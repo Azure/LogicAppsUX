@@ -65,10 +65,18 @@ import { validateAndInstallBinaries } from './app/commands/binaries/validateAndI
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
 import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
+import { registerDataMapperV3 } from './app/utils/dataMapperV3';
 
 const telemetryString = 'setInGitHubBuild';
+let cancelRuntimeInitialization: (() => void) | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
+  let runtimeInitializationCancelled = false;
+  const cancelInitialization = () => {
+    runtimeInitializationCancelled = true;
+  };
+  cancelRuntimeInitialization = cancelInitialization;
+  context.subscriptions.push({ dispose: cancelInitialization });
   initializeCustomExtensionContext(context);
   await updateLogicAppsContext();
 
@@ -81,6 +89,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+  registerDataMapperV3(context);
 
   registerUIExtensionVariables(ext);
   registerAzureUtilsExtensionVariables(ext);
@@ -99,7 +108,7 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
 
-    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+    if (vscode.workspace.workspaceFolders && (await getWorkspaceLogicAppRoots()).length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
       await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
@@ -145,52 +154,82 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     );
 
-    activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
-    callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
-      actionContext.telemetry.properties.isActivationEvent = 'true';
-      if (await promptShouldEnableLocalManagedIdentityAuth()) {
-        actionContext.telemetry.properties.actionTaken = 'true';
-        await enableLocalManagedIdentityAuth(actionContext);
-      }
-    });
-
-    // Dependencies and environment setup
-    activateContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
-    await ensureExtensionBundle();
-
-    activateContext.telemetry.properties.lastStep = 'isDevContainerWorkspace';
-    const isDevContainer = await isDevContainerWorkspace();
-    activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
-
-    activateContext.telemetry.properties.lastStep = 'ensureBinaries';
-    await ensureBinaries(activateContext, isDevContainer);
-
-    // Start background processes (design-time func, codeful language server)
-    activateContext.telemetry.properties.lastStep = 'startDesignTime';
-    callWithTelemetryAndErrorHandling('activate.startDesignTime', async (actionContext: IActionContext) => {
-      actionContext.telemetry.properties.isActivationEvent = 'true';
-      if (isDevContainer) {
-        actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
-        actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
-        scheduleStartAllDesignTimeApis();
-      } else {
-        const projectPaths = await getWorkspaceLogicAppRoots();
-        if (await promptShouldAutoStartDesignTime(projectPaths)) {
-          const startDesignTimePromises = projectPaths.map(async (projectPath) =>
-            callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
-              innerActionContext.telemetry.properties.isActivationEvent = 'true';
-              await startDesignTimeApi(innerActionContext, projectPath);
-            })
-          );
-          await Promise.all(startDesignTimePromises);
+    if ((await getWorkspaceLogicAppRoots()).length > 0) {
+      activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
+      callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        if (await promptShouldEnableLocalManagedIdentityAuth()) {
+          actionContext.telemetry.properties.actionTaken = 'true';
+          await enableLocalManagedIdentityAuth(actionContext);
         }
-      }
-    });
+      });
 
-    activateContext.telemetry.properties.lastStep = 'startLanguageServer';
-    const hasCodefulProjects = await codefulProjectsExist();
-    if (hasCodefulProjects) {
-      startLanguageServer();
+      // Dependencies and environment setup
+      const initializeRuntime = async (runtimeContext: IActionContext): Promise<void> => {
+        runtimeContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
+        await ensureExtensionBundle();
+        if (runtimeInitializationCancelled) {
+          return;
+        }
+
+        runtimeContext.telemetry.properties.lastStep = 'isDevContainerWorkspace';
+        const isDevContainer = await isDevContainerWorkspace();
+        runtimeContext.telemetry.properties.isDevContainer = String(isDevContainer);
+
+        runtimeContext.telemetry.properties.lastStep = 'ensureBinaries';
+        await ensureBinaries(runtimeContext, isDevContainer);
+        if (runtimeInitializationCancelled) {
+          return;
+        }
+
+        runtimeContext.telemetry.properties.lastStep = 'startDesignTime';
+        callWithTelemetryAndErrorHandling('activate.startDesignTime', async (actionContext: IActionContext) => {
+          actionContext.telemetry.properties.isActivationEvent = 'true';
+          if (runtimeInitializationCancelled) {
+            return;
+          }
+          if (isDevContainer) {
+            actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+            actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
+            scheduleStartAllDesignTimeApis();
+          } else {
+            const projectPaths = await getWorkspaceLogicAppRoots();
+            if (runtimeInitializationCancelled) {
+              return;
+            }
+            const shouldStart = await promptShouldAutoStartDesignTime(projectPaths);
+            if (shouldStart && !runtimeInitializationCancelled) {
+              const startDesignTimePromises = projectPaths.map(async (projectPath) =>
+                callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
+                  innerActionContext.telemetry.properties.isActivationEvent = 'true';
+                  if (!runtimeInitializationCancelled) {
+                    await startDesignTimeApi(innerActionContext, projectPath);
+                  }
+                })
+              );
+              await Promise.all(startDesignTimePromises);
+            }
+          }
+        });
+
+        runtimeContext.telemetry.properties.lastStep = 'startLanguageServer';
+        const hasCodefulProjects = await codefulProjectsExist();
+        if (hasCodefulProjects && !runtimeInitializationCancelled) {
+          startLanguageServer();
+        }
+      };
+      if (shouldRequireStrictDependencyValidation()) {
+        await initializeRuntime(activateContext);
+      } else {
+        callWithTelemetryAndErrorHandling('activate.initializeRuntime', async (runtimeContext: IActionContext) => {
+          runtimeContext.telemetry.properties.isActivationEvent = 'true';
+          await initializeRuntime(runtimeContext);
+        }).catch((error) => {
+          ext.outputChannel?.appendLog(
+            localize('runtimeInitializationFailed', 'Background runtime initialization failed: {0}', String(error))
+          );
+        });
+      }
     }
 
     ext.rgApi = await getResourceGroupsApi();
@@ -372,6 +411,8 @@ async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<
 }
 
 export async function deactivate(): Promise<void> {
+  cancelRuntimeInitialization?.();
+  cancelRuntimeInitialization = undefined;
   await stopAllDesignTimeApis();
   try {
     await ext.languageClient?.stop();

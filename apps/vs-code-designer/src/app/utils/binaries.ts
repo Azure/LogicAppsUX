@@ -164,6 +164,9 @@ export async function downloadAndExtractDependency(
       try {
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
       } catch (firstError) {
+        if (lockWaitTimeoutErrors.has(firstError as object)) {
+          throw firstError;
+        }
         const lockLike = isTransientLockError(firstError) || firstError instanceof BundleExtractionError;
         if (!lockLike) {
           throw firstError;
@@ -902,6 +905,8 @@ async function stopAllDesignTimeApisAndWait(timeoutMs: number = DESIGN_TIME_EXIT
  */
 type LockWaitAttempt = { ok: true } | { ok: false; error: unknown; retry: boolean };
 
+const lockWaitTimeoutErrors = new WeakSet<object>();
+
 /**
  * Generic retry loop used by `removeWithLockWait` and `mkdirWithLockWait`.
  * Polls `attempt` until success or `budgetMs` elapses. Logs progress every
@@ -939,6 +944,7 @@ async function withLockWait(
     }
     const now = Date.now();
     if (now >= deadline) {
+      lockWaitTimeoutErrors.add(lastError as object);
       throw lastError;
     }
     if (now - lastProgressLog >= LOCK_WAIT_LOG_INTERVAL_MS && ext.outputChannel) {
@@ -956,7 +962,7 @@ async function withLockWait(
       // budget to elapse, since some lock holders (Defender, indexer) clear
       // on their own and there's no point bailing early.
       try {
-        await offerToTerminateOrphanFuncProcesses(dependencyName);
+        await offerToTerminateOrphanFuncProcesses(dependencyName, deadline);
       } catch (promptErr) {
         if (ext.outputChannel) {
           ext.outputChannel.appendLog(
@@ -965,7 +971,11 @@ async function withLockWait(
         }
       }
     }
-    await new Promise((resolve) => setTimeout(resolve, LOCK_WAIT_POLL_MS));
+    if (Date.now() >= deadline) {
+      lockWaitTimeoutErrors.add(lastError as object);
+      throw lastError;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(LOCK_WAIT_POLL_MS, deadline - Date.now())));
   }
 }
 
@@ -1094,12 +1104,29 @@ function getTrackedFuncPids(): Set<number> {
  * No-op on non-Windows since the EPERM/EBUSY scenarios reported by users are
  * Windows-specific.
  */
-async function offerToTerminateOrphanFuncProcesses(dependencyName: string): Promise<boolean> {
+async function offerToTerminateOrphanFuncProcesses(
+  dependencyName: string,
+  deadline: number = Date.now() + LOCK_WAIT_BUDGET_MS
+): Promise<boolean> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      terminateConfirmedOrphanFuncProcesses(dependencyName, deadline),
+      new Promise<false>((resolve) => {
+        timeout = setTimeout(() => resolve(false), Math.max(0, deadline - Date.now()));
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function terminateConfirmedOrphanFuncProcesses(dependencyName: string, deadline: number): Promise<boolean> {
   if (process.platform !== Platform.windows) {
     return false;
   }
   const allFuncPids = await listFuncExePidsWindows();
-  if (allFuncPids.length === 0) {
+  if (Date.now() >= deadline || allFuncPids.length === 0) {
     return false;
   }
   const tracked = getTrackedFuncPids();
@@ -1123,12 +1150,18 @@ async function offerToTerminateOrphanFuncProcesses(dependencyName: string): Prom
     { modal: false },
     terminateLabel
   );
+  if (Date.now() >= deadline) {
+    return false;
+  }
   if (choice !== terminateLabel) {
     ext.outputChannel.appendLog('User declined to terminate orphan func.exe processes.');
     return false;
   }
   let killed = 0;
   for (const pid of orphans) {
+    if (Date.now() >= deadline || getTrackedFuncPids().has(pid)) {
+      continue;
+    }
     try {
       process.kill(pid);
       killed++;
@@ -1141,7 +1174,7 @@ async function offerToTerminateOrphanFuncProcesses(dependencyName: string): Prom
   ext.outputChannel.appendLog(`Terminated ${killed}/${orphans.length} orphan func.exe process(es).`);
   if (killed > 0) {
     // Give Windows a beat to release file handles before any retry.
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(1500, Math.max(0, deadline - Date.now()))));
   }
   return killed > 0;
 }

@@ -218,11 +218,42 @@ describe('registerCommands', () => {
       );
     });
 
+    it('offers project creation only on empty Explorer space', () => {
+      const creation = extensionManifest.contributes.menus['explorer/context'].find(
+        (entry) => entry.command === 'azureLogicAppsStandard.createProject'
+      );
+      expect(creation?.when).toBe('!explorerResourceIsFolder && !resourceFilename');
+    });
+
     it('keeps workspace-wide commands out of project-folder menus', () => {
       const explorerCommands = extensionManifest.contributes.menus['explorer/context'].map((entry) => entry.command);
-      for (const command of ['createProject', 'deploy', 'generateDeploymentScripts', 'switchToDotnetProject', 'useSQLStorage']) {
+      for (const command of ['deploy', 'generateDeploymentScripts', 'switchToDotnetProject', 'useSQLStorage']) {
         expect(explorerCommands).not.toContain(`azureLogicAppsStandard.${command}`);
       }
+    });
+
+    it('offers add and import only on Data Map project folders', () => {
+      const mapperActions = extensionManifest.contributes.menus['explorer/context'].filter((entry) =>
+        entry.when.includes('resourcePath in azureLogicAppsStandard.dataMap.projectFolders')
+      );
+      expect(mapperActions.map((entry) => entry.command)).toEqual([
+        'azureLogicAppsStandard.dataMap.addDataMap',
+        'azureLogicAppsStandard.dataMap.importDataMap',
+      ]);
+      expect(mapperActions.every((entry) => entry.when.includes('explorerResourceIsFolder'))).toBe(true);
+    });
+
+    it('opens BTM and LML files independently of whether a Logic App project exists', () => {
+      const openMap = extensionManifest.contributes.menus['explorer/context'].find(
+        (entry) => entry.command === 'azureLogicAppsStandard.dataMap.openDataMap'
+      );
+      expect(openMap?.when).toBe('!explorerResourceIsFolder && resourceExtname =~ /^\\.(btm|lml)$/i');
+      expect(extensionManifest.contributes.customEditors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ viewType: 'azureLogicAppsStandard.dataMapperV2', selector: [{ filenamePattern: '*.lml' }] }),
+          expect.objectContaining({ viewType: 'azureLogicAppsStandard.dataMapperV3', selector: [{ filenamePattern: '*.btm' }] }),
+        ])
+      );
     });
 
     it('contributes only project-specific actions to Logic App folders', () => {
@@ -235,6 +266,9 @@ describe('registerCommands', () => {
         'azureLogicAppsStandard.switchDebugMode',
       ]);
       expect(folderActions.every((entry) => entry.when.includes('explorerResourceIsFolder'))).toBe(true);
+      expect(folderActions.every((entry) => entry.when.includes('resourcePath not in azureLogicAppsStandard.dataMap.projectFolders'))).toBe(
+        true
+      );
     });
 
     it('does not contribute the standalone Data Mapper view, welcome buttons or title action', () => {

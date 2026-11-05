@@ -16,6 +16,13 @@ import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../../../extensionVariables';
+import * as dataMapperV3 from '../../../../utils/dataMapperV3';
+
+vi.mock('../../../../utils/dataMapperV3', () => ({
+  createDataMapProject: vi.fn(),
+  rememberDataMapToOpen: vi.fn(),
+  forgetDataMapToOpen: vi.fn(),
+}));
 
 vi.mock('vscode', () => ({
   window: {
@@ -820,11 +827,13 @@ describe('createLogicAppWorkspace', () => {
   describe('independent selected projects', () => {
     beforeEach(() => {
       (vscode as any).extensions = {
-        getExtension: vi.fn().mockReturnValue({
-          packageJSON: { contributes: { commands: [{ command: 'biztalkDataMapper.createProject' }] } },
-          activate: vi.fn().mockResolvedValue(undefined),
-        }),
+        getExtension: vi.fn().mockReturnValue(undefined),
       };
+      vi.mocked(dataMapperV3.createDataMapProject).mockImplementation(async (root, mapName) =>
+        vscode.Uri.file(actualPath.join(root.fsPath, `${mapName}.btm`))
+      );
+      vi.mocked(dataMapperV3.rememberDataMapToOpen).mockResolvedValue(undefined);
+      vi.mocked(dataMapperV3.forgetDataMapToOpen).mockResolvedValue(undefined);
     });
 
     const selectedOptions = (selectedProjects: IWebviewProjectContext['selectedProjects']) => ({
@@ -858,12 +867,18 @@ describe('createLogicAppWorkspace', () => {
       const root = actualPath.join(options.workspaceProjectPath.fsPath, options.workspaceName);
       expect(fse.mkdir).toHaveBeenCalledWith(root);
       if (dataMap) {
-        expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
-          'biztalkDataMapper.createProject',
+        expect(dataMapperV3.createDataMapProject).toHaveBeenCalledWith(
           expect.objectContaining({ fsPath: actualPath.join(root, 'data-map') }),
           'Mappings'
         );
       }
+      expect(dataMapperV3.createDataMapProject).toHaveBeenCalledTimes(dataMap ? 1 : 0);
+      expect(vscode.extensions.getExtension).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalledWith(
+        'biztalkDataMapper.createProject',
+        expect.anything(),
+        expect.anything()
+      );
       const workflowWrites = vi.mocked(fsUtils.writeFormattedJson).mock.calls.filter(([file]) => String(file).endsWith('workflow.json'));
       expect(workflowWrites).toHaveLength(logicApp ? 1 : 0);
       if (logicApp) {
@@ -887,9 +902,59 @@ describe('createLogicAppWorkspace', () => {
       const options = { ...selectedOptions({ logicApp: false, customCode: false, dataMap: true }), openBehavior };
       await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, options, false);
       expect(vscode.commands.executeCommand).toHaveBeenCalledWith('vscode.openFolder', expect.anything(), forceNewWindow);
+      const root = actualPath.join(options.workspaceProjectPath.fsPath, options.workspaceName);
+      expect(dataMapperV3.rememberDataMapToOpen).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ fsPath: actualPath.join(root, `${options.workspaceName}.code-workspace`) }),
+        expect.objectContaining({ fsPath: actualPath.join(root, 'data-map', 'Mappings.btm') })
+      );
+      expect(vi.mocked(dataMapperV3.createDataMapProject).mock.invocationCallOrder[0]).toBeLessThan(
+        vi.mocked(dataMapperV3.rememberDataMapToOpen).mock.invocationCallOrder[0]
+      );
+      expect(vi.mocked(dataMapperV3.rememberDataMapToOpen).mock.invocationCallOrder[0]).toBeLessThan(
+        vi.mocked(vscode.commands.executeCommand).mock.invocationCallOrder[0]
+      );
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
     });
 
-    it('does not open a window for DontOpen', async () => {
+    it.each([OpenBehavior.openInNewWindow, OpenBehavior.openInCurrentWindow])(
+      'clears the matching map handoff and preserves generated files when openFolder rejects: %s',
+      async (openBehavior) => {
+        const options = { ...selectedOptions({ logicApp: false, customCode: false, dataMap: true }), openBehavior };
+        const failure = new Error('Workspace opening canceled');
+        vi.mocked(vscode.commands.executeCommand).mockRejectedValueOnce(failure);
+
+        await expect(CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, options, false)).rejects.toBe(failure);
+
+        const root = actualPath.join(options.workspaceProjectPath.fsPath, options.workspaceName);
+        expect(dataMapperV3.forgetDataMapToOpen).toHaveBeenCalledExactlyOnceWith(
+          expect.objectContaining({ fsPath: actualPath.join(root, `${options.workspaceName}.code-workspace`) }),
+          expect.objectContaining({ fsPath: actualPath.join(root, 'data-map', 'Mappings.btm') })
+        );
+        expect(vi.mocked(dataMapperV3.forgetDataMapToOpen).mock.invocationCallOrder[0]).toBeGreaterThan(
+          vi.mocked(vscode.commands.executeCommand).mock.invocationCallOrder[0]
+        );
+        expect(fse.remove).not.toHaveBeenCalled();
+      }
+    );
+
+    it('does not clear another pending map when opening a workspace with no map rejects', async () => {
+      const failure = new Error('Workspace opening rejected');
+      vi.mocked(vscode.commands.executeCommand).mockRejectedValueOnce(failure);
+
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          selectedOptions({ logicApp: true, customCode: false, dataMap: false }),
+          false
+        )
+      ).rejects.toBe(failure);
+
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
+      expect(fse.remove).not.toHaveBeenCalled();
+    });
+
+    it('creates the map without opening an editor, workspace, or pending handoff for DontOpen', async () => {
       await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
         mockContext,
         {
@@ -898,7 +963,37 @@ describe('createLogicAppWorkspace', () => {
         },
         false
       );
-      expect(vi.mocked(vscode.commands.executeCommand).mock.calls.filter(([command]) => command === 'vscode.openFolder')).toHaveLength(0);
+      expect(dataMapperV3.createDataMapProject).toHaveBeenCalledOnce();
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
+    });
+
+    it('does not remember a map when only a Logic App workspace is opened', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        selectedOptions({ logicApp: true, customCode: false, dataMap: false }),
+        false
+      );
+      expect(dataMapperV3.createDataMapProject).not.toHaveBeenCalled();
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).toHaveBeenCalledWith('vscode.openFolder', expect.anything(), true);
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
+    });
+
+    it('preserves generated files and does not open the workspace if persisting the handoff fails', async () => {
+      const failure = new Error('Pending map persistence failed');
+      vi.mocked(dataMapperV3.rememberDataMapToOpen).mockRejectedValueOnce(failure);
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          selectedOptions({ logicApp: false, customCode: false, dataMap: true }),
+          false
+        )
+      ).rejects.toBe(failure);
+      expect(dataMapperV3.createDataMapProject).toHaveBeenCalledOnce();
+      expect(fse.remove).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
     });
 
     it('uses the independent Rules Engine subtype and configured folder names', async () => {

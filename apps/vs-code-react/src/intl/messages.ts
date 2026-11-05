@@ -165,6 +165,11 @@ export const workspaceWizardMessages = defineMessages({
     defaultMessage: 'Configure your Logic App',
     description: 'Text for logic app title in the Logic Apps workspace creation wizard.',
   },
+  LOGIC_APP_INTRO: {
+    defaultMessage: 'Set up the required Logic App project and its initial workflow',
+    id: 'b24Eqn',
+    description: 'Helper text below the Logic App configuration heading in the workspace creation wizard.',
+  },
   LOGIC_APP_PROJECT: {
     id: 'JsYfgQ',
     defaultMessage: 'Logic App project',
@@ -183,8 +188,8 @@ export const workspaceWizardMessages = defineMessages({
     description: 'Text for codeful description in the Logic Apps workspace creation wizard.',
   },
   LOGIC_APP_NAME: {
-    id: '3uePSB',
-    defaultMessage: 'Logic App name',
+    id: 'SPFzWp',
+    defaultMessage: 'Logic App project name',
     description: 'Text for logic app name in the Logic Apps workspace creation wizard.',
   },
   LOGIC_APP_FOLDER: {
@@ -318,8 +323,8 @@ export const workspaceWizardMessages = defineMessages({
     description: 'Text for map project in the Logic Apps workspace creation wizard.',
   },
   MAP_PROJECT_DESCRIPTION: {
-    id: 'Ye/Sne',
-    defaultMessage: 'Use a slash-separated project path to create nested folders, then name the map file created inside it.',
+    id: 'jvZtCk',
+    defaultMessage: 'Provide the name for your data map project.',
     description: 'Text for map project description in the Logic Apps workspace creation wizard.',
   },
   MAP_NAME: { id: 'LMvnRY', defaultMessage: 'Project name', description: 'Text for map name in the Logic Apps workspace creation wizard.' },

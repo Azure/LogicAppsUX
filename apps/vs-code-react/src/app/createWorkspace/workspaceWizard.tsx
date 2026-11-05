@@ -49,6 +49,7 @@ export const WorkspaceWizard = () => {
   const state = useSelector((root: RootState) => root.createWorkspace);
   const { workspaceName, workspaceProjectPath, separator, platform, pathValidationResults, workspaceExistenceResults, isLoading, error } =
     state;
+  const currentWorkspace = state.currentWorkspace;
   const [selected, setSelected] = useState({ logicApp: true, customCode: false, dataMap: false });
   const [step, setStep] = useState<Step>('workspace');
   const [openNewWindow, setOpenNewWindow] = useState(true);
@@ -78,7 +79,7 @@ export const WorkspaceWizard = () => {
   const isRulesEngine = form.customCodeType === ProjectType.rulesEngine;
   const steps: Step[] = ['workspace', ...projectKeys.filter((key) => selected[key]), 'review'];
   const labels: Record<Step, string> = {
-    workspace: text.WORKSPACE,
+    workspace: currentWorkspace ? text.PROJECTS : text.WORKSPACE,
     logicApp: text.LOGIC_APP,
     customCode: text.CUSTOM_CODE,
     dataMap: text.DATA_MAP,
@@ -93,7 +94,7 @@ export const WorkspaceWizard = () => {
   };
   const activeIndex = steps.indexOf(step);
   const parentPath = workspaceProjectPath.fsPath;
-  const workspacePath = joinPath(parentPath, workspaceName, separator);
+  const workspacePath = currentWorkspace ? state.workspaceRootFolder : joinPath(parentPath, workspaceName, separator);
   const workspaceFile = joinPath(workspacePath, `${workspaceName}.code-workspace`, separator);
   const projectDescriptions: Record<ProjectKey, string> = {
     logicApp: text.LOGIC_APP_DESCRIPTION,
@@ -115,6 +116,9 @@ export const WorkspaceWizard = () => {
   const selectedTargetFramework = targetFrameworkOptions.find((option) => option.value === form.targetFramework);
 
   useEffect(() => {
+    if (currentWorkspace) {
+      return;
+    }
     const timer = setTimeout(() => {
       if (parentPath && !(parentPath in pathValidationResults)) {
         vscode.postMessage({ command: ExtensionCommand.validatePath, data: { path: parentPath } });
@@ -131,7 +135,7 @@ export const WorkspaceWizard = () => {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [parentPath, workspaceName, workspacePath, workspaceFile, pathValidationResults, workspaceExistenceResults, vscode]);
+  }, [currentWorkspace, parentPath, workspaceName, workspacePath, workspaceFile, pathValidationResults, workspaceExistenceResults, vscode]);
 
   useEffect(() => {
     if (previousStep.current !== step) {
@@ -213,10 +217,11 @@ export const WorkspaceWizard = () => {
       ? text.WORKSPACE_NESTED
       : undefined);
   const workspaceValid =
-    !workspaceNameError &&
-    pathValidationResults[parentPath] === true &&
-    workspaceExistenceResults[workspacePath] === false &&
-    workspaceExistenceResults[workspaceFile] === false &&
+    (currentWorkspace ||
+      (!workspaceNameError &&
+        pathValidationResults[parentPath] === true &&
+        workspaceExistenceResults[workspacePath] === false &&
+        workspaceExistenceResults[workspaceFile] === false)) &&
     projectKeys.some((key) => selected[key]);
 
   function isStepValid(candidate: Step): boolean {
@@ -311,10 +316,12 @@ export const WorkspaceWizard = () => {
             </ul>
           </li>
         )}
-        <li>
-          <DocumentRegular />
-          <code>{workspaceName || text.NEW_WORKSPACE}.code-workspace</code>
-        </li>
+        {!currentWorkspace && (
+          <li>
+            <DocumentRegular />
+            <code>{workspaceName || text.NEW_WORKSPACE}.code-workspace</code>
+          </li>
+        )}
       </ul>
     </aside>
   );
@@ -344,7 +351,11 @@ export const WorkspaceWizard = () => {
         workspaceProjectPath,
         workspaceName,
         selectedProjects: selected,
-        openBehavior: openNewWindow ? OpenBehavior.openInNewWindow : OpenBehavior.openInCurrentWindow,
+        openBehavior: currentWorkspace
+          ? OpenBehavior.dontOpen
+          : openNewWindow
+            ? OpenBehavior.openInNewWindow
+            : OpenBehavior.openInCurrentWindow,
         isDevContainerProject: false,
         ...(selected.logicApp
           ? {
@@ -384,11 +395,11 @@ export const WorkspaceWizard = () => {
       <header className={styles.wizardHeader}>
         <div>
           <div className={styles.wizardMuted}>{text.BRAND}</div>
-          <h1>{text.TITLE}</h1>
+          <h1>{currentWorkspace ? legacy.CREATE_PROJECT : text.TITLE}</h1>
         </div>
         <div className={styles.wizardMuted}>
           {workspaceName ? `${workspaceName} / ` : ''}
-          {text.NEW_WORKSPACE}
+          {currentWorkspace ? text.PROJECTS : text.NEW_WORKSPACE}
         </div>
       </header>
       <nav className={styles.wizardProgress} aria-label={text.SETUP}>
@@ -415,44 +426,49 @@ export const WorkspaceWizard = () => {
       </nav>
       <main className={styles.wizardBody}>
         <h2 tabIndex={-1} ref={heading}>
-          {titles[step]}
+          {currentWorkspace && step === 'workspace' ? text.PROJECTS : titles[step]}
         </h2>
+        {step === 'logicApp' && <p className={styles.wizardMuted}>{text.LOGIC_APP_INTRO}</p>}
         {step === 'customCode' && isRulesEngine && <p className={styles.wizardMuted}>{text.RULES_INTRO}</p>}
         {step === 'dataMap' && <p className={styles.wizardMuted}>{text.MAP_INTRO}</p>}
         {step === 'workspace' ? (
           <>
-            <p className={styles.wizardMuted}>{text.WORKSPACE_DESCRIPTION}</p>
-            <h3>{text.WORKSPACE_DETAILS}</h3>
-            <div className={styles.wizardLocationFields}>
-              <Field
-                label={text.WORKSPACE_NAME}
-                hint={text.WORKSPACE_NAME_HINT}
-                required
-                validationState={touched.includes('workspaceName') && workspaceNameError ? 'error' : 'none'}
-                validationMessage={touched.includes('workspaceName') ? workspaceNameError : undefined}
-              >
-                <Input
-                  value={workspaceName}
-                  onChange={(_event, data) => dispatch(setWorkspaceName(data.value))}
-                  onBlur={() => touch('workspaceName')}
-                  disabled={isLoading}
-                />
-              </Field>
-              <Field
-                label={text.PARENT_FOLDER}
-                hint={text.PARENT_FOLDER_HINT}
-                required
-                validationState={pathValidationResults[parentPath] === false ? 'error' : 'none'}
-                validationMessage={pathValidationResults[parentPath] === false ? text.PATH_INVALID : undefined}
-              >
-                <div className={styles.wizardBrowse}>
-                  <Input value={parentPath} onChange={(_event, data) => dispatch(setProjectPath(data.value))} disabled={isLoading} />
-                  <Button disabled={isLoading} onClick={() => vscode.postMessage({ command: ExtensionCommand.select_folder })}>
-                    {common.BROWSE}...
-                  </Button>
+            {!currentWorkspace && (
+              <>
+                <p className={styles.wizardMuted}>{text.WORKSPACE_DESCRIPTION}</p>
+                <h3>{text.WORKSPACE_DETAILS}</h3>
+                <div className={styles.wizardLocationFields}>
+                  <Field
+                    label={text.WORKSPACE_NAME}
+                    hint={text.WORKSPACE_NAME_HINT}
+                    required
+                    validationState={touched.includes('workspaceName') && workspaceNameError ? 'error' : 'none'}
+                    validationMessage={touched.includes('workspaceName') ? workspaceNameError : undefined}
+                  >
+                    <Input
+                      value={workspaceName}
+                      onChange={(_event, data) => dispatch(setWorkspaceName(data.value))}
+                      onBlur={() => touch('workspaceName')}
+                      disabled={isLoading}
+                    />
+                  </Field>
+                  <Field
+                    label={text.PARENT_FOLDER}
+                    hint={text.PARENT_FOLDER_HINT}
+                    required
+                    validationState={pathValidationResults[parentPath] === false ? 'error' : 'none'}
+                    validationMessage={pathValidationResults[parentPath] === false ? text.PATH_INVALID : undefined}
+                  >
+                    <div className={styles.wizardBrowse}>
+                      <Input value={parentPath} onChange={(_event, data) => dispatch(setProjectPath(data.value))} disabled={isLoading} />
+                      <Button disabled={isLoading} onClick={() => vscode.postMessage({ command: ExtensionCommand.select_folder })}>
+                        {common.BROWSE}...
+                      </Button>
+                    </div>
+                  </Field>
                 </div>
-              </Field>
-            </div>
+              </>
+            )}
             <h3>{text.PROJECTS}</h3>
             <p className={styles.wizardMuted}>{text.PROJECTS_DESCRIPTION}</p>
             <div className={styles.wizardChoices}>
@@ -468,8 +484,8 @@ export const WorkspaceWizard = () => {
                       setSelected((previous) => ({
                         ...previous,
                         [key]: checked,
-                        ...(key === 'customCode' && checked ? { logicApp: true } : {}),
-                        ...(key === 'logicApp' && !checked ? { customCode: false } : {}),
+                        ...(!currentWorkspace && key === 'customCode' && checked ? { logicApp: true } : {}),
+                        ...(!currentWorkspace && key === 'logicApp' && !checked ? { customCode: false } : {}),
                       }));
                     }}
                   />
@@ -485,12 +501,14 @@ export const WorkspaceWizard = () => {
                 {text.AT_LEAST_ONE}
               </div>
             )}
-            {notice(text.PROJECTS_INFO)}
-            {parentPath && workspaceName && !workspaceNameError && !workspaceValid && notice(text.CHECKING)}
-            <div className={`${styles.wizardPath} ${styles.wizardMuted}`}>
-              <span>{text.LOCATION}</span>
-              <code>{parentPath && workspaceName ? workspacePath : ''}</code>
-            </div>
+            {!currentWorkspace && notice(text.PROJECTS_INFO)}
+            {!currentWorkspace && parentPath && workspaceName && !workspaceNameError && !workspaceValid && notice(text.CHECKING)}
+            {!currentWorkspace && (
+              <div className={`${styles.wizardPath} ${styles.wizardMuted}`}>
+                <span>{text.LOCATION}</span>
+                <code>{parentPath && workspaceName ? workspacePath : ''}</code>
+              </div>
+            )}
           </>
         ) : (
           <div className={styles.wizardColumns}>
@@ -624,10 +642,12 @@ export const WorkspaceWizard = () => {
               )}
               {step === 'dataMap' && (
                 <>
-                  <h3>{text.MAP_PROJECT}</h3>
-                  <p className={styles.wizardMuted}>{text.MAP_PROJECT_DESCRIPTION}</p>
+                  <div className={styles.wizardSectionIntro}>
+                    <h3>{text.MAP_PROJECT}</h3>
+                    <p className={styles.wizardMuted}>{text.MAP_PROJECT_DESCRIPTION}</p>
+                  </div>
                   <div className={styles.wizardFields} style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
-                    {textField('dataMapFolderName', text.MAP_NAME, text.MAP_PROJECT_HINT)}
+                    {textField('dataMapFolderName', text.MAP_NAME)}
                     {textField('dataMapName', text.MAP_FILE_NAME, wizardFormat.MAP_FILE_HINT({ mapName: form.dataMapName }))}
                   </div>
                   {notice(text.MAP_STRUCTURE)}
@@ -640,9 +660,11 @@ export const WorkspaceWizard = () => {
                       <strong>{workspaceName}</strong>
                       <p className={styles.wizardMuted}>{workspacePath}</p>
                     </div>
-                    <Button appearance="transparent" disabled={isLoading} onClick={() => setStep('workspace')}>
-                      {text.EDIT_WORKSPACE}
-                    </Button>
+                    {!currentWorkspace && (
+                      <Button appearance="transparent" disabled={isLoading} onClick={() => setStep('workspace')}>
+                        {text.EDIT_WORKSPACE}
+                      </Button>
+                    )}
                   </div>
                   <div className={styles.wizardReview}>
                     {selected.logicApp &&
@@ -678,12 +700,14 @@ export const WorkspaceWizard = () => {
                         </p>
                       )}
                   </div>
-                  <Checkbox
-                    checked={openNewWindow}
-                    disabled={isLoading}
-                    label={text.OPEN_NEW}
-                    onChange={(_event, data) => setOpenNewWindow(data.checked === true)}
-                  />
+                  {!currentWorkspace && (
+                    <Checkbox
+                      checked={openNewWindow}
+                      disabled={isLoading}
+                      label={text.OPEN_NEW}
+                      onChange={(_event, data) => setOpenNewWindow(data.checked === true)}
+                    />
+                  )}
                   {notice(text.LOCAL_ONLY)}
                 </>
               )}
@@ -719,6 +743,8 @@ export const WorkspaceWizard = () => {
                   <Spinner size="tiny" />
                   {text.CREATING}
                 </>
+              ) : currentWorkspace ? (
+                legacy.CREATE_PROJECT_BUTTON
               ) : (
                 text.CREATE
               )}

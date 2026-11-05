@@ -21,19 +21,34 @@ import * as vscode from 'vscode';
 
 type CommandTarget = vscode.Uri | { resourceUri?: vscode.Uri } | undefined;
 
+export interface MapCommandOptions {
+  viewType?: string;
+  lmlViewType?: string;
+  btmOnly?: boolean;
+  requireExistingProject?: boolean;
+}
+
 interface UriPickItem extends vscode.QuickPickItem {
   uri?: vscode.Uri;
 }
 
 function resourceUri(value: CommandTarget): vscode.Uri | undefined {
-  return value instanceof vscode.Uri ? value : value?.resourceUri;
+  if (value && 'fsPath' in value) {
+    return value;
+  }
+  if (value && 'resourceUri' in value) {
+    return value.resourceUri;
+  }
+  return undefined;
 }
 
-async function openDataMap(uri: vscode.Uri): Promise<void> {
+async function openDataMap(uri: vscode.Uri, options?: MapCommandOptions): Promise<void> {
   await vscode.commands.executeCommand(
     'vscode.openWith',
     uri,
-    uri.path.toLowerCase().endsWith('.lml') ? lmlEditorViewType : 'biztalkDataMapper.mapEditor'
+    uri.path.toLowerCase().endsWith('.lml')
+      ? (options?.lmlViewType ?? lmlEditorViewType)
+      : (options?.viewType ?? 'biztalkDataMapper.mapEditor')
   );
 }
 
@@ -125,15 +140,21 @@ export async function openExistingMapper(onChanged: () => void): Promise<void> {
   onChanged();
 }
 
-export async function addDataMap(value: CommandTarget, onChanged: () => void): Promise<void> {
+export async function addDataMap(value: CommandTarget, onChanged: () => void, options?: MapCommandOptions): Promise<void> {
   let project: { name: string; uri: vscode.Uri } | undefined;
   const selectedUri = resourceUri(value);
   if (selectedUri) {
     const uri = getWorkspaceRoot(selectedUri);
+    if (options?.requireExistingProject && !(await isMapperProject(uri))) {
+      throw new Error('The selected folder is not a mapper project.');
+    }
     project = { name: uri.path.split('/').filter(Boolean).pop() ?? uri.fsPath, uri };
   } else {
     const projects = await findMapperProjects();
     if (projects.length === 0) {
+      if (options?.requireExistingProject) {
+        throw new Error('No mapper project found in the workspace.');
+      }
       const action = await vscode.window.showWarningMessage('No mapper project found in the workspace.', 'Add Mapper Project');
       if (action) {
         await vscode.commands.executeCommand('biztalkDataMapper.newMap');
@@ -167,7 +188,7 @@ export async function addDataMap(value: CommandTarget, onChanged: () => void): P
 
   const mapUri = await createEmptyMap(project.uri, normalizeMapName(input));
   onChanged();
-  await openDataMap(mapUri);
+  await openDataMap(mapUri, options);
 }
 
 async function pathExists(uri: vscode.Uri): Promise<boolean> {
@@ -180,19 +201,27 @@ async function pathExists(uri: vscode.Uri): Promise<boolean> {
 }
 
 // Copies an imported map and its referenced schemas into the project.
-export async function importExistingMap(value: CommandTarget, onChanged: () => void, context: vscode.ExtensionContext): Promise<void> {
+export async function importExistingMap(
+  value: CommandTarget,
+  onChanged: () => void,
+  context: vscode.ExtensionContext,
+  options?: MapCommandOptions
+): Promise<void> {
   const rememberedDirectory = context.globalState.get<string>(IMPORT_MAP_BROWSE_DIRECTORY_KEY);
   const selected = await vscode.window.showOpenDialog({
     defaultUri: rememberedDirectory ? vscode.Uri.file(rememberedDirectory) : undefined,
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
-    filters: { 'Data Maps': ['btm', 'lml'] },
+    filters: { 'Data Maps': options?.btmOnly ? ['btm'] : ['btm', 'lml'] },
     openLabel: 'Import Map',
-    title: 'Select the map (.btm or .lml) to import',
+    title: options?.btmOnly ? 'Select the map (.btm) to import' : 'Select the map (.btm or .lml) to import',
   });
   if (!selected?.[0]) {
     return;
+  }
+  if (options?.btmOnly && !selected[0].path.toLowerCase().endsWith('.btm')) {
+    throw new Error('Only BTM maps can be imported into this mapper.');
   }
   await context.globalState.update(IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selected[0].fsPath));
 
@@ -210,9 +239,15 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
   const selectedUri = resourceUri(value);
   if (selectedUri) {
     projectUri = getWorkspaceRoot(selectedUri);
+    if (options?.requireExistingProject && !(await isMapperProject(projectUri))) {
+      throw new Error('The selected folder is not a mapper project.');
+    }
   } else {
     const projects = await findMapperProjects();
     if (projects.length === 0) {
+      if (options?.requireExistingProject) {
+        throw new Error('No mapper project found in the workspace.');
+      }
       const newProject = await promptForNewProject('Import Existing Map');
       projectUri = newProject ? vscode.Uri.joinPath(newProject.parentUri, newProject.name) : undefined;
     } else if (projects.length === 1) {
@@ -282,7 +317,7 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
     vscode.window.showInformationMessage(summary);
   }
   if (vscode.workspace.getWorkspaceFolder(projectUri)) {
-    await openDataMap(mapUri);
+    await openDataMap(mapUri, options);
   } else {
     await showProjectInWorkspace(projectUri);
   }

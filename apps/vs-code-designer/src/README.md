@@ -38,6 +38,8 @@ Starting with version 2.81.5, the Azure Logic Apps (Standard) extension for Visu
 
 ## Azure Logic Apps - Data Mapper for Visual Studio Code
 
+The Create Workspace wizard can generate a Data Map project with a native `.btm` map, `Schemas`, and `__generated` folders. When the workspace opens, the new map opens in the Data Mapper v3 visual editor bundled with this extension. No separate Data Mapper extension installation or activation is required. Choosing not to open the workspace only creates the files.
+
 In Visual Studio Code, you can graphically describe transformations by mapping relationships between data types in a source schema and a target schema. After you install the Azure Logic Apps - Data Mapper, you can create direct basic relationships and more complex transformations using functions, handling any translation between supported schema types in the backend. For more information, see [Create maps to transform data in Azure Logic Apps with Visual Studio Code (preview)](https://go.microsoft.com/fwlink/?linkid=2234193).
 
 ## Azure Logic Apps (Standard) moves to the Resources tab

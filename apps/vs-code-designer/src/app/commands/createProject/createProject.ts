@@ -5,84 +5,41 @@
 
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { ensureWorkspace } from '../ensureWorkspace';
+import { createWorkspace } from '../createWorkspace/createWorkspace';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import * as vscode from 'vscode';
 import path from 'path';
-import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
-import { getEligibleLogicAppFoldersForCustomCode } from '../../utils/customCodeUtils';
+import { addProjectsToWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 
 export async function createProject(_context: IActionContext): Promise<void> {
-  // Determine if in workspace, if not in workspace but there is a logic app project found,
-  // prompt to see if they want to move the project over to a logic app workspace
-  let workspaceRootFolder = '';
-
-  if (vscode.workspace.workspaceFile) {
-    // Get the directory containing the .code-workspace file
-    workspaceRootFolder = path.dirname(vscode.workspace.workspaceFile.fsPath);
-  } else {
-    // Fall back to the newly created workspace folder if not in a workspace
-    await callWithTelemetryAndErrorHandling('createProject.ensureWorkspace', async (actionContext: IActionContext) => {
-      actionContext.errorHandling.rethrow = true;
-      actionContext.errorHandling.suppressDisplay = true;
-      await ensureWorkspace(actionContext);
-    });
+  const workspaceFile = vscode.workspace.workspaceFile;
+  const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
+  if (!workspaceFile && !folder) {
+    await createWorkspace(_context);
     return;
   }
-
-  // Get workspace data for the webview
-  const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.workspace.workspaceFile);
-  const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
-  const customCodeEligibleProjectPaths = await getEligibleLogicAppFoldersForCustomCode();
-  const logicAppsWithoutCustomCode = customCodeEligibleProjectPaths.map((projectPath) => ({
-    label: path.basename(projectPath),
-    description: projectPath,
-    data: projectPath,
-  }));
-
-  // Enumerate all existing directories on disk (includes C# project folders, etc.)
-  const existingFolders = await getExistingFoldersOnDisk(workspaceRootFolder);
-  ext.outputChannel.appendLog(`[createProject] workspaceRoot=${workspaceRootFolder}, existingFolders=${JSON.stringify(existingFolders)}`);
+  if ((workspaceFile && workspaceFile.scheme !== 'file') || (!workspaceFile && folder.scheme !== 'file')) {
+    throw new Error('Add new project requires a saved local workspace or an open local folder.');
+  }
+  const workspaceRootFolder = workspaceFile ? path.dirname(workspaceFile.fsPath) : folder.fsPath;
 
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createLogicAppProject', 'Create project'),
+    panelName: localize('addNewProject', 'Add new project'),
     panelGroupKey: ext.webViewKey.createLogicApp,
-    projectName: ProjectName.createLogicApp,
-    createCommand: ExtensionCommand.createLogicApp,
+    projectName: ProjectName.createWorkspace,
+    createCommand: ExtensionCommand.createWorkspace,
     createHandler: async (data: any) => {
-      await callWithTelemetryAndErrorHandling(ExtensionCommand.createLogicApp, async (actionContext: IActionContext) => {
-        await createLogicAppProject(actionContext, data, workspaceRootFolder);
+      await callWithTelemetryAndErrorHandling(ExtensionCommand.createWorkspace, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        await addProjectsToWorkspace(actionContext, data, workspaceRootFolder, workspaceFile);
       });
     },
-    dialogOptions: {
-      workspace: {
-        canSelectMany: false,
-        openLabel: localize('selectWorkspaceParentFolder', 'Select workspace parent folder'),
-        canSelectFiles: false,
-        canSelectFolders: true,
-      },
-    },
     extraInitializeData: {
-      workspaceFileJson,
-      logicAppsWithoutCustomCode,
-      existingFolders,
+      currentWorkspace: true,
       workspaceRootFolder,
+      workspaceName: path.basename(workspaceRootFolder),
     },
   });
-}
-
-/**
- * Enumerates all directory names in the workspace root folder.
- * This captures folders that may not be in the .code-workspace file (e.g., C# custom code projects).
- */
-async function getExistingFoldersOnDisk(workspaceRootFolder: string): Promise<string[]> {
-  try {
-    const rootUri = vscode.Uri.file(workspaceRootFolder);
-    const entries = await vscode.workspace.fs.readDirectory(rootUri);
-    return entries.filter(([, type]) => type === vscode.FileType.Directory).map(([name]) => name);
-  } catch {
-    return [];
-  }
 }

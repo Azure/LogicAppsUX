@@ -45,6 +45,7 @@ import { createDevContainerContents, createLogicAppVsCodeContents } from './Crea
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
+import { createDataMapProject, dataMapperV3ViewType, forgetDataMapToOpen, rememberDataMapToOpen } from '../../../utils/dataMapperV3';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -278,7 +279,10 @@ const validateProjectSegment = (value: string, field: string): void => {
   }
 };
 
-const validateSelectedProjects = async (options: IWebviewProjectContext): Promise<IWebviewProjectContext> => {
+const validateSelectedProjects = async (
+  options: IWebviewProjectContext,
+  currentWorkspaceRoot?: string
+): Promise<IWebviewProjectContext> => {
   const selected = options.selectedProjects;
   if (
     !selected ||
@@ -288,7 +292,9 @@ const validateSelectedProjects = async (options: IWebviewProjectContext): Promis
     throw new Error('Select at least one project, with boolean logicApp, customCode, and dataMap selections.');
   }
 
-  validateProjectSegment(options.workspaceName, 'workspaceName');
+  if (!currentWorkspaceRoot) {
+    validateProjectSegment(options.workspaceName, 'workspaceName');
+  }
   if (typeof options.workspaceProjectPath?.fsPath !== 'string' || !path.isAbsolute(options.workspaceProjectPath.fsPath)) {
     throw new Error('workspaceProjectPath must be an absolute local directory path.');
   }
@@ -392,19 +398,8 @@ const validateSelectedProjects = async (options: IWebviewProjectContext): Promis
   if (!(await fse.stat(options.workspaceProjectPath.fsPath)).isDirectory()) {
     throw new Error('workspaceProjectPath must be an existing directory.');
   }
-  if (await fse.pathExists(path.join(options.workspaceProjectPath.fsPath, options.workspaceName))) {
+  if (!currentWorkspaceRoot && (await fse.pathExists(path.join(options.workspaceProjectPath.fsPath, options.workspaceName)))) {
     throw new Error('The workspace destination already exists. Choose a new workspace name.');
-  }
-  if (selected.dataMap) {
-    const mapper = vscode.extensions.getExtension('microsoft.btm-data-mapper');
-    if (!mapper) {
-      throw new Error('Install and enable the Logic App Data Mapper v3 extension before creating a Data Map project.');
-    }
-    const commands = mapper.packageJSON?.contributes?.commands;
-    if (!Array.isArray(commands) || !commands.some((command) => command.command === 'biztalkDataMapper.createProject')) {
-      throw new Error('Update the Logic App Data Mapper v3 extension to support workspace project creation.');
-    }
-    await mapper.activate();
   }
   return normalized;
 };
@@ -424,12 +419,104 @@ const writeSelectedProjectsWorkspaceFile = async (options: IWebviewProjectContex
   await fse.writeJson(path.join(workspaceFolder, `${options.workspaceName}.code-workspace`), { folders }, { spaces: 2 });
 };
 
-const createSelectedProjectsWorkspace = async (context: IActionContext, options: IWebviewProjectContext): Promise<void> => {
-  const normalized = await validateSelectedProjects(options);
-  const workspaceFolder = path.join(normalized.workspaceProjectPath.fsPath, normalized.workspaceName);
-  await fse.mkdir(workspaceFolder);
+export async function addProjectsToWorkspace(
+  context: IActionContext,
+  options: IWebviewProjectContext,
+  workspaceRoot: string,
+  workspaceFile?: vscode.Uri
+): Promise<void> {
+  const assertCurrentWorkspace = () => {
+    const activeFile = vscode.workspace.workspaceFile;
+    const activeRoot = activeFile ? path.dirname(activeFile.fsPath) : vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (activeFile?.toString() !== workspaceFile?.toString() || activeRoot !== workspaceRoot) {
+      throw new Error('The current workspace changed. Reopen Add new project.');
+    }
+  };
+  assertCurrentWorkspace();
+  await createSelectedProjectsWorkspace(
+    context,
+    {
+      ...options,
+      workspaceProjectPath: vscode.Uri.file(workspaceRoot),
+      workspaceName: path.basename(workspaceRoot),
+      openBehavior: OpenBehavior.dontOpen,
+    },
+    { root: workspaceRoot, assertCurrentWorkspace }
+  );
+}
+
+const createSelectedProjectsWorkspace = async (
+  context: IActionContext,
+  options: IWebviewProjectContext,
+  currentWorkspace?: { root: string; assertCurrentWorkspace: () => void }
+): Promise<void> => {
+  const normalized = await validateSelectedProjects(options, currentWorkspace?.root);
+  const workspaceFolder = currentWorkspace?.root ?? path.join(normalized.workspaceProjectPath.fsPath, normalized.workspaceName);
+  const projectFolders = [
+    ...(normalized.selectedProjects.logicApp ? [{ name: normalized.logicAppName, path: normalized.logicAppFolderName }] : []),
+    ...(normalized.selectedProjects.customCode ? [{ name: normalized.functionFolderName, path: normalized.functionFolderName }] : []),
+    ...(normalized.selectedProjects.dataMap
+      ? [{ name: path.posix.basename(normalized.dataMapFolderName), path: normalized.dataMapFolderName }]
+      : []),
+  ];
+  const createdDirectories: string[] = [];
+  let dataMapUri: vscode.Uri | undefined;
+  if (currentWorkspace) {
+    for (const project of projectFolders) {
+      const destination = path.join(workspaceFolder, project.path).toLowerCase();
+      for (const folder of vscode.workspace.workspaceFolders ?? []) {
+        const existing = path.resolve(folder.uri.fsPath).toLowerCase();
+        if (
+          folder.name.toLowerCase() === project.name.toLowerCase() ||
+          destination === existing ||
+          (existing !== path.resolve(workspaceFolder).toLowerCase() && destination.startsWith(`${existing}${path.sep}`)) ||
+          existing.startsWith(`${destination}${path.sep}`)
+        ) {
+          throw new Error(`Project folder ${project.path} conflicts with an existing workspace folder.`);
+        }
+      }
+      let parent = workspaceFolder;
+      const segments = project.path.split('/');
+      for (const [index, segment] of segments.entries()) {
+        const match = (await fse.readdir(parent)).find((entry) => entry.toLowerCase() === segment.toLowerCase());
+        if (!match) {
+          break;
+        }
+        const candidate = path.join(parent, match);
+        const stat = await fse.lstat(candidate);
+        if (index === segments.length - 1 || !stat.isDirectory() || stat.isSymbolicLink() || match !== segment) {
+          throw new Error(`Project folder ${project.path} conflicts with an existing file or directory.`);
+        }
+        parent = candidate;
+      }
+    }
+  } else {
+    await fse.mkdir(workspaceFolder);
+    createdDirectories.push(workspaceFolder);
+  }
   try {
-    await writeSelectedProjectsWorkspaceFile(normalized);
+    if (currentWorkspace) {
+      for (const project of projectFolders) {
+        let parent = workspaceFolder;
+        const segments = project.path.split('/');
+        for (const [index, segment] of segments.entries()) {
+          const directory = path.join(parent, segment);
+          const match = (await fse.readdir(parent)).find((entry) => entry.toLowerCase() === segment.toLowerCase());
+          if (match) {
+            const stat = await fse.lstat(path.join(parent, match));
+            if (index === segments.length - 1 || match !== segment || !stat.isDirectory() || stat.isSymbolicLink()) {
+              throw new Error(`Project folder ${project.path} conflicts with an existing file or directory.`);
+            }
+          } else {
+            await fse.mkdir(directory);
+            createdDirectories.push(directory);
+          }
+          parent = directory;
+        }
+      }
+    } else {
+      await writeSelectedProjectsWorkspaceFile(normalized);
+    }
     const logicAppFolderPath = path.join(workspaceFolder, normalized.logicAppFolderName);
     const functionContext = {
       ...context,
@@ -469,23 +556,55 @@ const createSelectedProjectsWorkspace = async (context: IActionContext, options:
 
     if (normalized.selectedProjects.dataMap) {
       const dataMapFolder = path.join(workspaceFolder, normalized.dataMapFolderName);
-      await vscode.commands.executeCommand('biztalkDataMapper.createProject', vscode.Uri.file(dataMapFolder), normalized.dataMapName);
+      dataMapUri = await createDataMapProject(vscode.Uri.file(dataMapFolder), normalized.dataMapName);
     }
 
-    if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
+    if (currentWorkspace) {
+      currentWorkspace.assertCurrentWorkspace();
+      if (
+        vscode.workspace.workspaceFile &&
+        !vscode.workspace.updateWorkspaceFolders(
+          vscode.workspace.workspaceFolders?.length ?? 0,
+          0,
+          ...projectFolders.map((project) => ({ name: project.name, uri: vscode.Uri.file(path.join(workspaceFolder, project.path)) }))
+        )
+      ) {
+        throw new Error('Could not add the new project folders to the current workspace.');
+      }
+    } else if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
       await gitInit(workspaceFolder);
     }
   } catch (error) {
-    await fse.remove(workspaceFolder);
+    for (const directory of createdDirectories.reverse()) {
+      await fse.remove(directory);
+    }
     throw error;
   }
   ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
+  if (currentWorkspace && dataMapUri) {
+    try {
+      await vscode.commands.executeCommand('vscode.openWith', dataMapUri, dataMapperV3ViewType);
+    } catch (error) {
+      vscode.window.showWarningMessage(`Projects were added, but the new Data Map could not be opened: ${String(error)}`);
+    }
+  }
   if (normalized.openBehavior !== OpenBehavior.dontOpen) {
-    await vscode.commands.executeCommand(
-      vscodeCommand.openFolder,
-      vscode.Uri.file(path.join(workspaceFolder, `${normalized.workspaceName}.code-workspace`)),
-      normalized.openBehavior === OpenBehavior.openInNewWindow
-    );
+    const workspaceFile = vscode.Uri.file(path.join(workspaceFolder, `${normalized.workspaceName}.code-workspace`));
+    if (dataMapUri) {
+      await rememberDataMapToOpen(workspaceFile, dataMapUri);
+    }
+    try {
+      await vscode.commands.executeCommand(
+        vscodeCommand.openFolder,
+        workspaceFile,
+        normalized.openBehavior === OpenBehavior.openInNewWindow
+      );
+    } catch (error) {
+      if (dataMapUri) {
+        await forgetDataMapToOpen(workspaceFile, dataMapUri).catch(() => undefined);
+      }
+      throw error;
+    }
   }
 };
 

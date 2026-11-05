@@ -9,6 +9,20 @@
     "vscode": "^1.104.0"
   },
   "contributes": {
+    "customEditors": [
+      {
+        "viewType": "azureLogicAppsStandard.dataMapperV2",
+        "displayName": "Mapper Editor (LML)",
+        "selector": [{ "filenamePattern": "*.lml" }],
+        "priority": "default"
+      },
+      {
+        "viewType": "azureLogicAppsStandard.dataMapperV3",
+        "displayName": "Mapper Editor",
+        "selector": [{ "filenamePattern": "*.btm" }],
+        "priority": "default"
+      }
+    ],
     "breakpoints": [
       {
         "language": "json"
@@ -49,6 +63,21 @@
     },
     "commands": [
       {
+        "command": "azureLogicAppsStandard.dataMap.openDataMap",
+        "title": "Open Data Map",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.addDataMap",
+        "title": "Add new map...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.dataMap.importDataMap",
+        "title": "Import data map...",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.openDesigner",
         "title": "Open designer",
         "category": "Azure Logic Apps"
@@ -60,7 +89,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createProject",
-        "title": "Create new project...",
+        "title": "Add new project...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/CreateNewProject.svg",
@@ -424,16 +453,6 @@
           "when": "azureLogicAppsStandard.hasProject"
         },
         {
-          "command": "azureLogicAppsStandard.switchToDotnetProject",
-          "group": "2_project@1",
-          "when": "azureLogicAppsStandard.hasProject"
-        },
-        {
-          "command": "azureLogicAppsStandard.useSQLStorage",
-          "group": "2_project@2",
-          "when": "azureLogicAppsStandard.hasProject"
-        },
-        {
           "command": "azureLogicAppsStandard.exportLogicApp",
           "group": "3_export@1"
         },
@@ -673,14 +692,29 @@
       ],
       "explorer/context": [
         {
-          "command": "azureLogicAppsStandard.createWorkflow",
-          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders",
-          "group": "zzz_LogicApptools@1"
+          "command": "azureLogicAppsStandard.dataMap.openDataMap",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(btm|lml)$/i",
+          "group": "navigation@1"
         },
         {
-          "command": "azureLogicAppsStandard.addCustomCode",
-          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
-          "group": "zzz_LogicApptools@1"
+          "command": "azureLogicAppsStandard.createProject",
+          "when": "(!explorerResourceIsFolder && !resourceFilename) || (explorerResourceIsFolder && explorerResourceIsRoot)",
+          "group": "zzz_LogicAppsWorkspace@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.dataMap.addDataMap",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.dataMap.importDataMap",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createWorkflow",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath not in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@1"
         },
         {
           "command": "azureLogicAppsStandard.createCustomCodeFunction",
@@ -714,8 +748,28 @@
         },
         {
           "command": "azureLogicAppsStandard.switchDebugMode",
-          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders",
-          "group": "zzz_LogicApptools@2"
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath not in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.switchToDotnetProject",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath not in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.useSQLStorage",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath not in azureLogicAppsStandard.dataMap.projectFolders",
+          "group": "zzz_LogicAppsProject@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.deploy",
+          "when": "explorerResourceIsFolder && azureLogicAppsStandard.hasProject && (explorerResourceIsRoot || resourcePath in azureLogicAppsStandard.logicAppProjectFolders || resourcePath in azureLogicAppsStandard.dataMap.projectFolders)",
+          "group": "zzz_LogicAppsDeployment@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "explorerResourceIsFolder && azureLogicAppsStandard.hasProject && (explorerResourceIsRoot || resourcePath in azureLogicAppsStandard.logicAppProjectFolders || resourcePath in azureLogicAppsStandard.dataMap.projectFolders)",
+          "group": "zzz_LogicAppsDeployment@2"
         },
         {
           "command": "azureLogicAppsStandard.syncCloudSettings",
@@ -731,14 +785,13 @@
           "command": "azureLogicAppsStandard.enableAzureConnectors",
           "when": "azureLogicAppsStandard.hasProject && resourceFilename==workflow.json",
           "group": "navigation@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-          "group": "navigation",
-          "when": "azureLogicAppsStandard.hasProject && resourceExtname in azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts"
         }
       ],
       "commandPalette": [
+        {
+          "command": "azureLogicAppsStandard.addCustomCode",
+          "when": "never"
+        },
         {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "azureLogicAppsStandard.hasProject && resourceFilename==workflow.json"
@@ -1059,6 +1112,7 @@
   "extensionDependencies": ["ms-azuretools.vscode-azureresourcegroups"],
   "extensionPack": ["azurite.azurite", "ms-dotnettools.csharp", "ms-dotnettools.csdevkit"],
   "activationEvents": [
+    "workspaceContains:**/*.btm",
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
     "workspaceContains:host.json",

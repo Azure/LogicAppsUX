@@ -49,6 +49,7 @@ export interface CreateWorkspaceState {
   isAddCustomCodeFlow: boolean;
   workspaceRootFolder: string;
   currentFolderPath: string;
+  currentWorkspace: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -90,6 +91,7 @@ const initialState: CreateWorkspaceState = {
   isAddCustomCodeFlow: false,
   workspaceRootFolder: '',
   currentFolderPath: '',
+  currentWorkspace: false,
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -135,6 +137,11 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       const { separator, platform, logicAppType, logicAppName, availableProjects, currentFolderPath } = action.payload;
       state.separator = separator;
       state.platform = platform;
+      state.currentWorkspace = action.payload.currentWorkspace === true;
+      state.workspaceRootFolder = action.payload.workspaceRootFolder || '';
+      if (state.currentWorkspace) {
+        state.workspaceName = action.payload.workspaceName || '';
+      }
       state.logicAppType = logicAppType || '';
       state.logicAppName = logicAppName || '';
       state.availableProjects = availableProjects || [];
@@ -254,6 +261,9 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
         platform: state.platform,
         separator: state.separator,
         currentFolderPath: state.currentFolderPath,
+        currentWorkspace: state.currentWorkspace,
+        workspaceRootFolder: state.workspaceRootFolder,
+        ...(state.currentWorkspace ? { workspaceName: state.workspaceName } : {}),
         ...(preserveLogicAppData
           ? {
               logicAppType: state.logicAppType,

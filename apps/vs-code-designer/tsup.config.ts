@@ -6,6 +6,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   external: ['vscode'],
+  noExternal: ['btm-data-mapper'],
   keepNames: true,
   // Enable linting and type checking after build
   async onSuccess() {

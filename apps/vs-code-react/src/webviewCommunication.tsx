@@ -323,6 +323,9 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       case ProjectName.createWorkflow:
       case ProjectName.createWorkspaceStructure: {
         switch (message.command) {
+          case ExtensionCommand.createWorkspace: {
+            break;
+          }
           case ExtensionCommand.initialize_frame: {
             dispatch(initializeWorkspace(message.data));
             break;

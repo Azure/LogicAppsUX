@@ -1,11 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
+import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
+import { parameterizeAllConnections } from '../app/commands/parameterizeConnections';
+import { registerCommands } from '../app/commands/registerCommands';
+import { runProjectConsistencyCheck } from '../app/commands/runProjectConsistencyCheck';
+import { ensureProjectFiles } from '../app/projectConsistency/projectFilesConsistency';
+import { ensureVSCodeFiles } from '../app/projectConsistency/vscodeConsistency';
 import * as binaries from '../app/utils/binaries';
+import { registerDataMapperV3 } from '../app/utils/dataMapperV3';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
-import { getWorkspaceSetting, shouldValidateAndInstallRuntimeDependencies, updateGlobalSetting } from '../app/utils/vsCodeConfig/settings';
+import { enableLocalManagedIdentityAuth } from '../app/utils/managedIdentity';
+import { shouldRequireStrictDependencyValidation } from '../app/utils/strictDependencyValidation';
+import {
+  getWorkspaceSetting,
+  isManagedIdentityAuthEnabled,
+  shouldParameterizeConnections,
+  shouldValidateAndInstallRuntimeDependencies,
+  updateGlobalSetting,
+} from '../app/utils/vsCodeConfig/settings';
 import { autoStartDesignTimeSetting, extensionCommand } from '../constants';
 import { ext } from '../extensionVariables';
-import { activate } from '../main';
+import { activate, deactivate } from '../main';
 
 const mocks = vi.hoisted(() => ({
   callWithTelemetryAndErrorHandling: vi.fn(),
@@ -19,6 +34,7 @@ const mocks = vi.hoisted(() => ({
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),
   startDesignTimeApi: vi.fn(),
+  startLanguageServer: vi.fn(),
 }));
 
 vi.mock('@microsoft/vscode-azext-azureappservice', () => ({
@@ -56,6 +72,10 @@ vi.mock('../app/utils/devContainerUtils', () => ({
   isDevContainerWorkspace: vi.fn(),
 }));
 
+vi.mock('../app/utils/dataMapperV3', () => ({
+  registerDataMapperV3: vi.fn(),
+}));
+
 vi.mock('../app/utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   getWorkspaceSetting: vi.fn(),
@@ -90,7 +110,7 @@ vi.mock('../app/commands/runProjectConsistencyCheck', () => ({
 }));
 
 vi.mock('../app/languageServer/languageServer', () => ({
-  startLanguageServer: vi.fn(),
+  startLanguageServer: mocks.startLanguageServer,
 }));
 
 vi.mock('../app/projectConsistency/projectFilesConsistency', () => ({
@@ -267,13 +287,75 @@ describe('activate design-time startup', () => {
     mocks.isAutoStartDesignTimeNotificationSuppressed.mockReturnValue(false);
     mocks.isManagedIdentityAuthNotificationSuppressed.mockReturnValue(true);
     mocks.codefulProjectsExist.mockResolvedValue(false);
+    vi.mocked(shouldRequireStrictDependencyValidation).mockReturnValue(false);
     mocks.startDesignTimeApi.mockResolvedValue(undefined);
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(false);
+    vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(false);
     vi.mocked(getWorkspaceSetting).mockReturnValue(false);
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
 
     ext.designTimeInstances.clear();
+  });
+
+  it.each([
+    ['blank', [], [], false],
+    ['mapper-only', ['D:\\workspace\\DataMaps'], [], false],
+    ['mapper-only devcontainer', ['D:\\workspace\\DataMaps'], [], true],
+    ['workflow', ['D:\\workspace\\Orders'], ['D:\\workspace\\Orders'], false],
+    ['mixed', ['D:\\workspace\\Orders', 'D:\\workspace\\DataMaps'], ['D:\\workspace\\Orders'], false],
+  ] as const)('registers the embedded mapper and normal designer in a %s workspace', async (_kind, folders, roots, devContainer) => {
+    Object.assign(vscode.workspace, {
+      workspaceFolders: folders.map((folder, index) => ({ uri: vscode.Uri.file(folder), name: folder, index })),
+    });
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue([...roots]);
+    vi.mocked(isDevContainerWorkspace).mockResolvedValue(devContainer);
+    vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(true);
+    vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(false);
+    mocks.isManagedIdentityAuthNotificationSuppressed.mockReturnValue(false);
+    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(vscode.window.showInformationMessage).mockResolvedValue('Enable');
+    const context = createExtensionContext();
+
+    await activate(context);
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(registerDataMapperV3).toHaveBeenCalledExactlyOnceWith(context);
+    expect(registerCommands).toHaveBeenCalledOnce();
+    expect(vscode.debug.registerDebugConfigurationProvider).toHaveBeenCalledWith('logicapp', expect.anything());
+    expect(mocks.getResourceGroupsApi).toHaveBeenCalledOnce();
+    expect(vscode.window.registerUriHandler).toHaveBeenCalledOnce();
+    if (roots.length === 0) {
+      expect(mocks.downloadExtensionBundle).not.toHaveBeenCalled();
+      expect(validateAndInstallBinaries).not.toHaveBeenCalled();
+      expect(shouldValidateAndInstallRuntimeDependencies).not.toHaveBeenCalled();
+      expect(updateGlobalSetting).not.toHaveBeenCalled();
+      expect(enableLocalManagedIdentityAuth).not.toHaveBeenCalled();
+      expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+      expect(vscode.window.showWarningMessage).not.toHaveBeenCalled();
+      expect(mocks.startDesignTimeApi).not.toHaveBeenCalled();
+      expect(mocks.scheduleStartAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(parameterizeAllConnections).not.toHaveBeenCalled();
+      expect(ensureProjectFiles).not.toHaveBeenCalled();
+      expect(ensureVSCodeFiles).not.toHaveBeenCalled();
+      expect(runProjectConsistencyCheck).not.toHaveBeenCalled();
+      const events = mocks.callWithTelemetryAndErrorHandling.mock.calls.map(([event]) => event);
+      expect(events).not.toContain('activate.enableLocalManagedIdentityAuth');
+      expect(events).not.toContain('activate.startDesignTime');
+      expect(events).not.toContain('activate.parameterizeAllConnections');
+      expect(events).not.toContain('activate.ensureVSCodeFiles');
+    } else {
+      expect(mocks.downloadExtensionBundle).toHaveBeenCalledOnce();
+      expect(validateAndInstallBinaries).toHaveBeenCalledOnce();
+      expect(enableLocalManagedIdentityAuth).toHaveBeenCalledOnce();
+      expect(parameterizeAllConnections).toHaveBeenCalledOnce();
+      expect(ensureProjectFiles).toHaveBeenCalledExactlyOnceWith(expect.anything(), roots[0]);
+      expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(expect.anything(), [...roots]);
+      expect(mocks.startDesignTimeApi).toHaveBeenCalledExactlyOnceWith(expect.anything(), roots[0]);
+    }
   });
 
   it('does not block activation while the auto-start prompt is unanswered', async () => {
@@ -285,6 +367,7 @@ describe('activate design-time startup', () => {
     mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
 
     await activate(createExtensionContext());
+    await flushPromises();
 
     expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(
       'Always start the background design-time process at launch? The workflow designer will open faster.',
@@ -297,6 +380,94 @@ describe('activate design-time startup', () => {
     resolvePrompt(undefined);
     await flushPromises();
     await Promise.all(backgroundOperations);
+  });
+
+  it('keeps commands available while runtime dependencies are still installing', async () => {
+    let finishValidation!: () => void;
+    vi.mocked(validateAndInstallBinaries).mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finishValidation = resolve;
+      })
+    );
+    vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
+    mocks.codefulProjectsExist.mockResolvedValue(true);
+    vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => key === autoStartDesignTimeSetting);
+    let activated = false;
+    const activation = activate(createExtensionContext()).then(() => {
+      activated = true;
+    });
+
+    try {
+      await flushPromises();
+      expect(validateAndInstallBinaries).toHaveBeenCalledOnce();
+      expect(activated).toBe(true);
+      expect(registerDataMapperV3).toHaveBeenCalledOnce();
+      expect(registerCommands).toHaveBeenCalledOnce();
+      expect(mocks.getResourceGroupsApi).toHaveBeenCalledOnce();
+      expect(vscode.window.registerUriHandler).toHaveBeenCalledOnce();
+      expect(mocks.startDesignTimeApi).not.toHaveBeenCalled();
+      expect(mocks.startLanguageServer).not.toHaveBeenCalled();
+    } finally {
+      finishValidation();
+      await activation;
+      await flushPromises();
+      await Promise.all(backgroundOperations);
+    }
+    expect(mocks.startDesignTimeApi).toHaveBeenCalledOnce();
+    expect(mocks.startLanguageServer).toHaveBeenCalledOnce();
+  });
+
+  it('does not start deferred runtimes after deactivation', async () => {
+    let finishValidation!: () => void;
+    vi.mocked(validateAndInstallBinaries).mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finishValidation = resolve;
+      })
+    );
+    vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
+    mocks.codefulProjectsExist.mockResolvedValue(true);
+    vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => key === autoStartDesignTimeSetting);
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    expect(validateAndInstallBinaries).toHaveBeenCalledOnce();
+    await deactivate();
+    finishValidation();
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(mocks.startDesignTimeApi).not.toHaveBeenCalled();
+    expect(mocks.startLanguageServer).not.toHaveBeenCalled();
+  });
+
+  it('still awaits extension-bundle installation in strict validation mode', async () => {
+    let finishDownload!: () => void;
+    mocks.downloadExtensionBundle.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finishDownload = resolve;
+      })
+    );
+    vi.mocked(shouldRequireStrictDependencyValidation).mockReturnValue(true);
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
+    let activated = false;
+    const activation = activate(createExtensionContext()).then(() => {
+      activated = true;
+    });
+
+    try {
+      await flushPromises();
+      expect(mocks.downloadExtensionBundle).toHaveBeenCalledOnce();
+      expect(activated).toBe(false);
+      expect(mocks.getResourceGroupsApi).not.toHaveBeenCalled();
+    } finally {
+      finishDownload();
+      await activation;
+      await flushPromises();
+      await Promise.all(backgroundOperations);
+    }
+    expect(activated).toBe(true);
   });
 
   it('starts all workspace projects before waiting for any startup to finish', async () => {

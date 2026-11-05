@@ -119,6 +119,7 @@ export const useCreateWorkspaceStyles = makeStyles({
     '& > button': { flexShrink: 0 },
   },
   wizardSection: { marginBottom: '24px', '& > [role="radiogroup"]': { width: '100%' } },
+  wizardSectionIntro: { '& > h3': { marginBottom: '6px' } },
   wizardChoices: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',

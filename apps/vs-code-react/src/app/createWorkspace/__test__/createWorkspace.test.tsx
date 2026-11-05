@@ -191,6 +191,8 @@ describe('CreateWorkspace', () => {
 
       nextWizardStep('Logic App');
       expect(screen.getByRole('heading', { name: 'Configure your Logic App' })).toHaveFocus();
+      expect(screen.getByText('Set up the required Logic App project and its initial workflow')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /^Logic App project name/i })).toBeInTheDocument();
       fireEvent.click(screen.getByRole('button', { name: 'Workspace' }));
       expect(screen.getByRole('heading', { name: 'Set up your workspace' })).toHaveFocus();
     });
@@ -320,7 +322,7 @@ describe('CreateWorkspace', () => {
     });
 
     it.each([
-      ['Logic App', /^Logic App name/i, 'CON', 'Orders'],
+      ['Logic App', /^Logic App project name/i, 'CON', 'Orders'],
       ['Logic App', /^Workflow name/i, 'Artifacts', 'ReceiveOrder'],
       ['Custom Code', /^Custom code folder name/i, 'AUX', 'custom-functions'],
       ['Custom Code', /^Function namespace/i, 'My..Namespace', 'Contoso.Functions'],
@@ -352,7 +354,7 @@ describe('CreateWorkspace', () => {
       (logicAppType) => {
         renderWithStore({ logicAppType });
         nextWizardStep('Logic App');
-        changeText(/^Logic App name/i, 'PritiLogicApp');
+        changeText(/^Logic App project name/i, 'PritiLogicApp');
         changeText(/^Workflow name/i, 'SimpleWorkflow');
         const preview = within(screen.getByRole('complementary', { name: 'Workspace preview' }));
         const projectFolder = preview.getByText('PritiLogicApp/').closest('li') as HTMLElement;
@@ -379,10 +381,10 @@ describe('CreateWorkspace', () => {
       renderWithStore();
       selectProjects(['Logic App', 'Data Map']);
       nextWizardStep('Logic App');
-      changeText(/^Logic App name/i, 'data-map');
+      changeText(/^Logic App project name/i, 'data-map');
       expect(screen.getByText('Each selected project must have a different folder name.')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Next: Data Map' })).toBeDisabled();
-      changeText(/^Logic App name/i, 'Orders');
+      changeText(/^Logic App project name/i, 'Orders');
       expect(screen.getByRole('button', { name: 'Next: Data Map' })).toBeEnabled();
     });
 
@@ -416,7 +418,7 @@ describe('CreateWorkspace', () => {
       ['Custom Code', 'Custom Code', /^Function name$/i, 'class', 'Enter a valid C# identifier.'],
       ['Custom Code', 'Custom Code', /^Function name$/i, 'Program', 'Enter a valid C# identifier.'],
       ['Custom Code', 'Custom Code', /^Function namespace/i, 'Contoso.class', 'Enter a valid C# namespace, such as Contoso.Orders.'],
-      ['Logic App', 'Codeful', /^Logic App name/i, 'Contoso.class', 'Enter a valid C# namespace, such as Contoso.Orders.'],
+      ['Logic App', 'Codeful', /^Logic App project name/i, 'Contoso.class', 'Enter a valid C# namespace, such as Contoso.Orders.'],
       ['Logic App', 'Codeful', /^Workflow name/i, 'Program', 'Enter a valid C# identifier.'],
       ['Custom Code', 'Rules Engine', /^Function name$/i, 'ContosoPurchase', 'Enter a valid C# identifier.'],
       ['Logic App', 'Standard', /^Workflow name/i, 'bin', 'This name is reserved and cannot be used as a workflow name.'],
@@ -430,7 +432,7 @@ describe('CreateWorkspace', () => {
       nextWizardStep(project);
       fireEvent.click(screen.getByRole('radio', { name: subtype }));
       if (subtype === 'Codeful') {
-        fireEvent.change(screen.getByRole('textbox', { name: /^Logic App name/i }), { target: { value: 'Contoso.Orders' } });
+        fireEvent.change(screen.getByRole('textbox', { name: /^Logic App project name/i }), { target: { value: 'Contoso.Orders' } });
         fireEvent.change(screen.getByRole('textbox', { name: /^Workflow name/i }), { target: { value: 'RunOrder' } });
       }
       expect(screen.getByRole('button', { name: 'Next: Review' })).toBeEnabled();
@@ -449,7 +451,7 @@ describe('CreateWorkspace', () => {
       renderWithStore();
       selectProjects(projectLabels);
       nextWizardStep('Logic App');
-      changeText(/^Logic App name/i, 'Orders');
+      changeText(/^Logic App project name/i, 'Orders');
       changeText(/^Workflow name/i, 'ReceiveOrder');
       nextWizardStep('Custom Code');
       changeText(/^Custom code folder name/i, 'order-functions');
@@ -467,7 +469,7 @@ describe('CreateWorkspace', () => {
       expect(screen.getByRole('textbox', { name: /^Project name/i })).toHaveValue('order-maps');
       nextWizardStep('Review');
       fireEvent.click(screen.getByRole('button', { name: 'Edit Logic App' }));
-      expect(screen.getByRole('textbox', { name: /^Logic App name/i })).toHaveValue('Orders');
+      expect(screen.getByRole('textbox', { name: /^Logic App project name/i })).toHaveValue('Orders');
       expect(screen.getByRole('textbox', { name: /^Workflow name/i })).toHaveValue('ReceiveOrder');
       changeText(/^Workflow name/i, 'ReceiveUpdatedOrder');
       fireEvent.click(screen.getByRole('button', { name: '5 Review' }));
@@ -488,12 +490,9 @@ describe('CreateWorkspace', () => {
       selectProjects(['Data Map']);
       nextWizardStep('Data Map');
       expect(screen.getByText('Create one Data Map project alongside your selected projects.')).toBeInTheDocument();
-      expect(
-        screen.getByText('Use a slash-separated project path to create nested folders, then name the map file created inside it.')
-      ).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: 'Project name' })).toHaveAccessibleDescription(
-        'Use slashes to create nested folders, for example DataMaps/Orders.'
-      );
+      expect(screen.getByText('Provide the name for your data map project.')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Project name' })).not.toHaveAccessibleDescription();
+      expect(screen.queryByText('Use slashes to create nested folders, for example DataMaps/Orders.')).not.toBeInTheDocument();
       changeText(/^Project name$/, 'DataMaps/Orders');
       changeText(/^Map name$/, 'OrderMapping');
       expect(screen.getByRole('textbox', { name: 'Map name' })).toHaveAccessibleDescription(
@@ -571,7 +570,7 @@ describe('CreateWorkspace', () => {
       expect(workflowType).toHaveValue(WorkflowType.stateless);
       if (codeful) {
         fireEvent.click(screen.getByRole('radio', { name: 'Codeful' }));
-        changeText(/^Logic App name/i, 'Contoso.Orders');
+        changeText(/^Logic App project name/i, 'Contoso.Orders');
         changeText(/^Workflow name/i, 'RunOrder');
         expect(workflowType).toBeDisabled();
         expect(workflowType).toHaveValue(WorkflowType.stateful);
@@ -869,7 +868,7 @@ describe('CreateWorkspace', () => {
     it('should validate the logic app name on its selected project step', () => {
       renderWithStore();
       nextWizardStep('Logic App');
-      changeText(/^Logic App name/i, '');
+      changeText(/^Logic App project name/i, '');
       expect(screen.getByRole('button', { name: 'Next: Review' })).toBeDisabled();
     });
 
@@ -1153,7 +1152,7 @@ describe('CreateWorkspace', () => {
       expect(nextButton?.hasAttribute('disabled')).toBe(false);
 
       fireEvent.click(nextButton as HTMLElement);
-      expect(screen.getByRole('textbox', { name: /^Logic App name/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /^Logic App project name/i })).toBeInTheDocument();
     });
 
     it('should enable Next button for custom code with dotted namespace', () => {

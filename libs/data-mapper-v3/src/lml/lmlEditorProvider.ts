@@ -103,10 +103,14 @@ export class LmlEditorProvider implements vscode.CustomTextEditorProvider, vscod
   private readonly didSaveListener: vscode.Disposable;
   private disposed = false;
 
-  static register(context: vscode.ExtensionContext, runtimeManager: LmlDesignTimeRuntimeManager): vscode.Disposable {
+  static register(
+    context: vscode.ExtensionContext,
+    runtimeManager: LmlDesignTimeRuntimeManager,
+    viewType = lmlEditorViewType
+  ): vscode.Disposable {
     const provider = new LmlEditorProvider(context, runtimeManager);
     return vscode.Disposable.from(
-      vscode.window.registerCustomEditorProvider(lmlEditorViewType, provider, {
+      vscode.window.registerCustomEditorProvider(viewType, provider, {
         webviewOptions: { retainContextWhenHidden: true },
         supportsMultipleEditorsPerDocument: false,
       }),

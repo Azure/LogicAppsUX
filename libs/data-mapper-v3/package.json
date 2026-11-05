@@ -14,6 +14,19 @@
   "categories": ["Other", "Visualization"],
   "keywords": ["biztalk", "mapper", "xslt", "xml", "schema", "data mapping", "functoids"],
   "main": "./out/extension.js",
+  "exports": {
+    ".": "./out/extension.js",
+    "./embedded": {
+      "types": "./src/embeddedMapper.ts",
+      "require": "./out/embedded.js",
+      "default": "./out/embedded.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "embedded": ["src/embeddedMapper.ts"]
+    }
+  },
   "activationEvents": ["workspaceContains:**/*.btm", "workspaceContains:**/*.lml"],
   "contributes": {
     "viewsContainers": {
@@ -243,7 +256,7 @@
     "bundle": "webpack --mode production --config webpack.extension.config.js && webpack --mode production --config webpack.webview.config.js && webpack --mode production --config webpack.lml.config.js",
     "bundle:dev": "webpack --mode development --config webpack.extension.config.js && webpack --mode development --config webpack.webview.config.js && webpack --mode development --config webpack.lml.config.js",
     "build:extension": "pnpm run bundle",
-    "debug:prepare": "pnpm run publish:framework-transform && pnpm run publish:worker:debug && pnpm run bundle:dev",
+    "build:embedded": "pnpm run publish:framework-transform && pnpm run publish:worker && webpack --mode production --config webpack.embedded.config.js && webpack --mode production --config webpack.webview.config.js && webpack --mode production --config webpack.lml.config.js",
     "compile": "tsc --noEmit -p tsconfig.json && pnpm run compile:webview",
     "compile:webview": "tsc --noEmit -p webview/tsconfig.json && tsc --noEmit -p webview/tsconfig.lml.json",
     "bundle:lml:dev": "webpack --mode development --config webpack.lml.config.js",

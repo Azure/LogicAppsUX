@@ -11,6 +11,14 @@ import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-a
 import { devContainerFolderName, devContainerFileName } from '../../../../../constants';
 import * as vscodeConfig from '../../../../utils/vsCodeConfig/settings';
 import { binariesExistSync } from '../../../../utils/binaries';
+import * as dataMapperV3 from '../../../../utils/dataMapperV3';
+import { BtmSerializer } from '../../../../../../../../libs/data-mapper-v3/src/schema/btmSerializer';
+
+vi.mock('../../../../utils/dataMapperV3', () => ({
+  createDataMapProject: vi.fn(),
+  rememberDataMapToOpen: vi.fn(),
+  forgetDataMapToOpen: vi.fn(),
+}));
 
 vi.mock('fs-extra', async (importOriginal) => {
   const actual = await importOriginal<typeof import('fs-extra') & { default: typeof import('fs-extra') }>();
@@ -174,21 +182,23 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
   describe('Selected Projects Integration', () => {
     beforeEach(() => {
       (vscode as any).extensions = {
-        getExtension: vi.fn().mockReturnValue({
-          packageJSON: { contributes: { commands: [{ command: 'biztalkDataMapper.createProject' }] } },
-          activate: vi.fn().mockResolvedValue(undefined),
-        }),
+        getExtension: vi.fn().mockReturnValue(undefined),
       };
-      vi.spyOn(vscode.commands, 'executeCommand').mockImplementation(async (command, ...args) => {
-        if (command === 'biztalkDataMapper.createProject') {
-          const [root, mapName] = args as [vscode.Uri, string];
-          await fse.ensureDir(path.join(root.fsPath, 'Schemas'));
-          await fse.ensureDir(path.join(root.fsPath, '__generated'));
-          await fse.writeFile(path.join(root.fsPath, `${mapName}.btm`), '<mapsource/>', 'utf8');
-        }
-        return undefined;
+      vi.mocked(dataMapperV3.createDataMapProject).mockReset();
+      vi.mocked(dataMapperV3.createDataMapProject).mockImplementation(async (root, mapName) => {
+        await fse.ensureDir(path.join(root.fsPath, 'Schemas'));
+        await fse.ensureDir(path.join(root.fsPath, '__generated'));
+        const mapUri = vscode.Uri.file(path.join(root.fsPath, `${mapName}.btm`));
+        const serializer = new BtmSerializer();
+        await fse.writeFile(mapUri.fsPath, serializer.serialize(serializer.createNew('', '', mapName)), 'utf8');
+        return mapUri;
       });
+      vi.mocked(dataMapperV3.rememberDataMapToOpen).mockReset().mockResolvedValue(undefined);
+      vi.mocked(dataMapperV3.forgetDataMapToOpen).mockReset().mockResolvedValue(undefined);
+      vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
     });
+
+    const readMap = async (mapPath: string) => new BtmSerializer().deserialize(await fse.readFile(mapPath, 'utf8'));
 
     const makeOptions = (selectedProjects: IWebviewProjectContext['selectedProjects']): IWebviewProjectContext => ({
       workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
@@ -220,12 +230,11 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(manifest.folders).toContainEqual({ name: 'Orders', path: './DataMaps/Orders' });
       const projectFolder = path.join(root, 'DataMaps', 'Orders');
       expect((await fse.readdir(projectFolder)).sort()).toEqual(['OrderMapping.btm', 'Schemas', '__generated']);
-      expect(await fse.readFile(path.join(projectFolder, 'OrderMapping.btm'), 'utf8')).toContain('<mapsource');
-      expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
-        'biztalkDataMapper.createProject',
-        expect.objectContaining({ fsPath: projectFolder }),
-        'OrderMapping'
-      );
+      expect(await readMap(path.join(projectFolder, 'OrderMapping.btm'))).toMatchObject({
+        name: 'OrderMapping',
+        pages: [{ name: 'Page 1', links: [], functoids: [] }],
+      });
+      expect(dataMapperV3.createDataMapProject).toHaveBeenCalledWith(expect.objectContaining({ fsPath: projectFolder }), 'OrderMapping');
     });
 
     it.each([
@@ -274,7 +283,15 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         expect((await fse.readdir(path.join(root, 'data-map'))).sort()).toEqual(['OrderMappings.btm', 'Schemas', '__generated']);
         expect(await fse.readdir(path.join(root, 'data-map', 'Schemas'))).toEqual([]);
         expect(await fse.readdir(path.join(root, 'data-map', '__generated'))).toEqual([]);
+        expect(await readMap(path.join(root, 'data-map', 'OrderMappings.btm'))).toMatchObject({
+          name: 'OrderMappings',
+          pages: [{ name: 'Page 1', links: [], functoids: [] }],
+        });
       }
+      expect(vscode.extensions.getExtension).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
       expect(options.logicAppFolderName).toBeUndefined();
       expect(options.functionFolderName).toBeUndefined();
     });
@@ -406,33 +423,107 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(await fse.readFile(path.join(root, 'keep.txt'), 'utf8')).toBe('created by another attempt');
     });
 
-    it('preserves a successfully generated workspace when opening it fails', async () => {
+    it.each([new Error('injected openFolder failure'), Object.assign(new Error('Canceled'), { name: 'CanceledError' })])(
+      'clears the matching handoff and preserves a generated workspace when opening rejects: %s',
+      async (failure) => {
+        const options = {
+          ...makeOptions({ logicApp: false, customCode: false, dataMap: true }),
+          openBehavior: OpenBehavior.openInNewWindow,
+        };
+        const executeCommand = vi.mocked(vscode.commands.executeCommand).getMockImplementation();
+        vi.mocked(vscode.commands.executeCommand).mockImplementation(async (command, ...args) => {
+          if (command === 'vscode.openFolder') {
+            throw failure;
+          }
+          return executeCommand(command, ...args);
+        });
+        await expect(createLogicAppWorkspace(mockContext, options, false)).rejects.toBe(failure);
+        expect((await fse.readJson(getWorkspaceFilePath(options.workspaceName))).folders).toEqual([
+          { name: 'data-map', path: './data-map' },
+        ]);
+        expect(await fse.pathExists(path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', '__generated'))).toBe(true);
+        expect(await readMap(path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', 'OrderMappings.btm'))).toMatchObject({
+          name: 'OrderMappings',
+          pages: [{ name: 'Page 1', links: [], functoids: [] }],
+        });
+        expect(dataMapperV3.rememberDataMapToOpen).toHaveBeenCalledExactlyOnceWith(
+          expect.objectContaining({ fsPath: getWorkspaceFilePath(options.workspaceName) }),
+          expect.objectContaining({ fsPath: path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', 'OrderMappings.btm') })
+        );
+        expect(dataMapperV3.forgetDataMapToOpen).toHaveBeenCalledExactlyOnceWith(
+          expect.objectContaining({ fsPath: getWorkspaceFilePath(options.workspaceName) }),
+          expect.objectContaining({ fsPath: path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', 'OrderMappings.btm') })
+        );
+      }
+    );
+
+    it('preserves a Logic App workspace and leaves other pending maps alone when openFolder rejects', async () => {
       const options = {
-        ...makeOptions({ logicApp: false, customCode: false, dataMap: true }),
+        ...makeOptions({ logicApp: true, customCode: false, dataMap: false }),
         openBehavior: OpenBehavior.openInNewWindow,
       };
-      const failure = new Error('injected openFolder failure');
-      const executeCommand = vi.mocked(vscode.commands.executeCommand).getMockImplementation();
-      vi.mocked(vscode.commands.executeCommand).mockImplementation(async (command, ...args) => {
-        if (command === 'vscode.openFolder') {
-          throw failure;
-        }
-        return executeCommand(command, ...args);
-      });
+      const failure = new Error('Workspace opening rejected');
+      vi.mocked(vscode.commands.executeCommand).mockRejectedValueOnce(failure);
+
       await expect(createLogicAppWorkspace(mockContext, options, false)).rejects.toBe(failure);
-      expect((await fse.readJson(getWorkspaceFilePath(options.workspaceName))).folders).toEqual([{ name: 'data-map', path: './data-map' }]);
-      expect(await fse.pathExists(path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', '__generated'))).toBe(true);
+
+      expect((await fse.readJson(getWorkspaceFilePath(options.workspaceName))).folders).toEqual([{ name: 'Orders', path: './Orders' }]);
+      expect(
+        await fse.pathExists(path.join(getWorkspaceRootFolder(options.workspaceName), 'Orders', 'ReceiveOrder', 'workflow.json'))
+      ).toBe(true);
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
     });
 
     it.each([
-      [undefined, 'Install and enable'],
-      [{ packageJSON: { contributes: { commands: [] } } }, 'Update'],
-    ])('rejects an unavailable or incompatible mapper before creating files: %j', async (mapper, message) => {
-      vi.mocked(vscode.extensions.getExtension).mockReturnValue(mapper as any);
-      const options = makeOptions({ logicApp: false, customCode: false, dataMap: true });
-      await expect(createLogicAppWorkspace(mockContext, options, false)).rejects.toThrow(message);
-      expect(await fse.readdir(tempDir)).toEqual([]);
+      [undefined, true],
+      [OpenBehavior.openInNewWindow, true],
+      [OpenBehavior.openInCurrentWindow, false],
+    ])('hands off a real nested map before opening its workspace: openBehavior=%s', async (openBehavior, forceNewWindow) => {
+      const options = {
+        ...makeOptions({ logicApp: false, customCode: false, dataMap: true }),
+        dataMapFolderName: 'DataMaps/Orders',
+        dataMapName: 'OrderMapping',
+        openBehavior,
+      };
+      const mapPath = path.join(getWorkspaceRootFolder(options.workspaceName), 'DataMaps', 'Orders', 'OrderMapping.btm');
+      vi.mocked(vscode.commands.executeCommand).mockImplementationOnce(async (command) => {
+        expect(command).toBe('vscode.openFolder');
+        expect(await readMap(mapPath)).toMatchObject({ name: 'OrderMapping', pages: [{ name: 'Page 1', links: [], functoids: [] }] });
+        expect(dataMapperV3.rememberDataMapToOpen).toHaveBeenCalledExactlyOnceWith(
+          expect.objectContaining({ fsPath: getWorkspaceFilePath(options.workspaceName) }),
+          expect.objectContaining({ fsPath: mapPath })
+        );
+      });
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      expect(vscode.commands.executeCommand).toHaveBeenCalledExactlyOnceWith(
+        'vscode.openFolder',
+        expect.objectContaining({ fsPath: getWorkspaceFilePath(options.workspaceName) }),
+        forceNewWindow
+      );
+      expect(vscode.extensions.getExtension).not.toHaveBeenCalled();
+      expect(dataMapperV3.forgetDataMapToOpen).not.toHaveBeenCalled();
     });
+
+    it.each([[undefined], [{ packageJSON: { contributes: { commands: [] } } }]])(
+      'creates a native map without looking up or activating the separate mapper: %j',
+      async (mapper) => {
+        const activate = vi.fn().mockRejectedValue(new Error('Separate mapper must not activate'));
+        vi.mocked(vscode.extensions.getExtension).mockReturnValue(mapper ? ({ ...mapper, activate } as any) : undefined);
+        const options = makeOptions({ logicApp: false, customCode: false, dataMap: true });
+        await createLogicAppWorkspace(mockContext, options, false);
+        expect(await readMap(path.join(getWorkspaceRootFolder(options.workspaceName), 'data-map', 'OrderMappings.btm'))).toMatchObject({
+          name: 'OrderMappings',
+          pages: [{ name: 'Page 1', links: [], functoids: [] }],
+        });
+        expect(vscode.extensions.getExtension).not.toHaveBeenCalled();
+        expect(activate).not.toHaveBeenCalled();
+        expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
+        expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
+      }
+    );
 
     it('does not require the mapper extension for a Logic App-only workspace', async () => {
       vi.mocked(vscode.extensions.getExtension).mockReturnValue(undefined);
@@ -442,17 +533,17 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(await fse.pathExists(getWorkspaceFilePath(options.workspaceName))).toBe(true);
     });
 
-    it('rolls back a partially created v3 mapper project when its command fails', async () => {
+    it('rolls back a partially created v3 mapper project when direct generation fails', async () => {
       const options = makeOptions({ logicApp: false, customCode: false, dataMap: true });
       const failure = new Error('injected v3 mapper failure');
-      vi.mocked(vscode.commands.executeCommand).mockImplementation(async (command, root: vscode.Uri) => {
-        if (command === 'biztalkDataMapper.createProject') {
-          await fse.ensureDir(path.join(root.fsPath, 'Schemas'));
-          throw failure;
-        }
+      vi.mocked(dataMapperV3.createDataMapProject).mockImplementationOnce(async (root) => {
+        await fse.ensureDir(path.join(root.fsPath, 'Schemas'));
+        throw failure;
       });
       await expect(createLogicAppWorkspace(mockContext, options, false)).rejects.toBe(failure);
       expect(await fse.readdir(tempDir)).toEqual([]);
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
+      expect(dataMapperV3.rememberDataMapToOpen).not.toHaveBeenCalled();
     });
 
     it('ignores stale unselected project inputs', async () => {

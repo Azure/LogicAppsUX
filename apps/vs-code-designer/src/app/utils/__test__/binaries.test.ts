@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as cp from 'child_process';
 import axios from 'axios';
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
@@ -1066,6 +1067,141 @@ describe('binaries', () => {
       });
       await expect(mkdirWithLockWait('C:/dep', 'TestDep', 5000)).rejects.toThrow(/ENOSPC/);
       expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
+    });
+
+    describe('orphan prompt deadline', () => {
+      const originalPlatform = process.platform;
+      const lockError = Object.assign(new Error('EPERM: install folder locked'), { code: 'EPERM' });
+      let respond: (choice: string | undefined) => void;
+      let rejectPrompt: (error: Error) => void;
+
+      beforeEach(() => {
+        vi.useFakeTimers();
+        vi.setSystemTime(0);
+        Object.defineProperty(process, 'platform', { value: Platform.windows });
+        vi.spyOn(process, 'kill').mockImplementation(() => true);
+        vi.mocked(cp.exec).mockImplementation((_command: any, callback: any) => {
+          callback(null, '"func.exe","39140","Console","1","12,345 K"\n"func.exe","45292","Console","1","12,345 K"');
+          return {} as cp.ChildProcess;
+        });
+        vi.mocked(vscode.window.showWarningMessage).mockImplementation(
+          () =>
+            new Promise<any>((resolve, reject) => {
+              respond = resolve;
+              rejectPrompt = reject;
+            })
+        );
+        vi.mocked(fs.mkdirSync).mockImplementation(() => {
+          throw lockError;
+        });
+        (fs as any).rmSync = vi.fn(() => {
+          throw lockError;
+        });
+        vi.mocked(fs.existsSync).mockReturnValue(true);
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+        delete (fs as any).rmSync;
+        ext.designTimeInstances.clear();
+        Object.defineProperty(process, 'platform', { value: originalPlatform });
+      });
+
+      it.each(['mkdir', 'remove'])(
+        'rejects %s with the original lock error at budget despite an unanswered prompt',
+        async (operationName) => {
+          let failure: unknown;
+          const run = operationName === 'mkdir' ? mkdirWithLockWait : removeWithLockWait;
+          const operation = run('C:/dep', 'TestDep', 6125).catch((error) => {
+            failure = error;
+          });
+          await vi.advanceTimersByTimeAsync(5000);
+          expect(vscode.window.showWarningMessage).toHaveBeenCalledTimes(1);
+          await vi.advanceTimersByTimeAsync(1124);
+          expect(failure).toBeUndefined();
+          await vi.advanceTimersByTimeAsync(1);
+          expect(failure).toBe(lockError);
+          await operation;
+          expect(process.kill).not.toHaveBeenCalled();
+          expect(vi.getTimerCount()).toBe(0);
+        }
+      );
+
+      it('ignores consent received after the lock deadline', async () => {
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 6000).catch((error) => error);
+        await vi.advanceTimersByTimeAsync(6000);
+        expect(await operation).toBe(lockError);
+        respond('Terminate 2 process(es)');
+        await vi.runAllTimersAsync();
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(vscode.window.showWarningMessage).toHaveBeenCalledTimes(1);
+        expect(vi.getTimerCount()).toBe(0);
+      });
+
+      it('handles a prompt rejection after expiry without reviving the attempt', async () => {
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 6000).catch((error) => error);
+        await vi.advanceTimersByTimeAsync(6000);
+        expect(await operation).toBe(lockError);
+        rejectPrompt(new Error('Warning dismissed after expiry'));
+        await vi.runAllTimersAsync();
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(vi.getTimerCount()).toBe(0);
+      });
+
+      it('keeps retrying after prompt rejection without offering another prompt', async () => {
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 6000).catch((error) => error);
+        await vi.advanceTimersByTimeAsync(5000);
+        const attempts = vi.mocked(fs.mkdirSync).mock.calls.length;
+        rejectPrompt(new Error('Warning failed'));
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(await operation).toBe(lockError);
+        expect(vi.mocked(fs.mkdirSync).mock.calls.length).toBeGreaterThan(attempts);
+        expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Warning failed'));
+        expect(vscode.window.showWarningMessage).toHaveBeenCalledTimes(1);
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(vi.getTimerCount()).toBe(0);
+      });
+
+      it('never terminates processes when consent is declined', async () => {
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 6000).catch((error) => error);
+        await vi.advanceTimersByTimeAsync(5000);
+        respond(undefined);
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(await operation).toBe(lockError);
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(vscode.window.showWarningMessage).toHaveBeenCalledTimes(1);
+        expect(vi.getTimerCount()).toBe(0);
+      });
+
+      it('terminates only confirmed untracked processes and retries successfully before expiry', async () => {
+        ext.designTimeInstances.set('tracked', { process: { pid: 45292 } } as any);
+        vi.mocked(process.kill).mockImplementation(() => {
+          vi.mocked(fs.mkdirSync).mockImplementation(() => undefined);
+          return true;
+        });
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 8000);
+        await vi.advanceTimersByTimeAsync(5000);
+        expect(process.kill).not.toHaveBeenCalled();
+        respond('Terminate 1 process(es)');
+        await vi.advanceTimersByTimeAsync(1750);
+        await operation;
+        expect(process.kill).toHaveBeenCalledExactlyOnceWith(39140);
+        expect(vi.mocked(fs.mkdirSync).mock.calls.length).toBeGreaterThan(1);
+        expect(vscode.window.showWarningMessage).toHaveBeenCalledTimes(1);
+        expect(vi.getTimerCount()).toBe(0);
+      });
+
+      it('does not terminate a process that became tracked while consent was pending', async () => {
+        const operation = mkdirWithLockWait('C:/dep', 'TestDep', 6000).catch((error) => error);
+        await vi.advanceTimersByTimeAsync(5000);
+        ext.designTimeInstances.set('newly-tracked', { process: { pid: 39140 }, childFuncPid: 45292 } as any);
+        respond('Terminate 2 process(es)');
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(await operation).toBe(lockError);
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(vi.getTimerCount()).toBe(0);
+      });
     });
   });
 

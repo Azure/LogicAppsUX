@@ -628,6 +628,9 @@ importers:
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
+      btm-data-mapper:
+        specifier: workspace:*
+        version: link:../../libs/data-mapper-v3
       chai:
         specifier: ^4.3.7
         version: 4.5.0

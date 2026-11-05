@@ -52,9 +52,9 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     this.compilerWorker = new CompilerWorkerClient(context);
   }
 
-  public static register(context: vscode.ExtensionContext): vscode.Disposable {
+  public static register(context: vscode.ExtensionContext, viewType = MapEditorProvider.viewType): vscode.Disposable {
     const provider = new MapEditorProvider(context);
-    const registration = vscode.window.registerCustomEditorProvider(MapEditorProvider.viewType, provider, {
+    const registration = vscode.window.registerCustomEditorProvider(viewType, provider, {
       webviewOptions: { retainContextWhenHidden: true },
       supportsMultipleEditorsPerDocument: false,
     });

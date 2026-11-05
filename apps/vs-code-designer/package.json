@@ -36,6 +36,7 @@
     "adm-zip": "^0.6.0",
     "axios": "1.18.0",
     "azure-storage": "^2.10.3",
+    "btm-data-mapper": "workspace:*",
     "chai": "^4.3.7",
     "fs-extra": "^11.2.0",
     "globby": "^11.0.2",
@@ -60,7 +61,7 @@
   },
   "private": true,
   "scripts": {
-    "build:extension": "tsup && pnpm run copyFiles && node scripts/install-dist-dependencies.js --ignore-scripts",
+    "build:extension": "pnpm --dir ../../libs/data-mapper-v3 run build:embedded && tsup && pnpm run copyFiles && node scripts/install-dist-dependencies.js --ignore-scripts",
     "build:ui": "tsup --config tsup.e2e.test.config.ts",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
