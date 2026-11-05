@@ -109,7 +109,9 @@ describe('experimental launch selection', () => {
 
   it.each(['../escape', 'invalid', '0.0.0'])('rejects invalid pin %j before starting a metadata source', async (pin) => {
     state.pin = pin;
-    await expect(getExperimentalBundleRuntime(context, 'synthetic-project')).rejects.toThrow('No experimental');
+    await expect(getExperimentalBundleRuntime(context, 'synthetic-project')).rejects.toThrow(
+      pin === '0.0.0' ? 'No experimental' : 'Invalid experimental extension bundle version'
+    );
     expect(state.resolve).not.toHaveBeenCalled();
   });
 
