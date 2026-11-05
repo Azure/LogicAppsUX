@@ -284,7 +284,7 @@ async function startDesignTimeApiInternal(
       // failed. Without a healthy bundle, func reports "No job functions
       // found" and unhealthy storage forever — surfacing a clear, actionable
       // error here is strictly better than letting the host start broken.
-      await ensureExtensionBundleHealthy(context);
+      await ensureExtensionBundleHealthy(context, { version: experimentalBundle?.folderVersion });
 
       startDesignTimeProcess(
         ext.outputChannel,

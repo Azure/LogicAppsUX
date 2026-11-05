@@ -48,14 +48,7 @@ export async function getExperimentalBundleRuntime(
       'The experimental bundle install or verification failed. Correct the selected version/source and reload before starting a host. No public bundle will be substituted.'
     );
   }
-  const localSettings = await getLocalSettingsJson(context, projectPath);
-  const pin = (
-    localSettings?.Values?.AzureFunctionsJobHost_extensionBundle_version ??
-    process.env.AzureFunctionsJobHost_extensionBundle_version ??
-    getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ??
-    ''
-  ).trim();
-  const version = pin || pickLatestVersion(await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue));
+  const version = await getExperimentalBundleVersion(context, projectPath);
   if (!parseBundleVersion(version) || version === '0.0.0') {
     throw new Error(
       'No experimental Logic Apps bundle is selected. Install a complete local bundle or configure an experimental source and reload.'
@@ -76,6 +69,20 @@ export async function getExperimentalBundleRuntime(
     `Selected experimental Logic Apps bundle folder ${runtime.folderVersion} (manifest ${runtime.manifestVersion}) for host resolution.`
   );
   return runtime;
+}
+
+async function getExperimentalBundleVersion(context: IActionContext, projectPath?: string): Promise<string> {
+  const localSettings = projectPath ? await getLocalSettingsJson(context, projectPath) : undefined;
+  const pin = (
+    localSettings?.Values?.AzureFunctionsJobHost_extensionBundle_version ??
+    process.env.AzureFunctionsJobHost_extensionBundle_version ??
+    getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ??
+    ''
+  ).trim();
+  if (pin && !parseBundleVersion(pin)) {
+    throw new Error('Invalid experimental extension bundle version. Use a valid three- or four-part version.');
+  }
+  return pin || pickLatestVersion(await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue));
 }
 
 export type BundleBaseUrlSource = 'localSettings' | 'envVar' | 'experimentalSetting' | 'default';
@@ -791,6 +798,7 @@ function scheduleBackgroundBundleFeedRefresh(context: IActionContext, options: B
  */
 interface EnsureExtensionBundleHealthyOptions {
   requireInstalled?: boolean;
+  version?: string;
 }
 
 export async function ensureExtensionBundleHealthy(
@@ -809,11 +817,17 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
 
-  if (healthyBundleVersion) {
+  const experimental = getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) === true;
+  const projectPath = experimental
+    ? await tryGetLogicAppProjectRoot(context, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath)
+    : undefined;
+  const selectedVersion = options.version ?? (experimental ? await getExperimentalBundleVersion(context, projectPath) : undefined);
+
+  if (healthyBundleVersion && (!selectedVersion || healthyBundleVersion === selectedVersion)) {
     return;
   }
 
-  const initialHealth = await evaluateBundleFastGate();
+  const initialHealth = await evaluateBundleFastGate(selectedVersion);
   if (initialHealth.ok) {
     healthyBundleVersion = initialHealth.version;
     return;
@@ -829,7 +843,9 @@ export async function ensureExtensionBundleHealthy(
     }
     ext.outputChannel?.appendLog('Logic Apps extension bundle is not installed. Downloading before dependency validation can complete.');
     await downloadExtensionBundle(context);
-    const postInstallHealth = await assertExtensionBundleOnDiskHealthy();
+    const postInstallHealth = await assertExtensionBundleOnDiskHealthy(
+      options.version ?? (experimental ? await getExperimentalBundleVersion(context, projectPath) : undefined)
+    );
     if (postInstallHealth.ok) {
       healthyBundleVersion = postInstallHealth.version;
       return;
@@ -854,7 +870,7 @@ export async function ensureExtensionBundleHealthy(
     );
   }
 
-  const postRepairHealth = await assertExtensionBundleOnDiskHealthy();
+  const postRepairHealth = await assertExtensionBundleOnDiskHealthy(selectedVersion);
   if (postRepairHealth.ok) {
     healthyBundleVersion = postRepairHealth.version;
     return;

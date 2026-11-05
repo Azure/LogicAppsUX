@@ -846,6 +846,50 @@ describe('downloadExtensionBundle readiness model', () => {
     });
   };
 
+  it('checks the experimental pin instead of a newer unmarked cached bundle', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.170.91', '');
+
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.197.13')).toBe(false);
+  });
+
+  it('rechecks the selected experimental pin after preparing its local marker', async () => {
+    configureDisk(['1.170.91', '1.197.13'], []);
+    await enableExperimental('1.170.91', '');
+
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(false);
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('does not reuse another experimental versions health cache after changing the pin', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.170.91', '');
+    await ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true });
+
+    await enableExperimental('1.197.13', '');
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.197.13')).toBe(true);
+  });
+
+  it('uses the launching projects explicit experimental folder for readiness', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.197.13', '');
+
+    await expect(
+      ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true, version: '1.170.91' })
+    ).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.197.13')).toBe(false);
+  });
+
   it.each([
     { pin: '', source: '', expected: '1.197.13' },
     { pin: '   ', source: 'https://private.invalid/public', expected: '1.197.13' },
