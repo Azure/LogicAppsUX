@@ -33,6 +33,11 @@ import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSet
 import { generateDesignTimeLocalSettingsJson } from '../../../projectConsistency/fileGenerators';
 import { getFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from '../extensionConfig';
+import { getExperimentalBundleRuntime } from '../../../utils/bundleFeed';
+
+vi.mock('../../../utils/bundleFeed', () => ({
+  getExperimentalBundleRuntime: vi.fn(),
+}));
 
 // The direct collaborators are mocked so the tests exercise startBackendRuntime's own control flow.
 // vscode (window.withProgress/ProgressLocation/Uri), ext (outputChannel/designTimeInstances) and
@@ -78,6 +83,7 @@ describe('startBackendRuntime', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    vi.mocked(getExperimentalBundleRuntime).mockReset();
     ext.designTimeInstances.clear();
 
     vi.mocked(getOrCreateDesignTimeDirectory).mockResolvedValue(designTimeDir);
@@ -122,7 +128,13 @@ describe('startBackendRuntime', () => {
     );
 
     // The func host is launched with the reserved port and the runtime is awaited.
-    expect(startDesignTimeProcess).toHaveBeenCalledWith(ext.outputChannel, designTimeDir.fsPath, 'func', 'host', 'start', '--port 7071');
+    expect(startDesignTimeProcess).toHaveBeenCalledWith(
+      ext.outputChannel,
+      designTimeDir.fsPath,
+      'func',
+      ['host', 'start', '--port 7071'],
+      undefined
+    );
     expect(waitForDesignTimeStartUp).toHaveBeenCalledWith(context, projectPath, expectedUrl, true);
   });
 
@@ -168,7 +180,13 @@ describe('startBackendRuntime', () => {
 
     expect(reserveFreePort).not.toHaveBeenCalled();
     expect(isDesignTimeUp).toHaveBeenCalledWith(`${backendRuntimeBaseUrl}9999${designerStartApi}`);
-    expect(startDesignTimeProcess).toHaveBeenCalledWith(ext.outputChannel, designTimeDir.fsPath, 'func', 'host', 'start', '--port 9999');
+    expect(startDesignTimeProcess).toHaveBeenCalledWith(
+      ext.outputChannel,
+      designTimeDir.fsPath,
+      'func',
+      ['host', 'start', '--port 9999'],
+      undefined
+    );
   });
 
   it('backfills a port when an existing instance has none', async () => {
@@ -179,6 +197,39 @@ describe('startBackendRuntime', () => {
     expect(reserveFreePort).toHaveBeenCalledTimes(1);
     expect(ext.designTimeInstances.get(projectPath)?.port).toBe(7071);
     expect(isDesignTimeUp).toHaveBeenCalledWith(`${backendRuntimeBaseUrl}7071${designerStartApi}`);
+  });
+
+  it('passes the shared experimental binding to the backend host', async () => {
+    const binding = {
+      directory: 'synthetic-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/synthetic-selection' },
+    };
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue(binding);
+    await startBackendRuntime(context, projectPath);
+    expect(getExperimentalBundleRuntime).toHaveBeenCalledWith(context, projectPath);
+    expect(startDesignTimeProcess).toHaveBeenCalledWith(
+      ext.outputChannel,
+      designTimeDir.fsPath,
+      'func',
+      ['host', 'start', '--port 7071'],
+      binding.env
+    );
+    expect(ext.designTimeInstances.get(projectPath)?.experimentalBundleSource).toBe(binding.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI);
+  });
+
+  it('rejects an already-running backend with a different experimental selection without stopping it', async () => {
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'synthetic-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/current-selection' },
+    });
+    vi.mocked(isDesignTimeUp).mockResolvedValue(true);
+    await expect(startBackendRuntime(context, projectPath)).rejects.toThrow('does not match the experimental bundle selection');
+    expect(startDesignTimeProcess).not.toHaveBeenCalled();
+    expect(createJsonFile).not.toHaveBeenCalled();
   });
 
   it('logs a failure and does not start a process when the design-time directory is missing', async () => {
