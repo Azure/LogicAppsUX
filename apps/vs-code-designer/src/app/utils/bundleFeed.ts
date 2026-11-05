@@ -48,11 +48,15 @@ export async function getExperimentalBundleRuntime(
       'The experimental bundle install or verification failed. Correct the selected version/source and reload before starting a host. No public bundle will be substituted.'
     );
   }
-  const version = await getExperimentalBundleVersion(context, projectPath);
+  let version = await getExperimentalBundleVersion(context, projectPath);
   if (!parseBundleVersion(version) || version === '0.0.0') {
     throw new Error(
       'No experimental Logic Apps bundle is selected. Install a complete local bundle or configure an experimental source and reload.'
     );
+  }
+  if (!(await fse.pathExists(path.join(defaultExtensionBundlePathValue, version)))) {
+    await downloadExtensionBundle(context, projectPath);
+    version = await getExperimentalBundleVersion(context, projectPath);
   }
   if (!experimentalBundleSource) {
     experimentalBundleSource = new ExperimentalBundleSource();
@@ -73,12 +77,12 @@ export async function getExperimentalBundleRuntime(
 
 async function getExperimentalBundleVersion(context: IActionContext, projectPath?: string): Promise<string> {
   const localSettings = projectPath ? await getLocalSettingsJson(context, projectPath) : undefined;
-  const pin = (
+  const inheritedPin = (
     localSettings?.Values?.AzureFunctionsJobHost_extensionBundle_version ??
     process.env.AzureFunctionsJobHost_extensionBundle_version ??
-    getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ??
     ''
   ).trim();
+  const pin = inheritedPin || (getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ?? '').trim();
   if (pin && !parseBundleVersion(pin)) {
     throw new Error('Invalid experimental extension bundle version. Use a valid three- or four-part version.');
   }
@@ -118,9 +122,11 @@ interface ExtensionBundleBaseUrlResult {
  *      `useExperimentalExtensionBundle` is `true` and the URI is non-empty).
  *   4. Default public CDN.
  */
-export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+export async function getExtensionBundleBaseUrl(context: IActionContext, projectPath?: string): Promise<ExtensionBundleBaseUrlResult> {
+  if (!projectPath) {
+    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  }
 
   let localSettingsUri: string | undefined;
   if (projectPath) {
@@ -818,10 +824,15 @@ export async function ensureExtensionBundleHealthy(
   }
 
   const experimental = getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) === true;
-  const projectPath = experimental
-    ? await tryGetLogicAppProjectRoot(context, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath)
-    : undefined;
+  const projectPath =
+    experimental && !options.version
+      ? await tryGetLogicAppProjectRoot(context, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath)
+      : undefined;
   const selectedVersion = options.version ?? (experimental ? await getExperimentalBundleVersion(context, projectPath) : undefined);
+
+  if (experimental && selectedVersion && selectedVersion !== '0.0.0') {
+    await prepareExperimentalLocalBundle(selectedVersion);
+  }
 
   if (healthyBundleVersion && (!selectedVersion || healthyBundleVersion === selectedVersion)) {
     return;
@@ -884,7 +895,7 @@ export async function ensureExtensionBundleHealthy(
  * @param {IActionContext} context - Command context.
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+export async function downloadExtensionBundle(context: IActionContext, projectPath?: string): Promise<boolean> {
   // Any (re)download or repair changes the bundle on disk, so the session
   // health cache is no longer authoritative — force the next
   // `ensureExtensionBundleHealthy` to re-verify.
@@ -894,7 +905,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   // extraction directory.
   if (inFlightBundleWork) {
     await inFlightBundleWork;
-    return false;
+    return projectPath ? downloadExtensionBundle(context, projectPath) : false;
   }
   let resolveInFlight: (() => void) | undefined;
   inFlightBundleWork = new Promise<void>((resolve) => {
@@ -905,7 +916,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     // Mark this whole call-stack as "inside the bundle download". Any nested
     // `waitForExtensionBundleReady()` will short-circuit instead of awaiting
     // the in-flight promise we own.
-    const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
+    const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context, projectPath));
     lastBundleInstallResult = 'ok';
     lastBundleInstallError = undefined;
     installSucceededAndChanged = result;
@@ -997,12 +1008,14 @@ async function tryHealthyLocalBundleFastPath(context: IActionContext, params: He
   return true;
 }
 
-async function downloadExtensionBundleCore(context: IActionContext): Promise<boolean> {
+async function downloadExtensionBundleCore(context: IActionContext, projectPath?: string): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    if (!projectPath) {
+      const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    }
 
     if (projectPath) {
       try {
@@ -1016,7 +1029,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
     envVarVer = envVarVer?.trim();
     const latestLocalBundleVersion = pickLatestVersion(localVersions);
-    const baseUrlInfo = await getExtensionBundleBaseUrl(context);
+    const baseUrlInfo = await getExtensionBundleBaseUrl(context, projectPath);
     if (baseUrlInfo.isExperimental && envVarVer && !parseBundleVersion(envVarVer)) {
       throw new Error('Invalid experimental extension bundle version. Use a valid three- or four-part version.');
     }
