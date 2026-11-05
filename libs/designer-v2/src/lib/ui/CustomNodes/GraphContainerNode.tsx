@@ -52,6 +52,7 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   const kind = type === 'if' ? 'condition' : type === 'switch' ? 'switch' : type === 'foreach' || type === 'until' ? 'loop' : 'scope';
   const merge = shared && (type === 'if' || type === 'switch');
   const bodyFrame = data?.bodyFrame as { y: number; height: number } | undefined;
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
 
   return (
     <>
@@ -63,13 +64,14 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
           ...(shared && { padding: 0 }),
         }}
       >
-        <DefaultHandle type="target" {...(shared && type === 'agent' && { contained: true })} />
+        {/* Structural targets use the graph boundary; contained positioning is only for a canonical handle dot. */}
+        <DefaultHandle axis={handleAxis} type="target" />
         {shared ? (
           type === 'agent' || type === 'if' || type === 'switch' ? null : (
             <NodeFrame
               kind={kind}
               selected={selected || isMultiSelected}
-              handleAxis="vertical"
+              handleAxis={handleAxis}
               style={{
                 width: '100%',
                 height: bodyFrame?.height ?? '100%',
@@ -81,11 +83,15 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
           <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
         )}
         {merge ? (
-          <DefaultHandle type="source" presentation="merge" label={label} />
+          <DefaultHandle axis={handleAxis} type="source" presentation="merge" label={label} />
         ) : isSubgraphContainer ? (
-          <DefaultHandle type="source" />
+          <DefaultHandle axis={handleAxis} type="source" />
         ) : (
-          <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} {...(shared && type === 'agent' && { contained: true })} />
+          <EdgeDrawSourceHandle
+            axis={handleAxis}
+            highlighted={selected || isMultiSelected}
+            {...(shared && type === 'agent' && { contained: true })}
+          />
         )}
       </div>
       {showLeafComponents && (

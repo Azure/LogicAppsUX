@@ -12,19 +12,38 @@ export const DefaultHandle = (props: {
   contained?: boolean;
   presentation?: 'structural' | 'merge';
   label?: string;
+  axis?: 'vertical' | 'horizontal';
 }) => {
   const styles = useHandleStyles();
   const shared = useHandlePresentation();
   const intl = useIntl();
   const merge = shared && props.presentation === 'merge';
+  const horizontal = props.axis === 'horizontal';
   const contained = shared && (props.contained || merge);
 
   const handle = (
     <Handle
-      className={mergeClasses(styles.nodeHandle, contained ? styles.sharedPort : props.type === 'source' ? styles.bottom : styles.top)}
+      className={mergeClasses(
+        styles.nodeHandle,
+        contained
+          ? styles.sharedPort
+          : shared && props.type === 'source'
+            ? horizontal
+              ? styles.sharedSourceHorizontal
+              : styles.sharedSource
+            : horizontal
+              ? props.type === 'source'
+                ? styles.right
+                : styles.left
+              : props.type === 'source'
+                ? styles.bottom
+                : styles.top
+      )}
       type={props.type}
       id={props.id}
-      position={props.type === 'source' ? Position.Bottom : Position.Top}
+      position={
+        horizontal ? (props.type === 'source' ? Position.Right : Position.Left) : props.type === 'source' ? Position.Bottom : Position.Top
+      }
       isConnectable={false}
       style={contained ? containedHandleStyle : undefined}
       data-port-contained={contained || undefined}
@@ -33,7 +52,7 @@ export const DefaultHandle = (props: {
 
   return merge ? (
     <NodeMergePoint
-      className={styles.merge}
+      className={mergeClasses(styles.merge, horizontal && styles.mergeHorizontal)}
       label={props.label ?? ''}
       strings={{
         label: (label) =>

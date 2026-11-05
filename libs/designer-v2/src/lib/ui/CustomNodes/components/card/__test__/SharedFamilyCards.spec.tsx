@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SharedAgentScopeCard, SharedBranchCard, SharedScopeCard } from '../SharedFamilyCards';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import type { ActionCardProps } from '../actionCard';
 import { PreviewOperationCard } from '../../../../panel/multiSelectPanel/SharedExtractionPreviewNode';
 const modelParameter = vi.hoisted(() => ({ current: undefined as { value: { value: string }[] } | undefined }));
@@ -171,6 +172,29 @@ describe('shared family interaction adapters', () => {
     expect(panel.compareDocumentPosition(agent.querySelector('[data-testid="real-agent-output"]')!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
+  it.each([1120, 576, 280])('centers the canonical Agent header within its accepted %ipx tools frame', (width) => {
+    const { container } = render(
+      <div style={{ width }}>
+        <SharedScopeCard {...props()} family="agent" toolsPanel={{ width, height: 300, bottomPadding: 20, items: [{ id: 'real-tool' }] }} />
+      </div>
+    );
+    const agent = container.querySelector<HTMLElement>('[data-node-card="agent"]')!;
+    const hoverTrigger = agent.parentElement!;
+    const panel = agent.querySelector<HTMLElement>('[data-testid="agent-tools-panel"]')!;
+    // JSDOM cannot measure canvas geometry; guard the CSS contract that the native frame relies on.
+    expect(getComputedStyle(hoverTrigger).width).toBe('100%');
+    expect(getComputedStyle(agent).width).toBe('280px');
+    expect(agent).toHaveStyle({ marginInline: 'auto' });
+    expect(panel).toHaveStyle({ width: `${width}px` });
+  });
+
+  it('does not stretch an Agent without an accepted tools frame', () => {
+    const { container } = render(<SharedScopeCard {...props()} family="agent" />);
+    const agent = container.querySelector<HTMLElement>('[data-node-card="agent"]')!;
+    expect(getComputedStyle(agent.parentElement!).width).not.toBe('100%');
+    expect(getComputedStyle(agent).width).toBe('280px');
+  });
+
   it('uses explicit false-branch metadata after a misleading rename and preserves compact-branch collapse semantics', () => {
     const open = vi.fn();
     const collapse = vi.fn();
@@ -235,6 +259,51 @@ describe('shared family interaction adapters', () => {
     expect(container.querySelector('[data-tool-kind="mcp"]')).toHaveAttribute('id', 'msla-node-tool-run-identity');
     expect(container.querySelectorAll('[data-node-card="tool"]')).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'MCP tool: Renamed tool' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it.each(['Wait', 'Send_teams_message_for_PR_details', 'Post_or_Patch_Azure_DevOps_REST_API', 'Long tool label '.repeat(12)])(
+    'constrains the tool hover trigger to accepted geometry without losing the full label: %s',
+    (title) => {
+      const { container, getByText, getByRole } = render(
+        <div style={{ width: nodeMetrics.cards.tool.width }}>
+          <SharedBranchCard
+            id="named-tool"
+            title={title}
+            subgraphType={SUBGRAPH_TYPES.AGENT_CONDITION}
+            handleAxis="horizontal"
+            onClick={vi.fn()}
+          />
+        </div>
+      );
+      const card = container.querySelector<HTMLElement>('[data-node-card="tool"]')!;
+      const trigger = card.parentElement!;
+      // The real ToolItem is fill-width; only a bounded hover trigger makes ellipsis honor ELK's width.
+      expect(getComputedStyle(trigger).width).toBe('100%');
+      expect(getComputedStyle(card).width).toBe('100%');
+      expect(getComputedStyle(card).boxSizing).toBe('border-box');
+      const label = getByText(title.trim());
+      expect(getComputedStyle(label)).toMatchObject({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
+      expect(getByRole('button', { name: `Tool: ${title.trim()}` })).toBe(card);
+    }
+  );
+
+  it('renders tool-row continuation slots on the horizontal axis when ELK accepts rightward branch flow', () => {
+    const { container } = render(
+      <SharedBranchCard
+        id="tool-run-identity"
+        title="Renamed tool"
+        subgraphType={SUBGRAPH_TYPES.MCP_CLIENT}
+        selected
+        handleAxis="horizontal"
+        inputSlot={<span data-testid="tool-input-slot" />}
+        outputSlot={<span data-testid="tool-output-slot" />}
+        onClick={vi.fn()}
+      />
+    );
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool).toHaveAttribute('data-handle-axis', 'horizontal');
+    expect(screen.getByTestId('tool-input-slot')).toBeInTheDocument();
+    expect(screen.getByTestId('tool-output-slot')).toBeInTheDocument();
   });
 
   it('does not overlay tool validation errors on an actual run-status badge', () => {

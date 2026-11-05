@@ -65,7 +65,7 @@ import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle'
 import { OperationNodeCard } from './components/card/OperationNodeCard';
 import type { NodePresentation } from '../../core/utils/graph';
 
-type OperationGraphNode = Node<{ presentation?: NodePresentation }>;
+type OperationGraphNode = Node<{ presentation?: NodePresentation; handleAxis?: 'vertical' | 'horizontal' }>;
 
 const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const readOnly = useReadOnly();
@@ -340,6 +340,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const toolKind = data?.presentation
     ? data.presentation.toolKind
     : isMcpClient
@@ -353,7 +354,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <EdgeDrawTargetHandle />
+        <EdgeDrawTargetHandle axis={handleAxis} />
         <OperationNodeCard
           id={id}
           sharedPresentation={data?.presentation?.shared}
@@ -387,11 +388,12 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
+          handleAxis={handleAxis}
           subtleBackground={isA2AWorkflow && isTrigger}
           copilotModified={copilotModified}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected || isMultiSelected} />}
+        {!isMcpClient && <EdgeDrawSourceHandle axis={handleAxis} highlighted={isSelected || isMultiSelected} />}
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

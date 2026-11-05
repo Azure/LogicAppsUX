@@ -279,12 +279,13 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const nodeIndex = useNodeIndex(subgraphId);
   const shouldShowPager =
     isMonitoringView && (normalizedType === constants.NODE.TYPE.UNTIL || (isParentAgent && (metadata?.runData?.repetitionCount ?? 0) > 1));
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
 
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative', ...(shared && presentation.size) }}>
-          {sharedTool ? null : <DefaultHandle type="target" />}
+          {sharedTool ? null : <DefaultHandle axis={handleAxis} type="target" />}
           {metadata?.subgraphType ? (
             <>
               {shared && isAddCase ? (
@@ -301,8 +302,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   title={title}
                   subgraphType={metadata.subgraphType}
                   toolKind={presentation.toolKind}
-                  inputSlot={sharedTool ? <DefaultHandle type="target" /> : undefined}
-                  outputSlot={sharedTool ? <DefaultHandle type="source" /> : undefined}
+                  handleAxis={handleAxis}
+                  inputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="target" /> : undefined}
+                  outputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="source" /> : undefined}
                   selected={selected}
                   pinned={isPinned}
                   active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
@@ -347,7 +349,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
               {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
             </>
           ) : null}
-          {sharedTool ? null : <DefaultHandle type="source" />}
+          {sharedTool ? null : <DefaultHandle axis={handleAxis} type="source" />}
         </div>
       </div>
       {graphCollapsed ? (

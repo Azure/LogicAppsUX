@@ -136,4 +136,22 @@ describe('real shared canvas handles', () => {
     expect(getByTestId('handle-source')).toHaveAttribute('id', 'actual-lane-identity');
     expect(getByTestId('handle-source')).toHaveAttribute('data-connectable', 'false');
   });
+
+  it('lays shared continuation handles on the horizontal axis for rightward branch progression', () => {
+    state.shared = true;
+    const { getAllByTestId } = render(
+      <>
+        <DefaultHandle type="target" axis="horizontal" />
+        <DefaultHandle type="source" axis="horizontal" />
+        <EdgeDrawTargetHandle axis="horizontal" />
+        <EdgeDrawSourceHandle axis="horizontal" />
+      </>
+    );
+    for (const handle of getAllByTestId('handle-target')) {
+      expect(handle).toHaveAttribute('data-position', 'left');
+    }
+    for (const handle of getAllByTestId('handle-source')) {
+      expect(handle).toHaveAttribute('data-position', 'right');
+    }
+  });
 });

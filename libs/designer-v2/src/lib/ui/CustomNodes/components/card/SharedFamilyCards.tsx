@@ -35,6 +35,7 @@ const useStyles = makeStyles({
   pinned: { outline: `2px solid ${tokens.colorPalettePumpkinBorderActive}`, outlineOffset: '2px' },
   collapse: { position: 'absolute', top: '4px', right: '4px', minWidth: 0 },
   branch: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' },
+  acceptedFrame: { width: '100%' },
   pagerSlot: { display: 'inline-flex', height: '20px', alignItems: 'center' },
 });
 
@@ -81,6 +82,7 @@ export const FamilyCollapseButton = ({
 interface SharedScopeCardProps extends ActionCardProps {
   family: NodePresentation['family'];
   operationType?: string;
+  handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlots?: readonly ReactNode[];
   model?: string;
@@ -101,6 +103,7 @@ export const SharedAgentScopeCard = (props: SharedScopeCardProps) => {
 export const SharedScopeCard = ({
   family,
   operationType,
+  handleAxis = 'vertical',
   inputSlot,
   outputSlots,
   model,
@@ -142,7 +145,7 @@ export const SharedScopeCard = ({
     selected: props.isSelected,
     status,
     statusDetail: props.runData?.duration,
-    handleAxis: 'vertical' as const,
+    handleAxis,
     id: `msla-node-${props.id}`,
     role: 'button',
     tabIndex: props.nodeIndex,
@@ -178,6 +181,8 @@ export const SharedScopeCard = ({
   };
   const withHover = (card: ReactNode) => (
     <SharedNodeHoverCard
+      // The fixed-width Agent header must center in its accepted frame, not a shrink-wrapped hover trigger.
+      className={family === 'agent' && toolsPanel ? styles.acceptedFrame : undefined}
       category={family === 'agent' ? 'agent' : 'control'}
       icon={undefined}
       title={props.title}
@@ -279,6 +284,7 @@ interface SharedBranchCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolKind?: NodePresentation['toolKind'];
+  handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlot?: ReactNode;
 }
@@ -336,6 +342,8 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
     const status = mapSharedRunStatus(props.runData?.status);
     return (
       <SharedNodeHoverCard
+        // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
+        className={styles.acceptedFrame}
         category="action"
         icon={toolKind === 'mcp' ? <PlugConnectedRegular /> : toolKind === 'subWorkflow' ? <FlowRegular /> : undefined}
         title={title}
@@ -369,7 +377,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
               {collapse}
             </>
           }
-          handleAxis="vertical"
+          handleAxis={props.handleAxis ?? 'vertical'}
         />
       </SharedNodeHoverCard>
     );

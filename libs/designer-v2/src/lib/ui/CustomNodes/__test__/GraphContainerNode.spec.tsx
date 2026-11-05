@@ -97,6 +97,19 @@ describe('GraphContainerNode', () => {
     expect(tree.root.findByProps({ className: 'msla-graph-container-wrapper' }).props.style).toMatchObject({ padding: 0 });
   });
 
+  it('keeps the shared Agent structural target on its top boundary rather than centering it in the compound graph', () => {
+    (useSharedNodeUi as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Agent' });
+    (useNodeSize as Mock).mockReturnValue({ width: 1160, height: 741 });
+    const tree = renderer.create(
+      <GraphContainerNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'vertical' }} />
+    );
+    const target = tree.root.findAllByType(DefaultHandle).find(({ props }) => props.type === 'target')!;
+    expect(target.props.contained).not.toBe(true);
+    expect(target.findByType('div').props['data-port-contained']).toBeUndefined();
+    expect(target.findByType('div').props.style?.top).not.toBe('50%');
+  });
+
   it.each(['If', 'Switch'])('renders the shared %s merge point with the real graph label, not a second frame', (type) => {
     (useSharedNodeUi as Mock).mockReturnValue(true);
     (useActionMetadata as Mock).mockReturnValue({ type });
