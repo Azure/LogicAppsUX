@@ -4,7 +4,7 @@ export const nodeMetrics = {
     action: { width: 232, height: 74 },
     trigger: { width: 232, height: 74 },
     condition: { width: 160, height: 74 },
-    switch: { width: 160, height: 103 },
+    switch: { width: 160, height: 103, outputGap: 8, borderWidth: 1 },
     loop: { width: 160, height: 74 },
     agent: { width: 280, headerHeight: 74, modelHeight: 42 },
     tool: { width: 232, height: 74, smallHeight: 56 },
@@ -22,5 +22,17 @@ export const nodeMetrics = {
   edgeControl: { pillSize: 24, hitTargetSize: 32, dualHitTargetWidth: 68, interactionWidth: 20 },
   collapseChip: { height: 24, maxVisibleCount: 99 },
 } as const;
+
+/** Tight Switch output margins cancel body padding; the card still reserves both borders. */
+export const getSwitchNodeSize = (caseCount = 1, axis: 'horizontal' | 'vertical' = 'vertical') => {
+  const count = Number.isFinite(caseCount) ? Math.max(1, Math.floor(caseCount)) : 1;
+  const outputExtent = count * nodeMetrics.handle.size + (count - 1) * nodeMetrics.cards.switch.outputGap;
+  return axis === 'horizontal'
+    ? {
+        width: nodeMetrics.cards.switch.width,
+        height: Math.max(nodeMetrics.cards.switch.height, outputExtent + 2 * nodeMetrics.cards.switch.borderWidth),
+      }
+    : { width: Math.max(nodeMetrics.cards.condition.width, outputExtent + 32), height: nodeMetrics.cards.condition.height };
+};
 
 export const nodeHoverCardTiming = { openDelay: 400, closeDelay: 200 } as const;

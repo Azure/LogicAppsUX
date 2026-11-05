@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
   medium: { minHeight: `${nodeMetrics.cards.action.height}px` },
   small: { minHeight: `${nodeMetrics.cards.tool.smallHeight}px` },
-  switch: { minHeight: `${nodeMetrics.cards.switch.height}px` },
+  switch: { minHeight: `${nodeMetrics.cards.switch.height}px`, ...shorthands.borderWidth(`${nodeMetrics.cards.switch.borderWidth}px`) },
   pill: {
     borderTopLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
     borderBottomLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
@@ -75,6 +75,7 @@ const useStyles = makeStyles({
 export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   width?: NodeCardWidth;
   size?: 'medium' | 'small' | 'switch';
+  bodyHeight?: number;
   shape?: NodeCardShape;
   surface?: 'neutral' | 'agent';
   appearance?: 'default' | 'placeholder';
@@ -89,6 +90,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   {
     width = 'standard',
     size = 'medium',
+    bodyHeight,
     shape = 'rounded',
     surface = 'neutral',
     appearance = 'default',
@@ -123,6 +125,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
         />
       ) : null}
       <div
+        style={bodyHeight === undefined ? undefined : { minHeight: bodyHeight }}
         className={mergeClasses(
           styles.card,
           styles[size],

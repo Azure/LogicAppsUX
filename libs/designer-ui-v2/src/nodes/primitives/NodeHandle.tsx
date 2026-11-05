@@ -31,7 +31,7 @@ const useStyles = makeStyles({
     alignSelf: 'center',
     marginRight: `calc(-1 * ${tokens.spacingHorizontalL} + ${nodeMetrics.handle.edgeOffset}px)`,
   },
-  tight: { gap: tokens.spacingVerticalS, marginBlock: `calc(-1 * ${tokens.spacingVerticalL})` },
+  tight: { gap: `${nodeMetrics.cards.switch.outputGap}px`, marginBlock: `calc(-1 * ${tokens.spacingVerticalL})` },
   loose: { gap: tokens.spacingVerticalL },
   outputsVertical: {
     position: 'absolute',
@@ -41,7 +41,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
   },
-  tightVertical: { gap: tokens.spacingHorizontalS },
+  tightVertical: { gap: `${nodeMetrics.cards.switch.outputGap}px` },
   looseVertical: { gap: tokens.spacingHorizontalL },
 });
 export type NodeHandleAxis = 'horizontal' | 'vertical';

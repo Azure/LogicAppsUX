@@ -279,7 +279,11 @@ const convertWorkflowGraphToElkGraph = (
     (nodeMetadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ||
       nodeMetadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ||
       (inRightwardToolBranch && !['agent', 'foreach', 'until'].includes(operationType ?? '')));
-  const presentation = getNodePresentation(node.type, useSharedNodeUi, getWorkflowNodePresentationContext(node, context));
+  const presentation = getNodePresentation(node.type, useSharedNodeUi, {
+    ...getWorkflowNodePresentationContext(node, context),
+    // Admission and canonical rendering must use the same local axis, including nested Switch headers.
+    handleAxis: rightwardToolBranch ? 'horizontal' : 'vertical',
+  });
   if (isWorkflowNode(node)) {
     return {
       id: node.id,
@@ -314,7 +318,7 @@ const convertWorkflowGraphToElkGraph = (
       : [];
   const header = children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
   if (header && branchPorts.length) {
-    const gap = operationType === 'switch' ? 8 : 16;
+    const gap = operationType === 'switch' ? nodeMetrics.cards.switch.outputGap : 16;
     const total = branchPorts.length * nodeMetrics.handle.size + (branchPorts.length - 1) * gap;
     const horizontalPorts = rightwardToolBranch;
     const headerWidth = header.width ?? 160;

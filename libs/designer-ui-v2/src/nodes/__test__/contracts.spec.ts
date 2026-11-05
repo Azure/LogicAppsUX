@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import * as metricsEntry from '../../metrics';
-import { nodeHoverCardTiming, nodeMetrics } from '../metrics';
+import { getSwitchNodeSize, nodeHoverCardTiming, nodeMetrics } from '../metrics';
 import { defaultNodeStrings } from '../strings';
 
 describe('public metrics entrypoint', () => {
@@ -8,7 +8,9 @@ describe('public metrics entrypoint', () => {
     const actionWidth: number = metricsEntry.nodeMetrics.cards.action.width;
     const openDelay: number = metricsEntry.nodeHoverCardTiming.openDelay;
 
-    expect(Object.keys(metricsEntry).sort()).toEqual(['nodeHoverCardTiming', 'nodeMetrics']);
+    expect(Object.keys(metricsEntry).sort()).toEqual(['getSwitchNodeSize', 'nodeHoverCardTiming', 'nodeMetrics']);
+    expect(Object.is(metricsEntry.getSwitchNodeSize, getSwitchNodeSize)).toBe(true);
+    expectTypeOf<typeof metricsEntry.getSwitchNodeSize>().toEqualTypeOf<typeof getSwitchNodeSize>();
     expect(Object.is(metricsEntry.nodeMetrics, nodeMetrics)).toBe(true);
     expect(Object.is(metricsEntry.nodeHoverCardTiming, nodeHoverCardTiming)).toBe(true);
     expectTypeOf<typeof metricsEntry.nodeMetrics>().toEqualTypeOf<typeof nodeMetrics>();

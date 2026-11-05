@@ -182,7 +182,7 @@ describe('shared node presentation', () => {
   it('keeps existing card dimensions unchanged when admitting canonical structural metrics', () => {
     expect(nodeMetrics.cards.action).toEqual({ width: 232, height: 74 });
     expect(nodeMetrics.cards.condition).toEqual({ width: 160, height: 74 });
-    expect(nodeMetrics.cards.switch).toEqual({ width: 160, height: 103 });
+    expect(nodeMetrics.cards.switch).toEqual({ width: 160, height: 103, outputGap: 8, borderWidth: 1 });
     expect(nodeMetrics.cards.loop).toEqual({ width: 160, height: 74 });
     expect(nodeMetrics.frame).toEqual({ minWidth: 232, minBodyHeight: 106 });
     expect(nodeMetrics.mergePoint).toEqual({ size: 16, dot: 6 });
