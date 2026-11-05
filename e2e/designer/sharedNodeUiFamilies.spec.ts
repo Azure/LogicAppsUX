@@ -193,7 +193,8 @@ test.describe('Shared node UI additional Local family acceptance', { tag: ['@moc
         throw new Error('The actual family card must have an accessible display name.');
       }
       const title = label.replace(/^(?:MCP tool|Tool): /, '').replace(/\s+operation(?:,.*)?$/, '');
-      await card.hover();
+      // The expanded Agent root includes its tools panel; its center can be a real tool insertion control.
+      await (id === 'WorkflowAgent' ? card.getByText(title, { exact: true }) : card).hover();
       const info = page.locator('[data-node-info-card]').filter({
         has: page.getByRole('heading', { name: title, exact: true }),
       });

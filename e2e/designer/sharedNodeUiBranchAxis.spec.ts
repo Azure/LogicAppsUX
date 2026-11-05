@@ -18,6 +18,8 @@ const workflowWithSwitch = (count: number) => {
   };
   return {
     ...agentFixture,
+    // The registry consumes the designer Workflow contract, not the JSON fixture loader's connections field.
+    connectionReferences: agentFixture.connections,
     definition: {
       ...agentFixture.definition,
       actions: {
@@ -117,6 +119,7 @@ for (const { count, height } of [
       await expect(card.locator('[data-testid="node-output-handles"]')).toHaveAttribute('data-axis', 'horizontal');
       await expect(card.locator('[data-testid="node-output-handles"] .source')).toHaveCount(count);
       const before = await getSerializedWorkflowFromStateV2(page);
+      expect(before.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server.inputs.connectionReference.connectionName).toBe('mcpclient');
       await page.getByRole('button', { name: 'Toolbox', exact: true }).click();
       await page.getByRole('button', { name: 'Zoom view to fit', exact: true }).click();
       await waitForViewport(page);
