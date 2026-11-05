@@ -372,7 +372,7 @@ export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationD
 export const DependencyVersion = {
   dotnet10: '10.0.403',
   funcCoreTools: '4.0.7030',
-  nodeJs: '24.15.0',
+  nodeJs: '24.22.2',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
