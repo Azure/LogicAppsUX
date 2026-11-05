@@ -11,7 +11,13 @@ import { MapsTreeProvider } from './mapsTreeProvider';
 import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
 import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
 import { addDataMap, addMapperProject, importExistingMap, openExistingMapper } from './projectCommands';
-import { copySchemaWithDependencies, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
+import {
+  copySchemaWithDependencies,
+  createWorkspaceMapperProject,
+  getWorkspaceRoot,
+  schemasFolderName,
+  updateMapperProjectContext,
+} from './workspaceStructure';
 
 let lmlRuntimeManager: LmlDesignTimeRuntimeManager | undefined;
 
@@ -37,12 +43,22 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Register the workspace maps view in the sidebar.
   const mapsTreeProvider = new MapsTreeProvider();
-  const refreshMaps = () => mapsTreeProvider.refresh();
+  const refreshMaps = () => {
+    mapsTreeProvider.refresh();
+    updateMapperProjectContext().catch((error) => logger.warn(`Could not refresh mapper project folders: ${String(error)}`));
+  };
+  refreshMaps();
 
   context.subscriptions.push(vscode.window.registerTreeDataProvider('biztalkDataMapper.mapsView', mapsTreeProvider));
 
   // Register commands
   context.subscriptions.push(
+    vscode.commands.registerCommand('biztalkDataMapper.createProject', async (rootUri: vscode.Uri, mapName: string) => {
+      const mapUri = await createWorkspaceMapperProject(rootUri, mapName);
+      refreshMaps();
+      return mapUri;
+    }),
+    vscode.commands.registerCommand('biztalkDataMapper.publishArtifacts', () => undefined),
     vscode.commands.registerCommand('biztalkDataMapper.showLogs', () => logger.show(true)),
     vscode.commands.registerCommand('biztalkDataMapper.startLmlRuntime', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {
       const uri = resourceUri(value) ?? vscode.window.activeTextEditor?.document.uri;
@@ -171,10 +187,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(provider);
 
-  const watcher = vscode.workspace.createFileSystemWatcher('**/*.{btm,lml}');
-  watcher.onDidCreate(() => mapsTreeProvider.refresh());
-  watcher.onDidDelete(() => mapsTreeProvider.refresh());
-  context.subscriptions.push(watcher);
+  const watcher = vscode.workspace.createFileSystemWatcher('**/{*.btm,*.lml,Schemas,__generated}');
+  context.subscriptions.push(
+    watcher,
+    watcher.onDidCreate(refreshMaps),
+    watcher.onDidDelete(refreshMaps),
+    vscode.workspace.onDidChangeWorkspaceFolders(refreshMaps)
+  );
   context.subscriptions.push({ dispose: () => runtimeManager.dispose().catch(() => logger.warn('LML runtime cleanup failed.')) });
   context.subscriptions.push({ dispose: disposeDataMapperLogger });
   logger.info('Data Mapper extension ready.');

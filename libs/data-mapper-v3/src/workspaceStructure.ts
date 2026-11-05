@@ -6,6 +6,7 @@ import { planSchemaImport } from './schema/mapImportPlanner';
 export const schemasFolderName = 'Schemas';
 export const generatedFolderName = '__generated';
 export const defaultMapBaseName = 'map';
+export const mapperProjectFoldersContext = 'biztalkDataMapper.projectFolders';
 
 export function validateWorkspaceName(value: string): string | undefined {
   const name = value.trim();
@@ -85,11 +86,10 @@ export interface MapperProject {
 }
 
 function isMapperProjectEntries(entries: [string, vscode.FileType][]): boolean {
-  return entries.some(
-    ([name, type]) =>
-      (type & vscode.FileType.Directory && name.toLocaleLowerCase() === schemasFolderName.toLocaleLowerCase()) ||
-      name.toLocaleLowerCase().endsWith('.btm') ||
-      name.toLocaleLowerCase().endsWith('.lml')
+  const directories = new Set(entries.filter(([, type]) => type & vscode.FileType.Directory).map(([name]) => name.toLocaleLowerCase()));
+  return (
+    (directories.has(schemasFolderName.toLocaleLowerCase()) && directories.has(generatedFolderName)) ||
+    entries.some(([name, type]) => Boolean(type & vscode.FileType.File) && /\.(btm|lml)$/i.test(name))
   );
 }
 
@@ -97,7 +97,6 @@ export async function isMapperProject(folderUri: vscode.Uri): Promise<boolean> {
   return isMapperProjectEntries(await readDirectoryEntries(folderUri));
 }
 
-// A mapper project holds a Schemas folder or a map document.
 export async function findMapperProjects(): Promise<MapperProject[]> {
   const projects: MapperProject[] = [];
   for (const workspaceFolder of vscode.workspace.workspaceFolders ?? []) {
@@ -117,6 +116,19 @@ export async function findMapperProjects(): Promise<MapperProject[]> {
     }
   }
   return projects;
+}
+
+let mapperContextRevision = 0;
+
+export async function updateMapperProjectContext(): Promise<void> {
+  const revision = ++mapperContextRevision;
+  const projects = await findMapperProjects();
+  if (revision !== mapperContextRevision) {
+    return;
+  }
+  await vscode.commands.executeCommand('setContext', mapperProjectFoldersContext, [
+    ...new Set(projects.map((project) => project.uri.fsPath)),
+  ]);
 }
 
 export function normalizeMapName(value: string): string {
@@ -143,6 +155,17 @@ export async function createMapperProject(parentUri: vscode.Uri, name: string): 
   const rootUri = vscode.Uri.joinPath(parentUri, name.trim());
   const mapUri = await createEmptyMap(rootUri);
   return { rootUri, mapUri };
+}
+
+export async function createWorkspaceMapperProject(rootUri: vscode.Uri, mapName: string): Promise<vscode.Uri> {
+  if (rootUri?.scheme !== 'file') {
+    throw new Error('The mapper project must be a local folder.');
+  }
+  const validationError = validateMapName(mapName, await readDirectoryNames(rootUri));
+  if (validationError) {
+    throw new Error(validationError);
+  }
+  return createEmptyMap(rootUri, normalizeMapName(mapName));
 }
 
 export async function createEmptyMap(rootUri: vscode.Uri, baseName = defaultMapBaseName): Promise<vscode.Uri> {

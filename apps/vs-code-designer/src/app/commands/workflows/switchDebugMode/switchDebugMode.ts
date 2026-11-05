@@ -12,8 +12,8 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
-export async function switchDebugMode(context: IActionContext): Promise<void> {
-  const workspacePath = await getWorkspaceFolderPath(context);
+export async function switchDebugMode(context: IActionContext, target?: vscode.Uri): Promise<void> {
+  const workspacePath = target?.fsPath ?? (await getWorkspaceFolderPath(context));
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath, true /* suppressPrompt */);
   if (!projectPath) {
     vscode.window.showErrorMessage(localize('debugMode.projectNotFound', 'No project found for the workspace'));
@@ -29,7 +29,9 @@ export async function switchDebugMode(context: IActionContext): Promise<void> {
   await wizard.prompt();
   await wizard.execute();
 
-  ext.outputChannel.appendLog(localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`));
+  ext.outputChannel.appendLog(
+    localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`)
+  );
 }
 
 /**

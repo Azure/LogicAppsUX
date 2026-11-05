@@ -4,17 +4,12 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import {
-  scheduleStartAllDesignTimeApis,
-  stopAllDesignTimeApis,
-  startDesignTimeApi,
-} from './app/utils/codeless/startDesignTimeApi';
+import { scheduleStartAllDesignTimeApis, stopAllDesignTimeApis, startDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -51,7 +46,12 @@ import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
-import { getWorkspaceSetting, isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import {
+  getWorkspaceSetting,
+  isManagedIdentityAuthEnabled,
+  shouldParameterizeConnections,
+  updateGlobalSetting,
+} from './app/utils/vsCodeConfig/settings';
 import {
   isAutoStartDesignTimeNotificationSuppressed,
   isManagedIdentityAuthNotificationSuppressed,
@@ -69,7 +69,7 @@ import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
-  initializeCustomExtensionContext();
+  initializeCustomExtensionContext(context);
   await updateLogicAppsContext();
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', logicAppDebugConfigProvider);
@@ -176,7 +176,7 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         const projectPaths = await getWorkspaceLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
-          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+          const startDesignTimePromises = projectPaths.map(async (projectPath) =>
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
               innerActionContext.telemetry.properties.isActivationEvent = 'true';
               await startDesignTimeApi(innerActionContext, projectPath);
@@ -259,7 +259,8 @@ async function promptShouldEnableLocalManagedIdentityAuth(): Promise<boolean> {
 
   if (selection === enableButton) {
     return true;
-  } else if (selection === dontShowAgain) {
+  }
+  if (selection === dontShowAgain) {
     await suppressManagedIdentityAuthNotification();
     return false;
   }
@@ -362,7 +363,8 @@ async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<
   if (result === confirm) {
     await updateGlobalSetting(autoStartDesignTimeSetting, true);
     return true;
-  } else if (result === dontWarnAgain) {
+  }
+  if (result === dontWarnAgain) {
     await suppressAutoStartDesignTimeNotification();
   }
 

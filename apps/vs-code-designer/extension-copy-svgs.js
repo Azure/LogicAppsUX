@@ -5,9 +5,10 @@ const path = require('path');
 const copyDoc = async (projectPath) => {
   await copy('./src', `${projectPath}`, {
     filter: ['LICENSE.md', 'package.json', 'README.md', 'assets/**'],
+    overwrite: true,
   });
-  await copy(path.resolve(__dirname, '..', '..'), `${projectPath}`, {
-    filter: ['CHANGELOG.md'],
+  await copy(path.resolve(__dirname, '..', '..', 'CHANGELOG.md'), path.join(projectPath, 'CHANGELOG.md'), {
+    overwrite: true,
   });
 };
 

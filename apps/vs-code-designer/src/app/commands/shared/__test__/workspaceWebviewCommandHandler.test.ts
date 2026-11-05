@@ -154,20 +154,57 @@ describe('createWorkspaceWebviewCommandHandler', () => {
     expect(panel.dispose).toHaveBeenCalledTimes(1);
   });
 
-  it('resets the in-progress guard after a failed create so the user can retry', async () => {
-    const createHandler = vi.fn().mockRejectedValueOnce(new Error('create failed')).mockResolvedValueOnce(undefined);
-    const onResolve = vi.fn();
-    const { sendMessage } = await createHandlerHarness(createHandler, onResolve);
+  it.each([new Error('create failed'), 'create failed'])(
+    'resets the in-progress guard after rejection %s so the user can retry',
+    async (error) => {
+      const createHandler = vi.fn().mockRejectedValueOnce(error).mockResolvedValueOnce(undefined);
+      const onResolve = vi.fn();
+      const { sendMessage } = await createHandlerHarness(createHandler, onResolve);
 
-    // First call fails — error propagates from the handler since there is no
-    // callWithTelemetryAndErrorHandling wrapper in the test mock.
-    await expect(sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } })).rejects.toThrow(
-      'create failed'
-    );
-    await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
+      // First call fails — error propagates from the handler since there is no
+      // callWithTelemetryAndErrorHandling wrapper in the test mock.
+      await expect(sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } })).rejects.toBe(error);
+      expect(panel.webview.postMessage).toHaveBeenCalledWith({
+        command: ExtensionCommand.createWorkspaceStructure,
+        error: 'create failed',
+      });
+      expect(panel.dispose).not.toHaveBeenCalled();
+      expect(onResolve).not.toHaveBeenCalled();
+      await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
 
-    expect(createHandler).toHaveBeenCalledTimes(2);
-    expect(onResolve).toHaveBeenCalledWith(true);
+      expect(createHandler).toHaveBeenCalledTimes(2);
+      expect(onResolve).toHaveBeenCalledWith(true);
+      expect(panel.dispose).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it('closes the idle panel and resolves cancellation without creating a workspace', async () => {
+    const { sendMessage, createHandler, onResolve } = await createHandlerHarness();
+    panel.dispose.mockImplementation(() => panel.onDidDispose.mock.calls[0][0]());
+
+    await sendMessage({ command: ExtensionCommand.close_panel });
+
+    expect(panel.dispose).toHaveBeenCalledTimes(1);
+    expect(createHandler).not.toHaveBeenCalled();
+    expect(onResolve).toHaveBeenCalledExactlyOnceWith(false);
+    expect(removeWebviewPanelFromCache).toHaveBeenCalledWith('workspace', 'Create Workspace');
+  });
+
+  it('refuses cancellation while creating and completes the original create', async () => {
+    const deferred = createDeferred();
+    const createHandler = vi.fn().mockReturnValue(deferred.promise);
+    const { sendMessage, onResolve } = await createHandlerHarness(createHandler);
+    const payload = { workspaceName: 'one' };
+
+    const creating = sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: payload });
+    await sendMessage({ command: ExtensionCommand.close_panel });
+
+    expect(panel.dispose).not.toHaveBeenCalled();
+    expect(onResolve).not.toHaveBeenCalled();
+    expect(createHandler).toHaveBeenCalledExactlyOnceWith(payload);
+    deferred.resolve();
+    await creating;
+    expect(onResolve).toHaveBeenCalledExactlyOnceWith(true);
     expect(panel.dispose).toHaveBeenCalledTimes(1);
   });
 

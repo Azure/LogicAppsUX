@@ -32,6 +32,7 @@ import {
 } from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
+import { WorkspaceWizard } from './workspaceWizard';
 
 const FLOW_TYPES = {
   CREATE_WORKSPACE: 'createWorkspace',
@@ -760,7 +761,7 @@ export const CreateWorkspace = () => {
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKSPACE));
   }, [dispatch]);
 
-  return <CreateWorkspaceInternal />;
+  return <WorkspaceWizard />;
 };
 
 export const CreateWorkspaceFromPackage = () => {

@@ -98,6 +98,12 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
       try {
         await createHandler(message.data);
         createSucceeded = true;
+      } catch (error) {
+        panel.webview.postMessage({
+          command: createCommand,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
       } finally {
         if (!createSucceeded) {
           isCreateInProgress = false;
@@ -112,6 +118,12 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
         onResolve(true);
       }
       panel.dispose();
+    },
+
+    [ExtensionCommand.close_panel]: async () => {
+      if (!isCreateInProgress) {
+        panel.dispose();
+      }
     },
 
     [ExtensionCommand.select_folder]: async () => {

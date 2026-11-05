@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import extensionManifest from '../../../package.json';
 
 // Hoisted mock variables for registration functions
 const {
@@ -200,6 +201,65 @@ describe('registerCommands', () => {
     registerCommands();
     const registeredCommands = mockRegisterCommand.mock.calls.map((call: any[]) => call[0]);
     expect(registeredCommands).toContain('azureLogicAppsStandard.addCustomCode');
+  });
+
+  describe('workspace entry points', () => {
+    it('contributes workspace-wide project and deployment actions in Workspace Actions', () => {
+      expect(extensionManifest.contributes.menus['azureLogicAppsStandard.submenus.workspaceActions'].map((entry) => entry.command)).toEqual(
+        [
+          'azureLogicAppsStandard.createWorkspace',
+          'azureLogicAppsStandard.createProject',
+          'azureLogicAppsStandard.deploy',
+          'azureLogicAppsStandard.generateDeploymentScripts',
+          'azureLogicAppsStandard.switchToDotnetProject',
+          'azureLogicAppsStandard.useSQLStorage',
+          'azureLogicAppsStandard.exportLogicApp',
+          'azureLogicAppsStandard.cloudToLocal',
+        ]
+      );
+    });
+
+    it('keeps workspace-wide commands out of project-folder menus', () => {
+      const explorerCommands = extensionManifest.contributes.menus['explorer/context'].map((entry) => entry.command);
+      for (const command of ['createProject', 'deploy', 'generateDeploymentScripts', 'switchToDotnetProject', 'useSQLStorage']) {
+        expect(explorerCommands).not.toContain(`azureLogicAppsStandard.${command}`);
+      }
+    });
+
+    it('contributes only project-specific actions to Logic App folders', () => {
+      const folderActions = extensionManifest.contributes.menus['explorer/context'].filter((entry) =>
+        entry.when.includes('resourcePath in azureLogicAppsStandard.logicAppProjectFolders')
+      );
+      expect(folderActions.map((entry) => entry.command)).toEqual([
+        'azureLogicAppsStandard.createWorkflow',
+        'azureLogicAppsStandard.addCustomCode',
+        'azureLogicAppsStandard.switchDebugMode',
+      ]);
+      expect(folderActions.every((entry) => entry.when.includes('explorerResourceIsFolder'))).toBe(true);
+    });
+
+    it('does not contribute the standalone Data Mapper view, welcome buttons or title action', () => {
+      expect(extensionManifest.contributes).not.toHaveProperty(
+        'views.azure',
+        expect.arrayContaining([expect.objectContaining({ id: 'azDataMapper' })])
+      );
+      expect(extensionManifest.contributes).not.toHaveProperty(
+        'viewsWelcome',
+        expect.arrayContaining([expect.objectContaining({ view: 'azDataMapper' })])
+      );
+      expect(extensionManifest.contributes.menus['view/title'].some((entry) => entry.when.includes('azDataMapper'))).toBe(false);
+    });
+
+    it('preserves the workflow and mapper commands for contextual and project-creation entry points', () => {
+      const commands = extensionManifest.contributes.commands.map((entry) => entry.command);
+      expect(commands).toEqual(
+        expect.arrayContaining([
+          'azureLogicAppsStandard.createWorkflow',
+          'azureLogicAppsStandard.dataMap.createDataMap',
+          'azureLogicAppsStandard.dataMap.loadDataMapFile',
+        ])
+      );
+    });
   });
 
   describe('error handler', () => {

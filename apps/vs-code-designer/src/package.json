@@ -403,20 +403,6 @@
         "label": "Azure Logic Apps"
       }
     ],
-    "views": {
-      "azure": [
-        {
-          "id": "azDataMapper",
-          "name": "Data Mapper"
-        }
-      ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "azDataMapper",
-        "contents": "[Create data map](command:azureLogicAppsStandard.dataMap.createDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
-      }
-    ],
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
@@ -425,17 +411,26 @@
         },
         {
           "command": "azureLogicAppsStandard.createProject",
-          "group": "1_create@2",
-          "when": "azureLogicAppsStandard.hasProject"
-        },
-        {
-          "command": "azureLogicAppsStandard.createWorkflow",
-          "group": "1_create@3",
-          "when": "azureLogicAppsStandard.hasProject"
+          "group": "1_create@2"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
           "group": "2_deploy@1",
+          "when": "azureLogicAppsStandard.hasProject"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "group": "2_deploy@2",
+          "when": "azureLogicAppsStandard.hasProject"
+        },
+        {
+          "command": "azureLogicAppsStandard.switchToDotnetProject",
+          "group": "2_project@1",
+          "when": "azureLogicAppsStandard.hasProject"
+        },
+        {
+          "command": "azureLogicAppsStandard.useSQLStorage",
+          "group": "2_project@2",
           "when": "azureLogicAppsStandard.hasProject"
         },
         {
@@ -452,11 +447,6 @@
           "submenu": "azureLogicAppsStandard.submenus.workspaceActions",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.dataMap.createDataMap",
-          "when": "view == azDataMapper",
-          "group": "navigation@1"
         }
       ],
       "view/item/context": [
@@ -683,33 +673,13 @@
       ],
       "explorer/context": [
         {
-          "command": "azureLogicAppsStandard.dataMap.createDataMap",
-          "when": "azureLogicAppsStandard.hasProject && resourceFilename in azureLogicAppsStandard.dataMap.dmFolders",
-          "group": "navigation"
-        },
-        {
-          "command": "azureLogicAppsStandard.deploy",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsFolder == true",
-          "group": "zzz_LogicApptools@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
-          "group": "zzz_LogicApptools@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.createProject",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
-          "group": "zzz_LogicApptools@1"
-        },
-        {
           "command": "azureLogicAppsStandard.createWorkflow",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.addCustomCode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -738,24 +708,14 @@
           "group": "navigation@3"
         },
         {
-          "command": "azureLogicAppsStandard.switchToDotnetProject",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
-          "group": "zzz_LogicApptools@3"
-        },
-        {
           "command": "azureLogicAppsStandard.reviewValidation",
           "when": "azureLogicAppsStandard.hasProject && resourceDirname=~/\\.logs\\/export/ && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.switchDebugMode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "explorerResourceIsFolder && resourcePath in azureLogicAppsStandard.logicAppProjectFolders",
           "group": "zzz_LogicApptools@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.useSQLStorage",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
-          "group": "zzz_LogicApptools@3"
         },
         {
           "command": "azureLogicAppsStandard.syncCloudSettings",

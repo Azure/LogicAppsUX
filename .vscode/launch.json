@@ -10,7 +10,7 @@
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
       "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
-      "preLaunchTask": "npm: build:extension",
+      "preLaunchTask": "Standard Designer: Build Extension",
       "env": {
         "DEBUGTELEMETRY": "v",
         "LSP_SERVER_DEV_PATH": "/Users/carloscastro/Documents/Dev/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"

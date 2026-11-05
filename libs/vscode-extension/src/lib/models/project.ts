@@ -107,6 +107,16 @@ export interface IWebviewProjectContext extends IActionContext {
   functionNamespace?: string;
   shouldCreateLogicAppProject: boolean;
   isDevContainerProject: boolean;
+  selectedProjects?: {
+    logicApp: boolean;
+    customCode: boolean;
+    dataMap: boolean;
+  };
+  logicAppFolderName?: string;
+  customCodeType?: 'customCode' | 'rulesEngine';
+  dataMapName?: string;
+  dataMapFolderName?: string;
+  openBehavior?: OpenBehavior;
 }
 
 export const OpenBehavior = {

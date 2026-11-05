@@ -57,6 +57,401 @@ export const commonMessages = defineMessages({
   },
 });
 
+export const workspaceWizardMessages = defineMessages({
+  TITLE: {
+    id: 'K/3J/c',
+    defaultMessage: 'Create Logic Apps Workspace',
+    description: 'Text for title in the Logic Apps workspace creation wizard.',
+  },
+  BRAND: { id: '3b7t70', defaultMessage: 'AZURE LOGIC APPS', description: 'Text for brand in the Logic Apps workspace creation wizard.' },
+  SETUP: { id: 'CFEJl5', defaultMessage: 'WORKSPACE SETUP', description: 'Text for setup in the Logic Apps workspace creation wizard.' },
+  WORKSPACE: { id: 'woZhyT', defaultMessage: 'Workspace', description: 'Text for workspace in the Logic Apps workspace creation wizard.' },
+  LOGIC_APP: { id: 'qPFaWo', defaultMessage: 'Logic App', description: 'Text for logic app in the Logic Apps workspace creation wizard.' },
+  CUSTOM_CODE: {
+    id: 'DCuUfg',
+    defaultMessage: 'Custom Code',
+    description: 'Text for custom code in the Logic Apps workspace creation wizard.',
+  },
+  DATA_MAP: { id: 'LoS7eD', defaultMessage: 'Data Map', description: 'Text for data map in the Logic Apps workspace creation wizard.' },
+  REVIEW: { id: 'rCSUKY', defaultMessage: 'Review', description: 'Text for review in the Logic Apps workspace creation wizard.' },
+  NEW_WORKSPACE: {
+    id: 'jnXbTL',
+    defaultMessage: 'New workspace',
+    description: 'Text for new workspace in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_TITLE: {
+    id: '0jD94+',
+    defaultMessage: 'Set up your workspace',
+    description: 'Text for workspace title in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_DESCRIPTION: {
+    id: 'ypE176',
+    defaultMessage: 'Choose a location and the projects to include. Configure each project in its own step.',
+    description: 'Text for workspace description in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_DETAILS: {
+    id: '+bFo6M',
+    defaultMessage: 'Workspace details',
+    description: 'Text for workspace details in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_NAME: {
+    id: 'R6l0Lf',
+    defaultMessage: 'Workspace name',
+    description: 'Text for workspace name in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_NAME_HINT: {
+    id: '+ZrMJc',
+    defaultMessage: 'Creates a folder with this name.',
+    description: 'Text for workspace name hint in the Logic Apps workspace creation wizard.',
+  },
+  PARENT_FOLDER: {
+    id: 'fHRupF',
+    defaultMessage: 'Workspace parent folder',
+    description: 'Text for parent folder in the Logic Apps workspace creation wizard.',
+  },
+  PARENT_FOLDER_HINT: {
+    id: '/AcsLT',
+    defaultMessage: 'Your workspace will be created inside this folder.',
+    description: 'Text for parent folder hint in the Logic Apps workspace creation wizard.',
+  },
+  PROJECTS: {
+    id: 'D5lSrV',
+    defaultMessage: 'Projects to include',
+    description: 'Text for projects in the Logic Apps workspace creation wizard.',
+  },
+  PROJECTS_DESCRIPTION: {
+    id: 'WW3sY+',
+    defaultMessage: 'Select at least one. Custom Code requires a Logic App. Data Map can be included independently.',
+    description: 'Text for projects description in the Logic Apps workspace creation wizard.',
+  },
+  LOGIC_APP_DESCRIPTION: {
+    id: 'E2kDmH',
+    defaultMessage: 'Workflows and connections. Choose Codeless or Codeful in the next step.',
+    description: 'Text for logic app description in the Logic Apps workspace creation wizard.',
+  },
+  CODE_DESCRIPTION: {
+    id: '5GCSPC',
+    defaultMessage: 'Extend your workflows with Custom Code or Rules Engine.',
+    description: 'Text for code description in the Logic Apps workspace creation wizard.',
+  },
+  CUSTOM_CODE_PROJECT_DESCRIPTION: {
+    id: 'qZHQ8N',
+    defaultMessage: 'Add a Logic Apps project with custom code.',
+    description: 'Text for custom code project description in the Logic Apps workspace creation wizard.',
+  },
+  MAP_DESCRIPTION: {
+    id: 'TuXL+7',
+    defaultMessage: 'Map data between source and target schemas.',
+    description: 'Text for map description in the Logic Apps workspace creation wizard.',
+  },
+  PROJECTS_INFO: {
+    id: 'anyCcB',
+    defaultMessage:
+      'Your path is based on the selected projects. Logic App is configured first because Codeful can restrict optional projects.',
+    description: 'Text for projects info in the Logic Apps workspace creation wizard.',
+  },
+  AT_LEAST_ONE: {
+    id: 'uz7oS/',
+    defaultMessage: 'Select at least one project.',
+    description: 'Text for at least one in the Logic Apps workspace creation wizard.',
+  },
+  LOCATION: {
+    id: 'BRZV8q',
+    defaultMessage: 'Workspace location',
+    description: 'Text for location in the Logic Apps workspace creation wizard.',
+  },
+  LOGIC_APP_TITLE: {
+    id: '+2nzLh',
+    defaultMessage: 'Configure your Logic App',
+    description: 'Text for logic app title in the Logic Apps workspace creation wizard.',
+  },
+  LOGIC_APP_PROJECT: {
+    id: 'JsYfgQ',
+    defaultMessage: 'Logic App project',
+    description: 'Text for logic app project in the Logic Apps workspace creation wizard.',
+  },
+  STANDARD: { id: 'Upc8K9', defaultMessage: 'Standard', description: 'Text for standard in the Logic Apps workspace creation wizard.' },
+  STANDARD_DESCRIPTION: {
+    id: '1bq+in',
+    defaultMessage: 'Designer-based workflows',
+    description: 'Text for standard description in the Logic Apps workspace creation wizard.',
+  },
+  CODEFUL: { id: '3fO5Zx', defaultMessage: 'Codeful', description: 'Text for codeful in the Logic Apps workspace creation wizard.' },
+  CODEFUL_DESCRIPTION: {
+    id: 'Bxb90v',
+    defaultMessage: 'Code-first workflows',
+    description: 'Text for codeful description in the Logic Apps workspace creation wizard.',
+  },
+  LOGIC_APP_NAME: {
+    id: '3uePSB',
+    defaultMessage: 'Logic App name',
+    description: 'Text for logic app name in the Logic Apps workspace creation wizard.',
+  },
+  LOGIC_APP_FOLDER: {
+    id: 'HMU0uz',
+    defaultMessage: 'Logic App folder name',
+    description: 'Text for logic app folder in the Logic Apps workspace creation wizard.',
+  },
+  INITIAL_WORKFLOW: {
+    id: '5kFl9j',
+    defaultMessage: 'Workflow details',
+    description: 'Text for initial workflow in the Logic Apps workspace creation wizard.',
+  },
+  WORKFLOW_NAME: {
+    id: 'yta8z4',
+    defaultMessage: 'Workflow name',
+    description: 'Text for workflow name in the Logic Apps workspace creation wizard.',
+  },
+  WORKFLOW_TYPE: {
+    id: '3sYK0B',
+    defaultMessage: 'Workflow type',
+    description: 'Text for workflow type in the Logic Apps workspace creation wizard.',
+  },
+  STATEFUL: { id: 'GO+YhP', defaultMessage: 'Stateful', description: 'Text for stateful in the Logic Apps workspace creation wizard.' },
+  STATELESS: { id: 'hlT1ec', defaultMessage: 'Stateless', description: 'Text for stateless in the Logic Apps workspace creation wizard.' },
+  INITIAL_TRIGGER: {
+    id: 'Es5qTk',
+    defaultMessage: 'Initial trigger',
+    description: 'Text for initial trigger in the Logic Apps workspace creation wizard.',
+  },
+  HTTP: { id: '0Au7qU', defaultMessage: 'HTTP request', description: 'Text for http in the Logic Apps workspace creation wizard.' },
+  CODE_TITLE: {
+    id: 'zXs6mE',
+    defaultMessage: 'Configure Custom Code',
+    description: 'Text for code title in the Logic Apps workspace creation wizard.',
+  },
+  RULES_TITLE: {
+    id: 'Lq5++l',
+    defaultMessage: 'Configure Rules Engine',
+    description: 'Text for rules title in the Logic Apps workspace creation wizard.',
+  },
+  RULES_INTRO: {
+    id: 'i8+yok',
+    defaultMessage: 'The Rules Engine subtype replaces Custom Code. Your Logic App and Data Map selections are unchanged.',
+    description: 'Text for rules intro in the Logic Apps workspace creation wizard.',
+  },
+  SUBTYPE: {
+    id: 'hh0TZe',
+    defaultMessage: 'Project subtype',
+    description: 'Text for subtype in the Logic Apps workspace creation wizard.',
+  },
+  SUBTYPE_DESCRIPTION: {
+    id: 'hZLXNB',
+    defaultMessage: 'Choose one. Custom Code and Rules Engine cannot both be included.',
+    description: 'Text for subtype description in the Logic Apps workspace creation wizard.',
+  },
+  CODE_SUBTYPE_DESCRIPTION: {
+    id: 'uZ6KxO',
+    defaultMessage: 'Write your own functions',
+    description: 'Text for code subtype description in the Logic Apps workspace creation wizard.',
+  },
+  RULES: { id: '9duwB8', defaultMessage: 'Rules Engine', description: 'Text for rules in the Logic Apps workspace creation wizard.' },
+  RULES_DESCRIPTION: {
+    id: 'MylKNN',
+    defaultMessage: 'Evaluate business rules',
+    description: 'Text for rules description in the Logic Apps workspace creation wizard.',
+  },
+  CODE_CONFIG: {
+    id: 'iRbyY6',
+    defaultMessage: 'Custom code configuration',
+    description: 'Text for code config in the Logic Apps workspace creation wizard.',
+  },
+  RULES_CONFIG: {
+    id: '4EHN8a',
+    defaultMessage: 'Rules engine configuration',
+    description: 'Text for rules config in the Logic Apps workspace creation wizard.',
+  },
+  RULES_FOLDER: {
+    id: 'jCLxAS',
+    defaultMessage: 'Rules engine folder name',
+    description: 'Text for rules folder in the Logic Apps workspace creation wizard.',
+  },
+  NET_VERSION: {
+    id: 'PqQDI5',
+    defaultMessage: '.NET version',
+    description: 'Text for net version in the Logic Apps workspace creation wizard.',
+  },
+  NET8: { id: 'Qzz2oM', defaultMessage: '.NET 8 (LTS)', description: 'Text for net8 in the Logic Apps workspace creation wizard.' },
+  NETFX: {
+    id: 'Tm7Ru7',
+    defaultMessage: '.NET Framework 4.7.2',
+    description: 'Text for netfx in the Logic Apps workspace creation wizard.',
+  },
+  CODE_FOLDER: {
+    id: 'cyUG8h',
+    defaultMessage: 'Custom code folder name',
+    description: 'Text for code folder in the Logic Apps workspace creation wizard.',
+  },
+  NAMESPACE: {
+    id: 'ogG11Z',
+    defaultMessage: 'Function namespace',
+    description: 'Text for namespace in the Logic Apps workspace creation wizard.',
+  },
+  NAMESPACE_HINT: {
+    id: 'UcM+R3',
+    defaultMessage: 'The namespace used by the generated function class.',
+    description: 'Text for namespace hint in the Logic Apps workspace creation wizard.',
+  },
+  FUNCTION: {
+    id: 'kWyXb9',
+    defaultMessage: 'Function name',
+    description: 'Text for function in the Logic Apps workspace creation wizard.',
+  },
+  GENERATED_FUNCTION: {
+    id: 'oFheA5',
+    defaultMessage: 'Generated function',
+    description: 'Text for generated function in the Logic Apps workspace creation wizard.',
+  },
+  MAP_TITLE: {
+    id: 'KntvxN',
+    defaultMessage: 'Configure your Data Map',
+    description: 'Text for map title in the Logic Apps workspace creation wizard.',
+  },
+  MAP_INTRO: {
+    id: 'IrK+oj',
+    defaultMessage: 'Create one Data Map project alongside your selected projects.',
+    description: 'Text for map intro in the Logic Apps workspace creation wizard.',
+  },
+  MAP_PROJECT: {
+    id: 'CYEXnA',
+    defaultMessage: 'Data Map project',
+    description: 'Text for map project in the Logic Apps workspace creation wizard.',
+  },
+  MAP_PROJECT_DESCRIPTION: {
+    id: 'Ye/Sne',
+    defaultMessage: 'Use a slash-separated project path to create nested folders, then name the map file created inside it.',
+    description: 'Text for map project description in the Logic Apps workspace creation wizard.',
+  },
+  MAP_NAME: { id: 'LMvnRY', defaultMessage: 'Project name', description: 'Text for map name in the Logic Apps workspace creation wizard.' },
+  MAP_PROJECT_HINT: {
+    id: 'K6RlKh',
+    defaultMessage: 'Use slashes to create nested folders, for example DataMaps/Orders.',
+    description: 'Text for map project hint in the Logic Apps workspace creation wizard.',
+  },
+  MAP_FILE_NAME: {
+    id: '8n8WrW',
+    defaultMessage: 'Map name',
+    description: 'Text for map file name in the Logic Apps workspace creation wizard.',
+  },
+  MAP_FILE_HINT: {
+    id: 'QnYcBj',
+    defaultMessage: '{mapName}.btm will be created inside the project folder.',
+    description: 'Text for map file hint in the Logic Apps workspace creation wizard.',
+  },
+  MAP_STRUCTURE: {
+    id: 'I1DfJL',
+    defaultMessage: 'This creates the Data Map project structure. Add source and target schemas after the workspace opens.',
+    description: 'Text for map structure in the Logic Apps workspace creation wizard.',
+  },
+  INVALID_PROJECT_PATH: {
+    id: '1SOu/D',
+    defaultMessage: 'Enter a relative project path with valid folder names separated by slashes.',
+    description: 'Text for invalid project path in the Logic Apps workspace creation wizard.',
+  },
+  REVIEW_TITLE: {
+    id: 'I0P0Dc',
+    defaultMessage: 'Review and create',
+    description: 'Text for review title in the Logic Apps workspace creation wizard.',
+  },
+  PREVIEW: {
+    id: 'd2yPsF',
+    defaultMessage: 'Workspace preview',
+    description: 'Text for preview in the Logic Apps workspace creation wizard.',
+  },
+  WILL_CREATE: {
+    id: 'VGNWua',
+    defaultMessage: 'What will be created',
+    description: 'Text for will create in the Logic Apps workspace creation wizard.',
+  },
+  EDIT: { id: 'p/iCl2', defaultMessage: 'Edit', description: 'Text for edit in the Logic Apps workspace creation wizard.' },
+  EDIT_WORKSPACE: {
+    id: 'CKUPIq',
+    defaultMessage: 'Edit workspace',
+    description: 'Text for edit workspace in the Logic Apps workspace creation wizard.',
+  },
+  OPEN_NEW: {
+    id: '4K7Ul9',
+    defaultMessage: 'Open workspace in a new window after creation',
+    description: 'Text for open new in the Logic Apps workspace creation wizard.',
+  },
+  LOCAL_ONLY: {
+    id: 'R262Lo',
+    defaultMessage: 'Local files only. No Azure resources will be deployed.',
+    description: 'Text for local only in the Logic Apps workspace creation wizard.',
+  },
+  NO_SIGN_IN: {
+    id: 'JGzv8C',
+    defaultMessage: 'No Azure sign-in required',
+    description: 'Text for no sign in in the Logic Apps workspace creation wizard.',
+  },
+  REQUIRED: {
+    id: 'd8nG8Z',
+    defaultMessage: '* Required fields',
+    description: 'Text for required in the Logic Apps workspace creation wizard.',
+  },
+  CREATE: { id: 'xrYrZI', defaultMessage: 'Create workspace', description: 'Text for create in the Logic Apps workspace creation wizard.' },
+  CREATING: {
+    id: 'G6zwWs',
+    defaultMessage: 'Creating workspace...',
+    description: 'Text for creating in the Logic Apps workspace creation wizard.',
+  },
+  COMPLETE: {
+    id: 'il4FDM',
+    defaultMessage: 'Workspace created',
+    description: 'Text for complete in the Logic Apps workspace creation wizard.',
+  },
+  INVALID_NAME: {
+    id: '/hDXRt',
+    defaultMessage: 'Use a name beginning with a letter, followed by letters, numbers, hyphens or underscores.',
+    description: 'Text for invalid name in the Logic Apps workspace creation wizard.',
+  },
+  INVALID_IDENTIFIER: {
+    id: 'CDenuf',
+    defaultMessage: 'Enter a valid C# identifier.',
+    description: 'Text for invalid identifier in the Logic Apps workspace creation wizard.',
+  },
+  INVALID_NAMESPACE: {
+    id: 'MozqTx',
+    defaultMessage: 'Enter a valid C# namespace, such as Contoso.Orders.',
+    description: 'Text for invalid namespace in the Logic Apps workspace creation wizard.',
+  },
+  FOLDER_COLLISION: {
+    id: 'fHysDm',
+    defaultMessage: 'Each selected project must have a different folder name.',
+    description: 'Text for folder collision in the Logic Apps workspace creation wizard.',
+  },
+  PATH_INVALID: {
+    id: 'X/nOoX',
+    defaultMessage: 'Select an existing parent folder.',
+    description: 'Text for path invalid in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_EXISTS: {
+    id: '58z0Kh',
+    defaultMessage: 'This workspace location already exists.',
+    description: 'Text for workspace exists in the Logic Apps workspace creation wizard.',
+  },
+  WORKSPACE_NESTED: {
+    id: 'j5n9Er',
+    defaultMessage: 'Choose a location outside the currently open project.',
+    description: 'Text for workspace nested in the Logic Apps workspace creation wizard.',
+  },
+  CHECKING: {
+    id: '/DK1LY',
+    defaultMessage: 'Checking workspace location...',
+    description: 'Text for checking in the Logic Apps workspace creation wizard.',
+  },
+  CODEFUL_LIMIT: {
+    id: 'PtJlWk',
+    defaultMessage: 'Codeful projects require the configured runtime dependencies and use the Stateful HTTP template.',
+    description: 'Text for codeful limit in the Logic Apps workspace creation wizard.',
+  },
+  RULES_LIMIT: {
+    id: 'esclZG',
+    defaultMessage: 'Rules Engine requires .NET Framework 4.7.2 on Windows.',
+    description: 'Text for rules limit in the Logic Apps workspace creation wizard.',
+  },
+});
+
 export const workspaceMessages = defineMessages({
   WORKFLOW_CONFIGURATION: {
     defaultMessage: 'Workflow configuration',

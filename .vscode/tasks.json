@@ -2,6 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Standard Designer: Build Extension",
+      "type": "shell",
+      "command": "pnpm exec turbo run build:extension --filter=vscode-react --ui=stream --output-logs=errors-only",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
       "type": "npm",
       "script": "watch",
       "problemMatcher": "$tsc-watch",

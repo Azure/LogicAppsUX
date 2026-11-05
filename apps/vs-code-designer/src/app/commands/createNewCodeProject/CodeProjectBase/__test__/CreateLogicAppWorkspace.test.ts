@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock } from 'vitest';
-import { WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { OpenBehavior, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -52,13 +52,18 @@ vi.mock('fs-extra', () => ({
   writeJson: vi.fn(),
   readJson: vi.fn(),
   pathExists: vi.fn(),
+  stat: vi.fn(),
+  existsSync: vi.fn(),
   writeFile: vi.fn(),
   readFile: vi.fn(),
   copyFile: vi.fn(),
+  mkdir: vi.fn(),
+  remove: vi.fn(),
   mkdirSync: vi.fn(),
 }));
 
-vi.mock('path', () => ({
+vi.mock('path', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('path')>()),
   join: vi.fn(),
   resolve: vi.fn(),
 }));
@@ -66,6 +71,7 @@ vi.mock('path', () => ({
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   isManagedIdentityAuthEnabled: vi.fn(() => true),
+  useNodeDesignTimeWorker: vi.fn(() => false),
 }));
 
 // Import actual path for test setup (not affected by mock)
@@ -752,6 +758,7 @@ describe('createLogicAppWorkspace', () => {
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
     vi.mocked(fse.writeFile).mockResolvedValue(undefined);
     vi.mocked(fse.mkdirSync).mockReturnValue(undefined);
+    vi.mocked(fse.stat).mockResolvedValue({ isDirectory: () => true } as any);
 
     // Note: Cannot spy on functions called internally within CreateLogicAppWorkspace module:
     // - createLogicAppAndWorkflow, createLocalConfigurationFiles, createRulesFiles, createLibFolder
@@ -778,6 +785,300 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 
     expect(funcVersionModule.addLocalFuncTelemetry).toHaveBeenCalledWith(mockContext);
+  });
+
+  it.each([
+    { selectedProjects: { logicApp: false, customCode: false, dataMap: false } },
+    { selectedProjects: { logicApp: true, customCode: false, dataMap: false }, workspaceName: '..' },
+    { selectedProjects: { logicApp: true, customCode: false, dataMap: false }, logicAppFolderName: '../outside' },
+    { selectedProjects: { logicApp: true, customCode: false, dataMap: false }, workflowName: '.' },
+    { selectedProjects: { logicApp: false, customCode: true, dataMap: false }, targetFramework: 'net6.0' },
+    {
+      selectedProjects: { logicApp: true, customCode: false, dataMap: true },
+      logicAppFolderName: 'same',
+      dataMapFolderName: 'SAME',
+      dataMapName: 'Maps',
+    },
+  ])('rejects invalid selected-project options before writes: %j', async (changes) => {
+    await expect(
+      CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        {
+          ...mockOptionsLogicApp,
+          workspaceProjectPath: { fsPath: actualPath.resolve('test', 'workspace') },
+          ...changes,
+        },
+        false
+      )
+    ).rejects.toThrow();
+    expect(fse.ensureDir).not.toHaveBeenCalled();
+    expect(fse.writeJson).not.toHaveBeenCalled();
+    expect(fse.writeFile).not.toHaveBeenCalled();
+    expect(fsUtils.writeFormattedJson).not.toHaveBeenCalled();
+  });
+
+  describe('independent selected projects', () => {
+    beforeEach(() => {
+      (vscode as any).extensions = {
+        getExtension: vi.fn().mockReturnValue({
+          packageJSON: { contributes: { commands: [{ command: 'biztalkDataMapper.createProject' }] } },
+          activate: vi.fn().mockResolvedValue(undefined),
+        }),
+      };
+    });
+
+    const selectedOptions = (selectedProjects: IWebviewProjectContext['selectedProjects']) => ({
+      ...mockOptionsLogicApp,
+      workspaceProjectPath: { fsPath: actualPath.resolve('test', 'workspace') },
+      selectedProjects,
+      functionFolderName: undefined,
+      targetFramework: TargetFramework.Net8,
+      dataMapName: 'Mappings',
+    });
+
+    it.each([
+      [true, false, false],
+      [false, true, false],
+      [false, false, true],
+      [true, true, false],
+      [true, false, true],
+      [false, true, true],
+      [true, true, true],
+    ])('creates exactly the selected projects: logicApp=%s customCode=%s dataMap=%s', async (logicApp, customCode, dataMap) => {
+      const options = selectedOptions({ logicApp, customCode, dataMap });
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, options, false);
+      const folders = vi.mocked(fse.writeJson).mock.calls[0][1].folders;
+      expect(folders).toEqual([
+        ...(logicApp ? [{ name: 'TestLogicApp', path: './TestLogicApp' }] : []),
+        ...(customCode ? [{ name: 'custom-code', path: './custom-code' }] : []),
+        ...(dataMap ? [{ name: 'data-map', path: './data-map' }] : []),
+      ]);
+      expect(vi.mocked(CreateFunctionAppFiles).mock.instances).toHaveLength(customCode ? 1 : 0);
+      expect(artifactsModule.createArtifactsFolder).toHaveBeenCalledTimes(logicApp ? 1 : 0);
+      const root = actualPath.join(options.workspaceProjectPath.fsPath, options.workspaceName);
+      expect(fse.mkdir).toHaveBeenCalledWith(root);
+      if (dataMap) {
+        expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
+          'biztalkDataMapper.createProject',
+          expect.objectContaining({ fsPath: actualPath.join(root, 'data-map') }),
+          'Mappings'
+        );
+      }
+      const workflowWrites = vi.mocked(fsUtils.writeFormattedJson).mock.calls.filter(([file]) => String(file).endsWith('workflow.json'));
+      expect(workflowWrites).toHaveLength(logicApp ? 1 : 0);
+      if (logicApp) {
+        expect(workflowWrites[0][1]).toMatchObject({
+          kind: 'Stateful',
+          definition: { actions: {}, triggers: { When_a_HTTP_request_is_received: { type: 'Request', kind: 'Http' } } },
+        });
+      } else {
+        expect(CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents).not.toHaveBeenCalled();
+        expect(fsUtils.writeFormattedJson).not.toHaveBeenCalled();
+        expect(fse.mkdirSync).not.toHaveBeenCalled();
+      }
+      expect(cloudToLocalUtilsModule.unzipLogicAppPackageIntoWorkspace).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      [undefined, true],
+      [OpenBehavior.openInNewWindow, true],
+      [OpenBehavior.openInCurrentWindow, false],
+    ])('honors openBehavior=%s', async (openBehavior, forceNewWindow) => {
+      const options = { ...selectedOptions({ logicApp: false, customCode: false, dataMap: true }), openBehavior };
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, options, false);
+      expect(vscode.commands.executeCommand).toHaveBeenCalledWith('vscode.openFolder', expect.anything(), forceNewWindow);
+    });
+
+    it('does not open a window for DontOpen', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        {
+          ...selectedOptions({ logicApp: false, customCode: false, dataMap: true }),
+          openBehavior: OpenBehavior.dontOpen,
+        },
+        false
+      );
+      expect(vi.mocked(vscode.commands.executeCommand).mock.calls.filter(([command]) => command === 'vscode.openFolder')).toHaveLength(0);
+    });
+
+    it('uses the independent Rules Engine subtype and configured folder names', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        {
+          ...selectedOptions({ logicApp: true, customCode: true, dataMap: false }),
+          logicAppFolderName: 'app-src',
+          functionFolderName: 'rules-src',
+          customCodeType: ProjectType.rulesEngine,
+          targetFramework: TargetFramework.NetFx,
+        },
+        false
+      );
+      expect(CreateFunctionAppFiles.prototype.setup).toHaveBeenCalledWith(
+        expect.objectContaining({
+          projectType: ProjectType.rulesEngine,
+          logicAppName: 'app-src',
+          functionFolderName: 'rules-src',
+          targetFramework: TargetFramework.NetFx,
+          functionAppName: 'TestFunction',
+          functionAppNamespace: 'TestNamespace',
+        })
+      );
+      expect(fse.writeFile).toHaveBeenCalledWith(
+        expect.stringContaining(actualPath.join('app-src', 'Artifacts', 'Rules', 'SampleRuleSet.xml')),
+        expect.anything()
+      );
+    });
+
+    it('targets its own folder when Custom Code is selected without a Logic App', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        selectedOptions({ logicApp: false, customCode: true, dataMap: false }),
+        false
+      );
+      expect(CreateFunctionAppFiles.prototype.setup).toHaveBeenCalledWith(expect.objectContaining({ logicAppName: 'custom-code' }));
+    });
+
+    it.each([
+      [{ logicAppName: '' }, 'logicAppName'],
+      [{ logicAppFolderName: '.' }, 'logicAppFolderName'],
+      [{ logicAppFolderName: 'CON.txt' }, 'logicAppFolderName'],
+      [{ functionFolderName: 'TestWorkspace.code-workspace' }, 'collide'],
+      [{ functionFolderName: 'custom.' }, 'functionFolderName'],
+      [{ functionName: 'class' }, 'C# identifier'],
+      [{ functionName: 'Program' }, 'C# identifier'],
+      [{ functionNamespace: 'Contoso.class' }, 'C# namespace'],
+      [{ customCodeType: 'functions' }, 'customCode or rulesEngine'],
+      [{ targetFramework: 'net9.0' }, 'targetFramework'],
+      [{ customCodeType: ProjectType.rulesEngine }, 'net472'],
+      [
+        { customCodeType: ProjectType.rulesEngine, targetFramework: TargetFramework.NetFx, functionName: 'ContosoPurchase' },
+        'sample class',
+      ],
+      [{ dataMapName: '' }, 'dataMapName'],
+      [{ dataMapFolderName: '..' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: '/outside' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'DataMaps/../outside' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'DataMaps//Orders' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'DataMaps\\Orders' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'C:/outside' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'DataMaps/CON' }, 'dataMapFolderName'],
+      [{ dataMapFolderName: 'TestLogicApp' }, 'distinct'],
+      [{ dataMapFolderName: 'TESTLOGICAPP/Maps' }, 'distinct'],
+      [{ dataMapFolderName: 'custom-code/Maps' }, 'distinct'],
+      [{ dataMapFolderName: 'TestWorkspace.code-workspace/Maps' }, 'collide'],
+      [{ workflowName: 'Artifacts' }, 'reserved project folder'],
+      [{ workflowType: 'unsupported-workflow-type' }, 'Select a Stateful'],
+      [{ logicAppType: ProjectType.customCode }, 'logicAppType'],
+      [{ logicAppType: ProjectType.codeful, workflowType: WorkflowType.statelessCodeful }, 'only the Stateful'],
+      [{ logicAppType: ProjectType.codeful, workflowName: 'Program' }, 'other than Program'],
+      [{ logicAppType: ProjectType.codeful, logicAppName: 'invalid-name' }, 'C# namespace'],
+      [{ openBehavior: OpenBehavior.addToWorkspace }, 'openBehavior'],
+      [{ isDevContainerProject: true }, 'Dev containers'],
+      [{ workspaceProjectPath: { fsPath: 'relative/path' } }, 'absolute local'],
+      [{ selectedProjects: { logicApp: true, dataMap: false } }, 'boolean'],
+      [{ selectedProjects: null }, 'Select at least one'],
+    ])('preflights invalid selected input %j', async (changes, message) => {
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          {
+            ...selectedOptions({ logicApp: true, customCode: true, dataMap: true }),
+            ...changes,
+          },
+          false
+        )
+      ).rejects.toThrow(message);
+      expect(fse.ensureDir).not.toHaveBeenCalled();
+      expect(fse.writeJson).not.toHaveBeenCalled();
+      expect(fse.writeFile).not.toHaveBeenCalled();
+      expect(fse.mkdirSync).not.toHaveBeenCalled();
+      expect(fsUtils.writeFormattedJson).not.toHaveBeenCalled();
+      expect(vscode.commands.executeCommand).not.toHaveBeenCalled();
+    });
+
+    it('rejects an existing destination before creating any files', async () => {
+      vi.mocked(fse.pathExists).mockResolvedValue(true);
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          selectedOptions({ logicApp: false, customCode: false, dataMap: true }),
+          false
+        )
+      ).rejects.toThrow('already exists');
+      expect(fse.ensureDir).not.toHaveBeenCalled();
+      expect(fse.writeJson).not.toHaveBeenCalled();
+    });
+
+    it('rejects a parent that is not a directory before writes', async () => {
+      vi.mocked(fse.stat).mockResolvedValue({ isDirectory: () => false } as any);
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          selectedOptions({ logicApp: false, customCode: false, dataMap: true }),
+          false
+        )
+      ).rejects.toThrow('existing directory');
+      expect(fse.ensureDir).not.toHaveBeenCalled();
+      expect(fse.writeJson).not.toHaveBeenCalled();
+    });
+
+    it('rejects an unconfigured codeful dependency path before writes', async () => {
+      await expect(
+        CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          {
+            ...selectedOptions({ logicApp: true, customCode: false, dataMap: false }),
+            logicAppType: ProjectType.codeful,
+          },
+          false
+        )
+      ).rejects.toThrow('runtime dependencies path');
+      expect(fse.ensureDir).not.toHaveBeenCalled();
+      expect(fse.writeJson).not.toHaveBeenCalled();
+    });
+
+    it.each([WorkflowType.stateful, WorkflowType.statefulCodeful, 'Stateful'])(
+      'normalizes codeful Stateful choice %s to the existing template',
+      async (workflowType) => {
+        vi.mocked(vscodeConfigModule.getGlobalSetting).mockReturnValue(actualPath.resolve('runtime'));
+        await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+          mockContext,
+          {
+            ...selectedOptions({ logicApp: true, customCode: false, dataMap: false }),
+            logicAppType: ProjectType.codeful,
+            workflowType,
+          },
+          false
+        );
+        expect(fse.readFile).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
+        expect(fse.readFile).not.toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
+        expect(fse.writeFile).toHaveBeenCalledWith(expect.stringContaining('TestWorkflow.cs'), expect.any(String));
+        expect(fsUtils.writeFormattedJson).not.toHaveBeenCalledWith(expect.stringContaining('workflow.json'), expect.anything());
+      }
+    );
+
+    it('keeps the legacy package route even if new selection fields are present', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        {
+          ...mockOptionsLogicApp,
+          selectedProjects: { logicApp: false, customCode: false, dataMap: true },
+        },
+        true
+      );
+      expect(cloudToLocalUtilsModule.unzipLogicAppPackageIntoWorkspace).toHaveBeenCalled();
+      expect(cloudToLocalUtilsModule.logicAppPackageProcessing).toHaveBeenCalled();
+      expect(vi.mocked(fse.writeJson).mock.calls[0][1].folders).toEqual([{ name: 'TestLogicApp', path: './TestLogicApp' }]);
+    });
+
+    it('keeps the legacy new-window default when selectedProjects is absent', async () => {
+      await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(
+        mockContext,
+        { ...mockOptionsLogicApp, openBehavior: OpenBehavior.openInCurrentWindow },
+        false
+      );
+      expect(vscode.commands.executeCommand).toHaveBeenCalledWith('vscode.openFolder', expect.anything(), true);
+    });
   });
 
   it('should create workspace structure with logic app and workflow', async () => {

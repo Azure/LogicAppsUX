@@ -14,6 +14,7 @@
   "categories": ["Other", "Visualization"],
   "keywords": ["biztalk", "mapper", "xslt", "xml", "schema", "data mapping", "functoids"],
   "main": "./out/extension.js",
+  "activationEvents": ["workspaceContains:**/*.btm", "workspaceContains:**/*.lml"],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -62,6 +63,10 @@
     ],
     "commands": [
       {
+        "command": "biztalkDataMapper.createProject",
+        "title": "Create Mapper Project for Workspace"
+      },
+      {
         "command": "biztalkDataMapper.showLogs",
         "title": "Logic App: Show Data Mapper Logs"
       },
@@ -88,8 +93,13 @@
       },
       {
         "command": "biztalkDataMapper.importExistingMap",
-        "title": "Import Existing Map",
+        "title": "Import Data Map",
         "icon": "$(go-to-file)"
+      },
+      {
+        "command": "biztalkDataMapper.publishArtifacts",
+        "title": "Publish Artifacts",
+        "icon": "$(cloud-upload)"
       },
       {
         "command": "biztalkDataMapper.addSchemaFile",
@@ -118,6 +128,12 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "biztalkDataMapper.createProject",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "biztalkDataMapper.newMap",
@@ -150,13 +166,18 @@
       "explorer/context": [
         {
           "command": "biztalkDataMapper.addDataMap",
-          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != __generated",
+          "when": "explorerResourceIsFolder && resourcePath in biztalkDataMapper.projectFolders",
           "group": "navigation@10"
         },
         {
           "command": "biztalkDataMapper.importExistingMap",
-          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != __generated",
+          "when": "explorerResourceIsFolder && resourcePath in biztalkDataMapper.projectFolders",
           "group": "navigation@11"
+        },
+        {
+          "command": "biztalkDataMapper.publishArtifacts",
+          "when": "explorerResourceIsFolder && resourcePath in biztalkDataMapper.projectFolders",
+          "group": "navigation@12"
         },
         {
           "command": "biztalkDataMapper.addSchemaFile",
