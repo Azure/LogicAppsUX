@@ -3,11 +3,17 @@ import * as path from 'path';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getExperimentalBundleRuntime, resetCachedBundleVersion } from '../bundleFeed';
 import { defaultExtensionBundlePathValue } from '../../../constants';
+import * as fse from 'fs-extra';
+import { getJsonFeed } from '../feed';
+import { downloadAndExtractDependency } from '../binaries';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { getLocalSettingsJson } from '../appSettings/localSettings';
 
 const state = vi.hoisted(() => ({
   enabled: true,
   pin: '',
   localPin: undefined as string | undefined,
+  localSource: undefined as string | undefined,
   folders: ['1.170.91', '1.197.13', '1.197.0.13'],
   subscriptions: [] as Array<{ dispose(): void }>,
   resolve: vi.fn(),
@@ -24,8 +30,14 @@ vi.mock('../binaries', () => ({ downloadAndExtractDependency: vi.fn() }));
 vi.mock('../feed', () => ({ getJsonFeed: vi.fn() }));
 vi.mock('../integrity', () => ({ fetchExpectedMd5: vi.fn(), isMissingPackageError: vi.fn() }));
 vi.mock('../appSettings/localSettings', () => ({
-  getLocalSettingsJson: vi.fn(async () => ({ Values: { AzureFunctionsJobHost_extensionBundle_version: state.localPin } })),
+  getLocalSettingsJson: vi.fn(async () => ({
+    Values: {
+      AzureFunctionsJobHost_extensionBundle_version: state.localPin,
+      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: state.localSource,
+    },
+  })),
 }));
+vi.mock('../verifyIsProject', () => ({ tryGetLogicAppProjectRoot: vi.fn() }));
 vi.mock('../vsCodeConfig/settings', () => ({
   getGlobalSetting: (key: string) => {
     if (key === 'useExperimentalExtensionBundle') {
@@ -38,6 +50,9 @@ vi.mock('fs-extra', () => ({
   pathExists: vi.fn(async () => true),
   readdirSync: vi.fn(() => state.folders),
   statSync: vi.fn(() => ({ isDirectory: () => true })),
+  outputFile: vi.fn(),
+  move: vi.fn(),
+  remove: vi.fn(),
 }));
 vi.mock('../../../extensionVariables', () => ({
   ext: {
@@ -55,6 +70,7 @@ beforeEach(() => {
   state.enabled = true;
   state.pin = '';
   state.localPin = undefined;
+  state.localSource = undefined;
   state.folders = ['1.170.91', '1.197.13', '1.197.0.13'];
   vi.stubEnv('AzureFunctionsJobHost_extensionBundle_version', undefined);
   state.resolve.mockImplementation(async (directory: string) => ({
@@ -105,6 +121,47 @@ describe('experimental launch selection', () => {
     vi.stubEnv('AzureFunctionsJobHost_extensionBundle_version', ' 1.197.0.13 ');
     await getExperimentalBundleRuntime(context, 'synthetic-project');
     expect(state.resolve).toHaveBeenCalledWith(path.join(defaultExtensionBundlePathValue, '1.197.0.13'));
+  });
+
+  it.each(['', '   '])('falls back to the configured pin for blank project pin %j', async (pin) => {
+    state.localPin = pin;
+    state.pin = '1.170.91';
+    await getExperimentalBundleRuntime(context, 'synthetic-project');
+    expect(state.resolve).toHaveBeenCalledWith(path.join(defaultExtensionBundlePathValue, '1.170.91'));
+  });
+
+  it.each(['', '   '])('falls back to the configured pin for blank inherited pin %j', async (pin) => {
+    vi.stubEnv('AzureFunctionsJobHost_extensionBundle_version', pin);
+    state.pin = '1.170.91';
+    await getExperimentalBundleRuntime(context, 'synthetic-project');
+    expect(state.resolve).toHaveBeenCalledWith(path.join(defaultExtensionBundlePathValue, '1.170.91'));
+  });
+
+  it('installs an uncached project pin from that projects source without resolving the first workspace', async () => {
+    state.localPin = '1.198.1';
+    state.localSource = 'https://project-source.invalid/public';
+    vi.mocked(fse.pathExists).mockResolvedValueOnce(false);
+    vi.mocked(getJsonFeed).mockResolvedValue(['1.198.1']);
+    vi.mocked(tryGetLogicAppProjectRoot).mockRejectedValue(new Error('Unrelated workspace must not be inspected'));
+
+    await getExperimentalBundleRuntime(context, 'second-project');
+
+    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, 'second-project');
+    expect(getJsonFeed).toHaveBeenCalledWith(
+      context,
+      'https://project-source.invalid/public/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/index.json'
+    );
+    expect(downloadAndExtractDependency).toHaveBeenCalledWith(
+      context,
+      expect.stringContaining('https://project-source.invalid/public/ExtensionBundles/'),
+      defaultExtensionBundlePathValue,
+      'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
+      '1.198.1',
+      undefined,
+      expect.any(Function)
+    );
+    expect(state.resolve).toHaveBeenCalledWith(path.join(defaultExtensionBundlePathValue, '1.198.1'));
   });
 
   it.each(['../escape', 'invalid', '0.0.0'])('rejects invalid pin %j before starting a metadata source', async (pin) => {

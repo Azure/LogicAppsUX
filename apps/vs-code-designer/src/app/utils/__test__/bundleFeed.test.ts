@@ -833,6 +833,38 @@ describe('downloadExtensionBundle readiness model', () => {
     expect(isExtensionBundleDownloadInFlight()).toBe(false);
   });
 
+  it('installs a second projects selected pin after waiting for another projects download', async () => {
+    await enableExperimental('', '');
+    const localSettingsModule = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsModule.getLocalSettingsJson).mockImplementation(async (_context, projectPath) => ({
+      Values: {
+        AzureFunctionsJobHost_extensionBundle_version: projectPath === 'first-project' ? '1.170.91' : '1.197.13',
+        FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://project-source.invalid/public',
+      },
+    }));
+    mockedGetJsonFeed.mockResolvedValue(['1.170.91', '1.197.13']);
+    let release: (() => void) | undefined;
+    mockedDownloadAndExtract.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = () => {
+            localVersions.add('1.170.91');
+            resolve({ actualSize: 1, actualMd5: 'download-md5' });
+          };
+        })
+    );
+
+    const first = downloadExtensionBundle(createMockContext(), 'first-project');
+    await vi.waitFor(() => expect(release).toBeTypeOf('function'));
+    const second = downloadExtensionBundle(createMockContext(), 'second-project');
+    release?.();
+    await Promise.all([first, second]);
+
+    expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(2);
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(true);
+  });
+
   const enableExperimental = async (pin = '', source = '') => {
     const settings = await import('../vsCodeConfig/settings');
     vi.mocked(settings.getGlobalSetting).mockImplementation((key) => {
@@ -888,6 +920,23 @@ describe('downloadExtensionBundle readiness model', () => {
     ).resolves.toBeUndefined();
 
     expect(completedVersions.has('1.197.13')).toBe(false);
+  });
+
+  it('prepares an explicit complete offline bundle without inspecting another project', async () => {
+    configureDisk(['1.170.91', '1.197.13'], []);
+    await enableExperimental('1.197.13', '');
+    const projectModule = await import('../verifyIsProject');
+    vi.mocked(projectModule.tryGetLogicAppProjectRoot).mockRejectedValue(new Error('Unrelated project picker'));
+
+    await expect(
+      ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true, version: '1.170.91' })
+    ).resolves.toBeUndefined();
+
+    expect(projectModule.tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(false);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
   it.each([
