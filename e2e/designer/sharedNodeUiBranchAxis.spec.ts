@@ -145,11 +145,11 @@ for (const { count, height } of [
       expect(geometry.action.x).toBeGreaterThan(geometry.tool.x + geometry.tool.width);
       expect(geometry.header.x).toBeGreaterThan(geometry.action.x + geometry.action.width);
       expect(geometry.agent.y).toBeGreaterThan(geometry.trigger.y + geometry.trigger.height);
-      expect(geometry.outputs.map(({ id }) => id)).toEqual(
-        [...Array.from({ length: count - 1 }, (_, index) => `Case_${index}`), 'Nested_switch-defaultCase'].map(
-          (id) => `Nested_switch-#scope::${id}`
-        )
-      );
+      // ReactFlow registers branch IDs on the owning node; only ELK's layout ports use the qualified node::branch namespace.
+      expect(geometry.outputs.map(({ id }) => id)).toEqual([
+        ...Array.from({ length: count - 1 }, (_, index) => `Case_${index}`),
+        'Nested_switch-defaultCase',
+      ]);
       for (const [index, port] of geometry.outputs.entries()) {
         const expectedY = geometry.header.y + (height / 2 - (count * 12 + (count - 1) * 8) / 2 + 6 + index * 20) * scale;
         expect(Math.abs(port.y - expectedY)).toBeLessThan(0.5);
