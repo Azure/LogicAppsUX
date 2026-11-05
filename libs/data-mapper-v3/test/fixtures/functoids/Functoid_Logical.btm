@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Logical Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- 1: Greater Than (Num1, Num2) -> IsGreater -->
+      <Link LinkID="10" SourceID="/Root/Num1" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="11" SourceID="/Root/Num2" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/IsGreater" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/IsGreater"/>
+      <!-- 2: Equal (Num1, Num2) -> AreEqual -->
+      <Link LinkID="12" SourceID="/Root/Num1" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="13" SourceID="/Root/Num2" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/AreEqual" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/AreEqual"/>
+      <!-- 3: Greater Than (Num1, 0) ; 4: Greater Than (Num2, 0) ; 5: Logical AND (3,4) -> BothPositive -->
+      <Link LinkID="14" SourceID="/Root/Num1" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="15" SourceID="/Root/Num2" TargetID="4" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="16" SourceID="3" TargetID="5" SourceType="functoid" TargetType="functoid"/>
+      <Link LinkID="17" SourceID="4" TargetID="5" SourceType="functoid" TargetType="functoid"/>
+      <Link LinkID="22" SourceID="5" TargetID="/Root/BothPositive" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/BothPositive"/>
+      <!-- 6: Greater Than (Num1, Num2) condition ; 7: Value Mapping (6, Text1) -> Picked -->
+      <Link LinkID="18" SourceID="/Root/Num1" TargetID="6" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="19" SourceID="/Root/Num2" TargetID="6" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="23" SourceID="6" TargetID="7" SourceType="functoid" TargetType="functoid"/>
+      <Link LinkID="24" SourceID="/Root/Text1" TargetID="7" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Text1"/>
+      <Link LinkID="25" SourceID="7" TargetID="/Root/Picked" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Picked"/>
+      <Functoid FunctoidID="1" TypeID="311" Name="Greater Than" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="315" Name="Equal" X="240" Y="260"/>
+      <Functoid FunctoidID="3" TypeID="311" Name="Greater Than" X="220" Y="280">
+        <Input-Parameters>
+          <Parameter Index="1" Type="constant" Value="0"/>
+        </Input-Parameters>
+      </Functoid>
+      <Functoid FunctoidID="4" TypeID="311" Name="Greater Than" X="220" Y="300">
+        <Input-Parameters>
+          <Parameter Index="1" Type="constant" Value="0"/>
+        </Input-Parameters>
+      </Functoid>
+      <Functoid FunctoidID="5" TypeID="321" Name="Logical AND" X="260" Y="290"/>
+      <Functoid FunctoidID="6" TypeID="311" Name="Greater Than" X="220" Y="320"/>
+      <Functoid FunctoidID="7" TypeID="375" Name="Value Mapping" X="260" Y="330"/>
+    </Page>
+  </Pages>
+</mapsource>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="NewMap" Version="1" XRange="100" YRange="420" OmitXmlDeclaration="No" TreatElementsAsRecords="No" OptimizeValueMapping="Yes" GenerateDefaultFixedNodes="Yes" PreserveSequenceOrder="Yes" IgnoreNamespacesForLinks="No">
+  <SrcTree>
+    <Reference Location=""/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=""/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1"/>
+  </Pages>
+</mapsource>

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
+import '../../../../../../../libs/shared-test-utils/fluentui-react-icons-mock';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -35,33 +36,6 @@ vi.mock('@microsoft/logic-apps-shared', async () => {
 });
 vi.mock('../../../../environments/environment', () => ({ environment: {} }));
 vi.mock('../Services/HttpClient', () => ({ isSuccessResponse: (status: number) => status >= 200 && status < 300 }));
-vi.mock('@fluentui/react-icons', async () => {
-  const { createElement, forwardRef } = await import('react');
-  const Icon = forwardRef<HTMLSpanElement>((props, ref) => createElement('span', { ...props, ref }));
-  return {
-    bundleIcon: () => Icon,
-    ArrowSyncFilled: Icon,
-    CheckmarkCircleRegular: Icon,
-    ErrorCircleFilled: Icon,
-    ArrowUndoFilled: Icon,
-    ArrowUndoRegular: Icon,
-    ArrowRedoFilled: Icon,
-    ArrowRedoRegular: Icon,
-    MoreHorizontalFilled: Icon,
-    MoreHorizontalRegular: Icon,
-    MentionBracketsFilled: Icon,
-    MentionBracketsRegular: Icon,
-    LinkFilled: Icon,
-    LinkRegular: Icon,
-    ErrorCircleRegular: Icon,
-    DocumentOnePageAddFilled: Icon,
-    DocumentOnePageAddRegular: Icon,
-    DocumentOnePageColumnsFilled: Icon,
-    DocumentOnePageColumnsRegular: Icon,
-    ChatSparkleFilled: Icon,
-    ChatSparkleRegular: Icon,
-  };
-});
 
 const deferred = () => {
   let resolve!: () => void;
