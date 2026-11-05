@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Cumulative Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Link LinkID="10" SourceID="/Root/Items/Value" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Items/Value"/>
+      <Link LinkID="11" SourceID="/Root/Items/Value" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Items/Value"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/Total" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Total"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/Average" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Average"/>
+      <Functoid FunctoidID="1" TypeID="324" Name="Cumulative Sum" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="325" Name="Cumulative Average" X="240" Y="260"/>
+    </Page>
+  </Pages>
+</mapsource>
