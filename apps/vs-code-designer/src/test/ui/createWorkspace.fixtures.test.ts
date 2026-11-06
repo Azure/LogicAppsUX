@@ -20,8 +20,8 @@
 //
 // The CustomCode fixture is created through the public .NET 10 wizard option,
 // then run-e2e.ts converts only the shared downstream fixture to the existing
-// .NET 8 project shape. This preserves existing-project lifecycle coverage
-// while Workflows SDK 1.4.0 is pending release.
+// .NET 8 project shape. This preserves existing-project .NET 8 lifecycle coverage
+// independently of the .NET 10 generation-only coverage.
 
 import * as fs from 'fs';
 import * as os from 'os';
