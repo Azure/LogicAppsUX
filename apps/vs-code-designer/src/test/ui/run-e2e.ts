@@ -2456,9 +2456,8 @@ namespace ${namespaceName}
         return 1;
       }
 
-      // The required Workflows SDK 1.4.0 package is pending release, so 4.15B
-      // verifies generated artifacts without dependency validation or runtime
-      // startup.
+      // Phase 4.15B covers generated artifacts only, without dependency
+      // validation or runtime startup.
       writeTestSettings({
         validateDependencies: false,
         autoStartDesignTime: false,
@@ -2559,10 +2558,9 @@ namespace ${namespaceName}
 
     /**
      * New custom-code workspaces intentionally target .NET 10, but the shared
-     * Phase 4.1 fixture feeds existing-project lifecycle coverage that must stay
-     * runnable while Workflows SDK 1.4.0 is pending release. After the wizard
-     * proves .NET 10 creation, convert only that shared fixture to the existing
-     * .NET 8 project shape consumed by p42-customcode and p43-customcode.
+     * Phase 4.1 fixture feeds existing-project .NET 8 lifecycle coverage. After
+     * the wizard proves .NET 10 creation, convert only that shared fixture to the
+     * existing .NET 8 project shape consumed by p42-customcode and p43-customcode.
      */
     const normalizeCustomCodeFixtureForNet8Compatibility = (): void => {
       const { manifest, error } = readFixtureManifest();
