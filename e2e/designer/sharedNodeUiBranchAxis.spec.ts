@@ -192,7 +192,17 @@ for (const { count, height } of [
       }
       if (count === 4) {
         const nested = page.locator('#msla-node-Nested_Agent');
-        await expect(nested.locator('.react-flow__handle.source')).toHaveClass(/react-flow__handle-right/);
+        // The compound continues its parent Tool flow RIGHT; its own inventory header remains DOWN.
+        const continuation = page.locator(
+          '.react-flow__node-GRAPH_NODE[data-id="Nested_Agent"] > .msla-graph-container-wrapper > .react-flow__handle.source'
+        );
+        await expect(continuation).toHaveAttribute('data-nodeid', 'Nested_Agent');
+        await expect(continuation).toHaveAttribute('data-handlepos', 'right');
+        await expect(continuation).toHaveClass(/react-flow__handle-right/);
+        const inventorySource = nested.locator('.react-flow__handle.source');
+        await expect(inventorySource).toHaveAttribute('data-nodeid', 'Nested_Agent-#scope');
+        await expect(inventorySource).toHaveAttribute('data-handlepos', 'bottom');
+        await expect(inventorySource).toHaveClass(/react-flow__handle-bottom/);
         const inventory = await page.locator('#msla-node-Nested_Regular_Tool').boundingBox();
         const nextTool = await page.locator('#msla-node-Nested_Empty_Tool').boundingBox();
         if (!inventory || !nextTool) {
