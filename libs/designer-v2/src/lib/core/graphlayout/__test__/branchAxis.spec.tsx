@@ -432,6 +432,19 @@ describe('actual deserialized tool-branch axis contracts', () => {
       },
     });
     const get = (id: string) => nodes.find((node) => node.id === id)!;
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const absolutePosition = (id: string) => {
+      const node = nodeById.get(id)!;
+      let x = node.position.x;
+      let y = node.position.y;
+      let parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+      while (parent) {
+        x += parent.position.x;
+        y += parent.position.y;
+        parent = parent.parentId ? nodeById.get(parent.parentId) : undefined;
+      }
+      return { x, y };
+    };
     expect(get('Nested_agent').data.handleAxis).toBe('horizontal');
     expect(get('Inner_tool').parentId).toBe('Nested_agent');
     expect(get('Inner_mcp').parentId).toBe('Nested_agent');
@@ -441,8 +454,38 @@ describe('actual deserialized tool-branch axis contracts', () => {
     expect(get('Inner_second').position.x).toBeGreaterThanOrEqual(get('Inner_first').position.x + get('Inner_first').width! + 12);
     expect(get('Inner_second').data.handleAxis).toBe('horizontal');
     expect(findElkNode(converted, 'Nested_agent')!.layoutOptions?.['elk.direction']).toBe('DOWN');
-    expect(get('Nested_agent-#scope').data.handleAxis).toBe('vertical');
     const compound = get('Nested_agent');
+    const header = get('Nested_agent-#scope');
+    expect(compound.type).toBe('GRAPH_NODE');
+    const panelBounds = compound.data.toolsPanel as { x: number; y: number; width: number; height: number };
+    for (const value of [panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+    expect(panelBounds.x).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.y).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.width).toBeGreaterThan(0);
+    expect(panelBounds.height).toBeGreaterThan(0);
+    expect(panelBounds.x + panelBounds.width).toBeLessThanOrEqual(compound.width!);
+    expect(panelBounds.y + panelBounds.height).toBeLessThanOrEqual(compound.height!);
+    expect(header.data.handleAxis).toBe('vertical');
+    const headerParent = nodeById.get(header.parentId ?? '');
+    expect(headerParent?.id).toBe(compound.id);
+    const headerPanel = header.data.toolsPanel as { x: number; y: number; width: number; height: number };
+    const compoundAbsolute = absolutePosition(compound.id);
+    const headerParentAbsolute = absolutePosition(headerParent!.id);
+    const backgroundAbsolute = {
+      x: compoundAbsolute.x + panelBounds.x,
+      y: compoundAbsolute.y + panelBounds.y,
+      width: panelBounds.width,
+      height: panelBounds.height,
+    };
+    const foregroundAbsolute = {
+      x: headerParentAbsolute.x + headerPanel.x,
+      y: headerParentAbsolute.y + headerPanel.y,
+      width: headerPanel.width,
+      height: headerPanel.height,
+    };
+    expect(foregroundAbsolute).toEqual(backgroundAbsolute);
     const following = get('After_agent');
     const edge = edges.find(({ source: from, target }) => from === compound.id && target === following.id)!;
     expect(edge.id).toBe('Nested_agent-After_agent');

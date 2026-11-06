@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   ActionNodeCard,
   AgentNodeCard,
+  AgentToolsDecoration,
   AgentToolsPanel,
   ConditionNodeCard,
   DesignerUiScope,
@@ -114,6 +115,34 @@ const resolveThemeColor = (theme: Record<string, string>, semanticToken: string)
   return resolved;
 };
 
+const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
+  const classNames = new Set(element.className.split(/\s+/).filter(Boolean));
+  if (!classNames.size) {
+    return [];
+  }
+
+  return Array.from(document.styleSheets).flatMap((sheet) => {
+    let cssRules: CSSRule[] = [];
+    try {
+      cssRules = Array.from(sheet.cssRules);
+    } catch {
+      return [];
+    }
+
+    return cssRules
+      .filter((rule): rule is CSSStyleRule => rule instanceof CSSStyleRule)
+      .filter((rule) =>
+        rule.selectorText
+          .split(',')
+          .map((selector) => selector.trim())
+          .some((selector) => {
+            const className = selector.startsWith('.') ? selector.slice(1).split(/[:\s.[#>+~]/)[0] : '';
+            return className ? classNames.has(className) : false;
+          })
+      );
+  });
+};
+
 describe('shared node presentation', () => {
   it('keeps children and focus mounted when the scope activates and deactivates', () => {
     const tree = (enabled: boolean) => (
@@ -211,6 +240,78 @@ describe('shared node presentation', () => {
     expect(parent).not.toHaveBeenCalled();
     rerender(<AgentNodeCard title="Agent" tools={<ToolItemCard title="Tool" size="small" />} toolsExpanded />);
     expect(screen.getByText('Tool')).toBeInTheDocument();
+  });
+
+  it('keeps the default Agent tools surface opaque and forwards refs and panel events', () => {
+    const ref = createRef<HTMLElement>();
+    const parent = vi.fn();
+    const onAddTool = vi.fn();
+    const onToggleExpanded = vi.fn();
+    render(
+      <div onClick={parent}>
+        <AgentToolsPanel ref={ref} onAddTool={onAddTool} onToggleExpanded={onToggleExpanded}>
+          <ToolItemCard title="Tool" size="small" />
+        </AgentToolsPanel>
+      </div>
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    expect(ref.current).toBe(panel);
+    expect(panel).toHaveTextContent('Tools (1)');
+    const matched = getMatchedStyleRules(panel);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Add tools' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse tools' }));
+    expect(onAddTool).toHaveBeenCalledOnce();
+    expect(onToggleExpanded).toHaveBeenCalledOnce();
+    expect(parent).not.toHaveBeenCalled();
+  });
+
+  it('supports a transparent Agent tools surface without foreground opaque declarations', () => {
+    render(
+      <AgentToolsPanel surface="transparent" aria-owns="tool-id">
+        <ToolItemCard title="Tool" size="small" />
+      </AgentToolsPanel>
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    expect(panel).toHaveAttribute('aria-owns', 'tool-id');
+    expect(panel).toHaveTextContent('Tools (1)');
+    const matched = getMatchedStyleRules(panel);
+    expect(matched.some((rule) => rule.style.getPropertyValue('box-sizing').trim() === 'border-box')).toBe(true);
+    expect(
+      matched.some((rule) => {
+        const borderColor = rule.style.getPropertyValue('border-color').trim();
+        const borderTopColor = rule.style.getPropertyValue('border-top-color').trim();
+        const borderLeftColor = rule.style.getPropertyValue('border-left-color').trim();
+        const borderRightColor = rule.style.getPropertyValue('border-right-color').trim();
+        const borderBottomColor = rule.style.getPropertyValue('border-bottom-color').trim();
+        return [borderColor, borderTopColor, borderLeftColor, borderRightColor, borderBottomColor].includes('transparent');
+      })
+    ).toBe(true);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(false);
+  });
+
+  it('renders AgentToolsDecoration as an opaque pointer-inert surface and forwards html attrs/ref', () => {
+    const ref = createRef<HTMLElement>();
+    render(
+      <AgentToolsDecoration
+        ref={ref}
+        data-testid="agent-tools-decoration"
+        data-agent-tools-decoration="WorkflowAgent"
+        aria-hidden="true"
+        role="presentation"
+        style={{ width: 304, height: 300 }}
+      />
+    );
+    const decoration = screen.getByTestId('agent-tools-decoration');
+    expect(ref.current).toBe(decoration);
+    expect(decoration).toHaveAttribute('data-agent-tools-decoration', 'WorkflowAgent');
+    expect(decoration).toHaveAttribute('aria-hidden', 'true');
+    expect(decoration).toHaveAttribute('role', 'presentation');
+    expect(decoration).toHaveStyle({ width: '304px', height: '300px' });
+    const matched = getMatchedStyleRules(decoration);
+    expect(matched.some((rule) => rule.style.getPropertyValue('pointer-events').trim() === 'none')).toBe(true);
+    expect(matched.some((rule) => rule.style.getPropertyValue('box-sizing').trim() === 'border-box')).toBe(true);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(true);
   });
 
   it('places a supplied tools panel before the vertical output without an empty-agent add button or copied tool rows', () => {

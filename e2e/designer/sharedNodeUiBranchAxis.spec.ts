@@ -3,9 +3,11 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import agentFixture from '../../__mocks__/workflows/AgentWithMcp.json' with { type: 'json' };
 import { getSerializedWorkflowFromStateV2 } from './utils/designerFunctions';
 import { waitForViewport } from './utils/sharedNodeUi';
+import { expectEdgePaint, expectOpaqueForegroundNegative } from './utils/sharedNodePaint';
 
 const workflowWithSwitch = (count: number) => {
   const agent = agentFixture.definition.actions.WorkflowAgent;
+  const tool = agent.tools.Regular_Tool;
   const actions: Record<string, LogicAppsV2.ActionDefinition> = {
     Before_switch: { type: 'Compose', inputs: 'Synthetic branch-axis evidence', runAfter: {} },
     Nested_switch: {
@@ -25,7 +27,32 @@ const workflowWithSwitch = (count: number) => {
       actions: {
         WorkflowAgent: {
           ...agent,
-          tools: { ...agent.tools, Regular_Tool: { ...agent.tools.Regular_Tool, actions } },
+          tools: {
+            ...agent.tools,
+            Regular_Tool: { ...tool, actions },
+            ...(count === 4
+              ? {
+                  Nested_Agent_Tool: {
+                    ...tool,
+                    actions: {
+                      Nested_Agent: {
+                        ...agent,
+                        tools: {
+                          Nested_Regular_Tool: {
+                            ...tool,
+                            actions: {
+                              Nested_First: { type: 'Compose', inputs: 'nested first', runAfter: {} },
+                              Nested_Second: { type: 'Compose', inputs: 'nested second', runAfter: { Nested_First: ['SUCCEEDED'] } },
+                            },
+                          },
+                          Nested_Empty_Tool: { ...tool, actions: {} },
+                        },
+                      },
+                    },
+                  },
+                }
+              : {}),
+          },
         },
       },
     },
@@ -156,6 +183,33 @@ for (const { count, height } of [
         expect(port.isRight).toBe(true);
         expect([port.dotWidth, port.dotHeight]).toEqual(['12px', '12px']);
         expect(geometry.edges.filter((edge) => Math.abs(edge.x - port.right) < 0.5 && Math.abs(edge.y - port.y) < 0.5)).toHaveLength(1);
+      }
+      // Geometry alone passed while opaque foreground paint hid these real SVG strokes.
+      await page.mouse.move(0, 0);
+      await expectOpaqueForegroundNegative(page, testInfo, 'WorkflowAgent', 'Before_switch-Nested_switch');
+      for (const port of geometry.outputs) {
+        await expectEdgePaint(page, testInfo, 'WorkflowAgent', `Nested_switch-#scope-${port.id}`);
+      }
+      if (count === 4) {
+        const nested = page.locator('#msla-node-Nested_Agent');
+        await expect(nested.locator('.react-flow__handle.source')).toHaveClass(/react-flow__handle-right/);
+        const inventory = await page.locator('#msla-node-Nested_Regular_Tool').boundingBox();
+        const nextTool = await page.locator('#msla-node-Nested_Empty_Tool').boundingBox();
+        if (!inventory || !nextTool) {
+          throw new Error('Both nested Tool inventory rows must be mounted.');
+        }
+        expect(nextTool.y).toBeGreaterThan(inventory.y + inventory.height);
+        await expectEdgePaint(page, testInfo, 'Nested_Agent', 'Nested_First-Nested_Second');
+        const collapse = page.locator('button[id="Nested_Agent-collapse-toggle"]');
+        await collapse.press('Enter');
+        await expect(page.locator('[data-agent-tools-decoration="Nested_Agent"]')).toBeVisible();
+        await expect(page.locator('#msla-node-Nested_First')).toHaveCount(0);
+        await expect(page.locator('[data-testid="agent-tools-panel"][data-agent-id="Nested_Agent"]')).not.toHaveAttribute('aria-owns');
+        await collapse.press('Enter');
+        await expect(page.locator('#msla-node-Nested_First')).toBeVisible();
+        await page.mouse.move(0, 0);
+        await waitForViewport(page);
+        await expectEdgePaint(page, testInfo, 'Nested_Agent', 'Nested_First-Nested_Second');
       }
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
       await testInfo.attach('mock-standalone-shared-tool-switch-geometry', {

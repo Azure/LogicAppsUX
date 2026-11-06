@@ -24,6 +24,31 @@ const props = (): ActionCardProps => ({
   nodeIndex: 2,
 });
 
+const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
+  const classes = new Set(element.className.split(/\s+/).filter(Boolean));
+  if (!classes.size) {
+    return [];
+  }
+  return Array.from(document.styleSheets).flatMap((sheet) => {
+    let cssRules: CSSRule[] = [];
+    try {
+      cssRules = Array.from(sheet.cssRules);
+    } catch {
+      return [];
+    }
+    const rules = cssRules.filter((rule): rule is CSSStyleRule => rule instanceof CSSStyleRule);
+    return rules.filter((rule) =>
+      rule.selectorText
+        .split(',')
+        .map((selector) => selector.trim())
+        .some((selector) => {
+          const className = selector.startsWith('.') ? selector.slice(1).split(/[:\s.[#>+~]/)[0] : '';
+          return className ? classes.has(className) : false;
+        })
+    );
+  });
+};
+
 describe('shared family interaction adapters', () => {
   it('keeps the extraction Scope header identical to the actual main Scope header', () => {
     const input = props();
@@ -170,6 +195,48 @@ describe('shared family interaction adapters', () => {
     expect(panel).toHaveStyle({ width: '304px', height: '300px' });
     expect(panel.parentElement).toHaveStyle({ paddingBottom: '20px' });
     expect(panel.compareDocumentPosition(agent.querySelector('[data-testid="real-agent-output"]')!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  it('prevents the foreground Agent tools panel from repainting an opaque frame over shared-graph edges', () => {
+    const { container } = render(
+      <SharedScopeCard
+        {...props()}
+        family="agent"
+        toolsPanel={{
+          width: 304,
+          height: 300,
+          bottomPadding: 20,
+          items: [{ id: 'real-tool' }],
+        }}
+      />
+    );
+    const panel = container.querySelector<HTMLElement>('[data-testid="agent-tools-panel"]')!;
+    expect(panel).toHaveStyle({ width: '304px', height: '300px' });
+    expect(panel.parentElement).toHaveStyle({ paddingBottom: '20px' });
+    expect(panel).toHaveTextContent('Tools (1)');
+    expect(panel).toHaveAttribute('data-agent-id', 'real-id');
+    expect(panel).not.toHaveAttribute('data-agent-tools-decoration');
+    const matchedRules = getMatchedStyleRules(panel);
+    expect(matchedRules.length).toBeGreaterThan(0);
+    expect(
+      matchedRules.some((rule) => rule.style.getPropertyValue('box-sizing').trim() === 'border-box'),
+      'foreground panel must keep border-box reservation contract'
+    ).toBe(true);
+    expect(
+      matchedRules.some((rule) => {
+        const borderColor = rule.style.getPropertyValue('border-color').trim();
+        const borderTopColor = rule.style.getPropertyValue('border-top-color').trim();
+        const borderLeftColor = rule.style.getPropertyValue('border-left-color').trim();
+        const borderRightColor = rule.style.getPropertyValue('border-right-color').trim();
+        const borderBottomColor = rule.style.getPropertyValue('border-bottom-color').trim();
+        return [borderColor, borderTopColor, borderLeftColor, borderRightColor, borderBottomColor].includes('transparent');
+      }),
+      'foreground panel must keep a transparent border reservation'
+    ).toBe(true);
+    const foregroundOpaqueRules = matchedRules.filter((rule) =>
+      /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color'))
+    );
+    expect(foregroundOpaqueRules).toHaveLength(0);
   });
 
   it.each([1120, 576, 280])('centers the canonical Agent header within its accepted %ipx tools frame', (width) => {

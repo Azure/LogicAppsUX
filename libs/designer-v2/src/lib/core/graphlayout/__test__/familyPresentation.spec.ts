@@ -508,9 +508,70 @@ describe('family admission and matching geometry', () => {
     const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
     const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, true, context);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const absolutePosition = (id: string) => {
+      const node = nodeById.get(id)!;
+      let x = node.position.x;
+      let y = node.position.y;
+      let parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+      while (parent) {
+        x += parent.position.x;
+        y += parent.position.y;
+        parent = parent.parentId ? nodeById.get(parent.parentId) : undefined;
+      }
+      return { x, y };
+    };
+    const container = nodes.find(({ id }) => id === 'WorkflowAgent')!;
     const header = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!;
+    const headerParent = nodeById.get(header.parentId ?? '');
+    expect(headerParent?.id).toBe(container.id);
+    expect(container.type).toBe(WORKFLOW_NODE_TYPES.GRAPH_NODE);
+    expect(container.data.presentation).toMatchObject({ shared: true, family: 'frame' });
+    expect(typeof container.width).toBe('number');
+    expect(typeof container.height).toBe('number');
+    const panelBounds = container.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    for (const value of [panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+    expect(panelBounds.x).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.y).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.width).toBeGreaterThan(0);
+    expect(panelBounds.height).toBeGreaterThan(0);
+    expect(panelBounds.x + panelBounds.width).toBeLessThanOrEqual(container.width as number);
+    expect(panelBounds.y + panelBounds.height).toBeLessThanOrEqual(container.height as number);
     expect(header.data.presentation).toMatchObject({ shared: true, family: 'agent' });
-    const panel = header.data.toolsPanel as { collapsed: boolean; items: { id: string }[] };
+    expect(header.width).toBe(panelBounds.width);
+    expect(header.height).toBe(container.height);
+    const panel = header.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    const containerAbsolute = absolutePosition(container.id);
+    const headerParentAbsolute = absolutePosition(headerParent!.id);
+    const backgroundAbsolute = {
+      x: containerAbsolute.x + panelBounds.x,
+      y: containerAbsolute.y + panelBounds.y,
+      width: panelBounds.width,
+      height: panelBounds.height,
+    };
+    const foregroundAbsolute = {
+      x: headerParentAbsolute.x + panel.x,
+      y: headerParentAbsolute.y + panel.y,
+      width: panel.width,
+      height: panel.height,
+    };
+    expect(foregroundAbsolute).toEqual(backgroundAbsolute);
     expect(panel.collapsed).toBe(collapsed);
     expect(nodes.some(({ id }) => id === 'HandoffOnly')).toBe(nested && !collapsed);
     expect(nodes.some(({ id }) => id === 'Transfer')).toBe(nested && !collapsed);

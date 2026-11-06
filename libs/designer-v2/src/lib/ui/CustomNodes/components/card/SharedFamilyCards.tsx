@@ -241,6 +241,7 @@ export const SharedScopeCard = ({
             >
               <AgentToolsPanel
                 style={{ width: toolsPanel.width, height: toolsPanel.height }}
+                surface="transparent"
                 strings={{
                   heading: () =>
                     intl.formatMessage(
