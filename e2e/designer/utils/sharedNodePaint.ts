@@ -40,6 +40,8 @@ async function findProbe(page: Page, agentId: string, edgeId: string) {
       }
       const radius = Math.max(1, Math.ceil((Number.parseFloat(style.strokeWidth) * scale) / 2));
       const size = radius * 2 + 1;
+      const frameSelector =
+        '.msla-graph-container-wrapper > :is([data-node-card="scope"], [data-node-card="loop-frame"], [data-node-card="condition-frame"], [data-node-card="switch-frame"], [data-node-card="branch-frame"])';
       const obstacles = [
         ...document.querySelectorAll(
           [
@@ -66,28 +68,86 @@ async function findProbe(page: Page, agentId: string, edgeId: string) {
           ].join(', ')
         ),
       ]
-        .filter((element) => {
+        .flatMap<{ rect: Pick<DOMRect, 'left' | 'top' | 'right' | 'bottom'>; identity: string }>((element) => {
           const current = getComputedStyle(element);
           if (current.display === 'none' || current.visibility === 'hidden') {
-            return false;
+            return [];
           }
           const rect = element.getBoundingClientRect();
           // Ancestor decoration encloses a nested Agent's panel below the same edges; it is not foreground content.
-          return !(
+          if (
             element.hasAttribute('data-agent-tools-decoration') &&
             rect.left <= bounds.left &&
             rect.top <= bounds.top &&
             rect.right >= bounds.right &&
             rect.bottom >= bounds.bottom
-          );
+          ) {
+            return [];
+          }
+          const node = element.closest('.react-flow__node');
+          const identity = `${element.tagName}[${element.getAttribute('data-node-card') ?? element.getAttribute('data-testid') ?? element.getAttribute('data-handle') ?? element.getAttribute('data-branch') ?? element.getAttribute('aria-label') ?? ''}]@${node?.getAttribute('data-id') ?? 'overlay'}`;
+          const parent = element.parentElement;
+          // GraphContainerNode mounts a headerless NodeFrame with one empty flex body.
+          // Neither its below-edge fill nor that layout body is foreground content; its contour still is an exclusion.
+          const isEmptyFrameBody =
+            element.tagName === 'DIV' &&
+            element.childNodes.length === 0 &&
+            current.display === 'flex' &&
+            current.flexGrow === '1' &&
+            [...element.attributes].every(({ name }) => name === 'class' || name === 'style');
+          const frame = element.matches(frameSelector)
+            ? element
+            : parent?.matches(frameSelector) && parent.childElementCount === 1 && isEmptyFrameBody
+              ? parent
+              : undefined;
+          if (!frame) {
+            return [{ rect, identity }];
+          }
+          if (
+            !node?.matches('.react-flow__node-GRAPH_NODE, .react-flow__node-SUBGRAPH_NODE') ||
+            !(Number(getComputedStyle(node).zIndex) < 0)
+          ) {
+            throw new Error(`Expected the canonical frame below edges: ${identity}`);
+          }
+          if (frame !== element) {
+            return [];
+          }
+          const contour = [
+            current.borderTopWidth,
+            current.borderRightWidth,
+            current.borderBottomWidth,
+            current.borderLeftWidth,
+            current.borderTopLeftRadius,
+            current.borderTopRightRadius,
+            current.borderBottomLeftRadius,
+            current.borderBottomRightRadius,
+          ].flatMap((value) => value.split(/\s+/).map(Number.parseFloat));
+          const outlineWidth = current.outlineStyle === 'none' ? 0 : Number.parseFloat(current.outlineWidth);
+          const outlineOffset = Number.parseFloat(current.outlineOffset);
+          if (![...contour, outlineWidth, outlineOffset].every(Number.isFinite)) {
+            throw new Error(`Expected real canonical frame contour geometry: ${identity}`);
+          }
+          const outset = Math.max(0, outlineWidth + outlineOffset) * scale;
+          const band = Math.max(...contour, outlineWidth + Math.abs(outlineOffset)) * scale + outset;
+          const left = rect.left - outset;
+          const top = rect.top - outset;
+          const right = rect.right + outset;
+          const bottom = rect.bottom + outset;
+          return [
+            { left, top, right, bottom: Math.min(top + band, bottom) },
+            { left, top: Math.max(bottom - band, top), right, bottom },
+            { left, top, right: Math.min(left + band, right), bottom },
+            { left: Math.max(right - band, left), top, right, bottom },
+          ].map((rect) => ({ rect, identity: `${identity}:contour` }));
         })
-        .map((element) => element.getBoundingClientRect())
-        .filter((rect) => rect.width > 0 && rect.height > 0);
+        .filter(({ rect }) => rect.right > rect.left && rect.bottom > rect.top);
       const dash = style.strokeDasharray === 'none' ? [] : style.strokeDasharray.split(/[ ,]+/).map(Number.parseFloat);
       const period = dash.reduce((sum, part) => sum + part, 0);
       const offset = Number.parseFloat(style.strokeDashoffset) || 0;
       let best: { x: number; y: number; width: number; height: number; clearance: number; distance: number } | undefined;
       const steps = Math.ceil(length * scale);
+      let interiorCandidates = 0;
+      const blockers = new Map<string, number>();
       for (let step = 1; step < steps; step++) {
         const distance = (length * step) / steps;
         // Locate an actual dash, not a dash gap; pixel comparison below still has to prove paint.
@@ -109,18 +169,25 @@ async function findProbe(page: Page, agentId: string, edgeId: string) {
         ) {
           continue;
         }
+        interiorCandidates++;
         let clearance = Math.min(x - interior.left, y - interior.top, interior.right - x - size, interior.bottom - y - size);
-        for (const rect of obstacles) {
+        for (const { rect, identity } of obstacles) {
           const dx = Math.max(rect.left - x - size, x - rect.right, 0);
           const dy = Math.max(rect.top - y - size, y - rect.bottom, 0);
           clearance = Math.min(clearance, Math.hypot(dx, dy));
+          if (dx === 0 && dy === 0) {
+            blockers.set(identity, (blockers.get(identity) ?? 0) + 1);
+          }
         }
         if (clearance > 0 && (!best || clearance > best.clearance)) {
           best = { x, y, width: size, height: size, clearance, distance };
         }
       }
       if (!best) {
-        throw new Error(`No open centerline clip strictly inside accepted panel for ${edgeId}`);
+        const rejectedBy = [...blockers].sort((a, b) => b[1] - a[1]).slice(0, 8);
+        throw new Error(
+          `No open centerline clip strictly inside accepted panel for ${edgeId}; interior candidates=${interiorCandidates}/${steps}; blockers=${JSON.stringify(rejectedBy)}`
+        );
       }
       return {
         clip: { x: best.x, y: best.y, width: best.width, height: best.height },
