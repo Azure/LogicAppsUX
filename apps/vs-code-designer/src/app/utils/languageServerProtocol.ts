@@ -1,23 +1,17 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { assetsFolderName, lspDirectory } from '../../constants';
+import { assetsFolderName } from '../../constants';
 import { ext } from '../../extensionVariables';
-import {
-  lspSdkAssetRevision,
-  lspSdkRevisionMarkerName,
-  lspServerAssetRevision,
-  lspServerDirectoryName,
-  lspServerRevisionMarkerName,
-} from './languageServerProtocolConstants';
+import { lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName } from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
 import { ensureRuntimeDependenciesDir } from './binaries';
 
-export { lspSdkAssetRevision, lspSdkRevisionMarkerName, lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName };
+export { lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
 
-export async function installLSPSDK(): Promise<void> {
+export async function installLSPServer(): Promise<void> {
   const targetDirectory = await ensureRuntimeDependenciesDir();
 
   // Check if LSPServer needs to be extracted or updated
@@ -27,14 +21,7 @@ export async function installLSPSDK(): Promise<void> {
   const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
   const shouldExtract = await shouldUpdateFromRevision(lspServerAssetRevision, serverRevisionMarkerFile, lspServerDllPath);
 
-  // Check if SDK needs to be copied or updated
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-  const sdkRevisionMarkerFile = path.join(targetDirectory, lspSdkRevisionMarkerName);
-  const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-  const shouldCopy = await shouldUpdateFromRevision(lspSdkAssetRevision, sdkRevisionMarkerFile, destinationFile);
-
-  if (shouldExtract || shouldCopy) {
+  if (shouldExtract) {
     await stopLanguageClientForUpdate();
   }
 
@@ -56,19 +43,6 @@ export async function installLSPSDK(): Promise<void> {
       await cleanupStaleLspServerFolders(targetDirectory);
     } catch (error) {
       throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
-    }
-  }
-
-  if (shouldCopy) {
-    try {
-      await fse.ensureDir(lspDirectoryPath);
-
-      await fse.copyFile(sdkNupkgFile, destinationFile);
-
-      await fse.writeFile(sdkRevisionMarkerFile, lspSdkAssetRevision);
-      await removeLegacySdkMarkers(targetDirectory);
-    } catch (error) {
-      throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
     }
   }
 }
@@ -101,11 +75,6 @@ async function removeLegacyLspMarkers(targetDirectory: string): Promise<void> {
   await fse.remove(path.join(targetDirectory, '.lspserver-version'));
   await fse.remove(path.join(targetDirectory, '.lspserver-path'));
   await fse.remove(path.join(targetDirectory, '.lspserver-hash'));
-}
-
-async function removeLegacySdkMarkers(targetDirectory: string): Promise<void> {
-  await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
-  await fse.remove(path.join(targetDirectory, '.lspsdk-hash'));
 }
 
 async function cleanupStaleLspServerFolders(targetDirectory: string): Promise<void> {

@@ -1,12 +1,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  connectionsFileName,
-  lspDirectory,
-  onStartLanguageServer,
-  workflowAppApiVersion,
-} from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, connectionsFileName, onStartLanguageServer, workflowAppApiVersion } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
@@ -21,10 +15,11 @@ import { getAzureConnectorDetailsForLocalProject } from '../commands/azureConnec
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
+import { resolveSdkFromProject } from '../utils/sdkResolution';
 import { localize } from '../../localize';
 
 export default class LogicAppsLanguageServer {
-  protected lspServerPath: string | undefined;
+  protected lspServerDllPath: string | undefined;
   protected sdkNupkgPath: string | undefined;
   protected apiVersion = workflowAppApiVersion;
   private projectPath: string | undefined;
@@ -46,12 +41,12 @@ export default class LogicAppsLanguageServer {
       return;
     }
 
-    const { lspServerPath, sdkNupkgPath } = await this.getSDKPaths();
+    const { lspServerDllPath, sdkNupkgPath } = await this.getSDKPaths();
 
-    this.lspServerPath = lspServerPath;
+    this.lspServerDllPath = lspServerDllPath;
     this.sdkNupkgPath = sdkNupkgPath;
 
-    if (!this.lspServerPath) {
+    if (!this.lspServerDllPath) {
       window.showWarningMessage('Install or repair Logic Apps language server dependencies before starting C# workflow authoring.');
       return;
     }
@@ -64,7 +59,7 @@ export default class LogicAppsLanguageServer {
     const metaData = await this.getMetadata();
 
     // Build server arguments (removed --connections)
-    const serverArgs = [this.lspServerPath, '--sdk', this.sdkNupkgPath];
+    const serverArgs = [this.lspServerDllPath, '--sdk', this.sdkNupkgPath];
 
     // Load connections from file
     const connections = await this.loadConnectionsFromFile(metaData.connectionFilePath);
@@ -177,39 +172,38 @@ export default class LogicAppsLanguageServer {
   private async getSDKPaths() {
     const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     if (!dependenciesPath) {
-      return { lspServerPath: undefined, sdkNupkgPath: undefined };
+      ext.outputChannel.appendLog(
+        localize('dependenciesPathNotSet', '[LSP] Could not resolve SDK paths. The dependencies path is not set.')
+      );
+      return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
     }
 
-    // Support for development mode - override with environment variable
     const devLspServerPath = process.env.LSP_SERVER_DEV_PATH;
-    let lspServerPath: string | undefined;
+    let lspServerDllPath: string | undefined;
 
     if (devLspServerPath && (await fse.pathExists(devLspServerPath))) {
-      lspServerPath = devLspServerPath;
-      console.log(`[LSP] Using development server: ${lspServerPath}`);
+      lspServerDllPath = devLspServerPath;
+      ext.outputChannel.appendLog(localize('lspDevelopmentServer', '[LSP] Using development server: "{0}".', lspServerDllPath));
     } else {
-      lspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
-      if (!(await fse.pathExists(lspServerPath))) {
-        lspServerPath = undefined;
+      const installedLspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
+      if (!(await fse.pathExists(installedLspServerPath))) {
+        ext.outputChannel.appendLog(
+          localize('lspServerDllNotFound', '[LSP] Could not find LSP server DLL at "{0}".', installedLspServerPath)
+        );
+        return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
       }
+      lspServerDllPath = installedLspServerPath;
     }
 
-    const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
-    if (!(await fse.pathExists(sdkFolderPath))) {
-      return { lspServerPath, sdkNupkgPath: undefined };
+    const resolvedSdk = await resolveSdkFromProject(this.projectPath!);
+    const sdkNupkgPath = resolvedSdk ? resolvedSdk.sdkNupkgPath : undefined;
+    if (!sdkNupkgPath) {
+      ext.outputChannel.appendLog(
+        localize('sdkNupkgNotFound', '[LSP] Could not resolve SDK nupkg for project at "{0}".', this.projectPath)
+      );
     }
 
-    const files = await fse.readdir(sdkFolderPath);
-    const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
-    });
-    if (!sdkNupkgFile) {
-      return { lspServerPath, sdkNupkgPath: undefined };
-    }
-
-    const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
-
-    return { lspServerPath, sdkNupkgPath };
+    return { lspServerDllPath, sdkNupkgPath };
   }
 
   private async getMetadata() {
