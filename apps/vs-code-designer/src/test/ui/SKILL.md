@@ -1,5 +1,8 @@
 # Skill: ExTester UI E2E Tests for VS Code Logic Apps Extension
 
+The extension provisions .NET 10 for new custom-code projects (fallback SDK `10.0.403`).
+Bundle-feed SDK requirements are retained alongside .NET 10 so existing .NET 8 workspaces remain supported.
+
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
 > **Last updated**: 2026-03-03

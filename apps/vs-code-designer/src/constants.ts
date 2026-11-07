@@ -370,13 +370,13 @@ export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationD
 
 // Fallback Dependency Versions
 export const DependencyVersion = {
-  dotnet8: '8.0.318',
+  dotnet10: '10.0.403',
   funcCoreTools: '4.0.7030',
   nodeJs: '24.22.2',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
-export const defaultDotnetMajorVersion = '8';
+export const defaultDotnetMajorVersion = '10';
 
 export const hostFileContent = {
   version: '2.0',
