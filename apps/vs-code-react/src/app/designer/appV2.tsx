@@ -28,15 +28,6 @@ import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
 
-interface DesignerWebviewState {
-  codeViewValidationErrors?: string[];
-}
-
-const readPersistedCodeViewValidationErrors = (state: unknown): string[] => {
-  const errors = (state as DesignerWebviewState | undefined)?.codeViewValidationErrors;
-  return Array.isArray(errors) && errors.every((error) => typeof error === 'string') ? errors : [];
-};
-
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
@@ -82,13 +73,8 @@ export const DesignerApp = () => {
     () => getCodeViewRequestOptionsValidationErrors(panelMetaData?.standardApp?.definition),
     [panelMetaData?.standardApp?.definition]
   );
-  const initialPersistedCodeViewValidationErrors = useMemo(() => readPersistedCodeViewValidationErrors(vscode.getState()), [vscode]);
-  const codeViewValidationSource = useRef<'code' | 'loaded' | 'none'>(
-    initialPersistedCodeViewValidationErrors.length > 0 ? 'code' : loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none'
-  );
-  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
-    Array.from(new Set([...initialPersistedCodeViewValidationErrors, ...loadedCodeViewValidationErrors]))
-  );
+  const codeViewValidationSource = useRef<'code' | 'loaded' | 'none'>(loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none');
+  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(loadedCodeViewValidationErrors);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -108,17 +94,10 @@ export const DesignerApp = () => {
     [vscode]
   );
 
-  const persistCodeViewValidationErrors = useCallback(
-    (errors: string[]) => {
-      codeViewValidationSource.current = errors.length > 0 ? 'code' : 'none';
-      setCodeViewValidationErrors(errors);
-      vscode.setState({
-        ...(vscode.getState() as DesignerWebviewState | undefined),
-        codeViewValidationErrors: errors,
-      });
-    },
-    [vscode]
-  );
+  const updateCodeViewValidationErrors = useCallback((errors: string[]) => {
+    codeViewValidationSource.current = errors.length > 0 ? 'code' : 'none';
+    setCodeViewValidationErrors(errors);
+  }, []);
 
   useEffect(() => {
     if (codeViewValidationSource.current !== 'code') {
@@ -128,9 +107,9 @@ export const DesignerApp = () => {
   }, [loadedCodeViewValidationErrors]);
 
   const discardAllChanges = useCallback(() => {
-    persistCodeViewValidationErrors([]);
+    updateCodeViewValidationErrors([]);
     setDesignerID(guid());
-  }, [persistCodeViewValidationErrors]);
+  }, [updateCodeViewValidationErrors]);
 
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
@@ -221,7 +200,7 @@ export const DesignerApp = () => {
   const saveWorkflowFromDesigner = useCallback(
     async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
-      persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+      updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
       vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
@@ -245,7 +224,7 @@ export const DesignerApp = () => {
         customCodeData,
       };
     },
-    [persistCodeViewValidationErrors, vscode, workflow]
+    [updateCodeViewValidationErrors, vscode, workflow]
   );
 
   const validateAndSaveCodeView = useCallback(
@@ -254,12 +233,12 @@ export const DesignerApp = () => {
         const hasChanges = codeEditorRef.current?.hasChanges() ?? false;
         const code = codeEditorRef.current?.getValue();
         if (!hasChanges && !code) {
-          persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition));
+          updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition));
           return workflow;
         }
         const codeToConvert = JSON.parse(code ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
-        persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+        updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
         if (!hasChanges) {
           return {
             ...workflow,
@@ -289,7 +268,7 @@ export const DesignerApp = () => {
       }
       return undefined;
     },
-    [initialWorkflow?.definition, persistCodeViewValidationErrors, vscode, workflow]
+    [initialWorkflow?.definition, updateCodeViewValidationErrors, vscode, workflow]
   );
 
   /////////////////////////////////////////////////////////////////////////////
