@@ -10,6 +10,7 @@ import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validateP
 import { refreshConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
 import {
+  executeFuncTaskForCleanup,
   getFuncPortFromTaskOrProject,
   getRunningFuncTaskForWorkspace,
   isFuncHostTask,
@@ -18,7 +19,6 @@ import {
 } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
-import { executeIfNotActive } from '../utils/taskUtils';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
@@ -365,7 +365,7 @@ async function startFuncTask(
   try {
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
     // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we already stopped any previous workspace-scoped func task above.
-    await executeIfNotActive(funcTask);
+    await executeFuncTaskForCleanup(funcTask);
 
     const intervalMs = 500;
     const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);

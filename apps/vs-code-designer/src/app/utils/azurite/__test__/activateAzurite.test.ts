@@ -67,6 +67,10 @@ vi.mock('../../../azuriteExtension/executeOnAzuriteExt', () => ({
   executeOnAzurite: vi.fn(),
 }));
 
+vi.mock('../azuriteConnectionString', () => ({
+  synchronizeAzuriteConnectionString: vi.fn(),
+}));
+
 vi.mock('../../delay', () => ({
   delay: vi.fn(),
 }));
@@ -83,6 +87,7 @@ import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt'
 import { AzuriteExtensionTerminalError } from '../../../azuriteExtension/azuriteErrors';
 import { azuriteCommand } from '../../../../constants';
 import { delay } from '../../delay';
+import { synchronizeAzuriteConnectionString } from '../azuriteConnectionString';
 
 const PROJECT_PATH = '/workspace/logicapp';
 
@@ -140,6 +145,7 @@ describe('activateAzurite', () => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: PROJECT_PATH } }];
     (getAzureWebJobsStorage as any).mockResolvedValue(localEmulatorConnectionString);
+    vi.mocked(synchronizeAzuriteConnectionString).mockResolvedValue(undefined);
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     // Default: the start command succeeds. Set explicitly so a rejected implementation from one
     // test cannot leak into the next (clearAllMocks resets calls, not implementations).
@@ -156,6 +162,19 @@ describe('activateAzurite', () => {
     expect(getWorkspaceSetting).not.toHaveBeenCalled();
     expect(updateGlobalSetting).not.toHaveBeenCalled();
     expect(executeOnAzurite).not.toHaveBeenCalled();
+  });
+
+  it('synchronizes custom Azurite endpoints before checking readiness', async () => {
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    (validateEmulatorIsRunning as any).mockResolvedValue(true);
+
+    await activateAzurite(createContext(), PROJECT_PATH);
+
+    expect(synchronizeAzuriteConnectionString).toHaveBeenCalledWith(expect.anything(), PROJECT_PATH);
+    expect(vi.mocked(synchronizeAzuriteConnectionString).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(getAzureWebJobsStorage).mock.invocationCallOrder[0]
+    );
   });
 
   it('resolves the project root when no projectPath is provided and returns early when none is found', async () => {
