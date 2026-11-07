@@ -25,6 +25,7 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
   const sharedOption = useSharedNodeUi();
   const presentation =
     (data?.presentation as NodePresentation | undefined) ?? getNodePresentation(WORKFLOW_NODE_TYPES.COLLAPSED_NODE, sharedOption);
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const focusRef = useRef<HTMLButtonElement>(null);
   const restoreFocusTarget = useRestoreFocusTarget();
   const intl = useIntl();
@@ -75,7 +76,7 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
         height: 50,
       }}
     >
-      <DefaultHandle type="target" />
+      <DefaultHandle axis={handleAxis} type="target" />
       {presentation.shared ? (
         <CollapseChip
           {...restoreFocusTarget}
@@ -104,7 +105,7 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
           nodeIndex={nodeIndex}
         />
       )}
-      <DefaultHandle type="source" />
+      <DefaultHandle axis={handleAxis} type="source" />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
   useMonitoringView,
   useNodeSelectAdditionalCallback,
   useReadOnly,
+  useSharedNodeUi,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
@@ -51,6 +52,7 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { useRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined, SUBGRAPH_TYPES, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -65,10 +67,12 @@ import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle'
 import { OperationNodeCard } from './components/card/OperationNodeCard';
 import type { NodePresentation } from '../../core/utils/graph';
 
-type OperationGraphNode = Node<{ presentation?: NodePresentation }>;
+type OperationGraphNode = Node<{ presentation?: NodePresentation; handleAxis?: 'vertical' | 'horizontal' }>;
 
 const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const readOnly = useReadOnly();
+  const sharedOption = useSharedNodeUi();
+  const shared = data?.presentation?.shared ?? sharedOption;
   const isMonitoringView = useMonitoringView();
 
   const intl = useIntl();
@@ -340,6 +344,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const toolKind = data?.presentation
     ? data.presentation.toolKind
     : isMcpClient
@@ -353,7 +358,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <EdgeDrawTargetHandle />
+        <EdgeDrawTargetHandle axis={handleAxis} />
         <OperationNodeCard
           id={id}
           sharedPresentation={data?.presentation?.shared}
@@ -387,15 +392,23 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
+          handleAxis={handleAxis}
           subtleBackground={isA2AWorkflow && isTrigger}
           copilotModified={copilotModified}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected || isMultiSelected} />}
+        {!isMcpClient && <EdgeDrawSourceHandle axis={handleAxis} highlighted={isSelected || isMultiSelected} />}
       </div>
       {showLeafComponents ? (
-        <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
+        <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
+          <DropZone
+            graphId={metadata?.graphId ?? ''}
+            parentId={id}
+            isLeaf={isLeaf}
+            tabIndex={nodeIndex}
+            axis={handleAxis}
+            sharedPresentation={shared}
+          />
         </div>
       ) : null}
       {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} /> : null}

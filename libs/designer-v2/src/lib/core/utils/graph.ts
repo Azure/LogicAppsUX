@@ -14,7 +14,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
-import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -56,6 +56,7 @@ export interface NodePresentationContext {
   operationType?: string;
   subgraphType?: SubgraphType;
   caseCount?: number;
+  handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
   hasToolStatus?: boolean;
 }
@@ -98,17 +99,10 @@ export const getNodePresentation = (
       case 'if':
         return { shared: true, family: 'if', size: nodeMetrics.cards.condition };
       case 'switch':
-        // The host flows DOWN. Canonical Switch uses the compact 74px body in this axis.
         return {
           shared: true,
           family: 'switch',
-          size: {
-            width: Math.max(
-              nodeMetrics.cards.condition.width,
-              (context.caseCount ?? 1) * nodeMetrics.handle.size + Math.max(0, (context.caseCount ?? 1) - 1) * 8 + 32
-            ),
-            height: nodeMetrics.cards.condition.height,
-          },
+          size: getSwitchNodeSize(context.caseCount, context.handleAxis),
         };
       case 'foreach':
       case 'until':

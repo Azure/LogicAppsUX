@@ -111,6 +111,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
     className="edge-drop-zone-container"
   >
     <div
+      axis="vertical"
       graphId=""
       isLeaf={true}
       parentId="mockId"
