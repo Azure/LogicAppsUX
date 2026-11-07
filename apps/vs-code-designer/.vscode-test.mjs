@@ -44,6 +44,21 @@ const dependencyRoot =
     : path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies'));
 const dotnetExecutablePath = findExecutable('dotnet') ?? 'dotnet';
 
+if (explicitlySelected('screenshotResolution')) {
+  if (
+    !process.env.LA_E2E_CLI_USER_DATA_DIR ||
+    fs.existsSync(userDataDir) ||
+    !extensionsDir ||
+    !fs.existsSync(extensionsDir) ||
+    fs.readdirSync(extensionsDir).length
+  ) {
+    throw new Error('screenshotResolution requires an explicit fresh user-data path and an existing empty extensions directory');
+  }
+  if (startupResource) {
+    throw new Error('screenshotResolution requires an empty window, not an inherited startup workspace');
+  }
+}
+
 prepareUserSettings(userDataDir);
 
 const baseConfig = {
@@ -68,7 +83,8 @@ const baseConfig = {
     '--skip-welcome',
     '--skip-release-notes',
     '--locale=en-US',
-    '--window-size=1920,1080',
+    '--window-size=3840,2160',
+    '--force-device-scale-factor=1',
     `--remote-debugging-port=${remoteDebuggingPort}`,
     '--remote-debugging-address=127.0.0.1',
     ...(extensionsDir ? ['--extensions-dir', extensionsDir] : []),
@@ -81,6 +97,19 @@ if (lifecycleEnv.LA_E2E_LIFECYCLE_PRODUCER_BINDING) {
 }
 
 const configs = [
+  // Local-only renderer proof: no Logic Apps activation, runtime or Azure.
+  ...(explicitlySelected('screenshotResolution')
+    ? [
+        {
+          label: 'screenshotResolution',
+          ...baseConfig,
+          extensionDevelopmentPath: [path.join(__dirname, 'scripts', 'fixtures', 'lifecycle-recorder')],
+          skipExtensionDependencies: true,
+          files: ['out/test/e2e/screenshotResolution.test.js'],
+          mocha: { ui: 'tdd', timeout: 120000 },
+        },
+      ]
+    : []),
   ...(explicitlySelected('lifecycleStartupProof')
     ? [
         {

@@ -388,7 +388,7 @@ jobs:
               set +e
               LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
               bash scripts/run-e2e-cli-linux-secure-session.sh \
-                xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                xvfb-run --auto-servernum --server-args="-screen 0 3840x2160x24" \
                 node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
               status=${PIPESTATUS[0]}
               set -e
@@ -489,7 +489,7 @@ jobs:
                 set +e
                 LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
                 bash scripts/run-e2e-cli-linux-secure-session.sh \
-                  xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                  xvfb-run --auto-servernum --server-args="-screen 0 3840x2160x24" \
                   node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
                 status=${PIPESTATUS[0]}
                 set -e

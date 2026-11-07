@@ -787,7 +787,7 @@ jobs:
           echo "PATH=$PATH"
           mkdir -p .vscode-test/results
           set +e
-          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+          xvfb-run --auto-servernum --server-args="-screen 0 3840x2160x24" \
             pnpm exec node scripts/run-e2e-cli.js --label "${{ matrix.label }}" 2>&1 | tee ".vscode-test/results/${{ matrix.label }}.log"
           status=${PIPESTATUS[0]}
           set -e

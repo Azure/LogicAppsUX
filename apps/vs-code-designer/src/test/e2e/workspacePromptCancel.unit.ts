@@ -292,7 +292,15 @@ class CancelCaptureFixture {
       if (this.mode === 'unstable' || (this.mode === 'warmup-once' && this.captureAttempts === 1)) {
         this.contextGeneration += 2;
       }
-      return { result: { data: Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0]).toString('base64') } };
+      // The evidence path now checks IHDR dimensions independently of readiness.
+      // Keep this a header-only transport control; native proof decodes pixels.
+      const header = Buffer.alloc(33);
+      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(header);
+      header.writeUInt32BE(13, 8);
+      header.write('IHDR', 12, 'ascii');
+      header.writeUInt32BE(3840, 16);
+      header.writeUInt32BE(2160, 20);
+      return { result: { data: header.toString('base64') } };
     }
     return { result: {} };
   }

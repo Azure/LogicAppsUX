@@ -335,7 +335,8 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
       '--skip-release-notes',
       '--locale=en-US',
       '--new-window',
-      '--window-size=1920,1080',
+      '--window-size=3840,2160',
+      '--force-device-scale-factor=1',
       `--remote-debugging-port=${process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT}`,
       '--remote-debugging-address=127.0.0.1',
     ];

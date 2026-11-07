@@ -2,6 +2,67 @@
 
 This directory contains extension-host smoke tests for the Logic Apps VS Code extension using the official `@vscode/test-cli` framework.
 
+## Native 4K screenshot rendering
+
+Evidence screenshots render the **owning workbench** at 3840×2160 CSS pixels
+with device scale factor **1**, then capture its CDP surface. PNG IHDR dimensions
+must independently equal 3840×2160 before evidence is accepted. Nothing resizes
+or upscales the bitmap. `captureViewport` in the sidecar identifies the workbench
+raster; `geometry.viewport` still describes the semantic sampling context (which
+may be a smaller nested webview).
+
+Native CLI launchers request `--window-size=3840,2160` and
+`--force-device-scale-factor=1`; Linux native CI provides a 3840×2160×24 Xvfb
+display. These are supporting settings, not authoritative screenshot sizing:
+Code can restore/clamp native window bounds, and Electron may not expose
+`Browser.getWindowForTarget`/`Browser.setWindowBounds`.
+
+`Emulation.setDeviceMetricsOverride` controls real renderer layout before
+readiness sampling and latch installation. Chromium clears emulation when its
+owning CDP session disconnects. The standard `captureCliScreenshot` and
+`captureEvidenceScreenshot` wrappers therefore retain one **invocation-owned**
+workbench session rather than closing it on return. Every acquisition resolves
+the exact unique workbench target without opening a disposable discovery
+session. Window closure or target replacement releases the old owner; root
+Mocha invocation teardown (with process-exit fallback) closes the retained
+session. Its socket is unreferenced and cannot keep an otherwise finished
+invocation alive. Teardown also fences any pending connect against leaking its
+eventual socket.
+
+Later interactions and screenshots therefore use the same CSS coordinate
+system. The override is not cleared between standard captures and is never
+applied to a nested webview target. The lower-level `captureCdpScreenshot` API
+uses its caller-owned connection: callers that need persistent 4K must keep that
+connection until their owned window/interaction lifecycle ends. Disconnecting
+that connection restores native metrics; it is not invocation-persistent by
+itself.
+Strict semantic/ordered readiness, input coordinates, and timeout budgets are
+unchanged. This proves **renderer fidelity**, not physical native window size or
+desktop-DPI behavior. Urgent diagnostics do not resize failed UI; their fallback
+desktop screenshots remain diagnostic-only and are not guaranteed 4K.
+
+The additive, **local-only** `screenshotResolution` label uses an isolated empty
+extensions directory, an editor and a responsive VS Code webview. It checks
+renderer metrics after **both standard wrappers return**, actual PNG dimensions
+and inflated pixel data, plus a real lower-right webview pointer click in CSS
+pixels. A passive observer also verifies root invocation teardown restores
+native metrics and then closes its own connection. It never activates Logic Apps,
+creates Azure resources, starts Func, or performs global process cleanup.
+
+```powershell
+Set-Location apps/vs-code-designer
+pnpm run test:e2e-cli:compile
+# Supply fresh, invocation-owned paths; never reuse an account/profile.
+$env:LA_E2E_CLI_USER_DATA_DIR = '<fresh-profile>'
+$env:LA_E2E_CLI_EXTENSIONS_DIR = '<fresh-empty-extensions-directory>'
+$env:LA_E2E_CLI_SCREENSHOT_DIR = '<proof-output>'
+pnpm exec vscode-test --config .vscode-test.mjs --label screenshotResolution
+```
+
+This label is not a canonical inventory lane or lifecycle acceptance verdict.
+Local Windows renderer proof does not replace isolated Linux Xvfb/Windows CI
+proof for affected suites.
+
 ## Overview
 
 **Before authoring or changing a test, read the canonical
@@ -1149,7 +1210,7 @@ The Azure-backed job should run inside `AzureCLI@2`, mint a token for `https://m
       export LA_E2E_CLI_AZURE_TENANT_ID="$account_tenant_id"
       export LA_E2E_CLI_AZURE_ACCESS_TOKEN="$(az account get-access-token --resource https://management.core.windows.net/ --query accessToken -o tsv)"
       cd apps/vs-code-designer
-      xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" pnpm exec node scripts/run-e2e-cli.js --msn-weather-lifecycle
+      xvfb-run --auto-servernum --server-args="-screen 0 3840x2160x24" pnpm exec node scripts/run-e2e-cli.js --msn-weather-lifecycle
   env:
     LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: LogicAppsVSCode-E2E-Fixtures
     LA_E2E_CLI_AZURE_LOCATION_NAME: westus

@@ -125,6 +125,8 @@ export interface ScreenshotReadinessMetadata {
     viewport: ScreenshotViewport;
     anchors: Array<{ name: string; bounds?: ScreenshotBounds }>;
   };
+  /** Workbench raster size, distinct from a semantic webview's CSS viewport. */
+  captureViewport?: ScreenshotViewport;
   counts: Record<string, number>;
   reasonCodes: string[];
   events?: ScreenshotCaptureEvent[];

@@ -220,6 +220,19 @@ export class CdpConnection {
     this.lifecycleListeners.push(listener);
   }
 
+  get isClosed(): boolean {
+    return this.socket.destroyed || this.socket.writableEnded;
+  }
+
+  onDidClose(listener: () => void): () => void {
+    this.socket.once('close', listener);
+    return () => this.socket.removeListener('close', listener);
+  }
+
+  unref(): void {
+    this.socket.unref();
+  }
+
   getExecutionContextIds(): number[] {
     return [...this.contexts.keys()];
   }
@@ -430,10 +443,23 @@ export async function connectToVsCodeCdpByText(options: {
 export async function connectToVsCodeWorkbenchCdp(
   options: { activate?: boolean; timeoutMs?: number; waitForServer?: boolean } = {}
 ): Promise<CdpConnection> {
+  const deadline = Date.now() + (options.timeoutMs ?? 15000);
+  const workbenchTarget = await findVsCodeWorkbenchTargetForCapture({ ...options, deadlineMs: deadline });
+  if (options.activate !== false && workbenchTarget.id) {
+    const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+    await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${workbenchTarget.id}`, remaining(deadline)).catch(() => undefined);
+  }
+  return CdpConnection.connect(workbenchTarget.webSocketDebuggerUrl!, workbenchTarget.id, remaining(deadline), workbenchTarget);
+}
+
+/** Resolve the unique owning target without opening a transient CDP session. */
+export async function findVsCodeWorkbenchTargetForCapture(
+  options: { timeoutMs?: number; waitForServer?: boolean; deadlineMs?: number } = {}
+): Promise<CdpTarget> {
   const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for workbench DOM smoke tests');
 
-  const deadline = Date.now() + (options.timeoutMs ?? 15000);
+  const deadline = options.deadlineMs ?? Date.now() + (options.timeoutMs ?? 15000);
   let targets: CdpTarget[] = [];
   let startupConnectionError: unknown;
 
@@ -461,10 +487,7 @@ export async function connectToVsCodeWorkbenchCdp(
     const workbenchTarget = chooseVsCodeWorkbenchTargetForCapture(targets);
 
     if (workbenchTarget?.webSocketDebuggerUrl) {
-      if (options.activate !== false && workbenchTarget.id) {
-        await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${workbenchTarget.id}`, remaining(deadline)).catch(() => undefined);
-      }
-      return CdpConnection.connect(workbenchTarget.webSocketDebuggerUrl, workbenchTarget.id, remaining(deadline), workbenchTarget);
+      return workbenchTarget;
     }
 
     await delay(Math.min(250, remaining(deadline)));

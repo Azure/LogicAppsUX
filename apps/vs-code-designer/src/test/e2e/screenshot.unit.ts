@@ -4,6 +4,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { mock } from 'node:test';
 import type { ScreenshotReadinessSnapshot } from './screenshotReadiness';
+import './screenshotViewport.unit';
+import './screenshotSession.unit';
 
 const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Record<string, unknown>) => { window: SerializedDomWindow } };
 
@@ -20,6 +22,7 @@ async function main(): Promise<void> {
 
   testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
   testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId);
+  await test4kCaptureContract(captureCdpScreenshot, screenshotDir);
   await testOwnerBindingDeadlineRetainsContext(captureCdpScreenshot, screenshotDir);
   await testOwnerBindingProtocolErrorAtDeadlineRemainsOriginal(captureCdpScreenshot);
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
@@ -63,6 +66,58 @@ async function main(): Promise<void> {
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
+}
+
+function fakePngHeader(width = 3840, height = 2160): Buffer {
+  const header = Buffer.alloc(33);
+  Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(header);
+  header.writeUInt32BE(13, 8);
+  header.write('IHDR', 12, 'ascii');
+  header.writeUInt32BE(width, 16);
+  header.writeUInt32BE(height, 20);
+  return header;
+}
+
+async function test4kCaptureContract(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  screenshotDir: string
+): Promise<void> {
+  const methods: string[] = [];
+  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    onSend: (method) => methods.push(method),
+  });
+  const file = await captureCdpScreenshot(cdp, '4k-contract', {
+    expectation: { kind: 'workbenchShell', label: '4k-contract' },
+    timeoutMs: 5000,
+  });
+  assert.equal(methods[0], 'Emulation.setDeviceMetricsOverride', 'Resize must precede observations and latches');
+  assert.ok(file);
+  const metadata = JSON.parse(fs.readFileSync(file.replace(/\.png$/, '.json'), 'utf8'));
+  assert.deepEqual(metadata.captureViewport, { width: 3840, height: 2160, deviceScaleFactor: 1 });
+  const wrongSize = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    captureData: fakePngHeader(1024, 768).toString('base64'),
+  });
+  await assert.rejects(
+    captureCdpScreenshot(wrongSize, '4k-wrong-size', {
+      expectation: { kind: 'workbenchShell', label: '4k-wrong-size' },
+      timeoutMs: 5000,
+    }),
+    /CDP returned 1024x768/
+  );
+  assert.equal(fs.existsSync(path.join(screenshotDir, '4k-wrong-size.png')), false);
+  assert.equal(
+    fs.existsSync(path.join(screenshotDir, '4k-wrong-size.json')),
+    false,
+    'Never publish an accepted sidecar for a wrong-size PNG'
+  );
+  methods.length = 0;
+  await captureCdpScreenshot(cdp, '4k-urgent-diagnostic', {
+    classification: 'diagnostic',
+    expectation: { kind: 'diagnostic', label: '4k-urgent-diagnostic', reason: 'failure' },
+    captureBeforeObservation: true,
+  });
+  assert.equal(methods[0], 'Page.captureScreenshot', 'Urgent diagnostics must capture without changing the failed UI');
+  assert.ok(!methods.includes('Emulation.setDeviceMetricsOverride'));
 }
 
 function testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId: (value: string) => string): void {
@@ -1523,7 +1578,7 @@ class FakeCaptureCdp {
         throw new Error('synthetic capture timeout');
       }
       return {
-        result: { data: this.options.omitCaptureData ? undefined : (this.options.captureData ?? Buffer.from('png').toString('base64')) },
+        result: { data: this.options.omitCaptureData ? undefined : (this.options.captureData ?? fakePngHeader().toString('base64')) },
       };
     }
     return { result: {} };

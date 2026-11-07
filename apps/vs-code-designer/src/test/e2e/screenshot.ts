@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
-import { connectToVsCodeWorkbenchCdp, hasExactVisibleWorkbenchIframeForTarget } from './cdpClient';
+import { connectToVsCodeWorkbenchCdp, findVsCodeWorkbenchTargetForCapture, hasExactVisibleWorkbenchIframeForTarget } from './cdpClient';
 import {
   buildScreenshotMetadata,
   buildScreenshotReadinessExpression,
@@ -17,6 +17,8 @@ import {
   type ScreenshotReadinessMetadata,
   type ScreenshotReadinessSnapshot,
 } from './screenshotReadiness';
+import { assertEvidenceScreenshotDimensions, evidenceScreenshotViewport, prepareEvidenceScreenshotViewport } from './screenshotViewport';
+import { EvidenceScreenshotSession } from './screenshotSession';
 
 type SemanticTextGroup = string | string[];
 
@@ -43,6 +45,27 @@ interface ScreenshotFileSystem {
 
 let screenshotFileSystem: ScreenshotFileSystem = fs;
 let failureScreenshotHookInstalled = false;
+const evidenceScreenshotSession = new EvidenceScreenshotSession(
+  async (deadline) => {
+    const target = await findVsCodeWorkbenchTargetForCapture({ deadlineMs: deadline });
+    if (!target.id) {
+      throw new Error('Evidence screenshot requires an exact owning workbench target ID');
+    }
+    return target.id;
+  },
+  (deadline) => connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: remaining(deadline, 15000) })
+);
+
+export function disposeEvidenceScreenshotSession(): void {
+  evidenceScreenshotSession.dispose();
+}
+
+// Native labels load this module while Mocha registers root hooks. The owning
+// session is closed at invocation teardown, not after an individual capture.
+if (typeof suiteTeardown === 'function') {
+  suiteTeardown(disposeEvidenceScreenshotSession);
+}
+process.once('exit', disposeEvidenceScreenshotSession);
 
 export function setScreenshotFileSystemForTests(fileSystem?: Partial<ScreenshotFileSystem>): () => void {
   const previous = screenshotFileSystem;
@@ -235,6 +258,11 @@ async function captureCdpScreenshotCore(
   let frameId = 'main-frame';
   let generation = cdp.contextGeneration ?? 0;
   const immediateDiagnostic = classification === 'diagnostic' && options.captureBeforeObservation === true;
+  // Resize before semantic observation and invalidation latches, never between
+  // stable readiness and capture. Urgent diagnostics must not change failed UI.
+  if (classification === 'evidence') {
+    await prepareEvidenceScreenshotViewport(cdp, deadline);
+  }
   let data: string | undefined;
   if (immediateDiagnostic) {
     captureAttempts++;
@@ -242,7 +270,7 @@ async function captureCdpScreenshotCore(
     try {
       const response = (await cdp.send(
         'Page.captureScreenshot',
-        { format: 'png', captureBeyondViewport: options.captureBeyondViewport ?? false },
+        { format: 'png', fromSurface: true, captureBeyondViewport: options.captureBeyondViewport ?? false },
         { timeoutMs: remaining(deadline, 5000) }
       )) as { result?: { data?: string } };
       data = response.result?.data;
@@ -353,6 +381,7 @@ async function captureCdpScreenshotCore(
           'Page.captureScreenshot',
           {
             format: 'png',
+            fromSurface: true,
             captureBeyondViewport: options.captureBeyondViewport ?? false,
           },
           { timeoutMs: remaining(deadline, 5000) }
@@ -393,6 +422,9 @@ async function captureCdpScreenshotCore(
           break;
         }
         throw new Error(`CDP screenshot returned no data for ${name}`);
+      }
+      if (classification === 'evidence') {
+        assertEvidenceScreenshotDimensions(Buffer.from(candidateData, 'base64'));
       }
 
       let postSample: ScreenshotReadinessSnapshot;
@@ -490,9 +522,8 @@ async function captureCdpScreenshotCore(
       classification === 'diagnostic' ? 'diagnostic-capture-unavailable' : 'readiness-timeout',
       ...(samples.at(-1)?.reasonCodes ?? []),
     ];
-    writeScreenshotMetadata(
-      metadataPath,
-      buildScreenshotMetadata({
+    writeScreenshotMetadata(metadataPath, {
+      ...buildScreenshotMetadata({
         checkpoint: safeName,
         diagnosticContext: options.diagnosticContext,
         phase: expectation.kind,
@@ -507,8 +538,9 @@ async function captureCdpScreenshotCore(
         captureAttempts,
         reasonCodes,
         events,
-      })
-    );
+      }),
+      ...(classification === 'evidence' ? { captureViewport: evidenceScreenshotViewport } : {}),
+    });
     if (classification === 'diagnostic') {
       console.warn(`[screenshot] Diagnostic capture unavailable for ${safeName}: ${reasonCodes.join(', ')}`);
       return undefined;
@@ -517,9 +549,8 @@ async function captureCdpScreenshotCore(
   }
 
   screenshotFileSystem.writeFileSync(screenshotPath, Buffer.from(data, 'base64'));
-  writeScreenshotMetadata(
-    metadataPath,
-    buildScreenshotMetadata({
+  writeScreenshotMetadata(metadataPath, {
+    ...buildScreenshotMetadata({
       checkpoint: safeName,
       diagnosticContext: options.diagnosticContext,
       phase: expectation.kind,
@@ -534,8 +565,9 @@ async function captureCdpScreenshotCore(
       captureAttempts,
       reasonCodes: samples.at(-1)?.reasonCodes,
       events,
-    })
-  );
+    }),
+    ...(classification === 'evidence' ? { captureViewport: evidenceScreenshotViewport } : {}),
+  });
   console.log(`[screenshot] Saved: ${screenshotPath}`);
   return screenshotPath;
 }
@@ -568,11 +600,16 @@ async function captureWorkbenchScreenshot(name: string, options: ScreenshotCaptu
   const timeoutMs = options.timeoutMs ?? (options.classification === 'diagnostic' ? 5000 : 15000);
   const deadline = Date.now() + timeoutMs;
   try {
-    const cdp = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: remaining(deadline, Math.min(timeoutMs, 15000)) });
+    const retained = options.classification === 'evidence';
+    const cdp = retained
+      ? await evidenceScreenshotSession.acquire(deadline)
+      : await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: remaining(deadline, Math.min(timeoutMs, 15000)) });
     try {
       return await captureCdpScreenshot(cdp, name, { ...options, timeoutMs, deadlineMs: deadline });
     } finally {
-      cdp.dispose();
+      if (!retained) {
+        cdp.dispose();
+      }
     }
   } catch (error) {
     if (options.classification !== 'diagnostic') {
