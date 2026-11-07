@@ -52,6 +52,28 @@ Do not copy the long Azure environment setup into family-specific notes. Keep
 the canonical snippet in `docs/testing/vscode-cli-authoring.md` so token
 freshness, approved-target policy and prepared-seed identity cannot drift.
 
+### Bounded ADO failed-job reruns
+
+Once attempt-safe artifact publication and rollup selection are available and
+verified, a failing pipeline may rerun **failed jobs only**, at the same
+immutable source SHA, at most **two additional times**. Count the original
+execution as attempt one: the limit is three executions total, not three
+retries. Preserve the initial failure and each rerun's native results,
+screenshots, lifecycle receipts, publication verdict and attempt identity.
+
+If both additional executions fail, stop retrying and treat the persistent
+failure as a regression requiring diagnosis before another run. This is the
+operational triage threshold, not proof of a particular product-code cause.
+Classify build/bootstrap, native test, lifecycle/evidence and publication
+failures separately; an artifact-name collision is not a native test failure.
+Do not reset the retry budget, change source between attempts, relax an
+assertion, or discard earlier failures to obtain a green result.
+
+A rerun pass requires the successful producing attempt's original artifact
+and all existing evidence/lifecycle gates. It does not make an older failure
+artifact valid or replace the protected full23 rollup. See
+`docs/testing/vscode-cli-authoring.md` for the canonical ADO procedure.
+
 ## 1.5. Critical Rules — Read Before Writing Any New Test
 
 These are the rules whose violation has caused entire test suites to be rewritten. Read them first.

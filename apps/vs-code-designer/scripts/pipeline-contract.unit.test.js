@@ -200,6 +200,7 @@ testCanonicalSuiteParityContract();
 testFullRollupGateCanonicalInventoryContract();
 testLifecycleFamilyRoutingContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
+testSuiteAttemptPublicationContract();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
@@ -301,6 +302,97 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const valid = runFullRollupGateFixture(script, { scenario: 'valid', baseContext: admittedContext });
   assert.strictEqual(valid.status, 0, valid.output);
+
+  const mixedAttempts = { linux_workspace_regeneration: 2, windows_unit_tests: 10, linux_unit_tests: 3 };
+  for (const gateAttempt of [1, 4]) {
+    const retry = runFullRollupGateFixture(script, {
+      scenario: `latest-suite-attempt-gate-${gateAttempt}`,
+      baseContext: admittedContext,
+      attempts: mixedAttempts,
+      gateAttempt,
+      previousFailedArtifacts: true,
+    });
+    assert.strictEqual(retry.status, 0, retry.output);
+  }
+  for (const values of [
+    { artifactName: '', jobAttempt: '' },
+    { artifactName: 'vscode-e2e-cli-diagnostics-linux-unit-tests-attempt-1', jobAttempt: '2' },
+    { artifactName: 'vscode-e2e-cli-diagnostics-windows-unit-tests-attempt-2', jobAttempt: '2' },
+    { artifactName: 'vscode-e2e-cli-diagnostics-linux-unit-tests-attempt-02', jobAttempt: '02' },
+    { artifactName: '../stale', jobAttempt: '2' },
+  ]) {
+    const invalid = runFullRollupGateFixture(script, {
+      scenario: 'invalid-output',
+      baseContext: admittedContext,
+      attempts: { linux_unit_tests: 2 },
+      outputOverride: { job: 'linux_unit_tests', values },
+      previousFailedArtifacts: true,
+    });
+    assert.notStrictEqual(invalid.status, 0, invalid.output);
+    assert.match(invalid.output, /Invalid canonical suite diagnostics output/);
+  }
+  for (const [field, value] of [
+    ['attempt', '1'],
+    ['suite', 'workspaceMultiRoot'],
+    ['job', 'windows_unit_tests'],
+    ['artifact', 'stale'],
+    ['runId', '41'],
+    ['definitionId', '24067'],
+    ['sourceSHA', 'b'.repeat(40)],
+    ['schemaVersion', 0],
+  ]) {
+    const invalid = runFullRollupGateFixture(script, {
+      scenario: `wrong-receipt-${field}`,
+      baseContext: admittedContext,
+      attempts: { linux_unit_tests: 2 },
+      receiptMutation: {
+        job: 'linux_unit_tests',
+        mutate: (receipt) => {
+          receipt[field] = value;
+        },
+      },
+    });
+    assert.notStrictEqual(invalid.status, 0, invalid.output);
+    assert.match(invalid.output, /Suite diagnostics attempt identity mismatch/);
+  }
+  const wrongReport = runFullRollupGateFixture(script, {
+    scenario: 'wrong-report-artifact',
+    baseContext: admittedContext,
+    resultOverride: { diagnosticsArtifactName: 'original-attempt' },
+  });
+  assert.notStrictEqual(wrongReport.status, 0, wrongReport.output);
+  assert.match(wrongReport.output, /Suite report diagnostics identity mismatch/);
+  const missingLatestWithOldSuccess = runFullRollupGateFixture(script, {
+    scenario: 'old-success-must-not-replace-missing-latest',
+    baseContext: admittedContext,
+    attempts: { linux_unit_tests: 2 },
+    previousSuccessfulArtifacts: true,
+    omitArtifactJob: 'linux_unit_tests',
+  });
+  assert.notStrictEqual(missingLatestWithOldSuccess.status, 0, missingLatestWithOldSuccess.output);
+  assert.match(missingLatestWithOldSuccess.output, /Missing required full-rollup artifact/);
+  for (const file of ['suite-attempt.json', 'unitTests.json']) {
+    const missing = runFullRollupGateFixture(script, {
+      scenario: 'missing-current-attempt-evidence',
+      baseContext: admittedContext,
+      attempts: { linux_unit_tests: 2 },
+      previousFailedArtifacts: true,
+      omit: { job: 'linux_unit_tests', file },
+    });
+    assert.notStrictEqual(missing.status, 0, missing.output);
+    assert.match(missing.output, /Missing required full-rollup artifact/);
+  }
+  for (const jobResult of ['Failed', 'SucceededWithIssues', 'Skipped', 'Canceled', '']) {
+    const failedLatest = runFullRollupGateFixture(script, {
+      scenario: 'latest-job-must-succeed',
+      baseContext: admittedContext,
+      attempts: { linux_unit_tests: 2 },
+      previousFailedArtifacts: true,
+      jobResultOverride: { job: 'linux_unit_tests', result: jobResult },
+    });
+    assert.notStrictEqual(failedLatest.status, 0, failedLatest.output);
+    assert.match(failedLatest.output, /Canonical suite job did not succeed/);
+  }
 
   const crlfLog = runFullRollupGateFixture(script, {
     scenario: 'crlf-log',
@@ -461,16 +553,40 @@ function runFullRollupGateFixture(script, options = {}) {
       options.baseContext ?? runAdmissionContextScriptFixture(parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml'));
 
     for (const suite of suites) {
-      if (options.omitArtifactJob === suite.job) {
-        continue;
-      }
-      const root = path.join(pipelineWorkspace, suite.artifact);
+      const attempt = String(options.attempts?.[suite.job] ?? 1);
+      const artifact = `${suite.artifact}-attempt-${attempt}`;
+      const root = path.join(pipelineWorkspace, artifact);
       const resultRoot = path.join(root, 'results');
       const logRoot = path.join(root, 'log');
       fs.mkdirSync(resultRoot, { recursive: true });
       fs.mkdirSync(logRoot, { recursive: true });
       const passing = suite.terminalReceipt ? 1 : 12;
-      const result = { outcome: 'success', total: passing, passing, failing: 0, pending: 0, ...(options.resultOverride ?? {}) };
+      const result = {
+        label: suite.suite,
+        diagnosticsArtifactName: artifact,
+        outcome: 'success',
+        total: passing,
+        passing,
+        failing: 0,
+        pending: 0,
+        ...(options.resultOverride ?? {}),
+      };
+      const receipt = {
+        schemaVersion: 1,
+        job: suite.job,
+        suite: suite.suite,
+        artifact,
+        attempt,
+        runId: baseContext.producerRunId,
+        definitionId: baseContext.producerDefinitionId,
+        sourceSHA: baseContext.sourceSHA,
+      };
+      if (options.receiptMutation?.job === suite.job) {
+        options.receiptMutation.mutate(receipt);
+      }
+      if (options.omit?.job !== suite.job || options.omit.file !== 'suite-attempt.json') {
+        fs.writeFileSync(path.join(root, 'suite-attempt.json'), JSON.stringify(receipt));
+      }
       const context = { ...baseContext };
       if (options.contextOverride?.job === suite.job) {
         context[options.contextOverride.field] = options.contextOverride.value;
@@ -532,12 +648,82 @@ function runFullRollupGateFixture(script, options = {}) {
               phaseCount: SUITE_REGISTRY[suite.suite].expectedPhases.length,
             });
       fs.writeFileSync(path.join(logRoot, `${suite.suite}.log`), options.logTransform ? options.logTransform(logText) : logText);
+      if ((options.previousFailedArtifacts || options.previousSuccessfulArtifacts) && attempt !== '1') {
+        const previous = path.join(pipelineWorkspace, `${suite.artifact}-attempt-1`);
+        fs.cpSync(root, previous, { recursive: true });
+        fs.writeFileSync(
+          path.join(previous, 'suite-attempt.json'),
+          JSON.stringify({
+            ...receipt,
+            attempt: '1',
+            artifact: `${suite.artifact}-attempt-1`,
+          })
+        );
+        fs.writeFileSync(
+          path.join(previous, 'results', `${suite.suite}.json`),
+          JSON.stringify({
+            ...result,
+            diagnosticsArtifactName: `${suite.artifact}-attempt-1`,
+            outcome: options.previousSuccessfulArtifacts ? 'success' : 'failure',
+            failing: options.previousSuccessfulArtifacts ? 0 : 1,
+          })
+        );
+        fs.writeFileSync(path.join(previous, 'original-failed-evidence.json'), '{"outcome":"failure"}');
+        // An unrelated lexicographically higher artifact must not win selection either.
+        fs.cpSync(previous, path.join(pipelineWorkspace, `${suite.artifact}-attempt-999`), { recursive: true });
+      }
+      if (options.omitArtifactJob === suite.job) {
+        fs.rmSync(root, { recursive: true, force: true });
+      }
     }
 
     let preparedScript = script.replaceAll('$(Pipeline.Workspace)', pipelineWorkspace).replaceAll('$(Build.SourcesDirectory)', repoRoot);
+    const env = {
+      BUILD_BUILDID: baseContext.producerRunId,
+      SYSTEM_DEFINITIONID: baseContext.producerDefinitionId,
+      BUILD_SOURCEVERSION: baseContext.sourceSHA,
+      SYSTEM_JOBATTEMPT: String(options.gateAttempt ?? 1),
+    };
+    const gate = getConsumerDirectJob(parseYaml('.config/vscode-e2e-cli.1es.yml'), 'verify_both_os_full_rollup');
+    const variables = new Map(gate.variables.map(({ name, value }) => [name, value]));
+    const downloads = gate.steps.filter((step) => step.download === 'current');
+    const gateStep = gate.steps.find((step) => step.pwsh === script);
     for (const suite of suites) {
       const result = options.jobResultOverride?.job === suite.job ? options.jobResultOverride.result : 'Succeeded';
       preparedScript = preparedScript.replaceAll(`$(${suite.variable})`, result);
+      const stem = suite.variable.replace(/Result$/, '');
+      const attempt = String(options.attempts?.[suite.job] ?? 1);
+      const outputs = {
+        artifactName: `${suite.artifact}-attempt-${attempt}`,
+        jobAttempt: attempt,
+        ...(options.outputOverride?.job === suite.job ? options.outputOverride.values : {}),
+      };
+      // Evaluate the real dependency-output expressions, then the download and script env macros.
+      for (const [suffix, output] of [
+        ['Artifact', 'artifactName'],
+        ['Attempt', 'jobAttempt'],
+      ]) {
+        const variable = `${stem}${suffix}`;
+        assert.strictEqual(variables.get(variable), `$[ dependencies.${suite.job}.outputs['diagnosticsIdentity.${output}'] ]`);
+        if (suffix === 'Artifact') {
+          assert.ok(
+            downloads.some((step) => step.artifact === `$(${variable})`),
+            `${suite.job} must download its output only`
+          );
+        }
+        assert.strictEqual(gateStep.env[variable], `$(${variable})`);
+        env[variable] = outputs[output];
+        env[variable.toUpperCase()] = outputs[output];
+      }
+    }
+    assert.strictEqual(downloads.length, 23);
+    assert.ok(downloads.every((step) => step.condition === 'succeeded()' && !step.continueOnError));
+    const preflight = gate.steps.find((step) => step.displayName === 'Validate exact suite artifact outputs before download');
+    const preflightResult = runPowerShellScript(preflight.pwsh, env);
+    if (!options.outputOverride) {
+      assert.strictEqual(preflightResult.status, 0, preflightResult.output);
+    } else if (preflightResult.status !== 0) {
+      assert.match(preflightResult.output, /Invalid canonical suite diagnostics output before download/);
     }
 
     function buildRealMochaEvidenceLog({ suiteId, phaseCount }) {
@@ -554,12 +740,69 @@ function runFullRollupGateFixture(script, options = {}) {
       }
       return `${lines.join('\n')}\n`;
     }
-    return runPowerShellScript(preparedScript);
+    const execution = runPowerShellScript(preparedScript, env);
+    if (options.previousFailedArtifacts) {
+      for (const suite of suites.filter((entry) => (options.attempts?.[entry.job] ?? 1) !== 1)) {
+        assert.strictEqual(
+          fs.readFileSync(path.join(pipelineWorkspace, `${suite.artifact}-attempt-1`, 'original-failed-evidence.json'), 'utf8'),
+          '{"outcome":"failure"}'
+        );
+      }
+    }
+    return execution;
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
 }
 
+function testSuiteAttemptPublicationContract() {
+  const template = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const job = template.jobs[0];
+  assert.strictEqual(
+    job.templateContext.outputs[0].artifactName,
+    'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)'
+  );
+  const identity = findObjectByDisplayName(template, 'Bind suite diagnostics to producing job attempt');
+  assert.strictEqual(identity?.name, 'diagnosticsIdentity');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-attempt-'));
+  try {
+    const artifacts = new Map();
+    for (const attempt of [1, 2, 10]) {
+      const script = identity.pwsh
+        .replaceAll('$(Build.ArtifactStagingDirectory)', path.join(root, String(attempt)))
+        .replaceAll('${{ parameters.artifactName }}', 'linux-workspace-regeneration')
+        .replaceAll('${{ parameters.jobName }}', 'linux_workspace_regeneration')
+        .replaceAll('${{ parameters.suiteId }}', 'workspaceArtifactRegeneration');
+      const execution = runPowerShellScript(script, {
+        SYSTEM_JOBATTEMPT: String(attempt),
+        BUILD_BUILDID: '42',
+        SYSTEM_DEFINITIONID: '28771',
+        BUILD_SOURCEVERSION: 'a'.repeat(40),
+      });
+      assert.strictEqual(execution.status, 0, execution.output);
+      const artifact = `vscode-e2e-cli-diagnostics-linux-workspace-regeneration-attempt-${attempt}`;
+      assert.match(execution.output, new RegExp(`variable=artifactName;isOutput=true\\]${artifact}`));
+      assert.match(execution.output, new RegExp(`variable=jobAttempt;isOutput=true\\]${attempt}`));
+      assert.ok(!artifacts.has(artifact), 'publication must never collide with an earlier suite attempt');
+      artifacts.set(artifact, attempt);
+      const receipt = JSON.parse(
+        fs.readFileSync(path.join(root, String(attempt), 'vscode-e2e-cli', 'linux-workspace-regeneration', 'suite-attempt.json'), 'utf8')
+      );
+      assert.strictEqual(receipt.artifact, artifact);
+      assert.strictEqual(receipt.attempt, String(attempt));
+    }
+    assert.strictEqual(artifacts.size, 3, 'earlier immutable artifacts remain published');
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+  const source = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  assert.strictEqual(
+    source.split('--diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)"')
+      .length - 1,
+    4,
+    'all Linux/Windows Azure/non-Azure CLI surfaces must report the physical artifact'
+  );
+}
 function runAdmissionContextScriptFixture(runSuite) {
   const script = extractRunSuiteStepScript(runSuite, 'Write admitted E2E artifact identity context');
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-admission-context-'));
@@ -1231,7 +1474,10 @@ function testConsumerAdmissionContract() {
     runSuitesTemplate,
     /targetPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e-cli\/\$\{\{ parameters\.artifactName \}\}/
   );
-  assert.match(runSuitesTemplate, /--diagnostics-artifact-name "vscode-e2e-cli-diagnostics-\$\{\{ parameters\.artifactName \}\}"/);
+  assert.match(
+    runSuitesTemplate,
+    /--diagnostics-artifact-name "vscode-e2e-cli-diagnostics-\$\{\{ parameters\.artifactName \}\}-attempt-\$\(System\.JobAttempt\)"/
+  );
   assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-test-results-\$\{\{ parameters\.artifactName \}\}/);
   assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-log-\$\{\{ parameters\.artifactName \}\}/);
   assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-screenshots-\$\{\{ parameters\.artifactName \}\}/);
@@ -1479,10 +1725,12 @@ function testFullRollupGateCanonicalInventoryContract() {
     'full gate must depend on exactly the 23 registered platform lanes'
   );
   assert.deepStrictEqual(
-    gate.variables.map((variable) => ({
-      name: variable.name,
-      value: variable.value,
-    })),
+    gate.variables
+      .filter((variable) => variable.name.endsWith('Result'))
+      .map((variable) => ({
+        name: variable.name,
+        value: variable.value,
+      })),
     CANONICAL_FULL_GATE_SUITES.map((suite) => ({
       name: suite.variable,
       value: `$[ dependencies.${suite.job}.result ]`,
@@ -1491,22 +1739,22 @@ function testFullRollupGateCanonicalInventoryContract() {
   );
   assert.deepStrictEqual(
     gate.steps.filter((step) => step.download === 'current').map((step) => step.artifact),
-    CANONICAL_FULL_GATE_SUITES.map((suite) => suite.artifact),
+    CANONICAL_FULL_GATE_SUITES.map((suite) => `$(${suite.variable.replace(/Result$/, 'Artifact')})`),
     'full gate must download exactly the 23 registered diagnostics artifacts'
   );
 
   const validationRecords = Array.from(
     script.matchAll(
-      /@\{ job = '([^']+)'; result = '\$\(([^)]+)\)'; artifact = '([^']+)'; suite = '([^']+)'; expectedMochaCompletions = (\d+); subtractMatrixFooter = \$(true|false)(?:; terminalReceipt = \$(true|false))? \}/g
+      /@\{ job = '([^']+)'; result = '\$\(([^)]+)\)'; artifact = \$env:(\w+); attempt = \$env:(\w+); logicalArtifact = '([^']+)'; suite = '([^']+)'; expectedMochaCompletions = (\d+); subtractMatrixFooter = \$(true|false)(?:; terminalReceipt = \$(true|false))? \}/g
     ),
     (match) => ({
       job: match[1],
       variable: match[2],
-      artifact: match[3],
-      suite: match[4],
-      expectedMochaCompletions: Number(match[5]),
-      subtractMatrixFooter: match[6] === 'true',
-      terminalReceipt: match[7] === 'true',
+      artifact: match[5],
+      suite: match[6],
+      expectedMochaCompletions: Number(match[7]),
+      subtractMatrixFooter: match[8] === 'true',
+      terminalReceipt: match[9] === 'true',
     })
   );
   assert.deepStrictEqual(validationRecords, CANONICAL_FULL_GATE_SUITES, 'full gate must validate exactly all 23 registered platform lanes');
@@ -1890,11 +2138,12 @@ function testLegacyDependencyProducerContract() {
   );
 }
 
-function runPowerShellScript(script) {
+function runPowerShellScript(script, env = {}) {
   try {
     const output = execFileSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', script], {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, ...env },
     });
     return { status: 0, output };
   } catch (error) {
@@ -2064,7 +2313,10 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     suiteJob.templateContext.outputs.map((output) => output.output),
     ['pipelineArtifact']
   );
-  assert.strictEqual(suiteJob.templateContext.outputs[0].artifactName, 'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}');
+  assert.strictEqual(
+    suiteJob.templateContext.outputs[0].artifactName,
+    'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)'
+  );
   assert.strictEqual(
     suiteJob.templateContext.outputs[0].targetPath,
     '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}'
@@ -2418,6 +2670,7 @@ function prepareInlineScriptForUnit({ name, shell, script, invokesRunner }) {
     .replaceAll('${{ parameters.suiteId }}', 'unitTests')
     .replaceAll('${{ parameters.shortName }}', 'ut')
     .replaceAll('${{ parameters.suites }}', 'unitTests')
+    .replaceAll('$(System.JobAttempt)', '2')
     .replaceAll('$(Build.SourcesDirectory)', sourceMacroValue)
     .replaceAll('$(Agent.TempDirectory)', agentTempMacroValue);
   return { name, shell, script: prepared, tempRoot, invokesRunner };

@@ -60,7 +60,47 @@ The Windows-only `createWorkspaceBehaviorSmoke` lane is part of the `windows` al
 
 The pipeline resolves the stable VS Code build once per run and passes it into every suite job. Linux profiles must stay short and isolated to respect VS Code's Unix socket path limit; the deeply nested batch profile layout is not reused. WIF/AzureCLI credential setup is limited to the Azure-required MSN Weather, HTTP timeout, Stateless variables, Run After persistence, and MultiRoot debug jobs. They use `requiresAzureAccessToken: true`, the fixed `LogicAppsVSCode-E2E-SignIn` service connection, the approved `LogicAppsVSCode-E2E-Fixtures` resource group and configured location. The AzureCLI task derives and validates tenant/subscription identity from that authenticated service connection and supplies the scoped WIF token and fixture context; missing identity or token evidence fails instead of falling back to ambient credentials. MultiRoot drives affirmative connector context setup through the shared UI policy and reads the existing group; it does not create Azure resources. Non-Azure smoke and regeneration jobs do not receive live Azure credential variables.
 
-Each suite publishes its own JUnit results and one consolidated sanitized diagnostics pipeline artifact named `vscode-e2e-cli-diagnostics-<os-suite>`. That artifact contains `results/`, `log/`, `screenshots/`, and `generated-workspaces/` so each independent lane has one artifact to inspect while the shared `vscode-e2e-build` artifact remains separate. Every registered suite also contains root-level `VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`, rendered from one schema-v2 producer manifest after manifest-allowlisted staging and before missing-file or strict terminal acceptance. The suite runner initializes the ordered plan, the shared screenshot boundary records outcomes, and `stage-vscode-e2e-evidence.js` copies only referenced regular files after containment, extension, size, hash, duplicate, and symlink checks. The renderer does not scan screenshot trees or derive semantic identity from paths. Multi-root dynamic checkpoints use stable ordinals from authoritative root order; basenames are display labels only. HTTP retains `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md` and `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json` as compatibility projections of its exact 38-step manifest. Missing, failed, and not-reached evidence remains visible in the report, but reports never weaken native result, ordered phase, cleanup, process-closure, or terminal gates. Raw profiles, auth stores, unrestricted workspaces, runtime dependency roots, raw logs, credentials, rich screenshot sidecars, and screenshot target/event details are not uploaded or copied into reports. Diagnostic selected reruns report through `report_diagnostic_selected_rerun`; protected checks for full validation must bind `verify_both_os_full_rollup`, which only exists for non-diagnostic full runs. The full gate provisions Node 22 before validation and requires all 23 registered platform lanes to succeed, nonzero successful per-suite results, strict terminal receipts for every lifecycle family, stable variant coverage, and matching admitted artifact/source/run/repository/VS Code identity. Missing, skipped, failed, empty, mismatched, or diagnostic-only results cannot make the full gate green.
+Each suite publishes its own JUnit results and one consolidated sanitized diagnostics pipeline artifact named `vscode-e2e-cli-diagnostics-<os-suite>-attempt-<System.JobAttempt>`. That artifact contains `results/`, `log/`, `screenshots/`, and `generated-workspaces/` so each independent lane has one artifact per attempt to inspect while the shared `vscode-e2e-build` artifact remains separate. Every registered suite also contains root-level `VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`, rendered from one schema-v2 producer manifest after manifest-allowlisted staging and before missing-file or strict terminal acceptance. The suite runner initializes the ordered plan, the shared screenshot boundary records outcomes, and `stage-vscode-e2e-evidence.js` copies only referenced regular files after containment, extension, size, hash, duplicate, and symlink checks. The renderer does not scan screenshot trees or derive semantic identity from paths. Multi-root dynamic checkpoints use stable ordinals from authoritative root order; basenames are display labels only. HTTP retains `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md` and `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json` as compatibility projections of its exact 38-step manifest. Missing, failed, and not-reached evidence remains visible in the report, but reports never weaken native result, ordered phase, cleanup, process-closure, or terminal gates. Raw profiles, auth stores, unrestricted workspaces, runtime dependency roots, raw logs, credentials, rich screenshot sidecars, and screenshot target/event details are not uploaded or copied into reports. Diagnostic selected reruns report through `report_diagnostic_selected_rerun`; protected checks for full validation must bind `verify_both_os_full_rollup`, which only exists for non-diagnostic full runs. The full gate provisions Node 22 before validation and requires all 23 registered platform lanes to succeed, nonzero successful per-suite results, strict terminal receipts for every lifecycle family, stable variant coverage, and matching admitted artifact/source/run/repository/VS Code identity. Missing, skipped, failed, empty, mismatched, or diagnostic-only results cannot make the full gate green.
+
+### Suite job retries and canonical diagnostics
+
+Suite diagnostics are immutable per producing **suite job** attempt. The named
+`diagnosticsIdentity` step emits `artifactName` and `jobAttempt` outputs and writes
+`suite-attempt.json`, binding the physical artifact to logical job/suite, source
+SHA, definition, run, and attempt. All four native CLI invocation paths and the
+1ES publication output use the same attempt-qualified name; earlier failed
+artifacts remain available for debugging. Publication is still `always()` and a
+publication failure still fails the producing job.
+
+The protected 23-lane rollup downloads only each dependency's emitted artifact,
+not a prefix search, an artifact-list maximum, or its own job attempt. It rejects
+missing/malformed outputs before downloads (an empty ADO artifact input would
+otherwise download all artifacts). It checks the receipt and report's exact
+physical artifact identity alongside the existing native/lifecycle and admitted
+payload gates, and still requires each latest dependency result to be
+`Succeeded`. Retrying only the protected gate reuses the completed suite attempts,
+which can differ across lanes. There is no fallback to a previous attempt.
+
+The new contract applies to runs compiled from this YAML revision. It does not
+rewrite an older run's fixed-name artifacts or its already-compiled plan;
+preserve that original failed evidence and validate the new contract on a
+source-bound run before relying on reruns for acceptance.
+
+This fixes **suite diagnostic** retries, not retries of the shared build or
+prepared-dependency producer jobs. Those publications retain fixed names
+(`vscode-e2e-build` and `vscode-e2e-prepared-extensions-<os>`), so a
+`forceRetryAllJobs=true` stage retry can still collide there. A clean-pass
+force-all-jobs native proof needs a coordinated extension: attempt-qualified
+physical producer publications and downloads selected from producer outputs,
+while preserving the logical admitted build name `vscode-e2e-build` and one exact
+shared payload for all 23 lanes. Do not delete original artifacts, suppress
+publication errors, or assume undocumented job-selective retry REST parameters.
+
+The separate user-directed [bounded failed-job rerun policy](../docs/testing/vscode-cli-authoring.md#operational-policy-bounded-failed-job-reruns)
+allows an initial failure plus at most two additional failed-job reruns in the
+same run at the same immutable SHA, only after attempt safety is verified.
+Three native failures require stopping retries and investigating a persistent
+regression; publication collisions alone are not product regressions.
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 

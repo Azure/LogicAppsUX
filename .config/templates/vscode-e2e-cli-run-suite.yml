@@ -101,11 +101,36 @@ jobs:
       outputs:
         - output: pipelineArtifact
           targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
-          artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}
+          artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)
           condition: always()
     steps:
       - checkout: self
         fetchDepth: 0
+
+      - pwsh: |
+          $attempt = [string]$env:SYSTEM_JOBATTEMPT
+          if ($attempt -notmatch '^[1-9][0-9]*$') {
+            throw "Invalid producing suite job attempt: '$attempt'"
+          }
+          $artifact = "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$attempt"
+          $root = '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}'
+          # Agent reuse must not carry earlier diagnostics into a new immutable attempt.
+          if (Test-Path $root) { Remove-Item $root -Recurse -Force }
+          New-Item -ItemType Directory -Force -Path $root | Out-Null
+          @{
+            schemaVersion = 1
+            job = '${{ parameters.jobName }}'
+            suite = '${{ parameters.suiteId }}'
+            artifact = $artifact
+            attempt = $attempt
+            runId = [string]$env:BUILD_BUILDID
+            definitionId = [string]$env:SYSTEM_DEFINITIONID
+            sourceSHA = [string]$env:BUILD_SOURCEVERSION
+          } | ConvertTo-Json | Set-Content (Join-Path $root 'suite-attempt.json') -Encoding utf8
+          Write-Host "##vso[task.setvariable variable=artifactName;isOutput=true]$artifact"
+          Write-Host "##vso[task.setvariable variable=jobAttempt;isOutput=true]$attempt"
+        name: diagnosticsIdentity
+        displayName: Bind suite diagnostics to producing job attempt
 
       - task: UseNode@1
         displayName: Use trusted Node.js for E2E artifact admission
@@ -376,7 +401,7 @@ jobs:
                 --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
                 --out-dir ".vscode-test/results" \
                 --outcome "$outcome" \
-                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)"
               exit "$status"
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
@@ -477,7 +502,7 @@ jobs:
                   --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
                   --out-dir ".vscode-test/results" \
                   --outcome "$outcome" \
-                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)"
                 exit "$status"
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
@@ -527,7 +552,7 @@ jobs:
                 --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
                 --out-dir ".vscode-test\results" `
                 --outcome "$outcome" `
-                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)"
               if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
                 $status = $LASTEXITCODE
               }
@@ -621,7 +646,7 @@ jobs:
                   --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
                   --out-dir ".vscode-test\results" `
                   --outcome "$outcome" `
-                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}-attempt-$(System.JobAttempt)"
                 if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
                   $status = $LASTEXITCODE
                 }

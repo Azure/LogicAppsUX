@@ -894,6 +894,98 @@ extends:
                     value: $[ dependencies.windows_workspace_regeneration.result ]
                   - name: windowsWorkspaceMultiRootResult
                     value: $[ dependencies.windows_workspace_multi_root.result ]
+                  - name: linuxUnitTestsArtifact
+                    value: $[ dependencies.linux_unit_tests.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxUnitTestsAttempt
+                    value: $[ dependencies.linux_unit_tests.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxCreateWorkspaceBehaviorArtifact
+                    value: $[ dependencies.linux_create_workspace_behavior.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxCreateWorkspaceBehaviorAttempt
+                    value: $[ dependencies.linux_create_workspace_behavior.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxCreateWorkspaceCoreMatrixArtifact
+                    value: $[ dependencies.linux_create_workspace_core_matrix.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxCreateWorkspaceCoreMatrixAttempt
+                    value: $[ dependencies.linux_create_workspace_core_matrix.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxCreateWorkspacePreviewMatrixArtifact
+                    value: $[ dependencies.linux_create_workspace_preview_matrix.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxCreateWorkspacePreviewMatrixAttempt
+                    value: $[ dependencies.linux_create_workspace_preview_matrix.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxCreateWorkspaceCodefulArtifact
+                    value: $[ dependencies.linux_create_workspace_codeful.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxCreateWorkspaceCodefulAttempt
+                    value: $[ dependencies.linux_create_workspace_codeful.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxMsnWeatherLifecycleArtifact
+                    value: $[ dependencies.linux_msn_weather_lifecycle.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxMsnWeatherLifecycleAttempt
+                    value: $[ dependencies.linux_msn_weather_lifecycle.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxHttpTimeoutLifecycleArtifact
+                    value: $[ dependencies.linux_http_timeout_lifecycle.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxHttpTimeoutLifecycleAttempt
+                    value: $[ dependencies.linux_http_timeout_lifecycle.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxStatelessVariablesArtifact
+                    value: $[ dependencies.linux_stateless_variables.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxStatelessVariablesAttempt
+                    value: $[ dependencies.linux_stateless_variables.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxRunAfterPersistenceArtifact
+                    value: $[ dependencies.linux_run_after_persistence.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxRunAfterPersistenceAttempt
+                    value: $[ dependencies.linux_run_after_persistence.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxWorkspaceRegenerationArtifact
+                    value: $[ dependencies.linux_workspace_regeneration.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxWorkspaceRegenerationAttempt
+                    value: $[ dependencies.linux_workspace_regeneration.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: linuxWorkspaceMultiRootArtifact
+                    value: $[ dependencies.linux_workspace_multi_root.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: linuxWorkspaceMultiRootAttempt
+                    value: $[ dependencies.linux_workspace_multi_root.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsUnitTestsArtifact
+                    value: $[ dependencies.windows_unit_tests.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsUnitTestsAttempt
+                    value: $[ dependencies.windows_unit_tests.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsCreateWorkspaceBehaviorArtifact
+                    value: $[ dependencies.windows_create_workspace_behavior.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsCreateWorkspaceBehaviorAttempt
+                    value: $[ dependencies.windows_create_workspace_behavior.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsCreateWorkspaceCoreMatrixArtifact
+                    value: $[ dependencies.windows_create_workspace_core_matrix.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsCreateWorkspaceCoreMatrixAttempt
+                    value: $[ dependencies.windows_create_workspace_core_matrix.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsCreateWorkspacePreviewMatrixArtifact
+                    value: $[ dependencies.windows_create_workspace_preview_matrix.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsCreateWorkspacePreviewMatrixAttempt
+                    value: $[ dependencies.windows_create_workspace_preview_matrix.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsCreateWorkspaceCodefulArtifact
+                    value: $[ dependencies.windows_create_workspace_codeful.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsCreateWorkspaceCodefulAttempt
+                    value: $[ dependencies.windows_create_workspace_codeful.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsCreateWorkspaceBehaviorSmokeArtifact
+                    value: $[ dependencies.windows_create_workspace_behavior_smoke.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsCreateWorkspaceBehaviorSmokeAttempt
+                    value: $[ dependencies.windows_create_workspace_behavior_smoke.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsMsnWeatherLifecycleArtifact
+                    value: $[ dependencies.windows_msn_weather_lifecycle.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsMsnWeatherLifecycleAttempt
+                    value: $[ dependencies.windows_msn_weather_lifecycle.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsHttpTimeoutLifecycleArtifact
+                    value: $[ dependencies.windows_http_timeout_lifecycle.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsHttpTimeoutLifecycleAttempt
+                    value: $[ dependencies.windows_http_timeout_lifecycle.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsStatelessVariablesArtifact
+                    value: $[ dependencies.windows_stateless_variables.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsStatelessVariablesAttempt
+                    value: $[ dependencies.windows_stateless_variables.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsRunAfterPersistenceArtifact
+                    value: $[ dependencies.windows_run_after_persistence.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsRunAfterPersistenceAttempt
+                    value: $[ dependencies.windows_run_after_persistence.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsWorkspaceRegenerationArtifact
+                    value: $[ dependencies.windows_workspace_regeneration.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsWorkspaceRegenerationAttempt
+                    value: $[ dependencies.windows_workspace_regeneration.outputs['diagnosticsIdentity.jobAttempt'] ]
+                  - name: windowsWorkspaceMultiRootArtifact
+                    value: $[ dependencies.windows_workspace_multi_root.outputs['diagnosticsIdentity.artifactName'] ]
+                  - name: windowsWorkspaceMultiRootAttempt
+                    value: $[ dependencies.windows_workspace_multi_root.outputs['diagnosticsIdentity.jobAttempt'] ]
                 templateContext:
                   type: validationJob
                 steps:
@@ -905,124 +997,148 @@ extends:
                   - pwsh: node --version
                     displayName: Print full rollup Node.js version
 
+                  - pwsh: |
+                      # Empty artifact input means "download all" in ADO. Fail before any download;
+                      # these non-secret job variables are automatically exposed as uppercase env.
+                      $names = @(
+                        'linuxUnitTests', 'linuxCreateWorkspaceBehavior', 'linuxCreateWorkspaceCoreMatrix',
+                        'linuxCreateWorkspacePreviewMatrix', 'linuxCreateWorkspaceCodeful', 'linuxMsnWeatherLifecycle',
+                        'linuxHttpTimeoutLifecycle', 'linuxStatelessVariables', 'linuxRunAfterPersistence',
+                        'linuxWorkspaceRegeneration', 'linuxWorkspaceMultiRoot',
+                        'windowsUnitTests', 'windowsCreateWorkspaceBehavior', 'windowsCreateWorkspaceCoreMatrix',
+                        'windowsCreateWorkspacePreviewMatrix', 'windowsCreateWorkspaceCodeful', 'windowsCreateWorkspaceBehaviorSmoke',
+                        'windowsMsnWeatherLifecycle', 'windowsHttpTimeoutLifecycle', 'windowsStatelessVariables',
+                        'windowsRunAfterPersistence', 'windowsWorkspaceRegeneration', 'windowsWorkspaceMultiRoot'
+                      )
+                      foreach ($name in $names) {
+                        $artifact = [Environment]::GetEnvironmentVariable("$($name.ToUpperInvariant())ARTIFACT")
+                        $attempt = [Environment]::GetEnvironmentVariable("$($name.ToUpperInvariant())ATTEMPT")
+                        if ($attempt -cnotmatch '^[1-9][0-9]*$' -or
+                            $artifact -cnotmatch '^vscode-e2e-cli-diagnostics-(linux|windows)-[a-z0-9-]+-attempt-[1-9][0-9]*$' -or
+                            -not $artifact.EndsWith("-attempt-$attempt", [StringComparison]::Ordinal)) {
+                          throw "Invalid canonical suite diagnostics output before download: $name"
+                        }
+                      }
+                    displayName: Validate exact suite artifact outputs before download
+
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-unit-tests
+                    artifact: $(linuxUnitTestsArtifact)
                     displayName: Download Linux unit tests diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-behavior
+                    artifact: $(linuxCreateWorkspaceBehaviorArtifact)
                     displayName: Download Linux create workspace behavior diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix
+                    artifact: $(linuxCreateWorkspaceCoreMatrixArtifact)
                     displayName: Download Linux create workspace core matrix diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix
+                    artifact: $(linuxCreateWorkspacePreviewMatrixArtifact)
                     displayName: Download Linux create workspace preview matrix diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-codeful
+                    artifact: $(linuxCreateWorkspaceCodefulArtifact)
                     displayName: Download Linux create workspace codeful diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle
+                    artifact: $(linuxMsnWeatherLifecycleArtifact)
                     displayName: Download Linux MSN Weather lifecycle diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-http-timeout-lifecycle
+                    artifact: $(linuxHttpTimeoutLifecycleArtifact)
                     displayName: Download Linux HTTP timeout lifecycle diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-stateless-variables
+                    artifact: $(linuxStatelessVariablesArtifact)
                     displayName: Download Linux Stateless variables diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-run-after-persistence
+                    artifact: $(linuxRunAfterPersistenceArtifact)
                     displayName: Download Linux Run After persistence diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-workspace-regeneration
+                    artifact: $(linuxWorkspaceRegenerationArtifact)
                     displayName: Download Linux workspace regeneration diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-linux-workspace-multi-root
+                    artifact: $(linuxWorkspaceMultiRootArtifact)
                     displayName: Download Linux multi-root workspace diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-unit-tests
+                    artifact: $(windowsUnitTestsArtifact)
                     displayName: Download Windows unit tests diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior
+                    artifact: $(windowsCreateWorkspaceBehaviorArtifact)
                     displayName: Download Windows create workspace behavior diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix
+                    artifact: $(windowsCreateWorkspaceCoreMatrixArtifact)
                     displayName: Download Windows create workspace core matrix diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix
+                    artifact: $(windowsCreateWorkspacePreviewMatrixArtifact)
                     displayName: Download Windows create workspace preview matrix diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-codeful
+                    artifact: $(windowsCreateWorkspaceCodefulArtifact)
                     displayName: Download Windows create workspace codeful diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke
+                    artifact: $(windowsCreateWorkspaceBehaviorSmokeArtifact)
                     displayName: Download Windows create workspace behavior smoke diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle
+                    artifact: $(windowsMsnWeatherLifecycleArtifact)
                     displayName: Download Windows MSN Weather lifecycle diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-http-timeout-lifecycle
+                    artifact: $(windowsHttpTimeoutLifecycleArtifact)
                     displayName: Download Windows HTTP timeout lifecycle diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-stateless-variables
+                    artifact: $(windowsStatelessVariablesArtifact)
                     displayName: Download Windows Stateless variables diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-run-after-persistence
+                    artifact: $(windowsRunAfterPersistenceArtifact)
                     displayName: Download Windows Run After persistence diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-workspace-regeneration
+                    artifact: $(windowsWorkspaceRegenerationArtifact)
                     displayName: Download Windows workspace regeneration diagnostics
-                    condition: always()
+                    condition: succeeded()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-workspace-multi-root
+                    artifact: $(windowsWorkspaceMultiRootArtifact)
                     displayName: Download Windows multi-root workspace diagnostics
-                    condition: always()
+                    condition: succeeded()
 
                   - pwsh: |
                       $suites = @(
-                        @{ job = 'linux_unit_tests'; result = '$(linuxUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'linux_create_workspace_behavior'; result = '$(linuxCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'linux_create_workspace_core_matrix'; result = '$(linuxCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
-                        @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'linux_http_timeout_lifecycle'; result = '$(linuxHttpTimeoutLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-http-timeout-lifecycle'; suite = 'httpTimeoutLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'linux_stateless_variables'; result = '$(linuxStatelessVariablesResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-stateless-variables'; suite = 'statelessVariablesLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'linux_run_after_persistence'; result = '$(linuxRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'linux_workspace_regeneration'; result = '$(linuxWorkspaceRegenerationResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-workspace-regeneration'; suite = 'workspaceArtifactRegeneration'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'linux_workspace_multi_root'; result = '$(linuxWorkspaceMultiRootResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-workspace-multi-root'; suite = 'workspaceMultiRoot'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_create_workspace_behavior'; result = '$(windowsCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_create_workspace_core_matrix'; result = '$(windowsCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'windows_create_workspace_preview_matrix'; result = '$(windowsCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'windows_create_workspace_codeful'; result = '$(windowsCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
-                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_http_timeout_lifecycle'; result = '$(windowsHttpTimeoutLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-http-timeout-lifecycle'; suite = 'httpTimeoutLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_stateless_variables'; result = '$(windowsStatelessVariablesResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-stateless-variables'; suite = 'statelessVariablesLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_run_after_persistence'; result = '$(windowsRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_workspace_regeneration'; result = '$(windowsWorkspaceRegenerationResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-workspace-regeneration'; suite = 'workspaceArtifactRegeneration'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
-                        @{ job = 'windows_workspace_multi_root'; result = '$(windowsWorkspaceMultiRootResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-workspace-multi-root'; suite = 'workspaceMultiRoot'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true }
+                        @{ job = 'linux_unit_tests'; result = '$(linuxUnitTestsResult)'; artifact = $env:linuxUnitTestsArtifact; attempt = $env:linuxUnitTestsAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_behavior'; result = '$(linuxCreateWorkspaceBehaviorResult)'; artifact = $env:linuxCreateWorkspaceBehaviorArtifact; attempt = $env:linuxCreateWorkspaceBehaviorAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_core_matrix'; result = '$(linuxCreateWorkspaceCoreMatrixResult)'; artifact = $env:linuxCreateWorkspaceCoreMatrixArtifact; attempt = $env:linuxCreateWorkspaceCoreMatrixAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = $env:linuxCreateWorkspacePreviewMatrixArtifact; attempt = $env:linuxCreateWorkspacePreviewMatrixAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = $env:linuxCreateWorkspaceCodefulArtifact; attempt = $env:linuxCreateWorkspaceCodefulAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
+                        @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = $env:linuxMsnWeatherLifecycleArtifact; attempt = $env:linuxMsnWeatherLifecycleAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'linux_http_timeout_lifecycle'; result = '$(linuxHttpTimeoutLifecycleResult)'; artifact = $env:linuxHttpTimeoutLifecycleArtifact; attempt = $env:linuxHttpTimeoutLifecycleAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-http-timeout-lifecycle'; suite = 'httpTimeoutLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'linux_stateless_variables'; result = '$(linuxStatelessVariablesResult)'; artifact = $env:linuxStatelessVariablesArtifact; attempt = $env:linuxStatelessVariablesAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-stateless-variables'; suite = 'statelessVariablesLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'linux_run_after_persistence'; result = '$(linuxRunAfterPersistenceResult)'; artifact = $env:linuxRunAfterPersistenceArtifact; attempt = $env:linuxRunAfterPersistenceAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'linux_workspace_regeneration'; result = '$(linuxWorkspaceRegenerationResult)'; artifact = $env:linuxWorkspaceRegenerationArtifact; attempt = $env:linuxWorkspaceRegenerationAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-workspace-regeneration'; suite = 'workspaceArtifactRegeneration'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'linux_workspace_multi_root'; result = '$(linuxWorkspaceMultiRootResult)'; artifact = $env:linuxWorkspaceMultiRootArtifact; attempt = $env:linuxWorkspaceMultiRootAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-linux-workspace-multi-root'; suite = 'workspaceMultiRoot'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = $env:windowsUnitTestsArtifact; attempt = $env:windowsUnitTestsAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_behavior'; result = '$(windowsCreateWorkspaceBehaviorResult)'; artifact = $env:windowsCreateWorkspaceBehaviorArtifact; attempt = $env:windowsCreateWorkspaceBehaviorAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_core_matrix'; result = '$(windowsCreateWorkspaceCoreMatrixResult)'; artifact = $env:windowsCreateWorkspaceCoreMatrixArtifact; attempt = $env:windowsCreateWorkspaceCoreMatrixAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'windows_create_workspace_preview_matrix'; result = '$(windowsCreateWorkspacePreviewMatrixResult)'; artifact = $env:windowsCreateWorkspacePreviewMatrixArtifact; attempt = $env:windowsCreateWorkspacePreviewMatrixAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'windows_create_workspace_codeful'; result = '$(windowsCreateWorkspaceCodefulResult)'; artifact = $env:windowsCreateWorkspaceCodefulArtifact; attempt = $env:windowsCreateWorkspaceCodefulAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
+                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = $env:windowsCreateWorkspaceBehaviorSmokeArtifact; attempt = $env:windowsCreateWorkspaceBehaviorSmokeAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = $env:windowsMsnWeatherLifecycleArtifact; attempt = $env:windowsMsnWeatherLifecycleAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_http_timeout_lifecycle'; result = '$(windowsHttpTimeoutLifecycleResult)'; artifact = $env:windowsHttpTimeoutLifecycleArtifact; attempt = $env:windowsHttpTimeoutLifecycleAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-http-timeout-lifecycle'; suite = 'httpTimeoutLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_stateless_variables'; result = '$(windowsStatelessVariablesResult)'; artifact = $env:windowsStatelessVariablesArtifact; attempt = $env:windowsStatelessVariablesAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-stateless-variables'; suite = 'statelessVariablesLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_run_after_persistence'; result = '$(windowsRunAfterPersistenceResult)'; artifact = $env:windowsRunAfterPersistenceArtifact; attempt = $env:windowsRunAfterPersistenceAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_workspace_regeneration'; result = '$(windowsWorkspaceRegenerationResult)'; artifact = $env:windowsWorkspaceRegenerationArtifact; attempt = $env:windowsWorkspaceRegenerationAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-workspace-regeneration'; suite = 'workspaceArtifactRegeneration'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
+                        @{ job = 'windows_workspace_multi_root'; result = '$(windowsWorkspaceMultiRootResult)'; artifact = $env:windowsWorkspaceMultiRootArtifact; attempt = $env:windowsWorkspaceMultiRootAttempt; logicalArtifact = 'vscode-e2e-cli-diagnostics-windows-workspace-multi-root'; suite = 'workspaceMultiRoot'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true }
                       )
                       $identityFields = @(
                         'producerDefinitionId',
@@ -1041,6 +1157,10 @@ extends:
                         if ($suite.result -ne 'Succeeded') {
                           throw "Canonical suite job did not succeed: $($suite.job) result=$($suite.result)"
                         }
+                        if ($suite.attempt -cnotmatch '^[1-9][0-9]*$' -or
+                            $suite.artifact -cne "$($suite.logicalArtifact)-attempt-$($suite.attempt)") {
+                          throw "Invalid canonical suite diagnostics output: $($suite.job) artifact='$($suite.artifact)' attempt='$($suite.attempt)'"
+                        }
                         $root = Join-Path '$(Pipeline.Workspace)' $suite.artifact
                         $resultRoot = Join-Path $root 'results'
                         $logRoot = Join-Path $root 'log'
@@ -1050,7 +1170,8 @@ extends:
                         $contextPath = Join-Path $resultRoot "admission-context-$($suite.suite).json"
                         $logPath = Join-Path $logRoot "$($suite.suite).log"
                         $terminalPath = Join-Path $resultRoot "$($suite.suite).terminal-result.json"
-                        $requiredFiles = @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath)
+                        $attemptPath = Join-Path $root 'suite-attempt.json'
+                        $requiredFiles = @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath, $attemptPath)
                         if ($suite.terminalReceipt) {
                           $requiredFiles += $terminalPath
                         }
@@ -1059,7 +1180,22 @@ extends:
                             throw "Missing required full-rollup artifact for $($suite.job): $required"
                           }
                         }
+                        $receipt = Get-Content $attemptPath -Raw | ConvertFrom-Json
+                        if ($receipt.schemaVersion -ne 1 -or
+                            [string]$receipt.job -cne $suite.job -or
+                            [string]$receipt.suite -cne $suite.suite -or
+                            [string]$receipt.artifact -cne $suite.artifact -or
+                            [string]$receipt.attempt -cne $suite.attempt -or
+                            [string]$receipt.runId -cne $env:BUILD_BUILDID -or
+                            [string]$receipt.definitionId -cne $env:SYSTEM_DEFINITIONID -or
+                            [string]$receipt.sourceSHA -cne $env:BUILD_SOURCEVERSION) {
+                          throw "Suite diagnostics attempt identity mismatch: $($suite.job)"
+                        }
                         $result = Get-Content $resultPath -Raw | ConvertFrom-Json
+                        if ([string]$result.label -cne $suite.suite -or
+                            [string]$result.diagnosticsArtifactName -cne $suite.artifact) {
+                          throw "Suite report diagnostics identity mismatch: $($suite.job)"
+                        }
                         $passing = [int]$result.passing
                         $failing = [int]$result.failing
                         $pending = [int]$result.pending
@@ -1090,6 +1226,11 @@ extends:
                           }
                         }
                         $context = Get-Content $contextPath -Raw | ConvertFrom-Json
+                        if ([string]$context.sourceSHA -cne [string]$receipt.sourceSHA -or
+                            [string]$context.producerRunId -cne [string]$receipt.runId -or
+                            [string]$context.producerDefinitionId -cne [string]$receipt.definitionId) {
+                          throw "Suite admitted identity does not match diagnostics attempt: $($suite.job)"
+                        }
                         foreach ($field in $identityFields) {
                           if (-not [string]$context.$field) {
                             throw "Suite admitted identity is missing '$field': $($suite.job)"
@@ -1106,6 +1247,54 @@ extends:
                         }
                       }
                     displayName: Enforce twenty-three-suite both-OS full rollup gate
+                    condition: always()
+                    env:
+                      linuxUnitTestsArtifact: $(linuxUnitTestsArtifact)
+                      linuxUnitTestsAttempt: $(linuxUnitTestsAttempt)
+                      linuxCreateWorkspaceBehaviorArtifact: $(linuxCreateWorkspaceBehaviorArtifact)
+                      linuxCreateWorkspaceBehaviorAttempt: $(linuxCreateWorkspaceBehaviorAttempt)
+                      linuxCreateWorkspaceCoreMatrixArtifact: $(linuxCreateWorkspaceCoreMatrixArtifact)
+                      linuxCreateWorkspaceCoreMatrixAttempt: $(linuxCreateWorkspaceCoreMatrixAttempt)
+                      linuxCreateWorkspacePreviewMatrixArtifact: $(linuxCreateWorkspacePreviewMatrixArtifact)
+                      linuxCreateWorkspacePreviewMatrixAttempt: $(linuxCreateWorkspacePreviewMatrixAttempt)
+                      linuxCreateWorkspaceCodefulArtifact: $(linuxCreateWorkspaceCodefulArtifact)
+                      linuxCreateWorkspaceCodefulAttempt: $(linuxCreateWorkspaceCodefulAttempt)
+                      linuxMsnWeatherLifecycleArtifact: $(linuxMsnWeatherLifecycleArtifact)
+                      linuxMsnWeatherLifecycleAttempt: $(linuxMsnWeatherLifecycleAttempt)
+                      linuxHttpTimeoutLifecycleArtifact: $(linuxHttpTimeoutLifecycleArtifact)
+                      linuxHttpTimeoutLifecycleAttempt: $(linuxHttpTimeoutLifecycleAttempt)
+                      linuxStatelessVariablesArtifact: $(linuxStatelessVariablesArtifact)
+                      linuxStatelessVariablesAttempt: $(linuxStatelessVariablesAttempt)
+                      linuxRunAfterPersistenceArtifact: $(linuxRunAfterPersistenceArtifact)
+                      linuxRunAfterPersistenceAttempt: $(linuxRunAfterPersistenceAttempt)
+                      linuxWorkspaceRegenerationArtifact: $(linuxWorkspaceRegenerationArtifact)
+                      linuxWorkspaceRegenerationAttempt: $(linuxWorkspaceRegenerationAttempt)
+                      linuxWorkspaceMultiRootArtifact: $(linuxWorkspaceMultiRootArtifact)
+                      linuxWorkspaceMultiRootAttempt: $(linuxWorkspaceMultiRootAttempt)
+                      windowsUnitTestsArtifact: $(windowsUnitTestsArtifact)
+                      windowsUnitTestsAttempt: $(windowsUnitTestsAttempt)
+                      windowsCreateWorkspaceBehaviorArtifact: $(windowsCreateWorkspaceBehaviorArtifact)
+                      windowsCreateWorkspaceBehaviorAttempt: $(windowsCreateWorkspaceBehaviorAttempt)
+                      windowsCreateWorkspaceCoreMatrixArtifact: $(windowsCreateWorkspaceCoreMatrixArtifact)
+                      windowsCreateWorkspaceCoreMatrixAttempt: $(windowsCreateWorkspaceCoreMatrixAttempt)
+                      windowsCreateWorkspacePreviewMatrixArtifact: $(windowsCreateWorkspacePreviewMatrixArtifact)
+                      windowsCreateWorkspacePreviewMatrixAttempt: $(windowsCreateWorkspacePreviewMatrixAttempt)
+                      windowsCreateWorkspaceCodefulArtifact: $(windowsCreateWorkspaceCodefulArtifact)
+                      windowsCreateWorkspaceCodefulAttempt: $(windowsCreateWorkspaceCodefulAttempt)
+                      windowsCreateWorkspaceBehaviorSmokeArtifact: $(windowsCreateWorkspaceBehaviorSmokeArtifact)
+                      windowsCreateWorkspaceBehaviorSmokeAttempt: $(windowsCreateWorkspaceBehaviorSmokeAttempt)
+                      windowsMsnWeatherLifecycleArtifact: $(windowsMsnWeatherLifecycleArtifact)
+                      windowsMsnWeatherLifecycleAttempt: $(windowsMsnWeatherLifecycleAttempt)
+                      windowsHttpTimeoutLifecycleArtifact: $(windowsHttpTimeoutLifecycleArtifact)
+                      windowsHttpTimeoutLifecycleAttempt: $(windowsHttpTimeoutLifecycleAttempt)
+                      windowsStatelessVariablesArtifact: $(windowsStatelessVariablesArtifact)
+                      windowsStatelessVariablesAttempt: $(windowsStatelessVariablesAttempt)
+                      windowsRunAfterPersistenceArtifact: $(windowsRunAfterPersistenceArtifact)
+                      windowsRunAfterPersistenceAttempt: $(windowsRunAfterPersistenceAttempt)
+                      windowsWorkspaceRegenerationArtifact: $(windowsWorkspaceRegenerationArtifact)
+                      windowsWorkspaceRegenerationAttempt: $(windowsWorkspaceRegenerationAttempt)
+                      windowsWorkspaceMultiRootArtifact: $(windowsWorkspaceMultiRootArtifact)
+                      windowsWorkspaceMultiRootAttempt: $(windowsWorkspaceMultiRootAttempt)
 
           - ${{ if eq(parameters.diagnosticOnly, true) }}:
               - job: report_diagnostic_selected_rerun

@@ -43,6 +43,43 @@ separate private traceability records, not this guide.
 Do not promote a policy or unit control to native success. Record the exact
 scope proved, and preserve earlier failures rather than rewriting their history.
 
+## Operational policy: bounded failed-job reruns
+
+Apply this user-directed policy **only after attempt-safe artifact publication
+and canonical selection have been verified for the jobs being retried**. See
+[the definition 28771 retry contract](../../.config/README.md#suite-job-retries-and-canonical-diagnostics)
+for suite diagnostics and the remaining shared-producer retry limitation.
+
+After an initial failing execution, rerun the failed jobs in the **same
+pipeline/run at the same immutable source SHA**, with **at most two additional
+failed-job reruns: three executions total**. Keep the first failure and every
+attempt's identity, diagnostics, and boundary verdicts. Do not delete or
+overwrite earlier artifacts, substitute older evidence, or change the source
+SHA while counting these attempts.
+
+If a retry succeeds, use that producing job's successful **latest attempt**
+evidence, selected through dependency outputs, and require the protected full
+rollup to pass its unchanged native, lifecycle/evidence, admitted-payload, and
+job-result gates. A targeted diagnostic green alone is not full acceptance.
+Rerunning the protected gate is not another native execution and must reuse the
+actual completed suite attempts, not derive their identity from the gate's
+attempt number.
+
+If the initial execution and both additional native executions fail, **stop
+retries and classify the issue as a persistent regression requiring root-cause
+investigation**. Do not run a fourth attempt, reset the retry counter/clock by
+starting a new run, or loosen tests, timeouts, evidence, or acceptance gates to
+get green. This is an **operational regression threshold**, not mathematical
+proof that the product caused the failure.
+
+Classify each execution separately at the **build/bootstrap**, **native body**,
+**lifecycle/evidence**, and **artifact publication** boundaries. An artifact-name
+collision or publication-only failure is not a native/product regression and
+does not establish three native failures; fix the infrastructure boundary
+before interpreting retry outcomes. Native-body success also cannot waive
+lifecycle, evidence, cleanup, or publication failure. Do not invent
+job-selective REST parameters or artificial failure hooks to exercise retries.
+
 Unexpected workbench prompts, dialogs and blocking UI must be flagged and
 captured before dismissal, navigation or rejection. Reuse the shared prompt
 boundary's one-attempt diagnostic screenshot on the current CDP connection,

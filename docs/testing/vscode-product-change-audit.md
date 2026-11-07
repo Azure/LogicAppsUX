@@ -379,6 +379,54 @@ the canonical full23/protected rollup at the identical committed source before
 another removal. The uncommitted feed trial is excluded from its commit and
 native payload.
 
+#### First committed D3 native results
+
+Candidate source: `b967e04608b4d8f6acf8dbcd6f3bb0c86f8c524f`.
+
+- [Affected run 15956191](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15956191):
+  both Linux and Windows HTTP lifecycle passed. Downloaded original artifacts
+  passed source/run/artifact identity, ordered evidence and terminal acceptance.
+- [Canonical run 15956873](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15956873):
+  **failed**. Twenty-two suite jobs succeeded; Linux workspace artifact
+  regeneration failed, so the protected full rollup rejected acceptance.
+  All twelve Windows original artifacts separately passed canonical identity,
+  ordered evidence and terminal acceptance; this does not certify full23.
+
+The regeneration baseline host passed. The next `vscode-single` observation
+failed with `SyntaxError: Unexpected end of JSON input`, after capturing the
+overwrite confirmation and before recording a completed repair observation.
+Both regular Code hosts closed with exit `0` and signal `null`. Final staging
+also rejected missing required family diagnostics. The persisted error
+aggregation discarded the original stack and file identity, so these artifacts
+alone do not prove which JSON read failed or establish D3 causality.
+
+The follow-up investigation is confined to test observation/readiness and
+actionable failure diagnostics. It does not authorize more product removals,
+pipeline dependency changes, or weaker lifecycle/semantic acceptance. Full23
+must pass at the next explicitly recorded immutable candidate before cleanup
+continues.
+
+#### Same-build rerun: native acceptance versus publication
+
+Linux regeneration was rerun as job attempt 2 in build `15956873`, without a
+source change. Native task log `1491` passed at the same D3 SHA; staging log
+`1493` accepted ordered native phases and finalized cleanup, after staging
+39 allowlisted evidence files. Linux dependency recovery and subsequent startup
+were accepted under the existing lifecycle policy, not natural original closure.
+
+Publication log `1507` then failed with
+`Artifact vscode-e2e-cli-diagnostics-linux-workspace-regeneration already exists for build 15956873`.
+The first attempt's published failure artifact remains the downloadable artifact;
+it must not be relabeled as the successful second attempt. The protected rollup
+is still failed, so this is a same-source native rerun pass, not full23 acceptance.
+
+A test-only readiness candidate was locally implemented and validated during
+the investigation, but remains uncommitted and excluded from the native source.
+Its deterministic reproduction establishes a possible observation defect, not
+the proven cause of the original failure or a required D3 fix. The next
+acceptance attempt is a fresh canonical build at the unchanged D3 SHA, avoiding
+the same-build artifact-name collision without changing publication policy.
+
 ### D6. Visible MessageBars and wrapping
 
 **Source:** `apps/vs-code-react/src/app/designer/appV2.tsx:412-415`.
