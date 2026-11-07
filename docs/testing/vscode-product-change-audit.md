@@ -373,11 +373,11 @@ synthetic Roslyn fixture; the result is not evidence of a D3 dependency or a
 verified filesystem root cause. No lifecycle guard or fixture was changed to
 obtain the repeat pass.
 
-This is a candidate, not native acceptance. It must pass the complete affected
-HTTP lifecycle on Linux and Windows, with original artifact acceptance, and then
-the canonical full23/protected rollup at the identical committed source before
-another removal. The uncommitted feed trial is excluded from its commit and
-native payload.
+At implementation, this was a candidate, not native acceptance. Required gates
+were the complete affected HTTP lifecycle on Linux and Windows, with original
+artifact acceptance, followed by the canonical full23/protected rollup at the
+identical committed source before another removal. The uncommitted feed trial
+is excluded from its commit and native payload.
 
 #### First committed D3 native results
 
@@ -423,9 +423,45 @@ is still failed, so this is a same-source native rerun pass, not full23 acceptan
 A test-only readiness candidate was locally implemented and validated during
 the investigation, but remains uncommitted and excluded from the native source.
 Its deterministic reproduction establishes a possible observation defect, not
-the proven cause of the original failure or a required D3 fix. The next
-acceptance attempt is a fresh canonical build at the unchanged D3 SHA, avoiding
+the proven cause of the original failure or a required D3 fix. A fresh
+canonical build was queued at the unchanged D3 SHA, avoiding
 the same-build artifact-name collision without changing publication policy.
+
+#### Accepted D3 baseline and attempt-safe diagnostics
+
+The independent unchanged-D3
+[canonical run 15957422](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15957422)
+at `b967e04608b4d8f6acf8dbcd6f3bb0c86f8c524f` failed in Windows
+`createWorkspaceBehavior`. Its original results retain a CDP
+`Runtime.evaluate` timeout and a subsequent ordered-checkpoint rejection;
+cleanup was verified. This is separate from the earlier Linux regeneration
+failure and does not establish a D3 dependency.
+
+Commit `11680614afc6a88bd37353ee7b1a4d2d89a03c62` adds attempt-qualified suite
+diagnostics and dependency-output-bound protected rollup selection, without
+shipping the regeneration-readiness or feed drafts. At that immutable source:
+
+- [Affected run 15957577](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15957577)
+  passed both-OS HTTP and regeneration acceptance. Linux regeneration initially
+  failed its multiple-window observation because the required initialization
+  prompt/real Yes was absent before the original deadline. One failed-job-only
+  consumer-stage retry passed at suite attempt 2 and published a distinct
+  `vscode-e2e-cli-diagnostics-linux-workspace-regeneration-attempt-2` artifact
+  without a collision. Its attempt-1 failure artifact remains preserved.
+  Original artifact verification accepted Linux regeneration attempt 2 and
+  the other three lanes at attempt 1, including source/run/receipt identity,
+  ordered evidence and terminal cleanup.
+- [Canonical run 15957906](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15957906)
+  passed all **11 Linux and 12 Windows** suites at attempt 1. Downloaded original
+  artifacts passed the same identity, ordered-evidence and terminal acceptance
+  checks, and the protected twenty-three-suite rollup passed.
+
+This establishes D3 removal acceptance and native attempt-2 diagnostic
+publication, not absence of intermittent failures. The mixed-attempt protected
+rollup contract has local regression coverage; the protected native full23
+run used attempt 1 throughout. The bounded failed-job retry policy is saved
+in the E2E skill and canonical authoring guide. Do not relabel earlier failures
+as successes or ship the unrelated drafts to obtain acceptance.
 
 ### D6. Visible MessageBars and wrapping
 
@@ -473,6 +509,35 @@ still a test-side diagnostics/removal candidate, not a proven product dependency
 
 **References:** `httpTimeoutComposeDriver.ts:1959-1970`;
 `httpTimeoutComposeOracle.ts:118-131`.
+
+#### Isolated D7 implementation after accepted D3 baseline
+
+The new candidate removes only the production
+`data-code-view-validation-errors` attribute. Validation state, exact visible
+alerts, root styling, Designer identity, D3 recomputation and D4/D5 editing
+protections remain unchanged. The backward-compatible nullable driver probe
+and visible-state oracle remain unchanged.
+
+Three new rendering controls cover zero, one and multiple validation alerts:
+no internal-state diagnostic attribute, exact visible alert text, visible
+Designer shell and retained `100vh` root styling. All three controls failed
+against the original markup before removal; the existing eleven host tests
+passed. After removal, all fourteen host tests passed.
+
+| Command (repository root) | Local result |
+| --- | --- |
+| `pnpm exec biome check apps/vs-code-react/src/app/designer/appV2.tsx apps/vs-code-react/src/app/designer/__test__/appV2.spec.tsx` | Passed after correcting added-test formatting |
+| `pnpm exec vitest run --workspace vitest.workspace.js --project vscode-react` | Passed: 360 tests, 30 files |
+| `pnpm --dir apps/vs-code-designer run test:e2e-cli:compile` | Passed |
+| `pnpm --dir apps/vs-code-designer run test:e2e-cli:unit` | Complete chain passed |
+| `pnpm --dir apps/vs-code-react run build:extension` | Passed |
+
+The VS Code test specialist applied owning-domain, test-strategy and senior
+plan/risk/diff-review workflows directly and found no blocking issue. Local
+CLI compilation/controls include the preserved unrelated drafts; they are not
+committed-source native proof. The feed and regeneration-readiness drafts
+remain excluded from publication. Required next gates are both-OS HTTP native
+acceptance and then canonical full23 at the identical D7 candidate SHA.
 
 ### D8. Run After accessible names, both Designer versions
 

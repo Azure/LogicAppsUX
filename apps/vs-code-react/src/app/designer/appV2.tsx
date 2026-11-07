@@ -342,7 +342,7 @@ export const DesignerApp = () => {
   }
 
   return (
-    <div key={designerID} data-code-view-validation-errors={JSON.stringify(codeViewValidationErrors)} style={{ height: '100vh' }}>
+    <div key={designerID} style={{ height: '100vh' }}>
       <DesignerProvider
         id={workflowDefinitionId}
         key={designerID}

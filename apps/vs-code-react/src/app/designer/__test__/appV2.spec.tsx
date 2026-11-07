@@ -233,6 +233,41 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     expect(screen.getByTestId('designer-v2-inner')).toBeDefined();
   });
 
+  it.each(
+    [
+      [],
+      [
+        "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.",
+      ],
+      [
+        "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.",
+        "The request options timeout parameter is not supported for action 'Compose_2' of type 'Compose'. Actions of type 'HTTP' are supported.",
+      ],
+    ].map((errors) => ({ errors, count: errors.length }))
+  )('renders $count visible validation alerts without exposing internal state in diagnostic markup', ({ errors }) => {
+    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue(errors);
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    const { container } = render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    expect(container.querySelector('[data-code-view-validation-errors]')).toBeNull();
+    expect(container.firstElementChild).toHaveStyle({ height: '100vh' });
+    expect(screen.getByTestId('designer-command-bar')).toBeVisible();
+    expect(screen.getByTestId('designer-v2-inner')).toBeVisible();
+    const alerts = screen.queryAllByRole('alert');
+    expect(alerts.map((alert) => alert.textContent)).toEqual(errors);
+    for (const alert of alerts) {
+      expect(alert).toBeVisible();
+    }
+  });
+
   it('retains local Code errors during refresh but recomputes them from the file on remount', async () => {
     const expectedError =
       "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
