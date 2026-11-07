@@ -108,11 +108,24 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   });
 
   const onRunClick = useCallback(() => {
+    // Parse a JSON object/array body so the HTTP client serializes it exactly once.
+    // Sending the raw string would let the client JSON.stringify it again, double-escaping the payload.
+    let body: unknown = bodyValue;
+    if (typeof bodyValue === 'string') {
+      const trimmed = bodyValue.trim();
+      if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          body = JSON.parse(bodyValue);
+        } catch {
+          // Not valid JSON, send as-is
+        }
+      }
+    }
     onSubmit({
       method,
       headers: headersValue,
       queries: queriesValue,
-      body: bodyValue,
+      body,
     });
     setOpen(false);
   }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen]);
