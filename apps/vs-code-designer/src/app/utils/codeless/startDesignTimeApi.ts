@@ -42,6 +42,7 @@ import {
   isExtensionBundleDownloadInFlight,
   isInsideBundleDownloadScope,
   waitForExtensionBundleReady,
+  getExperimentalBundleRuntime,
 } from '../bundleFeed';
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
@@ -228,7 +229,13 @@ async function startDesignTimeApiInternal(
     }
 
     const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    const experimentalBundle = await getExperimentalBundleRuntime(context, projectPath);
     if (await isDesignTimeUp(url)) {
+      if (designTimeInst.experimentalBundleSource !== experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI) {
+        throw new Error(
+          "The running design-time host was not launched with the selected experimental bundle. Stop this project's design-time host and reopen the designer to apply the selection."
+        );
+      }
       designTimeInst.isStarting = false;
       context.telemetry.properties.isDesignTimeUp = 'true';
       await validateRunningFuncProcess(projectPath, currRetry);
@@ -277,16 +284,26 @@ async function startDesignTimeApiInternal(
       // failed. Without a healthy bundle, func reports "No job functions
       // found" and unhealthy storage forever — surfacing a clear, actionable
       // error here is strictly better than letting the host start broken.
-      await ensureExtensionBundleHealthy(context);
+      await ensureExtensionBundleHealthy(context, { version: experimentalBundle?.folderVersion });
 
-      startDesignTimeProcess(ext.outputChannel, designTimeDirectory, getFunctionsCommand(), 'host', 'start', portArgs);
+      startDesignTimeProcess(
+        ext.outputChannel,
+        designTimeDirectory,
+        getFunctionsCommand(),
+        ['host', 'start', portArgs],
+        experimentalBundle?.env
+      );
+      designTimeInst.experimentalBundleSource = experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
       await waitForDesignTimeStartUp(context, projectPath, url, true);
       context.telemetry.properties.isDesignTimeUp = 'true';
 
       ext.pinnedBundleVersion.set(projectPath, false);
       const hostfilepath: Uri = Uri.file(path.join(designTimeDirectory, hostFileName));
       const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
-      if (data.extensionBundle) {
+      if (experimentalBundle) {
+        ext.currentBundleVersion.set(projectPath, experimentalBundle.manifestVersion);
+        ext.pinnedBundleVersion.set(projectPath, true);
+      } else if (data.extensionBundle) {
         const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
         const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
         if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
@@ -307,9 +324,13 @@ async function startDesignTimeApiInternal(
     } finally {
       designTimeInst.isStarting = false;
     }
+  } catch (error) {
+    designTimeInst.startupError = error instanceof Error ? error.message : String(error);
+    throw error;
   } finally {
     const currentInst = ext.designTimeInstances.get(projectPath);
     if (currentInst) {
+      currentInst.isStarting = false;
       currentInst.startupPromise = undefined;
     }
   }
@@ -512,7 +533,8 @@ export function startDesignTimeProcess(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
-  ...args: string[]
+  args: string[],
+  environment?: Record<string, string>
 ): void {
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
@@ -521,6 +543,7 @@ export function startDesignTimeProcess(
   const options: cp.SpawnOptions = {
     cwd: workingDirectory || os.tmpdir(),
     shell: true,
+    ...(environment ? { env: { ...process.env, ...environment } } : {}),
   };
 
   const designChildProcess = cp.spawn(command, args, options);

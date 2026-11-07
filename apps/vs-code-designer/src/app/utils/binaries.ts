@@ -36,7 +36,7 @@ import { type DownloadAttemptResult, downloadFileWithVerification as downloadFil
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -64,15 +64,12 @@ export async function downloadAndExtractDependency(
   targetFolder: string,
   dependencyName: string,
   folderName?: string,
-  dotNetVersion?: string
+  dotNetVersion?: string,
+  validateExtractedBundle?: (directory: string) => Promise<void>
 ): Promise<DownloadAttemptResult | undefined> {
   folderName = folderName || dependencyName;
-  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, folderName);
+  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, `${folderName}-${randomUUID()}`);
   targetFolder = path.join(targetFolder, folderName);
-  fs.mkdirSync(targetFolder, { recursive: true });
-
-  // Read and write permissions
-  fs.chmodSync(targetFolder, 0o777);
 
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
@@ -93,9 +90,6 @@ export async function downloadAndExtractDependency(
     try {
       if (fs.existsSync(tempFolderPath)) {
         fs.rmSync(tempFolderPath, { recursive: true, force: true });
-      }
-      if (fs.existsSync(targetFolder)) {
-        fs.rmSync(targetFolder, { recursive: true, force: true });
       }
     } catch {
       // Best-effort cleanup; ignore secondary errors.
@@ -124,9 +118,6 @@ export async function downloadAndExtractDependency(
         if (fs.existsSync(tempFolderPath)) {
           fs.rmSync(tempFolderPath, { recursive: true, force: true });
         }
-        if (fs.existsSync(targetFolder)) {
-          fs.rmSync(targetFolder, { recursive: true, force: true });
-        }
       } catch {
         // Best-effort cleanup; ignore secondary errors.
       }
@@ -138,7 +129,9 @@ export async function downloadAndExtractDependency(
   try {
     // Extract to targetFolder
     if (dependencyName === dotnetDependencyName) {
-      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+      fs.mkdirSync(targetFolder, { recursive: true });
+      fs.chmodSync(targetFolder, 0o777);
+      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet10);
       if (process.platform === Platform.windows) {
         await executeCommand(
           ext.outputChannel,
@@ -154,7 +147,7 @@ export async function downloadAndExtractDependency(
         await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
       }
     } else {
-      if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+      if (dependencyName === funcDependencyName) {
         // Await actual process exit (not just SIGTERM) so our own func.exe
         // releases its handles on the bundle dir before we try to delete it.
         // Without this, the immediately-following rmSync can leave the dir
@@ -162,7 +155,7 @@ export async function downloadAndExtractDependency(
         await stopAllDesignTimeApisAndWait();
       }
       try {
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+        await installDependencyArchive(dependencyFilePath, targetFolder, dependencyName, validateExtractedBundle);
       } catch (firstError) {
         const lockLike = isTransientLockError(firstError) || firstError instanceof BundleExtractionError;
         if (!lockLike) {
@@ -176,7 +169,7 @@ export async function downloadAndExtractDependency(
           throw firstError;
         }
         ext.outputChannel.appendLog(`Retrying ${dependencyName} install after terminating orphan func.exe processes.`);
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+        await installDependencyArchive(dependencyFilePath, targetFolder, dependencyName, validateExtractedBundle);
       }
       ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
       if (dependencyName === funcDependencyName) {
@@ -225,9 +218,13 @@ export async function downloadAndExtractDependency(
     throw error;
   } finally {
     // remove the temp folder.
-    if (fs.existsSync(tempFolderPath)) {
-      fs.rmSync(tempFolderPath, { recursive: true, force: true });
+    try {
+      if (fs.existsSync(tempFolderPath)) {
+        fs.rmSync(tempFolderPath, { recursive: true, force: true });
+      }
       ext.outputChannel.appendLog(`Removed ${tempFolderPath}`);
+    } catch (cleanupError) {
+      ext.outputChannel.appendLog(`Failed to clean dependency download directory ${tempFolderPath}: ${String(cleanupError)}`);
     }
   }
 
@@ -385,17 +382,17 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
             latestVersion = releaseVersion;
           }
         }
-        return latestVersion ?? DependencyVersion.dotnet8;
+        return latestVersion ?? DependencyVersion.dotnet10;
       })
       .catch((error) => {
         context.telemetry.properties.latestVersionSource = 'fallback';
         context.telemetry.properties.errorNewestDotNetVersion = `Error getting latest .NET SDK version: ${error}`;
-        return DependencyVersion.dotnet8;
+        return DependencyVersion.dotnet10;
       });
   }
 
   context.telemetry.properties.latestVersionSource = 'fallback';
-  return DependencyVersion.dotnet8;
+  return DependencyVersion.dotnet10;
 }
 
 export async function getLatestNodeJsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
@@ -1173,6 +1170,56 @@ export function verifyExtractedZip(zip: AdmZip, targetFolder: string): void {
   }
   if (verified === 0) {
     throw new BundleExtractionError('empty');
+  }
+}
+
+async function installDependencyArchive(
+  dependencyFilePath: string,
+  targetFolder: string,
+  dependencyName: string,
+  validateExtractedBundle?: (directory: string) => Promise<void>
+): Promise<void> {
+  if (dependencyName !== extensionBundleId) {
+    await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+    return;
+  }
+
+  const installDirectory = path.join(path.dirname(targetFolder), `.bundle-install-${randomUUID()}`);
+  const stagedFolder = path.join(installDirectory, 'content');
+  const backupFolder = path.join(installDirectory, 'previous');
+  fs.mkdirSync(installDirectory, { recursive: true });
+  let preserveBackup = false;
+  try {
+    await extractDependency(dependencyFilePath, stagedFolder, dependencyName);
+    await validateExtractedBundle?.(stagedFolder);
+    await stopAllDesignTimeApisAndWait();
+    const hadPreviousInstall = fs.existsSync(targetFolder);
+    if (hadPreviousInstall) {
+      fs.renameSync(targetFolder, backupFolder);
+    }
+    try {
+      fs.renameSync(stagedFolder, targetFolder);
+    } catch (error) {
+      if (hadPreviousInstall) {
+        try {
+          fs.renameSync(backupFolder, targetFolder);
+        } catch (restoreError) {
+          preserveBackup = true;
+          ext.outputChannel.appendLog(
+            `Failed to restore extension bundle at ${targetFolder}. Previous install preserved at ${backupFolder}: ${String(restoreError)}`
+          );
+        }
+      }
+      throw error;
+    }
+  } finally {
+    if (!preserveBackup) {
+      try {
+        fs.rmSync(installDirectory, { recursive: true, force: true });
+      } catch (cleanupError) {
+        ext.outputChannel.appendLog(`Failed to clean extension bundle staging directory ${installDirectory}: ${String(cleanupError)}`);
+      }
+    }
   }
 }
 
