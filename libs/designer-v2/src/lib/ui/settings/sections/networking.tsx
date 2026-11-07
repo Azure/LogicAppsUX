@@ -305,8 +305,9 @@ export const Networking = ({
     description: 'title for retry policy HTTP status codes setting',
   });
   const retryPolicyHttpStatusCodesTooltip = intl.formatMessage({
-    defaultMessage: 'Specify which HTTP status codes should trigger a retry. Select one or more status codes.',
-    id: '9emgHc',
+    defaultMessage:
+      'Specify which HTTP status codes trigger a retry. Selecting codes here replaces the default retryable set (408, 429, and 5xx), so only the codes you select are retried. Leave empty to keep the default set.',
+    id: 'BGOMQF',
     description: 'tooltip for retry policy HTTP status codes setting',
   });
 
