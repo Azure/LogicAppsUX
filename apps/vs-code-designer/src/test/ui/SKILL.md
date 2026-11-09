@@ -88,8 +88,10 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   recomputation and local Code-save source precedence.
 - **Preserve editing safeguards:** D4 metadata synchronization and D5 deferred
   baseline adoption prevent controlled saved-definition/content-loss cases.
-  No-change reparsing remains a separate unresolved contract; do not delete
-  D3-D5 as a bundle or mistake a synthetic dirty-state test for native proof.
+  Clean local Code state can still contain serialized unsaved Designer edits.
+  No-change reparsing has conditional graph/view-transition controls, not
+  native public-event proof. Assess initialization guards separately; do not
+  delete D3-D5 as a bundle or mistake a dirty-state mock for native proof.
 - **Retain required integration and features:** supported WIF provider/session
   and SDK adaptations, actual compiler prerequisites, and the product
   validation needed for an independently required visible error. The separate

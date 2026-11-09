@@ -58,7 +58,8 @@ This documentation update is not another native run.
 | Not required; removal accepted | D7 `data-code-view-validation-errors` | Keep removed; observe actual visible alerts, identity and geometry | Three rendering controls plus both-OS HTTP and full23 at `afc472be2`; nullable driver probe remains |
 | Required for selected ADO authentication | E3 WIF provider, activation/session integration and associated azureauth dependency/type/API adaptations | Retain together; not a cleanup target | SDK-documented secretless provider; follow installed SDK contract, not a newer upstream example. Does not approve E4's token fallback |
 | Editing protection; retain or extract | D4 metadata dependencies; D5 deferred baseline adoption | Preserve saved definition and mounted Code text | Controlled local restoration reproduces saved-definition reset/content replacement. Native-file HTTP coverage does not isolate every embedded-editor race |
-| Retained; necessity unresolved | D5 no-change reparsing and other initialization guards | Investigate separately, not as part of a D3-D5 bundle deletion | Removing the no-change reparsing did not break five audit probes but broke an existing dirty-state contract; no native removal acceptance |
+| Conditional editing protection; retain or extract | D5 no-change reparsing | A locally clean Code editor can contain unsaved Designer graph edits; preserve that serialized baseline | Runtime-present view-transition control reproduces deleted-action resurrection with the old guard. Public Run history route is source-supported, but exact host/UI sequence is not natively executed |
+| Retained; necessity unresolved | Other D5 initialization guards | Investigate individually, not as part of a D3-D5 bundle deletion | The no-change counterfactual does not establish every initialization branch; no native removal acceptance |
 | Required for specified visible-error outcome, not test-only plumbing | D1 validation, D2 fresh-file recomputation, D6 error MessageBars | Retain/separate explicit product-validation work | A selector or wait cannot supply an absent error. The broader action policy and particular wrapping geometry are not independently justified by one scenario |
 | Build prerequisite, runtime-neutral | D9 Mapper typing | Retain or extract the compiler fix | Counterfactual adds TS2322; emitted JavaScript is unchanged. Skipping compilation is not an equivalent test adaptation |
 | Product shutdown fix, not a harness workaround | E13 Linux pending-startup Func shutdown | Preserve original product-owned runtime release; separate the product fix | Native retained ancestry demonstrated surviving product Func descendants. Harness killing proves recovery, not original release; not every algorithm detail was isolated |
@@ -110,7 +111,7 @@ defended as one inseparable test-infrastructure change.**
 | Area | Finding | Can tests use the original behavior? | Recommended separation |
 | --- | --- | --- | --- |
 | Unsupported Compose timeout error | New local validation and visible UI, not previously supplied by this Designer implementation | Not while still requiring that exact error in a fresh Designer | Explicit product-validation fix; otherwise report the unsupported scenario |
-| Embedded-Code save, refresh and persistence | Hardening accumulated around a flow later corrected to native `workflow.json`; D3-D5 counterfactuals distinguish its parts | Durable alert storage is removed and native-accepted; restoring D4/D5 protections reproduces editing regressions | Keep D3 durability removed; retain/extract editing protections and assess dirty-state reparsing separately |
+| Embedded-Code save, refresh and persistence | Hardening accumulated around a flow later corrected to native `workflow.json`; D3-D5 counterfactuals distinguish its parts | Durable alert storage is removed and native-accepted; restoring D4/D5 protections reproduces editing regressions | Keep D3 durability removed; retain/extract editing protections, including conditionally demonstrated no-change reparsing; keep native reachability limits explicit |
 | Validation-state DOM attribute | Diagnostic-only access to internal state | Yes; removal is native-accepted without changing visible-error observations | Keep D7 removed |
 | Run After accessible names | Removes a duplicated title; expansion behavior unchanged | Yes, using the exact existing label within the correct predecessor row | Separate accessibility fix |
 | Mapper typing | Runtime-neutral compiler repair | No, not with the same strict compiler/dependencies and real package build | Retain or extract as prerequisite build fix |
@@ -375,7 +376,63 @@ This establishes a test dependency, not a generic removal proof: separately
 investigate whether a saved raw definition can diverge from current workflow
 metadata after acknowledgement/refresh, and whether reparsing is required to
 preserve it. The other D5 guards must not be removed solely because this synthetic
-dirty-state contract is absent from the corrected native scenario.
+dirty-state contract is absent from the corrected native scenario. These earlier
+five probes did not cover the separate graph-edit/view-roundtrip mechanism below.
+
+### D5 follow-up: clean Code state can contain Designer edits
+
+The later source-backed controls keep D4 synchronization and D5 deferred
+baseline adoption unchanged and restore only the original no-change return.
+They mount the actual `DesignerApp` and `CodeViewEditor`, use production
+deserialization/deletion/serialization bodies, and execute the provider's
+deep-comparison/reinitialization effect. No probe injects a contradictory local
+dirty flag or substitutes a stale canned serialization result.
+
+The supported unfinished fixture contains Compose and no selected trigger.
+Deleting Compose in Designer changes its graph while the parent's loaded
+definition remains unchanged. Entering Code serializes the edited graph with
+empty `actions`, but initialization correctly leaves local Code `hasChanges()`
+false: no Code edit occurred. The original guard returns the old parent
+definition; reparsing captures the edited graph's serialized baseline.
+
+| Follow-up control | Current behavior | Original no-change guard |
+| --- | --- | --- |
+| Designer deletion, untouched Code, Workflow, then Code baseline | Pass | Internal baseline divergence; displayed Code still reflects the edited graph |
+| Designer deletion, untouched Code, Monitoring, then Workflow | Deletion preserved | Compose resurrected by graph reinitialization |
+| Genuine Code edit, Save/reset, token update, then Workflow | Pass | Pass |
+| Two genuine Code edits and saves | Pass | Pass |
+| Leave Code before held initialization completes | Pass | Pass |
+
+Both replayed variants produce the expected result: current **5/5**, original
+guard **3/5**. The baseline mismatch is not a second independently visible
+defect: re-entering Code reserializes the edited graph and masks it. The
+Monitoring roundtrip is the demonstrated content-loss mechanism.
+
+**Public-path prerequisite:** The real command bar renders **Run history** for
+a non-codeful workflow when a tracked runtime URL is available, without a
+trigger-validity, dirty-state or Save gate
+(`DesignerCommandBar/indexV2.tsx:246-258`, `appV2.tsx:84,389`). Its action resets
+presentation state, then calls the Monitoring callback; the public Workflow
+button returns through the existing graph reinitialization path
+(`DesignerCommandBar/indexV2.tsx:222-232`, `appV2.tsx:277-332`). The host supplies
+the tracked runtime URL in initialization
+(`localDesignerV2Panel.ts:118,215-222`). Unchanged Code does not post a Save on
+this transition.
+
+**Proof boundary:** The control supplies a runtime URL and invokes the
+callback through an adapted command bar. It does not establish a real tracked
+runtime for this exact unfinished fixture or click the actual public buttons.
+The editor DOM, service/host boundaries and asynchronous graph initialization
+are adapted. No runnable Request/Compose control, native host acknowledgement,
+or both-OS public-event roundtrip was executed. This is conditional local
+necessity under the runtime-present state, not native integration acceptance.
+
+**Disposition:** Retain/extract no-change reparsing under current state
+ownership, rather than deleting it based on the earlier mocked-dirty contract.
+A native counterfactual must establish the runtime, delete in Designer, enter
+untouched Code, click actual Run history and Workflow, and exclude intervening
+Save, metadata replacement or selected-run definition changes. Keep the
+initialization guards and deferred-baseline behavior separate.
 
 **Native coverage boundary:** The corrected scenario edits/saves/closes the exact
 native `workflow.json`, then opens a different Designer target and checks the
