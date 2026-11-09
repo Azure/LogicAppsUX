@@ -43,6 +43,55 @@ separate private traceability records, not this guide.
 Do not promote a policy or unit control to native success. Record the exact
 scope proved, and preserve earlier failures rather than rewriting their history.
 
+## Product changes versus test requirements
+
+Use the [product-change audit](vscode-product-change-audit.md#current-decisions-and-acceptance)
+for source-bound outcomes and outstanding decisions. This guide records reusable
+rules, not private case details or run identities. An E2E harness dependency,
+a product defect and an independently required feature are different things;
+an integration pass does not make every retained product edit necessary.
+
+| Area | Required boundary and current decision |
+| --- | --- |
+| Durable validation alerts and diagnostic DOM state | Durable `getState()/setState()` alert storage and `data-code-view-validation-errors` are not required for the native-file scenario; both removals have both-OS targeted and full23 acceptance. Keep fresh-file recomputation, local Code-save source precedence and real visible-alert observations |
+| Embedded-Code editing | Retain D4 metadata synchronization and D5 deferred baseline adoption unless an independently proved replacement preserves saved definitions and mounted text. No-change reparsing is a separate unresolved contract, not justification to remove the whole cluster |
+| Visible validation | Native edit/save/close/reopen must use the exact `workflow.json` and a fresh Designer target. If the required alert is absent, selectors, sleeps, terminal errors or synthesized banners cannot supply it; retain/separate the explicit product feature. Do not prescribe arbitrary wrapping geometry |
+| ADO authentication | Keep the supported WIF subscription provider, activation/session integration and related SDK dependency/type/API adaptations. Use the installed SDK contract, not newer upstream examples. An interactive profile is not equivalent WIF proof; the separate environment-token session fallback remains a candidate requiring its own replacement proof |
+| Compilation | Retain/extract runtime-neutral typing needed by the actual compiler/dependencies. Do not skip the real package build or weaken types to avoid a prerequisite |
+| Shutdown and recovery | Preserve original Logic Apps shutdown/resource release. Harness termination of product-owned Func is recovery, not original release; only independently proven dependency survivors can use the exceptional lifecycle policy |
+| Other cleanup candidates | Original Run After labels, normal activation, update throttling, authentic package layouts, feed behavior and narrower recorder diagnostics require separate controlled proof. Existing tests or modified fixtures do not justify product behavior, but a proposal is not an accepted removal |
+| Non-target file writes | Settled final contents and continuous non-target immutability are different requirements. Do not silently relax the latter to tolerate a demonstrated transient rewrite |
+
+The stale persisted-alert counterfactual and invalid-to-valid clearing have
+local controls. A fresh native target alone does not prove stale-error rejection:
+add an actual valid-after-invalid native leg before making that coverage claim.
+Likewise, a local incomplete-write reproduction does not prove the cause of an
+earlier native failure. Do not attribute committed-source success to uncommitted
+feed or readiness experiments.
+
+For each cleanup, change one coherent area, preserve the original scenario and
+visible/semantic/ownership assertions, run the focused local controls and
+affected complete Linux/Windows lanes, then require canonical full23/protected
+acceptance at the **identical immutable SHA** before another removal. Inspect
+the original producing-attempt artifacts, not just the pipeline badge. Keep
+failed attempts and distinguish an unrelated failure from causal removal proof.
+Apply OS-specific native ownership/containment rules without changing the
+functional contract between OSes.
+
+The current-run extension/test payload and verified prepared dependencies
+are required infrastructure; rebuilding every suite or serializing all OS
+preparation is not. Windows preparation gates Windows consumers, not Linux.
+Linux preparation is currently grouped with the shared build job, while the
+Windows producer runs in parallel after context resolution. Treat that grouping
+as pipeline topology, not an inherent product requirement.
+
+Suite diagnostics must be immutable per producing job attempt and canonical
+selection must use dependency outputs and matching receipts. Native suite
+attempt-2 publication is established; the latest protected full23 proofs used
+attempt 1 throughout. Mixed-attempt protected selection has local controls, not
+native full23 proof. Shared producer artifacts still have fixed names: do not
+force-retry every job or suppress a collision to exercise the suite-only fix.
+
 ## Operational policy: bounded failed-job reruns
 
 Apply this user-directed policy **only after attempt-safe artifact publication

@@ -2,7 +2,7 @@
 
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
-> **Last updated**: 2026-10-29
+> **Last updated**: 2026-11-09 (shared authoring guidance; the ExTester status above was not revalidated)
 
 ---
 
@@ -73,6 +73,46 @@ A rerun pass requires the successful producing attempt's original artifact
 and all existing evidence/lifecycle gates. It does not make an older failure
 artifact valid or replace the protected full23 rollup. See
 `docs/testing/vscode-cli-authoring.md` for the canonical ADO procedure.
+
+### Product changes versus test requirements
+
+The [product-change audit](../../../../../docs/testing/vscode-product-change-audit.md#current-decisions-and-acceptance)
+owns source-bound decisions and evidence. The
+[canonical CLI guide](../../../../../docs/testing/vscode-cli-authoring.md#product-changes-versus-test-requirements)
+owns detailed reusable rules. CLI full23 acceptance is not a new ExTester
+result; do not replace the historical ExTester counts with CLI lane counts.
+
+- **Not required; removals accepted:** durable validation-alert storage and the
+  internal `data-code-view-validation-errors` DOM attribute. Observe real alert
+  text, visibility, geometry and owner identity instead. Preserve fresh-file
+  recomputation and local Code-save source precedence.
+- **Preserve editing safeguards:** D4 metadata synchronization and D5 deferred
+  baseline adoption prevent controlled saved-definition/content-loss cases.
+  No-change reparsing remains a separate unresolved contract; do not delete
+  D3-D5 as a bundle or mistake a synthetic dirty-state test for native proof.
+- **Retain required integration and features:** supported WIF provider/session
+  and SDK adaptations, actual compiler prerequisites, and the product
+  validation needed for an independently required visible error. The separate
+  environment-token fallback is not automatically approved by WIF retention.
+  A selector, sleep or terminal error cannot replace an absent product banner.
+- **Keep lifecycle and file policies explicit:** original product Func release
+  is not harness recovery. An independent dependency exception requires the
+  established ownership/shutdown/startup proof. Final settled contents do not
+  prove continuous non-target file immutability.
+- **Candidates are not removals:** original Run After labels, normal activation,
+  dependency-update behavior, package layouts, feed cleanup and narrower
+  recorder hooks still need their own controlled proof. Do not credit native
+  passes to uncommitted feed or regeneration-readiness drafts.
+- **Prove one cleanup at a time:** keep real UI and semantic/ownership oracles;
+  require affected both-OS coverage and canonical full23 at the same immutable
+  source before proceeding. A new Designer target does not by itself prove
+  stale-error rejection; that needs a native valid-after-invalid negative leg.
+- **Separate infrastructure from product behavior:** a shared source-bound build
+  and prepared dependencies are required; Windows preparation is not a Linux
+  prerequisite. Suite-attempt publication has native rerun proof, but
+  mixed-attempt protected full23 selection remains locally covered rather
+  than native-proven. Keep the bounded failed-job policy above; fixed-name
+  shared producers are not safe for force-all retries.
 
 ## 1.5. Critical Rules — Read Before Writing Any New Test
 

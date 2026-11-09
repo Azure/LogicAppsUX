@@ -16,7 +16,7 @@ for a product change.** A harness limitation, a new oracle, and a product defect
 are different things. A real bug discovered by a test can still belong in a
 separate product-fix PR.
 
-The committed comparison is:
+The historical committed comparison is:
 
 - Base: `41d0e2c64c411c5c2f90f9d4409fb496b2f9bea6`, the upstream comparison
   base used by the audited work.
@@ -30,12 +30,75 @@ The committed comparison is:
 
 There is also an **uncommitted feed cleanup trial** in the working tree. Its
 intended behavior is described in finding E8, but it is not part of this committed
-comparison and has no native acceptance claim. The historical audit does not
-itself approve removals; the separately authorized D3 implementation is recorded
-below.
+comparison and has no native acceptance claim. The regeneration-readiness
+draft is also uncommitted and excluded from native payloads. The historical
+audit does not itself approve removals; separately authorized D3 and D7
+implementations and their accepted native results are recorded below.
 
-Source line references describe the committed head. The uncommitted feed trial
-changes line numbers in its three production files.
+Source line references describe the historical comparison head, not the latest
+accepted source. The uncommitted feed trial changes line numbers in its three
+production files.
+
+## Current decisions and acceptance
+
+Evidence checked **2026-11-09**. The latest accepted code baseline is
+`afc472be2b4aa0e56ba3fbf0a86cdc2931e1ddb6`, containing both D3 durable-storage
+removal and D7 diagnostic-attribute removal. Both-OS HTTP
+[run 15959057](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959057)
+and canonical
+[run 15959210](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959210)
+passed at that identical SHA. Downloaded originals passed source/run/attempt,
+ordered-evidence and terminal acceptance; the full run's **11 Linux and
+12 Windows** suites and protected rollup passed. Both runs used suite attempt 1.
+This documentation update is not another native run.
+
+| Classification | Areas | Current decision | Evidence boundary |
+| --- | --- | --- | --- |
+| Not required; removal accepted | D3 durable `getState()/setState()` alert storage | Keep removed; recompute fresh-file errors and preserve local Code-save source precedence | D3-only accepted at `11680614`; latest full23 also includes D7 removal. This is not removal of all D3 validation behavior |
+| Not required; removal accepted | D7 `data-code-view-validation-errors` | Keep removed; observe actual visible alerts, identity and geometry | Three rendering controls plus both-OS HTTP and full23 at `afc472be2`; nullable driver probe remains |
+| Required for selected ADO authentication | E3 WIF provider, activation/session integration and associated azureauth dependency/type/API adaptations | Retain together; not a cleanup target | SDK-documented secretless provider; follow installed SDK contract, not a newer upstream example. Does not approve E4's token fallback |
+| Editing protection; retain or extract | D4 metadata dependencies; D5 deferred baseline adoption | Preserve saved definition and mounted Code text | Controlled local restoration reproduces saved-definition reset/content replacement. Native-file HTTP coverage does not isolate every embedded-editor race |
+| Retained; necessity unresolved | D5 no-change reparsing and other initialization guards | Investigate separately, not as part of a D3-D5 bundle deletion | Removing the no-change reparsing did not break five audit probes but broke an existing dirty-state contract; no native removal acceptance |
+| Required for specified visible-error outcome, not test-only plumbing | D1 validation, D2 fresh-file recomputation, D6 error MessageBars | Retain/separate explicit product-validation work | A selector or wait cannot supply an absent error. The broader action policy and particular wrapping geometry are not independently justified by one scenario |
+| Build prerequisite, runtime-neutral | D9 Mapper typing | Retain or extract the compiler fix | Counterfactual adds TS2322; emitted JavaScript is unchanged. Skipping compilation is not an equivalent test adaptation |
+| Product shutdown fix, not a harness workaround | E13 Linux pending-startup Func shutdown | Preserve original product-owned runtime release; separate the product fix | Native retained ancestry demonstrated surviving product Func descendants. Harness killing proves recovery, not original release; not every algorithm detail was isolated |
+| Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
+| Test-adaptation candidate; not removed | D8 Run After accessible names | Functional coverage can use the original exact label scoped to its predecessor row | Genuine accessibility improvement, but no independently required single-title label or accepted removal proof |
+| Test/fixture candidates; not removed | E1 minimal activation, E2 update suppression, E4 environment-token session fallback | Prove normal activation, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
+| Provenance/race questions remain open | E5 activation catch-up; E6 optional executable chmod; E7 flattened Node/npm layout | Establish the actual race or authentic supported package before retaining/extracting a compatibility fix | Modeled controls and altered fixtures do not establish native customer/package provenance |
+| Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
+| Observation candidates; not removed | E10 writer, E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
+| Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
+| Already restored | Designer API timeout override | Keep original fixed product timeout; no new E2E product override | Historical restoration predates these removals; it is not a remaining product cleanup |
+
+### Infrastructure and proof limits
+
+- Retain one source-bound current-run extension/test payload, verified
+  prepared dependencies, actual UI interactions and all lifecycle/evidence
+  gates. Windows dependency preparation is required by Windows consumers, not
+  Linux consumers. The two producer jobs run in parallel after context
+  resolution; Linux dependency preparation is currently grouped inside the
+  shared build job. That grouping is pipeline topology, not a product feature.
+- Attempt-qualified suite artifacts are required for collision-free same-build
+  failed-job retries. Run `15957577` natively proved Linux regeneration attempt
+  2 publication and original-artifact acceptance while preserving attempt 1.
+  Protected full23 runs `15957906` and `15959210` used attempt 1 throughout;
+  mixed-attempt protected selection has local regression coverage, not native
+  full23 proof. Shared producer artifacts remain fixed-name: force-all retries
+  are not covered by the suite-only fix.
+- Keep the initial execution plus at most two additional failed-job reruns at
+  the same run/SHA. Preserve failures and classify native body, lifecycle,
+  staging and publication separately. Three failures require diagnosis; a pass
+  does not erase earlier evidence or prove absence of intermittency.
+- Fresh-file recomputation and invalid-to-valid clearing have local regression
+  coverage. The native HTTP scenario does not yet include a valid-after-invalid
+  negative leg, so do not claim native stale-alert rejection from a fresh target
+  or a green full matrix alone.
+
+No additional product removal is approved by this status update. The reusable
+authoring rules are maintained in
+[the CLI guide](vscode-cli-authoring.md#product-changes-versus-test-requirements)
+and [the E2E skill](../../apps/vs-code-designer/src/test/ui/SKILL.md#product-changes-versus-test-requirements).
 
 ## Executive findings
 
@@ -46,8 +109,8 @@ defended as one inseparable test-infrastructure change.**
 | Area | Finding | Can tests use the original behavior? | Recommended separation |
 | --- | --- | --- | --- |
 | Unsupported Compose timeout error | New local validation and visible UI, not previously supplied by this Designer implementation | Not while still requiring that exact error in a fresh Designer | Explicit product-validation fix; otherwise report the unsupported scenario |
-| Embedded-Code save, refresh and persistence | Hardening accumulated around a flow later corrected to native `workflow.json`; D3-D5 counterfactuals now distinguish its parts | Fresh-load probes pass without the cluster, but restoring D4/D5 reproduces editing regressions | Target durable alert storage first; retain/extract editing protections |
-| Validation-state DOM attribute | Diagnostic-only access to internal state | Yes; visible-error observations do not depend on it | Test-side diagnostics/removal candidate |
+| Embedded-Code save, refresh and persistence | Hardening accumulated around a flow later corrected to native `workflow.json`; D3-D5 counterfactuals distinguish its parts | Durable alert storage is removed and native-accepted; restoring D4/D5 protections reproduces editing regressions | Keep D3 durability removed; retain/extract editing protections and assess dirty-state reparsing separately |
+| Validation-state DOM attribute | Diagnostic-only access to internal state | Yes; removal is native-accepted without changing visible-error observations | Keep D7 removed |
 | Run After accessible names | Removes a duplicated title; expansion behavior unchanged | Yes, using the exact existing label within the correct predecessor row | Separate accessibility fix |
 | Mapper typing | Runtime-neutral compiler repair | No, not with the same strict compiler/dependencies and real package build | Retain or extract as prerequisite build fix |
 | Minimal activation/update suppression/token fallback | Shipping product branches used as test accommodations | Yes in principle, using normal activation and supported isolated/authenticated fixtures | Test/fixture changes; prove each replacement |
@@ -334,7 +397,7 @@ Source hashes, per-test outcomes and replayable experimental configuration are
 retained as session artifacts.
 
 No product removal, commit, push or ADO run was performed for this investigation.
-The next controlled removal candidate is **D3 durable storage alone**, with
+At that point, the next controlled removal candidate was **D3 durable storage alone**, with
 D4 and D5 baseline protection retained, revised non-stale validation coverage,
 and complete affected both-OS native acceptance followed by the canonical
 matrix at the same source.
@@ -501,18 +564,19 @@ observation. It is not the acceptance oracle.
 **Can the test adapt?** Yes. Actual alert text, candidates, geometry, visibility
 and owner identity remain observable without internal state.
 
-**Evidence/disposition:** Removal passed local checks and both-OS HTTP native
+**Earlier trial:** Removal passed local checks and both-OS HTTP native
 acceptance. Subsequent full-suite runs failed in other Windows scenarios; those
 failures do not establish that this attribute is necessary. It was restored
-because the candidate did not receive complete full-suite acceptance. This is
-still a test-side diagnostics/removal candidate, not a proven product dependency.
+because the candidate did not receive complete full-suite acceptance. That did
+not prove a product dependency. The separately implemented removal below has
+now received complete acceptance; keep the attribute removed.
 
 **References:** `httpTimeoutComposeDriver.ts:1959-1970`;
 `httpTimeoutComposeOracle.ts:118-131`.
 
-#### Isolated D7 implementation after accepted D3 baseline
+#### Accepted isolated D7 removal after the D3 baseline
 
-The new candidate removes only the production
+Commit `afc472be2b4aa0e56ba3fbf0a86cdc2931e1ddb6` removes only the production
 `data-code-view-validation-errors` attribute. Validation state, exact visible
 alerts, root styling, Designer identity, D3 recomputation and D4/D5 editing
 protections remain unchanged. The backward-compatible nullable driver probe
@@ -536,8 +600,22 @@ The VS Code test specialist applied owning-domain, test-strategy and senior
 plan/risk/diff-review workflows directly and found no blocking issue. Local
 CLI compilation/controls include the preserved unrelated drafts; they are not
 committed-source native proof. The feed and regeneration-readiness drafts
-remain excluded from publication. Required next gates are both-OS HTTP native
-acceptance and then canonical full23 at the identical D7 candidate SHA.
+remain excluded from publication.
+
+Both required native gates passed at that identical D7 source:
+
+- [Affected HTTP run 15959057](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959057):
+  Linux and Windows passed at suite attempt 1. Downloaded originals passed
+  physical artifact/receipt, source/run, ordered-evidence and terminal checks.
+- [Canonical full23 run 15959210](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959210):
+  all 11 Linux and 12 Windows suites passed at attempt 1, original artifacts
+  passed the same checks, and the protected full rollup passed.
+
+D7 is therefore not a remaining removal candidate. The accepted source retains
+D3 fresh-file/local validation and D4/D5 editing protections. Neither run
+contains the feed or regeneration-readiness drafts, and neither required a
+failed-job retry. Documentation updates record these source-bound outcomes;
+they do not imply another native run at a later documentation-only SHA.
 
 ### D8. Run After accessible names, both Designer versions
 
@@ -1010,6 +1088,10 @@ comparison. Tests, runners, pipeline definitions and generated knowledge graphs
 are outside this production-source inventory.
 
 ## Proposed disposition, not an implementation approval
+
+The current-status matrix above supersedes the original candidate status for
+D3 durable storage and D7 diagnostic markup: both removals are accepted.
+The proposals below concern the remaining areas, not those completed removals.
 
 The strongest test-only candidates are original Run After label support,
 correct native-file editing instead of embedded-Code assumptions, normal
