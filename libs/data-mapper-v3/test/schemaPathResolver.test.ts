@@ -7,6 +7,7 @@ import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { DEFAULT_MAP_OPTIONS, FunctoidCategory, LinkEndpointType, type MapDocument, ParameterType } from '../src/model';
 import { replaceSchema } from '../src/schema/schemaReplacement';
 import { applyMapPatches, createMapPatchValidationContext } from '../src/copilot/mapPrompt';
+import { parseOrderedXsd } from '../src/schema/orderedXsdParser';
 
 const schemaXml = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:group name="Domestic"><xs:sequence><xs:element name="Code" type="xs:string"/></xs:sequence></xs:group>
@@ -68,6 +69,9 @@ describe('legacy schema paths', () => {
     expect(resolver.require(domestic.path).node).toBe(domestic.node);
     expect(resolver.resolve('/Root/Code')).toBeUndefined();
     expect(resolver.resolve('/Root/<Choice>/Code')).toBeUndefined();
+    expect(
+      new SchemaPathResolver(tree, true).resolve("/*[local-name()='<Schema>']/*[local-name()='Root']/*[local-name()='Code']")
+    ).toBeUndefined();
     expect(new SchemaPathResolver(JSON.parse(JSON.stringify(tree))).require('/Root/<Choice>/<Group:Foreign>/Code').path).toBe(foreign.path);
   });
 
@@ -107,6 +111,151 @@ describe('legacy schema paths', () => {
     expect(simplifySchemaPath(raw)).toBe('/Root/Value');
     expect(resolver.require(raw).path).toBe('/Root/Value');
     expect(resolver.resolve(raw.replace("'Root'", "'root'"))).toBeUndefined();
+  });
+
+  test.each(['<Schema>', '<schema>'])('resolves an element-style attribute endpoint only inside a %s TOM selector', (wrapper) => {
+    const phoneTree = new SchemaParser().parse(
+      `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="PhoneCalls"><xs:complexType>
+          <xs:attribute name="PhoneNumber" type="xs:string"/>
+        </xs:complexType></xs:element>
+      </xs:schema>`,
+      'phone-calls.xsd'
+    );
+    const paths = new SchemaPathResolver(phoneTree);
+    const raw = `/*[local-name()='${wrapper}']/*[local-name()='PhoneCalls']/*[local-name()='PhoneNumber']`;
+    const canonical = paths.require('/PhoneCalls/@PhoneNumber');
+    expect(paths.require(raw)).toEqual(canonical);
+    expect(paths.require(raw).path).toBe('/PhoneCalls/@PhoneNumber');
+  });
+
+  test('does not coerce plain paths or instance XPath to attributes, or invent missing TOM attributes', () => {
+    const phoneTree = new SchemaParser().parse(
+      `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="PhoneCalls"><xs:complexType>
+          <xs:attribute name="PhoneNumber" type="xs:string"/>
+        </xs:complexType></xs:element>
+      </xs:schema>`,
+      'phone-calls.xsd'
+    );
+    const paths = new SchemaPathResolver(phoneTree);
+    expect(paths.resolve('/PhoneCalls/PhoneNumber')).toBeUndefined();
+    expect(paths.resolve("/*[local-name()='PhoneCalls']/*[local-name()='PhoneNumber']")).toBeUndefined();
+    expect(paths.resolve("/*[local-name()='<Schema>']/*[local-name()='PhoneCalls']/*[local-name()='Missing']")).toBeUndefined();
+    expect(paths.require("/*[local-name()='PhoneCalls']/@*[local-name()='PhoneNumber']").path).toBe('/PhoneCalls/@PhoneNumber');
+  });
+
+  test('keeps element-style TOM attribute matching namespace-aware', () => {
+    const phoneTree = new SchemaParser().parse(
+      `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:phones"
+          attributeFormDefault="qualified">
+        <xs:element name="PhoneCalls"><xs:complexType>
+          <xs:attribute name="PhoneNumber" type="xs:string"/>
+        </xs:complexType></xs:element>
+      </xs:schema>`,
+      'qualified-phone-calls.xsd'
+    );
+    const paths = new SchemaPathResolver(phoneTree);
+    const raw =
+      "/*[local-name()='<Schema>']/*[local-name()='PhoneCalls' and namespace-uri()='urn:phones']/*[local-name()='PhoneNumber' and namespace-uri()='urn:phones']";
+    expect(
+      paths.resolve(raw.replace("PhoneNumber' and namespace-uri()='urn:phones", "PhoneNumber' and namespace-uri()='wrong"))
+    ).toBeUndefined();
+    expect(
+      paths.resolve(raw.replace("PhoneCalls' and namespace-uri()='urn:phones", "PhoneCalls' and namespace-uri()='wrong"))
+    ).toBeUndefined();
+    expect(paths.require(raw).path).toBe('/PhoneCalls/@PhoneNumber');
+  });
+
+  test('preserves ambiguity between a same-name child element and attribute in an element-style TOM endpoint', () => {
+    const phoneTree = new SchemaParser().parse(
+      `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="PhoneCalls"><xs:complexType>
+          <xs:sequence><xs:element name="PhoneNumber" type="xs:string"/></xs:sequence>
+          <xs:attribute name="PhoneNumber" type="xs:string"/>
+        </xs:complexType></xs:element>
+      </xs:schema>`,
+      'ambiguous-phone-calls.xsd'
+    );
+    const paths = new SchemaPathResolver(phoneTree);
+    const raw = "/*[local-name()='<Schema>']/*[local-name()='PhoneCalls']/*[local-name()='PhoneNumber']";
+    expect(paths.require('/PhoneCalls/PhoneNumber').attribute).toBeUndefined();
+    expect(paths.require('/PhoneCalls/@PhoneNumber').attribute?.name).toBe('PhoneNumber');
+    expect(paths.resolve(raw)).toBeUndefined();
+    expect(paths.resolve(raw, true)).toBeUndefined();
+    expect(new SchemaPathResolver(phoneTree, true).resolve(raw)).toBeUndefined();
+    expect(paths.require(raw.replace("/*[local-name()='PhoneNumber']", "/@*[local-name()='PhoneNumber']")).path).toBe(
+      '/PhoneCalls/@PhoneNumber'
+    );
+  });
+
+  test('accepts explicit TOM position one for a singleton sequence without accepting nonexistent positions or branches', () => {
+    const raw =
+      "/*[local-name()='<Schema>']/*[local-name()='Root']/*[local-name()='<Sequence>' and position()='1']/*[local-name()='Value']";
+    expect(resolver.resolve(raw.replace("position()='1'", "position()='2'"))).toBeUndefined();
+    expect(resolver.resolve(raw.replace('<Sequence>', '<Choice>'))).toBeUndefined();
+    expect(resolver.resolve(raw.replace('<Sequence>', '<Unknown>'))).toBeUndefined();
+    expect(resolver.require(raw).path).toBe('/Root/Value');
+    expect(resolver.require(raw.replace(" and position()='1'", "][position()='1'")).path).toBe('/Root/Value');
+  });
+
+  describe('namespace-ignored TOM sibling compatibility', () => {
+    const localField = '<xs:element name="Field" type="xs:string"/>';
+    const foreignField = '<xs:element ref="foreign:Field"/>';
+    const raw = "/*[local-name()='<Schema>']/*[local-name()='Root']/*[local-name()='Field']";
+    const parseFields = (content: string) => {
+      const imported = parseOrderedXsd(
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:foreign">
+          <xs:element name="Field" type="xs:string"/>
+        </xs:schema>`
+      )['xs:schema'];
+      return new SchemaParser().parseWithImports(
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:foreign="urn:foreign"
+            targetNamespace="urn:local" elementFormDefault="qualified">
+          <xs:import namespace="urn:foreign" schemaLocation="foreign.xsd"/>
+          <xs:element name="Root"><xs:complexType>${content}</xs:complexType></xs:element>
+        </xs:schema>`,
+        'namespace-siblings.xsd',
+        new Map([['foreign.xsd', imported]])
+      );
+    };
+
+    test.each([
+      { order: 'local first', fields: `${localField}${foreignField}`, firstNamespace: 'urn:local' },
+      { order: 'foreign first', fields: `${foreignField}${localField}`, firstNamespace: 'urn:foreign' },
+    ])('selects the first schema sibling only for namespace-ignored TOM ($order)', ({ fields, firstNamespace }) => {
+      const siblingTree = parseFields(`<xs:sequence>${fields}</xs:sequence>`);
+      const paths = new SchemaPathResolver(siblingTree);
+      const namespaceIgnored = new SchemaPathResolver(siblingTree, true);
+      const foreign = siblingTree.rootElement.children.find((child) => child.namespace === 'urn:foreign');
+      expect(siblingTree.rootElement.children.map((child) => child.namespace)).toEqual(
+        firstNamespace === 'urn:local' ? ['urn:local', 'urn:foreign'] : ['urn:foreign', 'urn:local']
+      );
+      expect(paths.resolve(raw)).toBeUndefined();
+      expect(namespaceIgnored.resolve(raw, false)).toBeUndefined();
+      expect(namespaceIgnored.resolve('/Root/Field')).toBeUndefined();
+      expect(namespaceIgnored.resolve("/*[local-name()='Root']/*[local-name()='Field']")).toBeUndefined();
+      expect(paths.resolve(raw.replace("local-name()='Field'", "local-name()='Field' and namespace-uri()='urn:foreign'"))?.node).toBe(
+        foreign
+      );
+      expect(namespaceIgnored.require(raw).node).toBe(siblingTree.rootElement.children[0]);
+      expect(namespaceIgnored.require(raw).path).toBe(siblingTree.rootElement.children[0].path);
+      expect(paths.resolve(raw, true)?.node).toBe(siblingTree.rootElement.children[0]);
+    });
+
+    test('keeps distinct-namespace elements in different compositor branches ambiguous even for namespace-ignored TOM', () => {
+      const branchTree = parseFields(
+        `<xs:choice><xs:sequence>${localField}</xs:sequence><xs:sequence>${foreignField}</xs:sequence></xs:choice>`
+      );
+      expect(branchTree.rootElement.children.map((child) => child.namespace)).toEqual(['urn:local', 'urn:foreign']);
+      expect(new SchemaPathResolver(branchTree, true).resolve(raw)).toBeUndefined();
+    });
+
+    test('keeps same-namespace sibling declarations ambiguous even for namespace-ignored TOM', () => {
+      const siblingTree = parseFields(`<xs:sequence>${localField}${localField}</xs:sequence>`);
+      expect(siblingTree.rootElement.children).toHaveLength(2);
+      expect(new SchemaPathResolver(siblingTree, true).resolve(raw)).toBeUndefined();
+    });
   });
 
   test.each(['<Schema>', '<schema>'])('round-trips original %s endpoint and value paths through repeated saves', (wrapper) => {

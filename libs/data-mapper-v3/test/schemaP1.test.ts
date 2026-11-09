@@ -2,6 +2,8 @@ import { describe, test, expect } from 'vitest';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { InstanceGenerator } from '../src/schema/instanceGenerator';
+import * as path from 'path';
+import { resolveSchemaDependencies } from '../src/schema/schemaDependencyResolver';
 
 describe('SchemaParser P1 metadata', () => {
   test('retains choice, nil/default, namespace, attribute, and inheritance metadata', () => {
@@ -346,6 +348,97 @@ describe('SchemaParser P1 metadata', () => {
     const importedTree = new SchemaParser().parseWithImports(importedXml, 'common.xsd', imports, 'Head');
     expect(importedTree.rootElement.substitutionMembers).toEqual([expect.objectContaining({ name: 'Member' })]);
   });
+
+  test.each([
+    { name: 'no default namespace', schemaDefault: '', rootDefault: '', refDefault: '', ref: 'Field', namespace: '' },
+    {
+      name: 'inherited schema default namespace',
+      schemaDefault: 'xmlns="urn:common"',
+      rootDefault: '',
+      refDefault: '',
+      ref: 'Field',
+      namespace: 'urn:common',
+    },
+    {
+      name: 'inherited element default namespace',
+      schemaDefault: 'xmlns="urn:parent"',
+      rootDefault: 'xmlns="urn:common"',
+      refDefault: '',
+      ref: 'Field',
+      namespace: 'urn:common',
+    },
+    {
+      name: 'element-local default namespace override',
+      schemaDefault: 'xmlns="urn:parent"',
+      rootDefault: '',
+      refDefault: 'xmlns="urn:common"',
+      ref: 'Field',
+      namespace: 'urn:common',
+    },
+    {
+      name: 'element-local default namespace reset',
+      schemaDefault: 'xmlns="urn:parent"',
+      rootDefault: '',
+      refDefault: 'xmlns=""',
+      ref: 'Field',
+      namespace: '',
+    },
+    {
+      name: 'explicitly qualified import despite a different default namespace',
+      schemaDefault: 'xmlns="urn:parent"',
+      rootDefault: '',
+      refDefault: '',
+      ref: 'common:Field',
+      namespace: 'urn:common',
+    },
+  ])(
+    'expands imported element references using $name rather than the parent targetNamespace',
+    async ({ schemaDefault, rootDefault, refDefault, ref, namespace }) => {
+      const rootPath = path.resolve('schemas', 'qname-root.xsd');
+      const imported = (targetNamespace: string) => `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        ${targetNamespace ? `targetNamespace="${targetNamespace}"` : ''} elementFormDefault="qualified">
+      <xs:element name="Field"><xs:complexType><xs:sequence>
+        <xs:element name="ImportedValue" type="xs:string"/>
+      </xs:sequence><xs:attribute name="ImportedCode" type="xs:string" use="required"/></xs:complexType></xs:element>
+    </xs:schema>`;
+      const files = new Map([
+        [path.resolve('schemas', 'no-namespace.xsd'), imported('')],
+        [path.resolve('schemas', 'common.xsd'), imported('urn:common')],
+      ]);
+      const root = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:common="urn:common"
+        targetNamespace="urn:parent" ${schemaDefault}>
+      <xs:import schemaLocation="no-namespace.xsd"/>
+      <xs:import namespace="urn:common" schemaLocation="common.xsd"/>
+      <xs:element name="Field"><xs:complexType><xs:sequence>
+        <xs:element name="ParentValue" type="xs:string"/>
+      </xs:sequence></xs:complexType></xs:element>
+      <xs:element name="Root" ${rootDefault}><xs:complexType><xs:sequence>
+        <xs:element ref="${ref}" ${refDefault}/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:schema>`;
+      const dependencies = await resolveSchemaDependencies(
+        root,
+        rootPath,
+        async (filePath) => {
+          const content = files.get(filePath);
+          if (!content) {
+            throw new Error(`Unexpected schema dependency: ${filePath}`);
+          }
+          return content;
+        },
+        (containingPath, location) => path.resolve(path.dirname(containingPath), location)
+      );
+      const tree = new SchemaParser().parseWithImports(root, rootPath, dependencies, 'Root');
+      const field = tree.rootElement.children[0];
+      expect(tree.rootElement.namespace).toBe('urn:parent');
+      expect(field.name).toBe('Field');
+      expect(field.namespace || '').toBe(namespace);
+      expect(field.children.map((child) => child.name)).toEqual(['ImportedValue']);
+      expect(field.children[0].namespace || '').toBe(namespace);
+      expect(field.attributes).toEqual([expect.objectContaining({ name: 'ImportedCode', type: 'xs:string', required: true })]);
+      expect(field.attributes[0].namespace || '').toBe('');
+    }
+  );
 
   test('stops recursive type and group expansion without overflowing', () => {
     const tree = new SchemaParser().parse(

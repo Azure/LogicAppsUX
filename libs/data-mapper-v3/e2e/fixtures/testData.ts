@@ -161,8 +161,12 @@ export function createInitPayload(overrides: Partial<InitPayload> = {}): InitPay
   };
 }
 
-export async function loadSampleMap(relativePath: string, serializedContent?: string): Promise<InitPayload> {
-  const mapPath = path.resolve(__dirname, '../samples', relativePath);
+export async function loadSampleMap(
+  relativePath: string,
+  serializedContent?: string,
+  sampleDirectory = path.resolve(__dirname, '../samples')
+): Promise<InitPayload> {
+  const mapPath = path.resolve(sampleDirectory, relativePath);
   const content = serializedContent ?? readTextFileSync(mapPath);
   if (!content) {
     throw new Error(`Sample map not found: ${mapPath}`);

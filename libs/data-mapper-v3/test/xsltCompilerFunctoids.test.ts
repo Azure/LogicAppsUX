@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import { XMLValidator } from 'fast-xml-parser';
+import { create } from 'xmlbuilder2';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import {
@@ -15,6 +16,7 @@ import {
   TargetLinkOption,
 } from '../src/model';
 import { SchemaParser } from '../src/schema/schemaParser';
+import { BtmSerializer } from '../src/schema/btmSerializer';
 
 const fixtures = path.join(__dirname, 'fixtures', 'functoids');
 const sourceSchema = new SchemaParser().parse(fs.readFileSync(path.join(fixtures, 'FunctoidSource.xsd'), 'utf8'), 'src');
@@ -1079,6 +1081,240 @@ describe('XsltCompiler functoid coverage', () => {
   });
 
   describe.each([false, true])('inline XSLT script helpers (preserve sequence: %s)', (preserveSequenceOrder) => {
+    const xsltNamespace = 'http://www.w3.org/1999/XSL/Transform';
+
+    function createScriptMap(scriptContent: string, scriptType = ScriptType.InlineXslt): MapDocument {
+      const definition = FunctoidRegistry.getInstance().getFunctoid(260)!;
+      const map = createMap({
+        id: 'xslt',
+        functoidId: definition.id,
+        category: definition.category,
+        name: definition.name,
+        x: 0,
+        y: 0,
+        inputLinks: [],
+        outputLinks: [],
+        parameters: [],
+        scriptType,
+        scriptContent,
+      });
+      map.options.preserveSequenceOrder = preserveSequenceOrder;
+      map.pages[0].functoids[0].parameters = [];
+      map.pages[0].links[0].targetId = map.pages[0].links[0].targetPath = '/Root/Total';
+      return map;
+    }
+
+    function parseStylesheet(xslt: string): Element {
+      expect(XMLValidator.validate(xslt)).toBe(true);
+      const stylesheet = create(xslt).root().node as Element;
+      expect(stylesheet.namespaceURI).toBe(xsltNamespace);
+      expect(stylesheet.localName).toBe('stylesheet');
+      return stylesheet;
+    }
+
+    test('preserves detached additive key declarations on a separate page without calls or map mutation', () => {
+      const map = createScriptMap("<xsl:value-of select=\"count(key('groups', 'a'))\"/>");
+      const declaration: MapFunctoid = {
+        ...map.pages[0].functoids[0],
+        id: 'keys',
+        scriptType: ScriptType.InlineXsltCallTemplate,
+        scriptContent: [
+          `<t:key xmlns:t="${xsltNamespace}" xmlns:data="urn:orders" name="groups" match="data:Order" use="@id"/>`,
+          `<t:key xmlns:t="${xsltNamespace}" xmlns:data="urn:orders" name="groups" match="data:ArchivedOrder" use="@id"/>`,
+        ].join('\n'),
+      };
+      const uppercase = FunctoidRegistry.getInstance().getFunctoid(110)!;
+      map.pages.push({
+        id: 'declarations',
+        name: 'Declarations',
+        links: [],
+        functoids: [
+          declaration,
+          { ...declaration, id: 'duplicate-keys' },
+          {
+            ...declaration,
+            id: 'unused-uppercase',
+            functoidId: uppercase.id,
+            category: uppercase.category,
+            name: uppercase.name,
+            scriptType: undefined,
+            scriptContent: undefined,
+            parameters: [{ index: 0, value: 'unused', type: ParameterType.Constant }],
+          },
+        ],
+      });
+      const original = JSON.stringify(map);
+
+      const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+      expect(result.errors).toEqual([]);
+      expect(result.success).toBe(true);
+      const stylesheet = parseStylesheet(result.xslt!);
+      const keys = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'key'));
+      expect(keys.map((key) => [key.getAttribute('name'), key.getAttribute('match'), key.getAttribute('use')])).toEqual([
+        ['groups', 'data:Order', '@id'],
+        ['groups', 'data:ArchivedOrder', '@id'],
+      ]);
+      for (const key of keys) {
+        expect(key.parentNode === stylesheet).toBe(true);
+        expect(key.lookupNamespaceURI('data')).toBe('urn:orders');
+      }
+      expect(result.xslt).toContain("count(key('groups', 'a'))");
+      expect(stylesheet.getElementsByTagNameNS(xsltNamespace, 'call-template').length).toBe(0);
+      expect(result.warnings.filter((warning) => /declarations:(keys|duplicate-keys)$/.test(warning.elementId || ''))).toEqual([]);
+      expect(result.warnings).toContainEqual(
+        expect.objectContaining({ elementId: 'declarations:unused-uppercase', message: expect.stringContaining('not compiled') })
+      );
+      expect(result.xslt).not.toContain("translate('unused'");
+      expect(JSON.stringify(map)).toBe(original);
+    });
+
+    test('preserves a detached namespaced helper and global variable with its transitive C# reference', () => {
+      const map = createScriptMap('<xsl:call-template xmlns:h="urn:helper" name="h:emit"/>');
+      const helper: MapFunctoid = {
+        ...map.pages[0].functoids[0],
+        id: 'template',
+        scriptType: ScriptType.InlineXsltCallTemplate,
+        scriptContent: [
+          `<t:variable xmlns:t="${xsltNamespace}" name="greeting" select="'hello:'"/>`,
+          `<t:template xmlns:t="${xsltNamespace}" xmlns:h="urn:helper" name="h:emit">`,
+          '<h:value><t:value-of select="concat($greeting, userCSharp:GetValue())"/></h:value>',
+          '</t:template>',
+        ].join('\n'),
+      };
+      const csharp: MapFunctoid = {
+        ...helper,
+        id: 'csharp',
+        scriptType: ScriptType.InlineCSharp,
+        scriptContent: 'public string GetValue() { return "helper-value"; }',
+      };
+      map.pages.push({
+        id: 'helpers',
+        name: 'Helpers',
+        links: [],
+        functoids: [helper, csharp, { ...csharp, id: 'unused', scriptContent: 'public string Unused() { return "unused"; }' }],
+      });
+      const original = JSON.stringify(map);
+
+      const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+      expect(result.errors).toEqual([]);
+      expect(result.success).toBe(true);
+      const stylesheet = parseStylesheet(result.xslt!);
+      const templates = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'template')).filter(
+        (template) => template.getAttribute('name') === 'h:emit'
+      );
+      expect(templates.length).toBe(1);
+      expect(templates[0].parentNode === stylesheet).toBe(true);
+      expect(templates[0].lookupNamespaceURI('h')).toBe('urn:helper');
+      expect(templates[0].getElementsByTagNameNS('urn:helper', 'value').length).toBe(1);
+      const globals = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'variable')).filter(
+        (variable) => variable.getAttribute('name') === 'greeting'
+      );
+      expect(globals.length).toBe(1);
+      expect(globals[0].parentNode === stylesheet).toBe(true);
+      expect(globals[0].getAttribute('select')).toBe("'hello:'");
+      const calls = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'call-template'));
+      expect(calls.map((call) => call.getAttribute('name'))).toEqual(['h:emit']);
+      expect(calls[0].parentNode === stylesheet).toBe(false);
+      expect(result.xslt).toContain('concat($greeting, userCSharp:GetValue())');
+      expect(result.xslt).toContain('<msxsl:script language="C#" implements-prefix="userCSharp">');
+      expect(stylesheet.lookupNamespaceURI('userCSharp')).toBe('http://schemas.microsoft.com/BizTalk/2003/userCSharp');
+      expect(result.xslt).toContain(csharp.scriptContent);
+      expect(result.xslt).not.toContain('public string Unused()');
+      expect(result.xslt).not.toMatch(/<xsl:variable[^>]*select="userCSharp:GetValue/);
+      expect(result.warnings.filter((warning) => /helpers:(template|csharp)$/.test(warning.elementId || ''))).toEqual([]);
+      expect(result.warnings).toContainEqual(expect.objectContaining({ elementId: 'helpers:unused' }));
+      expect(JSON.stringify(map)).toBe(original);
+    });
+
+    test('deduplicates detached and connected definitions and resets declarations when the compiler is reused', () => {
+      const definitions =
+        '<xsl:key name="groups" match="Order" use="@id"/>\n' +
+        '<xsl:template name="emit-group"><xsl:value-of select="count(key(\'groups\', \'a\'))"/></xsl:template>';
+      const map = createScriptMap(definitions, ScriptType.InlineXsltCallTemplate);
+      map.pages.push({
+        id: 'declarations',
+        name: 'Declarations',
+        links: [],
+        functoids: [
+          { ...map.pages[0].functoids[0], id: 'first' },
+          { ...map.pages[0].functoids[0], id: 'second' },
+        ],
+      });
+      const compiler = new XsltCompiler();
+      const result = compiler.compile(map, sourceSchema);
+
+      expect(result.errors).toEqual([]);
+      expect(result.success).toBe(true);
+      const stylesheet = parseStylesheet(result.xslt!);
+      const keys = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'key'));
+      expect(keys.length).toBe(1);
+      expect(keys[0].parentNode === stylesheet).toBe(true);
+      const templates = Array.from(stylesheet.getElementsByTagNameNS(xsltNamespace, 'template')).filter(
+        (template) => template.getAttribute('name') === 'emit-group'
+      );
+      expect(templates.length).toBe(1);
+      expect(templates[0].parentNode === stylesheet).toBe(true);
+      expect(stylesheet.getElementsByTagNameNS(xsltNamespace, 'call-template').length).toBe(1);
+
+      const clean = compiler.compile(createScriptMap('<xsl:text>clean-map</xsl:text>'), sourceSchema);
+      expect(clean.errors).toEqual([]);
+      expect(clean.success).toBe(true);
+      expect(clean.warnings).toEqual([]);
+      const cleanStylesheet = parseStylesheet(clean.xslt!);
+      expect(cleanStylesheet.getElementsByTagNameNS(xsltNamespace, 'key').length).toBe(0);
+      expect(cleanStylesheet.getElementsByTagNameNS(xsltNamespace, 'call-template').length).toBe(0);
+      expect(clean.xslt).not.toContain('emit-group');
+      expect(clean.xslt).toContain('clean-map');
+      expect(result.warnings).toEqual([]);
+    });
+
+    test('reports malformed detached declarations with their original page and element', () => {
+      const map = createScriptMap('<xsl:text>linked-output</xsl:text>');
+      map.pages.push({
+        id: 'declarations',
+        name: 'Declarations',
+        links: [],
+        functoids: [
+          {
+            ...map.pages[0].functoids[0],
+            id: 'broken',
+            scriptType: ScriptType.InlineXsltCallTemplate,
+            scriptContent: '<xsl:key name="groups" match="Order" use="@id">',
+          },
+        ],
+      });
+
+      const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('malformed XML'),
+          elementId: 'declarations:broken',
+          pageId: 'declarations',
+          pageName: 'Declarations',
+        })
+      );
+    });
+
+    test('still rejects a connected key-only script instead of inventing a named template', () => {
+      const map = createScriptMap('<xsl:key name="groups" match="Order" use="@id"/>', ScriptType.InlineXsltCallTemplate);
+      const result = new XsltCompiler().compile(map, sourceSchema);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('must contain a named xsl:template'),
+          elementId: 'xslt',
+          pageId: 'page1',
+          pageName: 'Page 1',
+        })
+      );
+      expect(parseStylesheet(result.xslt!).getElementsByTagNameNS(xsltNamespace, 'call-template').length).toBe(0);
+    });
+
     test.each([ScriptType.InlineXslt, ScriptType.InlineXsltCallTemplate])(
       'includes an unlinked C# function called by %s without changing the map',
       (scriptType) => {
@@ -1145,6 +1381,53 @@ describe('XsltCompiler functoid coverage', () => {
         expect(unusedResult.warnings.some((warning) => warning.elementId === 'helpers:helper')).toBe(true);
       }
     );
+  });
+
+  test.each(['MapOrderUsingCount', 'MapOrderUsingGenerateId'])('imports %s with its detached LearningPath grouping key', (mapName) => {
+    const sample = path.join(
+      __dirname,
+      '..',
+      'e2etests',
+      'Muenchian-Grouping-and-Sorting-without-losing-Map-functionalities',
+      'MuenchianGrouping',
+      'Sample1'
+    );
+    function readSampleXml(filename: string): string {
+      const bytes = fs.readFileSync(path.join(sample, filename));
+      return bytes[0] === 0xff && bytes[1] === 0xfe ? bytes.subarray(2).toString('utf16le') : bytes.toString('utf8');
+    }
+    const map = new BtmSerializer().deserialize(readSampleXml(`${mapName}.btm`));
+    const parser = new SchemaParser();
+    const source = parser.parse(readSampleXml('InputOrder.xsd'), 'InputOrder.xsd');
+    const target = parser.parse(readSampleXml('OutputOrder.xsd'), 'OutputOrder.xsd');
+    const detached = map.pages.flatMap((page) =>
+      page.functoids.filter(
+        (functoid) =>
+          functoid.scriptType === ScriptType.InlineXsltCallTemplate &&
+          !page.links.some((link) => link.sourceType === LinkEndpointType.Functoid && link.sourceId === functoid.id)
+      )
+    );
+    expect(detached).toHaveLength(1);
+    const original = JSON.stringify(map);
+
+    const result = new XsltCompiler().compile(map, source, target);
+
+    expect(result.errors).toEqual([]);
+    expect(result.success).toBe(true);
+    expect(XMLValidator.validate(result.xslt!)).toBe(true);
+    const stylesheet = create(result.xslt!).root().node as Element;
+    const keys = Array.from(stylesheet.getElementsByTagNameNS('http://www.w3.org/1999/XSL/Transform', 'key'));
+    expect(keys.length).toBe(1);
+    expect(keys[0].parentNode === stylesheet).toBe(true);
+    expect([keys[0].getAttribute('name'), keys[0].getAttribute('match'), keys[0].getAttribute('use')]).toEqual([
+      'groups',
+      'Order',
+      'OrderId',
+    ]);
+    expect(result.xslt).toContain("key('groups',OrderId)");
+    expect(stylesheet.getElementsByTagNameNS('http://www.w3.org/1999/XSL/Transform', 'call-template').length).toBe(0);
+    expect(result.warnings).toEqual([]);
+    expect(JSON.stringify(map)).toBe(original);
   });
 
   test('evaluates cumulative functoids once at their common parent context', () => {

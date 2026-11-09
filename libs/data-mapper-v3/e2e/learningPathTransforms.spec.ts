@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { readTextFileSync } from '../src/schema/schemaFileResolver';
+import { resolveAssemblyFilePath, resolveExtensionObjectAssemblyPaths } from '../src/schema/extensionObjectResolver';
 import { behaviorMaps, loadLearningPathMap } from './fixtures/learningPath';
 import { expect, test, type MapperFixture } from './fixtures/mapperHost';
 
@@ -19,7 +20,7 @@ const root = path.resolve(__dirname, '..');
 const transformDirectory = path.join(root, 'tools', 'compiler-worker', 'runtime', 'win-x64', 'framework-transform');
 const transformExecutable = path.join(transformDirectory, 'BizTalk.DataMapper.FrameworkTransform.exe');
 
-function transform(xslt: string, input: string): string {
+function transform(xslt: string, input: string, extensionObjectXml?: string): string {
   const directory = mkdtempSync(path.join(os.tmpdir(), 'learning-path-transform-'));
   try {
     const xsltPath = path.join(directory, 'map.xslt');
@@ -27,7 +28,13 @@ function transform(xslt: string, input: string): string {
     const outputPath = path.join(directory, 'output.xml');
     writeFileSync(xsltPath, xslt);
     writeFileSync(inputPath, input);
-    execFileSync(transformExecutable, [xsltPath, inputPath, outputPath], { timeout: 30_000, windowsHide: true });
+    const arguments_ = [xsltPath, inputPath, outputPath];
+    if (extensionObjectXml) {
+      const extensionPath = path.join(directory, 'extensions.xml');
+      writeFileSync(extensionPath, extensionObjectXml);
+      arguments_.push(extensionPath);
+    }
+    execFileSync(transformExecutable, arguments_, { timeout: 30_000, windowsHide: true });
     return readFileSync(outputPath, 'utf8');
   } finally {
     rmSync(directory, { recursive: true, force: true });
@@ -43,7 +50,27 @@ async function testMap(mapper: MapperFixture, relativePath: string, inputXml: st
   await ui.validateButton.click();
   const compileMessage = await compiling;
   expect(compileMessage.data).toEqual(payload.map);
-  const result = new XsltCompiler().compile(compileMessage.data, payload.sourceSchema!, payload.targetSchema!);
+  const map = structuredClone(compileMessage.data);
+  const mapDirectory = path.resolve(root, 'e2etests', path.dirname(relativePath));
+  for (const page of map.pages) {
+    for (const functoid of page.functoids) {
+      for (const parameter of functoid.parameters) {
+        if (parameter.type === 'assemblyPath') {
+          parameter.value = resolveAssemblyFilePath(parameter.value, mapDirectory);
+        }
+      }
+      for (const implementation of functoid.scriptImplementations ?? []) {
+        if (implementation.assemblyPath) {
+          implementation.assemblyPath = resolveAssemblyFilePath(implementation.assemblyPath, mapDirectory);
+        }
+      }
+    }
+  }
+  if (map.customExtensionXmlPath) {
+    const descriptor = path.resolve(mapDirectory, map.customExtensionXmlPath);
+    map.customExtensionXml = resolveExtensionObjectAssemblyPaths(readTextFileSync(descriptor)!, path.dirname(descriptor));
+  }
+  const result = new XsltCompiler().compile(map, payload.sourceSchema!, payload.targetSchema!);
   expect(result.errors).toEqual([]);
   expect(result.success).toBe(true);
   await test.info().attach('compiled.xslt', { body: result.xslt!, contentType: 'application/xml' });
@@ -57,7 +84,7 @@ async function testMap(mapper: MapperFixture, relativePath: string, inputXml: st
   await host.send({ type: 'instanceGenerated', data: { side: 'source', xml: inputXml } });
   const message = await testing;
   expect(message.data).toEqual({ map: payload.map, inputXml });
-  const output = transform(result.xslt!, message.data.inputXml);
+  const output = transform(result.xslt!, message.data.inputXml, result.extensionObjectXml);
   await test.info().attach('transformed.xml', { body: output, contentType: 'application/xml' });
   await host.send({ type: 'testMapResult', data: { output } });
   await expect(ui.instanceEditor).toHaveValue(inputXml.replace(/\r\n/g, '\n'));
@@ -115,6 +142,109 @@ test.describe('BizTalk learning-path transformations @learning-path', () => {
     }
   });
 
+  test('inline XSLT calls a portable external assembly and emits a single price record per car', async ({ mapper }) => {
+    const output = await testMap(
+      mapper,
+      path.join('Calling-external-assembly-from-Custom-XSLT', 'BizTalk.CallingExternalAssemblyFromInlineXSLT', 'CarInfo_to_CarsOnSale.btm'),
+      `<p:CarProperty xmlns:p="http://BizTalk.CallingExternalAssemblyFromInlineXSLT.CarInfo">
+        <Car><Brand>A</Brand><Model>A1</Model><Year>2020</Year><FuelType>Gas</FuelType><HP>100</HP>
+          <Color>Blue</Color><Observations>First</Observations><MarketPrice>190000</MarketPrice><OwnerPrice>189600</OwnerPrice></Car>
+        <Car><Brand>B</Brand><Model>B2</Model><Year>2021</Year><FuelType>Diesel</FuelType><HP>120</HP>
+          <Color>Red</Color><Observations>Second</Observations><MarketPrice>25000.5</MarketPrice><OwnerPrice>24000</OwnerPrice></Car>
+        <OwnerName>Ada</OwnerName><OwnerAddress>Main</OwnerAddress><OwnerProfession>Engineer</OwnerProfession><OwnerAge>40</OwnerAge>
+      </p:CarProperty>`
+    );
+    expect(output.name).toBe('CarsOnSale');
+    expect(output.children).toHaveLength(2);
+    const prices = output.children.map((car) => {
+      const records = car.children.filter((child) => child.name === 'Price');
+      expect(records).toHaveLength(1);
+      expect(records[0].children.map((child) => child.name)).toEqual(['PriceMarket', 'PriceOwner']);
+      return fields(records[0]);
+    });
+    expect(prices).toEqual([
+      { PriceMarket: '190000.000', PriceOwner: '189600.000' },
+      { PriceMarket: '25000.500', PriceOwner: '24000.000' },
+    ]);
+    expect(output.children.map((car) => fields(car.children.find((child) => child.name === 'OwnerInfo')!))).toEqual([
+      { Name: 'Ada', Address: 'Main' },
+      { Name: 'Ada', Address: 'Main' },
+    ]);
+  });
+
+  for (const variant of [
+    ['UsingFunctoid', 'OrderToSAPOrderAccessOrcVarFunctoids.btm'],
+    ['UsingHelperClass', 'OrderToSAPOrderAccOrcVarHC.btm'],
+  ]) {
+    test(`orchestration ${variant[0]} maps normal Order input without an active orchestration context`, async ({ mapper }) => {
+      const output = await testMap(
+        mapper,
+        path.join('How-to-Access-Orchestration-Variables-from-Maps', 'HowToSendOrchestrationVariablesIntoMaps', ...variant),
+        `<p:Order xmlns:p="http://HowToSendOrchestrationVariablesIntoMaps.Order">
+            <Orderheader><OrderDate>20261106</OrderDate><EstimatedDeliveryDate>20261231</EstimatedDeliveryDate><OrderNumber>O42</OrderNumber></Orderheader>
+            <CustomerDetails><Name>Ada</Name><Address>Main</Address><Id>42</Id></CustomerDetails>
+            <OrderDetails><ItemDescription>Widget</ItemDescription><ItemCustomerCode>P7</ItemCustomerCode><TotalAmount>2</TotalAmount><UnitType>EA</UnitType></OrderDetails>
+          </p:Order>`
+      );
+      expect(output.name).toBe('SAPOrder');
+      expect(fields(output)).toMatchObject({ OrderId: 'O42', ClientId: '42' });
+      expect(fields(output.children.find((child) => child.name === 'Dates')!)).toMatchObject({
+        OrderDate: '20261106',
+        EstimatedDeliveryDate: '20261231',
+      });
+      expect(fields(output.children.find((child) => child.name === 'Details')!)).toEqual({
+        ItemId: 'P7',
+        Units: '2',
+        UnitType: 'EA',
+      });
+      expect(fields(output.children.find((child) => child.name === 'AdditionalInfo')!)).toEqual({ DiscountType: '' });
+    });
+  }
+
+  for (const globalFunctions of [false, true]) {
+    test(`${globalFunctions ? 'shared global C# bodies' : 'C# overloads'} preserve dates and decimal values`, async ({ mapper }) => {
+      const relativePath = globalFunctions
+        ? path.join(
+            'How-to-create-a-Global-Inline-Csharp-Function',
+            'MapTipsDifferenWayToReuseScriptingFunctoids',
+            'MappingMultipleDates',
+            'DifferentWayReuseScriptingFunctoid.btm'
+          )
+        : path.join(
+            'How-To-Reuse-Scripting-Functoids-with-Inline-Csharp',
+            'MapTipsHowToReuseScriptingFunctoids',
+            'MappingMultipleDates',
+            'DifferentScriptingFunctoidWithTheSameNameOk.btm'
+          );
+      const namespace = globalFunctions
+        ? 'http://MapTipsDifferenWayToReuseScriptingFunctoids.Order'
+        : 'http://BuiltInVSScriptingVSCustomFunctoids.Order';
+      const output = await testMap(
+        mapper,
+        relativePath,
+        `<p:Order xmlns:p="${namespace}">
+            <OrderHeader><OrderDate>20261106</OrderDate><EstimatedDeliveryDate>20261231</EstimatedDeliveryDate><OrderNumber>O42</OrderNumber></OrderHeader>
+            <CustomDetails><Name>Ada</Name><Address>Main</Address></CustomDetails>
+            <OrderDetail><Item><ItemDescription>Widget</ItemDescription><ItemCustomerCode>P7</ItemCustomerCode><TotalAmount>1234,50</TotalAmount><UnitType>EA</UnitType>
+              ${globalFunctions ? '<Discount>7,25</Discount><NumberItems>2</NumberItems>' : ''}
+            </Item></OrderDetail>
+          </p:Order>`
+      );
+      const dates = fields(output.children.find((child) => child.name === 'Dates')!);
+      expect(dates.OrderDate).toBe('06/11/2026');
+      if (globalFunctions) {
+        expect(dates.EstimatedDeliveryDate).toBe('31/12/2026');
+        const details = output.children.find((child) => child.name === 'Details')!;
+        expect(details.children).toHaveLength(1);
+        expect(fields(details.children[0])).toMatchObject({ Total: '1234.50', Discount: '7.25' });
+      } else {
+        expect(dates.EstimatedDeliveryDate).not.toBe('31/12/2026');
+        const currentDate = new Date(dates.EstimatedDeliveryDate);
+        expect(Number.isNaN(currentDate.getTime())).toBe(false);
+        expect(Math.abs(Date.now() - currentDate.getTime())).toBeLessThan(60_000);
+      }
+    });
+  }
   test('name-based links preserve repeating items, values and target field order', async ({ mapper }) => {
     const output = await testMap(
       mapper,
@@ -183,9 +313,7 @@ test.describe('BizTalk learning-path transformations @learning-path', () => {
     { file: 'IfThenElseSource3.xml', Name: 'Sandro Pereira', Sex: 'M', Age: '0', CivilStatusDescription: 'Married' },
   ]) {
     test(`three-page conditions choose exactly one branch for ${sample.file}`, async ({ mapper }) => {
-      const input = readTextFileSync(
-        path.resolve(__dirname, 'samples', 'LearningPath', 'Conditional-Pattern', 'TestFiles', '03', sample.file)
-      );
+      const input = readTextFileSync(path.resolve(root, 'e2etests', 'Conditional-Pattern', 'TestFiles', '03', sample.file));
       expect(input).toBeTruthy();
       const output = await testMap(mapper, behaviorMaps.conditions, input!);
       expect(output.namespace).toBe('http://WorkingWithConditions.IfThenElseDestination');
@@ -199,6 +327,42 @@ test.describe('BizTalk learning-path transformations @learning-path', () => {
     });
   }
 
+  for (const sample of [
+    { map: 'MapConditionsRecords', managers: ['CEO', 'Director'], employees: ['R&D Director', 'Developer', 'ceo'] },
+    { map: 'MapConditionsRecordsCScript', managers: ['CEO', 'R&D Director', 'ceo'], employees: ['Director', 'Developer'] },
+  ]) {
+    test(`switch records preserve loop-local conditions and filtering in ${sample.map}`, async ({ mapper }) => {
+      const roles = ['CEO', 'Director', 'R&D Director', 'Business Assistant', 'Assistant', 'Developer', 'ceo'];
+      const people = roles
+        .map(
+          (role, index) =>
+            `<Person><Name>Person${index}</Name><Role>${role.replace(/&/g, '&amp;')}</Role><AdditionalInfo><CivilStatus>${
+              index % 2 ? 'S' : 'M'
+            }</CivilStatus></AdditionalInfo></Person>`
+        )
+        .join('');
+      const output = await testMap(
+        mapper,
+        `Conditional-Pattern\\WorkingWithConditions\\05-SwitchStatement\\${sample.map}.btm`,
+        `<s:Conditions xmlns:s="http://WorkingWithConditions.Conditions">${people}</s:Conditions>`
+      );
+      expect(output).toMatchObject({ name: 'ConditionsResultTwo', namespace: 'http://WorkingWithConditions.ConditionsResult2' });
+      const records = (name: string) => output.children.filter((record) => record.name === name).map(fields);
+      expect(records('BusinessManagers').map((record) => record.Role)).toEqual(sample.managers);
+      expect(records('BusinessAssistant').map((record) => record.Role)).toEqual(['Business Assistant', 'Assistant']);
+      expect(records('Employee')).toEqual(
+        sample.employees.map((role) => {
+          const index = roles.indexOf(role);
+          return { Name: `Person${index}`, Role: role, CivilStatusDescription: index % 2 ? 'Single' : 'Married' };
+        })
+      );
+      expect(output.children).toHaveLength(roles.length);
+      for (const record of output.children) {
+        expect(record.text).toBe(record.children.map((child) => child.text).join(''));
+      }
+    });
+  }
+
   test('looping maps each record to attributes without cross-record value leakage', async ({ mapper }) => {
     const output = await testMap(
       mapper,
@@ -209,7 +373,6 @@ test.describe('BizTalk learning-path transformations @learning-path', () => {
       </s:Surveys>`
     );
     expect(output).toMatchObject({ name: 'MasterAddresses', namespace: 'http://LoopingPattern.MasterAddresses' });
-    test.fail(true, 'Looping functoid output is emitted as a scalar value, losing repeated records and their target attributes.');
     expect(output.children.map((child) => ({ name: child.name, attributes: child.attributes }))).toEqual([
       { name: 'Address', attributes: { Name: 'A', Street: 'A St', City: 'X', State: 'WA', PostalCode: '1' } },
       { name: 'Address', attributes: { Name: 'B', Street: 'B St', City: 'Y', State: 'OR', PostalCode: '2' } },

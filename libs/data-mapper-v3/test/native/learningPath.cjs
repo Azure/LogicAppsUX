@@ -3,6 +3,8 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const vscode = require('vscode');
 const { findMapperFrame } = require('./suite.cjs');
+const { buildLearningPathHelpers } = require('./buildLearningPathHelpers.cjs');
+const { getLearningPathExclusion } = require('./learningPathExclusions.cjs');
 
 const extensionPath = path.resolve(__dirname, '../..');
 const viewType = 'biztalkDataMapper.mapEditor';
@@ -39,7 +41,7 @@ exports.run = async () => {
   const root = process.env.MAPPER_NATIVE_ROOT;
   const reportDirectory = process.env.MAPPER_NATIVE_REPORT;
   const workspace = process.env.MAPPER_NATIVE_WORKSPACE;
-  const report = { status: 'running', total: 0, succeeded: 0, failed: 0, results: [] };
+  const report = { status: 'running', total: 0, succeeded: 0, failed: 0, skipped: 0, results: [] };
   let browser;
   const saveReport = async () => {
     report.runtimeMs = Date.now() - started;
@@ -50,7 +52,8 @@ exports.run = async () => {
     const extension = vscode.extensions.getExtension('microsoft.btm-data-mapper');
     assert.ok(extension, 'Mapper development extension must be installed');
     await extension.activate();
-    await fs.cp(path.join(extensionPath, 'e2e', 'samples', 'LearningPath'), workspace, { recursive: true });
+    await fs.cp(path.join(extensionPath, 'e2etests'), workspace, { recursive: true });
+    buildLearningPathHelpers(workspace);
     const corpus = await mapFiles(workspace);
     assert.equal(corpus.length, 151, 'The entire learning-path corpus must be available');
     const filter = process.env.MAPPER_NATIVE_MAP_FILTER;
@@ -68,9 +71,18 @@ exports.run = async () => {
 
     for (const [index, mapPath] of maps.entries()) {
       const relativePath = path.relative(workspace, mapPath);
-      const artifactDirectory = path.join(reportDirectory, String(index + 1).padStart(3, '0'));
+      const caseId = String(corpus.indexOf(mapPath) + 1).padStart(3, '0');
+      const exclusion = getLearningPathExclusion(relativePath);
+      if (exclusion) {
+        report.skipped++;
+        report.results.push({ map: relativePath, caseId, status: 'skipped', reason: exclusion });
+        await saveReport();
+        console.log(`SKIP Test Map ${index + 1}/${maps.length}: ${relativePath} (${exclusion})`);
+        continue;
+      }
+      const artifactDirectory = path.join(reportDirectory, caseId);
       await fs.mkdir(artifactDirectory);
-      const result = { map: relativePath, status: 'running', artifacts: path.basename(artifactDirectory) };
+      const result = { map: relativePath, caseId, status: 'running', artifacts: path.basename(artifactDirectory) };
       const mapStarted = Date.now();
       let frame;
       try {
@@ -147,7 +159,7 @@ exports.run = async () => {
     }
     report.status = report.failed === 0 ? 'passed' : 'failed';
     await saveReport();
-    console.log(`Native Test Map: ${report.succeeded} succeeded, ${report.failed} failed; ${reportDirectory}`);
+    console.log(`Native Test Map: ${report.succeeded} succeeded, ${report.failed} failed, ${report.skipped} skipped; ${reportDirectory}`);
     if (report.failed > 0) {
       throw new Error(`${report.failed}/${report.total} native Test Map operations failed; see ${reportDirectory}`);
     }

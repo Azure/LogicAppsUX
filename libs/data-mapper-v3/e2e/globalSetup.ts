@@ -17,6 +17,10 @@ function newestMtime(dir: string): number {
 
 // Lets tests run from the VS Code Playwright extension, which doesn't run the package.json scripts.
 export default function globalSetup() {
+  if (process.platform === 'win32') {
+    const { buildLearningPathHelpers } = require('../test/native/buildLearningPathHelpers.cjs');
+    buildLearningPathHelpers(path.join(root, 'e2etests'));
+  }
   if (coverageEnabled) {
     rmSync(coverageDirectory, { recursive: true, force: true });
   }

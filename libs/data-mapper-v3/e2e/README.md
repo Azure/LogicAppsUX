@@ -65,8 +65,13 @@ Native execution does not automatically contribute to browser coverage.
 
 ### Native Test Map Corpus
 
-The [learning-path native suite](../test/native/learningPath.cjs) opens every
-one of the 151 sample maps in the real custom editor and clicks **Test Map**.
+The [learning-path native suite](../test/native/learningPath.cjs) inventories all
+151 sample maps and executes 132 eligible maps in the real custom editor by
+clicking **Test Map**. The 19 known failures are excluded by full relative path
+in [learningPathExclusions.cjs](../test/native/learningPathExclusions.cjs):
+18 maps require unregistered custom functoids, and one has no loaded source
+schema. Exclusions are reported as skipped, with their reasons; they are not
+counted as passes. All 151 maps retain their browser import/edit/reopen coverage.
 It uses the production instance generator, compiler worker and .NET transform,
 not mock host replies. Build current extension, worker and webview artifacts
 before running:
@@ -79,8 +84,9 @@ pnpm --dir libs\data-mapper-v3 run test:native
 ```
 
 Set `MAPPER_NATIVE_MAP_FILTER` to a relative-path substring for a focused run;
-leave it unset to attempt all 151 maps. The suite copies the fixtures into its
-isolated workspace and retains timestamped reports under
+leave it unset to run all eligible maps. Exclusions also apply to filtered runs,
+and report case IDs remain tied to the full corpus ordering. The suite copies
+the fixtures into its isolated workspace and retains timestamped reports under
 `libs\data-mapper-v3\test-results\native-learning-path-*`. Each attempted map
 has a `result.json` entry plus its generated input and native result text;
 successful compilations retain `compiled.xslt` even when transformation fails.
@@ -89,8 +95,8 @@ according to the map's declared output method. Harness failures include a
 screenshot when the editor remains available. Temporary VS Code profiles and
 the copied workspace are cleaned up independently of these reports.
 
-The suite deliberately fails if any map cannot complete Test Map, including
-empty/invalid teaching maps and unavailable external dependencies. It does
+The suite deliberately fails if any non-excluded map cannot complete Test Map,
+including invalid teaching maps and unavailable external dependencies. It does
 not whitelist known failures as passes. Success requires a real saved output
 and well-formed XML for maps declaring XML output; it does not establish
 target-XSD validity, expected business values, or parity with BizTalk. Use the focused browser transform
@@ -113,14 +119,15 @@ cases for their additional value and cardinality assertions.
 | Assistant | Empty prompts, button/keyboard submit, active page and trimmed payload, busy protection, context files, success/error replies, retry, unapplied proposals and applied map rendering | [copilot.spec.ts](copilot.spec.ts) |
 
 Sample maps and schemas live under [samples](samples), grouped into
-`LoopingFunctoids`, `PerformanceLargeMap`, `SchemaReferences`, and `LearningPath`.
+`LoopingFunctoids`, `PerformanceLargeMap`, and `SchemaReferences`.
+The BizTalk Learning Path corpus lives separately in `../e2etests`.
 These test fixtures are excluded from the packaged extension.
 
 ## BizTalk Learning Path Maps
 
-The `LearningPath` fixtures are copied from the `Working-with-Maps` directory of
+The `e2etests` fixtures are copied from the `Working-with-Maps` directory of
 Sandro Pereira's **BizTalk-Server-Learning-Path** samples. Their MIT copyright and
-permission notice is retained in `samples/LearningPath/LICENSE`. Original BTM
+permission notice is retained in `../e2etests/LICENSE`. Original BTM
 and XSD bytes, directory names, schema references, scripts, and intentionally
 incorrect teaching examples are preserved. No BizTalk installation, assemblies,
 signing keys, or machine-local source checkout is required to load the fixtures.

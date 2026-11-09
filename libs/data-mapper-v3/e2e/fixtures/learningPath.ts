@@ -5,7 +5,7 @@ import { FunctoidRegistry } from '../../src/functoids/functoidRegistry';
 import { readTextFileSync } from '../../src/schema/schemaFileResolver';
 import { loadSampleMap } from './testData';
 
-const directory = path.resolve(__dirname, '../samples/LearningPath');
+const directory = path.resolve(__dirname, '../../e2etests');
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '',
@@ -50,7 +50,7 @@ export function originalPages(relativePath: string): OriginalPage[] {
 }
 
 export async function loadLearningPathMap(relativePath: string, serializedContent?: string) {
-  const payload = await loadSampleMap(path.join('LearningPath', relativePath), serializedContent);
+  const payload = await loadSampleMap(relativePath, serializedContent, directory);
   return {
     ...payload,
     functoids: FunctoidRegistry.getInstance()

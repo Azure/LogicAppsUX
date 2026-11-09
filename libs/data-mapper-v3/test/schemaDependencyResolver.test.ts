@@ -158,6 +158,40 @@ describe('schema dependency resolution', () => {
     expect(tree.rootElement.children[1].children[0].namespace).toBe('urn:root');
   });
 
+  test.each(['', 'xmlns=""'])('preserves unprefixed references in nested chameleon includes (%s)', async (defaultNamespace) => {
+    const rootPath = path.resolve('schemas', 'root.xsd');
+    const root = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:t="urn:root" targetNamespace="urn:root">
+      <xs:include schemaLocation="included.xsd"/>
+      <xs:element name="Root"><xs:complexType><xs:sequence>
+        <xs:element ref="t:Container"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:schema>`;
+    const included = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+      <xs:include schemaLocation="nested.xsd"/>
+      <xs:element name="Container"><xs:complexType><xs:sequence>
+        <xs:element ${defaultNamespace} ref="Leaf"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:schema>`;
+    const nested = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+      <xs:element name="Leaf" type="RecordType"/>
+      <xs:complexType name="RecordType"><xs:sequence>
+        <xs:element name="Value" type="xs:string"/>
+      </xs:sequence></xs:complexType>
+    </xs:schema>`;
+    const dependencies = await resolveSchemaDependencies(
+      root,
+      rootPath,
+      async (dependencyPath) => (path.basename(dependencyPath) === 'included.xsd' ? included : nested),
+      (containingPath, location) => path.resolve(path.dirname(containingPath), location)
+    );
+    const tree = new SchemaParser().parseWithImports(root, rootPath, dependencies);
+    const leaf = tree.rootElement.children[0].children[0];
+    expect(leaf.name).toBe('Leaf');
+    expect(leaf.namespace).toBe('urn:root');
+    expect(leaf.dataTypeNamespace).toBe('urn:root');
+    expect(leaf.children.map((node) => [node.name, node.namespace])).toEqual([['Value', 'urn:root']]);
+  });
+
   test('reports an unresolved dependency explicitly', async () => {
     const root = `
             <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">

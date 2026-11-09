@@ -79,10 +79,28 @@ export function simplifySchemaPath(path: string): string {
   return steps ? `/${steps.map((step) => `${step.name}${step.position ? `[${step.position}]` : ''}`).join('/')}` : path;
 }
 
+export function normalizeSingleSourcePath(path: string, rootName: string): string {
+  const steps = xpathSteps(path);
+  const names = steps?.map((step) => step.name) || path.split('/').filter(Boolean);
+  if (names[0] !== 'Root' || names[1] !== 'InputMessagePart_0' || names[2] !== rootName) {
+    return path;
+  }
+  if (!steps) {
+    return path.replace(/^\/Root\/InputMessagePart_0/, '');
+  }
+  const selectors = path.match(/\/@?\*\[[^\]]+\](?:\[position\(\)='\d+'\])?/g)!;
+  const schemaStep = /local-name\(\)='<[Ss]chema>'/.test(selectors[0]) ? selectors.shift()! : '';
+  return schemaStep + selectors.slice(2).join('');
+}
+
 export function linkSchemaPath(link: MapLink, side: 'source' | 'target'): string {
   const path = link[`${side}Path`] || link[`${side}Id`];
   const original = link[`${side}BtmPath`];
-  return original && simplifySchemaPath(original) === path ? original : path;
+  const root = instancePathParts(path)[0];
+  return original &&
+    (simplifySchemaPath(original) === path || (side === 'source' && normalizeSingleSourcePath(simplifySchemaPath(original), root) === path))
+    ? original
+    : path;
 }
 
 const structuralSegment = /^<(?:Schema|Sequence|Choice|All|Group:[^<>]+|AttrGroup:[^<>]+)>(?:\[\d+\])?$/;
@@ -97,16 +115,25 @@ export function instancePathParts(path: string): string[] {
 // the parsed schema, in order and at the same element level.
 function matchesStructure(path: string, structure: string): boolean {
   const requested = path.split('/').filter(Boolean);
+  const segments = structure.split('/').filter(Boolean);
   let positions = new Set([0]);
-  for (const segment of structure.split('/').filter(Boolean)) {
+  for (const [index, segment] of segments.entries()) {
     const next = new Set<number>();
+    const structural = structuralSegment.test(segment);
+    let singleton = structural;
+    for (let nested = index + 1; nested < segments.length && structuralSegment.test(segments[nested]); nested++) {
+      if (segments[nested] !== segment && segments[nested].replace(/\[\d+\]$/, '') === segment) {
+        singleton = false;
+      }
+    }
     for (const position of positions) {
-      if (structuralSegment.test(segment)) {
+      if (structural) {
         next.add(position);
       }
       if (
         requested[position] === segment ||
-        (!/\[\d+\]$/.test(requested[position] || '') && requested[position] === segment.replace(/\[\d+\]$/, ''))
+        (!/\[\d+\]$/.test(requested[position] || '') && requested[position] === segment.replace(/\[\d+\]$/, '')) ||
+        (singleton && requested[position] === `${segment}[1]`)
       ) {
         next.add(position + 1);
       }
@@ -153,7 +180,9 @@ export class SchemaPathResolver<T extends PathNode<T> = SchemaNode> {
 
   public resolve(path: string, ignoreNamespaces = this.ignoreNamespaces): ResolvedSchemaPath<T> | undefined {
     const key = simplifySchemaPath(path);
-    const steps = ignoreNamespaces ? undefined : xpathSteps(path)?.filter((step) => !structuralSegment.test(step.name));
+    const parsedSteps = xpathSteps(path);
+    const tomPath = !!parsedSteps && /^\/\*\[[^\]]*local-name\(\)='<[Ss]chema>'[^\]]*\]/.test(path);
+    const steps = ignoreNamespaces ? undefined : parsedSteps?.filter((step) => !structuralSegment.test(step.name));
     const matchesNamespaces = (entry: ResolvedSchemaPath<T>): boolean => {
       const nodes = [...entry.ancestors, ...(entry.attribute ? [entry.attribute] : [])];
       return (
@@ -162,22 +191,20 @@ export class SchemaPathResolver<T extends PathNode<T> = SchemaNode> {
           steps.every((step, index) => step.namespace === undefined || step.namespace === (nodes[index].namespace || '')))
       );
     };
-    const flat = this.flattened.get(key);
-    const exact = flat && flat.length > 1 ? flat : this.aliases.get(key) || this.identities.get(key);
-    if (exact) {
-      const matches = exact.filter(matchesNamespaces);
-      return matches.length === 1 ? matches[0] : undefined;
-    }
-    const instancePath = `/${instancePathParts(key)
-      .map((part) => part.replace(/\[\d+\]$/, ''))
-      .join('/')}`;
-    const matches = this.flattened
-      .get(instancePath)
-      ?.filter(
+    const findMatches = (candidate: string): ResolvedSchemaPath<T>[] => {
+      const flat = this.flattened.get(candidate);
+      const exact = flat && flat.length > 1 ? flat : this.aliases.get(candidate) || this.identities.get(candidate);
+      if (exact) {
+        return exact.filter(matchesNamespaces);
+      }
+      const instancePath = `/${instancePathParts(candidate)
+        .map((part) => part.replace(/\[\d+\]$/, ''))
+        .join('/')}`;
+      return (this.flattened.get(instancePath) || []).filter(
         (entry) =>
           matchesNamespaces(entry) &&
           matchesStructure(
-            key,
+            candidate,
             entry.attribute?.structuralPath ||
               entry.attribute?.schemaPath ||
               (entry.attribute
@@ -185,7 +212,39 @@ export class SchemaPathResolver<T extends PathNode<T> = SchemaNode> {
                 : entry.node.structuralPath || entry.node.schemaPath || entry.node.path)
           )
       );
-    return matches?.length === 1 ? matches[0] : undefined;
+    };
+    const matches = findMatches(key);
+    const terminal = parsedSteps?.at(-1);
+    if (terminal && tomPath && !terminal.name.startsWith('@') && !structuralSegment.test(terminal.name)) {
+      // Older TOM selectors represent XSD attributes without the instance @ axis.
+      const attributePath = `${key.slice(0, key.lastIndexOf('/') + 1)}@${key.slice(key.lastIndexOf('/') + 1)}`;
+      matches.push(...findMatches(attributePath));
+    }
+    if (tomPath && ignoreNamespaces && matches.length > 1) {
+      const first = matches[0];
+      const namespaces = new Set(matches.map((entry) => entry.node.namespace || ''));
+      const parentStructures = new Set(
+        matches.map((entry) => {
+          const structure = entry.node.structuralPath || entry.node.schemaPath || entry.node.path;
+          return structure.slice(0, structure.lastIndexOf('/'));
+        })
+      );
+      // Namespace-ignoring TOM links select the first sibling in schema order.
+      // Do not extend that compatibility to attributes or distinct branches.
+      if (
+        namespaces.size === matches.length &&
+        parentStructures.size === 1 &&
+        matches.every(
+          (entry) =>
+            !entry.attribute &&
+            entry.ancestors.length === first.ancestors.length &&
+            entry.ancestors.slice(0, -1).every((ancestor, index) => ancestor === first.ancestors[index])
+        )
+      ) {
+        return first;
+      }
+    }
+    return matches.length === 1 ? matches[0] : undefined;
   }
 
   public require(path: string): ResolvedSchemaPath<T> {

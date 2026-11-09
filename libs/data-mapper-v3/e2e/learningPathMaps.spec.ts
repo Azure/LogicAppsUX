@@ -55,20 +55,7 @@ test.describe('BizTalk learning-path maps @learning-path', () => {
       for (const [index, original] of pages.entries()) {
         await ui.pageTabs.nth(index).click();
         await expect(ui.functoidNodes).toHaveCount(original.Functoids?.Functoid?.length ?? 0);
-        const staleAggregatePaths =
-          relativePath.endsWith('OrderToSAPOrderAccessOrcVarFunctoids.btm') || relativePath.endsWith('OrderToSAPOrderAccOrcVarHC.btm');
-        if (staleAggregatePaths) {
-          // These teaching maps select /Order but retain source links from an older aggregate /Root schema.
-          expect(payload.sourceSchema!.rootElement.path).toBe('/Order');
-          expect(payload.map.pages[index].links.filter((link) => link.sourceType === 'schemaNode').map((link) => link.sourcePath)).toEqual(
-            Array(7).fill(expect.stringMatching(/^\/Root\/InputMessagePart_0\/Order\//))
-          );
-          await expect(ui.links).toHaveCount(2);
-          await expect(ui.link('5')).toHaveCount(1);
-          await expect(ui.link('9')).toHaveCount(1);
-        } else {
-          await expect(ui.links).toHaveCount(original.Links?.Link?.length ?? 0);
-        }
+        await expect(ui.links).toHaveCount(original.Links?.Link?.length ?? 0);
       }
       expect(host.messages('update')).toHaveLength(0);
 
@@ -97,10 +84,6 @@ test.describe('BizTalk learning-path maps @learning-path', () => {
       await mapper.open(reopened);
       await expect(ui.pageTabs).toHaveText(expected.pages.map((page) => page.name));
       await expect(ui.functoidNodes).toHaveCount(expected.pages[0].functoids.length);
-      test.fail(
-        relativePath.endsWith('OrderToSAPOrderAccOrcVarHC.btm'),
-        'Each BTM round trip appends duplicate external-assembly metadata parameters.'
-      );
       expect(reopened.map.pages.flatMap((page) => page.functoids)).toEqual(expected.pages.flatMap((page) => page.functoids));
     });
   }

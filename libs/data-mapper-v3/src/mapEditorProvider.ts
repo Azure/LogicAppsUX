@@ -17,7 +17,8 @@ import { CompilerWorkerClient } from './worker/compilerWorkerClient';
 import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
-import { resolveSchemaFilePath } from './schema/schemaFileResolver';
+import { readTextFileSync, resolveSchemaFilePath } from './schema/schemaFileResolver';
+import { resolveAssemblyFilePath, resolveExtensionObjectAssemblyPaths } from './schema/extensionObjectResolver';
 import { replaceSchema } from './schema/schemaReplacement';
 import { describeSchemaLoadError, SchemaNotFoundError, type SchemaLoadResult } from './schema/schemaLoadError';
 import {
@@ -775,11 +776,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 const outputMethod = validateTestMapOutput(compileResult.xslt, outputXml);
                 if (outputMethod === 'xml') {
                   // Saved files use UTF-8 regardless of the transform's requested encoding.
-                  outputXml = outputXml.replace(
-                    /^(\uFEFF?<\?xml\s[^?]*\bencoding\s*=\s*)(["'])([^"']+)\2/,
-                    (declaration, prefix, quote, encoding) =>
-                      encoding.toLowerCase() === 'utf-8' ? declaration : `${prefix}${quote}utf-8${quote}`
-                  );
+                  outputXml = this.normalizeXmlForUtf8(outputXml);
                 }
                 this.logger.info(`${operation}: ${outputMethod} output validation completed.`);
                 testMessages.push(
@@ -1117,15 +1114,51 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     const baseDirectory = path.dirname(document.uri.fsPath);
     if (map.customXsltPath) {
       const xsltPath = path.resolve(baseDirectory, map.customXsltPath);
-      hydrated.customXslt = fs.existsSync(xsltPath) ? fs.readFileSync(xsltPath, 'utf-8') : '';
+      hydrated.customXslt = readTextFileSync(xsltPath) ?? '';
     }
     if (map.customExtensionXmlPath) {
       const extensionPath = path.resolve(baseDirectory, map.customExtensionXmlPath);
-      hydrated.customExtensionXml = fs.existsSync(extensionPath) ? fs.readFileSync(extensionPath, 'utf-8') : '';
+      const extensionXml = readTextFileSync(extensionPath);
+      if (extensionXml === undefined) {
+        throw new Error(`Custom extension-object XML file could not be read: ${extensionPath}`);
+      }
+      try {
+        hydrated.customExtensionXml = resolveExtensionObjectAssemblyPaths(extensionXml, path.dirname(extensionPath));
+      } catch (error) {
+        throw new Error(`${error instanceof Error ? error.message : String(error)}: ${extensionPath}`);
+      }
+    } else if (map.customExtensionXml !== undefined) {
+      hydrated.customExtensionXml = resolveExtensionObjectAssemblyPaths(map.customExtensionXml, baseDirectory);
     } else if (map.customXsltPath) {
       hydrated.customExtensionXml = '<ExtensionObjects />';
     }
+    hydrated.pages = map.pages.map((page) => ({
+      ...page,
+      functoids: page.functoids.map((functoid) => ({
+        ...functoid,
+        parameters: functoid.parameters.map((parameter) =>
+          parameter.type === 'assemblyPath' ? { ...parameter, value: resolveAssemblyFilePath(parameter.value, baseDirectory) } : parameter
+        ),
+        ...(functoid.scriptImplementations
+          ? {
+              scriptImplementations: functoid.scriptImplementations.map((implementation) =>
+                implementation.assemblyPath
+                  ? { ...implementation, assemblyPath: resolveAssemblyFilePath(implementation.assemblyPath, baseDirectory) }
+                  : implementation
+              ),
+            }
+          : {}),
+      })),
+    }));
     return hydrated;
+  }
+
+  private normalizeXmlForUtf8(content: string): string {
+    return content
+      .replace(/^\uFEFF/, '')
+      .replace(/^(\s*<\?xml\s[^?]*\bencoding\s*=\s*)(["'])([^"']+)\2/i, (declaration, prefix, quote, encoding) =>
+        encoding.toLowerCase() === 'utf-8' ? declaration : `${prefix}${quote}utf-8${quote}`
+      );
   }
 
   private async compileMap(map: MapDocument, sourceSchema?: SchemaTree, targetSchema?: SchemaTree): Promise<CompileResult> {
@@ -1136,6 +1169,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       const enrichedMap = await this.enrichExternalAssemblyMetadata(map);
       this.logger.info('Compilation: sending map to compiler worker.');
       const result = await this.compilerWorker.compileMap({ map: enrichedMap, sourceSchema, targetSchema });
+      if (result.xslt !== undefined) {
+        result.xslt = this.normalizeXmlForUtf8(result.xslt);
+      }
+      if (result.extensionObjectXml !== undefined) {
+        result.extensionObjectXml = this.normalizeXmlForUtf8(result.extensionObjectXml);
+      }
       const summary = `Compilation ${result.success ? 'succeeded' : 'failed'} in ${Date.now() - started}ms: ${result.errors.length} errors, ${result.warnings.length} warnings. Diagnostic details are shown in the editor.`;
       if (!result.success) {
         this.logger.error(summary);
