@@ -20,8 +20,22 @@ import type { IWebviewProjectContext, IProjectWizardContext } from '@microsoft/v
 import { hostFileName } from '../../../../../constants';
 import * as assetUtils from '../../../../utils/assets';
 
-// Unmock fs-extra to use real file system operations
-vi.unmock('fs-extra');
+// Use real disk operations; resolve codeful templates from source rather than beside the compiled bundle.
+vi.mock('fs-extra', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs-extra')>();
+  const actualFs = (actual as any).default ?? actual;
+  return {
+    ...actualFs,
+    ...actual,
+    readFile: (filePath: string, ...args: any[]) =>
+      actualFs.readFile(
+        typeof filePath === 'string' && filePath.includes('CodefulProjectTemplate')
+          ? new URL(`../../../../../assets/CodefulProjectTemplate/${path.basename(filePath)}`, import.meta.url)
+          : filePath,
+        ...args
+      ),
+  };
+});
 import * as fse from 'fs-extra';
 import { ext } from '../../../../../extensionVariables';
 
@@ -102,7 +116,15 @@ describe('createLogicAppProject', () => {
     (updateWorkspaceFile as Mock).mockResolvedValue(undefined);
     (createLogicAppAndWorkflow as Mock).mockResolvedValue(undefined);
     (createLogicAppVsCodeContents as Mock).mockResolvedValue(undefined);
-    (createLocalConfigurationFiles as Mock).mockResolvedValue(undefined);
+    (createLocalConfigurationFiles as Mock).mockImplementation(async (_ctx, appPath) => {
+      await fse.ensureDir(appPath);
+      if (!(await fse.pathExists(path.join(appPath, 'local.settings.json')))) {
+        await fse.writeJson(path.join(appPath, 'local.settings.json'), {
+          IsEncrypted: false,
+          Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true' },
+        });
+      }
+    });
     (createArtifactsFolder as Mock).mockResolvedValue(undefined);
     (createRulesFiles as Mock).mockResolvedValue(undefined);
     (createLibFolder as Mock).mockResolvedValue(undefined);
@@ -151,7 +173,7 @@ describe('createLogicAppProject', () => {
     expect(createLocalConfigurationFiles).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
   });
 
-  it('should skip logic app creation when it already exists and is a logic app project', async () => {
+  it.each([undefined, 'net8'])('does not reinitialize an existing regular logic app with custom-code version=%s', async (version) => {
     // Create a valid logic app structure with proper workflow.json schema
     await fse.ensureDir(logicAppFolderPath);
     await fse.writeFile(
@@ -177,8 +199,16 @@ describe('createLogicAppProject', () => {
       })
     );
 
+    const settingsPath = path.join(logicAppFolderPath, 'local.settings.json');
+    await fse.writeJson(settingsPath, {
+      IsEncrypted: false,
+      Values: { ...(version ? { LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: version } : {}), Existing: 'keep' },
+    });
+    const originalSettings = await fse.readFile(settingsPath, 'utf8');
+
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
+    expect(await fse.readFile(settingsPath, 'utf8')).toBe(originalSettings);
     // These should NOT be called when logic app already exists
     expect(createLogicAppAndWorkflow).not.toHaveBeenCalled();
     expect(createLogicAppVsCodeContents).not.toHaveBeenCalled();
@@ -892,6 +922,53 @@ local.settings.json`
   });
 
   describe('Standard Logic App Integration', () => {
+    it.each([
+      [ProjectType.logicApp, undefined, 'net10.0'],
+      [ProjectType.logicApp, 'net8', 'net10.0'],
+      [ProjectType.logicApp, 'net10.0', 'net10.0'],
+      [ProjectType.rulesEngine, 'net10.0', undefined],
+      [ProjectType.rulesEngine, undefined, undefined],
+      [ProjectType.codeful, 'net10.0', undefined],
+      [ProjectType.codeful, undefined, undefined],
+    ])('adds project type=%s framework=%s with custom-code version=%s', async (logicAppType, targetFramework, version) => {
+      const options = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'TestWorkspace',
+        logicAppName: 'TestLogicApp',
+        logicAppType,
+        workflowName: 'SettingsWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'Functions',
+        functionName: 'TestFunction',
+        functionNamespace: 'TestNamespace',
+        targetFramework,
+      } as IWebviewProjectContext;
+      // Exercise production configuration generation as well as the production project entry point.
+      vi.mocked(createLocalConfigurationFiles).mockImplementation(realCreateLogicAppWorkspace.createLocalConfigurationFiles);
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(
+        () => ({ setup: vi.fn().mockResolvedValue(undefined), hideStepCount: true }) as any
+      );
+      vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
+        get: vi.fn(),
+        inspect: vi.fn().mockReturnValue({ globalValue: tempDir }),
+      } as any);
+      // The fixture mocks createArtifactsFolder; provide its required rules destination.
+      if (logicAppType === ProjectType.rulesEngine) {
+        await fse.ensureDir(path.join(logicAppFolderPath, 'Artifacts', 'Rules'));
+        await fse.ensureDir(path.join(logicAppFolderPath, 'Artifacts', 'Schemas'));
+      }
+
+      await createLogicAppProject(mockContext, options, workspaceRootFolder);
+
+      const settings = await fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+      expect(settings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe(version);
+      expect(settings.Values.FUNCTIONS_INPROC_NET8_ENABLED).toBe('1');
+      expect(settings.Values.AzureWebJobsStorage).toBe('UseDevelopmentStorage=true');
+      expect(settings.IsEncrypted).toBe(false);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'local.settings.json'))).toBe(false);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'Functions', 'local.settings.json'))).toBe(false);
+    });
+
     it('should create workflow.json with correct schema and structure', async () => {
       const options: IWebviewProjectContext = {
         workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,

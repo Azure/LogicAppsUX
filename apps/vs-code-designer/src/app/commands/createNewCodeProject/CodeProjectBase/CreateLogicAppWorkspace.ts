@@ -356,10 +356,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
       await createFunctionAppFilesStep.setup(mySubContext);
     }
 
-    // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
-    // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
-    // directory. No-op for rulesEngine, codeful, standard, or NetFx.
-    await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+    await addCustomCodeDotNetVersionSetting(
+      context,
+      mySubContext.projectPath,
+      mySubContext.projectType,
+      mySubContext.targetFramework,
+      true
+    );
 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
