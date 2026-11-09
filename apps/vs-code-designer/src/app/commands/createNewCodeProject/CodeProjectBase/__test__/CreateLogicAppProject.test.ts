@@ -18,6 +18,7 @@ import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { hostFileName } from '../../../../../constants';
+import * as assetUtils from '../../../../utils/assets';
 
 // Unmock fs-extra to use real file system operations
 vi.unmock('fs-extra');
@@ -763,8 +764,6 @@ describe('createLogicAppProject - Integration Tests', () => {
   // On Windows, pathname is like /D:/path/to/file, so remove leading slash
   const normalizedDir = process.platform === 'win32' && testFileDir[0] === '/' ? testFileDir.slice(1) : testFileDir;
   const assetsPath = path.resolve(normalizedDir, '../../../../../assets');
-  const functionTemplatesPath = path.join(assetsPath, 'FunctionProjectTemplate');
-  const rulesTemplatesPath = path.join(assetsPath, 'RuleSetProjectTemplate');
 
   beforeAll(async () => {
     // Dynamic imports need to be in an async context
@@ -773,107 +772,13 @@ describe('createLogicAppProject - Integration Tests', () => {
     realCreateLogicAppVSCodeContents = await vi.importActual('../CreateLogicAppVSCodeContents');
   });
 
-  // Helper function to process EJS-style templates
-  async function processTemplate(templatePath: string, replacements: Record<string, string>): Promise<string> {
-    let content = await fse.readFile(templatePath, 'utf-8');
-    for (const [key, value] of Object.entries(replacements)) {
-      const regex = new RegExp(`<%=\\s*${key}\\s*%>`, 'g');
-      content = content.replace(regex, value);
-    }
-    return content;
-  }
-
-  // Factory function to create test-friendly function app files handler
   function createTestFunctionAppFiles() {
-    return {
-      hideStepCount: true,
-      async setup(context: IProjectWizardContext): Promise<void> {
-        const functionFolderPath = path.join(context.workspacePath, context.functionFolderName!);
-        await fse.ensureDir(functionFolderPath);
-
-        const projectType = context.projectType;
-        const targetFramework = context.targetFramework!;
-        const methodName = context.functionAppName!;
-        const namespace = context.functionAppNamespace!;
-        const logicAppName = context.logicAppName || 'LogicApp';
-
-        // Create .cs file from template using correct path
-        const csTemplateMap: Record<string, string> = {
-          'net10.0': 'FunctionsFileNet10',
-          net8: 'FunctionsFileNet8',
-          net472: 'FunctionsFileNetFx',
-          rulesEngine: 'RulesFunctionsFile',
-        };
-        const csTemplate = projectType === ProjectType.rulesEngine ? csTemplateMap.rulesEngine : csTemplateMap[targetFramework];
-        const csTemplatePath =
-          projectType === ProjectType.rulesEngine
-            ? path.join(rulesTemplatesPath, csTemplate)
-            : path.join(functionTemplatesPath, csTemplate);
-        const csContent = await processTemplate(csTemplatePath, { methodName, namespace });
-        await fse.writeFile(path.join(functionFolderPath, `${methodName}.cs`), csContent);
-
-        // Create Program.cs for .NET 10 custom code projects
-        if (targetFramework === 'net10.0' && projectType !== ProjectType.rulesEngine) {
-          const programTemplatePath = path.join(functionTemplatesPath, 'ProgramFileNet10');
-          const programContent = await processTemplate(programTemplatePath, { namespace });
-          await fse.writeFile(path.join(functionFolderPath, 'Program.cs'), programContent);
-        }
-
-        // Create rules files for rulesEngine
-        if (projectType === ProjectType.rulesEngine) {
-          const contosoPurchasePath = path.join(rulesTemplatesPath, 'ContosoPurchase');
-          await fse.copyFile(contosoPurchasePath, path.join(functionFolderPath, 'ContosoPurchase.cs'));
-
-          const sampleRuleSetPath = path.join(rulesTemplatesPath, 'SampleRuleSet');
-          const sampleRuleSetContent = await processTemplate(sampleRuleSetPath, { methodName });
-          await fse.writeFile(path.join(functionFolderPath, 'SampleRuleSet.xml'), sampleRuleSetContent);
-        }
-
-        // Create .csproj file from template using correct path
-        const csprojTemplateMap: Record<string, string> = {
-          'net10.0': 'FunctionsProjNet10',
-          net8: 'FunctionsProjNet8',
-          net472: 'FunctionsProjNetFx',
-          rulesEngine: 'RulesFunctionsProj',
-        };
-        const csprojTemplate = projectType === ProjectType.rulesEngine ? csprojTemplateMap.rulesEngine : csprojTemplateMap[targetFramework];
-        const csprojTemplatePath =
-          projectType === ProjectType.rulesEngine
-            ? path.join(rulesTemplatesPath, csprojTemplate)
-            : path.join(functionTemplatesPath, csprojTemplate);
-        let csprojContent = await fse.readFile(csprojTemplatePath, 'utf-8');
-
-        // Replace LogicApp folder references
-        if ((targetFramework === 'net8' || targetFramework === 'net10.0') && projectType === ProjectType.customCode) {
-          csprojContent = csprojContent.replace(
-            /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
-            `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
-          );
-        } else {
-          csprojContent = csprojContent.replace(
-            /<LogicAppFolder>LogicApp<\/LogicAppFolder>/g,
-            `<LogicAppFolder>${logicAppName}</LogicAppFolder>`
-          );
-        }
-        await fse.writeFile(path.join(functionFolderPath, `${methodName}.csproj`), csprojContent);
-
-        // Create VS Code config files (call parent's private methods aren't accessible, so recreate)
-        const vscodePath = path.join(functionFolderPath, '.vscode');
-        await fse.ensureDir(vscodePath);
-        await fse.writeJson(path.join(vscodePath, 'extensions.json'), {
-          recommendations: ['ms-azuretools.vscode-azurefunctions', 'ms-dotnettools.csharp'],
-        });
-        await fse.writeJson(path.join(vscodePath, 'settings.json'), {
-          'azureFunctions.projectRuntime': '~4',
-          'azureFunctions.projectLanguage': 'C#',
-        });
-        await fse.writeJson(path.join(vscodePath, 'tasks.json'), { version: '2.0.0', tasks: [] });
-      },
-    };
+    return new realCreateFunctionAppFiles.CreateFunctionAppFiles();
   }
 
   beforeEach(async () => {
     vi.resetAllMocks();
+    vi.spyOn(assetUtils, 'getAssetsRoot').mockReturnValue(assetsPath);
 
     // Create a real temp directory for integration testing
     const tmpBase = process.env.TEMP || process.env.TMP || process.cwd();
@@ -1334,7 +1239,7 @@ local.settings.json`
       expect(settingsContent).toHaveProperty('azureFunctions.projectRuntime');
     });
 
-    it('should create Program.cs for Net10 custom code project with correct namespace', async () => {
+    it('should create a Net10 custom code library without Program.cs', async () => {
       const options: IWebviewProjectContext = {
         workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
         workspaceName: 'TestWorkspace',
@@ -1359,17 +1264,39 @@ local.settings.json`
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
-      // Verify Program.cs was created
       const functionsFolderPath = path.join(workspaceRootFolder, 'Functions');
-      const programCsPath = path.join(functionsFolderPath, 'Program.cs');
-      const programCsExists = await fse.pathExists(programCsPath);
-      expect(programCsExists).toBe(true);
+      expect((await fse.readdir(functionsFolderPath)).sort()).toEqual(['.vscode', 'MyFunction.cs', 'MyFunction.csproj']);
 
-      // Verify Program.cs content has namespace replaced
-      const programContent = await fse.readFile(programCsPath, 'utf-8');
-      expect(programContent).toContain('namespace MyCompany.Functions');
-      expect(programContent).not.toContain('<%= namespace %>');
-      expect(programContent).toContain('HostBuilder');
+      const functionContent = await fse.readFile(path.join(functionsFolderPath, 'MyFunction.cs'), 'utf-8');
+      expect(functionContent).toContain('namespace MyCompany.Functions');
+      expect(functionContent).toContain('[Function("MyFunction")]');
+      expect(functionContent).toContain('[WorkflowActionTrigger]');
+      expect(functionContent).not.toMatch(/<%=/);
+
+      const csprojContent = await fse.readFile(path.join(functionsFolderPath, 'MyFunction.csproj'), 'utf-8');
+      expect(csprojContent).toContain('<IsPackable>false</IsPackable>');
+      expect(csprojContent).toContain('<TargetFramework>net10.0</TargetFramework>');
+      expect(csprojContent).toContain('<OutputType>Library</OutputType>');
+      expect(csprojContent).toContain('<AzureFunctionsVersion>v4</AzureFunctionsVersion>');
+      expect(csprojContent).toContain('<PlatformTarget>AnyCPU</PlatformTarget>');
+      expect(csprojContent).toContain('<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>');
+      expect(csprojContent).toContain('<CopyToOutputDirectory>Always</CopyToOutputDirectory>');
+      expect(csprojContent).toContain('<SelfContained>false</SelfContained>');
+      const packageReferences = [...csprojContent.matchAll(/<PackageReference Include="([^"]+)" Version="([^"]+)"/g)].map(
+        ([, name, version]) => ({ name, version })
+      );
+      expect(packageReferences).toEqual([
+        { name: 'Microsoft.Azure.Functions.Worker.Extensions.Abstractions', version: '1.3.0' },
+        { name: 'Microsoft.Azure.Functions.Worker', version: '2.51.0' },
+        { name: 'Microsoft.Azure.Functions.Worker.Sdk', version: '2.0.7' },
+        { name: 'Microsoft.Azure.Workflows.Webjobs.Sdk', version: '1.4.1' },
+        { name: 'Microsoft.Extensions.Logging.Abstractions', version: '10.0.0' },
+        { name: 'Microsoft.Extensions.Logging', version: '10.0.0' },
+      ]);
+      expect(csprojContent).not.toMatch(/FrameworkReference|EnsureOutputDirectory|CopyToNet472Folder/);
+      expect(csprojContent).toContain('<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\TestLogicApp</LogicAppFolderToPublish>');
+      expect(csprojContent).toContain('<Target Name="TriggerPublishOnBuild" AfterTargets="Build">');
+      expect(csprojContent).toContain('<CallTarget Targets="Publish" />');
     });
 
     it('should not create Program.cs for Net8 custom code project', async () => {
@@ -1631,14 +1558,15 @@ local.settings.json`
           }) as any
       );
 
-      // Mock createRulesFiles to avoid template access issues
-      vi.mocked(createRulesFiles).mockResolvedValue(undefined);
+      vi.mocked(createRulesFiles).mockImplementation(async (ctx) => {
+        await fse.ensureDir(path.join(ctx.projectPath, 'Artifacts', 'Rules'));
+        await fse.ensureDir(path.join(ctx.projectPath, 'Artifacts', 'Schemas'));
+        await realCreateLogicAppWorkspace.createRulesFiles(ctx);
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
-      // Verify SampleRuleSet.xml was created
-      const functionsFolderPath = path.join(workspaceRootFolder, 'Functions');
-      const sampleRuleSetPath = path.join(functionsFolderPath, 'SampleRuleSet.xml');
+      const sampleRuleSetPath = path.join(logicAppFolderPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
       const sampleRuleSetExists = await fse.pathExists(sampleRuleSetPath);
       expect(sampleRuleSetExists).toBe(true);
 
