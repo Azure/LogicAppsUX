@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import { debugSymbolDll, defaultFuncPort, func, hostStartCommand, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import * as path from 'path';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
@@ -37,6 +38,7 @@ const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
+import { getExperimentalBundleRuntime } from '../utils/bundleFeed';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -154,16 +156,55 @@ export async function pickFuncProcessInternal(
     throw new Error(localize('noFuncTask', 'Failed to find "{0}" task.', preLaunchTaskName || hostStartTaskName));
   }
 
+  const experimentalBundle = isBundleProject ? await getExperimentalBundleRuntime(context, projectPath) : undefined;
+  let hostTask = funcTask;
+  let symbolTask = debugTask;
+  if (experimentalBundle) {
+    const execution = funcTask.execution;
+    if (!(execution instanceof vscode.ShellExecution) && !(execution instanceof vscode.ProcessExecution)) {
+      throw new Error('Experimental bundles require a shell or process Functions host task. Reinitialize this project for VS Code.');
+    }
+    const options = {
+      ...execution.options,
+      env: { ...execution.options?.env, ...experimentalBundle.env },
+    };
+    const boundExecution =
+      execution instanceof vscode.ProcessExecution
+        ? new vscode.ProcessExecution(execution.process, [...execution.args], options)
+        : execution.commandLine !== undefined
+          ? new vscode.ShellExecution(execution.commandLine, options)
+          : new vscode.ShellExecution(execution.command, [...execution.args], options);
+    hostTask = createExperimentalTask(funcTask, workspaceFolder, boundExecution);
+    const debugExecution = debugTask?.execution;
+    if (
+      !debugConfig.noDebug &&
+      debugTask &&
+      debugExecution instanceof vscode.ProcessExecution &&
+      debugExecution.args.includes('${input:getDebugSymbolDll}')
+    ) {
+      symbolTask = createExperimentalTask(
+        debugTask,
+        workspaceFolder,
+        new vscode.ProcessExecution(
+          debugExecution.process,
+          debugExecution.args.map((arg) =>
+            arg === '${input:getDebugSymbolDll}' ? path.join(experimentalBundle.directory, 'bin', debugSymbolDll) : arg
+          ),
+          debugExecution.options
+        )
+      );
+    }
+  }
   ext.workflowRuntimePort = getFunctionRuntimePort(funcTask);
 
   getPickProcessTimeout(context);
 
   const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
-  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
-    await startDebugTask(debugTask, workspaceFolder);
+  if (symbolTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
+    await startDebugTask(symbolTask, workspaceFolder);
   }
 
-  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
+  const taskInfo = await startFuncTask(context, workspaceFolder, hostTask);
   const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
   ext.outputChannel.appendLog(
     localize(
@@ -178,6 +219,51 @@ export async function pickFuncProcessInternal(
     )
   );
   return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
+}
+
+function createExperimentalTask(
+  original: vscode.Task,
+  workspaceFolder: vscode.WorkspaceFolder,
+  execution: vscode.ShellExecution | vscode.ProcessExecution
+): vscode.Task {
+  // Fetched Task handles ignore nested execution edits. Assigning execution instead
+  // clears both the saved handle and its scope. New tasks need an explicit scope.
+  // The public Task API does not expose/serialize dependsOn, so never drop a graph.
+  const configurations = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get<Record<string, unknown>[]>('tasks') ?? [];
+  const matches = configurations.filter((configuration) => configuration.label === original.name);
+  const configuration = matches.length === 1 ? matches[0] : undefined;
+  const platformKey = process.platform === 'win32' ? 'windows' : process.platform === 'darwin' ? 'osx' : 'linux';
+  const platformConfiguration = configuration?.[platformKey] as Record<string, unknown> | undefined;
+  const effective = { ...configuration, ...platformConfiguration };
+  const generatedFunctionsHost =
+    original.name === hostStartTaskName &&
+    effective.type === func &&
+    effective.command === hostStartCommand &&
+    effective.args === undefined;
+  if (!configuration || (!['shell', 'process'].includes(String(effective.type)) && !generatedFunctionsHost)) {
+    throw new Error(
+      `Experimental bundles require "${original.name}" to be an explicit workspace shell or process task, or the extension-generated Functions host task. Reinitialize this project for VS Code or disable experimental bundles.`
+    );
+  }
+  if (effective.dependsOn !== undefined && !(Array.isArray(effective.dependsOn) && effective.dependsOn.length === 0)) {
+    throw new Error(
+      `Experimental bundles cannot override task "${original.name}" with dependsOn without losing its prerequisites through the VS Code Task API. Disable experimental bundles to run this configured dependency graph.`
+    );
+  }
+  const task = new vscode.Task(
+    generatedFunctionsHost ? { type: execution instanceof vscode.ProcessExecution ? 'process' : 'shell' } : { ...original.definition },
+    workspaceFolder,
+    original.name,
+    original.source,
+    execution,
+    original.problemMatchers
+  );
+  task.isBackground = original.isBackground;
+  task.group = original.group;
+  task.presentationOptions = { ...original.presentationOptions };
+  task.runOptions = { ...original.runOptions };
+  task.detail = original.detail;
+  return task;
 }
 
 /**
@@ -226,9 +312,7 @@ function getPickProcessTimeout(context: IActionContext): number {
  * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
  */
 async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
-  await vscode.tasks.executeTask(debugTask);
-
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
       if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.execution.task.name === debugTask.name) {
         if (e.exitCode !== 0) {
@@ -239,6 +323,10 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
         disposable.dispose();
         resolve();
       }
+    });
+    vscode.tasks.executeTask(debugTask).then(undefined, (error) => {
+      disposable.dispose();
+      reject(error);
     });
   });
 }
