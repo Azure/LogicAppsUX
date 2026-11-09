@@ -65,7 +65,8 @@ This documentation update is not another native run.
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
 | Test-adaptation candidate; not removed | D8 Run After accessible names | Functional coverage can use the original exact label scoped to its predecessor row | Genuine accessibility improvement, but no independently required single-title label or accepted removal proof |
 | Test/fixture candidates; not removed | E1 minimal activation, E2 update suppression, E4 environment-token session fallback | Prove normal activation, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
-| Provenance/race questions remain open | E5 activation catch-up; E6 optional executable chmod; E7 flattened Node/npm layout | Establish the actual race or authentic supported package before retaining/extracting a compatibility fix | Modeled controls and altered fixtures do not establish native customer/package provenance |
+| Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
+| Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
 | Observation candidates; not removed | E10 writer, E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
 | Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
@@ -116,7 +117,7 @@ defended as one inseparable test-infrastructure change.**
 | Minimal activation/update suppression/token fallback | Shipping product branches used as test accommodations | Yes in principle, using normal activation and supported isolated/authenticated fixtures | Test/fixture changes; prove each replacement |
 | WIF subscription provider | Required, SDK-documented secretless authentication for Azure-connected ADO E2E | Replacing WIF with an interactive profile changes the selected authentication contract | Retain; not a cleanup/removal target |
 | Workspace activation catch-up | Plausible race fix plus additional initialization calls | Yes for ordinary scenarios; not for an explicit during-activation race scenario | Separate product fix with independently specified race |
-| Dependency layouts and feed resilience | Product compatibility/networking changes introduced during test work | Often, through authentic preparation and original supported layouts | Establish provenance; separate product fixes if needed |
+| Dependency layouts and feed resilience | Authentic packages establish E6 root-`gozip` and E7 managed-Node incompatibilities; feed necessity remains unproven | Not equivalent when the product itself normalizes the official layout or the authentic package omits a required file | Retain/extract proven compatibility fixes; assess remaining branches and feed behavior independently |
 | Writer/task/design-time diagnostics | Test observations embedded in production | Mostly; exact internal attribution may need a narrower observation boundary | Prefer recorder/test instrumentation |
 | No-op `.gitignore` write | Proven transient truncation, not permanent content corruption | Yes for final-content correctness; not for continuous non-target immutability | Separate small product fix or explicit policy justification |
 | Linux pending-startup Func shutdown | Demonstrated product-owned descendants outliving original shutdown | Harness recovery is possible, but is not equivalent to original product release | Separate lifecycle product fix |
@@ -829,41 +830,78 @@ Modeled controls: `src/__test__/main.test.ts:396-436`.
 the code checks existence for optional `gozip`/`in-proc6` files. Required
 launcher/in-proc8 files remain mandatory; Windows is excluded.
 
-**Why/only to pass tests?** Conditional. Unit controls demonstrate packages
-without optional files, but an original authentic archive manifest/native
-provenance was not established in the bounded audit.
+**Why/only to pass tests?** The root `gozip` guard has independent publisher
+provenance, not just a fixture. The official
+[Functions Core Tools 4.16.0 Linux x64 package](https://github.com/Azure/azure-functions-core-tools/releases/download/4.16.0/Azure.Functions.Cli.linux-x64.4.16.0.zip)
+contains `func`, `in-proc8/func` and `in-proc6/func`, but no root `gozip`.
+Its 8,886-entry ZIP central directory was retrieved directly from the publisher
+using bounded HTTP 206 ranges. A control executed the original permission block
+and current helper against those exact entry names: the original rejects
+`gozip` with `ENOENT`; the current helper completes and still requires the
+launcher and in-proc8 files. This is a package-layout/source control with a
+filesystem adapter, not an actual POSIX chmod or native installation.
 
-**Can the test adapt?** Yes for general designer scenarios: use an authentic
-supported package with the original layout, not fabricated placeholder binaries.
-If a current officially supported package legitimately omits these files, the
-original installer is defective for that package. Pinning an older layout does
-not validate the new package's installation.
+**Can the test adapt?** General designer scenarios can prepare authentic,
+verified dependencies. Pinning an older package or inventing a root executable
+does not validate ordinary installation of the current supported package:
+the product resolves a supported major version to a current published release.
 
-**Disposition:** Separate compatibility fix if supported-package provenance is
-shown; otherwise fixture-adapt/unproven.
+**Remaining boundary:** The `in-proc6` guard is not independently necessary for
+that x64 archive because its file exists. The official 4.16.0 Linux ARM64 ZIP's
+4,123-entry directory omits both in-proc6 and in-proc8 launchers, as well as root
+`gozip`. The source accepts ARM64 and selects that archive, but the current
+permission helper still rejects mandatory `in-proc8/func`; the source control
+preserves this failure instead of claiming complete ARM64 installation support.
+That mandatory requirement also existed in the original code. Do not broaden
+this cleanup into an unverified platform fix.
+
+The bounded downloads verify directory structure and entry counts, not the
+full publisher archive SHA256. No Functions binary was installed or executed.
+
+**Disposition:** Retain/extract the authentic-package compatibility fix for
+root `gozip`. Do not describe every optional-file branch or ARM64 provisioning
+as independently proved, and do not remove the whole change as fixture-only.
 
 ### E7. POSIX Node/npm resolver accepts a flattened layout
 
 **Source:** `src/app/utils/nodeJs/nodeJsVersion.ts:51,75-78,94-101`.
 **Introduced:** `b25b68f0b`.
 
-**Before/after:** The original managed layout was `<node-v*>/bin`; direct
+**Before/after:** The original resolver expected `<node-v*>/bin`; direct
 `bin/node` and `bin/npm` now take precedence, with nested-layout fallback.
 
-**Why/only to pass tests?** Fixture-related evidence exists; independent product
-necessity is unproven. Added unit tests demonstrate the new accepted layout, not
-that a production downloader originally creates it.
+**Why/only to pass tests?** Independent product-layout provenance is now
+established. The official
+[Node 24.15.0 Linux x64 archive](https://nodejs.org/dist/v24.15.0/node-v24.15.0-linux-x64.tar.gz)
+has one `node-v24.15.0-linux-x64` container. Its complete SHA256 was checked
+against the publisher's
+[SHASUMS256.txt](https://nodejs.org/dist/v24.15.0/SHASUMS256.txt):
+`44836872d9aec49f1e6b52a9a922872db9a2b02d235a616a5681b6a85fec8d89`.
+The product's `extractDependency` calls `extractContainerFolder`, which moves
+that container's children directly into managed `NodeJs`. The normalization
+helper is unchanged from the audit base; the test fixture did not invent this
+flattening.
 
-**Can the test adapt?** Yes: preserve the authentic supported archive layout or
-use ordinary supported installation/configuration. Do not flatten a fixture and
-then require shipping product support for the changed layout.
+An archive-backed filesystem control ran that actual normalizer and the
+original/current resolver modules with mocked VS Code settings and simulated
+Linux platform selection. Both resolvers choose the nested managed executable
+before normalization. After normal product normalization, the original writes
+the ambient `node` fallback; the current code chooses managed `NodeJs/bin/node`.
+The extracted executable was not run. Ambient Node may incidentally make a
+scenario pass, but it does not prove correct managed executable selection.
 
-**When not equivalent:** If normal production extraction itself yields a
-supported flattened layout. Establish that provenance before classifying a
-resolver defect.
+**Can the test adapt?** Normal dependency preparation remains appropriate,
+but retaining the original archive container would bypass the unchanged product
+normalization. A test-only directory rearrangement or ambient Node fallback is
+not equivalent proof of the supported managed installation path.
 
-**Disposition:** Restore/test-adapt unless product-layout evidence supports a
-separate fix.
+**Remaining boundary:** This is source/archive compatibility proof, not a
+native POSIX installation, npm execution or isolated native rollback. npm uses
+the same resolver but its authentic archive entry is a symlink and was not
+separately executed.
+
+**Disposition:** Retain/extract direct managed-layout compatibility. Do not
+remove it as support for an artificially flattened fixture.
 
 ### E8. Feed retry, deadline and request-error metadata
 

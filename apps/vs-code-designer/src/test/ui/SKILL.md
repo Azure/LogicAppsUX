@@ -100,9 +100,14 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   established ownership/shutdown/startup proof. Final settled contents do not
   prove continuous non-target file immutability.
 - **Candidates are not removals:** original Run After labels, normal activation,
-  dependency-update behavior, package layouts, feed cleanup and narrower
+  dependency-update behavior, unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.
+- **Check authentic dependency provenance:** inspect publisher package entries
+  and normal production extraction before changing a fixture to match the old
+  resolver. Product-owned container normalization and genuinely omitted optional
+  executables can require compatibility fixes. Keep platform/file-specific
+  gaps explicit; metadata and simulated controls are not native install proof.
 - **Prove one cleanup at a time:** keep real UI and semantic/ownership oracles;
   require affected both-OS coverage and canonical full23 at the same immutable
   source before proceeding. A new Designer target does not by itself prove
