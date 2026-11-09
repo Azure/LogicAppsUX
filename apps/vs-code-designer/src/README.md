@@ -34,6 +34,8 @@ This template cleanup applies to newly created custom code projects. It does not
 
 New regular Logic App projects default `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` to `net10.0` without requiring a framework selection. Custom code projects retain their selected .NET 8 or .NET 10 setting; .NET Framework, Rules Engine, codeful, existing regular projects, and package imports do not receive this default. `FUNCTIONS_INPROC_NET8_ENABLED` remains unchanged.
 
+Adding a .NET 10 custom code project to an existing Logic App also sets `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` to `net10.0` in that Logic App's `local.settings.json`, replacing an older value if present. Existing workflows and unrelated app settings are preserved.
+
 To migrate an existing .NET 8 custom code project to .NET 10, follow [Logic Apps Standard custom code now supports .NET 10](https://techcommunity.microsoft.com/blog/IntegrationsonAzureBlog/logic-apps-standard-custom-code-now-supports-net-10/4570808). The guide covers project dependencies, runtime settings, coordinated debugging, and build and deployment verification.
 
 ## Azure Logic Apps - Automated Deployment Scripts Generation (preview)

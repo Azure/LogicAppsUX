@@ -1137,6 +1137,79 @@ local.settings.json`
   });
 
   describe('Custom Code Project Integration', () => {
+    it.each([undefined, 'net8'])(
+      'sets net10.0 when adding custom code to an existing Logic App with runtime setting=%s',
+      async (existingVersion) => {
+        const options = {
+          workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+          workspaceName: 'TestWorkspace',
+          logicAppName: 'TestLogicApp',
+          logicAppType: ProjectType.customCode,
+          workflowName: 'ExistingWorkflow',
+          workflowType: 'Stateful',
+          functionFolderName: 'Functions',
+          functionName: 'MyFunction',
+          functionNamespace: 'MyNamespace',
+          targetFramework: 'net10.0',
+        } as IWebviewProjectContext;
+        const workflowPath = path.join(logicAppFolderPath, 'ExistingWorkflow', 'workflow.json');
+        const hostPath = path.join(logicAppFolderPath, hostFileName);
+        const settingsPath = path.join(logicAppFolderPath, 'local.settings.json');
+        await fse.ensureDir(path.dirname(workflowPath));
+        await fse.writeJson(workflowPath, {
+          definition: {
+            $schema: 'https://schema.management.azure.com/schemas/2016-06-01/Microsoft.Logic/workflowdefinition.json#',
+            actions: {},
+            triggers: {},
+          },
+          kind: 'Stateful',
+        });
+        await fse.writeJson(hostPath, {
+          version: '2.0',
+          extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' },
+        });
+        await fse.writeJson(settingsPath, {
+          IsEncrypted: false,
+          Values: {
+            AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ExistingSetting: 'keepMe',
+            ...(existingVersion ? { LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: existingVersion } : {}),
+          },
+        });
+        await fse.writeJson(workspaceFilePath, { folders: [{ path: 'TestLogicApp' }], settings: {} });
+        const originalWorkflow = await fse.readFile(workflowPath, 'utf8');
+        const originalHost = await fse.readFile(hostPath, 'utf8');
+        const functionAppFiles = createTestFunctionAppFiles();
+        vi.mocked(CreateFunctionAppFiles).mockImplementation(() => functionAppFiles);
+
+        await createLogicAppProject(mockContext, options, workspaceRootFolder);
+
+        expect(updateWorkspaceFile).toHaveBeenCalledWith(expect.objectContaining({ shouldCreateLogicAppProject: false }));
+        expect(createLogicAppAndWorkflow).not.toHaveBeenCalled();
+        expect(createLocalConfigurationFiles).not.toHaveBeenCalled();
+        expect(await fse.readJson(settingsPath)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ExistingSetting: 'keepMe',
+            LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: 'net10.0',
+          },
+        });
+        expect(await fse.readFile(workflowPath, 'utf8')).toBe(originalWorkflow);
+        expect(await fse.readFile(hostPath, 'utf8')).toBe(originalHost);
+        const functionsPath = path.join(workspaceRootFolder, 'Functions');
+        expect(await fse.readFile(path.join(functionsPath, 'MyFunction.csproj'), 'utf8')).toContain(
+          '<TargetFramework>net10.0</TargetFramework>'
+        );
+        expect(await fse.pathExists(path.join(functionsPath, 'MyFunction.cs'))).toBe(true);
+        expect(await fse.pathExists(path.join(functionsPath, 'local.settings.json'))).toBe(false);
+      }
+    );
+
     it('should create function .cs file with correct namespace and class', async () => {
       const options: IWebviewProjectContext = {
         workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
