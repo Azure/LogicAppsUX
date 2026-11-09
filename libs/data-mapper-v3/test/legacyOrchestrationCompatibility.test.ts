@@ -348,7 +348,7 @@ test('082 resolves both assembly metadata forms on clones and leaves FQN identit
   const original = JSON.stringify(payload.map);
   const map = resolveScriptMetadata(payload.map, cases[1][1]);
   const functoid = map.pages.flatMap((page) => page.functoids).find((candidate) => candidate.functoidId === 260)!;
-  const expectedAssembly = path.resolve(path.dirname(path.join(corpusRoot, cases[1][1])), '.\\StoreValuesHelperClass.dll');
+  const expectedAssembly = path.resolve(path.dirname(path.join(corpusRoot, cases[1][1])), 'StoreValuesHelperClass.dll');
   expect(functoid.parameters.find((parameter) => parameter.type === 'assemblyPath')!.value).toBe(expectedAssembly);
   expect(functoid.scriptImplementations!.find((implementation) => implementation.type === 'externalAssembly')!.assemblyPath).toBe(
     expectedAssembly
