@@ -7,6 +7,7 @@ import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import { DEFAULT_MAP_OPTIONS, LinkEndpointType, type MapDocument, type MapLink, ParameterType } from '../src/model';
 import { BtmSerializer } from '../src/schema/btmSerializer';
+import { resolveSchemaFilePath } from '../src/schema/schemaFileResolver';
 import { SchemaParser } from '../src/schema/schemaParser';
 
 const parser = new SchemaParser();
@@ -271,8 +272,8 @@ function readXml(filename: string): string {
 function loadSample(relative: string) {
   const filename = path.resolve(__dirname, '..', 'e2etests', ...relative.split('/'));
   const map = new BtmSerializer().deserialize(readXml(filename));
-  const sourceTree = parser.parse(readXml(path.resolve(path.dirname(filename), map.sourceSchema.location)), 'source');
-  const targetTree = parser.parse(readXml(path.resolve(path.dirname(filename), map.targetSchema.location)), 'target');
+  const sourceTree = parser.parse(readXml(resolveSchemaFilePath(path.dirname(filename), map.sourceSchema.location)), 'source');
+  const targetTree = parser.parse(readXml(resolveSchemaFilePath(path.dirname(filename), map.targetSchema.location)), 'target');
   return { map, sourceTree, targetTree };
 }
 

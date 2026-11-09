@@ -38,7 +38,9 @@ export function resolveExtensionObjectAssemblyPaths(content: string, baseDirecto
 }
 
 export function resolveAssemblyFilePath(assemblyName: string, baseDirectory: string): string {
-  return (/[\\/]/.test(assemblyName) || /\.(dll|exe)$/i.test(assemblyName)) && !path.isAbsolute(assemblyName)
-    ? path.resolve(baseDirectory, assemblyName)
+  return (/[\\/]/.test(assemblyName) || /\.(dll|exe)$/i.test(assemblyName)) &&
+    !path.isAbsolute(assemblyName) &&
+    !path.win32.isAbsolute(assemblyName)
+    ? path.resolve(baseDirectory, assemblyName.replace(/[\\/]/g, path.sep))
     : assemblyName;
 }

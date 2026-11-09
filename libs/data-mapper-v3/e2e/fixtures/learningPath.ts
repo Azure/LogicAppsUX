@@ -3,6 +3,7 @@ import path from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
 import { FunctoidRegistry } from '../../src/functoids/functoidRegistry';
 import { readTextFileSync } from '../../src/schema/schemaFileResolver';
+import { compareLearningPathPaths } from '../../test/native/learningPathExclusions.cjs';
 import { loadSampleMap } from './testData';
 
 const directory = path.resolve(__dirname, '../../e2etests');
@@ -38,7 +39,7 @@ function mapFiles(directoryPath: string): string[] {
   });
 }
 
-export const learningPathMaps = mapFiles(directory).sort();
+export const learningPathMaps = mapFiles(directory).sort(compareLearningPathPaths);
 
 export function originalPages(relativePath: string): OriginalPage[] {
   const content = readTextFileSync(path.join(directory, relativePath));

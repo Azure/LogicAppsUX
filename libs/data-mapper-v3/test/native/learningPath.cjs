@@ -4,7 +4,7 @@ const path = require('node:path');
 const vscode = require('vscode');
 const { findMapperFrame } = require('./suite.cjs');
 const { buildLearningPathHelpers } = require('./buildLearningPathHelpers.cjs');
-const { getLearningPathExclusion } = require('./learningPathExclusions.cjs');
+const { compareLearningPathPaths, getLearningPathExclusion } = require('./learningPathExclusions.cjs');
 
 const extensionPath = path.resolve(__dirname, '../..');
 const viewType = 'biztalkDataMapper.mapEditor';
@@ -17,7 +17,7 @@ async function mapFiles(directory) {
       return entry.isDirectory() ? mapFiles(fullPath) : entry.name.endsWith('.btm') ? [fullPath] : [];
     })
   );
-  return paths.flat().sort();
+  return paths.flat().sort(compareLearningPathPaths);
 }
 
 function failureStage(output) {

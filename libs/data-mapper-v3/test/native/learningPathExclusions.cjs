@@ -45,3 +45,10 @@ const exclusions = new Map([
 ]);
 
 exports.getLearningPathExclusion = (relativePath) => exclusions.get(relativePath.replace(/\//g, '\\'));
+
+// Keep the original Windows corpus IDs on every host.
+exports.compareLearningPathPaths = (left, right) => {
+  const first = left.replace(/\//g, '\\');
+  const second = right.replace(/\//g, '\\');
+  return first < second ? -1 : first > second ? 1 : 0;
+};

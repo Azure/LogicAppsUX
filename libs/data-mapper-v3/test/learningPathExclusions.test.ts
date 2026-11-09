@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { learningPathMaps } from '../e2e/fixtures/learningPath';
-import { getLearningPathExclusion } from './native/learningPathExclusions.cjs';
+import { compareLearningPathPaths, getLearningPathExclusion } from './native/learningPathExclusions.cjs';
 
 describe('native Learning Path exclusions', () => {
   test('excludes exactly the 19 reported failures while retaining the other 132 maps', () => {
@@ -36,5 +36,10 @@ describe('native Learning Path exclusions', () => {
     expect(getLearningPathExclusion(map)).toBe('Unregistered custom functoid 10203');
     expect(getLearningPathExclusion(map.replace(/\\/g, '/'))).toBe(getLearningPathExclusion(map));
     expect(getLearningPathExclusion('AnotherProject\\MapConstantValues.btm')).toBeUndefined();
+  });
+
+  test.each(['/', '\\'])('preserves corpus order when paths use %s separators', (separator) => {
+    const maps = ['Maps/Map1.btm', 'Maps2/Map1.btm'].map((map) => map.replace(/\//g, separator));
+    expect(maps.sort(compareLearningPathPaths)).toEqual([`Maps2${separator}Map1.btm`, `Maps${separator}Map1.btm`]);
   });
 });
