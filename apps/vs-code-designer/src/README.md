@@ -32,10 +32,6 @@ The template retains the Functions Worker and Worker SDK, uses Workflows SDK 1.4
 
 This template cleanup applies to newly created custom code projects. It does not modify existing projects or the separate codeful Logic App application templates.
 
-## Azure Logic Apps - Introducing .NET 8 Custom Code support (preview)
-
-Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the integration of .NET 8 custom code into Logic Apps workspaces. This update allows for a smooth transition to the latest .NET version while maintaining compatibility with existing workflows. Developers can now easily develop and debug custom code within the Logic Apps environment, accelerating the development process and leveraging the advancements of .NET 8 technology. This empowers users to build more robust and efficient workflows using the most up-to-date tools and capabilities. For more information, see [Introducing .NET 8 Custom Code support for Azure Logic Apps (Standard) - Preview](https://go.microsoft.com/fwlink/?linkid=2279312).
-
 ## Azure Logic Apps - Automated Deployment Scripts Generation (preview)
 
 Starting with version 4.4.3, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the ability to generate ARM templates for Logic Apps Standard applications and Azure Managed Connections. It will also support the generation of Azure DevOps YAML pipelines, sppeding up the move from Local development to cloud using DevOps best practics. For more information, see [Automate build and deployment for Standard logic app workflows with Azure DevOps (preview)](https://go.microsoft.com/fwlink/?linkid=2268158).
