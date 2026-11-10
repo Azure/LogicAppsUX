@@ -23,8 +23,11 @@ test(
     await page.getByRole('button', { name: 'Collapsed Run After, Select to expand' }).click();
     await page.getByRole('button', { name: 'Expanded Tracking, Select to collapse' }).click();
     await page.getByRole('button', { name: 'Collapsed Tracking, Select to expand' }).click();
-    await page.getByRole('button', { name: 'Expand Initialize variable' }).click();
-    await page.getByRole('button', { name: 'Collapse Initialize variable' }).click();
+    const predecessor = page.locator('.msla-run-after-edge-header').filter({
+      has: page.locator('.msla-run-after-node-title', { hasText: /^Initialize variable$/ }),
+    });
+    await predecessor.getByRole('button', { name: 'Expand Initialize variable Initialize variable', exact: true }).click();
+    await predecessor.getByRole('button', { name: 'Collapse Initialize variable Initialize variable', exact: true }).click();
     expect(true).toBeTruthy();
   }
 );

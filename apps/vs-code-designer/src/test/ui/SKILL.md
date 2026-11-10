@@ -105,6 +105,13 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   dependency-update behavior, unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.
+- **Preserve original Run After names:** scope to the unique visible predecessor
+  row and match its exact browser-formatted label. Reuse
+  `runAfterPredecessorLabelDom`; percent placeholders can consume the extra title
+  argument instead of simply duplicating it. Validate against the installed
+  browser polyfill and actual React/Fluent DOM, retaining trusted clicks, status
+  assertions and persisted `runAfter`. Run component controls with the package's
+  JSDOM configuration; local controls are not both-OS native acceptance.
 - **Check authentic dependency provenance:** inspect publisher package entries
   and normal production extraction before changing a fixture to match the old
   resolver. Product-owned container normalization and genuinely omitted optional

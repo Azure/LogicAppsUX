@@ -6,6 +6,7 @@ import * as ts from 'typescript';
 import { runInNewContext } from 'vm';
 import type { Point } from './cdpFormHelpers';
 import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
+import { originalRunAfterLabel } from './runAfterPredecessorLabel';
 
 interface TestDomWindow {
   document: {
@@ -61,6 +62,8 @@ async function main(): Promise<void> {
   testOperationCardVisibility();
   await testDiscoveryVisibleOperationCard();
   await testSettingsTabPaths();
+  testOriginalRunAfterBrowserFormatter();
+  await testOriginalRunAfterPredecessorDom();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
   await testRunAfterRejectsDisabledAndWrongFinalState();
   testRunAfterCheckboxOwnerDom();
@@ -1460,6 +1463,169 @@ async function testRunAfterToggleOrderingAndRerenderReacquisition(): Promise<voi
   assert.ok(clickGenerations[1] > clickGenerations[0], 'Each toggle must use state reacquired after the prior React rerender');
   assert.strictEqual(state.statuses.Failed.checked, true);
   assert.strictEqual(state.statuses.Succeeded.checked, false);
+}
+
+function testOriginalRunAfterBrowserFormatter(): void {
+  // Execute the actual util polyfill used by the webview build, not Node's
+  // newer formatter (notably different for %i, %f and %o).
+  const webviewRoot = path.resolve(path.dirname(actionsSourcePath), '..', '..', '..', '..', '..', 'apps', 'vs-code-react');
+  const polyfillEntry = require.resolve('rollup-plugin-polyfill-node', { paths: [webviewRoot] });
+  const polyfills = require(path.join(path.dirname(polyfillEntry), 'polyfills.js')) as Record<string, string>;
+  const source = ts.createSourceFile('util.js', polyfills['util.js'], ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
+  const functions = ['format', 'isString', 'isNull', 'isObject'].map((name) => {
+    const declaration = source.statements.find(
+      (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === name
+    );
+    assert.ok(declaration, `Expected actual browser util.${name}`);
+    return declaration.getText(source).replace(/^export /, '');
+  });
+  const formatRegExp = source.statements
+    .filter(ts.isVariableStatement)
+    .flatMap((statement) => [...statement.declarationList.declarations])
+    .find((declaration) => declaration.name.getText(source) === 'formatRegExp');
+  assert.ok(formatRegExp?.initializer, 'Expected actual browser format specifiers');
+  const browserFormat = runInNewContext(
+    `(() => { const formatRegExp = ${formatRegExp.initializer.getText(source)}; ${functions.join('\n')} return format; })()`
+  ) as (value: string, title: string) => string;
+  for (const verb of ['Expand', 'Collapse']) {
+    for (const title of [
+      'Compose',
+      'Compose "quoted" [x] & 日本語',
+      'Compose %s',
+      'Compose %d',
+      'Compose %j',
+      'Compose %%',
+      'Compose %i %f %o',
+      'Compose %s %d',
+      'Compose $& ${title}',
+      'Compose \t %j',
+      'Compose %% %s %%',
+    ]) {
+      assert.strictEqual(originalRunAfterLabel(verb, title), browserFormat(`${verb} ${title}`, title), `${verb}: ${title}`);
+    }
+  }
+}
+
+async function testOriginalRunAfterPredecessorDom(): Promise<void> {
+  const cases = [
+    ['Compose', 'Compose Compose'],
+    ['Compose "quoted" [x] & 日本語', 'Compose "quoted" [x] & 日本語 Compose "quoted" [x] & 日本語'],
+    ['Compose %s', 'Compose Compose %s'],
+    ['Compose %d', 'Compose NaN'],
+    ['Compose %j', 'Compose "Compose %j"'],
+    ['Compose %%', 'Compose % Compose %%'],
+    ['Compose %i', 'Compose %i Compose %i'],
+    ['Compose %s %d', 'Compose Compose %s %d %d'],
+    ['Compose $& ${title}', 'Compose $& ${title} Compose $& ${title}'],
+  ];
+  for (const [title, suffix] of cases) {
+    for (const blocked of [
+      undefined,
+      'disabled',
+      'hidden',
+      'covered',
+      'wrong-name',
+      'duplicate-row',
+      'wrong-panel',
+      'wrong-row',
+    ] as const) {
+      const dom = new JSDOM(
+        `<html><body>
+          <div id="msla-node-details-panel-child">
+            <div class="msla-run-after-edge-header" id="row">
+              <button id="toggle"><span class="msla-run-after-node-title"></span></button>
+            </div>
+            <div class="msla-run-after-statuses">
+              <label><input type="checkbox" checked disabled />Is successful</label>
+              <label><input type="checkbox" />Has timed out</label>
+              <label><input type="checkbox" />Is skipped</label>
+              <label><input type="checkbox" />Has failed</label>
+            </div>
+          </div>
+          <div id="other-panel"><button id="decoy"></button></div>
+          <div id="cover"></div>
+        </body></html>`,
+        { runScripts: 'outside-only' }
+      );
+      const window = dom.window as any;
+      const document = window.document;
+      const button = document.getElementById('toggle');
+      const row = document.getElementById('row');
+      row.querySelector('.msla-run-after-node-title').textContent = title;
+      button.setAttribute('aria-label', `Expand ${suffix}`);
+      document.getElementById('decoy').setAttribute('aria-label', `Collapse ${suffix}`);
+      const rect = { left: 20, top: 20, right: 220, bottom: 60, width: 200, height: 40 };
+      Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', { configurable: true, value: () => rect });
+      Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [rect] });
+      Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: () => undefined });
+      document.elementFromPoint = () => (blocked === 'covered' ? document.getElementById('cover') : button.firstElementChild);
+      if (blocked === 'disabled') {
+        button.disabled = true;
+      }
+      if (blocked === 'hidden') {
+        button.style.display = 'none';
+      }
+      if (blocked === 'wrong-name') {
+        button.setAttribute('aria-label', `Expand ${title}`);
+      }
+      if (blocked === 'duplicate-row') {
+        row.after(row.cloneNode(true));
+      }
+      if (blocked === 'wrong-panel') {
+        document.getElementById('other-panel').append(row);
+      }
+      if (blocked === 'wrong-row') {
+        row.querySelector('.msla-run-after-node-title').textContent = 'Other predecessor';
+      }
+      let clicks = 0;
+      button.addEventListener('click', () => button.setAttribute('aria-label', `Collapse ${suffix}`));
+      const actions = new ProvenDesignerCdpActions(
+        {
+          evaluate: async <T>(_id: number | undefined, expression: string) => {
+            const result = window.eval(expression);
+            if (blocked) {
+              assert.strictEqual(result.expanded, false, `${blocked}: must not accept a decoy expanded name`);
+              assert.strictEqual(result.point, undefined, `${blocked}: must not expose a click point`);
+              throw new Error('blocked original predecessor');
+            }
+            return result as T;
+          },
+          send: async () => undefined,
+        },
+        1,
+        Date.now() + 5000
+      ) as any;
+      actions.readNodeIdentity = async (id: string) => {
+        assert.strictEqual(id, 'predecessor');
+        return { nodeId: id, title };
+      };
+      actions.assertExactPanelOwnership = async (id: string) => assert.strictEqual(id, 'child');
+      actions.dispatchTrustedPoint = async (point: Point) => {
+        assert.deepStrictEqual(JSON.parse(JSON.stringify(point)), { x: 120, y: 40 });
+        clicks++;
+        button.click();
+      };
+      try {
+        assert.strictEqual(originalRunAfterLabel('Expand', title), `Expand ${suffix}`);
+        assert.strictEqual(originalRunAfterLabel('Collapse', title), `Collapse ${suffix}`);
+        if (blocked) {
+          await assert.rejects(() => actions.expandRunAfterPredecessor('child', 'predecessor'), /blocked original predecessor/);
+          assert.strictEqual(clicks, 0);
+        } else {
+          await actions.expandRunAfterPredecessor('child', 'predecessor');
+          assert.strictEqual(clicks, 1);
+          await actions.expandRunAfterPredecessor('child', 'predecessor');
+          assert.strictEqual(clicks, 1, 'An already expanded exact row must not toggle closed');
+          const state = await actions.readRunAfterState('child', 'predecessor');
+          assert.strictEqual(state.predecessorTitle, title);
+          assert.deepStrictEqual(state.statuses.Succeeded, { checked: true, disabled: true });
+          assert.deepStrictEqual(state.statuses.Failed, { checked: false, disabled: false });
+        }
+      } finally {
+        dom.window.close();
+      }
+    }
+  }
 }
 
 async function testRunAfterRejectsDisabledAndWrongFinalState(): Promise<void> {

@@ -565,6 +565,9 @@ export interface MsnDesignerClickResult {
   viewport?: { width: number; height: number; devicePixelRatio: number; frameUrl?: string; title?: string };
 }
 
+// Keep the fingerprinted generalized-helper prefix above unchanged.
+import { runAfterPredecessorLabelDom } from './runAfterPredecessorLabel';
+
 export interface DesignerNodeIdentity {
   nodeId: string;
   title: string;
@@ -2603,6 +2606,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
         const title = ${JSON.stringify(predecessor.title)};
+        ${runAfterPredecessorLabelDom}
         const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
           .filter(visible)
           .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
@@ -2612,9 +2616,10 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         const ariaLabel = normalize(button.getAttribute('aria-label'));
         const buttonVisible = visible(button);
         const buttonDisabled = button.getAttribute('aria-disabled') === 'true' || button.disabled;
-        const expanded = ariaLabel === 'Collapse ' + title;
+        const rowTitle = headers[0].querySelector('.msla-run-after-node-title').textContent;
+        const expanded = ariaLabel === normalize(originalRunAfterLabel('Collapse', rowTitle));
         if (expanded) return { count: 1, expanded: true, ariaLabel, buttonVisible, buttonDisabled };
-        if (!buttonVisible || ariaLabel !== 'Expand ' + title || buttonDisabled) {
+        if (!buttonVisible || ariaLabel !== normalize(originalRunAfterLabel('Expand', rowTitle)) || buttonDisabled) {
           return { count: 1, expanded: false, ariaLabel, buttonVisible, buttonDisabled };
         }
         button.scrollIntoView({ block: 'center', inline: 'center' });
@@ -2650,10 +2655,14 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const title = ${JSON.stringify(predecessor.title)};
-        const buttons = Array.from(panel.querySelectorAll('.msla-run-after-edge-header button'))
+        ${runAfterPredecessorLabelDom}
+        const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
           .filter(visible)
-          .filter((button) => normalize(button.getAttribute('aria-label')) === 'Collapse ' + title);
-        return buttons.length === 1;
+          .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
+        if (headers.length !== 1) return false;
+        const button = headers[0].querySelector('button');
+        const rowTitle = headers[0].querySelector('.msla-run-after-node-title').textContent;
+        return visible(button) && normalize(button.getAttribute('aria-label')) === normalize(originalRunAfterLabel('Collapse', rowTitle));
       })()`,
       `expanded Run after predecessor ${predecessorNodeId} for ${childNodeId}`,
       predecessorDeadline
@@ -2671,6 +2680,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       ${visibleDom}
       ${exactVisibleElementByIdDom}
       ${runAfterCheckboxOwnerDom}
+      ${runAfterPredecessorLabelDom}
       const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
       if (!(panel instanceof HTMLElement) || !visible(panel)) return { predecessorCount: 0, expanded: false, controls: [] };
       const title = ${JSON.stringify(predecessor.title)};
@@ -2679,7 +2689,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
       if (headers.length !== 1) return { predecessorCount: headers.length, expanded: false, controls: [] };
       const button = headers[0].querySelector('button');
-      const expanded = normalize(button?.getAttribute('aria-label')) === 'Collapse ' + title;
+      const rowTitle = headers[0].querySelector('.msla-run-after-node-title').textContent;
+      const expanded = normalize(button?.getAttribute('aria-label')) === normalize(originalRunAfterLabel('Collapse', rowTitle));
       const statusRoot = headers[0].nextElementSibling;
       const controls = statusRoot?.classList.contains('msla-run-after-statuses')
         ? Array.from(statusRoot.querySelectorAll('input[type="checkbox"]')).map((input) => {

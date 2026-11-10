@@ -64,7 +64,7 @@ This documentation update is not another native run.
 | Build prerequisite, runtime-neutral | D9 Mapper typing | Retain or extract the compiler fix | Counterfactual adds TS2322; emitted JavaScript is unchanged. Skipping compilation is not an equivalent test adaptation |
 | Product shutdown fix, not a harness workaround | E13 Linux pending-startup Func shutdown | Preserve original product-owned runtime release; separate the product fix | Native retained ancestry demonstrated surviving product Func descendants. Harness killing proves recovery, not original release; not every algorithm detail was isolated |
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
-| Test-adaptation candidate; not removed | D8 Run After accessible names | Functional coverage can use the original exact label scoped to its predecessor row | Genuine accessibility improvement, but no independently required single-title label or accepted removal proof |
+| Original behavior restored; native acceptance pending | D8 Run After accessible names | Original browser `util.format` restored in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases pass; browser-polyfill and strict CLI controls pass. No D8 native acceptance yet |
 | Test/fixture candidates; not removed | E1 minimal activation, E2 update suppression, E4 environment-token session fallback | Prove normal activation, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
@@ -701,6 +701,24 @@ specifically required the title to occur only once in the accessible name.
 No prior independent requirement of that specificity was established. The
 authoring-document statement of the corrected label was added in the same fix;
 it is not independent authority.
+
+**Restoration under validation:** Both Designer versions now use the original
+`util.format` expression. Shared CLI interaction and screenshot readiness match
+the exact original browser label within the unique visible predecessor row;
+Playwright uses the same original label for its ordinary-title scenario.
+Status, persisted `runAfter`, trusted-click ownership and evidence requirements
+remain intact. Browser-format controls execute the installed browser polyfill,
+including percent placeholders, rather than assuming modern Node semantics.
+
+The actual React/Fluent component passes seven title cases in each package,
+including expansion, status changes, last-status disabling and collapse/reopen
+persistence. Run these with each package's explicit `vitest.config.ts`; the
+root invocation used a non-DOM workspace project and failed before rendering.
+Strict CLI compilation and affected lifecycle, DOM, readiness and pipeline
+controls also pass locally. Local checks do not certify a committed native
+payload. Full run `15974647` at `67d308af0` excludes D8 and cannot validate this
+restoration. A D8 commit still requires affected Linux/Windows acceptance and
+then canonical full23 at its identical SHA.
 
 **Disposition:** Separate accessibility fix; adapt functional tests if the PR is
 strictly test-only. Current corrected-name dependencies are at

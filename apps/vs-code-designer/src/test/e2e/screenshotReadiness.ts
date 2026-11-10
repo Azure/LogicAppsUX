@@ -1,3 +1,5 @@
+import { runAfterPredecessorLabelDom } from './runAfterPredecessorLabel';
+
 export type ScreenshotClassification = 'evidence' | 'diagnostic';
 
 export interface ScreenshotFieldExpectation {
@@ -845,7 +847,9 @@ export const screenshotReadinessDomScript = `
     );
     const header = matchingHeaders.length === 1 ? matchingHeaders[0] : undefined;
     const button = header?.querySelector?.('button');
-    const expanded = normalize(button?.getAttribute?.('aria-label')) === 'Collapse ' + predecessorTitle;
+    ${runAfterPredecessorLabelDom}
+    const rowTitle = header?.querySelector?.('.msla-run-after-node-title')?.textContent || '';
+    const expanded = normalize(button?.getAttribute?.('aria-label')) === normalize(originalRunAfterLabel('Collapse', rowTitle));
     const statusRoot = header?.nextElementSibling;
     const controls = statusRoot?.classList?.contains('msla-run-after-statuses')
       ? Array.from(statusRoot.querySelectorAll('input[type="checkbox"]')).map((input) => {

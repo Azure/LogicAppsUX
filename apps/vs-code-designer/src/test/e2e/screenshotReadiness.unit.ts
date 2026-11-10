@@ -702,6 +702,19 @@ function runJsdomExactNodeOwnershipProbe(options: {
 function testDesignerPanelRequiresExactFailedOnlyRunAfter(): void {
   const snapshot = runJsdomRunAfterProbe();
   assert.strictEqual(snapshot.ready, true);
+  for (const [predecessorTitle, ariaLabel] of [
+    ['Compose "quoted" [x] & 日本語', 'Collapse Compose "quoted" [x] & 日本語 Compose "quoted" [x] & 日本語'],
+    ['Compose %s', 'Collapse Compose Compose %s'],
+    ['Compose %d', 'Collapse Compose NaN'],
+    ['Compose %j', 'Collapse Compose "Compose %j"'],
+    ['Compose %%', 'Collapse Compose % Compose %%'],
+    ['Compose %i', 'Collapse Compose %i Compose %i'],
+  ]) {
+    assert.strictEqual(runJsdomRunAfterProbe({ predecessorTitle, ariaLabel }).ready, true, predecessorTitle);
+  }
+  for (const ariaLabel of ['Collapse Compose', 'Expand Compose Compose', 'Collapse Other Other']) {
+    assert.strictEqual(runJsdomRunAfterProbe({ ariaLabel }).ready, false, `Reject inexact or collapsed label ${ariaLabel}`);
+  }
 }
 
 function testDesignerPanelRejectsWrongRunAfterPanelPredecessorAndStatuses(): void {
@@ -730,6 +743,8 @@ function runJsdomRunAfterProbe(
     predecessorNodeId?: string;
     succeeded?: boolean;
     coverFailed?: boolean;
+    predecessorTitle?: string;
+    ariaLabel?: string;
   } = {}
 ): ScreenshotReadinessSnapshot {
   const dom = new JSDOM(
@@ -742,7 +757,7 @@ function runJsdomRunAfterProbe(
         <div id="msla-node-details-panel-Compose_2">
           <div class="msla-panel-header"><input id="title" aria-label="Card title" value="Compose 2" /></div>
           <div class="msla-run-after-edge-header" id="run-after-header">
-            <button id="predecessor-button" aria-label="Collapse Compose"><span class="msla-run-after-node-title">Compose</span></button>
+            <button id="predecessor-button" aria-label="Collapse Compose Compose"><span class="msla-run-after-node-title">Compose</span></button>
           </div>
           <div class="msla-run-after-statuses" id="statuses">
             <label id="succeeded-label"><input id="succeeded" type="checkbox" ${options.succeeded ? 'checked' : ''}/>Is successful</label>
@@ -757,6 +772,12 @@ function runJsdomRunAfterProbe(
     { runScripts: 'outside-only' }
   );
   const windowAny = dom.window as any;
+  const predecessorTitle = options.predecessorTitle ?? 'Compose';
+  windowAny.document.getElementById('msla-node-Compose').setAttribute('data-testid', `card-${predecessorTitle}`);
+  windowAny.document.querySelector('.msla-run-after-node-title').textContent = predecessorTitle;
+  if (options.ariaLabel) {
+    windowAny.document.getElementById('predecessor-button').setAttribute('aria-label', options.ariaLabel);
+  }
   Object.defineProperty(windowAny, 'innerWidth', { configurable: true, value: 1200 });
   Object.defineProperty(windowAny, 'innerHeight', { configurable: true, value: 800 });
   configureJsdomElementGeometry(windowAny, {

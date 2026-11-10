@@ -541,9 +541,13 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
   After opening the Run After section, reacquire the exact predecessor row until
   its Fluent expand button is enabled and hit-testable; the row can render before
-  the transition exposes a clickable target. The product ARIA contract is exactly
-  `Expand <title>` / `Collapse <title>`; do not use `util.format` with an already
-  interpolated label because unused arguments are appended to the accessible name.
+  the transition exposes a clickable target. Match the original product's exact
+  accessible name within that predecessor row. Its browser `util.format`
+  appends the unused title argument (for example, `Expand Compose Compose`);
+  percent placeholders in titles can consume that argument instead. Reuse
+  `runAfterPredecessorLabelDom`, whose controls execute the installed browser
+  polyfill, rather than modern Node formatting or a broad prefix match. Do not
+  change shipping accessible names merely to simplify a test selector.
   Fluent v9 checkboxes render the native input and its label as siblings. Read
   and click each status through the input's one visible associated label from
   `input.labels`; reject multiple visible labels, and use the visible parent only
