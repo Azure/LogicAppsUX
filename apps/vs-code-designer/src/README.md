@@ -24,9 +24,19 @@ Starting with version 4.57.0, the Azure Logic Apps (Standard) extension for Visu
 
 Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces the Rules Engine, a decision management inference engine. This engine allows customers to build Standard workflows in Azure Logic Apps and integrate readable, declarative, and semantically rich rules that operate on multiple data sources. Currently, the native data sources available for the Rules Engine are XML and .NET objects. For more information, see [Decision management and business logic integration using the Azure Logic Apps Rules Engine (Preview)](https://go.microsoft.com/fwlink/?linkid=2279508).
 
-## Azure Logic Apps - Introducing .NET 8 Custom Code support (preview)
+## Azure Logic Apps - .NET 10 Custom Code projects
 
-Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the integration of .NET 8 custom code into Logic Apps workspaces. This update allows for a smooth transition to the latest .NET version while maintaining compatibility with existing workflows. Developers can now easily develop and debug custom code within the Logic Apps environment, accelerating the development process and leveraging the advancements of .NET 8 technology. This empowers users to build more robust and efficient workflows using the most up-to-date tools and capabilities. For more information, see [Introducing .NET 8 Custom Code support for Azure Logic Apps (Standard) - Preview](https://go.microsoft.com/fwlink/?linkid=2279312).
+.NET 10 custom code projects are class libraries loaded by the Logic Apps runtime, not standalone Functions applications. The template does not generate `Program.cs` or include ASP.NET Core HTTP integration or Application Insights worker-service packages.
+
+The template retains the Functions Worker and Worker SDK, uses Workflows SDK 1.4.1, and explicitly references the worker extensions abstractions for function attributes. Dependency copying and build-triggered publication into the sibling Logic App's `lib/custom/net10.0` folder are preserved. The unused output-directory and `net472` copy workaround targets have been removed.
+
+This template cleanup applies to newly created custom code projects. It does not modify existing projects or the separate codeful Logic App application templates.
+
+New regular Logic App projects default `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` to `net10.0` without requiring a framework selection. Custom code projects retain their selected .NET 8 or .NET 10 setting; .NET Framework, Rules Engine, codeful, existing regular projects, and package imports do not receive this default. `FUNCTIONS_INPROC_NET8_ENABLED` remains unchanged.
+
+Adding a .NET 10 custom code project to an existing Logic App also sets `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` to `net10.0` in that Logic App's `local.settings.json`, replacing an older value if present. Existing workflows and unrelated app settings are preserved.
+
+To migrate an existing .NET 8 custom code project to .NET 10, follow [Logic Apps Standard custom code now supports .NET 10](https://techcommunity.microsoft.com/blog/IntegrationsonAzureBlog/logic-apps-standard-custom-code-now-supports-net-10/4570808). The guide covers project dependencies, runtime settings, coordinated debugging, and build and deployment verification.
 
 ## Azure Logic Apps - Automated Deployment Scripts Generation (preview)
 
