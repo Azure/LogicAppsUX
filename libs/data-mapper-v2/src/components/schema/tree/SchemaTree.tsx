@@ -36,9 +36,12 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const { panelNodeId, openKeys, isSourceSchema, schemaTreeData } = useSchema({
     id,
   });
-  const { height: currentHeight } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
-  );
+  const {
+    height: currentHeight,
+    width: currentWidth,
+    x: currentX,
+    y: currentY,
+  } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect);
   const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const updateNodeInternals = useUpdateNodeInternals();
 
@@ -118,12 +121,16 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   }, [updateVisibleNodes]);
 
   useEffect(() => {
-    updateNodeInternals(panelNodeId);
+    const frame = requestAnimationFrame(() => updateNodeInternals(panelNodeId));
+    return () => cancelAnimationFrame(frame);
   }, [
     panelNodeId,
     schemaTreeRoot,
     flattenedSchemaMap,
     currentHeight,
+    currentWidth,
+    currentX,
+    currentY,
     updateNodeInternals,
     openKeys,
     searchTerm,

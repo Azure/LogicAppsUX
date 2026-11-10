@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
 import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
@@ -26,9 +26,10 @@ interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
   loggerService?: ILoggerService;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
+  toolbarActions?: ReactNode;
 }
 
-export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDirty, toolbarActions }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
@@ -108,7 +109,7 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
         },
       }}
     >
-      <EditorCommandBar />
+      <EditorCommandBar toolbarActions={toolbarActions} />
       <div className={styles.root} onClick={onContainerClick} onKeyDown={onKeyDown}>
         <DialogView />
         <FunctionPanel />

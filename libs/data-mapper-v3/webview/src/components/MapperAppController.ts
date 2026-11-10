@@ -18,6 +18,13 @@ import type { BottomPanelTab, MapperBottomPanel } from './MapperBottomPanel';
 import type { MapperContextMenu, ContextMenuItem } from './MapperContextMenu';
 import type { MapperNotification, NotificationType } from './MapperNotification';
 import type { MapperToolbar } from './MapperToolbar';
+import type {
+  AzurePublishQuery,
+  PublishContext,
+  PublishDestination,
+  PublishMethod,
+  PublishTarget,
+} from '../../../src/protocol/publishProtocol';
 import {
   type AssemblyClassInfo,
   type AssemblyMethodInfo,
@@ -129,6 +136,39 @@ export class MapperAppController {
   private redrawFrame: number | null = null;
   private pendingFullCanvasRedraw = false;
   private disposed = false;
+  private readonly publishingRequests = new Map<
+    string,
+    {
+      resolve(value: unknown): void;
+      reject(error: Error): void;
+      timer: ReturnType<typeof setTimeout>;
+    }
+  >();
+  private readonly loadPublishContext = () => this.requestPublishing<PublishContext>('context');
+  private readonly loadAzureResources = (query: AzurePublishQuery) =>
+    this.requestPublishing<PublishDestination[]>('azureResources', undefined, query);
+  private readonly publishMap = (target: PublishTarget) => this.requestPublishing<boolean>('publish', target);
+
+  private requestPublishing<Result>(method: PublishMethod, target?: PublishTarget, query?: AzurePublishQuery): Promise<Result> {
+    if (this.disposed || !this.state.map) {
+      return Promise.reject(new Error('The mapper is not ready to publish.'));
+    }
+    return new Promise<Result>((resolve, reject) => {
+      const id = crypto.randomUUID();
+      const timer = setTimeout(() => {
+        this.publishingRequests.delete(id);
+        reject(new Error('The publishing request timed out.'));
+      }, 120_000);
+      this.publishingRequests.set(id, { resolve: (value) => resolve(value as Result), reject, timer });
+      try {
+        this.vscode.postMessage({ type: 'publishRequest', id, method, data: this.state.map ?? undefined, target, query });
+      } catch (error) {
+        clearTimeout(timer);
+        this.publishingRequests.delete(id);
+        reject(error);
+      }
+    });
+  }
 
   private resizeObserver: ResizeObserver | null = null;
 
@@ -172,6 +212,11 @@ export class MapperAppController {
 
   public dispose(): void {
     this.disposed = true;
+    for (const request of this.publishingRequests.values()) {
+      clearTimeout(request.timer);
+      request.reject(new Error('The mapper editor was closed.'));
+    }
+    this.publishingRequests.clear();
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('contextmenu', this.handleContextMenu);
     document.removeEventListener('pointermove', this.handleLinkPointerMove);
@@ -841,6 +886,19 @@ export class MapperAppController {
   }
 
   public handleMessage(message: HostToWebviewMessage): void {
+    if (message.type === 'publishResponse') {
+      const request = this.publishingRequests.get(message.id);
+      if (request) {
+        clearTimeout(request.timer);
+        this.publishingRequests.delete(message.id);
+        if (message.error) {
+          request.reject(new Error(message.error));
+        } else {
+          request.resolve(message.result);
+        }
+      }
+      return;
+    }
     switch (message.type) {
       case 'executeCompile':
         this.validateAndCompile();
@@ -984,11 +1042,9 @@ export class MapperAppController {
       status: this.toolbarStatusMessage,
       onValidateAndCompile: () => this.validateAndCompile(),
       onTest: () => this.runTestMap(),
-      onDeploy: () => {
-        if (this.state.map) {
-          this.vscode.postMessage({ type: 'deployToLogicApps', data: this.state.map });
-        }
-      },
+      loadPublishContext: this.loadPublishContext,
+      loadAzureResources: this.loadAzureResources,
+      onPublish: this.publishMap,
       onCopilot: () => {
         this.copilotPanelOpen = !this.copilotPanelOpen;
         this.syncCopilot();

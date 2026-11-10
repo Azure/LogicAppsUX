@@ -4,10 +4,19 @@
  */
 
 import * as vscode from 'vscode';
+import {
+  getPublishContext,
+  listAzurePublishResources,
+  parsePublishTarget,
+  publishMapArtifacts,
+  selectAzurePublishTarget,
+} from './publishing';
+import type { PublishResponse } from './protocol/publishProtocol';
 import { type HostToWebviewMessage, isWebviewToHostMessage, type SchemaLoadErrors, type SchemaSide } from './protocol/mapEditorProtocol';
 import * as path from 'path';
 import * as fs from 'fs';
 import { BtmSerializer } from './schema/btmSerializer';
+import { planMapImport } from './schema/mapImportPlanner';
 import { SchemaParser } from './schema/schemaParser';
 import { InstanceGenerator } from './schema/instanceGenerator';
 import { type MapDocument, type ScriptImplementation, ScriptType } from './model';
@@ -870,6 +879,34 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               break;
             }
             await this.deployToLogicApps(compileResult.xslt, document, compileResult.assemblyPaths || []);
+            break;
+          }
+          case 'publishRequest': {
+            const response: PublishResponse = { type: 'publishResponse', id: message.id };
+            try {
+              if (message.method === 'context') {
+                response.result = await getPublishContext(document);
+              } else if (message.method === 'azureTarget') {
+                response.result = await selectAzurePublishTarget();
+              } else if (message.method === 'azureResources') {
+                response.result = await listAzurePublishResources(message.query);
+              } else {
+                const target = parsePublishTarget(message.target);
+                const map = this.loadCustomTransform(message.data as MapDocument, document);
+                const result = await this.compileMap(map, sourceSchemaTree, targetSchemaTree);
+                if (!result.success || !result.xslt) {
+                  throw new Error(`Compilation failed: ${result.errors.map((error) => error.message).join('\n')}`);
+                }
+                const schemas = planMapImport(document.uri.fsPath, this.btmSerializer.serialize(map));
+                if (schemas.warnings.length) {
+                  throw new Error(`Map schemas could not be published: ${schemas.warnings.join(' ')}`);
+                }
+                response.result = await publishMapArtifacts(document, result.xslt, target, result.assemblyPaths ?? [], schemas.schemaFiles);
+              }
+            } catch (error) {
+              response.error = error instanceof Error ? error.message : String(error);
+            }
+            await webviewPanel.webview.postMessage(response);
             break;
           }
           case 'copilotPrompt': {

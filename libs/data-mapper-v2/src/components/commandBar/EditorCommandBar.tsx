@@ -9,7 +9,7 @@ import {
   Save20Regular,
   TextGrammarErrorRegular,
 } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
@@ -24,9 +24,11 @@ import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-
 import { collectErrorsForMapChecker } from '../../utils/MapChecker.Utils';
 import { ActionCreators } from 'redux-undo';
 
-export type EditorCommandBarProps = {};
+export interface EditorCommandBarProps {
+  toolbarActions?: ReactNode;
+}
 
-export const EditorCommandBar = (_props: EditorCommandBarProps) => {
+export const EditorCommandBar = ({ toolbarActions }: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -265,6 +267,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           >
             {Resources.OPEN_TEST_PANEL}
           </ToolbarButton>
+          {toolbarActions}
           <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
             {Resources.UNDO}
           </ToolbarButton>

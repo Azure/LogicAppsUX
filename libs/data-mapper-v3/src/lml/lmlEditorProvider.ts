@@ -8,6 +8,13 @@ import type { LmlEditorInitialState, LmlEditorRequest, LmlEditorResponse, LmlSav
 import { LmlRuntimeClient } from './lmlRuntimeClient';
 import { getLmlSchemaReferences } from './lmlImportPlanner';
 import { prepareLmlRuntimeWorkspace } from './runtimeWorkspace';
+import {
+  getPublishContext,
+  listAzurePublishResources,
+  parsePublishTarget,
+  publishMapArtifacts,
+  selectAzurePublishTarget,
+} from '../publishing';
 
 const customXsltFolder = 'Artifacts/DataMapper/Extensions/InlineXslt';
 
@@ -453,6 +460,29 @@ export class LmlEditorProvider implements vscode.CustomTextEditorProvider, vscod
       }
       case 'getFunctionsManifest':
         return (await this.runtime(state, false)).getFunctionsManifest();
+      case 'getPublishContext':
+        return getPublishContext(state.document);
+      case 'selectAzurePublishTarget':
+        return selectAzurePublishTarget();
+      case 'listAzurePublishResources':
+        return listAzurePublishResources(params);
+      case 'publishMap': {
+        const definition = text(params, 'dataMapDefinition');
+        const target = parsePublishTarget(params.target);
+        const revision = state.document.version;
+        const runtime = await this.runtime(state, false);
+        await prepareLmlRuntimeWorkspace(state.projectPath, getLmlSchemaReferences(definition));
+        this.revision(state, revision);
+        const xslt = await runtime.generateDataMapXslt(definition);
+        const schemaFiles = [];
+        const schemaFolder = 'workflow-designtime/Artifacts/Schemas';
+        for (const relativePath of await assetPaths(state.projectPath, schemaFolder, /\.(xsd|xml|json)$/i)) {
+          const filename = await projectFile(state.projectPath, `${schemaFolder}/${relativePath}`);
+          schemaFiles.push({ relativePath, data: await fs.readFile(filename) });
+        }
+        this.revision(state, revision);
+        return publishMapArtifacts(state.document, xslt, target, [], schemaFiles);
+      }
       case 'getSchemaFile': {
         const schemaName = text(params, 'schemaName');
         const schemaFilePath = text(params, 'schemaFilePath').replace(/\\/g, '/');

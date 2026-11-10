@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import { Loading } from './Loading';
 import { cancelPending } from './rpc';
 import '@xyflow/react/dist/style.css';
 import './styles.css';
@@ -33,11 +34,7 @@ function showFailure(error: unknown): void {
 window.addEventListener('error', (event) => showFailure(event.error ?? event.message));
 window.addEventListener('unhandledrejection', (event) => showFailure(event.reason));
 
-root.render(
-  <main className="lml-status" role="status">
-    Loading LML editor...
-  </main>
-);
+root.render(<Loading />);
 import('./Editor')
   .then(({ default: Editor }) => {
     if (!failed) {

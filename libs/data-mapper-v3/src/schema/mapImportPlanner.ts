@@ -214,8 +214,8 @@ export function planSchemaImport(schemaPath: string): SchemaImportPlan {
 
 // Builds the set of files needed to bring a .btm into a mapper project: the map itself with its schema references
 // repointed at the Schemas folder, plus each referenced schema and its imports in their original relative layout.
-export function planMapImport(btmPath: string): MapImportPlan {
-  const mapContent = readTextFileSync(btmPath);
+export function planMapImport(btmPath: string, mapContentOverride?: string): MapImportPlan {
+  const mapContent = mapContentOverride ?? readTextFileSync(btmPath);
   if (mapContent === undefined) {
     throw new Error(`Could not read "${btmPath}".`);
   }

@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { useEffect, useRef, useCallback, useState, type MouseEvent, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection, NodeChange } from '@xyflow/react';
-import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
+import { PanOnScrollMode, ReactFlow, useNodesInitialized, useReactFlow, useUpdateNodeInternals } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
 import SchemaPanelNode from '../common/reactflow/nodes/SchemaPanelNode';
 import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
@@ -53,6 +53,45 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     newY: ref.current?.getBoundingClientRect().y,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
+  const [edgesReady, setEdgesReady] = useState(false);
+  const nodesInitialized = useNodesInitialized();
+  const updateNodeInternals = useUpdateNodeInternals();
+  const { sourceSchema, targetSchema, sourceSchemaTreeData, targetSchemaTreeData } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
+  const schemaTreesReady =
+    (!sourceSchema?.schemaTreeRoot || sourceSchemaTreeData.startIndex >= 0) &&
+    (!targetSchema?.schemaTreeRoot || targetSchemaTreeData.startIndex >= 0);
+
+  useEffect(() => {
+    setEdgesReady(false);
+    if (!nodesInitialized || !schemaTreesReady || !newWidth || !newHeight) {
+      return;
+    }
+
+    let disposed = false;
+    let measureFrame = 0;
+    let revealFrame = 0;
+    (document.fonts?.ready ?? Promise.resolve()).then(() => {
+      if (disposed) {
+        return;
+      }
+      measureFrame = requestAnimationFrame(() => {
+        updateNodeInternals(nodes.map((node) => node.id));
+        revealFrame = requestAnimationFrame(() => {
+          if (!disposed) {
+            setEdgesReady(true);
+          }
+        });
+      });
+    });
+
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(measureFrame);
+      cancelAnimationFrame(revealFrame);
+    };
+  }, [nodesInitialized, schemaTreesReady, newWidth, newHeight, nodes, updateNodeInternals]);
 
   const { getIntersectingNodes } = useReactFlow();
 
@@ -235,7 +274,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         <ReactFlow
           id="dm-react-flow"
           ref={drop}
-          edges={edges}
+          edges={edgesReady ? edges : []}
           nodes={nodes}
           onNodesChange={
             needsLayout

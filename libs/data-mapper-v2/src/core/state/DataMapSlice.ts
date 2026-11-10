@@ -691,7 +691,6 @@ export const {
 
 export default dataMapSlice.reducer;
 
-/* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {
   state.curDataMapOperation = newCurrentState.curDataMapOperation;
   state.lastAction = action;
@@ -751,8 +750,12 @@ export const deleteConnectionFromConnections = (
   if (connections[inputKey] !== undefined) {
     connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
   }
-  const outputNode = connections[outputKey]?.self?.node;
-  let outputNodeInputs = connections[outputKey]?.inputs ?? [];
+  const outputConnection = connections[outputKey];
+  if (!outputConnection) {
+    return;
+  }
+  const outputNode = outputConnection.self?.node;
+  let outputNodeInputs = outputConnection.inputs ?? [];
 
   if (outputNode && isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
@@ -773,7 +776,7 @@ export const deleteConnectionFromConnections = (
       return inputEntry;
     });
   }
-  connections[outputKey].inputs = outputNodeInputs;
+  outputConnection.inputs = outputNodeInputs;
 };
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {

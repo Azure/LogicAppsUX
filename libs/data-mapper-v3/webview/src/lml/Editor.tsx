@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
+import { ToolbarButton } from '@fluentui/react-components';
+import { CloudArrowUp20Regular } from '@fluentui/react-icons';
+import { PublishDialog } from '../components/PublishDialog';
+import type { AzurePublishQuery, PublishContext, PublishDestination, PublishTarget } from '../../../src/protocol/publishProtocol';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
@@ -26,6 +30,7 @@ import type {
   LmlEditorInitialState,
 } from '../../../src/lml/editorProtocol';
 import { loadMap } from './loadMap';
+import { Loading } from './Loading';
 import { cancelPending, request, resetRevision, sendSaveSnapshot, write } from './rpc';
 import { apiService, createFileService, fileItems } from './services';
 import { acknowledgeSave, createEditorStore, type SaveOperation } from './store';
@@ -39,6 +44,8 @@ type Session = {
 };
 
 const wrappedContext = { scroll: { setScroll: () => undefined } };
+const loadPublishContext = () => request<PublishContext>('getPublishContext');
+const loadAzurePublishResources = (query: AzurePublishQuery) => request<PublishDestination[]>('listAzurePublishResources', { ...query });
 
 async function bootstrap(): Promise<Session> {
   const initial = await request<LmlEditorInitialState>('initialize');
@@ -92,6 +99,24 @@ async function bootstrap(): Promise<Session> {
 
 function EditorSession({ session, onError }: { session: Session; onError(error: unknown): void }) {
   const [data, setData] = useState(session.data);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const publishMap = async (target: PublishTarget) => {
+    const present = session.store.getState().dataMap.present;
+    if (!session.active || !session.ready || present.sourceInEditState || present.targetInEditState) {
+      throw new Error('Finish selecting the source and target schemas before publishing.');
+    }
+    const operation = present.curDataMapOperation;
+    const definition = convertToMapDefinition(
+      operation.dataMapConnections,
+      operation.sourceSchema,
+      operation.targetSchema,
+      operation.targetSchemaOrdering
+    );
+    if (!definition.isSuccess) {
+      throw new Error('The map could not be serialized. Check the map issues before publishing.');
+    }
+    return request<boolean>('publishMap', { dataMapDefinition: definition.definition, target });
+  };
   const draftTimer = useRef<ReturnType<typeof setTimeout>>();
   const [fileService] = useState(() => {
     const service = createFileService(
@@ -325,7 +350,21 @@ function EditorSession({ session, onError }: { session: Session; onError(error: 
         <DataMapperWrappedContext.Provider value={wrappedContext}>
           <DataMapDataProvider {...data}>
             <div className="lml-designer">
-              <DataMapperDesigner fileService={fileService} />
+              <DataMapperDesigner
+                fileService={fileService}
+                toolbarActions={
+                  <ToolbarButton icon={<CloudArrowUp20Regular />} onClick={() => setPublishOpen(true)}>
+                    Publish
+                  </ToolbarButton>
+                }
+              />
+              <PublishDialog
+                open={publishOpen}
+                onClose={() => setPublishOpen(false)}
+                loadContext={loadPublishContext}
+                loadAzureResources={loadAzurePublishResources}
+                onPublish={publishMap}
+              />
             </div>
           </DataMapDataProvider>
         </DataMapperWrappedContext.Provider>
@@ -389,10 +428,13 @@ export default function Editor() {
   }, [reload, disposeSession]);
 
   if (!session) {
+    if (!error) {
+      return <Loading />;
+    }
     return (
       <main className="lml-status" aria-live="polite">
-        <h1>{error ? 'Unable to open LML map' : 'Opening LML map'}</h1>
-        {error ? <pre role="alert">{error}</pre> : <p>Loading schemas and functions...</p>}
+        <h1>Unable to open LML map</h1>
+        <pre role="alert">{error}</pre>
         {error && (
           <button type="button" onClick={reload}>
             Retry

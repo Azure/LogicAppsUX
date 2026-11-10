@@ -212,7 +212,6 @@ export const extensionCommand = {
   enableLocalManagedIdentityAuth: 'azureLogicAppsStandard.enableLocalManagedIdentityAuth',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
-  switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
   sdkLspApplyEdits: 'azureLogicAppsStandard.sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
@@ -276,7 +275,6 @@ export const gitCommand = 'git';
 
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
-export const dataMapperVersionSetting = 'dataMapperVersion';
 export const designerVersionSetting = 'designerVersion';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';

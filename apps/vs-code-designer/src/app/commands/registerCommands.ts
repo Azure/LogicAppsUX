@@ -72,7 +72,6 @@ import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
 import { AppSettingsTreeItem, AppSettingTreeItem } from '@microsoft/vscode-azext-azureappsettings';
-import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
@@ -172,7 +171,6 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.addCustomCode, addCustomCode);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
-  registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
   registerCommand(extensionCommand.enableDevContainer, enableDevContainer);
 
   // Connections

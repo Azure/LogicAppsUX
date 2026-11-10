@@ -50,10 +50,6 @@
           "title": "Create logic app in Azure...",
           "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
-        },
-        {
-          "command": "azureLogicAppsStandard.switchToDataMapperV2",
-          "title": "Switch to Data Mapper Version 2"
         }
       ],
       "activation": {
@@ -396,11 +392,6 @@
         "when": "resourceExtname in azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts"
       },
       {
-        "command": "azureLogicAppsStandard.dataMap.switchToDataMapperV2",
-        "title": "Switch to Data Mapper Version 2",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.parameterizeProjectConnections",
         "title": "Parameterize project connections",
         "category": "Azure Logic Apps",
@@ -699,7 +690,7 @@
         {
           "command": "azureLogicAppsStandard.createProject",
           "when": "(!explorerResourceIsFolder && !resourceFilename) || (explorerResourceIsFolder && explorerResourceIsRoot)",
-          "group": "zzz_LogicAppsWorkspace@1"
+          "group": "zzz_LogicAppsProject@99"
         },
         {
           "command": "azureLogicAppsStandard.dataMap.addDataMap",
@@ -868,13 +859,6 @@
             "readOnly": true,
             "description": "The default language to use when performing operations like \"Create New Workflow\".",
             "enumDescriptions": [""]
-          },
-          "azureLogicAppsStandard.dataMapperVersion": {
-            "type": "number",
-            "enum": [1, 2],
-            "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
-            "enumDescriptions": ["Version 1 (Deprecated)", "Version 2"],
-            "default": 2
           },
           "azureLogicAppsStandard.designerVersion": {
             "type": "number",

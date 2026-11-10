@@ -1,15 +1,18 @@
 import { FluentProvider, makeStyles, Toolbar, ToolbarButton, ToolbarGroup, tokens } from '@fluentui/react-components';
 import { Beaker20Regular, Bot20Regular, CloudArrowUp20Regular, PlayCircle20Regular } from '@fluentui/react-icons';
-// biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { PublishDialog } from './PublishDialog';
+import type { AzurePublishQuery, PublishContext, PublishDestination, PublishTarget } from '../../../src/protocol/publishProtocol';
 
 interface MapperToolbarViewProps {
   disabled: boolean;
   status: string;
   onCopilot(): void;
-  onDeploy(): void;
+  loadPublishContext(): Promise<PublishContext>;
+  loadAzureResources(query: AzurePublishQuery): Promise<PublishDestination[]>;
+  onPublish(target: PublishTarget): Promise<boolean>;
   onTest(): void;
   onValidateAndCompile(): void;
 }
@@ -55,12 +58,15 @@ function MapperToolbarView({
   disabled,
   status,
   onCopilot,
-  onDeploy,
+  loadPublishContext,
+  loadAzureResources,
+  onPublish,
   onTest,
   onValidateAndCompile,
 }: MapperToolbarViewProps): React.ReactElement {
   const styles = useStyles();
   const typographyStyles = useTypographyStyles();
+  const [publishOpen, setPublishOpen] = React.useState(false);
 
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} className={styles.provider}>
@@ -83,9 +89,9 @@ function MapperToolbarView({
             className={styles.command}
             icon={<CloudArrowUp20Regular />}
             disabled={disabled}
-            onClick={onDeploy}
+            onClick={() => setPublishOpen(true)}
           >
-            Deploy to Logic Apps
+            Publish
           </ToolbarButton>
           <ToolbarButton id="btn-copilot" className={styles.primaryCommand} icon={<Bot20Regular />} disabled={disabled} onClick={onCopilot}>
             Data Mapper Assistant
@@ -95,6 +101,13 @@ function MapperToolbarView({
           {status}
         </span>
       </Toolbar>
+      <PublishDialog
+        open={publishOpen}
+        onClose={() => setPublishOpen(false)}
+        loadContext={loadPublishContext}
+        loadAzureResources={loadAzureResources}
+        onPublish={onPublish}
+      />
     </FluentProvider>
   );
 }
@@ -105,7 +118,11 @@ export class MapperToolbar extends HTMLElement {
     disabled: true,
     status: '',
     onCopilot: () => {},
-    onDeploy: () => {},
+    loadPublishContext: async () => {
+      throw new Error('The mapper is not ready to publish.');
+    },
+    loadAzureResources: async () => [],
+    onPublish: async () => false,
     onTest: () => {},
     onValidateAndCompile: () => {},
   };

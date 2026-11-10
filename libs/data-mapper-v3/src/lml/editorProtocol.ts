@@ -12,6 +12,10 @@ export type LmlEditorMethod =
   | 'readSchemas'
   | 'selectSchema'
   | 'readCustomXsltPaths'
+  | 'getPublishContext'
+  | 'selectAzurePublishTarget'
+  | 'listAzurePublishResources'
+  | 'publishMap'
   | 'notify';
 
 export interface LmlEditorRequest {

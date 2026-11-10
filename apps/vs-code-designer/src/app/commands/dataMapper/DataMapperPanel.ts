@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dataMapperVersionSetting, defaultDataMapperVersion, vscodeFolderName } from '../../../constants';
+import { defaultDataMapperVersion, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -39,7 +39,6 @@ import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
 import { copyOverImportedSchemas } from './DataMapperPanelUtils';
-import { switchToDataMapperV2 } from '../setDataMapperVersion';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -201,13 +200,6 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.sendNotification: {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
-        break;
-      }
-      case ExtensionCommand.switchToDataMapperV2: {
-        // Execute the switchToDataMapperV2 VS Code command with telemetry
-        this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.switchToDataMapperV2', () => {
-          return switchToDataMapperV2();
-        });
         break;
       }
     }
@@ -590,9 +582,7 @@ export default class DataMapperPanel {
   }
 
   public getDataMapperVersion() {
-    const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
-    const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
-    return configValue;
+    return defaultDataMapperVersion;
   }
 
   private getMapMetadataPath() {

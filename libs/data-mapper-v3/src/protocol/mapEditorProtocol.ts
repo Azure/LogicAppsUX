@@ -1,6 +1,7 @@
 import type { CompileResult } from '../compiler/xsltCompiler';
 import type { FunctoidCategory, MapDocument } from '../model/mapModel';
 import type { SchemaTree } from '../model/schemaModel';
+import type { AzurePublishQuery, PublishMethod, PublishResponse, PublishTarget } from './publishProtocol';
 
 export type SchemaSide = 'source' | 'target';
 
@@ -95,6 +96,7 @@ export const WEBVIEW_TO_HOST_MESSAGE_TYPES = [
   'browseAssembly',
   'exportXslt',
   'deployToLogicApps',
+  'publishRequest',
   'copilotPrompt',
   'browseCopilotContext',
   'removeCopilotContext',
@@ -114,6 +116,7 @@ export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
   'testMapResult',
   'copilotResult',
   'copilotContextChanged',
+  'publishResponse',
 ] as const;
 
 export type WebviewToHostMessage =
@@ -129,12 +132,14 @@ export type WebviewToHostMessage =
   | { type: 'browseAssembly' }
   | { type: 'exportXslt'; data: MapDocument }
   | { type: 'deployToLogicApps'; data: MapDocument }
+  | { type: 'publishRequest'; id: string; method: PublishMethod; data?: MapDocument; target?: PublishTarget; query?: AzurePublishQuery }
   | { type: 'copilotPrompt'; data: { prompt: string; activePage: number } }
   | { type: 'browseCopilotContext' }
   | { type: 'removeCopilotContext'; data: { id: string } }
   | { type: 'clearCopilotContext' };
 
 export type HostToWebviewMessage =
+  | PublishResponse
   | {
       type: 'init';
       data: {
@@ -211,6 +216,14 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
   }
 
   switch (value.type) {
+    case 'publishRequest':
+      return (
+        typeof value.id === 'string' &&
+        (value.method === 'context' ||
+          value.method === 'azureTarget' ||
+          (value.method === 'azureResources' && isObject(value.query)) ||
+          (value.method === 'publish' && hasObjectData(value)))
+      );
     case 'ready':
     case 'testMap':
     case 'browseAssembly':
@@ -252,7 +265,13 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
 }
 
 export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMessage {
-  if (!isObject(value) || typeof value.type !== 'string' || !isObject(value.data)) {
+  if (!isObject(value) || typeof value.type !== 'string') {
+    return false;
+  }
+  if (value.type === 'publishResponse') {
+    return typeof value.id === 'string' && (value.error === undefined || typeof value.error === 'string');
+  }
+  if (!isObject(value.data)) {
     return false;
   }
   const data = value.data;

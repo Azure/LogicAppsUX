@@ -8,6 +8,7 @@ import {
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { migrateLegacyDataMapperProjects } from './legacyDataMapperMigration';
 
 export const dataMapperV3ViewType = 'azureLogicAppsStandard.dataMapperV3';
 export const dataMapperV2ViewType = 'azureLogicAppsStandard.dataMapperV2';
@@ -68,6 +69,22 @@ export function registerDataMapperV3(context: vscode.ExtensionContext): void {
       vscode.window.showErrorMessage(localize('dataMapV3ContextError', 'Could not refresh Data Map project folders: {0}', String(error)));
     });
   };
+  const migrate = (): void => {
+    if (disposed) {
+      return;
+    }
+    migrateLegacyDataMapperProjects()
+      .then(() => {
+        if (!disposed) {
+          refresh();
+        }
+      })
+      .catch((error) => {
+        vscode.window.showErrorMessage(
+          localize('legacyMapperMigrationError', 'Could not convert legacy mapper elements: {0}', String(error))
+        );
+      });
+  };
   const options = { viewType: dataMapperV3ViewType, lmlViewType: dataMapperV2ViewType, requireExistingProject: true };
   const watcher = vscode.workspace.createFileSystemWatcher('**/{*.[bB][tT][mM],*.[lL][mM][lL],Schemas,__generated}');
   context.subscriptions.push(
@@ -115,7 +132,8 @@ export function registerDataMapperV3(context: vscode.ExtensionContext): void {
     watcher.onDidCreate(refresh),
     watcher.onDidChange(refresh),
     watcher.onDidDelete(refresh),
-    vscode.workspace.onDidChangeWorkspaceFolders(refresh),
+    vscode.workspace.onDidChangeWorkspaceFolders(migrate),
+    vscode.workspace.onDidGrantWorkspaceTrust(migrate),
     {
       dispose: () => {
         disposed = true;

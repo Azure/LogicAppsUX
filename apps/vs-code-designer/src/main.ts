@@ -66,6 +66,7 @@ import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsist
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
 import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
 import { registerDataMapperV3 } from './app/utils/dataMapperV3';
+import { migrateLegacyDataMapperProjects } from './app/utils/legacyDataMapperMigration';
 
 const telemetryString = 'setInGitHubBuild';
 let cancelRuntimeInitialization: (() => void) | undefined;
@@ -109,6 +110,9 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
 
     if (vscode.workspace.workspaceFolders && (await getWorkspaceLogicAppRoots()).length > 0) {
+      if (await migrateLegacyDataMapperProjects()) {
+        return;
+      }
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
       await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
