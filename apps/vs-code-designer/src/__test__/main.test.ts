@@ -300,12 +300,35 @@ describe('activate design-time startup', () => {
     ext.designTimeInstances.clear();
   });
 
-  it.each(['0', '1'])('registers owning task events only for normal activation (minimal=%s)', async (minimal) => {
+  it.each([undefined, '0', '1'])('completes normal activation even with the legacy minimal flag (%s)', async (minimal) => {
     vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', minimal);
     try {
       await activate(createExtensionContext());
       await Promise.all(backgroundOperations);
-      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(minimal === '0' ? 1 : 0);
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.registerEvent).toHaveBeenCalledTimes(1);
+      expect(mocks.getResourceGroupsApi).toHaveBeenCalledTimes(1);
+      expect(ext.rgApi.registerApplicationResourceResolver).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
+      expect(vscode.window.registerUriHandler).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it.each([undefined, '0', '1'])('preserves the independent initial-workspace skip policy (%s)', async (skip) => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', '1');
+    vi.stubEnv('LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE', skip);
+    Object.assign(vscode.workspace, {
+      workspaceFolders: [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }],
+    });
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(ensureWorkspace).toHaveBeenCalledTimes(skip === '1' ? 0 : 1);
+      expect(mocks.runProjectConsistencyCheck).not.toHaveBeenCalled();
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
     } finally {
       vi.unstubAllEnvs();
     }
@@ -444,6 +467,9 @@ describe('activate design-time startup', () => {
       fs.mkdirSync(path.join(root, 'FuncCoreTools'));
       const executable = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
       fs.writeFileSync(executable, 'unit-owned-nonexecutable-fixture-never-run');
+      const worker = path.join(root, 'FuncCoreTools', 'in-proc8', path.basename(executable));
+      fs.mkdirSync(path.dirname(worker));
+      fs.writeFileSync(worker, 'unit-owned-nonexecutable-worker-fixture-never-run');
       const request = bootstrapRequest({
         LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: path.join(root, 'attestation.json'),
         LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify({
@@ -460,7 +486,7 @@ describe('activate design-time startup', () => {
       writeBootstrapAttestation(
         request,
         snapshotBootstrapBinary(request.context, executable),
-        ['configured launcher fixture=4.1.2', 'in-proc8 fixture=4.1.2'],
+        [`configured launcher ${executable}=4.1.2`, `in-proc8 worker host ${worker}=4.1.2`],
         'unit-Code'
       );
       const admitted = readBootstrapAttestation(request.file, request.context, {

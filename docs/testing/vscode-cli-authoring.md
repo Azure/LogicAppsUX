@@ -60,7 +60,8 @@ an integration pass does not make every retained product edit necessary.
 | Compilation | Retain/extract runtime-neutral typing needed by the actual compiler/dependencies. Do not skip the real package build or weaken types to avoid a prerequisite |
 | Shutdown and recovery | Preserve original Logic Apps shutdown/resource release. Harness termination of product-owned Func is recovery, not original release; only independently proven dependency survivors can use the exceptional lifecycle policy |
 | Dependency compatibility | Inspect authentic publisher packages and the actual production extraction path before blaming a fixture. Preserve managed executable selection after product-owned container normalization and permit optional files genuinely absent from supported releases. Establish necessity separately for each platform/file; directory metadata and simulated controls are not native installation or full-archive checksum proof |
-| Other cleanup candidates | Original Run After labels, normal activation, update throttling, remaining dependency branches, feed behavior and narrower recorder diagnostics require separate controlled proof. Existing tests or modified fixtures do not justify product behavior, but a proposal is not an accepted removal |
+| Original Run After names | Restoration has affected both-OS and canonical full23 acceptance. Scope exact browser-formatted names to the unique predecessor row; preserve trusted clicks, status controls and persisted `runAfter`, including percent-placeholder behavior |
+| Other cleanup candidates | Normal activation, update throttling, remaining dependency branches, feed behavior and narrower recorder diagnostics require separate controlled proof. Existing tests or modified fixtures do not justify product behavior, but a proposal is not an accepted removal |
 | Non-target file writes | Settled final contents and continuous non-target immutability are different requirements. Do not silently relax the latter to tolerate a demonstrated transient rewrite |
 
 The stale persisted-alert counterfactual and invalid-to-valid clearing have
@@ -88,9 +89,10 @@ as pipeline topology, not an inherent product requirement.
 
 Suite diagnostics must be immutable per producing job attempt and canonical
 selection must use dependency outputs and matching receipts. Native suite
-attempt-2 publication is established; the latest protected full23 proofs used
-attempt 1 throughout. Mixed-attempt protected selection has local controls, not
-native full23 proof. Shared producer artifacts still have fixed names: do not
+attempt-2 publication and mixed-attempt protected full23 selection are
+established, with original producing-artifact identity verified and failed
+originals preserved. This does not prove the absence of intermittency.
+Shared producer artifacts still have fixed names: do not
 force-retry every job or suppress a collision to exercise the suite-only fix.
 
 ## Operational policy: bounded failed-job reruns

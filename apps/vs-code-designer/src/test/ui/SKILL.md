@@ -101,7 +101,7 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   is not harness recovery. An independent dependency exception requires the
   established ownership/shutdown/startup proof. Final settled contents do not
   prove continuous non-target file immutability.
-- **Candidates are not removals:** original Run After labels, normal activation,
+- **Candidates are not removals:** normal activation,
   dependency-update behavior, unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.
@@ -111,7 +111,9 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   argument instead of simply duplicating it. Validate against the installed
   browser polyfill and actual React/Fluent DOM, retaining trusted clicks, status
   assertions and persisted `runAfter`. Run component controls with the package's
-  JSDOM configuration; local controls are not both-OS native acceptance.
+  JSDOM configuration; local controls alone are not both-OS native acceptance.
+  The restoration now has affected both-OS and canonical full23 acceptance,
+  recorded against its immutable source in the audit.
 - **Check authentic dependency provenance:** inspect publisher package entries
   and normal production extraction before changing a fixture to match the old
   resolver. Product-owned container normalization and genuinely omitted optional
@@ -123,9 +125,10 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   stale-error rejection; that needs a native valid-after-invalid negative leg.
 - **Separate infrastructure from product behavior:** a shared source-bound build
   and prepared dependencies are required; Windows preparation is not a Linux
-  prerequisite. Suite-attempt publication has native rerun proof, but
-  mixed-attempt protected full23 selection remains locally covered rather
-  than native-proven. Keep the bounded failed-job policy above; fixed-name
+  prerequisite. Suite-attempt publication and mixed-attempt protected full23
+  selection have native proof with producing-artifact identity verified and
+  failed originals preserved; this does not prove absence of intermittency.
+  Keep the bounded failed-job policy above; fixed-name
   shared producers are not safe for force-all retries.
 
 ## 1.5. Critical Rules — Read Before Writing Any New Test

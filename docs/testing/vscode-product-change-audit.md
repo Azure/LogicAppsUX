@@ -33,7 +33,8 @@ intended behavior is described in finding E8, but it is not part of this committ
 comparison and has no native acceptance claim. The regeneration-readiness
 draft is also uncommitted and excluded from native payloads. The historical
 audit does not itself approve removals; separately authorized D3 and D7
-implementations and their accepted native results are recorded below.
+implementations, the D8 restoration and their accepted native results are
+recorded below.
 
 Source line references describe the historical comparison head, not the latest
 accepted source. The uncommitted feed trial changes line numbers in its three
@@ -42,19 +43,22 @@ production files.
 ## Current decisions and acceptance
 
 Evidence checked **2026-11-09**. The latest accepted code baseline is
-`afc472be2b4aa0e56ba3fbf0a86cdc2931e1ddb6`, containing both D3 durable-storage
-removal and D7 diagnostic-attribute removal. Both-OS HTTP
-[run 15959057](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959057)
+`8491373293031bc7f6b3f974bf3a590cf6664eb4`, containing D3 durable-storage
+removal, D7 diagnostic-attribute removal and D8 original Run After names.
+Both-OS Run After
+[run 15974936](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15974936)
 and canonical
-[run 15959210](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15959210)
+[run 15975701](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15975701)
 passed at that identical SHA. Downloaded originals passed source/run/attempt,
 ordered-evidence and terminal acceptance; the full run's **11 Linux and
-12 Windows** suites and protected rollup passed. Both runs used suite attempt 1.
-This documentation update is not another native run.
+12 Windows** suites and protected rollup passed. Windows core-matrix used
+attempt 2; its failed attempt 1 remains preserved. This establishes native
+mixed-attempt protected selection, not elimination of intermittency.
+This documentation update is not another native run, and does not accept E1.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
-| Not required; removal accepted | D3 durable `getState()/setState()` alert storage | Keep removed; recompute fresh-file errors and preserve local Code-save source precedence | D3-only accepted at `11680614`; latest full23 also includes D7 removal. This is not removal of all D3 validation behavior |
+| Not required; removal accepted | D3 durable `getState()/setState()` alert storage | Keep removed; recompute fresh-file errors and preserve local Code-save source precedence | D3-only accepted at `11680614`; latest full23 also includes D7 removal and D8 restoration. This is not removal of all D3 validation behavior |
 | Not required; removal accepted | D7 `data-code-view-validation-errors` | Keep removed; observe actual visible alerts, identity and geometry | Three rendering controls plus both-OS HTTP and full23 at `afc472be2`; nullable driver probe remains |
 | Required for selected ADO authentication | E3 WIF provider, activation/session integration and associated azureauth dependency/type/API adaptations | Retain together; not a cleanup target | SDK-documented secretless provider; follow installed SDK contract, not a newer upstream example. Does not approve E4's token fallback |
 | Editing protection; retain or extract | D4 metadata dependencies; D5 deferred baseline adoption | Preserve saved definition and mounted Code text | Controlled local restoration reproduces saved-definition reset/content replacement. Native-file HTTP coverage does not isolate every embedded-editor race |
@@ -64,7 +68,7 @@ This documentation update is not another native run.
 | Build prerequisite, runtime-neutral | D9 Mapper typing | Retain or extract the compiler fix | Counterfactual adds TS2322; emitted JavaScript is unchanged. Skipping compilation is not an equivalent test adaptation |
 | Product shutdown fix, not a harness workaround | E13 Linux pending-startup Func shutdown | Preserve original product-owned runtime release; separate the product fix | Native retained ancestry demonstrated surviving product Func descendants. Harness killing proves recovery, not original release; not every algorithm detail was isolated |
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
-| Original behavior restored; native acceptance pending | D8 Run After accessible names | Original browser `util.format` restored in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases pass; browser-polyfill and strict CLI controls pass. No D8 native acceptance yet |
+| Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
 | Test/fixture candidates; not removed | E1 minimal activation, E2 update suppression, E4 environment-token session fallback | Prove normal activation, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
@@ -84,10 +88,11 @@ This documentation update is not another native run.
 - Attempt-qualified suite artifacts are required for collision-free same-build
   failed-job retries. Run `15957577` natively proved Linux regeneration attempt
   2 publication and original-artifact acceptance while preserving attempt 1.
-  Protected full23 runs `15957906` and `15959210` used attempt 1 throughout;
-  mixed-attempt protected selection has local regression coverage, not native
-  full23 proof. Shared producer artifacts remain fixed-name: force-all retries
-  are not covered by the suite-only fix.
+  Protected full23 run `15975701` natively proved mixed-attempt selection:
+  Windows core-matrix attempt 2 and the other 22 suites' attempt 1 originals
+  passed producing-artifact identity and the protected rollup. Preserve the
+  earlier failed attempt. Shared producer artifacts remain fixed-name:
+  force-all retries are not covered by the suite-only fix.
 - Keep the initial execution plus at most two additional failed-job reruns at
   the same run/SHA. Preserve failures and classify native body, lifecycle,
   staging and publication separately. Three failures require diagnosis; a pass
@@ -702,7 +707,7 @@ No prior independent requirement of that specificity was established. The
 authoring-document statement of the corrected label was added in the same fix;
 it is not independent authority.
 
-**Restoration under validation:** Both Designer versions now use the original
+**Restoration accepted:** Both Designer versions now use the original
 `util.format` expression. Shared CLI interaction and screenshot readiness match
 the exact original browser label within the unique visible predecessor row;
 Playwright uses the same original label for its ordinary-title scenario.
@@ -715,14 +720,17 @@ including expansion, status changes, last-status disabling and collapse/reopen
 persistence. Run these with each package's explicit `vitest.config.ts`; the
 root invocation used a non-DOM workspace project and failed before rendering.
 Strict CLI compilation and affected lifecycle, DOM, readiness and pipeline
-controls also pass locally. Local checks do not certify a committed native
-payload. Full run `15974647` at `67d308af0` excludes D8 and cannot validate this
-restoration. A D8 commit still requires affected Linux/Windows acceptance and
-then canonical full23 at its identical SHA.
+controls also pass locally. The complete local CLI build gate passed.
+Commit `8491373293031bc7f6b3f974bf3a590cf6664eb4` then passed affected both-OS
+Run After `15974936` and canonical full23 `15975701` at that identical SHA.
+Downloaded originals passed source/run/producing-attempt, ordered-evidence
+and terminal checks; the protected full23 rollup passed. Windows core-matrix
+used attempt 2, with its failed original preserved. Earlier run `15974647` at
+`67d308af0` excluded D8 and is not restoration evidence.
 
-**Disposition:** Separate accessibility fix; adapt functional tests if the PR is
-strictly test-only. Current corrected-name dependencies are at
-`designerCdpActions.ts:2615-2617,2655,2682`.
+**Disposition:** Keep the restoration and original-label test adaptation.
+An independent accessibility correction can be a separate product change;
+the functional scenario does not require it.
 
 ### D9. Mapper `satisfies GriffelStyle`
 
@@ -767,7 +775,30 @@ existing settings, readiness and real prompt handling. Intentionally partial
 activation can be tested with unit/module fixtures rather than a shipping early
 return. The MSN correction demonstrates normal activation is feasible.
 
-**Disposition:** Restore/test-adapt through a separately proven fixture change.
+**Current counterfactual, not native acceptance:** Remove only the minimal
+activation early return and its telemetry marker. Preserve the independent
+initial-workspace skip condition, E5 catch-up, WIF, dependency setup and all
+native interaction/evidence gates. Existing runner environment values remain
+unchanged for this controlled ablation; the legacy minimal flag no longer
+has a shipping consumer. It cannot certify or bypass normal activation.
+
+The real activation-function controls require task listeners, the workspace
+listener, Azure Resources APIs/resolver and URI registration with the legacy
+flag unset, `0` and `1`. Separate controls preserve the initial-workspace skip
+semantics for unset, `0` and `1`. The old early return failed four controls;
+all 16 activation controls pass after removal. An existing Multi-root unit
+fixture also needed the required worker file and path-bound probe records;
+these are non-executed fixture bytes, not native dependency provenance.
+
+Full activation can expose startup prompts, background work and managed-path
+changes in formerly minimal phases. Do not blanket-allow dialogs, seed
+persisted suppression, re-pin binaries after activation or weaken cold-root,
+ownership and failure assertions. Require complete affected both-OS families
+and canonical full23 at one identical final SHA. Optional/noncanonical
+consumers require separate evidence; the canonical inventory cannot prove them.
+
+**Disposition:** E1 minimal-return removal is under validation, not accepted.
+The separate workspace-initialization bypass remains unproven and retained.
 
 ### E2. E2E mode suppresses dependency update checks
 

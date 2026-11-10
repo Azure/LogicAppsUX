@@ -98,12 +98,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
-    if (process.env.LA_E2E_CLI_MINIMAL_ACTIVATION === '1') {
-      activateContext.telemetry.properties.minimalActivationForE2eCli = 'true';
-      context.subscriptions.push(ext.outputChannel);
-      return;
-    }
-
     const workspaceIdentity = () => JSON.stringify((vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.toString()).sort());
     const workspaceIdentityAtActivation = workspaceIdentity();
     const workspaceWasReadyAtActivation = workspaceIdentityAtActivation !== '[]';
