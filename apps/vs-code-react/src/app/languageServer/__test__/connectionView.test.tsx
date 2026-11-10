@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { designerSlice, updateFileSystemConnection } from '../../../state/DesignerSlice';
 import { LanguageServerConnectionView } from '../connectionView';
 import { initializeLanguageServer, languageServerSlice } from '../../../state/LanguageServerSlice';
+import { IntlProvider } from 'react-intl';
 
 const mocks = vi.hoisted(() => ({
   getDesignerServices: vi.fn(),
@@ -65,7 +66,15 @@ vi.mock('@microsoft/logic-apps-designer', () => ({
       >
         Managed success
       </button>
-      <button onClick={() => onConnectionSuccessful({ id: 'local-connection', name: 'local' })} type="button">
+      <button
+        onClick={() =>
+          onConnectionSuccessful({
+            id: '/serviceProviders/serviceBus/connections/servicebus-1',
+            name: 'servicebus-1',
+          })
+        }
+        type="button"
+      >
         Local success
       </button>
     </div>
@@ -87,7 +96,7 @@ vi.mock('@microsoft/logic-apps-designer', () => ({
   useThemeObserver: vi.fn(),
 }));
 
-function createStore() {
+function createStore({ connectorType = 'serviceProvider', azureConnectorsEnabled = true } = {}) {
   const store = configureStore({
     reducer: {
       designer: designerSlice.reducer,
@@ -104,11 +113,12 @@ function createStore() {
       connector: {
         currentConnectionId: 'current',
         name: 'filesystem',
-        type: 'serviceProvider',
+        type: connectorType,
       },
       hostVersion: '4.0',
       oauthRedirectUrl: 'https://redirect',
       panelMetadata: {
+        azureDetails: { enabled: azureConnectorsEnabled },
         localSettings: {},
         parametersData: {},
       },
@@ -119,14 +129,16 @@ function createStore() {
   return store;
 }
 
-function renderConnectionView() {
+function renderConnectionView(options = {}) {
   const postMessage = vi.fn();
-  const store = createStore();
+  const store = createStore(options);
 
   render(
     <VSCodeContext.Provider value={{ postMessage }}>
       <Provider store={store}>
-        <LanguageServerConnectionView />
+        <IntlProvider locale="en">
+          <LanguageServerConnectionView />
+        </IntlProvider>
       </Provider>
     </VSCodeContext.Provider>
   );
@@ -141,7 +153,7 @@ describe('LanguageServerConnectionView', () => {
   });
 
   it('posts close and managed insert messages to the extension host', () => {
-    const { postMessage } = renderConnectionView();
+    const { postMessage } = renderConnectionView({ connectorType: 'ApiConnection' });
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     fireEvent.click(screen.getByRole('button', { name: 'Managed success' }));
@@ -159,20 +171,49 @@ describe('LanguageServerConnectionView', () => {
     });
   });
 
+  it('persists an ApiManagement connection with an ARM ID as managed', () => {
+    const { postMessage } = renderConnectionView({ connectorType: 'ApiManagement' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Managed success' }));
+
+    expect(postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.insert_connection,
+      connection: {
+        id: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Web/connections/managed',
+        name: 'managed',
+      },
+      connectionReferences: {
+        referenceOne: { connectionName: 'managed' },
+      },
+    });
+  });
+
   it('captures local addConnection data and sends it with the insert message', () => {
     const { postMessage } = renderConnectionView();
     const wrappedVscode = mocks.getDesignerServices.mock.calls[0][9];
+    const connectionAndSetting = {
+      connectionData: {
+        displayName: 'Service Bus connection',
+        serviceProvider: { id: '/serviceProviders/serviceBus' },
+      },
+      connectionKey: 'servicebus-1',
+      pathLocation: ['serviceProviderConnections'],
+      settings: {},
+    };
 
     wrappedVscode.postMessage({
       command: ExtensionCommand.addConnection,
-      connectionAndSetting: { appSettingName: 'AzureWebJobsStorage' },
+      connectionAndSetting,
     });
     fireEvent.click(screen.getByRole('button', { name: 'Local success' }));
 
     expect(postMessage).toHaveBeenCalledWith({
       command: ExtensionCommand.insert_connection,
-      connection: { id: 'local-connection', name: 'local' },
-      connectionAndSetting: { appSettingName: 'AzureWebJobsStorage' },
+      connection: {
+        id: '/serviceProviders/serviceBus/connections/servicebus-1',
+        name: 'servicebus-1',
+      },
+      connectionAndSetting,
     });
   });
 
@@ -192,5 +233,33 @@ describe('LanguageServerConnectionView', () => {
     store.dispatch(updateFileSystemConnection({ connectionName: 'share', connection: { id: 'share' }, error: '' }));
 
     await expect(pendingConnection).resolves.toEqual({ id: 'share' });
+  });
+
+  it.each([
+    'ApiConnection',
+    'ApiConnectionNotification',
+    'ApiConnectionWebhook',
+    'OpenApiConnection',
+    'OpenApiConnectionNotification',
+    'OpenApiConnectionWebhook',
+  ])('shows a terminal setup state for %s when Azure connector setup was skipped', (connectorType) => {
+    const { postMessage } = renderConnectionView({ connectorType, azureConnectorsEnabled: false });
+
+    expect(screen.getByText('Azure connector setup has not been completed')).toBeInTheDocument();
+    expect(screen.getByText('Set up Azure connectors to manage this connection.')).toBeInTheDocument();
+    expect(mocks.getDesignerServices).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Set up now' }));
+    expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.configureAzureConnectors });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.close_panel });
+  });
+
+  it('continues to load local connectors when Azure connector setup was skipped', () => {
+    renderConnectionView({ connectorType: 'serviceProvider', azureConnectorsEnabled: false });
+
+    expect(screen.getByTestId('designer-provider')).toBeInTheDocument();
+    expect(mocks.getDesignerServices).toHaveBeenCalledTimes(1);
   });
 });

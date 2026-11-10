@@ -8,17 +8,17 @@ import {
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
   azureStorageTypeSetting,
+  customCodeDotNetVersionSettingKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
 import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSettings';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, type ILocalSettingsJson  } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, ProjectType, TargetFramework, type ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri } from 'vscode';
@@ -39,6 +39,15 @@ export async function addOrUpdateLocalAppSettings(
   isDesignTime = false
 ): Promise<void> {
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const existingContent = fse.existsSync(localSettingsPath) ? (await fse.readFile(localSettingsPath)).toString() : '';
+  let wasEncrypted = false;
+  if (/[^\s]/.test(existingContent)) {
+    try {
+      wasEncrypted = Boolean((parseJson(existingContent) as ILocalSettingsJson | undefined)?.IsEncrypted);
+    } catch {
+      // getLocalSettingsJson reports the repository-standard localized parse error below.
+    }
+  }
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath, isDesignTime);
 
   settings.Values = settings.Values || {};
@@ -48,6 +57,47 @@ export async function addOrUpdateLocalAppSettings(
   };
 
   await writeFormattedJson(localSettingsPath, settings);
+  if (wasEncrypted) {
+    await encryptLocalSettings(Uri.file(localSettingsPath));
+  }
+}
+
+/**
+ * Adds/updates the `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` app setting in the Logic App's local.settings.json
+ * so the runtime knows which .NET version to use to resolve custom code assemblies. New regular Logic App
+ * projects default to .NET 10 regardless of a framework selection. Custom-code projects use their selected
+ * .NET 8 (`net8`) or .NET 10 (`net10.0`) framework. Existing regular projects, rules engine, codeful,
+ * and custom-code projects targeting other frameworks (e.g. .NET Framework) are unchanged.
+ * Reuses {@link addOrUpdateLocalAppSettings} so unrelated existing settings and encrypted-settings behavior
+ * are preserved.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - The authoritative Logic App project path (i.e. `context.projectPath`).
+ * @param {ProjectType} [projectType] - The project type of the logic app.
+ * @param {TargetFramework} [targetFramework] - The target framework of the associated custom code functions project.
+ * @param {boolean} [isNewProject] - Whether a new Logic App is being scaffolded, excluding imports and existing projects.
+ */
+export async function addCustomCodeDotNetVersionSetting(
+  context: IActionContext,
+  projectPath: string,
+  projectType?: ProjectType,
+  targetFramework?: TargetFramework,
+  isNewProject = false
+): Promise<void> {
+  let customCodeDotNetVersion: TargetFramework;
+  if (projectType === ProjectType.logicApp && isNewProject) {
+    customCodeDotNetVersion = TargetFramework.Net10;
+  } else if (
+    projectType === ProjectType.customCode &&
+    (targetFramework === TargetFramework.Net8 || targetFramework === TargetFramework.Net10)
+  ) {
+    customCodeDotNetVersion = targetFramework;
+  } else {
+    return;
+  }
+
+  await addOrUpdateLocalAppSettings(context, projectPath, {
+    [customCodeDotNetVersionSettingKey]: customCodeDotNetVersion,
+  });
 }
 
 /**
@@ -108,11 +158,11 @@ async function getDecryptedLocalSettings(
   localSettingsPath: string
 ): Promise<ILocalSettingsJson> {
   if (localSettings.IsEncrypted) {
-    await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
+    await decryptLocalSettings(localSettingsUri);
     try {
       return (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
     } finally {
-      await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
+      await encryptLocalSettings(localSettingsUri);
     }
   }
   return localSettings;

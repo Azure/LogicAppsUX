@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
-import { collapseFlowTree } from './helper';
+import { collapseFlowTree, isSingleHandoffAction } from './helper';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
@@ -52,8 +52,17 @@ export const useNodeDescription = (id: string) =>
     useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)?.description), [id])
   );
 
-export const useShouldNodeFocus = (id: string) =>
-  useSelector(useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id), [id]));
+export const useShouldNodeFocus = (id: string, canvasNodeId = id) =>
+  useSelector(
+    useMemo(
+      () =>
+        createSelector(
+          getWorkflowState,
+          (state: WorkflowState) => state.focusedCanvasNodeId === id || state.focusedCanvasNodeId === canvasNodeId
+        ),
+      [id, canvasNodeId]
+    )
+  );
 
 const selectFocusElement = createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement);
 
@@ -236,7 +245,7 @@ const handoffToolAdjustment = (
       for (const tool of tools ?? []) {
         const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
         // If the tool only has a single handoff action, add it to the list to be removed
-        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
+        if (isSingleHandoffAction(toolActions.map((action) => operations[action.id]))) {
           handoffToolIds.push(tool.id);
         }
         // If the tool has a handoff action at all, add a handoff edge to the graph

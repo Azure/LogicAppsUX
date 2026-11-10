@@ -1,14 +1,20 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  defaultDependencyPathValue,
+  localSettingsFileName,
+  lspDirectory,
+  workflowCodefulEnabledKey,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
+import { lspSdkRevisionMarkerName } from './languageServerProtocolConstants';
 
 const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
 const codefulSdkPackageVersion = '1.0.0-preview.1';
-const lspSdkHashMarkerName = '.lspsdk-hash';
-const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';
+const codefulSdkProjectRevisionMarkerName = '.logicapps-lspsdk-revision';
 
 /**
  * Checks whether any workspace folder contains a codeful Logic Apps project.
@@ -82,30 +88,30 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkHashMarkerPath = path.join(targetDirectory, lspSdkHashMarkerName);
+  const installedSdkRevisionMarkerPath = path.join(targetDirectory, lspSdkRevisionMarkerName);
 
   if (
-    !(await fse.pathExists(installedSdkHashMarkerPath)) ||
+    !(await fse.pathExists(installedSdkRevisionMarkerPath)) ||
     !(await fse.pathExists(nugetConfigPath)) ||
     !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, lspDirectoryPath))
   ) {
     return false;
   }
 
-  const installedSdkHash = (await fse.readFile(installedSdkHashMarkerPath, 'utf-8')).trim();
-  if (!installedSdkHash) {
+  const installedSdkRevision = (await fse.readFile(installedSdkRevisionMarkerPath, 'utf-8')).trim();
+  if (!installedSdkRevision) {
     return false;
   }
 
   const projectNugetFolder = path.join(projectPath, '.nuget');
-  const projectSdkHashMarkerPath = path.join(projectNugetFolder, codefulSdkProjectHashMarkerName);
+  const projectSdkRevisionMarkerPath = path.join(projectNugetFolder, codefulSdkProjectRevisionMarkerName);
   const projectSdkPackagePath = path.join(projectNugetFolder, 'packages', codefulSdkPackageId.toLowerCase(), codefulSdkPackageVersion);
   const restoreNoOpCachePaths = [
     path.join(projectPath, 'obj', 'project.assets.json'),
     path.join(projectPath, 'obj', 'project.nuget.cache'),
   ];
 
-  if ((await readTrimmedFileIfExists(projectSdkHashMarkerPath)) === installedSdkHash) {
+  if ((await readTrimmedFileIfExists(projectSdkRevisionMarkerPath)) === installedSdkRevision) {
     return false;
   }
 
@@ -118,7 +124,8 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
 
   await Promise.all(restoreNoOpCachePaths.map((cachePath) => removeIfExists(cachePath)));
   await fse.ensureDir(projectNugetFolder);
-  await fse.writeFile(projectSdkHashMarkerPath, installedSdkHash);
+  await fse.writeFile(projectSdkRevisionMarkerPath, installedSdkRevision);
+  await fse.remove(path.join(projectNugetFolder, '.logicapps-lspsdk-hash'));
   return true;
 };
 

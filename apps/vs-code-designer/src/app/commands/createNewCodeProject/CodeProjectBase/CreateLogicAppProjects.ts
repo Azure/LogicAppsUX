@@ -20,6 +20,7 @@ import {
 } from './CreateLogicAppWorkspace';
 import { devContainerFolderName, devContainerFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
+import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -91,6 +92,16 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
+
+  // Only new regular projects receive the default; adding custom code keeps its selected framework.
+  await addCustomCodeDotNetVersionSetting(
+    context,
+    mySubContext.projectPath,
+    mySubContext.projectType,
+    mySubContext.targetFramework,
+    !doesLogicAppExist
+  );
+
   ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }
 

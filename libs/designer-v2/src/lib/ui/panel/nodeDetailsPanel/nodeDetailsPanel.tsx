@@ -55,7 +55,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       nodesMetadata: state.workflow.nodesMetadata,
       idReplacements: state.workflow.idReplacements,
       operationInfo,
-      showTriggerInfo: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST && !isA2AWorkflow,
+      showTriggerInfo: isTrigger && operationInfo?.type === constants.SERIALIZED_TYPE.REQUEST && !isA2AWorkflow,
     };
   });
 
@@ -218,6 +218,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     <PanelContainer
       key={undoRedoClickToggle}
       {...commonPanelProps}
+      enableNodeNavigation
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       node={selectedNodeData}

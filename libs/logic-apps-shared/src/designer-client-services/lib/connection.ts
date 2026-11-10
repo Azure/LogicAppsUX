@@ -22,6 +22,7 @@ export interface ConnectionCreationInfo {
   operationParameterValues?: Record<string, any>;
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
+  isUpdate?: boolean;
   features?: ConnectionFeatureType;
   parameterName?: string;
   appSettings?: Record<string, string>;
@@ -62,6 +63,7 @@ export interface IConnectionService {
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   getAuthSetHideKeys?(): string[];
   getSubscriptionLocationWebUrl?(): string;
+  persistKnowledgeHubConnection?(): Promise<void>;
 }
 
 let service: IConnectionService;

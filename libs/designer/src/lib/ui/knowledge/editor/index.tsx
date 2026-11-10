@@ -126,12 +126,13 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
       content: { file: UploadFile; name: string; description?: string },
       setIsLoading: (isLoading: boolean) => void
     ) => {
-      if (WorkflowService().uploadFileArtifact) {
-        await WorkflowService().uploadFileArtifact?.(resourceId, hubName, content, setIsLoading);
-        await refetch();
-      } else {
-        console.warn('uploadFileArtifact method is not implemented in WorkflowService');
+      const uploadFileArtifact = WorkflowService().uploadFileArtifact;
+      if (!uploadFileArtifact) {
+        throw new Error('File upload is not supported by the current host.');
       }
+
+      await uploadFileArtifact(resourceId, hubName, content, setIsLoading);
+      await refetch();
     },
     [refetch]
   );

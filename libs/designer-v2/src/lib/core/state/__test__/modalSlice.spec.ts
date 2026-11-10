@@ -11,6 +11,8 @@ describe('modalSlice', () => {
   const initialState: ModalState = {
     isCombineVariableOpen: false,
     isTriggerDescriptionOpen: false,
+    isKnowledgeConnectionOpen: false,
+    kindChangeDialogType: undefined,
   };
 
   beforeEach(() => {

@@ -2,16 +2,20 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import GraphContainerNode from '../GraphContainerNode';
 import { vi, beforeEach, describe, Mock, it, expect } from 'vitest';
-import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useNodeMetadata } from '../../../core';
 import { useActionMetadata, useIsLeafNode, useParentNodeId, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { useNodeSize, useNodeLeafIndex, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { NodeProps } from '@xyflow/react';
+import { NodeFrame, NodeMergePoint } from '@microsoft/designer-ui-v2';
+import { GraphContainer } from '@microsoft/designer-ui';
+import { DefaultHandle } from '../components/handles/DefaultHandle';
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: vi.fn(),
   useMonitoringView: vi.fn(),
+  useSharedNodeUi: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
@@ -22,6 +26,7 @@ vi.mock('../../../core/state/panel/panelSelectors', () => ({
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: vi.fn(),
   useNodeMetadata: vi.fn(),
+  useNodeDisplayName: () => 'Actual graph display name',
   useIsLeafNode: vi.fn(),
   useParentNodeId: vi.fn(),
   useRunData: vi.fn(),
@@ -48,6 +53,8 @@ vi.mock(import('@xyflow/react'), async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
+    useNodeId: () => null,
+    useNodesData: () => undefined,
     Handle: (({ children, ...props }) => <div {...props}>{'Handle reactflow'}</div>) as any,
   };
 });
@@ -58,6 +65,7 @@ describe('GraphContainerNode', () => {
   } as NodeProps;
 
   beforeEach(() => {
+    (useSharedNodeUi as Mock).mockReturnValue(false);
     (useReadOnly as Mock).mockReturnValue(false);
     (useIsNodeSelectedInOperationPanel as Mock).mockReturnValue(false);
     (useActionMetadata as Mock).mockReturnValue({});
@@ -73,6 +81,53 @@ describe('GraphContainerNode', () => {
   it('should render without crashing', () => {
     const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
     expect(tree).toMatchSnapshot();
+  });
+
+  it('renders the accepted shared Scope frame, vertical ports and selection without the legacy frame', () => {
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+    (useIsNodeSelectedInOperationPanel as Mock).mockReturnValue(true);
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+    expect(tree.root.findByType(NodeFrame).props).toMatchObject({
+      kind: 'scope',
+      selected: true,
+      handleAxis: 'vertical',
+      style: { width: '100%', height: '100%' },
+    });
+    expect(tree.root.findAllByType(GraphContainer)).toHaveLength(0);
+    expect(tree.root.findByProps({ className: 'msla-graph-container-wrapper' }).props.style).toMatchObject({ padding: 0 });
+  });
+
+  it.each(['If', 'Switch'])('renders the shared %s merge point with the real graph label, not a second frame', (type) => {
+    (useSharedNodeUi as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type });
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+    expect(tree.root.findAllByType(NodeFrame)).toHaveLength(0);
+    const merge = tree.root.findByType(NodeMergePoint);
+    expect(merge.props.label).toBe('Actual graph display name');
+    expect(tree.root.findAllByType(DefaultHandle).find(({ props }) => props.type === 'source')?.props).toMatchObject({
+      presentation: 'merge',
+      label: 'Actual graph display name',
+    });
+  });
+
+  it('uses the accepted Foreach body rectangle instead of stretching the frame behind its header', () => {
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Foreach' });
+    const tree = renderer.create(
+      <GraphContainerNode {...defaultProps} data={{ presentation: { shared: true }, bodyFrame: { y: 114, height: 220 } }} />
+    );
+    expect(tree.root.findByType(NodeFrame).props).toMatchObject({
+      kind: 'loop',
+      handleAxis: 'vertical',
+      style: { position: 'absolute', top: 114, width: '100%', height: 220 },
+    });
+  });
+
+  it('retains the accepted legacy frame while a shared relayout is pending', () => {
+    (useSharedNodeUi as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(tree.root.findAllByType(NodeFrame)).toHaveLength(0);
+    expect(tree.root.findAllByType(GraphContainer)).toHaveLength(1);
   });
 
   it('should render with footer and be a subgraph', () => {

@@ -25,11 +25,7 @@ import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
-import {
-  type IActionContext,
-  type IAzExtOutputChannel,
-  callWithTelemetryAndErrorHandling,
-} from '@microsoft/vscode-azext-utils';
+import { type IActionContext, type IAzExtOutputChannel, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -46,6 +42,7 @@ import {
   isExtensionBundleDownloadInFlight,
   isInsideBundleDownloadScope,
   waitForExtensionBundleReady,
+  getExperimentalBundleRuntime,
 } from '../bundleFeed';
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
@@ -215,7 +212,12 @@ export async function startDesignTimeApi(context: IActionContext, projectPath: s
   await designTimeInst.startupPromise;
 }
 
-async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string, currRetry: number): Promise<void> {
+async function startDesignTimeApiInternal(
+  context: IActionContext,
+  designTimeInst: FuncInstance,
+  projectPath: string,
+  currRetry: number
+): Promise<void> {
   try {
     context.telemetry.properties.didStartDesignTime = 'false';
 
@@ -227,7 +229,13 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
     }
 
     const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    const experimentalBundle = await getExperimentalBundleRuntime(context, projectPath);
     if (await isDesignTimeUp(url)) {
+      if (designTimeInst.experimentalBundleSource !== experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI) {
+        throw new Error(
+          "The running design-time host was not launched with the selected experimental bundle. Stop this project's design-time host and reopen the designer to apply the selection."
+        );
+      }
       designTimeInst.isStarting = false;
       context.telemetry.properties.isDesignTimeUp = 'true';
       await validateRunningFuncProcess(projectPath, currRetry);
@@ -253,11 +261,10 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
         )
       );
 
-      // If activation triggered a bundle (re)download (newer version, corruption
-      // detected, sidecar missing/drifted), wait for it to finish before spawning
-      // func.exe. Launching while the extension bundle is being re-extracted can
-      // lock the bundle folder on Windows and leave the design-time host pointing
-      // at a half-extracted bundle.
+      // If activation triggered a bundle (re)download (newer version or incomplete
+      // installation), wait for it to finish before spawning func.exe. Launching
+      // while the extension bundle is being re-extracted can lock the bundle folder
+      // on Windows and leave the design-time host pointing at a half-extracted bundle.
       //
       // When this call originates from inside `downloadExtensionBundle` itself
       // (the post-install restart hook), `isInsideBundleDownloadScope()` is true
@@ -277,16 +284,26 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
       // failed. Without a healthy bundle, func reports "No job functions
       // found" and unhealthy storage forever — surfacing a clear, actionable
       // error here is strictly better than letting the host start broken.
-      await ensureExtensionBundleHealthy(context);
+      await ensureExtensionBundleHealthy(context, { version: experimentalBundle?.folderVersion });
 
-      startDesignTimeProcess(ext.outputChannel, designTimeDirectory, getFunctionsCommand(), 'host', 'start', portArgs);
+      startDesignTimeProcess(
+        ext.outputChannel,
+        designTimeDirectory,
+        getFunctionsCommand(),
+        ['host', 'start', portArgs],
+        experimentalBundle?.env
+      );
+      designTimeInst.experimentalBundleSource = experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
       await waitForDesignTimeStartUp(context, projectPath, url, true);
       context.telemetry.properties.isDesignTimeUp = 'true';
 
       ext.pinnedBundleVersion.set(projectPath, false);
       const hostfilepath: Uri = Uri.file(path.join(designTimeDirectory, hostFileName));
       const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
-      if (data.extensionBundle) {
+      if (experimentalBundle) {
+        ext.currentBundleVersion.set(projectPath, experimentalBundle.manifestVersion);
+        ext.pinnedBundleVersion.set(projectPath, true);
+      } else if (data.extensionBundle) {
         const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
         const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
         if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
@@ -307,9 +324,13 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
     } finally {
       designTimeInst.isStarting = false;
     }
+  } catch (error) {
+    designTimeInst.startupError = error instanceof Error ? error.message : String(error);
+    throw error;
   } finally {
     const currentInst = ext.designTimeInstances.get(projectPath);
     if (currentInst) {
+      currentInst.isStarting = false;
       currentInst.startupPromise = undefined;
     }
   }
@@ -512,7 +533,8 @@ export function startDesignTimeProcess(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
-  ...args: string[]
+  args: string[],
+  environment?: Record<string, string>
 ): void {
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
@@ -521,6 +543,7 @@ export function startDesignTimeProcess(
   const options: cp.SpawnOptions = {
     cwd: workingDirectory || os.tmpdir(),
     shell: true,
+    ...(environment ? { env: { ...process.env, ...environment } } : {}),
   };
 
   const designChildProcess = cp.spawn(command, args, options);
@@ -554,9 +577,12 @@ export function startDesignTimeProcess(
           ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
         })
         .finally(() => {
-          callWithTelemetryAndErrorHandling('designTimeError.languageWorkerFailed.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await startDesignTimeApi(actionContext, projectPath);
-          });
+          callWithTelemetryAndErrorHandling(
+            'designTimeError.languageWorkerFailed.startDesignTimeApi',
+            async (actionContext: IActionContext) => {
+              await startDesignTimeApi(actionContext, projectPath);
+            }
+          );
         });
     }
   });
@@ -646,7 +672,11 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', error instanceof Error ? error.message : String(error))
+      localize(
+        'scheduleAllDesignTimeApisFailed',
+        'Background design-time startup encountered an error. Error: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   });
 }
@@ -658,7 +688,9 @@ export function scheduleStartAllDesignTimeApis(): void {
 export async function startAllDesignTimeApis(): Promise<void> {
   const projectPaths = await getWorkspaceLogicAppRoots();
   if (projectPaths.length === 0) {
-    ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
+    ext.outputChannel.appendLog(
+      localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.')
+    );
     return;
   }
 
@@ -670,11 +702,13 @@ export async function startAllDesignTimeApis(): Promise<void> {
     )
   );
 
-  await Promise.all(projectPaths.map(async (projectPath) => {
-    await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
-      await startDesignTimeApi(actionContext, projectPath);
-    });
-  }));
+  await Promise.all(
+    projectPaths.map(async (projectPath) => {
+      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, projectPath);
+      });
+    })
+  );
 }
 
 /**

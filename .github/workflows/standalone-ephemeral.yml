@@ -1,0 +1,132 @@
+name: Reconcile Standalone Ephemeral
+
+on:
+  workflow_run:
+    workflows: [Build Standalone Ephemeral]
+    types: [completed]
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled, closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number, or leave empty to reconcile all previews'
+        type: string
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions: {}
+
+env:
+  EPHEMERAL_RESOURCE_GROUP: ${{ vars.EPHEMERAL_RESOURCE_GROUP }}
+  EPHEMERAL_STATIC_WEB_APP: ${{ vars.EPHEMERAL_STATIC_WEB_APP }}
+  EPHEMERAL_SUBSCRIPTION_ID: ${{ vars.EPHEMERAL_SUBSCRIPTION_ID }}
+
+jobs:
+  select:
+    if: >-
+      vars.EPHEMERAL_ENABLED == 'true' &&
+      (
+        github.event_name != 'pull_request_target' ||
+        contains(github.event.pull_request.labels.*.name, 'ephemeral') ||
+        (github.event.action == 'unlabeled' && github.event.label.name == 'ephemeral')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: standalone-ephemeral
+      deployment: false
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      id-token: write
+    outputs:
+      prs: ${{ steps.select.outputs.result }}
+    steps:
+      # This workflow has credentials. Never check out a PR ref or install PR dependencies here.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: azure/login@v3
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.pr_number == '')
+        with:
+          client-id: ${{ vars.EPHEMERAL_CLIENT_ID }}
+          tenant-id: ${{ vars.EPHEMERAL_TENANT_ID }}
+          subscription-id: ${{ vars.EPHEMERAL_SUBSCRIPTION_ID }}
+      - uses: actions/github-script@v8
+        id: select
+        with:
+          script: |
+            const { candidateNumbers } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/ephemeral/github.mjs`);
+            return candidateNumbers({ github, context });
+
+  reconcile:
+    needs: select
+    if: needs.select.outputs.prs != '[]'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        pr: ${{ fromJSON(needs.select.outputs.prs) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: standalone-ephemeral
+      deployment: false
+    concurrency:
+      group: standalone-ephemeral-pr-${{ matrix.pr }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+      deployments: write
+      id-token: write
+    env:
+      EPHEMERAL_PR_NUMBER: ${{ matrix.pr }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: azure/login@v3
+        with:
+          client-id: ${{ vars.EPHEMERAL_CLIENT_ID }}
+          tenant-id: ${{ vars.EPHEMERAL_TENANT_ID }}
+          subscription-id: ${{ vars.EPHEMERAL_SUBSCRIPTION_ID }}
+      - uses: actions/github-script@v8
+        id: prepare
+        with:
+          script: |
+            const { prepareJob } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/ephemeral/github.mjs`);
+            await prepareJob({ github, context, core });
+      - uses: actions/github-script@v8
+        id: credential
+        if: steps.prepare.outputs.deploy == 'true'
+        with:
+          script: |
+            const { publishToken } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/ephemeral/github.mjs`);
+            await publishToken({ core });
+      # Pin the verified v1 branch commit: the v1 tag lacks skip_api_build and deployment_environment inputs.
+      - uses: Azure/static-web-apps-deploy@4d27395796ac319302594769cfe812bd207490b1
+        id: upload
+        if: steps.prepare.outputs.deploy == 'true'
+        with:
+          azure_static_web_apps_api_token: ${{ steps.credential.outputs.token }}
+          action: upload
+          app_location: .ephemeral-site
+          output_location: ''
+          api_location: ''
+          skip_app_build: true
+          skip_api_build: true
+          deployment_environment: ${{ steps.prepare.outputs.environment }}
+      - uses: actions/github-script@v8
+        if: always() && steps.prepare.outputs.deploy == 'true'
+        env:
+          EPHEMERAL_UPLOAD_RESULT: ${{ steps.upload.outcome }}
+        with:
+          script: |
+            const { finishJob } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/ephemeral/github.mjs`);
+            await finishJob({ github, context });

@@ -11,6 +11,13 @@ import { CreateGroup } from '../creategroup';
 
 const mockCreateKnowledgeHub = vi.fn();
 const mockValidateHubNameAvailability = vi.fn();
+const mockPersistKnowledgeHubConnection = vi.fn();
+const mockDelay = vi.fn();
+
+vi.mock('@microsoft/logic-apps-shared', () => ({
+  ConnectionService: () => ({ persistKnowledgeHubConnection: mockPersistKnowledgeHubConnection }),
+  delay: (...args: any[]) => mockDelay(...args),
+}));
 
 vi.mock('../../../../core/knowledge/utils/helper', () => ({
   createKnowledgeHub: (...args: any[]) => mockCreateKnowledgeHub(...args),
@@ -56,6 +63,8 @@ describe('CreateGroup Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPersistKnowledgeHubConnection.mockResolvedValue(undefined);
+    mockDelay.mockResolvedValue(undefined);
     mockCreateKnowledgeHub.mockResolvedValue({});
     mockValidateHubNameAvailability.mockReturnValue(undefined);
     mockUseAllKnowledgeHubs.mockReturnValue({
@@ -239,7 +248,31 @@ describe('CreateGroup Component', () => {
       fireEvent.click(createButton);
 
       await waitFor(() => {
+        expect(mockPersistKnowledgeHubConnection).toHaveBeenCalledTimes(1);
         expect(mockCreateKnowledgeHub).toHaveBeenCalledWith(defaultProps.resourceId, 'TestGroup', 'Test description');
+        expect(mockDelay).not.toHaveBeenCalled();
+        expect(mockPersistKnowledgeHubConnection.mock.invocationCallOrder[0]).toBeLessThan(
+          mockCreateKnowledgeHub.mock.invocationCallOrder[0]
+        );
+      });
+    });
+
+    it('retries createKnowledgeHub twice with a 15 second delay', async () => {
+      const mockOnCreate = vi.fn();
+      mockCreateKnowledgeHub.mockRejectedValueOnce(new Error('Service restarting')).mockRejectedValueOnce(new Error('Service restarting'));
+      renderComponent({ onCreate: mockOnCreate });
+
+      const dialog = getDialog();
+      fireEvent.change(within(dialog).getByRole('textbox', { name: /name/i }), { target: { value: 'RetryGroup' } });
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
+
+      await waitFor(() => {
+        expect(mockCreateKnowledgeHub).toHaveBeenCalledTimes(3);
+        expect(mockDelay).toHaveBeenCalledTimes(2);
+        expect(mockDelay).toHaveBeenNthCalledWith(1, 15_000);
+        expect(mockDelay).toHaveBeenNthCalledWith(2, 15_000);
+        expect(mockPersistKnowledgeHubConnection).toHaveBeenCalledTimes(1);
+        expect(mockOnCreate).toHaveBeenCalledWith('RetryGroup', '');
       });
     });
 

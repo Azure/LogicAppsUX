@@ -15,6 +15,7 @@ import {
   listAllFoundryAgentsViaProxy,
   listFoundryAgentVersionsViaProxy,
   listFoundryModelsViaProxy,
+  ResourceService,
 } from '@microsoft/logic-apps-shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
@@ -214,6 +215,39 @@ export const useAllBuiltInRoleDefinitions = () => {
     {
       ...queryOpts,
       retryOnMount: true,
+    }
+  );
+};
+
+export interface CosmosDbAccount {
+  id: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  endpoint: string;
+}
+export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
+  return useQuery(
+    ['allCosmosDbServiceAccounts', { subscriptionId }],
+    async (): Promise<CosmosDbAccount[]> => {
+      const allCosmosDbServiceAccounts = await ResourceService().listResources(
+        subscriptionId,
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | where array_length(todynamic(properties.capabilities)) > 0 | extend capabilities = tostring(properties.capabilities) | where capabilities contains 'EnableNoSQLVectorSearch'`
+      );
+      return (allCosmosDbServiceAccounts ?? []).map((account: any) => ({
+        id: account.id,
+        name: account.name,
+        resourceGroup: account.resourceGroup,
+        subscriptionId,
+        endpoint: account.properties.documentEndpoint,
+      }));
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId && enabled,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
     }
   );
 };

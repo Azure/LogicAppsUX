@@ -25,8 +25,10 @@ import type {
   IExperimentationService,
   ICognitiveServiceService,
   ICopilotWorkflowEditorService,
+  IResourceService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
+import type { WorkflowExtractionService } from '../../../common/models/workflowExtraction';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -39,6 +41,8 @@ export interface DesignerOptionsState {
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
+  /** Private local PoC: atomically adopts shared operation cards and their layout metrics. Default false. */
+  useSharedNodeUi?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
@@ -64,6 +68,7 @@ export interface DesignerOptionsState {
 }
 
 export interface ServiceOptions {
+  workflowExtractionService?: WorkflowExtractionService;
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
@@ -88,4 +93,5 @@ export interface ServiceOptions {
   experimentationService?: IExperimentationService;
   cognitiveServiceService?: ICognitiveServiceService;
   copilotWorkflowEditorService?: ICopilotWorkflowEditorService;
+  resourceService?: IResourceService;
 }

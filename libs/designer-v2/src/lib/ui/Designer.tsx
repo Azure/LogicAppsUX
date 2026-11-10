@@ -7,6 +7,7 @@ import {
   useHostOptions,
   useIsVSCode,
   useIsDarkMode,
+  useSharedNodeUi,
 } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
@@ -18,6 +19,7 @@ import Controls from './Controls';
 import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
 import { MultiSelectDeleteModal } from './common/DeleteModal/MultiSelectDeleteModal';
+import { DesignerDialog } from './DesignerDialog';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { mergeClasses, PanelLocation, MultiTriggerUnsupportedMessage } from '@microsoft/designer-ui';
@@ -43,6 +45,8 @@ import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
+import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
+import { tokens } from '@fluentui/react-components';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -61,10 +65,13 @@ export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const isVSCode = useIsVSCode();
-  const isReadOnly = useReadOnly();
+  const readOnly = useReadOnly();
+  const extractionOpen = useSelector((state: RootState) => !!state.designerView.workflowExtractionDialogOpen);
+  const isReadOnly = readOnly || extractionOpen;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
+  const sharedOption = useSharedNodeUi();
 
   const styles = useDesignerStyles();
 
@@ -87,7 +94,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: !isVSCode }
+    { enabled: !isVSCode && !extractionOpen }
   );
 
   useHotkeys(
@@ -96,7 +103,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: isVSCode }
+    { enabled: isVSCode && !extractionOpen }
   );
 
   const canUndo = useCanUndo();
@@ -261,6 +268,8 @@ export const Designer = (props: DesignerProps) => {
               <DesignerReactFlow canvasRef={canvasRef}>
                 {backgroundProps ? (
                   <Background {...backgroundProps} />
+                ) : sharedOption ? (
+                  <Background bgColor={tokens.colorNeutralBackground1} />
                 ) : (
                   <Background
                     bgColor={isReadOnly ? '#80808010' : undefined}
@@ -273,11 +282,12 @@ export const Designer = (props: DesignerProps) => {
                 )}
                 <DeleteModal />
                 <MultiSelectDeleteModal />
+                <DesignerDialog containerRef={designerContainerRef} />
                 <DesignerContextualMenu />
                 <EdgeContextualMenu />
                 <RunDisplay />
                 <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-                  <Controls />
+                  <Controls canvasRef={canvasRef} />
                   <Minimap />
                 </div>
               </DesignerReactFlow>
@@ -294,6 +304,7 @@ export const Designer = (props: DesignerProps) => {
           <CanvasSizeMonitor canvasRef={canvasRef} />
           <DragPanMonitor canvasRef={canvasRef} />
           <KindChangeDialog />
+          <WorkflowExtractionDialog />
         </ReactFlowProvider>
         <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>

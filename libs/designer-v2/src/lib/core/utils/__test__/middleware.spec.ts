@@ -59,7 +59,13 @@ describe('middleware utils', () => {
     vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue(undefined);
     vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue(undefined);
 
-    const action = { type: undoableActionType };
+    const action = { type: undoableActionType, meta: { arg: { nodeId: 'node1' } } };
+    if (undoableActionType === 'updateNodeConnection/pending') {
+      store.getState.mockReturnValue({
+        ...createMockState(),
+        connections: { connectionsMapping: { node1: { kind: 'expression', expression: '@triggerBody()' } } },
+      });
+    }
     invoke(action);
 
     expect(next).toHaveBeenCalledWith(action);
@@ -131,6 +137,54 @@ describe('middleware utils', () => {
     expect(next).toHaveBeenCalled();
     expect(store.dispatch).not.toHaveBeenCalled();
     expect(compressSpy).not.toHaveBeenCalled();
+  });
+
+  it.each(['Sql', null, undefined])('does not save history for a concrete connection update when the prior mapping is %s', (mapping) => {
+    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState');
+    store.getState.mockReturnValue({
+      ...createMockState(),
+      connections: {
+        connectionsMapping: {
+          node1: mapping,
+          otherNode: { kind: 'expression', expression: '@triggerBody()' },
+        },
+      },
+    });
+    const action = { type: 'updateNodeConnection/pending', meta: { arg: { nodeId: 'node1' } } };
+    next.mockReturnValue('forwarded');
+
+    expect(invoke(action)).toBe('forwarded');
+    expect(next).toHaveBeenCalledWith(action);
+    expect(compressSpy).not.toHaveBeenCalled();
+    expect(store.dispatch).not.toHaveBeenCalled();
+  });
+
+  it('saves the prior expression mapping when replacing it with a concrete connection', () => {
+    const beforeState = {
+      ...createMockState(),
+      connections: { connectionsMapping: { node1: { kind: 'expression', expression: '@triggerBody()' } } },
+    };
+    const compressedSlices = { connections: new Uint8Array([1, 2, 3]) };
+    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState').mockReturnValue(compressedSlices);
+    vi.spyOn(undoRedoUtils, 'shouldSkipSavingStateToHistory').mockReturnValue(false);
+    vi.spyOn(undoRedoUtils, 'getEditedPanelTab').mockReturnValue(undefined);
+    vi.spyOn(undoRedoUtils, 'getEditedPanelNode').mockReturnValue(undefined);
+    store.getState.mockReturnValue(beforeState);
+    next.mockImplementation(() => {
+      store.getState.mockReturnValue({ ...beforeState, connections: { connectionsMapping: { node1: 'Sql' } } });
+    });
+    const action = { type: 'updateNodeConnection/pending', meta: { arg: { nodeId: 'node1' } } };
+
+    invoke(action);
+
+    expect(next).toHaveBeenCalledExactlyOnceWith(action);
+    expect(compressSpy).toHaveBeenCalledExactlyOnceWith(beforeState);
+    expect(store.dispatch).toHaveBeenCalledExactlyOnceWith(
+      saveStateToHistory({
+        stateHistoryItem: { compressedSlices, editedPanelTab: undefined, editedPanelNode: undefined },
+        limit: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
+      })
+    );
   });
 });
 

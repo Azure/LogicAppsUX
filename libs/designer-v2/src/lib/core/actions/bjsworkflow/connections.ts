@@ -1,5 +1,7 @@
 import Constants, { MCP_AUTH_PROPERTY_KEYS, usesMcpManagedIdentityFallback } from '../../../common/constants';
-import type { ApiHubAuthentication } from '../../../common/models/workflow';
+import { isExpressionConnectionMapping, type ApiHubAuthentication, type ConnectionMapping } from '../../../common/models/workflow';
+import { getServiceProviderConnectionMapping, isConnectionExpressionValid } from '../../utils/connectors/connectionExpression';
+import { canInvokeDynamicConnection } from '../../utils/parameters/dynamicdata';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
@@ -9,10 +11,16 @@ import {
   changeConnectionMapping,
   changeConnectionMappingsForNodes,
   initializeConnectionsMappings,
+  setNodeConnectionMapping,
 } from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { updateErrorDetails, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
+import {
+  updateErrorDetails,
+  updateNodeParameters,
+  updateNodeParameterGroups,
+  DynamicLoadStatus,
+} from '../../state/operation/operationMetadataSlice';
 import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
@@ -50,6 +58,7 @@ import {
   LogEntryLevel,
   foundryServiceConnectionRegex,
   microsoftFoundryModelsRegex,
+  isServiceProviderOperation,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -57,6 +66,8 @@ import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../sta
 import type { PanelMode } from '../../state/panel/panelTypes';
 import { setIsWorkflowDirty } from '../../state/workflow/workflowSlice';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
+import { getCustomSwaggerIfNeeded, getInputParametersFromManifest } from './initialize';
+import { serializeOperation } from './serializer';
 export interface ConnectionPayload {
   nodeId: string;
   connector: Connector;
@@ -273,6 +284,108 @@ export const updateNodeConnection = createAsyncThunk(
   }
 );
 
+export const updateNodeConnectionExpression = createAsyncThunk(
+  'updateNodeConnectionExpression',
+  async (
+    { nodeId, expression, designTimeReferenceKey }: { nodeId: string; expression: string; designTimeReferenceKey?: string },
+    { dispatch, getState }
+  ): Promise<void> => {
+    const state = getState() as RootState;
+    if (state.designerOptions.readOnly || state.designerOptions.isMonitoringView) {
+      throw new Error('Connection expression editing is not enabled.');
+    }
+    const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (
+      !operationInfo ||
+      !isServiceProviderOperation(operationInfo.type) ||
+      !state.workflow.workflowKind ||
+      isTriggerNode(nodeId, state.workflow.nodesMetadata)
+    ) {
+      throw new Error('Connection expressions are only supported on Standard service provider actions.');
+    }
+    if (!isConnectionExpressionValid(expression)) {
+      throw new Error('Invalid connection expression.');
+    }
+    const reference =
+      designTimeReferenceKey && Object.hasOwn(state.connections.connectionReferences, designTimeReferenceKey)
+        ? state.connections.connectionReferences[designTimeReferenceKey]
+        : undefined;
+    if (
+      designTimeReferenceKey &&
+      (!reference || !equals(reference.api.id, operationInfo.connectorId) || !canInvokeDynamicConnection(operationInfo, reference))
+    ) {
+      throw new Error('Select an existing connection for this service provider.');
+    }
+    dispatch(
+      setNodeConnectionMapping({
+        nodeId,
+        mapping: { kind: 'expression', expression, ...(designTimeReferenceKey ? { designTimeReferenceKey } : {}) },
+      })
+    );
+    const dependencies = state.operations.dependencies[nodeId]?.inputs ?? {};
+    const parameters = Object.entries(state.operations.inputParameters[nodeId]?.parameterGroups ?? {}).flatMap(([groupId, group]) =>
+      group.parameters
+        .filter((parameter) => parameter.info.isDynamic || parameter.dynamicData || dependencies[parameter.parameterKey])
+        .map((parameter) => ({
+          groupId,
+          parameterId: parameter.id,
+          propertiesToUpdate: {
+            dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
+            ...(dependencies[parameter.parameterKey]?.dependencyType === 'ListValues'
+              ? { editorOptions: { ...parameter.editorOptions, options: [] } }
+              : {}),
+          },
+        }))
+    );
+    if (parameters.length) {
+      dispatch(updateNodeParameters({ nodeId, parameters }));
+    }
+    dispatch(updateErrorDetails({ id: nodeId, clear: true }));
+    dispatch(setIsWorkflowDirty(true));
+    if (reference) {
+      await refreshConnectionMetadata(nodeId, dispatch, getState as () => RootState, true);
+    } else {
+      const currentInputs = (getState() as RootState).operations.inputParameters[nodeId];
+      const currentParameters = Object.values(currentInputs?.parameterGroups ?? {}).flatMap((group) => group.parameters);
+      const missingSchemaKeys = Object.entries(dependencies)
+        .filter(
+          ([key, dependency]) =>
+            dependency.dependencyType === 'ApiSchema' &&
+            !currentParameters.some((parameter) => parameter.parameterKey === key || parameter.info.dynamicParameterReference === key)
+        )
+        .map(([key]) => key);
+      if (currentInputs && missingSchemaKeys.length) {
+        const originalOperation = state.workflow.operations[nodeId];
+        const originalInputs = currentInputs.preservedConnectionInputs ?? (originalOperation as LogicAppsV2.ServiceProvider)?.inputs;
+        const definition = {
+          ...originalOperation,
+          type: operationInfo.type,
+          inputs: {
+            ...originalInputs,
+            serviceProviderConfiguration: { ...originalInputs?.serviceProviderConfiguration, connectionName: expression },
+          },
+        };
+        const manifest = await getOperationManifest(operationInfo);
+        const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, definition);
+        const { inputs } = getInputParametersFromManifest(nodeId, operationInfo, manifest, undefined, customSwagger, definition);
+        const groups = { ...currentInputs.parameterGroups };
+        for (const [groupId, group] of Object.entries(inputs.parameterGroups)) {
+          const missing = group.parameters.filter((parameter) => missingSchemaKeys.includes(parameter.parameterKey));
+          if (missing.length) {
+            const current = groups[groupId] ?? { ...group, parameters: [], rawInputs: [] };
+            groups[groupId] = {
+              ...current,
+              parameters: [...current.parameters, ...missing],
+              rawInputs: [...current.rawInputs, ...group.rawInputs.filter((input) => missingSchemaKeys.includes(input.key))],
+            };
+          }
+        }
+        dispatch(updateNodeParameterGroups({ nodeId, parameterGroups: groups }));
+      }
+    }
+  }
+);
+
 export const closeConnectionsFlow = createAsyncThunk(
   'closeConnectionsFlow',
   async ({ nodeId, panelMode }: { nodeId: string; panelMode?: PanelMode }, { dispatch }): Promise<void> => {
@@ -297,10 +410,20 @@ export const updateNodeConnectionAndProperties = async (
   getState: () => RootState
 ): Promise<void> => {
   const { nodeId } = payload;
+  const preserveInputs = isExpressionConnectionMapping(getState().connections.connectionsMapping[nodeId]);
   dispatch(changeConnectionMapping(payload));
   dispatch(setIsWorkflowDirty(true));
+  await refreshConnectionMetadata(nodeId, dispatch, getState, preserveInputs);
+};
 
+const refreshConnectionMetadata = async (
+  nodeId: string,
+  dispatch: Dispatch,
+  getState: () => RootState,
+  preserveInputs = false
+): Promise<void> => {
   const newState = getState() as RootState;
+  const previousGroups = newState.operations.inputParameters[nodeId]?.parameterGroups;
   const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
   const dependencies = getRecordEntry(newState.operations.dependencies, nodeId);
   const newlyAddedOperations = getRecordEntry(newState.workflow.newlyAddedOperations, nodeId);
@@ -311,6 +434,12 @@ export const updateNodeConnectionAndProperties = async (
     return;
   }
 
+  const hasManualSchemaInput =
+    preserveInputs &&
+    Object.values(previousGroups ?? {}).some((group) =>
+      group.parameters.some((parameter) => parameter.info.isDynamic && parameter.info.dynamicParameterReference === parameter.parameterKey)
+    );
+  const inputSnapshot = hasManualSchemaInput ? await serializeOperation(newState, nodeId, { skipValidation: true }) : undefined;
   try {
     await updateDynamicDataInNode(
       nodeId,
@@ -323,9 +452,50 @@ export const updateNodeConnectionAndProperties = async (
       newState.tokens?.variables ?? {},
       newState.workflowParameters?.definitions ?? {},
       !!newState.tokens /* updateTokenMetadata */,
-      newlyAddedOperations ? undefined : operation
+      inputSnapshot ?? (newlyAddedOperations ? undefined : operation),
+      true,
+      !preserveInputs
     );
   } finally {
+    if (preserveInputs && previousGroups) {
+      const groups = { ...getState().operations.inputParameters[nodeId]?.parameterGroups };
+      for (const [groupId, previousGroup] of Object.entries(previousGroups)) {
+        const currentGroup = groups[groupId] ?? previousGroup;
+        const previousByKey = new Map(previousGroup.parameters.map((parameter) => [parameter.parameterKey, parameter]));
+        const currentKeys = new Set(currentGroup.parameters.map((parameter) => parameter.parameterKey));
+        groups[groupId] = {
+          ...currentGroup,
+          parameters: [
+            ...currentGroup.parameters.map((parameter) => {
+              const previous = previousByKey.get(parameter.parameterKey);
+              return previous
+                ? {
+                    ...parameter,
+                    value: previous.value,
+                    preservedValue: previous.preservedValue,
+                    editorViewModel: previous.editorViewModel,
+                  }
+                : parameter;
+            }),
+            ...previousGroup.parameters.filter(
+              (parameter) =>
+                !currentKeys.has(parameter.parameterKey) &&
+                !(
+                  parameter.info.dynamicParameterReference === parameter.parameterKey &&
+                  currentGroup.parameters.some((current) => current.info.dynamicParameterReference === parameter.parameterKey)
+                )
+            ),
+          ],
+        };
+      }
+      dispatch(
+        updateNodeParameterGroups({
+          nodeId,
+          parameterGroups: groups,
+          ...(inputSnapshot ? { preservedConnectionInputs: { ...(inputSnapshot as LogicAppsV2.ServiceProvider).inputs } } : {}),
+        })
+      );
+    }
     dispatch(setIsWorkflowDirty(true));
   }
 };
@@ -413,10 +583,14 @@ export const updateIdentityChangeInConnection = createAsyncThunk(
     const { nodeId, identity } = payload;
     const rootState = getState() as RootState;
     const userAssignedIdentity = identity !== Constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? identity : undefined;
+    const reference = getConnectionReference(rootState.connections, nodeId);
+    if (!reference) {
+      return;
+    }
     const {
       api: { id: connectorId },
       connection: { id: connectionId },
-    } = getConnectionReference(rootState.connections, nodeId);
+    } = reference;
     const connector = await getConnector(connectorId);
     const connection = await getConnection(connectionId, connectorId);
 
@@ -493,12 +667,12 @@ export const autoCreateConnectionIfPossible = async (payload: {
   }
 };
 
-export async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
+export async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<ConnectionMapping> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
-  let connectionsMapping: Record<string, string> = {};
+  let connectionsMapping: ConnectionMapping = {};
   const operationManifestService = OperationManifestService();
 
-  const tasks: Promise<Record<string, string> | undefined>[] = [];
+  const tasks: Promise<ConnectionMapping | undefined>[] = [];
 
   for (const [nodeId, operation] of Object.entries(actionData)) {
     const isTrigger = getRecordEntry(nodesMetadata, nodeId)?.isTrigger ?? false;
@@ -517,8 +691,14 @@ export const getConnectionMappingForNode = (
   nodeId: string,
   isTrigger: boolean,
   operationManifestService: IOperationManifestService
-): Promise<Record<string, string> | undefined> => {
+): Promise<ConnectionMapping | undefined> => {
   try {
+    if (isServiceProviderOperation(operation.type)) {
+      const connectionName = (operation as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
+      return Promise.resolve(
+        typeof connectionName === 'string' ? { [nodeId]: getServiceProviderConnectionMapping(connectionName) } : undefined
+      );
+    }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       return getManifestBasedConnectionMapping(nodeId, isTrigger, operation);
     }
@@ -648,7 +828,11 @@ export async function getManifestBasedConnectionMapping(
   nodeId: string,
   isTrigger: boolean,
   operationDefinition: LogicAppsV2.OperationDefinition
-): Promise<Record<string, string> | undefined> {
+): Promise<ConnectionMapping | undefined> {
+  if (isServiceProviderOperation(operationDefinition.type)) {
+    const connectionName = (operationDefinition as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
+    return typeof connectionName === 'string' ? { [nodeId]: getServiceProviderConnectionMapping(connectionName) } : undefined;
+  }
   try {
     const { connectorId, operationId } = await getOperationInfo(nodeId, operationDefinition, isTrigger);
     const operationManifest = await getOperationManifest({

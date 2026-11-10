@@ -30,6 +30,7 @@ import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
+import { enableAzureConnectors } from '../../../azureConnectors/enableAzureConnectors';
 
 export default class ConnectionPanel extends DesignerPanel {
   private readonly workflowFilePath: string;
@@ -94,9 +95,12 @@ export default class ConnectionPanel extends DesignerPanel {
     this.panel.webview.html = this.getLoadingHtml();
 
     // Start design time API and load metadata in parallel
-    const startDesignTimePromise = callWithTelemetryAndErrorHandling('ConnectionPanel.create.startDesignTimeApi', async (actionContext: IActionContext) => {
-      await startDesignTimeApi(actionContext, this.projectPath!);
-    });
+    const startDesignTimePromise = callWithTelemetryAndErrorHandling(
+      'ConnectionPanel.create.startDesignTimeApi',
+      async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, this.projectPath!);
+      }
+    );
     const [_, panelMetadata] = await Promise.all([startDesignTimePromise, this.getConnectionPanelMetadata()]);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
@@ -161,11 +165,11 @@ export default class ConnectionPanel extends DesignerPanel {
     <html>
     <head>
         <style>
-            body { 
-                display: flex; 
-                justify-content: center; 
-                align-items: center; 
-                height: 100vh; 
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
                 margin: 0;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 color: var(--vscode-foreground);
@@ -226,6 +230,27 @@ export default class ConnectionPanel extends DesignerPanel {
       }
       case ExtensionCommand.close_panel: {
         this.panel?.dispose();
+        break;
+      }
+      case ExtensionCommand.configureAzureConnectors: {
+        await callWithTelemetryAndErrorHandling('ConnectionPanel.configureAzureConnectors', async (actionContext: IActionContext) => {
+          await enableAzureConnectors(actionContext, Uri.file(this.workflowFilePath));
+
+          const panelMetadata = await this.getConnectionPanelMetadata();
+          if (!panelMetadata.azureDetails.enabled || !this.panel) {
+            return;
+          }
+
+          this.panelMetadata = panelMetadata;
+          this.panel.webview.html = await this.getWebviewContent({
+            connectionsData: panelMetadata.connectionsData,
+            parametersData: panelMetadata.parametersData || {},
+            localSettings: panelMetadata.localSettings,
+            artifacts: panelMetadata.artifacts,
+            azureDetails: panelMetadata.azureDetails,
+            workflowDetails: panelMetadata.workflowDetails,
+          });
+        });
         break;
       }
       case ExtensionCommand.insert_connection: {

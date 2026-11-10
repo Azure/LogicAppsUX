@@ -6,7 +6,7 @@ import workflowReducer from '../../../state/workflow/workflowSlice';
 import operationsReducer, { initializeNodes } from '../../../state/operation/operationMetadataSlice';
 import tokensReducer, { initializeTokensAndVariables } from '../../../state/tokens/tokensSlice';
 import panelReducer from '../../../state/panel/panelSlice';
-import connectionsReducer from '../../../state/connection/connectionSlice';
+import connectionsReducer, { initializeConnectionReferences, setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
 import workflowParametersReducer from '../../../state/workflowparameters/workflowparametersSlice';
 import type { WorkflowState, NodeMetadata } from '../../../state/workflow/workflowInterfaces';
 
@@ -171,6 +171,59 @@ describe('updateNodeFromCodeView', () => {
     // B->C edge removed and a trigger->C edge created.
     const edgeIds = (workflow.graph?.edges ?? []).map((edge) => edge.id).sort();
     expect(edgeIds).toEqual(['A-B', 'manual-A', 'manual-C']);
+  });
+
+  test('synchronizes exact literal, expression, and literal connection mappings using the real import helper', async () => {
+    const operation = (connectionName: string) =>
+      ({
+        type: 'ServiceProvider',
+        inputs: {
+          serviceProviderConfiguration: {
+            serviceProviderId: '/serviceProviders/sql',
+            operationId: 'executeQuery',
+            connectionName,
+          },
+          parameters: { query: 'select 1', body: { preserved: true } },
+        },
+      }) as unknown as LogicAppsV2.OperationDefinition;
+
+    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: operation('Sql') })).unwrap();
+    expect(store.getState().connections.connectionsMapping.C).toBe('Sql');
+    const expression = "@if(equals(triggerBody()?['region'], 'west'), 'Sql', 'sql')";
+    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: operation(expression) })).unwrap();
+    expect(store.getState().connections.connectionsMapping.C).toEqual({ kind: 'expression', expression });
+    expect((store.getState().workflow.operations.C as any).inputs.parameters.body).toEqual({ preserved: true });
+    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: operation('sql') })).unwrap();
+    expect(store.getState().connections.connectionsMapping.C).toBe('sql');
+  });
+
+  test('keeps imported malformed expressions out of reference IDs and preserves a real design-time selection only for the same connector', async () => {
+    const operation = (connectionName: string, serviceProviderId = '/serviceProviders/sql') =>
+      ({
+        type: 'ServiceProvider',
+        inputs: { serviceProviderConfiguration: { serviceProviderId, operationId: 'executeQuery', connectionName } },
+      }) as unknown as LogicAppsV2.OperationDefinition;
+    store.dispatch(
+      initializeConnectionReferences({
+        Sql: { api: { id: '/serviceProviders/sql' }, connection: { id: '/serviceProviders/sql/connections/Sql' } },
+      })
+    );
+    store.dispatch(
+      setNodeConnectionMapping({
+        nodeId: 'C',
+        mapping: { kind: 'expression', expression: '@triggerBody()', designTimeReferenceKey: 'Sql' },
+      })
+    );
+    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: operation('@if(') })).unwrap();
+    expect(store.getState().connections.connectionsMapping.C).toEqual({
+      kind: 'expression',
+      expression: '@if(',
+      designTimeReferenceKey: 'Sql',
+    });
+    await store
+      .dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: operation('@triggerBody()', '/serviceProviders/other') }))
+      .unwrap();
+    expect(store.getState().connections.connectionsMapping.C).toEqual({ kind: 'expression', expression: '@triggerBody()' });
   });
 
   test('re-initializes only the edited node and preserves other nodes', async () => {

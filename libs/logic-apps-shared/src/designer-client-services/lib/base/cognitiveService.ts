@@ -96,12 +96,17 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     return response;
   }
 
-  async fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any[]> {
+  async fetchAllCognitiveServiceAccountDeployments(accountId: string, options?: { throwOnError?: boolean }): Promise<any[]> {
     const { httpClient, baseUrl, apiVersion } = this.options;
     const uri = `${baseUrl}${accountId}/deployments`;
-    const response = await getAzureResourceRecursive(httpClient, uri, {
-      'api-version': apiVersion,
-    });
+    const response = await getAzureResourceRecursive(
+      httpClient,
+      uri,
+      {
+        'api-version': apiVersion,
+      },
+      options
+    );
     return response;
   }
 

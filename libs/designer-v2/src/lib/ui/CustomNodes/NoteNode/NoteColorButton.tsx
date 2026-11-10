@@ -1,4 +1,5 @@
 import { Button, Popover, PopoverTrigger, PopoverSurface, SwatchPicker, ColorSwatch, tokens } from '@fluentui/react-components';
+import type { PopoverProps } from '@fluentui/react-components';
 import type { AppDispatch } from '../../../core';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNote } from '../../../core/state/notes/notesSlice';
@@ -9,7 +10,13 @@ import { bundleIcon, ColorFilled, ColorRegular } from '@fluentui/react-icons';
 
 const ColorIcon = bundleIcon(ColorFilled, ColorRegular);
 
-const ColorButton = ({ id, selectedColor }: any) => {
+interface ColorButtonProps {
+  id: string;
+  selectedColor?: string;
+  onOpenChange?: PopoverProps['onOpenChange'];
+}
+
+const ColorButton = ({ id, selectedColor, onOpenChange }: ColorButtonProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isReadOnly = useReadOnly();
   const colorSelectCallback = useCallback(
@@ -32,7 +39,7 @@ const ColorButton = ({ id, selectedColor }: any) => {
   ];
 
   return (
-    <Popover withArrow size="small" positioning="after">
+    <Popover withArrow size="small" positioning="after" onOpenChange={onOpenChange}>
       <PopoverTrigger>
         <Button icon={<ColorIcon />} appearance="transparent" size="small" />
       </PopoverTrigger>

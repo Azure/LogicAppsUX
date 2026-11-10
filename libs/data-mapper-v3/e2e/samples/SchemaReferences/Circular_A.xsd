@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:b="urn:samples:circular-b"
+           targetNamespace="urn:samples:circular-a"
+           xmlns="urn:samples:circular-a"
+           elementFormDefault="qualified">
+  <xs:import namespace="urn:samples:circular-b" schemaLocation=".\Circular_B.xsd"/>
+  <xs:element name="Order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="OrderId" type="xs:string"/>
+        <xs:element name="CustomerName" type="xs:string"/>
+        <xs:element name="ShipTo" type="b:AddressType"/>
+        <xs:element name="Total" type="xs:decimal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

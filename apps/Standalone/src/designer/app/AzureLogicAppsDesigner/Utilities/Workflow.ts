@@ -82,7 +82,7 @@ export class WorkflowUtility {
 }
 
 export function addConnectionInJson(connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void {
-  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+  const { connectionData, connectionKey, pathLocation, isUpdate } = connectionAndSetting;
 
   let pathToSetConnectionsData: any = connectionsJson;
 
@@ -94,7 +94,7 @@ export function addConnectionInJson(connectionAndSetting: ConnectionAndAppSettin
     pathToSetConnectionsData = pathToSetConnectionsData[path];
   }
 
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey] && !isUpdate) {
     // TODO: To show this in a notification of info bar on the blade.
     // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
     return;
