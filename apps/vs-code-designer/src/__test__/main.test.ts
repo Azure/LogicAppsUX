@@ -2,7 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import * as binaries from '../app/utils/binaries';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
-import { getWorkspaceSetting, shouldValidateAndInstallRuntimeDependencies, updateGlobalSetting } from '../app/utils/vsCodeConfig/settings';
+import {
+  getWorkspaceSetting,
+  shouldParameterizeConnections,
+  shouldValidateAndInstallRuntimeDependencies,
+  updateGlobalSetting,
+} from '../app/utils/vsCodeConfig/settings';
 import { autoStartDesignTimeSetting, extensionCommand } from '../constants';
 import { ext } from '../extensionVariables';
 import { activate } from '../main';
@@ -11,6 +16,9 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
 import { ensureWorkspace } from '../app/commands/ensureWorkspace';
+import { parameterizeAllConnections } from '../app/commands/parameterizeConnections';
+import { ensureProjectFiles } from '../app/projectConsistency/projectFilesConsistency';
+import { ensureVSCodeFiles } from '../app/projectConsistency/vscodeConsistency';
 import { registerFuncHostTaskEvents } from '../app/utils/funcCoreTools/funcHostTask';
 import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import {
@@ -294,6 +302,7 @@ describe('activate design-time startup', () => {
     mocks.startDesignTimeApi.mockResolvedValue(undefined);
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(false);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(false);
     vi.mocked(getWorkspaceSetting).mockReturnValue(false);
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
 
@@ -316,17 +325,52 @@ describe('activate design-time startup', () => {
     }
   });
 
-  it.each([undefined, '0', '1'])('preserves the independent initial-workspace skip policy (%s)', async (skip) => {
+  it.each([undefined, '0', '1'])('initializes open workspaces regardless of the legacy workspace flag (%s)', async (skip) => {
     vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', '1');
     vi.stubEnv('LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE', skip);
+    const projectPaths = ['D:\\workspace\\app-one', 'D:\\workspace\\app-two'];
     Object.assign(vscode.workspace, {
-      workspaceFolders: [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }],
+      workspaceFolders: projectPaths.map((projectPath, index) => ({
+        uri: vscode.Uri.file(projectPath),
+        name: `app-${index + 1}`,
+        index,
+      })),
     });
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(projectPaths);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(true);
     try {
       await activate(createExtensionContext());
       await Promise.all(backgroundOperations);
-      expect(ensureWorkspace).toHaveBeenCalledTimes(skip === '1' ? 0 : 1);
+      expect(ensureWorkspace).toHaveBeenCalledTimes(1);
+      expect(parameterizeAllConnections).toHaveBeenCalledTimes(1);
+      expect(ensureProjectFiles).toHaveBeenCalledTimes(projectPaths.length);
+      for (const projectPath of projectPaths) {
+        expect(ensureProjectFiles).toHaveBeenCalledWith(expect.any(Object), projectPath);
+      }
+      expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(expect.any(Object), projectPaths);
+      expect(vi.mocked(ensureWorkspace).mock.invocationCallOrder[0]).toBeLessThan(
+        vi.mocked(parameterizeAllConnections).mock.invocationCallOrder[0]
+      );
+      for (const invocation of vi.mocked(ensureProjectFiles).mock.invocationCallOrder) {
+        expect(invocation).toBeLessThan(vi.mocked(ensureVSCodeFiles).mock.invocationCallOrder[0]);
+      }
       expect(mocks.runProjectConsistencyCheck).not.toHaveBeenCalled();
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it.each([undefined, '0', '1'])('does not initialize absent workspace folders with the legacy workspace flag (%s)', async (skip) => {
+    vi.stubEnv('LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE', skip);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(ensureWorkspace).not.toHaveBeenCalled();
+      expect(parameterizeAllConnections).not.toHaveBeenCalled();
+      expect(ensureProjectFiles).not.toHaveBeenCalled();
+      expect(ensureVSCodeFiles).not.toHaveBeenCalled();
       expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
       expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
     } finally {

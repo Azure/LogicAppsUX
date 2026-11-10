@@ -103,10 +103,14 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   prove continuous non-target file immutability.
 - **Preserve normal activation:** minimal-activation early-return removal has
   affected both-OS and canonical full23 acceptance. Legacy minimal flags no
-  longer skip normal activation. The independent initial-workspace bypass
-  remains retained and unproven; optional consumers need their own evidence.
-- **Candidates are not removals:** initial-workspace initialization,
-  dependency-update behavior, unresolved package branches, feed cleanup and narrower
+  longer skip normal activation. The independent initial-workspace bypass is
+  removed in the next isolated candidate, with native acceptance pending.
+  Exercise all initial workspace-setup calls regardless of legacy flag values,
+  preserve real prompts and E5 catch-up, and include regeneration in affected
+  both-OS coverage before identical-SHA full23. Optional consumers need their
+  own evidence.
+- **Candidates are not accepted removals:** dependency-update behavior,
+  unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.
 - **Preserve original Run After names:** scope to the unique visible predecessor

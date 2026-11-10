@@ -101,11 +101,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const workspaceIdentity = () => JSON.stringify((vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.toString()).sort());
     const workspaceIdentityAtActivation = workspaceIdentity();
     const workspaceWasReadyAtActivation = workspaceIdentityAtActivation !== '[]';
-    if (
-      vscode.workspace.workspaceFolders &&
-      vscode.workspace.workspaceFolders.length > 0 &&
-      process.env.LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE !== '1'
-    ) {
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
       await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';

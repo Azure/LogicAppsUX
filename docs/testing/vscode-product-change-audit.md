@@ -56,7 +56,8 @@ throughout; Linux and Windows regeneration used attempt 2 in full23, with both
 failed attempt 1 originals preserved. This establishes native
 mixed-attempt protected selection, not elimination of intermittency.
 This documentation update is not another native run. E1's separate
-initial-workspace initialization bypass remains unproven and retained.
+initial-workspace initialization bypass is now removed in the next isolated
+candidate below; its native acceptance remains pending.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
@@ -72,7 +73,8 @@ initial-workspace initialization bypass remains unproven and retained.
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
 | Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
-| Test/fixture candidates; not removed | E1 workspace-initialization bypass, E2 update suppression, E4 environment-token session fallback | Prove normal workspace initialization, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
+| Removal candidate; native acceptance pending | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local activation controls and affected both-OS/full23 proof are required; the earlier minimal-return acceptance does not prove this removal |
+| Test/fixture candidates; not removed | E2 update suppression, E4 environment-token session fallback | Prove authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
@@ -812,7 +814,38 @@ originals rather than interpreting the final green as a flake-free first pass.
 Uncommitted feed and regeneration-readiness drafts were excluded.
 
 **Disposition:** Keep E1 minimal-return removal; native acceptance is complete.
-The separate workspace-initialization bypass remains unproven and retained.
+
+**Next isolated candidate: initial-workspace initialization.** Remove only the
+shipping `LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE` condition. Already-open
+folders now execute the existing `ensureWorkspace`, connection parameterization,
+per-project `ensureProjectFiles` and `ensureVSCodeFiles` block regardless of
+legacy flag values. Keep its original ordering, prompt and error policy, E5
+catch-up, WIF, dependency setup and all lifecycle/evidence gates unchanged.
+Runner flag assignments remain unchanged for this ablation: they no longer
+have a shipping consumer and cannot supply partial activation.
+
+Replace the old skip-policy controls with real activation-function controls
+for unset, `0` and `1`, covering both project roots, parameterization, project
+and VS Code setup order, continued registrations and no initialization when
+folders are absent. The old source fails the flag-`1` positive control;
+the other 18 controls pass. All 19 pass after removal, and changed-file Biome
+passes. The complete `pnpm --dir apps/vs-code-designer run test:e2e-cli:build`
+gate also passes, including extension/webview builds, strict CLI compilation
+and the registered CLI unit chain. Local validation includes the existing dirty
+worktree drafts; the committed-payload ADO build remains authoritative.
+This isolates the bypass rather than relying on a green test that never opens
+a workspace.
+
+Require seven complete affected families on both OSes: `unitTests`,
+`msnWeatherLifecycle`, `httpTimeoutLifecycle`, `statelessVariablesLifecycle`,
+`runAfterPersistenceLifecycle`, `workspaceMultiRoot` and
+`workspaceArtifactRegeneration`. Include regeneration because ordinary
+initialization can interact with generated artifacts. Only after original
+targeted artifacts pass acceptance, require canonical full23/protected rollup
+at the identical immutable SHA. Optional/noncanonical consumers still need
+their own evidence; canonical creation is not optional codeful-debug proof.
+Do not credit this candidate with the earlier `82477dc0e` native results.
+Native acceptance of this workspace-initialization removal is pending.
 
 ### E2. E2E mode suppresses dependency update checks
 
