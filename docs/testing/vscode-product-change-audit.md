@@ -86,7 +86,7 @@ Later documentation-only commits are not another native payload or run.
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
 | Not required; removal accepted | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls, affected 14-lane run `15983333` and canonical full23 run `15984836` accepted at `3e9d343a0`; failed regeneration attempts preserved |
 | Not required; removal accepted | E2 update suppression | Keep normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` and canonical full23 run `15987081` accepted at `c585d2639`; all 23 canonical producing attempts passed on attempt 1 |
-| Test/fixture candidate; not removed | E4 environment-token session fallback | Prove supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
+| Test/fixture candidate; retain pending decision | E4 environment-token session fallback | E3 supplies the WIF token without E4; resolve session identity and local raw-token-only coverage before authorizing removal | Real installed SDK controls expose a tenant-only account ID that the connector-details caller misparses. No E4-disabled native acceptance; retaining E3 does not approve E4 |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
@@ -1088,20 +1088,166 @@ environment-token fallback.
 ### E4. Environment-token fallback session
 
 **Source:** `src/app/utils/codeless/getAuthorizationToken.ts:34-36,68-87`.
-**Introduced:** `c29cef8af`.
+**Introduced:** `c29cef8af50730d2b27ca2203d6a0a832fbf50e1`.
+**Audit source:** documentation head
+`88566197338ffa819f5c9a937c4275d422772056`, retaining the product implementation
+accepted at `c585d26394dbc6a7c20d07937fbbcc0fed5db663`. The inherited
+`apps/vs-code-designer/src` difference from that accepted code commit is
+`src/test/ui/SKILL.md`, not product source.
 
 **Before/after:** When silent native session lookup is absent, a
 `VSCODE_RUNNING_TESTS=1` branch can construct a session from E2E environment
 tokens/identity values. `silentAuth` itself already existed at the comparison
-base and is not new.
+base and is not new. The branch requires a nonempty
+`LA_E2E_CLI_AZURE_ACCESS_TOKEN`; it does not mint, renew, validate the audience of,
+or verify the tenant claimed by that token. A requested tenant overrides the
+environment tenant when constructing the synthetic account.
 
-**Why/only to pass tests?** Yes: a test-gated authentication bridge.
+**Historical rationale:** The introducing commit's
+`apps/vs-code-designer/src/test/e2e/README.md` explicitly describes an MSAL account
+being visible while the exact Logic Apps scope still has no cached VS Code
+session. It describes injecting an Azure CLI ARM token for connector discovery
+even while the title bar shows **Sign in**. The same commit's `plan.md` selects
+WIF/provider-backed authentication for ADO and preserves silent/offline tests;
+it lists live provider sign-in/subscription/token smoke coverage as future work.
+E3 and E4 were introduced together, but that co-occurrence does not establish
+that E4 is required by E3. This is contemporary rationale, not a recovered
+native failure trace or an independent customer-authentication requirement.
 
-**Can the test adapt?** Yes in principle, by establishing the supported session
-or an approved bridge at the VS Code authentication boundary before the
-scenario. That is different from assuming a pipeline token is a cached session.
+**Current reachability:** `getAuthData()` first selects E3's provider-backed
+session when WIF is configured and `ext.subscriptionProvider` is present.
+Only after that returns no session does it query native Microsoft
+authentication. E4 runs only if the latter lookup is silent and returns no
+session. Rejected provider sign-in, token acquisition, subscription enumeration
+or native-session lookup do not fall through to E4. Thus it cannot repair an
+invalid WIF setup or a failed provider request. Empty subscription results or a
+requested tenant absent from those results can reach E4.
 
-**Disposition:** Restore/test-adapt. Decide separately from E3's WIF product mode.
+**Supported replacement, checked against the installed package:** The locked
+`@microsoft/vscode-azext-azureauth@5.1.1` ships
+`dist/cjs/src/AzureDevOpsSubscriptionProvider.js`. Its real implementation uses
+`ClientAssertionCredential` from the resolved `@azure/identity@4.5.0`, not the
+batch harness's separate `AzurePipelinesCredential`:
+
+- `signIn()` checks ADO job context and constructs the credential; it does not
+  itself prove a successful token exchange.
+- Required job variables are `AGENT_BUILDDIRECTORY`, `SYSTEM_ACCESSTOKEN`,
+  `SYSTEM_TEAMFOUNDATIONCOLLECTIONURI`, `SYSTEM_TEAMPROJECTID`, `SYSTEM_PLANID`
+  and `SYSTEM_JOBID`, in addition to the configured connection/tenant/client
+  identifiers. OIDC is obtained from the current plan/job endpoint.
+- `getSubscriptions()` ignores its SDK filter argument. The product helper's
+  explicit matching of `subscription.tenantId` is therefore material.
+- Subscription enumeration requests an ARM token for
+  `https://management.azure.com/.default`. The resulting subscription's real
+  `authentication.getSession()` returns that token without a Microsoft profile
+  cache or an environment-token session bridge. This is the supported path
+  already integrated by E3; a second authentication provider is not needed.
+- The session captures the token obtained during enumeration. Reusing the same
+  subscription/session is not a refresh mechanism. A new product `getAuthData()`
+  call enumerates again and requests a token through the credential. Preserve
+  the existing Designer V1/V2 periodic token-refresh calls.
+
+The examined provider file's SHA-256 is
+`5372a0fbdde748caf49e6dc69c7faed898f635a0bf5bfb62b48d1e9f7864cf85`.
+These observations concern that installed implementation, not newer upstream
+examples or an inferred minimum SDK version.
+
+**Session-identity blocker:** In this SDK the returned session's `id` and
+`account.id` are the tenant ID, and its default `scopes` is empty.
+`azureConnectorDetails.ts:87-94` instead splits `account.id` on `.` as
+`clientId.tenantId`, overwriting the valid settings/wizard tenant. A local
+control invoking the unmodified connector-details function with the real
+SDK-produced session returns `clientId = <tenant>` and `tenantId = undefined`.
+The result is the same with E4 present and with only its fallback expression
+removed in memory: E3 already wins on this path. This is not a regression
+caused by removing E4, nor proof that retaining E4 fixes it. It prevents claiming
+full consumer-compatible session replacement based only on token availability
+or the existing mocked provider test. No native customer-visible failure or
+authorized identity correction has been established by this audit.
+
+**Fresh-profile and environment boundary:** The harness creates isolated
+profiles and sets `azureLogicAppsStandard.silentAuth = true`; it does not thereby
+create a cached Microsoft session. The current Linux/Windows Azure task in
+`.config/templates/vscode-e2e-cli-run-suite.yml:433-536,588-680` supplies WIF
+connection metadata and maps `SYSTEM_ACCESSTOKEN`. Suite scoping in
+`scripts/e2e-cli-batch.js:138-162,345-375` retains the ordinary ADO job context and
+reintroduces approved connection/job credentials only for Azure suites.
+Although `.vscode-test.mjs`'s explicit forwarded list does not list every WIF
+variable, installed `@vscode/test-cli@0.0.10` passes the profile environment to
+`@vscode/test-electron@2.5.2`; the latter merges it over `process.env` in
+`out/runTest.js:72-74`. Source inspection therefore does not show WIF metadata
+being dropped merely because it is absent from that explicit list. This is a
+source-level propagation check, not an observed native startup receipt.
+
+**Focused non-GUI controls:** The existing token/provider suites passed
+**19/19** with this repository-root command:
+
+```powershell
+node node_modules\vitest\vitest.mjs run --root apps\vs-code-designer --config vitest.config.ts --coverage.enabled=false src\app\utils\codeless\__test__\getAuthorizationToken.test.ts src\app\utils\services\__test__\VSCodeAzureSubscriptionProvider.test.ts
+```
+
+Those tests mock the SDK session/provider boundary. A separate session-artifact
+control, `e4-session-contract-control.cjs`, exercises the actual installed SDK
+provider/credential constructor, product factory, token helper and
+connector-details caller. It substitutes synthetic external token/list
+responses, settings and VS Code host APIs; it does **not** substitute the
+provider's `authentication.getSession()`. HTTP/HTTPS/fetch are disabled, the
+process uses only a synthetic authentication environment, and no credentials
+or live auth payloads are recorded. Its in-memory counterfactual changes only
+`return session ?? getE2eCliAuthSession(tenantId)` to `return session`.
+All **nine** control groups passed:
+
+| Boundary exercised | Observed result |
+| --- | --- |
+| WIF selected; native cache absent; raw token present | Real SDK session wins; E4 is not called; removing the fallback expression preserves the result |
+| WIF selected; raw token absent; provider signed out | Product helper re-signs into the provider and obtains its session |
+| Connector identity consumer | Real SDK session produces the identity mismatch above, both before and after the counterfactual |
+| Token acquisition or ARM enumeration rejects | Error propagates; E4 does not hide it |
+| New helper call after the synthetic token response changes | New session uses the changed token; previously returned session remains a snapshot |
+| Empty subscriptions or wrong requested tenant | E4 can synthesize a session; counterfactual returns no session when the native cache is empty |
+| Raw-token-only local profile versus cached native session | Raw-token-only path depends on E4; a returned native session is preserved without it |
+| Missing ADO job context or incomplete connection metadata | Configuration/sign-in fails before E4 can provide a substitute |
+| Non-test silent path or interactive path | Neither uses E4 |
+
+These are local contract controls, **not** live OIDC/Entra exchange, real
+RBAC/subscription enumeration, native extension startup, end-user E2E
+reproduction or E4-disabled native acceptance. Existing full23 acceptance at
+`c585d2639` includes E4 and cannot supply that missing proof. Domain, testing and
+senior-review workflows were applied directly for this audit.
+
+**Surgical candidate, only after authorization:**
+
+1. Retain all E3 factory/activation/session integration and installed
+   SDK/dependency/type/API adaptations. Establish an approved disposition for
+   the real SDK/connector identity mismatch; do not silently fabricate account
+   identity or bundle an unproved product-authentication fix.
+2. Retain E4 until the intended local-mode contract is explicit. A raw-token-only
+   local profile would lose its bridge. Supported Microsoft-session warm-up
+   exists in `src/test/e2e/azureAuthWarmup.test.ts`, but it is interactive auth,
+   not a substitute for the selected ADO WIF model.
+3. If removal is approved, delete only the synthetic-session helper and its
+   silent-path fallback expression, adapt their directly dependent tests and
+   local authoring guidance, and add real-SDK boundary coverage. Preserve
+   `silentAuth`, native silent/interactive options, tenant selection, provider
+   errors and periodic refresh behavior.
+4. Do not blanket-delete raw-token minting or environment forwarding.
+   `approvedAzureFixture.ts`, `azureConnectorFixture.ts` and suite credential
+   preparation independently use the raw token for fixture/API work. Also,
+   `LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK=1` only disables local wrapper
+   minting; it does not disable E4 when a token is already present
+   (`scripts/run-e2e-cli.js:2752-2787`). It is not an E4-removal control.
+5. After an authorized candidate, run focused controls and the complete local
+   CLI gate, then submit that identical SHA to the coordinator for canonical
+   full23 non-diagnostic validation. A targeted native selection is optional,
+   not a substitute. Retain bounded same-run failed-job attempts and all
+   original artifacts; do not queue a fresh run to reset attempts.
+
+**Disposition:** **Retain pending the session-identity/local-mode decision and
+authorized native proof; not justified as an independent product requirement.**
+The supported WIF token replacement is already present and locally exercised,
+but full session-consumer compatibility and native removal acceptance remain
+unproved. No product authentication files were edited, no native/GUI or Azure
+mutation run was started, and no shared integration ref was moved by this audit.
 
 ### E5. Activation catches workspace identity changes and initializes more paths
 
