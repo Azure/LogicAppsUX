@@ -943,7 +943,7 @@ const hasSecureDataProperty = (definition: LogicAppsV2.OperationDefinition | und
   return secureData?.properties?.some((property: string) => equals(property, propertyName)) ?? false;
 };
 
-export const isErrorResponsePropertySupportedInSecureDataSetting = (
+const isErrorResponsePropertySupportedInSecureDataSetting = (
   isTrigger: boolean,
   nodeType: string,
   workflowKind?: WorkflowKind

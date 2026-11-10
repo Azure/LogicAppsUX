@@ -68,72 +68,30 @@ describe('secure error response setting', () => {
     expect(settings.secureErrorResponse?.value).toBe(true);
   });
 
-  it('serializes the setting when enabled for a Consumption action', () => {
-    const originalDefinition = operationDefinition(['inputs', 'futureSecureValue']);
-    const settings = getOperationSettings(false, operationInfo('HttpWebhook'), undefined, undefined, originalDefinition);
-
-    expect(settings.secureErrorResponse).toEqual({ isSupported: true, value: false });
+  it('serializes enabled secure settings for a Consumption action', () => {
+    const settings = getOperationSettings(false, operationInfo('HttpWebhook'));
+    settings.secureInputs = { isSupported: true, value: true };
     settings.secureErrorResponse = { isSupported: true, value: true };
 
-    expect(serializeSecureData(settings, originalDefinition)?.properties).toEqual(['futureSecureValue', 'inputs', 'errorResponse']);
+    expect(serializeSecureData(settings)?.properties).toEqual(['inputs', 'errorResponse']);
   });
 
-  it.each(standardWorkflowKinds)('preserves a hidden error response when saving a Standard %s workflow', (workflowKind) => {
-    const originalDefinition = operationDefinition(['ErrorResponse', 'futureSecureValue', 'inputs', 'outputs']);
+  it.each(standardWorkflowKinds)('does not serialize errorResponse for Standard %s workflows', (workflowKind) => {
+    const originalDefinition = operationDefinition(['ErrorResponse']);
     const settings = getOperationSettings(false, operationInfo('HttpWebhook'), undefined, undefined, originalDefinition, workflowKind);
 
     expect(settings.secureErrorResponse).toEqual({ isSupported: false, value: true });
-    expect(serializeSecureData(settings, originalDefinition)?.properties).toEqual([
-      'ErrorResponse',
-      'futureSecureValue',
-      'inputs',
-      'outputs',
-    ]);
+    expect(serializeSecureData(settings, originalDefinition)).toBeUndefined();
   });
 
-  it('serializes all secure settings independently and preserves unknown values', () => {
-    const secureData = serializeSecureData(
-      {
-        secureInputs: { isSupported: true, value: true },
-        secureOutputs: { isSupported: true, value: false },
-        secureErrorResponse: { isSupported: true, value: true },
-      },
-      operationDefinition(['outputs', 'futureSecureValue', 'ERRORRESPONSE'])
-    );
-
-    expect(secureData?.properties).toEqual(['futureSecureValue', 'inputs', 'errorResponse']);
-  });
-
-  it('removes only errorResponse when the setting is disabled', () => {
-    const secureData = serializeSecureData(
-      {
-        secureInputs: { isSupported: true, value: true },
-        secureOutputs: { isSupported: true, value: true },
-        secureErrorResponse: { isSupported: true, value: false },
-      },
-      operationDefinition(['errorResponse', 'futureSecureValue'])
-    );
-
-    expect(secureData?.properties).toEqual(['futureSecureValue', 'inputs', 'outputs']);
-  });
-
-  it('preserves hidden errorResponse values on unsupported operations', () => {
-    const secureData = serializeSecureData(
-      {
-        secureErrorResponse: { isSupported: false, value: true },
-      },
-      operationDefinition(['errorResponse', 'futureSecureValue'])
-    );
-
-    expect(secureData?.properties).toEqual(['errorResponse', 'futureSecureValue']);
-  });
-
-  it('preserves a copied hidden errorResponse without an original definition', () => {
+  it('does not serialize errorResponse when the setting is disabled', () => {
     const secureData = serializeSecureData({
-      secureErrorResponse: { isSupported: false, value: true },
+      secureInputs: { isSupported: true, value: true },
+      secureOutputs: { isSupported: true, value: true },
+      secureErrorResponse: { isSupported: true, value: false },
     });
 
-    expect(secureData?.properties).toEqual(['errorResponse']);
+    expect(secureData?.properties).toEqual(['inputs', 'outputs']);
   });
 
   it('removes the empty secureData container when all settings are disabled', () => {

@@ -12,7 +12,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
-import { isErrorResponsePropertySupportedInSecureDataSetting } from './settings';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
@@ -144,22 +143,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
-  const copiedSettings = nodeData.settings;
-  const settings = copiedSettings && {
-    ...copiedSettings,
-    secureErrorResponse: {
-      ...copiedSettings.secureErrorResponse,
-      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(
-        false,
-        operationInfo.type,
-        (getState() as RootState).workflow.workflowKind
-      ),
-      value: copiedSettings.secureErrorResponse?.value ?? false,
-    },
-  };
-
   // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId, settings }] }));
+  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
   const updatedTokens = nodeTokenData.tokens.map((token) => {
     // Modify the actionName to a unique value

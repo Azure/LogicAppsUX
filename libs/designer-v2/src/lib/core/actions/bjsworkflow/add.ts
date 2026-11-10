@@ -349,8 +349,7 @@ export const initializeOperationDetails = async (
       nativeMcpManifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.workflow.isConsumptionWorkflow
+      state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
     const updatedOutputs = nodeOutputs;
@@ -404,8 +403,7 @@ export const initializeOperationDetails = async (
       manifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.workflow.isConsumptionWorkflow
+      state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
 
@@ -465,8 +463,7 @@ export const initializeOperationDetails = async (
       /* manifest */ undefined,
       parsedSwagger,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.workflow.isConsumptionWorkflow
+      state.workflow.workflowKind
     );
 
     settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);

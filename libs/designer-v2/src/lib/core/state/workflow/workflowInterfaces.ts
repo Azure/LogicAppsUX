@@ -56,8 +56,6 @@ export interface WorkflowState {
   isDirty: boolean;
   changeCount: number;
   workflowKind: WorkflowKind;
-  /** SKU inferred when the workflow is loaded, independent of subsequent kind changes. */
-  isConsumptionWorkflow?: boolean;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
   hostData: {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;

@@ -137,8 +137,7 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind,
-  isConsumptionWorkflow?: boolean
+  workflowKind?: WorkflowKind
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -159,7 +158,7 @@ export const getOperationSettings = (
       value: getSecureOutputsSetting(operation),
     },
     secureErrorResponse: {
-      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(isTrigger, nodeType, workflowKind, isConsumptionWorkflow),
+      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(isTrigger, nodeType, workflowKind),
       value: getSecureErrorResponseSetting(operation),
     },
     disableAsyncPattern: {
@@ -944,11 +943,10 @@ const hasSecureDataProperty = (definition: LogicAppsV2.OperationDefinition | und
   return secureData?.properties?.some((property: string) => equals(property, propertyName)) ?? false;
 };
 
-export const isErrorResponsePropertySupportedInSecureDataSetting = (
+const isErrorResponsePropertySupportedInSecureDataSetting = (
   isTrigger: boolean,
   nodeType: string,
-  workflowKind?: WorkflowKind,
-  isConsumptionWorkflow?: boolean
+  workflowKind?: WorkflowKind
 ): boolean => {
   const supportedActionTypes = [
     Constants.SERIALIZED_TYPE.HTTP,
@@ -956,7 +954,7 @@ export const isErrorResponsePropertySupportedInSecureDataSetting = (
     Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK,
     Constants.SERIALIZED_TYPE.OPEN_API_CONNECTION_WEBHOOK,
   ];
-  return (isConsumptionWorkflow ?? !workflowKind) && !isTrigger && supportedActionTypes.some((type) => equals(nodeType, type));
+  return !workflowKind && !isTrigger && supportedActionTypes.some((type) => equals(nodeType, type));
 };
 
 const isConditionExpressionSupported = (isTrigger: boolean, operation?: LogicAppsV2.OperationDefinition): boolean => {

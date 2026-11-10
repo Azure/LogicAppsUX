@@ -163,8 +163,7 @@ export const addForeachToNode = createAsyncThunk(
         customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
-        dispatch,
-        state.workflow.isConsumptionWorkflow
+        dispatch
       )) as NodeDataWithOperationMetadata[];
 
       const repetitionInfo = await getRepetitionContext(

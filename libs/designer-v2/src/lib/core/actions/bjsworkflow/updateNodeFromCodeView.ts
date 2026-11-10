@@ -57,7 +57,7 @@ export const updateNodeFromCodeView = createAsyncThunk(
       dispatch(replaceOperationDefinition({ nodeId, operationDefinition: serializedOperation }));
 
       const updatedState = getState() as RootState;
-      const { operations, nodesMetadata, workflowKind, isConsumptionWorkflow, graph } = updatedState.workflow;
+      const { operations, nodesMetadata, workflowKind, graph } = updatedState.workflow;
       const references = updatedState.connections.connectionReferences;
       const workflowParameters = updatedState.workflowParameters.definitions;
       const isTrigger = isTriggerNode(nodeId, nodesMetadata);
@@ -98,19 +98,10 @@ export const updateNodeFromCodeView = createAsyncThunk(
           {} /* customCode */,
           isTrigger,
           workflowKind,
-          dispatch,
-          isConsumptionWorkflow
+          dispatch
         );
       } else {
-        nodeData = await initializeOperationDetailsForSwagger(
-          nodeId,
-          serializedOperation,
-          references,
-          isTrigger,
-          workflowKind,
-          dispatch,
-          isConsumptionWorkflow
-        );
+        nodeData = await initializeOperationDetailsForSwagger(nodeId, serializedOperation, references, isTrigger, workflowKind, dispatch);
       }
 
       if (!nodeData || nodeData.length === 0) {

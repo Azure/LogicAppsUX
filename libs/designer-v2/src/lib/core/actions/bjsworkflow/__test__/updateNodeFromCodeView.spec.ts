@@ -114,7 +114,7 @@ const buildWorkflowState = (): WorkflowState =>
     flowErrors: {},
   }) as unknown as WorkflowState;
 
-const makeStore = (workflow = buildWorkflowState()) =>
+const makeStore = () =>
   configureStore({
     reducer: {
       workflow: workflowReducer,
@@ -125,7 +125,7 @@ const makeStore = (workflow = buildWorkflowState()) =>
       workflowParameters: workflowParametersReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
-    preloadedState: { workflow } as any,
+    preloadedState: { workflow: buildWorkflowState() } as any,
   });
 
 type TestStore = ReturnType<typeof makeStore>;
@@ -234,7 +234,7 @@ describe('updateNodeFromCodeView', () => {
     const { operations } = store.getState();
     // Only the edited node was passed to the deserializer.
     expect(mockManifest).toHaveBeenCalledTimes(1);
-    expect(mockManifest).toHaveBeenCalledWith('C', expect.anything(), expect.anything(), false, 'stateful', expect.anything(), undefined);
+    expect(mockManifest).toHaveBeenCalledWith('C', expect.anything(), expect.anything(), false, 'stateful', expect.anything());
     // Edited node metadata (re)written...
     expect((operations.inputParameters as any).C.marker).toBe('inputs-C');
     // ...and the other node's metadata is untouched.
@@ -286,28 +286,6 @@ describe('updateNodeFromCodeView', () => {
 
     expect(mockSwagger).toHaveBeenCalledTimes(1);
     expect(mockManifest).not.toHaveBeenCalled();
-  });
-
-  test.each([true, false])('passes the loaded Consumption classification=%s when reinitializing an edited node', async (isConsumption) => {
-    const workflow = buildWorkflowState();
-    workflow.workflowKind = 'agent';
-    workflow.isConsumptionWorkflow = isConsumption;
-    store = makeStore(workflow);
-
-    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: composeWithoutRunAfter })).unwrap();
-    expect(mockManifest).toHaveBeenCalledWith('C', expect.anything(), {}, false, 'agent', expect.anything(), isConsumption);
-
-    InitOperationManifestService({
-      isSupported: () => false,
-      isAliasingSupported: () => false,
-      getOperationInfo: async () => ({}) as any,
-      getOperationManifest: async () => ({}) as any,
-      getOperation: async () => ({}) as any,
-      isBuiltInConnector: () => false,
-      getBuiltInConnector: () => ({}) as any,
-    } as any);
-    await store.dispatch(updateNodeFromCodeView({ nodeId: 'C', serializedOperation: composeWithoutRunAfter })).unwrap();
-    expect(mockSwagger).toHaveBeenCalledWith('C', expect.anything(), expect.anything(), false, 'agent', expect.anything(), isConsumption);
   });
 
   test('uses the connector branch for connector-typed operations', async () => {

@@ -28,7 +28,6 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
-import { isErrorResponsePropertySupportedInSecureDataSetting } from './settings';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
@@ -261,19 +260,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
   }
 
-  const copiedSettings = nodeData.settings;
-  const { workflowKind, isConsumptionWorkflow } = (getState() as RootState).workflow;
-  const settings = copiedSettings && {
-    ...copiedSettings,
-    secureErrorResponse: {
-      ...copiedSettings.secureErrorResponse,
-      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(false, operationInfo.type, workflowKind, isConsumptionWorkflow),
-      value: copiedSettings.secureErrorResponse?.value ?? false,
-    },
-  };
-
   // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId, settings }] }));
+  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
   const updatedTokens = (nodeTokenData?.tokens ?? []).map((token) => {
     // Modify the actionName to a unique value
@@ -438,8 +426,7 @@ export const pasteScopeOperation = createAsyncThunk(
         {},
         workflowKind,
         dispatch,
-        { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId },
-        state.workflow.isConsumptionWorkflow
+        { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
       ),
     ]);
     await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
