@@ -42,7 +42,7 @@ production files.
 
 ## Current decisions and acceptance
 
-Evidence checked **2026-11-10**. The latest accepted code baseline is
+Evidence checked **2026-11-10**. The earlier accepted code baseline is
 `82477dc0e56a010baa4d03318915cae313fc51f6`, containing D3 durable-storage
 removal, D7 diagnostic-attribute removal, D8 original Run After names and E1
 minimal-activation early-return removal. Six affected families on both OSes
@@ -59,6 +59,17 @@ This documentation update is not another native run. E1's separate
 initial-workspace initialization bypass is also removed and accepted at
 `3e9d343a0` in affected run `15983333` and canonical full23 run `15984836`.
 
+The latest accepted code baseline is
+`c585d26394dbc6a7c20d07937fbbcc0fed5db663`, additionally removing E2's
+dependency-update suppression while preserving strict validation. Affected
+[run 15986177](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15986177)
+and canonical
+[full23 run 15987081](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15987081)
+passed at that identical SHA. All 23 canonical suite jobs passed on attempt 1;
+downloaded originals passed artifact/source/run/producing-attempt, ordered
+evidence and terminal identity checks, and the protected full rollup passed.
+Later documentation-only commits are not another native payload or run.
+
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
 | Not required; removal accepted | D3 durable `getState()/setState()` alert storage | Keep removed; recompute fresh-file errors and preserve local Code-save source precedence | D3-only accepted at `11680614`; latest full23 also includes D7 removal and D8 restoration. This is not removal of all D3 validation behavior |
@@ -74,7 +85,7 @@ initial-workspace initialization bypass is also removed and accepted at
 | Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
 | Not required; removal accepted | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls, affected 14-lane run `15983333` and canonical full23 run `15984836` accepted at `3e9d343a0`; failed regeneration attempts preserved |
-| User-directed removal candidate; full23 acceptance pending | E2 update suppression | Restore normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` accepted at `c585d2639`; identical-SHA full23 run `15987081` is in progress |
+| Not required; removal accepted | E2 update suppression | Keep normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` and canonical full23 run `15987081` accepted at `c585d2639`; all 23 canonical producing attempts passed on attempt 1 |
 | Test/fixture candidate; not removed | E4 environment-token session fallback | Prove supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
@@ -981,7 +992,8 @@ flag values. Before the product edit, six strict-`1` due-state assertions
 failed and the other 20 tests passed. After removal, the five-file command
 above passed **61 tests**, including all 26 predicate/persistence cases and
 the unchanged strict-validation/orchestration and managed-validator controls.
-Biome passed for both changed TypeScript files. Native acceptance remains pending.
+Biome passed for both changed TypeScript files. Native acceptance below is
+bound to the committed candidate, not this dirty local worktree.
 `pnpm.cmd --dir apps\vs-code-designer run test:e2e-cli:build` also passed,
 including extension/webview builds, CLI compilation and the complete local
 CLI regression gate. This local worktree still contains excluded feed and
@@ -995,8 +1007,11 @@ The user authorized parallel execution. Affected
 passed all 12 producing-attempt artifact/source/run/ordered/terminal identity
 checks at `c585d26394dbc6a7c20d07937fbbcc0fed5db663`. Identical-SHA canonical
 [full23 run 15987081](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15987081)
-is in progress with diagnostic mode disabled and both canonical OS aliases.
-This is not yet full23 acceptance.
+passed with diagnostic mode disabled and both canonical OS aliases. All 23
+suite jobs passed on attempt 1. Downloaded originals passed artifact, source,
+run, producing-attempt, ordered-evidence and terminal identity checks; the
+protected full23 rollup also passed. E2 removal is accepted at this immutable
+SHA without fixture changes or relaxed validation.
 
 **User-directed loop change:** Queue canonical full23 directly for subsequent
 candidates after the focused local controls; do not require a targeted ADO pass

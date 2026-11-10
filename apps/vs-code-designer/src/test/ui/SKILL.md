@@ -121,8 +121,10 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   passes to uncommitted feed or regeneration-readiness drafts.
 - **Separate update eligibility from strict validation:** the user-directed
   suppression-removal candidate restores the normal persisted 24-hour
-  throttle while keeping strict fail-closed checks enabled. Native acceptance
-  remains pending; do not disable strict validation to audit updates.
+  throttle while keeping strict fail-closed checks enabled. Removal is accepted
+  at `c585d2639` in affected run `15986177` and canonical full23 run `15987081`,
+  with all 23 canonical suites passing on attempt 1. Do not disable strict
+  validation to audit updates.
   Fresh profiles lose persisted throttle history even when phases share
   installed binaries. Bundle refresh also records that
   timestamp, so it cannot attest full setup. Prove real cold/warm setup and
