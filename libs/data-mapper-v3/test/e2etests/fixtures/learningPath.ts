@@ -1,12 +1,10 @@
-import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
-import { FunctoidRegistry } from '../../src/functoids/functoidRegistry';
-import { readTextFileSync } from '../../src/schema/schemaFileResolver';
-import { compareLearningPathPaths } from '../../test/native/learningPathExclusions.cjs';
+import { FunctoidRegistry } from '../../../src/functoids/functoidRegistry';
+import { readTextFileSync } from '../../../src/schema/schemaFileResolver';
+import { getLearningPathMaps, learningPathDirectory as directory } from './learningPathCorpus.cjs';
 import { loadSampleMap } from './testData';
 
-const directory = path.resolve(__dirname, '../../e2etests');
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '',
@@ -32,14 +30,7 @@ export interface OriginalPage {
   Functoids?: { Functoid?: OriginalFunctoid[] };
 }
 
-function mapFiles(directoryPath: string): string[] {
-  return readdirSync(directoryPath, { withFileTypes: true }).flatMap((entry) => {
-    const fullPath = path.join(directoryPath, entry.name);
-    return entry.isDirectory() ? mapFiles(fullPath) : entry.name.endsWith('.btm') ? [path.relative(directory, fullPath)] : [];
-  });
-}
-
-export const learningPathMaps = mapFiles(directory).sort(compareLearningPathPaths);
+export const learningPathMaps: string[] = getLearningPathMaps();
 
 export function originalPages(relativePath: string): OriginalPage[] {
   const content = readTextFileSync(path.join(directory, relativePath));

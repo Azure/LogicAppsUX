@@ -1,6 +1,10 @@
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { learningPathMaps } from '../e2e/fixtures/learningPath';
-import { compareLearningPathPaths, getLearningPathExclusion } from './native/learningPathExclusions.cjs';
+import { learningPathMaps } from './e2etests/fixtures/learningPath';
+import { compareLearningPathPaths, getLearningPathMaps } from './e2etests/fixtures/learningPathCorpus.cjs';
+import { getLearningPathExclusion } from './native/learningPathExclusions.cjs';
 
 describe('native Learning Path exclusions', () => {
   test('excludes exactly the 19 reported failures while retaining the other 132 maps', () => {
@@ -41,5 +45,25 @@ describe('native Learning Path exclusions', () => {
   test.each(['/', '\\'])('preserves corpus order when paths use %s separators', (separator) => {
     const maps = ['Maps/Map1.btm', 'Maps2/Map1.btm'].map((map) => map.replace(/\//g, separator));
     expect(maps.sort(compareLearningPathPaths)).toEqual([`Maps2${separator}Map1.btm`, `Maps${separator}Map1.btm`]);
+  });
+
+  test('keeps auxiliary browser samples out of the corpus without dropping nested sample directories', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'mapper-corpus-'));
+    try {
+      for (const relativePath of [
+        ['Maps', 'Map.btm'],
+        ['Maps', 'samples', 'Nested.btm'],
+        ['samples', 'Auxiliary.btm'],
+        ['fixtures', 'Helper.btm'],
+        ['pages', 'Helper.btm'],
+      ]) {
+        const filename = path.join(root, ...relativePath);
+        mkdirSync(path.dirname(filename), { recursive: true });
+        writeFileSync(filename, '');
+      }
+      expect(getLearningPathMaps(root)).toEqual([path.join('Maps', 'Map.btm'), path.join('Maps', 'samples', 'Nested.btm')]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

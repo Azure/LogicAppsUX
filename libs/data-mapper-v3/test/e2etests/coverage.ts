@@ -1,8 +1,9 @@
 import { CoverageReport } from 'monocart-coverage-reports';
 import path from 'node:path';
+import { packageRoot } from './fixtures/learningPathCorpus.cjs';
 
 export const coverageEnabled = process.env.MAPPER_E2E_COVERAGE === '1';
-export const coverageDirectory = path.resolve(__dirname, '../coverage/e2e');
+export const coverageDirectory = path.join(packageRoot, 'coverage', 'e2e');
 
 export function createCoverageReport(): CoverageReport {
   return new CoverageReport({

@@ -8,5 +8,5 @@ tools/compiler-worker/**/bin/
 tools/compiler-worker/**/obj/
 tools/xslt-transform/**/bin/
 tools/xslt-transform/**/obj/
-e2etests/**/MapperExtensionsFunctions.dll
-e2etests/**/StoreValuesHelperClass.dll
+test/e2etests/**/MapperExtensionsFunctions.dll
+test/e2etests/**/StoreValuesHelperClass.dll

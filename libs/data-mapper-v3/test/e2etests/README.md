@@ -1,9 +1,17 @@
-# Mapper v3 Browser Tests
+# Mapper v3 End-to-End Tests
 
 These Playwright tests interact with the real built mapper webview in Chromium.
 The VS Code host is mocked: a passing browser test does not prove that native
 dialogs, disk persistence, deployment, the compiler worker, or live Assistant
 generation work inside VS Code.
+
+Browser specs, page objects, shared fixtures, and sample maps are consolidated
+under `test\e2etests`. Learning Path fixtures remain at this directory's root;
+other browser samples live in `samples`. The shared
+`fixtures/learningPathCorpus.cjs` owns fixture paths, corpus discovery, and
+stable case ordering for both browser and native execution. Its inventory
+excludes the browser infrastructure directories so auxiliary maps do not
+become duplicate native cases.
 
 ## Run
 
@@ -28,11 +36,11 @@ The focused suite runs separately from browser coverage:
 pnpm --dir libs/data-mapper-v3 exec vitest run --config vitest.config.ts test/mapEditorProtocol.test.ts test/canvasViewport.test.ts test/webviewBootstrap.test.ts test/webviewLifecycle.test.ts test/webviewFunctoidFallbacks.test.ts
 ```
 
-- [Protocol tests](../test/mapEditorProtocol.test.ts) validate host commands and replies directly.
-- [Layout tests](../test/canvasViewport.test.ts) cover complete, finite, snapped, non-overlapping results, anchor propagation/averaging, missing connectors, tied positions, and viewport overflow.
-- [Bootstrap tests](../test/webviewBootstrap.test.ts) cover API/root failures, missing containers, readiness and message forwarding. They also establish that later React failures are outside the synchronous startup catch.
-- [Lifecycle tests](../test/webviewLifecycle.test.ts) cover canvas disconnect/reconnect, React unmount, controller disposal, callback-identity listener removal, observers, timers and pending animation frames.
-- [Fallback tests](../test/webviewFunctoidFallbacks.test.ts) cover unknown/custom names and categories, rendered SVG fallbacks, supported icon props and all three themes.
+- [Protocol tests](../mapEditorProtocol.test.ts) validate host commands and replies directly.
+- [Layout tests](../canvasViewport.test.ts) cover complete, finite, snapped, non-overlapping results, anchor propagation/averaging, missing connectors, tied positions, and viewport overflow.
+- [Bootstrap tests](../webviewBootstrap.test.ts) cover API/root failures, missing containers, readiness and message forwarding. They also establish that later React failures are outside the synchronous startup catch.
+- [Lifecycle tests](../webviewLifecycle.test.ts) cover canvas disconnect/reconnect, React unmount, controller disposal, callback-identity listener removal, observers, timers and pending animation frames.
+- [Fallback tests](../webviewFunctoidFallbacks.test.ts) cover unknown/custom names and categories, rendered SVG fallbacks, supported icon props and all three themes.
 
 Component tests use JSDOM and explicit API/component doubles. They do not prove
 native VS Code integration. Keep their Istanbul reports separate from browser
@@ -40,7 +48,7 @@ V8 reports; neither is an aggregate percentage for the entire extension.
 
 ## Native Extension Host
 
-The [native runner](../test/native/run.cjs) launches an isolated Extension
+The [native runner](../native/run.cjs) launches an isolated Extension
 Development Host using an existing VS Code executable and the workspace's
 installed test-electron dependency. It does not download a runtime or use the
 running editor's profile. Build current bundles before running:
@@ -52,7 +60,7 @@ pnpm --dir libs/data-mapper-v3 run test:native
 
 The default executable is the Windows user installation. Set
 `MAPPER_NATIVE_VSCODE` to an existing compatible executable for another location.
-The [native suite](../test/native/suite.cjs) is intended to verify activation,
+The [native suite](../native/suite.cjs) is intended to verify activation,
 custom-editor opening, real webview-to-host edits, document version/dirty state,
 physical save and reopen in a temporary workspace. Autosave is disabled; no
 Azure, file picker, compiler worker or live Assistant operation is required.
@@ -65,10 +73,10 @@ Native execution does not automatically contribute to browser coverage.
 
 ### Native Test Map Corpus
 
-The [learning-path native suite](../test/native/learningPath.cjs) inventories all
+The [learning-path native suite](../native/learningPath.cjs) inventories all
 151 sample maps and executes 132 eligible maps in the real custom editor by
 clicking **Test Map**. The 19 known failures are excluded by full relative path
-in [learningPathExclusions.cjs](../test/native/learningPathExclusions.cjs):
+in [learningPathExclusions.cjs](../native/learningPathExclusions.cjs):
 18 maps require unregistered custom functoids, and one has no loaded source
 schema. Exclusions are reported as skipped, with their reasons; they are not
 counted as passes. All 151 maps retain their browser import/edit/reopen coverage.
@@ -120,14 +128,14 @@ cases for their additional value and cardinality assertions.
 
 Sample maps and schemas live under [samples](samples), grouped into
 `LoopingFunctoids`, `PerformanceLargeMap`, and `SchemaReferences`.
-The BizTalk Learning Path corpus lives separately in `../e2etests`.
+The BizTalk Learning Path corpus lives alongside the specs in this directory.
 These test fixtures are excluded from the packaged extension.
 
 ## BizTalk Learning Path Maps
 
 The `e2etests` fixtures are copied from the `Working-with-Maps` directory of
 Sandro Pereira's **BizTalk-Server-Learning-Path** samples. Their MIT copyright and
-permission notice is retained in `../e2etests/LICENSE`. Original BTM
+permission notice is retained in [LICENSE](LICENSE). Original BTM
 and XSD bytes, directory names, schema references, scripts, and intentionally
 incorrect teaching examples are preserved. No BizTalk installation, assemblies,
 signing keys, or machine-local source checkout is required to load the fixtures.
@@ -157,14 +165,14 @@ custom functoids, external assemblies and historical absolute XSLT paths remain
 import/preservation scenarios, not expected-success transforms.
 
 Two orchestration-variable teaching maps (`OrderToSAPOrderAccessOrcVarFunctoids`
-and `OrderToSAPOrderAccOrcVarHC`) select the `/Order` source schema but retain
-seven stale `/Root/InputMessagePart_0/Order/...` source paths. Their tests
-explicitly verify that mismatch, the two renderable functoid output links,
-and preservation of all nine original links rather than inventing an aggregate
-schema or calling the stale endpoints a mapper rendering regression.
+and `OrderToSAPOrderAccOrcVarHC`) select the `/Order` source schema. Their seven
+obsolete `/Root/InputMessagePart_0/Order/...` aliases are rebased to that source
+root while the original selectors are retained for roundtrips. The tests verify
+renderable links and original link preservation without inventing an aggregate
+source envelope.
 
-The learning-path suite has 161 cases: 158 successful scenarios and three
-documented expected failures. Expected failures still execute the browser
+The learning-path suite has 168 cases: 167 successful scenarios and one
+documented expected sorting failure. Expected failures still execute the browser
 flow and fail if the defect unexpectedly disappears; remove their annotation
 when the corresponding product fix lands.
 

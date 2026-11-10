@@ -1,4 +1,4 @@
-import { BtmSerializer } from '../src/schema/btmSerializer';
+import { BtmSerializer } from '../../src/schema/btmSerializer';
 import { learningPathMaps, loadLearningPathMap, originalPages } from './fixtures/learningPath';
 import { expect, test } from './fixtures/mapperHost';
 

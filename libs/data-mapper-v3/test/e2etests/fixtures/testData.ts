@@ -1,11 +1,12 @@
 import path from 'node:path';
-import type { MapDocument, MapFunctoid, MapLink } from '../../src/model/mapModel';
-import type { FunctoidSummary } from '../../src/protocol/mapEditorProtocol';
-import type { SchemaNode, SchemaTree } from '../../src/model/schemaModel';
-import { BtmSerializer } from '../../src/schema/btmSerializer';
-import { resolveSchemaDependencies } from '../../src/schema/schemaDependencyResolver';
-import { readTextFileSync, resolveSchemaFilePath } from '../../src/schema/schemaFileResolver';
-import { SchemaParser } from '../../src/schema/schemaParser';
+import type { MapDocument, MapFunctoid, MapLink } from '../../../src/model/mapModel';
+import type { FunctoidSummary } from '../../../src/protocol/mapEditorProtocol';
+import type { SchemaNode, SchemaTree } from '../../../src/model/schemaModel';
+import { BtmSerializer } from '../../../src/schema/btmSerializer';
+import { resolveSchemaDependencies } from '../../../src/schema/schemaDependencyResolver';
+import { readTextFileSync, resolveSchemaFilePath } from '../../../src/schema/schemaFileResolver';
+import { SchemaParser } from '../../../src/schema/schemaParser';
+import { samplesDirectory } from './learningPathCorpus.cjs';
 
 export type TestSchemaNode = SchemaNode;
 export type TestSchema = SchemaTree;
@@ -164,7 +165,7 @@ export function createInitPayload(overrides: Partial<InitPayload> = {}): InitPay
 export async function loadSampleMap(
   relativePath: string,
   serializedContent?: string,
-  sampleDirectory = path.resolve(__dirname, '../samples')
+  sampleDirectory = samplesDirectory
 ): Promise<InitPayload> {
   const mapPath = path.resolve(sampleDirectory, relativePath);
   const content = serializedContent ?? readTextFileSync(mapPath);

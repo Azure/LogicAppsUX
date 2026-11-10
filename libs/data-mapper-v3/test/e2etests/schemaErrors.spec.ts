@@ -1,6 +1,6 @@
-import { resolveSchemaDependencies } from '../src/schema/schemaDependencyResolver';
-import { describeSchemaLoadError, SchemaNotFoundError } from '../src/schema/schemaLoadError';
-import { SchemaParser } from '../src/schema/schemaParser';
+import { resolveSchemaDependencies } from '../../src/schema/schemaDependencyResolver';
+import { describeSchemaLoadError, SchemaNotFoundError } from '../../src/schema/schemaLoadError';
+import { SchemaParser } from '../../src/schema/schemaParser';
 import { expect, test } from './fixtures/mapperHost';
 import { createInitPayload, paths } from './fixtures/testData';
 

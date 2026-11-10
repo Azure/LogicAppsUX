@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { loadLearningPathMap } from '../e2e/fixtures/learningPath';
+import { loadLearningPathMap } from './e2etests/fixtures/learningPath';
 import { LinkEndpointType } from '../src/model/mapModel';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { linkSchemaPath, normalizeSingleSourcePath, SchemaPathResolver } from '../src/schema/schemaPathResolver';

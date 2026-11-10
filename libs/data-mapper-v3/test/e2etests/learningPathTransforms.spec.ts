@@ -2,10 +2,11 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { XsltCompiler } from '../src/compiler/xsltCompiler';
-import { readTextFileSync } from '../src/schema/schemaFileResolver';
-import { resolveAssemblyFilePath, resolveExtensionObjectAssemblyPaths } from '../src/schema/extensionObjectResolver';
+import { XsltCompiler } from '../../src/compiler/xsltCompiler';
+import { readTextFileSync } from '../../src/schema/schemaFileResolver';
+import { resolveAssemblyFilePath, resolveExtensionObjectAssemblyPaths } from '../../src/schema/extensionObjectResolver';
 import { behaviorMaps, loadLearningPathMap } from './fixtures/learningPath';
+import { learningPathDirectory, packageRoot as root } from './fixtures/learningPathCorpus.cjs';
 import { expect, test, type MapperFixture } from './fixtures/mapperHost';
 
 interface OutputElement {
@@ -16,7 +17,6 @@ interface OutputElement {
   children: OutputElement[];
 }
 
-const root = path.resolve(__dirname, '..');
 const transformDirectory = path.join(root, 'tools', 'compiler-worker', 'runtime', 'win-x64', 'framework-transform');
 const transformExecutable = path.join(transformDirectory, 'BizTalk.DataMapper.FrameworkTransform.exe');
 
@@ -51,7 +51,7 @@ async function testMap(mapper: MapperFixture, relativePath: string, inputXml: st
   const compileMessage = await compiling;
   expect(compileMessage.data).toEqual(payload.map);
   const map = structuredClone(compileMessage.data);
-  const mapDirectory = path.resolve(root, 'e2etests', path.dirname(relativePath));
+  const mapDirectory = path.resolve(learningPathDirectory, path.dirname(relativePath));
   for (const page of map.pages) {
     for (const functoid of page.functoids) {
       for (const parameter of functoid.parameters) {
@@ -313,7 +313,7 @@ test.describe('BizTalk learning-path transformations @learning-path', () => {
     { file: 'IfThenElseSource3.xml', Name: 'Sandro Pereira', Sex: 'M', Age: '0', CivilStatusDescription: 'Married' },
   ]) {
     test(`three-page conditions choose exactly one branch for ${sample.file}`, async ({ mapper }) => {
-      const input = readTextFileSync(path.resolve(root, 'e2etests', 'Conditional-Pattern', 'TestFiles', '03', sample.file));
+      const input = readTextFileSync(path.join(learningPathDirectory, 'Conditional-Pattern', 'TestFiles', '03', sample.file));
       expect(input).toBeTruthy();
       const output = await testMap(mapper, behaviorMaps.conditions, input!);
       expect(output.namespace).toBe('http://WorkingWithConditions.IfThenElseDestination');

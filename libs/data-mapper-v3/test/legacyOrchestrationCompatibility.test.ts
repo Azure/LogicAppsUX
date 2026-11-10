@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { create } from 'xmlbuilder2';
-import { loadLearningPathMap } from '../e2e/fixtures/learningPath';
+import { loadLearningPathMap } from './e2etests/fixtures/learningPath';
+import { learningPathDirectory as corpusRoot } from './e2etests/fixtures/learningPathCorpus.cjs';
 import { orchestrationVariableScript } from '../src/compiler/orchestrationVariableScript';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids/functoidRegistry';
@@ -20,7 +21,6 @@ const require = createRequire(import.meta.url);
 const { buildLearningPathHelpers } = require('./native/buildLearningPathHelpers.cjs') as {
   buildLearningPathHelpers: (root: string) => string;
 };
-const corpusRoot = path.resolve(__dirname, '../e2etests');
 const directory = path.join('How-to-Access-Orchestration-Variables-from-Maps', 'HowToSendOrchestrationVariablesIntoMaps');
 const cases = [
   ['081', path.join(directory, 'UsingFunctoid', 'OrderToSAPOrderAccessOrcVarFunctoids.btm')],

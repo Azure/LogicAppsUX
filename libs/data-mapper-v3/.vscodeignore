@@ -6,8 +6,6 @@ node_modules/**
 test/**
 test-results/**
 playwright-report/**
-e2e/**
-e2etests/**
 .gitignore
 tsconfig.json
 webpack.*.js

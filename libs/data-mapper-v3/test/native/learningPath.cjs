@@ -4,21 +4,10 @@ const path = require('node:path');
 const vscode = require('vscode');
 const { findMapperFrame } = require('./suite.cjs');
 const { buildLearningPathHelpers } = require('./buildLearningPathHelpers.cjs');
-const { compareLearningPathPaths, getLearningPathExclusion } = require('./learningPathExclusions.cjs');
+const { getLearningPathExclusion } = require('./learningPathExclusions.cjs');
+const { getLearningPathMaps, learningPathDirectory } = require('../e2etests/fixtures/learningPathCorpus.cjs');
 
-const extensionPath = path.resolve(__dirname, '../..');
 const viewType = 'biztalkDataMapper.mapEditor';
-
-async function mapFiles(directory) {
-  const entries = await fs.readdir(directory, { withFileTypes: true });
-  const paths = await Promise.all(
-    entries.map(async (entry) => {
-      const fullPath = path.join(directory, entry.name);
-      return entry.isDirectory() ? mapFiles(fullPath) : entry.name.endsWith('.btm') ? [fullPath] : [];
-    })
-  );
-  return paths.flat().sort(compareLearningPathPaths);
-}
 
 function failureStage(output) {
   if (output.includes('Output validation failed:')) {
@@ -52,9 +41,9 @@ exports.run = async () => {
     const extension = vscode.extensions.getExtension('microsoft.btm-data-mapper');
     assert.ok(extension, 'Mapper development extension must be installed');
     await extension.activate();
-    await fs.cp(path.join(extensionPath, 'e2etests'), workspace, { recursive: true });
+    await fs.cp(learningPathDirectory, workspace, { recursive: true });
     buildLearningPathHelpers(workspace);
-    const corpus = await mapFiles(workspace);
+    const corpus = getLearningPathMaps(workspace).map((relativePath) => path.join(workspace, relativePath));
     assert.equal(corpus.length, 151, 'The entire learning-path corpus must be available');
     const filter = process.env.MAPPER_NATIVE_MAP_FILTER;
     const maps = filter ? corpus.filter((mapPath) => path.relative(workspace, mapPath).includes(filter)) : corpus;

@@ -1,5 +1,5 @@
-import { FunctoidRegistry } from '../src/functoids/functoidRegistry';
-import { BtmSerializer } from '../src/schema/btmSerializer';
+import { FunctoidRegistry } from '../../src/functoids/functoidRegistry';
+import { BtmSerializer } from '../../src/schema/btmSerializer';
 import { expect, test } from './fixtures/mapperHost';
 import { createMap, createMapFunctoid, createSchemaLink, paths } from './fixtures/testData';
 

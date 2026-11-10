@@ -14,6 +14,7 @@ import type { MapDocument } from '../src/model';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { CompilerWorkerClient, type WorkerCompileMapRequest } from '../src/worker/compilerWorkerClient';
 import { outputChannel, window as mockWindow } from './__mocks__/vscode';
+import { learningPathDirectory as fixtureRoot } from './e2etests/fixtures/learningPathCorpus.cjs';
 
 vi.mock('../src/worker/compilerWorkerClient', () => ({
   CompilerWorkerClient: vi.fn(() => ({ compileMap: vi.fn(), testMap: vi.fn() })),
@@ -28,7 +29,6 @@ vi.mock('vscode', async () => {
   };
 });
 
-const fixtureRoot = path.resolve(__dirname, '../e2etests');
 const helperPath = path.resolve(
   __dirname,
   '../tools/compiler-worker/runtime/win-x64/framework-transform/BizTalk.DataMapper.FrameworkTransform.exe'

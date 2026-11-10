@@ -1,13 +1,14 @@
 import { expect, test as base, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { MapDocument } from '../../src/model/mapModel';
-import type { HostToWebviewMessage, WebviewToHostMessage } from '../../src/protocol/mapEditorProtocol';
+import type { MapDocument } from '../../../src/model/mapModel';
+import type { HostToWebviewMessage, WebviewToHostMessage } from '../../../src/protocol/mapEditorProtocol';
 import { coverageEnabled, createCoverageReport } from '../coverage';
 import { MapperPage } from '../pages/mapperPage';
+import { packageRoot } from './learningPathCorpus.cjs';
 import { createInitPayload, type InitPayload } from './testData';
 
-const bundlePath = path.resolve(__dirname, '../../out/webview/webview.js');
+const bundlePath = path.join(packageRoot, 'out', 'webview', 'webview.js');
 const pageUrl = 'https://webview.test/index.html';
 const scriptUrl = 'https://webview.test/webview.js';
 const nonce = 'e2e-nonce';

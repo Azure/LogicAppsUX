@@ -17,6 +17,7 @@ import {
 } from '../src/model';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { BtmSerializer } from '../src/schema/btmSerializer';
+import { learningPathDirectory } from './e2etests/fixtures/learningPathCorpus.cjs';
 
 const fixtures = path.join(__dirname, 'fixtures', 'functoids');
 const sourceSchema = new SchemaParser().parse(fs.readFileSync(path.join(fixtures, 'FunctoidSource.xsd'), 'utf8'), 'src');
@@ -1385,9 +1386,7 @@ describe('XsltCompiler functoid coverage', () => {
 
   test.each(['MapOrderUsingCount', 'MapOrderUsingGenerateId'])('imports %s with its detached LearningPath grouping key', (mapName) => {
     const sample = path.join(
-      __dirname,
-      '..',
-      'e2etests',
+      learningPathDirectory,
       'Muenchian-Grouping-and-Sorting-without-losing-Map-functionalities',
       'MuenchianGrouping',
       'Sample1'

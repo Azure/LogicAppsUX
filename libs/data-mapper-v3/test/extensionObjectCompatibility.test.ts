@@ -8,7 +8,6 @@ import { XMLValidator } from 'fast-xml-parser';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi, type Mocked } from 'vitest';
 import * as vscode from 'vscode';
 import { create } from 'xmlbuilder2';
-import { loadLearningPathMap } from '../e2e/fixtures/learningPath';
 import { XsltCompiler, type CompileResult } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import { disposeDataMapperLogger } from '../src/logger';
@@ -19,6 +18,8 @@ import { readTextFileSync } from '../src/schema/schemaFileResolver';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { CompilerWorkerClient, type WorkerCompileMapRequest } from '../src/worker/compilerWorkerClient';
 import { outputChannel, window as mockWindow } from './__mocks__/vscode';
+import { loadLearningPathMap } from './e2etests/fixtures/learningPath';
+import { learningPathDirectory as corpusRoot } from './e2etests/fixtures/learningPathCorpus.cjs';
 
 vi.mock('../src/worker/compilerWorkerClient', () => ({
   CompilerWorkerClient: vi.fn(() => ({ compileMap: vi.fn(), testMap: vi.fn() })),
@@ -37,7 +38,6 @@ const xsltNamespace = 'http://www.w3.org/1999/XSL/Transform';
 const sourceNamespace = 'http://BizTalk.CallingExternalAssemblyFromInlineXSLT.CarInfo';
 const targetNamespace = 'http://BizTalk.CallingExternalAssemblyFromInlineXSLT.CarsOnSale';
 const scriptNamespace = 'http://schemas.microsoft.com/BizTalk/2003/ScriptNS0';
-const corpusRoot = path.resolve(__dirname, '../e2etests');
 const case025 = path.join(
   'Calling-external-assembly-from-Custom-XSLT',
   'BizTalk.CallingExternalAssemblyFromInlineXSLT',

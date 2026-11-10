@@ -1,4 +1,4 @@
-import { BtmSerializer } from '../src/schema/btmSerializer';
+import { BtmSerializer } from '../../src/schema/btmSerializer';
 import { expect, test } from './fixtures/mapperHost';
 import { loadSampleMap } from './fixtures/testData';
 

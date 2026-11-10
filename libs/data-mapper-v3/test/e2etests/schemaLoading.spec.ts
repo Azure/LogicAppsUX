@@ -1,4 +1,4 @@
-import { SchemaParser } from '../src/schema/schemaParser';
+import { SchemaParser } from '../../src/schema/schemaParser';
 import { expect, test } from './fixtures/mapperHost';
 import { createMap, createSchemaLink, loadSampleMap, paths } from './fixtures/testData';
 

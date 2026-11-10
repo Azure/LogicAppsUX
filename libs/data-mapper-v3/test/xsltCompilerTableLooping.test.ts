@@ -9,6 +9,7 @@ import { DEFAULT_MAP_OPTIONS, LinkEndpointType, type MapDocument, type MapLink, 
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { resolveSchemaFilePath } from '../src/schema/schemaFileResolver';
 import { SchemaParser } from '../src/schema/schemaParser';
+import { learningPathDirectory } from './e2etests/fixtures/learningPathCorpus.cjs';
 
 const parser = new SchemaParser();
 const source = parser.parse(
@@ -270,7 +271,7 @@ function readXml(filename: string): string {
 }
 
 function loadSample(relative: string) {
-  const filename = path.resolve(__dirname, '..', 'e2etests', ...relative.split('/'));
+  const filename = path.resolve(learningPathDirectory, ...relative.split('/'));
   const map = new BtmSerializer().deserialize(readXml(filename));
   const sourceTree = parser.parse(readXml(resolveSchemaFilePath(path.dirname(filename), map.sourceSchema.location)), 'source');
   const targetTree = parser.parse(readXml(resolveSchemaFilePath(path.dirname(filename), map.targetSchema.location)), 'target');

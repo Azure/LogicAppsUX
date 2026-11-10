@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { create } from 'xmlbuilder2';
-import { loadLearningPathMap } from '../e2e/fixtures/learningPath';
+import { loadLearningPathMap } from './e2etests/fixtures/learningPath';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 
 const helper = path.resolve(
