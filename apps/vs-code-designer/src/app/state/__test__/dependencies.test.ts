@@ -33,16 +33,17 @@ describe('dependencies', () => {
     }
   });
 
-  describe('shouldCheckForDependencyUpdates', () => {
-    it('returns false during strict E2E validation to preserve admitted dependency bytes', () => {
-      process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = '1';
-      globalStateGet.mockReturnValue(undefined);
-      expect(shouldCheckForDependencyUpdates()).toBe(false);
+  describe.each([undefined, '0', '1'])('shouldCheckForDependencyUpdates with strict validation %s', (strictValidation) => {
+    beforeEach(() => {
+      if (strictValidation !== undefined) {
+        process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = strictValidation;
+      }
     });
 
     it('returns true when no timestamp has been recorded', () => {
       globalStateGet.mockReturnValue(undefined);
       expect(shouldCheckForDependencyUpdates()).toBe(true);
+      expect(globalStateGet).toHaveBeenCalledWith(lastDependencyUpdateCheckKey);
     });
 
     it('returns true when the stored value is not a number', () => {
@@ -70,6 +71,12 @@ describe('dependencies', () => {
     it('returns false when less than the interval has elapsed', () => {
       const now = 1_000_000_000_000;
       globalStateGet.mockReturnValue(now - 1000);
+      expect(shouldCheckForDependencyUpdates(now)).toBe(false);
+    });
+
+    it('returns false when the recorded timestamp is in the future', () => {
+      const now = 1_000_000_000_000;
+      globalStateGet.mockReturnValue(now + 1000);
       expect(shouldCheckForDependencyUpdates(now)).toBe(false);
     });
 

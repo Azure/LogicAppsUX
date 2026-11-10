@@ -113,6 +113,14 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.
+- **Separate update eligibility from strict validation:** the user-directed
+  suppression-removal candidate restores the normal persisted 24-hour
+  throttle while keeping strict fail-closed checks enabled. Native acceptance
+  remains pending; do not disable strict validation to audit updates.
+  Fresh profiles lose persisted throttle history even when phases share
+  installed binaries. Bundle refresh also records that
+  timestamp, so it cannot attest full setup. Prove real cold/warm setup and
+  exact executable identity; do not substitute timestamp seeding or re-pinning.
 - **Preserve original Run After names:** scope to the unique visible predecessor
   row and match its exact browser-formatted label. Reuse
   `runAfterPredecessorLabelDom`; percent placeholders can consume the extra title

@@ -72,6 +72,15 @@ Likewise, a local incomplete-write reproduction does not prove the cause of an
 earlier native failure. Do not attribute committed-source success to uncommitted
 feed or readiness experiments.
 
+Dependency-update eligibility and strict validation are separate contracts.
+The user-directed suppression-removal candidate restores the normal persisted
+24-hour throttle under strict E2E validation without disabling fail-closed
+checks; its native acceptance is pending. Fresh profiles do not inherit
+throttling history merely because phases share an installed runtime root; the shared timestamp can
+also be recorded by bundle refresh, so it is not proof of complete dependency
+setup. Prove authentic cold setup, warm persistence and exact executable
+admission rather than manufacturing a recent timestamp or re-pinning binaries.
+
 For each cleanup, change one coherent area, preserve the original scenario and
 visible/semantic/ownership assertions, run the focused local controls and
 affected complete Linux/Windows lanes, then require canonical full23/protected

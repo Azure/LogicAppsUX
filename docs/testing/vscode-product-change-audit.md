@@ -73,8 +73,9 @@ candidate below; its native acceptance remains pending.
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
 | Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
-| Removal candidate; native acceptance pending | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local activation controls and affected both-OS/full23 proof are required; the earlier minimal-return acceptance does not prove this removal |
-| Test/fixture candidates; not removed | E2 update suppression, E4 environment-token session fallback | Prove authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
+| Removal candidate; canonical acceptance pending | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls and affected 14-lane run `15983333` accepted at `3e9d343a0`; identical-SHA canonical run `15984836` remains in progress |
+| User-directed removal candidate; native acceptance pending | E2 update suppression | Restore normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected both-OS and identical-SHA full23 proof remain pending |
+| Test/fixture candidate; not removed | E4 environment-token session fallback | Prove supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
@@ -845,14 +846,30 @@ targeted artifacts pass acceptance, require canonical full23/protected rollup
 at the identical immutable SHA. Optional/noncanonical consumers still need
 their own evidence; canonical creation is not optional codeful-debug proof.
 Do not credit this candidate with the earlier `82477dc0e` native results.
-Native acceptance of this workspace-initialization removal is pending.
+Commit `3e9d343a00eac073ce70896a706484f6e2ae37d7` passed affected
+[run 15983333](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15983333):
+all 14 producing-attempt originals passed source/run, ordered-evidence and
+terminal acceptance. Linux regeneration required attempt 3; its failed first
+two attempts remain preserved. The same `vscode-repeat` JSON parse failure
+also occurred before this removal in run `15979977`, and the committed
+regeneration launcher already set the workspace-skip flag to `0`. These facts
+do not establish a causal removal regression or eliminate intermittency.
+The regeneration/write-observation investigation is separate; its local
+controlled reproduction is not historical native writer attribution.
+
+Identical-SHA canonical
+[run 15984836](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15984836)
+is in progress at this audit checkpoint. Keep the removal, but do not claim
+canonical acceptance. The user subsequently authorized preparing the separate
+E2 ablation while this run finishes; its existing monitor retains retry ownership.
+Do not queue E2 concurrently or credit E1 with E2's outcome.
 
 ### E2. E2E mode suppresses dependency update checks
 
 **Source:** `src/app/state/dependencies.ts:13-24`. **Introduced:** `49acbcc31`.
 
-**Before/after:** Normal persisted-state throttling is bypassed when strict E2E
-dependency validation is set; update checks return false.
+**Audited change:** Normal persisted-state throttling was bypassed when strict
+E2E dependency validation was set; update checks returned false.
 
 **Why/only to pass tests?** Yes: prevent isolated profiles from replacing the
 same pre-admitted dependency bytes. No independent ordinary-user defect was
@@ -866,6 +883,115 @@ an inherent need for a shipping E2E update bypass.
 
 **Disposition:** Restore/test-adapt. A product dependency-pinning capability, if
 desired, is a separate feature.
+
+#### E2 follow-up audit: scope and replacement proof, 2026-11-10
+
+The pre-removal investigation compared the committed predicate at
+`3e9d343a00eac073ce70896a706484f6e2ae37d7` with the original comparison base
+`41d0e2c64c411c5c2f90f9d4409fb496b2f9bea6`. That audit made no shipping change.
+The focused VS Code test-specialist consultation required authentic cold/warm
+setup, exact executable admission and independent both-OS proof; a recent
+timestamp or a green existing integration run cannot supply those guarantees.
+
+**Established behavior and boundaries:**
+
+- `state/dependencies.ts:21-29` returns before reading persisted state whenever
+  `LA_E2E_STRICT_DEPENDENCY_VALIDATION=1`. Without that branch, absent/invalid
+  state and an elapsed **24-hour** interval allow checks; recent state throttles
+  them. The original implementation already has this normal throttle.
+- The same flag separately requests fail-closed validation in
+  `utils/strictDependencyValidation.ts:4-7` and
+  `commands/binaries/validateAndInstallBinaries.ts:133,160-162`. Do not unset
+  the entire flag to remove update suppression: preserve installed-bundle
+  requirements and error propagation. The isolated candidate concerns only
+  the early return in the update predicate.
+- Scope includes managed Func and .NET update/reinstallation paths, Node's
+  outdated-version warning and user-selected Update action, and the bundle
+  fast path. It is not a universal prohibition on installation: missing,
+  corrupt or unrunnable dependencies still enter their caller-specific repair
+  paths. The .NET validator uses presence/version checks; do not describe it
+  as having the same manifest-integrity check as Node and managed Func.
+- `utils/bundleFeed.ts:1454-1483,1756-1769` also consumes and records this shared
+  throttle. A successful background bundle-feed refresh can record the key
+  independently of a successful complete Node/Func/.NET validation pass.
+  Therefore the persisted timestamp is not an attestation of full setup.
+  These references were read from committed source, not the dirty feed trial.
+- `scripts/run-e2e-cli.js:1888-1947` reuses one isolated HTTP-family runtime
+  root across bootstrap/create/run, but gives those phases fresh profile
+  suffixes. Root isolation between suites does not carry VS Code globalState
+  between their phases. A fresh-profile consumer can legitimately find due
+  updates to already-admitted bytes. This establishes a fixture constraint,
+  not an independently required shipping bypass or native mutation.
+- Not every regular-Code phase runs managed validation. For example,
+  `workspaceMultiRootLaunch.ts:115-136` deliberately uses the normal unmanaged
+  branch with PATH resolution bound to the attested Func. Preserve that
+  contract rather than blanket-enabling managed installation.
+
+**Executed controls:** The five existing state/orchestrator/managed-validator
+test files passed **45 tests** using:
+
+```powershell
+pnpm.cmd exec vitest run --workspace vitest.workspace.js --project vscode-designer --coverage.enabled=false apps/vs-code-designer/src/app/state/__test__/dependencies.test.ts apps/vs-code-designer/src/app/commands/binaries/__test__/validateAndInstallBinaries.test.ts apps/vs-code-designer/src/app/commands/funcCoreTools/__test__/validateFuncCoreToolsIsLatest.test.ts apps/vs-code-designer/src/app/commands/nodeJs/__test__/validateNodeJsIsLatest.test.ts apps/vs-code-designer/src/app/commands/dotnet/__test__/validateDotNetIsLatest.test.ts
+```
+
+These are mocked local controls, not authentic package installation or native
+acceptance. The orchestrator's bundle collaborator is mocked; this pass does
+not validate the excluded dirty feed changes.
+
+A retained session control transpiles and executes the exact original/current
+committed state modules with controlled environment and in-memory globalState:
+**42 predicate observations pass**, plus record/read controls for each flag.
+The only five return-value differences are strict-flag `1` with absent,
+non-number, NaN, exactly-expired or older state: original checks are due,
+current checks are suppressed without reading state. Recent-state behavior is
+the same. This counterfactual establishes the branch effect, not real profile
+persistence, completed installation, feed concurrency or native replacement.
+
+**Pre-removal audit recommendations, not native acceptance:** After E1 canonical
+acceptance, prove normal cold setup and warm persisted restart, interval-boundary
+behavior, due-update behavior and throttled missing/corrupt/unrunnable handling.
+Identify which consumers actually share mutable roots and bind admission to
+the physical executable that runs. Do not copy unrelated profile/auth state,
+seed a recent timestamp as a substitute for real setup, re-pin binaries after
+activation, or relabel replacement bytes as the original admission. Preserve
+real update prompts and caller-specific error policies. A fixture-only
+replacement must demonstrate these contracts on affected complete Linux and
+Windows families, followed by canonical full23 at the identical immutable SHA.
+Those audit results did not themselves authorize removal or prove native
+acceptance; the uncommitted feed and regeneration drafts remain excluded.
+
+#### E2 user-directed removal experiment, 2026-11-10
+
+The user explicitly requested removing suppression and observing the E2E
+outcome. The candidate removes only the environment-gated early return and
+its obsolete explanation. The normal persisted 24-hour throttle, strict
+installed-bundle validation and failure propagation, runner flags, runtime
+admission assertions and fixtures remain unchanged. No timestamp seeding,
+dependency freezing or post-activation re-pinning is introduced.
+
+The original October 29 commit `49acbcc31` explained suppression as preserving
+pre-admitted dependency bytes across isolated profiles sharing a runtime root.
+History establishes that motivation, not a controlled native failure proving
+the suppression necessary.
+
+The regression tests exercise the normal predicate under unset, `0` and `1`
+flag values. Before the product edit, six strict-`1` due-state assertions
+failed and the other 20 tests passed. After removal, the five-file command
+above passed **61 tests**, including all 26 predicate/persistence cases and
+the unchanged strict-validation/orchestration and managed-validator controls.
+Biome passed for both changed TypeScript files. Native acceptance remains pending.
+`pnpm.cmd --dir apps\vs-code-designer run test:e2e-cli:build` also passed,
+including extension/webview builds, CLI compilation and the complete local
+CLI regression gate. This local worktree still contains excluded feed and
+regeneration drafts; that gate is not immutable-source native acceptance.
+
+The focused VS Code test-specialist review selected six complete affected
+families on both OSes: MSN Weather, HTTP timeout, stateless variables, Run After
+persistence, workspace artifact regeneration and workspace multi-root.
+After the preceding E1 run settles, run these 12 lanes, then canonical full23
+at the identical immutable candidate SHA. Preserve every failed attempt and
+distinguish dependency update/setup failures, actual execution failures and
+admission-identity assertion failures; do not adapt fixtures to hide them.
 
 ### E3. Required WIF subscription provider and authentication integration
 
