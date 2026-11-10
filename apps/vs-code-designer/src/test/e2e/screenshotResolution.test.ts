@@ -1,5 +1,6 @@
 import * as assert from 'node:assert/strict';
 import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { inflateSync } from 'node:zlib';
 import * as vscode from 'vscode';
 import {
@@ -35,7 +36,7 @@ suiteTeardown(async () => {
 });
 
 suite('Native 4K workbench renderer', () => {
-  test('renders editor and responsive webview at 4K and preserves CSS pointer coordinates', async function () {
+  test('renders 125% content at 4K and preserves CSS pointer coordinates', async function () {
     this.timeout(120_000);
     const document = await vscode.workspace.openTextDocument({
       language: 'json',
@@ -58,7 +59,8 @@ suite('Native 4K workbench renderer', () => {
         section:last-child{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end}
         button{font:20px system-ui;background:#b8e9a0;padding:12px;color:#132738;border:0}
       </style></head><body><main>
-        <section>4K responsive webview<br>Top left — real CSS layout</section>
+        <section>4K responsive webview<br>Top left — real CSS layout
+          <div style="width:100px;height:40px;background:#ff00ff"></div></section>
         <section>Top right — native raster, not upscaled</section>
         <section>Bottom left — full-height rendered content</section>
         <section>Bottom right<button id="probe">Click with CSS coordinates</button></section>
@@ -90,6 +92,22 @@ suite('Native 4K workbench renderer', () => {
       } catch (error) {
         console.log(`[4k-proof] Browser window-control unavailable: ${String(error)}`);
       }
+      await cdp.send('Emulation.setDeviceMetricsOverride', {
+        width: 3840,
+        height: 2160,
+        deviceScaleFactor: 1,
+        mobile: false,
+        screenWidth: 3840,
+        screenHeight: 2160,
+      });
+      await cdp.evaluate(undefined, viewportExpression);
+      const baselineResponse = await cdp.send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
+      const baseline = Buffer.from((baselineResponse as { result: { data: string } }).result.data, 'base64');
+      assertReal4kRaster(baseline);
+      const baselineMarker = measureRasterMarker(baseline);
+      assert.deepEqual(baselineMarker, { width: 100, height: 40 }, '100% must rasterize the fixed CSS marker at native scale');
+      await cdp.send('Emulation.clearDeviceMetricsOverride');
+      assert.deepEqual(await cdp.evaluate(undefined, viewportExpression), originalViewport);
       const standard = await captureEvidenceScreenshot(
         '4k-editor-webview',
         {
@@ -98,7 +116,17 @@ suite('Native 4K workbench renderer', () => {
         },
         { binding: { activeTabText: ['4K capture fixture'] } }
       );
-      assertReal4kRaster(fs.readFileSync(standard));
+      const scaled = fs.readFileSync(standard);
+      assertReal4kRaster(scaled);
+      fs.writeFileSync(path.join(path.dirname(standard), '4k-100-percent-comparison.png'), baseline);
+      const scaledMarker = measureRasterMarker(scaled);
+      assert.ok(
+        Math.abs(scaledMarker.width - 125) <= 1 && Math.abs(scaledMarker.height - 50) <= 1,
+        `125% must enlarge actual raster content, not just metadata: ${JSON.stringify(scaledMarker)}`
+      );
+      console.log(
+        `[4k-proof] Actual fixed CSS marker raster: 100%=${JSON.stringify(baselineMarker)}; 125%=${JSON.stringify(scaledMarker)}`
+      );
       const afterWrapper = await cdp.evaluate(undefined, viewportExpression);
       console.log(`[4k-proof] Standard evidence wrapper returned: ${JSON.stringify(afterWrapper)}`);
       assert.deepEqual(afterWrapper, evidenceScreenshotViewport, 'Standard wrapper must retain 4K between interactions');
@@ -109,7 +137,13 @@ suite('Native 4K workbench renderer', () => {
       assert.ok(before);
       assertReal4kRaster(fs.readFileSync(before));
       assert.deepEqual(await cdp.evaluate(undefined, viewportExpression), evidenceScreenshotViewport);
-      await captureDiagnosticScreenshot('4k-diagnostic-wrapper', { reason: 'verify-transient-diagnostic-does-not-clear-owner' });
+      const diagnostic = await captureDiagnosticScreenshot('4k-diagnostic-wrapper', {
+        reason: 'verify-transient-diagnostic-does-not-clear-owner',
+      });
+      assert.ok(diagnostic);
+      const diagnosticPng = fs.readFileSync(diagnostic);
+      assert.deepEqual(readScreenshotPngDimensions(diagnosticPng), { width: 3072, height: 1728 });
+      assert.deepEqual(measureRasterMarker(diagnosticPng), { width: 100, height: 40 });
       assert.deepEqual(
         await cdp.evaluate(undefined, viewportExpression),
         evidenceScreenshotViewport,
@@ -127,9 +161,12 @@ suite('Native 4K workbench renderer', () => {
         webview.contextId,
         `(() => {const r=document.getElementById('probe').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:innerWidth,height:innerHeight,dpr:devicePixelRatio};})()`
       );
-      assert.equal(button.dpr, 1);
-      assert.ok(button.height > 1900, `Webview must reflow to the tall 4K workbench: ${JSON.stringify(button)}`);
-      assert.ok(button.x > 0 && button.x < button.width && button.y > 1800 && button.y < button.height);
+      // Electron's out-of-process webview retains native DPR while the owning
+      // workbench surface composites it at 125%, as the PNG marker proves.
+      assert.equal(button.dpr, originalViewport?.deviceScaleFactor);
+      assert.ok(button.height > 1500 && button.height < 1728, `Webview must reflow to the logical workbench: ${JSON.stringify(button)}`);
+      assert.ok(button.x > 0 && button.x < button.width && button.y > 1400 && button.y < button.height);
+      console.log(`[4k-proof] Nested webview CSS pointer geometry: ${JSON.stringify(button)}`);
       for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased']) {
         await webview.cdp.send('Input.dispatchMouseEvent', {
           type,
@@ -182,4 +219,52 @@ function assertReal4kRaster(png: Buffer): void {
   }
   const pixels = inflateSync(Buffer.concat(chunks));
   assert.equal(pixels.length, (3840 * channels + 1) * 2160);
+}
+
+function measureRasterMarker(png: Buffer): { width: number; height: number } {
+  const { width, height } = readScreenshotPngDimensions(png);
+  const channels = png[25] === 6 ? 4 : 3;
+  const chunks: Buffer[] = [];
+  for (let offset = 8; offset + 12 <= png.length; ) {
+    const length = png.readUInt32BE(offset);
+    if (png.toString('ascii', offset + 4, offset + 8) === 'IDAT') {
+      chunks.push(png.subarray(offset + 8, offset + 8 + length));
+    }
+    offset += length + 12;
+  }
+  const filtered = inflateSync(Buffer.concat(chunks));
+  const stride = width * channels;
+  let previous = Buffer.alloc(stride);
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < height; y++) {
+    const filter = filtered[y * (stride + 1)];
+    assert.ok(filter <= 4, `Unsupported PNG filter ${filter}`);
+    const row = Buffer.alloc(stride);
+    for (let i = 0; i < stride; i++) {
+      const left = i >= channels ? row[i - channels] : 0;
+      const up = previous[i];
+      const upperLeft = i >= channels ? previous[i - channels] : 0;
+      const p = left + up - upperLeft;
+      const pa = Math.abs(p - left);
+      const pb = Math.abs(p - up);
+      const pc = Math.abs(p - upperLeft);
+      const paeth = pa <= pb && pa <= pc ? left : pb <= pc ? up : upperLeft;
+      const predictor = [0, left, up, Math.floor((left + up) / 2), paeth][filter];
+      row[i] = (filtered[y * (stride + 1) + i + 1] + predictor) & 255;
+    }
+    for (let x = 0; x < width; x++) {
+      if (row[x * channels] === 255 && row[x * channels + 1] === 0 && row[x * channels + 2] === 255) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+    previous = row;
+  }
+  assert.ok(maxX >= minX && maxY >= minY, 'Actual PNG pixels must contain the fixed CSS marker');
+  return { width: maxX - minX + 1, height: maxY - minY + 1 };
 }

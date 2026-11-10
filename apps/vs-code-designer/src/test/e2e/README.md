@@ -4,16 +4,22 @@ This directory contains extension-host smoke tests for the Logic Apps VS Code ex
 
 ## Native 4K screenshot rendering
 
-Evidence screenshots render the **owning workbench** at 3840×2160 CSS pixels
-with device scale factor **1**, then capture its CDP surface. PNG IHDR dimensions
+Evidence screenshots render the **owning workbench** at 3072×1728 CSS pixels
+with device scale factor **1.25** (125% rendering), then capture its CDP surface.
+Fixed-size text and controls occupy 25% more raster pixels per dimension than
+at 100%, with less logical layout space at the same output resolution. PNG IHDR dimensions
 must independently equal 3840×2160 before evidence is accepted. Nothing resizes
 or upscales the bitmap. `captureViewport` in the sidecar identifies the workbench
-raster; `geometry.viewport` still describes the semantic sampling context (which
+logical viewport and DPR; `geometry.viewport` still describes the semantic sampling context (which
 may be a smaller nested webview).
+Electron's out-of-process webviews can still report native DPR 1 while the
+owning surface composites them at 125%; do not infer raster scale from nested
+`devicePixelRatio` or multiply pointer coordinates by either DPR.
 
 Native CLI launchers request `--window-size=3840,2160` and
 `--force-device-scale-factor=1`; Linux native CI provides a 3840×2160×24 Xvfb
-display. These are supporting settings, not authoritative screenshot sizing:
+display. Native launch DPR stays 1; the retained CDP owner applies 125% renderer
+scaling before evidence readiness. These are supporting settings, not authoritative screenshot sizing:
 Code can restore/clamp native window bounds, and Electron may not expose
 `Browser.getWindowForTarget`/`Browser.setWindowBounds`.
 
@@ -39,7 +45,11 @@ itself.
 Strict semantic/ordered readiness, input coordinates, and timeout budgets are
 unchanged. This proves **renderer fidelity**, not physical native window size or
 desktop-DPI behavior. Urgent diagnostics do not resize failed UI; their fallback
-desktop screenshots remain diagnostic-only and are not guaranteed 4K.
+desktop screenshots remain diagnostic-only and are not guaranteed 4K. Capture
+scaling belongs to the capturing CDP session: a separate diagnostic connection
+can capture 3072×1728 at native scale even while observing the retained owner's
+3072×1728 / DPR 1.25 DOM metrics. Only evidence captured through its prepared
+owner has the fixed 3840×2160 raster guarantee.
 
 The additive, **local-only** `screenshotResolution` label uses an isolated empty
 extensions directory, an editor and a responsive VS Code webview. It checks

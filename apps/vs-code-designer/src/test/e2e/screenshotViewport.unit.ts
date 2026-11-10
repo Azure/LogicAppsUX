@@ -13,7 +13,7 @@ export function pngHeader(width = 3840, height = 2160): Buffer {
   return header;
 }
 
-test('4K uses top-level CSS metrics, explicit DPR1 and the remaining deadline', async () => {
+test('4K at 125% uses logical CSS metrics, explicit DPR1.25 and the remaining deadline', async () => {
   const calls: unknown[][] = [];
   await prepareEvidenceScreenshotViewport(
     {
@@ -28,12 +28,12 @@ test('4K uses top-level CSS metrics, explicit DPR1 and the remaining deadline', 
   assert.equal(calls.length, 1);
   assert.equal(calls[0][0], 'Emulation.setDeviceMetricsOverride');
   assert.deepEqual(calls[0][1], {
-    width: 3840,
-    height: 2160,
-    deviceScaleFactor: 1,
+    width: 3072,
+    height: 1728,
+    deviceScaleFactor: 1.25,
     mobile: false,
-    screenWidth: 3840,
-    screenHeight: 2160,
+    screenWidth: 3072,
+    screenHeight: 1728,
   });
   const options = calls[0][2] as { timeoutMs: number };
   assert.ok(options.timeoutMs > 0 && options.timeoutMs <= 500);
@@ -64,6 +64,7 @@ test('PNG IHDR is measured independently; lower resolution, DPR2 and malformed d
     [1024, 768],
     [1440, 900],
     [1920, 1080],
+    [3072, 1728],
     [7680, 4320],
   ]) {
     assert.throws(() => assertEvidenceScreenshotDimensions(pngHeader(width, height)), new RegExp(`${width}x${height}`));

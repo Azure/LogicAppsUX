@@ -2,9 +2,10 @@
  * Render the workbench at 4K, independently of the host desktop's size/DPI.
  * --window-size is only a launch hint: Code can restore or clamp native bounds.
  * CDP metrics cause real layout/rasterization, not bitmap upscaling. Input
- * coordinates remain CSS pixels because the device scale factor is one.
+ * coordinates remain CSS pixels, independently of the raster device scale.
  */
-export const evidenceScreenshotViewport = { width: 3840, height: 2160, deviceScaleFactor: 1 } as const;
+export const evidenceScreenshotViewport = { width: 3072, height: 1728, deviceScaleFactor: 1.25 } as const;
+export const evidenceScreenshotDimensions = { width: 3840, height: 2160 } as const;
 
 export async function prepareEvidenceScreenshotViewport(
   cdp: {
@@ -47,7 +48,7 @@ export function readScreenshotPngDimensions(png: Buffer): { width: number; heigh
 
 export function assertEvidenceScreenshotDimensions(png: Buffer): void {
   const { width, height } = readScreenshotPngDimensions(png);
-  if (width !== evidenceScreenshotViewport.width || height !== evidenceScreenshotViewport.height) {
+  if (width !== evidenceScreenshotDimensions.width || height !== evidenceScreenshotDimensions.height) {
     throw new Error(`Evidence screenshot must be native 3840x2160; CDP returned ${width}x${height}`);
   }
 }

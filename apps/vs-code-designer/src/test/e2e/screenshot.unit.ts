@@ -93,7 +93,7 @@ async function test4kCaptureContract(
   assert.equal(methods[0], 'Emulation.setDeviceMetricsOverride', 'Resize must precede observations and latches');
   assert.ok(file);
   const metadata = JSON.parse(fs.readFileSync(file.replace(/\.png$/, '.json'), 'utf8'));
-  assert.deepEqual(metadata.captureViewport, { width: 3840, height: 2160, deviceScaleFactor: 1 });
+  assert.deepEqual(metadata.captureViewport, { width: 3072, height: 1728, deviceScaleFactor: 1.25 });
   const wrongSize = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
     captureData: fakePngHeader(1024, 768).toString('base64'),
   });
