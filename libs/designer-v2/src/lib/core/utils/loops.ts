@@ -163,7 +163,8 @@ export const addForeachToNode = createAsyncThunk(
         customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
-        dispatch
+        dispatch,
+        state.workflow.isConsumptionWorkflow
       )) as NodeDataWithOperationMetadata[];
 
       const repetitionInfo = await getRepetitionContext(
@@ -299,7 +300,6 @@ const getArrayDetailsForNestedForeach = (
         : undefined
     );
 
-    // eslint-disable-next-line no-loop-func
     const alreadyInLoop = repetitionContext.repetitionReferences.some((repetitionReference) => {
       const { repetitionValue } = repetitionReference;
       if (typeof repetitionValue !== 'string') {

@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-
-/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { getLegacyConnectionReferenceKey } from '../../actions/bjsworkflow/connections';
@@ -67,7 +64,8 @@ export const initializeOperationDetailsForSwagger = async (
   references: ConnectionReferences,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  isConsumptionWorkflow?: boolean
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const staticResultService = StaticResultService();
@@ -100,7 +98,15 @@ export const initializeOperationDetailsForSwagger = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, /* manifest */ undefined, parsedSwagger, operation, workflowKind);
+      const settings = getOperationSettings(
+        isTrigger,
+        nodeOperationInfo,
+        /* manifest */ undefined,
+        parsedSwagger,
+        operation,
+        workflowKind,
+        isConsumptionWorkflow
+      );
 
       return [
         {

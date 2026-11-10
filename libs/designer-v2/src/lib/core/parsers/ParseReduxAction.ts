@@ -145,7 +145,9 @@ export const initializeGraphState = createAsyncThunk<
                 parameters ?? {},
                 customCodeWithData,
                 workflow.workflowKind,
-                dispatch
+                dispatch,
+                undefined,
+                workflow.isConsumptionWorkflow
               ),
               getConnectionsApiAndMapping(deserializedWorkflow, dispatch),
             ]);

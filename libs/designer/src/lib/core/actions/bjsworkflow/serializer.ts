@@ -1359,7 +1359,11 @@ const getSerializedRuntimeConfiguration = (
   if (isSecureOutputsSet) {
     properties.push(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS);
   }
-  if (settings.secureErrorResponse?.isSupported && settings.secureErrorResponse.value) {
+  if (
+    settings.secureErrorResponse?.value &&
+    (settings.secureErrorResponse.isSupported ||
+      !properties.some((property) => equals(property, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE)))
+  ) {
     properties.push(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE);
   }
 

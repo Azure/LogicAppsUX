@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
-import { extendUpstreamNodeIdsForScopePaste } from '../copypaste';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import { extendUpstreamNodeIdsForScopePaste, pasteOperation } from '../copypaste';
+import * as add from '../add';
+import * as initialize from '../initialize';
 import type { RootState } from '../../..';
+import { initializeNodes, type NodeData } from '../../../state/operation/operationMetadataSlice';
 import { createWorkflowEdge, createWorkflowNode } from '../../../utils/graph';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { configureStore } from '@reduxjs/toolkit';
 
 // Graph shape:
 //   root
@@ -107,4 +111,65 @@ describe('extendUpstreamNodeIdsForScopePaste', () => {
     const result = extendUpstreamNodeIdsForScopePaste(['Init_Variable'], 'For_each', undefined, state, nodeMap);
     expect(result.filter((id) => id === 'Init_Variable')).toHaveLength(1);
   });
+});
+
+describe('pasteOperation secure error response', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each([
+    { workflowKind: 'stateful' as const, copiedSupport: true, expectedSupport: false },
+    { workflowKind: undefined, copiedSupport: false, expectedSupport: true },
+    { workflowKind: undefined, copiedSupport: undefined, expectedSupport: true },
+  ])(
+    'uses the destination workflow for support (kind: $workflowKind, copied support: $copiedSupport)',
+    async ({ workflowKind, copiedSupport, expectedSupport }) => {
+      const state = buildState();
+      state.workflow.workflowKind = workflowKind;
+      vi.spyOn(add, 'initializeOperationDetails').mockResolvedValue(undefined);
+      vi.spyOn(initialize, 'updateAllUpstreamNodes').mockReturnValue(undefined);
+
+      const pastedNodes: NodeData[] = [];
+      const store = configureStore({
+        reducer: (currentState: RootState = state) => currentState,
+        middleware: (getDefaultMiddleware) =>
+          getDefaultMiddleware().concat(() => (next) => (action) => {
+            if (initializeNodes.match(action)) {
+              pastedNodes.push(...action.payload.nodes);
+            }
+            return next(action);
+          }),
+      });
+
+      await store
+        .dispatch(
+          pasteOperation({
+            nodeId: 'pasted_http',
+            relationshipIds: { graphId: 'root', parentId: 'manual' },
+            operationInfo: { connectorId: 'connectionProviders/http', operationId: 'http', type: 'Http' },
+            nodeTokenData: { tokens: [], upstreamNodeIds: [] },
+            nodeData: {
+              id: 'source_http',
+              nodeInputs: { parameterGroups: {} },
+              nodeOutputs: { outputs: {} },
+              nodeDependencies: { inputs: {}, outputs: {} },
+              operationMetadata: { iconUri: '', brandColor: '' },
+              settings: {
+                secureInputs: { isSupported: true, value: true },
+                ...(copiedSupport === undefined ? {} : { secureErrorResponse: { isSupported: copiedSupport, value: true } }),
+              },
+            },
+          })
+        )
+        .unwrap();
+
+      expect(pastedNodes).toHaveLength(1);
+      expect(pastedNodes[0].settings?.secureErrorResponse).toEqual({
+        isSupported: expectedSupport,
+        value: copiedSupport !== undefined,
+      });
+      expect(pastedNodes[0].settings?.secureInputs).toEqual({ isSupported: true, value: true });
+    }
+  );
 });

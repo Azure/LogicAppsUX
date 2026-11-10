@@ -158,7 +158,7 @@ export const getOperationSettings = (
       value: getSecureOutputsSetting(operation),
     },
     secureErrorResponse: {
-      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(isTrigger, nodeType),
+      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(isTrigger, nodeType, workflowKind),
       value: getSecureErrorResponseSetting(operation),
     },
     disableAsyncPattern: {
@@ -943,14 +943,18 @@ const hasSecureDataProperty = (definition: LogicAppsV2.OperationDefinition | und
   return secureData?.properties?.some((property: string) => equals(property, propertyName)) ?? false;
 };
 
-const isErrorResponsePropertySupportedInSecureDataSetting = (isTrigger: boolean, nodeType: string): boolean => {
+export const isErrorResponsePropertySupportedInSecureDataSetting = (
+  isTrigger: boolean,
+  nodeType: string,
+  workflowKind?: WorkflowKind
+): boolean => {
   const supportedActionTypes = [
     Constants.SERIALIZED_TYPE.HTTP,
     Constants.SERIALIZED_TYPE.HTTP_WEBHOOK,
     Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK,
     Constants.SERIALIZED_TYPE.OPEN_API_CONNECTION_WEBHOOK,
   ];
-  return !isTrigger && supportedActionTypes.some((type) => equals(nodeType, type));
+  return !workflowKind && !isTrigger && supportedActionTypes.some((type) => equals(nodeType, type));
 };
 
 const isConditionExpressionSupported = (isTrigger: boolean, operation?: LogicAppsV2.OperationDefinition): boolean => {

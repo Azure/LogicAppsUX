@@ -21,31 +21,30 @@ const operationDefinition = (properties: string[]): LogicAppsV2.OperationDefinit
 const serializeSecureData = (settings: Settings, originalDefinition?: LogicAppsV2.OperationDefinition) =>
   serializeSettings(settings, {}, false, originalDefinition).runtimeConfiguration?.secureData;
 
+const supportedActionTypes = ['Http', 'HttpWebhook', 'ApiConnectionWebhook', 'OpenApiConnectionWebhook'] as const;
+const standardWorkflowKinds = ['stateful', 'stateless', 'agentic', 'agent'] as const;
+
 describe('secure error response setting', () => {
   beforeAll(() => {
     InitWorkflowService({ isSplitOnSupported: () => true } as any);
   });
 
-  it.each([
-    ['Http', undefined],
-    ['Http', 'stateful'],
-    ['Http', 'stateless'],
-    ['HttpWebhook', undefined],
-    ['HttpWebhook', 'stateful'],
-    ['HttpWebhook', 'stateless'],
-    ['ApiConnectionWebhook', undefined],
-    ['ApiConnectionWebhook', 'stateful'],
-    ['ApiConnectionWebhook', 'stateless'],
-    ['OpenApiConnectionWebhook', undefined],
-    ['OpenApiConnectionWebhook', 'stateful'],
-    ['OpenApiConnectionWebhook', 'stateless'],
-  ] as const)('supports %s actions for workflow kind %s', (type, workflowKind) => {
-    const settings = getOperationSettings(false, operationInfo(type), undefined, undefined, undefined, workflowKind);
+  it.each(supportedActionTypes)('supports %s actions for Consumption workflows', (type) => {
+    const settings = getOperationSettings(false, operationInfo(type));
 
     expect(settings.secureErrorResponse).toEqual({ isSupported: true, value: false });
   });
 
-  it.each(['Http', 'HttpWebhook', 'ApiConnectionWebhook', 'OpenApiConnectionWebhook'])('does not support %s triggers', (type) => {
+  it.each(supportedActionTypes.flatMap((type) => standardWorkflowKinds.map((kind) => [type, kind] as const)))(
+    'does not support %s actions for Standard %s workflows',
+    (type, workflowKind) => {
+      const settings = getOperationSettings(false, operationInfo(type), undefined, undefined, undefined, workflowKind);
+
+      expect(settings.secureErrorResponse).toEqual({ isSupported: false, value: false });
+    }
+  );
+
+  it.each(supportedActionTypes)('does not support %s triggers', (type) => {
     const settings = getOperationSettings(true, operationInfo(type));
 
     expect(settings.secureErrorResponse?.isSupported).toBe(false);
@@ -67,6 +66,29 @@ describe('secure error response setting', () => {
     );
 
     expect(settings.secureErrorResponse?.value).toBe(true);
+  });
+
+  it('serializes the setting when enabled for a Consumption action', () => {
+    const originalDefinition = operationDefinition(['inputs', 'futureSecureValue']);
+    const settings = getOperationSettings(false, operationInfo('HttpWebhook'), undefined, undefined, originalDefinition);
+
+    expect(settings.secureErrorResponse).toEqual({ isSupported: true, value: false });
+    settings.secureErrorResponse = { isSupported: true, value: true };
+
+    expect(serializeSecureData(settings, originalDefinition)?.properties).toEqual(['futureSecureValue', 'inputs', 'errorResponse']);
+  });
+
+  it.each(standardWorkflowKinds)('preserves a hidden error response when saving a Standard %s workflow', (workflowKind) => {
+    const originalDefinition = operationDefinition(['ErrorResponse', 'futureSecureValue', 'inputs', 'outputs']);
+    const settings = getOperationSettings(false, operationInfo('HttpWebhook'), undefined, undefined, originalDefinition, workflowKind);
+
+    expect(settings.secureErrorResponse).toEqual({ isSupported: false, value: true });
+    expect(serializeSecureData(settings, originalDefinition)?.properties).toEqual([
+      'ErrorResponse',
+      'futureSecureValue',
+      'inputs',
+      'outputs',
+    ]);
   });
 
   it('serializes all secure settings independently and preserves unknown values', () => {
@@ -104,6 +126,14 @@ describe('secure error response setting', () => {
     );
 
     expect(secureData?.properties).toEqual(['errorResponse', 'futureSecureValue']);
+  });
+
+  it('preserves a copied hidden errorResponse without an original definition', () => {
+    const secureData = serializeSecureData({
+      secureErrorResponse: { isSupported: false, value: true },
+    });
+
+    expect(secureData?.properties).toEqual(['errorResponse']);
   });
 
   it('removes the empty secureData container when all settings are disabled', () => {

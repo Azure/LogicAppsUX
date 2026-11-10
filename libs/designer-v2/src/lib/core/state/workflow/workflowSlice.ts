@@ -1090,6 +1090,9 @@ export const workflowSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
+    builder.addCase(initializeGraphState.pending, (state, action) => {
+      state.isConsumptionWorkflow = !action.meta.arg.workflowDefinition.kind;
+    });
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
       // If the workflow was switched to a multi-trigger definition while this thunk was still in
       // flight (e.g. code view <-> designer view without a workflowId change), the effect that
@@ -1098,6 +1101,7 @@ export const workflowSlice = createSlice({
       if (state.hasUnsupportedMultipleTriggers) {
         return;
       }
+      state.isConsumptionWorkflow ??= !action.meta.arg.workflowDefinition.kind;
       const { deserializedWorkflow, originalDefinition } = action.payload;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;

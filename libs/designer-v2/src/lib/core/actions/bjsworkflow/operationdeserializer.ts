@@ -123,7 +123,8 @@ export const initializeOperationMetadata = async (
   customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   dispatch: Dispatch,
-  pasteParams?: PasteScopeAdditionalParams
+  pasteParams?: PasteScopeAdditionalParams,
+  isConsumptionWorkflow?: boolean
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
@@ -159,9 +160,25 @@ export const initializeOperationMetadata = async (
     } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
       operationPromise = initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch);
     } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      operationPromise = initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch);
+      operationPromise = initializeOperationDetailsForManifest(
+        operationId,
+        operation,
+        customCode,
+        !!isTrigger,
+        workflowKind,
+        dispatch,
+        isConsumptionWorkflow
+      );
     } else {
-      operationPromise = initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch);
+      operationPromise = initializeOperationDetailsForSwagger(
+        operationId,
+        operation,
+        references,
+        !!isTrigger,
+        workflowKind,
+        dispatch,
+        isConsumptionWorkflow
+      );
     }
 
     promiseNodeIds.push(operationId);
@@ -395,7 +412,8 @@ export const initializeOperationDetailsForManifest = async (
   customCode: CustomCodeFileNameMapping,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  isConsumptionWorkflow?: boolean
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -463,7 +481,15 @@ export const initializeOperationDetailsForManifest = async (
 
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
-    let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    let settings = getOperationSettings(
+      isTrigger,
+      nodeOperationInfo,
+      manifest,
+      undefined /* swagger */,
+      operation,
+      workflowKind,
+      isConsumptionWorkflow
+    );
     settings = await applySettingDefaults(
       settings,
       nodeOperationInfo.connectorId,
