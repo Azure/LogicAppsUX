@@ -101,7 +101,11 @@ result; do not replace the historical ExTester counts with CLI lane counts.
   is not harness recovery. An independent dependency exception requires the
   established ownership/shutdown/startup proof. Final settled contents do not
   prove continuous non-target file immutability.
-- **Candidates are not removals:** normal activation,
+- **Preserve normal activation:** minimal-activation early-return removal has
+  affected both-OS and canonical full23 acceptance. Legacy minimal flags no
+  longer skip normal activation. The independent initial-workspace bypass
+  remains retained and unproven; optional consumers need their own evidence.
+- **Candidates are not removals:** initial-workspace initialization,
   dependency-update behavior, unresolved package branches, feed cleanup and narrower
   recorder hooks still need their own controlled proof. Do not credit native
   passes to uncommitted feed or regeneration-readiness drafts.

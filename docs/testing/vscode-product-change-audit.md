@@ -33,8 +33,8 @@ intended behavior is described in finding E8, but it is not part of this committ
 comparison and has no native acceptance claim. The regeneration-readiness
 draft is also uncommitted and excluded from native payloads. The historical
 audit does not itself approve removals; separately authorized D3 and D7
-implementations, the D8 restoration and their accepted native results are
-recorded below.
+implementations, the D8 restoration, E1 minimal-return removal and their
+accepted native results are recorded below.
 
 Source line references describe the historical comparison head, not the latest
 accepted source. The uncommitted feed trial changes line numbers in its three
@@ -42,19 +42,21 @@ production files.
 
 ## Current decisions and acceptance
 
-Evidence checked **2026-11-09**. The latest accepted code baseline is
-`8491373293031bc7f6b3f974bf3a590cf6664eb4`, containing D3 durable-storage
-removal, D7 diagnostic-attribute removal and D8 original Run After names.
-Both-OS Run After
-[run 15974936](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15974936)
+Evidence checked **2026-11-10**. The latest accepted code baseline is
+`82477dc0e56a010baa4d03318915cae313fc51f6`, containing D3 durable-storage
+removal, D7 diagnostic-attribute removal, D8 original Run After names and E1
+minimal-activation early-return removal. Six affected families on both OSes
+[run 15979351](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15979351)
 and canonical
-[run 15975701](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15975701)
+[run 15979977](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15979977)
 passed at that identical SHA. Downloaded originals passed source/run/attempt,
 ordered-evidence and terminal acceptance; the full run's **11 Linux and
-12 Windows** suites and protected rollup passed. Windows core-matrix used
-attempt 2; its failed attempt 1 remains preserved. This establishes native
+12 Windows** suites and protected rollup passed. The affected run used attempt 1
+throughout; Linux and Windows regeneration used attempt 2 in full23, with both
+failed attempt 1 originals preserved. This establishes native
 mixed-attempt protected selection, not elimination of intermittency.
-This documentation update is not another native run, and does not accept E1.
+This documentation update is not another native run. E1's separate
+initial-workspace initialization bypass remains unproven and retained.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
@@ -69,7 +71,8 @@ This documentation update is not another native run, and does not accept E1.
 | Product shutdown fix, not a harness workaround | E13 Linux pending-startup Func shutdown | Preserve original product-owned runtime release; separate the product fix | Native retained ancestry demonstrated surviving product Func descendants. Harness killing proves recovery, not original release; not every algorithm detail was isolated |
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
 | Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
-| Test/fixture candidates; not removed | E1 minimal activation, E2 update suppression, E4 environment-token session fallback | Prove normal activation, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
+| Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
+| Test/fixture candidates; not removed | E1 workspace-initialization bypass, E2 update suppression, E4 environment-token session fallback | Prove normal workspace initialization, authentic dependency setup and supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
@@ -775,7 +778,7 @@ existing settings, readiness and real prompt handling. Intentionally partial
 activation can be tested with unit/module fixtures rather than a shipping early
 return. The MSN correction demonstrates normal activation is feasible.
 
-**Current counterfactual, not native acceptance:** Remove only the minimal
+**Accepted counterfactual:** Remove only the minimal
 activation early return and its telemetry marker. Preserve the independent
 initial-workspace skip condition, E5 catch-up, WIF, dependency setup and all
 native interaction/evidence gates. Existing runner environment values remain
@@ -797,7 +800,18 @@ ownership and failure assertions. Require complete affected both-OS families
 and canonical full23 at one identical final SHA. Optional/noncanonical
 consumers require separate evidence; the canonical inventory cannot prove them.
 
-**Disposition:** E1 minimal-return removal is under validation, not accepted.
+Commit `82477dc0e56a010baa4d03318915cae313fc51f6` passed the complete local
+CLI build gate, affected both-OS run `15979351` (12 lanes, attempt 1) and
+canonical full23 `15979977` at the identical SHA. The affected selection
+covered `unitTests`, `msnWeatherLifecycle`, `httpTimeoutLifecycle`,
+`statelessVariablesLifecycle`, `runAfterPersistenceLifecycle` and
+`workspaceMultiRoot`. Downloaded originals passed source/run/producing-attempt,
+ordered-evidence and terminal acceptance; the protected full23 rollup passed.
+Full23 Linux and Windows regeneration required attempt 2; preserve both failed
+originals rather than interpreting the final green as a flake-free first pass.
+Uncommitted feed and regeneration-readiness drafts were excluded.
+
+**Disposition:** Keep E1 minimal-return removal; native acceptance is complete.
 The separate workspace-initialization bypass remains unproven and retained.
 
 ### E2. E2E mode suppresses dependency update checks
