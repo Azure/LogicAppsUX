@@ -82,9 +82,13 @@ setup. Prove authentic cold setup, warm persistence and exact executable
 admission rather than manufacturing a recent timestamp or re-pinning binaries.
 
 For each cleanup, change one coherent area, preserve the original scenario and
-visible/semantic/ownership assertions, run the focused local controls and
-affected complete Linux/Windows lanes, then require canonical full23/protected
-acceptance at the **identical immutable SHA** before another removal. Inspect
+visible/semantic/ownership assertions, run the focused local controls, then
+queue canonical full23 directly at the **immutable candidate SHA**: all 11
+Linux and 12 Windows suites, with diagnostic mode disabled. Do not require a
+targeted ADO pass before the full pass. Targeted runs remain optional diagnostic
+tools, not a mandatory extra validation stage. Independent workstreams may
+proceed in parallel; keep their source identities and evidence separate.
+Require protected full23 acceptance for each candidate. Inspect
 the original producing-attempt artifacts, not just the pipeline badge. Keep
 failed attempts and distinguish an unrelated failure from causal removal proof.
 Apply OS-specific native ownership/containment rules without changing the

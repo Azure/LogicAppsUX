@@ -56,8 +56,8 @@ throughout; Linux and Windows regeneration used attempt 2 in full23, with both
 failed attempt 1 originals preserved. This establishes native
 mixed-attempt protected selection, not elimination of intermittency.
 This documentation update is not another native run. E1's separate
-initial-workspace initialization bypass is now removed in the next isolated
-candidate below; its native acceptance remains pending.
+initial-workspace initialization bypass is also removed and accepted at
+`3e9d343a0` in affected run `15983333` and canonical full23 run `15984836`.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
@@ -73,8 +73,8 @@ candidate below; its native acceptance remains pending.
 | Conditional on file policy | E9 unchanged `.gitignore` write guard | Retain/separate under continuous non-target immutability; make the policy explicit | Transient truncation is demonstrated, permanent corruption is not. Settled final-content sampling is a different requirement |
 | Not required; restoration accepted | D8 Run After accessible names | Keep original browser `util.format` in both Designers; tests use its exact label scoped to the predecessor row | Fourteen product-DOM cases, browser-polyfill controls, both-OS Run After and canonical full23 accepted at `849137329` |
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
-| Removal candidate; canonical acceptance pending | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls and affected 14-lane run `15983333` accepted at `3e9d343a0`; identical-SHA canonical run `15984836` remains in progress |
-| User-directed removal candidate; native acceptance pending | E2 update suppression | Restore normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected both-OS and identical-SHA full23 proof remain pending |
+| Not required; removal accepted | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls, affected 14-lane run `15983333` and canonical full23 run `15984836` accepted at `3e9d343a0`; failed regeneration attempts preserved |
+| User-directed removal candidate; full23 acceptance pending | E2 update suppression | Restore normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` accepted at `c585d2639`; identical-SHA full23 run `15987081` is in progress |
 | Test/fixture candidate; not removed | E4 environment-token session fallback | Prove supported session replacement first | Current test dependence is not product necessity; WIF retention does not approve every auth hook |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
@@ -859,10 +859,12 @@ controlled reproduction is not historical native writer attribution.
 
 Identical-SHA canonical
 [run 15984836](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15984836)
-is in progress at this audit checkpoint. Keep the removal, but do not claim
-canonical acceptance. The user subsequently authorized preparing the separate
-E2 ablation while this run finishes; its existing monitor retains retry ownership.
-Do not queue E2 concurrently or credit E1 with E2's outcome.
+is now accepted: all 23 current producing attempts passed original-artifact,
+source/run, ordered-evidence, terminal and protected-rollup checks. Failed
+regeneration attempts remain preserved; acceptance does not eliminate the
+separately investigated intermittency. The user authorized E2 to proceed in
+parallel rather than waiting on this gate. Keep the two candidates' evidence
+separate; E1 acceptance does not prove E2's outcome.
 
 ### E2. E2E mode suppresses dependency update checks
 
@@ -988,10 +990,21 @@ regeneration drafts; that gate is not immutable-source native acceptance.
 The focused VS Code test-specialist review selected six complete affected
 families on both OSes: MSN Weather, HTTP timeout, stateless variables, Run After
 persistence, workspace artifact regeneration and workspace multi-root.
-After the preceding E1 run settles, run these 12 lanes, then canonical full23
-at the identical immutable candidate SHA. Preserve every failed attempt and
-distinguish dependency update/setup failures, actual execution failures and
-admission-identity assertion failures; do not adapt fixtures to hide them.
+The user authorized parallel execution. Affected
+[run 15986177](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15986177)
+passed all 12 producing-attempt artifact/source/run/ordered/terminal identity
+checks at `c585d26394dbc6a7c20d07937fbbcc0fed5db663`. Identical-SHA canonical
+[full23 run 15987081](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15987081)
+is in progress with diagnostic mode disabled and both canonical OS aliases.
+This is not yet full23 acceptance.
+
+**User-directed loop change:** Queue canonical full23 directly for subsequent
+candidates after the focused local controls; do not require a targeted ADO pass
+first. Independent workstreams may proceed in parallel at explicit immutable
+SHAs. The already-running full23 is retained, not duplicated. Preserve every
+failed attempt and distinguish dependency update/setup failures, actual
+execution failures and admission-identity assertion failures; do not adapt
+fixtures to hide them.
 
 ### E3. Required WIF subscription provider and authentication integration
 

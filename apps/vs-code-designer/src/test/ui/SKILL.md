@@ -82,6 +82,11 @@ owns source-bound decisions and evidence. The
 owns detailed reusable rules. CLI full23 acceptance is not a new ExTester
 result; do not replace the historical ExTester counts with CLI lane counts.
 
+- **Full-first ADO validation:** after focused local controls, queue all 11
+  Linux and 12 Windows suites directly at the immutable candidate SHA with
+  diagnostic mode disabled. A targeted ADO pass is optional diagnosis, not a
+  prerequisite for full23. Independent workstreams may proceed in parallel,
+  with separate source-bound evidence and protected full23 acceptance.
 - **Not required; removals accepted:** durable validation-alert storage and the
   internal `data-code-view-validation-errors` DOM attribute. Observe real alert
   text, visibility, geometry and owner identity instead. Preserve fresh-file
@@ -104,10 +109,11 @@ result; do not replace the historical ExTester counts with CLI lane counts.
 - **Preserve normal activation:** minimal-activation early-return removal has
   affected both-OS and canonical full23 acceptance. Legacy minimal flags no
   longer skip normal activation. The independent initial-workspace bypass is
-  removed in the next isolated candidate, with native acceptance pending.
+  removed and accepted at `3e9d343a0` in affected run `15983333` and canonical
+  full23 run `15984836`; failed regeneration attempts remain preserved.
   Exercise all initial workspace-setup calls regardless of legacy flag values,
-  preserve real prompts and E5 catch-up, and include regeneration in affected
-  both-OS coverage before identical-SHA full23. Optional consumers need their
+  preserve real prompts and E5 catch-up, and retain regeneration in full23.
+  Optional consumers need their
   own evidence.
 - **Candidates are not accepted removals:** dependency-update behavior,
   unresolved package branches, feed cleanup and narrower
