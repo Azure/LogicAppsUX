@@ -1421,8 +1421,16 @@ export function deepVerifyWorkspace(
   }
   if (fs.existsSync(localSettingsPath)) {
     console.log('[deepVerify] local.settings.json exists ✔');
-  } else if (appType === 'codeful') {
-    throw new Error(`Codeful workspace missing required local.settings.json: ${localSettingsPath}`);
+    const settings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf-8'));
+    const customCodeVersion = settings.Values?.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION;
+    if (appType === 'standard' && customCodeVersion !== 'net10.0') {
+      throw new Error(`New regular Logic App must default LOGIC_APPS_CUSTOMCODE_DOTNETVERSION to net10.0, got ${customCodeVersion}`);
+    }
+    if ((appType === 'rulesEngine' || appType === 'codeful') && customCodeVersion !== undefined) {
+      throw new Error(`${appType} must not receive LOGIC_APPS_CUSTOMCODE_DOTNETVERSION, got ${customCodeVersion}`);
+    }
+  } else if (appType === 'codeful' || appType === 'standard') {
+    throw new Error(`${appType} workspace missing required local.settings.json: ${localSettingsPath}`);
   } else {
     console.log('[deepVerify] Warning: local.settings.json not found');
   }

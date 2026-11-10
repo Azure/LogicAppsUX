@@ -64,31 +64,39 @@ export async function addOrUpdateLocalAppSettings(
 
 /**
  * Adds/updates the `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` app setting in the Logic App's local.settings.json
- * so the runtime knows which .NET version to use to resolve custom code assemblies. This only applies to
- * custom-code projects targeting .NET 8 (`net8`) or .NET 10 (`net10.0`); it is a no-op for every other
- * project type (rules engine, codeful, standard) and target framework (e.g. .NET Framework).
+ * so the runtime knows which .NET version to use to resolve custom code assemblies. New regular Logic App
+ * projects default to .NET 10 regardless of a framework selection. Custom-code projects use their selected
+ * .NET 8 (`net8`) or .NET 10 (`net10.0`) framework. Existing regular projects, rules engine, codeful,
+ * and custom-code projects targeting other frameworks (e.g. .NET Framework) are unchanged.
  * Reuses {@link addOrUpdateLocalAppSettings} so unrelated existing settings and encrypted-settings behavior
  * are preserved.
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - The authoritative Logic App project path (i.e. `context.projectPath`).
  * @param {ProjectType} [projectType] - The project type of the logic app.
  * @param {TargetFramework} [targetFramework] - The target framework of the associated custom code functions project.
+ * @param {boolean} [isNewProject] - Whether a new Logic App is being scaffolded, excluding imports and existing projects.
  */
 export async function addCustomCodeDotNetVersionSetting(
   context: IActionContext,
   projectPath: string,
   projectType?: ProjectType,
-  targetFramework?: TargetFramework
+  targetFramework?: TargetFramework,
+  isNewProject = false
 ): Promise<void> {
-  if (projectType !== ProjectType.customCode) {
-    return;
-  }
-  if (targetFramework !== TargetFramework.Net8 && targetFramework !== TargetFramework.Net10) {
+  let customCodeDotNetVersion: TargetFramework;
+  if (projectType === ProjectType.logicApp && isNewProject) {
+    customCodeDotNetVersion = TargetFramework.Net10;
+  } else if (
+    projectType === ProjectType.customCode &&
+    (targetFramework === TargetFramework.Net8 || targetFramework === TargetFramework.Net10)
+  ) {
+    customCodeDotNetVersion = targetFramework;
+  } else {
     return;
   }
 
   await addOrUpdateLocalAppSettings(context, projectPath, {
-    [customCodeDotNetVersionSettingKey]: targetFramework,
+    [customCodeDotNetVersionSettingKey]: customCodeDotNetVersion,
   });
 }
 

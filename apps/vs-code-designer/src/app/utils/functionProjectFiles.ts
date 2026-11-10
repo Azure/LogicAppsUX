@@ -70,32 +70,6 @@ export async function createCsFile(
 }
 
 /**
- * Creates the Program.cs file for .NET 10 isolated worker model.
- * Only generates for .NET 10 custom code projects (not rules engine).
- * @param assetsPath - Base path to the assets directory.
- * @param functionFolderPath - The path to the functions folder.
- * @param namespace - The name of the namespace.
- * @param projectType - The workspace project type.
- * @param targetFramework - The target framework.
- */
-export async function createProgramFile(
-  assetsPath: string,
-  functionFolderPath: string,
-  namespace: string,
-  projectType: ProjectType,
-  targetFramework: TargetFramework
-): Promise<void> {
-  if (targetFramework !== TargetFramework.Net10 || projectType === ProjectType.rulesEngine) {
-    return;
-  }
-
-  const templatePath = path.join(assetsPath, 'FunctionProjectTemplate', 'ProgramFileNet10');
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
-  const content = templateContent.replace(/<%= namespace %>/g, namespace);
-  await fs.writeFile(path.join(functionFolderPath, 'Program.cs'), content);
-}
-
-/**
  * Creates the ContosoPurchase.cs rules file for rules engine projects.
  * @param assetsPath - Base path to the assets directory.
  * @param functionFolderPath - The path to the functions folder.

@@ -16,6 +16,7 @@ import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import { ext } from '../../../../../extensionVariables';
+import * as localSettingsModule from '../../../../utils/appSettings/localSettings';
 
 vi.mock('vscode', () => ({
   window: {
@@ -768,6 +769,7 @@ describe('createLogicAppWorkspace', () => {
     vi.spyOn(artifactsModule, 'createArtifactsFolder').mockResolvedValue(undefined);
     vi.spyOn(cloudToLocalUtilsModule, 'unzipLogicAppPackageIntoWorkspace').mockResolvedValue(undefined);
     vi.spyOn(cloudToLocalUtilsModule, 'logicAppPackageProcessing').mockResolvedValue(undefined);
+    vi.spyOn(localSettingsModule, 'addCustomCodeDotNetVersionSetting').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -778,6 +780,24 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 
     expect(funcVersionModule.addLocalFuncTelemetry).toHaveBeenCalledWith(mockContext);
+  });
+
+  it('initializes the regular project setting without a framework selection at the authoritative app path', async () => {
+    await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, { ...mockOptionsLogicApp, targetFramework: undefined }, false);
+
+    expect(localSettingsModule.addCustomCodeDotNetVersionSetting).toHaveBeenCalledWith(
+      mockContext,
+      logicAppFolderPath,
+      ProjectType.logicApp,
+      undefined,
+      true
+    );
+  });
+
+  it('does not initialize the new-project default when importing a package', async () => {
+    await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, true);
+
+    expect(localSettingsModule.addCustomCodeDotNetVersionSetting).not.toHaveBeenCalled();
   });
 
   it('should create workspace structure with logic app and workflow', async () => {
