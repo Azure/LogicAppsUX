@@ -219,7 +219,6 @@ test.describe('assistant controls', () => {
     await expect(ui.statusBar).toContainText('Functoids: 1');
     expect(host.messages('update')).toEqual([]);
 
-    test.fail(true, 'Applied assistant maps leave the added functoid unrendered despite updating links and connection state.');
     await expect
       .poll(
         async () => ({

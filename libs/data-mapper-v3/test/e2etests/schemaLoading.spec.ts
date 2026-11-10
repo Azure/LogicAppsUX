@@ -121,7 +121,13 @@ test.describe('XSD structures and schema interactions @p0', () => {
         expect(labelOffset).toBeLessThan(80);
         await mapper.ui.treeNode(side, '/Record').locator('.tree-icon.expandable').click();
         await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
-        await tree.getByRole('button', { name: 'Expand all schema nodes', exact: true }).click();
+        const expandAll = tree.getByRole('button', { name: 'Expand all schema nodes', exact: true });
+        if (await expandAll.isVisible()) {
+          await expandAll.click();
+        } else {
+          await tree.getByRole('button', { name: 'Schema node tools', exact: true }).click();
+          await mapper.ui.page.getByRole('menuitem', { name: 'Expand all schema nodes', exact: true }).click();
+        }
         await expect(mapper.ui.treeNode(side, `/Record/Details/${name}`)).toHaveCount(1);
         await mapper.ui.treeNode(side, `/Record/Details/${name}`).scrollIntoViewIfNeeded();
         await expect.poll(() => tree.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);

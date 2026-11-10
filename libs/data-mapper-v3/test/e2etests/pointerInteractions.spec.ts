@@ -181,7 +181,14 @@ test.describe('real pointer interactions', () => {
     await expect(ui.links).toHaveCount(3);
     const saved = host.lastUpdatedMap()!;
     expect(host.messages('update')).toHaveLength(3);
-    expect(saved.pages[0].functoids).toEqual(map.pages[0].functoids);
+    expect(saved.pages[0].functoids).toEqual(
+      map.pages[0].functoids.map((functoid, index) => ({
+        ...functoid,
+        inputLinks: [saved.pages[0].links[index].id],
+        outputLinks: [saved.pages[0].links[index + 1].id],
+        parameters: [{ index: 0, type: 'link', value: saved.pages[0].links[index].id, guid: expect.any(String) }],
+      }))
+    );
     expect(saved.pages[0].links).toEqual([
       expect.objectContaining({ sourceId: paths.source.customerName, sourceType: 'schemaNode', targetId: 'f1', targetType: 'functoid' }),
       expect.objectContaining({ sourceId: 'f1', sourceType: 'functoid', targetId: 'f2', targetType: 'functoid' }),
@@ -270,7 +277,7 @@ test.describe('real pointer interactions', () => {
     expect(host.messages('update')).toHaveLength(0);
   });
 
-  test('dragging blank canvas pans the viewport without changing functoid coordinates or links', async ({ mapper }) => {
+  test('Alt-dragging blank canvas pans the viewport without changing functoid coordinates or links', async ({ mapper }) => {
     const map = linkedMap();
     map.pages[0].functoids.push(createMapFunctoid('offscreen', { x: 1600, y: 1200 }));
     await mapper.open({ map });
@@ -281,12 +288,14 @@ test.describe('real pointer interactions', () => {
     const start = { x: box!.x + box!.width * 0.7, y: box!.y + box!.height * 0.7 };
     const transform = await ui.functoidNode().getAttribute('transform');
     await ui.page.mouse.move(start.x, start.y);
+    await ui.page.keyboard.down('Alt');
     await ui.page.mouse.down();
     await ui.page.mouse.move(start.x - 90, start.y - 60, { steps: 10 });
     await expect(viewport).toHaveClass(/panning/);
     await expect.poll(() => viewport.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
     await expect.poll(() => viewport.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
     await ui.page.mouse.up();
+    await ui.page.keyboard.up('Alt');
 
     await expect(viewport).not.toHaveClass(/panning/);
     await expect(ui.functoidNode()).toHaveAttribute('transform', transform!);
@@ -333,7 +342,6 @@ test.describe('real pointer interactions', () => {
 
     await ui.instanceEditor.press('Delete');
 
-    test.fail(true, 'Global Delete handler ignores text editing focus and deletes the selected functoid and incident links.');
     await expect(ui.functoidNodes).toHaveCount(1, { timeout: 1_000 });
     await expect(ui.links).toHaveCount(2);
     await expect(ui.instanceEditor).toHaveValue('bc');
