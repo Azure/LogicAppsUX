@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.1013.4](https://github.com/Azure/LogicAppsUX/compare/v5.1013.2...v5.1013.4) (2026-11-10)
+
+### Bug Fixes
+
+* **vscode:** cleanup .NET 10 custom code projects (hotfix) ([#9698](https://github.com/Azure/LogicAppsUX/pull/9698))
+* update WebJobs SDK to 1.4.1 ([#9693](https://github.com/Azure/LogicAppsUX/pull/9693))
+
 ## [5.1013.2](https://github.com/Azure/LogicAppsUX/compare/v5.1013.1...v5.1013.2) (2026-11-05)
 
 ### Bug Fixes
