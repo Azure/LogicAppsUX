@@ -1249,6 +1249,105 @@ but full session-consumer compatibility and native removal acceptance remain
 unproved. No product authentication files were edited, no native/GUI or Azure
 mutation run was started, and no shared integration ref was moved by this audit.
 
+#### Bounded native identity-observation preparation
+
+The audit-only evidence is preserved in
+`b5b7ff24bd8f16b9ccbc8fbba2c1aca4d11723db`. The subsequent reproduction candidate
+retains E4, E3, local raw-token authoring, SDK/dependency adaptations and all
+production authentication source. It is instrumentation, **not a fix, removal,
+native result or acceptance claim**.
+
+The existing `msnWeatherLifecycle` flow is the observable: normal Open Designer,
+Azure connector metadata, managed MSN Weather action/connection selection,
+save, debug, overview execution, successful run and verified weather response.
+`openDesigner.ts` selects the local Designer V1 or V2 panel; both call
+`getAzureConnectorDetailsForLocalProject`, which calls `getAuthData` and then
+splits `account.id`. Ordinary local connection creation does not necessarily
+consume the resulting client identity: the connection ACL helper returns early
+without `workflowAppDetails`. A contract mismatch can therefore coexist with
+every end-user assertion passing. That outcome is **not a customer-defect
+reproduction**.
+
+`nativeConnectorIdentityObservation.ts` observes the already-loaded extension
+bundle through an in-process Inspector session. It does not open a debugging
+listener, call product authentication itself, replace functions, evaluate the
+bundle, invalidate caches or change UI choices. Three always-false conditional
+probes observe the provider-returned session reference, the real connector
+caller's input and its uncached return. The loaded source must byte-match the
+resolved extension entry; each probe must resolve at its exact unique compiled
+source location. Missing, ambiguous, paused or contradictory evidence fails
+explicitly. A session returned through another path is recorded as
+`providerSessionCorrelated: false`, never attributed to WIF.
+
+Observation is enabled only with existing WIF connection/tenant/client
+metadata and requires the existing approved fixture target. Raw-token-only
+local authoring does not acquire a WIF prerequisite. The observer starts before
+the current warmup and is removed before debug/runtime, with failure cleanup
+preserving the original authoring error and normal shutdown. It adds no
+resource provisioning, permission expansion, credential creation or forced
+connection branch. Native admission must use the existing approved fixture;
+if exercising the flow requires new live resources or credentials, stop.
+
+Supplemental stdout receipts have fixed prefixes
+`[workspace-lifecycle][msn-weather][connector-identity-after-warmup]` and
+`[workspace-lifecycle][msn-weather][connector-identity-after-authoring]`.
+On authoring failure, the last available observation uses
+`connector-identity-at-authoring-failure`. These are **not new screenshots,
+ordered checkpoints or acceptance gates**. Existing invocation/source-bound
+native logs retain them. Five-minute product caching may reuse the warmup
+result; the later receipt does not claim another uncached authentication call.
+
+For the installed SDK's tenant-only session, the expected hypothesis is:
+
+| Boolean | Expected if that real provider/caller boundary is reached |
+| --- | --- |
+| `providerSessionCorrelated`, `inputTenantMatchesFixture` | `true` |
+| `sessionAccountIsTenantOnly`, `returnedClientIsFixtureTenant` | `true` |
+| `sessionAccountHasCompositeShape` | `false` |
+| `returnedTenantPresent`, `returnedTenantMatchesFixture` | `false` |
+| `observed`, `connectorsEnabled`, `consistent`, `nonPausing` | `true` |
+
+These are observations, not assertions that require the suspected mismatch.
+A different consistent shape is recorded without changing the product.
+Missing WIF metadata means there is no WIF receipt/proof. A cached return
+before installation, pre-existing debugger, changed bundle or missing probe
+is an instrumentation limitation, not an end-user defect.
+
+**Instrumentation privacy boundary:** the session is retained only as a weak
+object reference for provenance; comparisons occur in process. Receipts contain
+only the eleven fixed booleans above. No token, account/tenant/client value,
+identity hash, project path or private authentication payload is serialized.
+Only own data properties are inspected; accessors and proxies are rejected
+without invoking their code. Inspector error payloads are not published.
+Offline controls use synthetic canaries and verify unchanged function results,
+no extra product calls or accessor/proxy reads,
+non-pausing execution, provenance/non-provenance, rejected source mismatch and
+stale receipts after a condition fails, exact real-bundle probe binding without
+evaluation, raw-token compatibility and
+cleanup/error preservation through the actual MSN orchestration. Existing
+required screenshots and other baseline artifacts are unchanged; these controls
+do not establish that all pre-existing artifacts are identity-free.
+
+Preparation validation on Windows (repository-root commands, not native proof):
+
+| Command | Result |
+| --- | --- |
+| `pnpm --dir apps\vs-code-designer run test:e2e-cli:compile` | Passed strict compilation. |
+| `node apps\vs-code-designer\out\test\e2e\nativeConnectorIdentityObservation.unit.js` | Passed synthetic execution/privacy, accessor/proxy and stale-receipt rejection, exact real-bundle binding without execution, and nine actual-orchestration scenarios. |
+| `node node_modules\vitest\vitest.mjs run --root apps\vs-code-designer --config vitest.config.ts --coverage.enabled=false src\app\utils\codeless\__test__\getAuthorizationToken.test.ts src\app\utils\services\__test__\VSCodeAzureSubscriptionProvider.test.ts` | Passed 19/19 existing E4/WIF tests. |
+| `pnpm --dir apps\vs-code-designer run test:e2e-cli:build` | Passed the complete extension/React build, strict compilation and CLI control chain, including the new observer and existing lifecycle diagnostics controls. |
+
+Two earlier complete-gate attempts exposed mandatory first/second command-order
+contracts. Registration was moved after `azureConnectorFixture.unit.js`; the
+contracts and original command order were preserved, not weakened. Existing
+platform-conditional skips remain unchanged. The optional pipeline shell-identity
+probes were not enabled by this default gate.
+
+Native proof still requires coordinator admission and identical-SHA canonical full23
+non-diagnostic validation; targeted native diagnosis is optional. No local
+shared-desktop GUI launch, ADO queue/ref movement or retry-budget reset is
+authorized by this preparation.
+
 ### E5. Activation catches workspace identity changes and initializes more paths
 
 **Source:** `src/main.ts:107-109,151-174`.

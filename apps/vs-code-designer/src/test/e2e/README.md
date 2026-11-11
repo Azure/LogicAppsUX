@@ -47,6 +47,26 @@ Run `test:e2e-cli:msn-reporting-unit` after strict CLI compilation for the
 production-orchestrator/finalization controls. Native validation remains on
 isolated source-bound consumers, not concurrent local worktrees.
 
+### Supplemental connector identity observation
+
+With the existing WIF metadata, MSN authoring observes the real provider/session
+and connector-details boundary in the already-loaded extension. E3/E4 and
+raw-token-only local authoring remain unchanged. The in-process Inspector probes
+never open a listener and are removed before debug/runtime or on authoring
+failure. Missing source-bound evidence is an instrumentation failure, not a
+customer-authentication defect.
+
+The `connector-identity-*` native stdout receipts contain only fixed contract
+booleans, never identity values, hashes, tokens or private payloads. Cached
+metadata can reuse the warmup observation. These supplemental lines do not add
+or replace the existing MSN checkpoints, assertions or lifecycle evidence.
+A mismatch with a successful managed-connector run does not establish an
+end-user defect. See the [E4 audit](../../../../../docs/testing/vscode-product-change-audit.md#bounded-native-identity-observation-preparation)
+for the caller, expected hypothesis, privacy boundary and native-admission limits.
+The offline control is `node out/test/e2e/nativeConnectorIdentityObservation.unit.js`
+after building the extension and strict CLI compilation; the complete CLI gate
+includes it automatically.
+
 ## Test Structure
 
 ```

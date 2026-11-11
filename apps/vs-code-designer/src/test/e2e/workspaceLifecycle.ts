@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { observeMsnCleanupDiagnostics, recordMsnBodyAssertions } from '../../../scripts/msn-cleanup-diagnostics';
 import { operationDiagnostics } from './operationDiagnostics';
+import { NativeConnectorIdentityObservation, shouldObserveNativeConnectorIdentity } from './nativeConnectorIdentityObservation';
 import { assertOwnedMsnHandleScopes } from './ownedMsnShutdown';
 import {
   type CdpConnection,
@@ -4503,8 +4504,20 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
 
   const settings = getMsnWeatherAzureSettingsFromEnvironment();
   const errors: unknown[] = [];
+  let identityObserver: NativeConnectorIdentityObservation | undefined;
   try {
     await waitForGeneratedLogicAppFolder(createdWorkspace);
+    if (shouldObserveNativeConnectorIdentity(process.env)) {
+      assert.ok(settings, 'Connector identity observation requires the existing approved Azure fixture settings');
+      const extension = vscode.extensions.getExtension(logicAppsExtensionId);
+      assert.ok(extension?.isActive, 'Connector identity observation requires the original active extension');
+      assert.strictEqual(typeof extension.packageJSON.main, 'string', 'Connector identity observation requires the extension entry');
+      identityObserver = await NativeConnectorIdentityObservation.install(
+        require.resolve(path.resolve(extension.extensionPath, extension.packageJSON.main)),
+        createdWorkspace.appDir,
+        settings.tenantId
+      );
+    }
     await logMsnWeatherDesignerOpenDiagnostics('before warmup', createdWorkspace);
     if (settings) {
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
@@ -4516,6 +4529,9 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
         actionProfile: 'msn',
       });
       assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-warmup');
+      if (identityObserver) {
+        console.log(`[workspace-lifecycle][msn-weather][connector-identity-after-warmup] ${JSON.stringify(identityObserver.snapshot())}`);
+      }
       await logMsnWeatherDesignerOpenDiagnostics('after azure-targeted warmup designer open', createdWorkspace);
     } else {
       console.log(
@@ -4537,6 +4553,10 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-save');
     }
     assertMsnWeatherStandardWorkflow(createdWorkspace);
+    if (identityObserver) {
+      console.log(`[workspace-lifecycle][msn-weather][connector-identity-after-authoring] ${JSON.stringify(identityObserver.snapshot())}`);
+      await identityObserver.dispose();
+    }
     await waitForPathExists(path.join(createdWorkspace.appDir, 'host.json'), 45000);
     await waitForPathExists(path.join(createdWorkspace.appDir, '.vscode', 'tasks.json'), 45000);
     if (settings) {
@@ -4574,6 +4594,20 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     });
   } catch (error) {
     errors.push(error);
+  }
+  if (identityObserver && !identityObserver.isDisposed) {
+    try {
+      console.log(
+        `[workspace-lifecycle][msn-weather][connector-identity-at-authoring-failure] ${JSON.stringify(identityObserver.snapshot())}`
+      );
+    } catch (error) {
+      errors.push(error);
+    }
+    try {
+      await identityObserver.dispose();
+    } catch (error) {
+      errors.push(error);
+    }
   }
   const observe = (stage: 'before-task-teardown' | 'after-task-teardown') =>
     observeMsnCleanupDiagnostics({
