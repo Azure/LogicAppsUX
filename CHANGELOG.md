@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [5.961.19](https://github.com/Azure/LogicAppsUX/compare/v5.961.14...v5.961.19) (2026-07-06)
+
+### Features
+
+* **vscode:** remove .NET 10 custom code support for v5.961 hotfix ([#9369](https://github.com/Azure/LogicAppsUX/pull/9369))
+* **vscode:** workflow/webview validation and E2E launcher migration ([#9289](https://github.com/Azure/LogicAppsUX/pull/9289))
+* **vscode:** Cleanup dead code ([#9341](https://github.com/Azure/LogicAppsUX/pull/9341))
+* Revert over-scoped #9294 cherry-pick (#9347) from hotfix/v5.961 ([#9347](https://github.com/Azure/LogicAppsUX/pull/9347))
+* **vscode:** harden runtime readiness ([#9164](https://github.com/Azure/LogicAppsUX/pull/9164))
+* **Designer:** Add gpt-5.1, gpt-5.2, gpt-5.4 to supported agent OpenAI models ([#9316](https://github.com/Azure/LogicAppsUX/pull/9316))
+
+### Bug Fixes
+
+* **vscode:** preserve platform so .NET Framework shows in custom-code dropdown ([#9366](https://github.com/Azure/LogicAppsUX/pull/9366))
+* **vscode:** WORKFLOW_CODEFUL_ENABLED source of truth ([#9335](https://github.com/Azure/LogicAppsUX/pull/9335))
+* **vscode:** runtime dep resolution, debug shutdown, multi-root workflow ([#9330](https://github.com/Azure/LogicAppsUX/pull/9330))
+* **vscode:** Guard against bundle download corruption ([#9294](https://github.com/Azure/LogicAppsUX/pull/9294))
+* **agent:** correct AGENT_MODEL_CONFIG versions for gpt-5.1+ [hotfix/v5.961] ([#9322](https://github.com/Azure/LogicAppsUX/pull/9322))
+* **Designer:** Cherry-picking 2 MSI agent-connection fixes ([#9312](https://github.com/Azure/LogicAppsUX/pull/9312))
+
 ## [5.961.14](https://github.com/Azure/LogicAppsUX/compare/v5.961.11...v5.961.14) (2026-06-13)
 
 ### Features
