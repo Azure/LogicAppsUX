@@ -1795,6 +1795,39 @@ checks and recursive JSON redaction to create that aggregate after retaining
 original failure receipts. It does not repair the native interaction, generate
 missing acceptance receipts, change deadlines/assertions, or reset retry budgets.
 
+**Retention repair validated; native failure retained:** Repair
+`a8f0fc348175dd15e753dbed7d601840c96de78f`, complete tree
+`bdd9aa121c4a2c0c90654afabedb3daae2cbeb8d`, passed
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:build` (exit 0) under
+official Windows Node 22.23.4 in an owned checkout that was clean before and
+after. The complete wrapper controls also passed independently. This proves
+the diagnostic repair locally, not E11 removal acceptance.
+
+Windows-only diagnostic run **15995855**, bound to that exact source with
+`diagnosticOnly: true` and `workspaceArtifactRegeneration` selected, failed its
+original attempt at the same required initialization prompt/real Yes. No retry
+was issued. Its original published artifact now contains the sanitized
+`prompt-observations.jsonl`: three changed observations, all with the owned
+workbench ready and `.vscode/tasks.json` missing. The recognized containers
+changed from empty, to `Activating Extensions...` without buttons, back to
+empty. Unchanged observations are deduplicated; the final changed record is
+not the final poll time. These observations establish no recognized visible
+initialization prompt, not that no prompt existed outside detector visibility.
+
+The original extension-host and Logic Apps channel logs show normal Logic Apps
+activation and subsequent discovery of one project for the design-time startup
+step. They do not prove that the asynchronous VS Code consistency warning was
+issued or establish its visibility. The accepted E10 Windows artifact does
+contain the initialization warning and a hit-testable exact Yes, followed by
+the separate overwrite confirmation. Those observations narrow the evidence
+gap but do not distinguish a product warning failure from notification
+presentation/detection, or establish E11 causation.
+
+The diagnostic run retained original process closure and clean infrastructure,
+with no recovery, product proof unverified and acceptance false. It is not a
+canonical full23 run or a reset of exhausted run 15994921. E10 remains the last
+accepted baseline; E11 and further removals remain gated on native proof.
+
 ### E12. Design-time diagnostics and native spawn identity
 
 **Sources:** new `src/app/utils/codeless/designTimeDiagnostics.ts:1-51`;
