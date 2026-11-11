@@ -12,7 +12,6 @@ import {
   getFuncPortFromTaskOrProject,
   getRunningFuncTaskForWorkspace,
   isFuncHostTask,
-  runningFuncTaskMap,
   scopeMatchesWorkspace,
   stopFuncTaskForWorkspace,
 } from '../utils/funcCoreTools/funcHostTask';
@@ -38,7 +37,6 @@ const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
-import { emitFuncDiagnostic, finishFuncDiagnostic, funcTaskState, startFuncDiagnostic } from '../utils/funcCoreTools/funcTaskDiagnostics';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -260,22 +258,6 @@ async function startFuncTask(
   const pickProcessTimeout = getPickProcessTimeout(context);
 
   let taskError: Error | undefined;
-  const snapshot = () => {
-    const tracked = getRunningFuncTaskForWorkspace(workspaceFolder);
-    return {
-      ...funcTaskState(funcTask),
-      workspace: workspaceFolder.uri.fsPath,
-      scopeExact: funcTask.scope === workspaceFolder,
-      scopeMatches: scopeMatchesWorkspace(funcTask.scope, workspaceFolder),
-      mapCount: runningFuncTaskMap.size,
-      trackedPid: tracked?.processId,
-      childCount: tracked?.childProcessId?.length ?? 0,
-    };
-  };
-  let checkpoint: ReturnType<typeof startFuncDiagnostic>;
-  let responseState: unknown;
-  let lastRequestTimeout: number | undefined;
-  let requestTimedOut = false;
   const errorListener: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e: vscode.TaskProcessEndEvent) => {
     if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.exitCode !== 0) {
       context.errorHandling.suppressReportIssue = true;
@@ -295,16 +277,13 @@ async function startFuncTask(
   try {
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
     // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we already stopped any previous workspace-scoped func task above.
-    checkpoint = startFuncDiagnostic('func-task-execute', snapshot);
     await executeIfNotActive(funcTask);
-    finishFuncDiagnostic(checkpoint, 'end', snapshot);
 
     const intervalMs = 500;
     const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
     let statusRequestTimeout: number = intervalMs;
     const taskStartMaxTime: number = Date.now() + Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds) * 1000;
     let taskInfo: IRunningFuncTask | undefined = getRunningFuncTaskForWorkspace(workspaceFolder);
-    checkpoint = startFuncDiagnostic('func-wait-map', () => ({ ...snapshot(), found: Boolean(taskInfo) }));
     while (!taskInfo && Date.now() < taskStartMaxTime) {
       if (taskError !== undefined) {
         throw taskError;
@@ -323,11 +302,6 @@ async function startFuncTask(
       );
     }
 
-    finishFuncDiagnostic(checkpoint, 'end', () => ({ ...snapshot(), found: true }));
-    emitFuncDiagnostic('startup', 'func-map-found', snapshot);
-    checkpoint = startFuncDiagnostic('func-host-status', snapshot);
-    let hostSamples = 0;
-    let attempt = 0;
     const maxTime: number = Date.now() + pickProcessTimeout * 1000;
     while (Date.now() < maxTime) {
       if (taskError !== undefined) {
@@ -346,41 +320,14 @@ async function startFuncTask(
 
         try {
           // wait for status url to indicate functions host is running
-          attempt++;
-          lastRequestTimeout = statusRequestTimeout;
-          requestTimedOut = false;
           const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
-          responseState = response.parsedBody.state;
-          if (hostSamples++ < 4) {
-            emitFuncDiagnostic('startup', 'func-host-status', () => ({
-              responseState,
-              requestTimeoutMs: lastRequestTimeout,
-              timeout: false,
-              attempt,
-            }));
-          }
           if (response.parsedBody.state.toLowerCase() === 'running') {
-            finishFuncDiagnostic(checkpoint, 'end', () => ({
-              ...snapshot(),
-              responseState,
-              requestTimeoutMs: lastRequestTimeout,
-              timeout: false,
-              attempt,
-            }));
             funcTaskReadyEmitter.fire(workspaceFolder);
             taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
             return taskInfo;
           }
         } catch (error) {
-          requestTimedOut = isTimeoutError(error);
-          if (hostSamples++ < 4) {
-            emitFuncDiagnostic('startup', 'func-host-status', () => ({
-              requestTimeoutMs: lastRequestTimeout,
-              timeout: requestTimedOut,
-              attempt,
-            }));
-          }
-          if (requestTimedOut) {
+          if (isTimeoutError(error)) {
             // Timeout likely means localhost isn't ready yet, but we'll increase the timeout each time it fails just in case it's a slow computer that can't handle a request that fast
             statusRequestTimeout *= 2;
             context.telemetry.measurements.maxStatusTimeout = statusRequestTimeout;
@@ -401,19 +348,6 @@ async function startFuncTask(
         `${ext.prefix}.${pickProcessTimeoutSetting}`
       )
     );
-  } catch (error) {
-    finishFuncDiagnostic(
-      checkpoint,
-      'failure',
-      () => ({
-        ...snapshot(),
-        responseState,
-        requestTimeoutMs: lastRequestTimeout,
-        timeout: requestTimedOut,
-      }),
-      error
-    );
-    throw error;
   } finally {
     errorListener.dispose();
   }
@@ -423,20 +357,12 @@ async function startFuncTask(
  * Discover (or reuse cached) child process IDs for workflow debug attachment.
  */
 async function getWorkflowDebugProcessCandidates(taskInfo: IRunningFuncTask): Promise<Array<string | undefined>> {
-  const snapshot = () => ({ trackedPid: taskInfo.processId, childCount: taskInfo.childProcessId?.length ?? 0 });
-  const span = startFuncDiagnostic('func-candidate-discovery', snapshot);
-  try {
-    const hasCachedFirstChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 1;
-    const hasCachedHostChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 2;
-    const firstChildProcessId = hasCachedFirstChildProcessId ? taskInfo.childProcessId?.[0] : await pickChildProcess(taskInfo);
-    const hostChildProcessId = hasCachedHostChildProcessId ? taskInfo.childProcessId?.[1] : await pickFuncHostChildProcess(taskInfo);
+  const hasCachedFirstChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 1;
+  const hasCachedHostChildProcessId = (taskInfo.childProcessId?.length ?? 0) >= 2;
+  const firstChildProcessId = hasCachedFirstChildProcessId ? taskInfo.childProcessId?.[0] : await pickChildProcess(taskInfo);
+  const hostChildProcessId = hasCachedHostChildProcessId ? taskInfo.childProcessId?.[1] : await pickFuncHostChildProcess(taskInfo);
 
-    finishFuncDiagnostic(span, 'end', () => ({ ...snapshot(), candidates: [firstChildProcessId, hostChildProcessId] }));
-    return [firstChildProcessId, hostChildProcessId];
-  } catch (error) {
-    finishFuncDiagnostic(span, 'failure', snapshot, error);
-    throw error;
-  }
+  return [firstChildProcessId, hostChildProcessId];
 }
 
 export async function pickWorkflowDebugProcess(taskInfo: IRunningFuncTask, preferHostChildProcess = false): Promise<string> {

@@ -598,7 +598,8 @@ test('startup serialization admits only explicit fields, preserving boolean mean
   }
 });
 
-test('func owner admission has no output outside test diagnostic mode, and separate caps survive relay', (t) => {
+// Standalone producer/relay controls; product Func tasks no longer use this adapter.
+test('standalone func producer admission has no output outside test diagnostic mode, and separate caps survive relay', (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-func-owner-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const invocation = require('node:crypto').randomUUID();
@@ -644,7 +645,7 @@ test('func owner admission has no output outside test diagnostic mode, and separ
   assert.ok(!JSON.stringify(relayed).includes('private-workspace'));
 });
 
-test('func diagnostic append failure stays secondary and never creates missing directories', (t) => {
+test('standalone func producer append failure stays secondary and never creates missing directories', (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-func-sink-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const trace = getFuncDiagnosticProducer('startup', {

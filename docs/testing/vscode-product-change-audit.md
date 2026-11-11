@@ -42,7 +42,7 @@ production files.
 
 ## Current decisions and acceptance
 
-Evidence checked **2026-11-10**. The earlier accepted code baseline is
+Evidence checked **2026-11-11**. The earlier accepted code baseline is
 `82477dc0e56a010baa4d03318915cae313fc51f6`, containing D3 durable-storage
 removal, D7 diagnostic-attribute removal, D8 original Run After names and E1
 minimal-activation early-return removal. Six affected families on both OSes
@@ -59,7 +59,7 @@ This documentation update is not another native run. E1's separate
 initial-workspace initialization bypass is also removed and accepted at
 `3e9d343a0` in affected run `15983333` and canonical full23 run `15984836`.
 
-The latest accepted code baseline is
+The E2 accepted code baseline is
 `c585d26394dbc6a7c20d07937fbbcc0fed5db663`, additionally removing E2's
 dependency-update suppression while preserving strict validation. Affected
 [run 15986177](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15986177)
@@ -69,6 +69,16 @@ passed at that identical SHA. All 23 canonical suite jobs passed on attempt 1;
 downloaded originals passed artifact/source/run/producing-attempt, ordered
 evidence and terminal identity checks, and the protected full rollup passed.
 Later documentation-only commits are not another native payload or run.
+
+The E10 removal is accepted at exact source
+`71084a53d8d6857b41346cb9f8ed5b2665ddc604`, tree
+`bceb22a297b45833268b4a9e7a597cc233746d1a`, in canonical both-OS
+[full23 run 15994233](https://devdiv.visualstudio.com/0bdbc590-a062-4c3f-b0f6-9383f67865ee/_build/results?buildId=15994233).
+All 23 original producing-attempt artifacts and the protected rollup were
+accepted. Both regeneration lanes produced on unchanged-source attempt 2;
+the other 21 lanes produced on attempt 1. Initial failures and their separate
+containment/product-proof verdicts are preserved in E10 below. This is not
+first-attempt stability or native acceptance of the subsequent E11 candidate.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
@@ -90,8 +100,9 @@ Later documentation-only commits are not another native payload or run.
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Not required; removal accepted | E8 feed retries/deadline cleanup | Keep single-request/configured-timeout behavior and preserved error causes | Canonical full23 run `15993682` accepted at source `41ceef4aa`, tree `38e0717840c42e2591abbf3fc81d272845039709`; all 23 original producing artifacts were attempt 1, with protected rollup verified |
-| Isolated removal candidate; native acceptance pending | E10 writer diagnostics | Restore direct string write/native copy; retain E9 and all functional/evidence gates | Committed regeneration acceptance does not require writer receipts. Exact internal attribution is intentionally retired optional diagnostics; watcher events remain `unknown-writer` |
-| Observation candidates; not removed | E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
+| Not required; removal accepted | E10 writer diagnostics | Keep direct string write/native copy; retain E9 and all functional/evidence gates | Exact source `71084a53d` and canonical full23 `15994233` accepted; both regeneration producers used attempt 2. Exact internal attribution is retired optional diagnostics; watcher events remain `unknown-writer` |
+| Isolated removal candidate; native acceptance pending | E11 task/debug diagnostics | Remove only optional product observations and unused adapter; preserve functional task/debug behavior | Supported events/logs are not equivalent internal task/map/candidate attribution. Full-file functional regressions remain; clean exact-source and canonical gates are still required |
+| Observation candidate; not removed | E12 design-time/spawn diagnostics | Justify any minimal original-identity hook separately | Preserve race-safe birth/ownership proof; do not claim a watcher can reconstruct an already-exited leader |
 | Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
 | Already restored | Designer API timeout override | Keep original fixed product timeout; no new E2E product override | Historical restoration predates these removals; it is not a remaining product cleanup |
 
@@ -1637,10 +1648,10 @@ that diagnostic claim.
 **Disposition:** Prefer test/recorder instrumentation. Explain any unavoidable
 minimal observation hook separately from E9's actual no-op guard.
 
-**Authorized isolated removal candidate; native acceptance pending:** Remove
-only the two product imports/wrappers and restore direct
+**Isolated removal accepted:** Removed only the two product imports/wrappers
+and restored direct
 `fse.writeFile(gitignorePath, gitignoreContents)` and
-`fse.copyFile(templatePath, gitignorePath)`. Preserve E9's unchanged-content
+`fse.copyFile(templatePath, gitignorePath)`. Preserved E9's unchanged-content
 early return, original copy/string-write semantics and original failures.
 Standalone diagnostic adapters and their controls remain, explicitly without
 claiming product use. No replacement attribution hook is introduced.
@@ -1658,19 +1669,40 @@ proof of an internal writer.
 Loss of exact internal attribution on future runs is intentional retirement of
 optional product diagnostics, not behavior-neutral observation replacement.
 Historical receipts still establish the transient truncation described in E9;
-their causal evidence is not retracted. E8 run `15993682` accepts only its exact
-source, not this E10 candidate. Require isolated exact-source validation before
-claiming E10 native acceptance; unrelated regeneration drafts remain excluded.
+their causal evidence is not retracted. E8 run `15993682` accepted only its exact
+source. E10's separate exact-source validation and native acceptance are
+recorded below; unrelated regeneration drafts remained excluded.
 
-**Focused local validation:** The filtered `removeFromGitIgnore` and
+**Earlier focused local validation:** The filtered `removeFromGitIgnore` and
 `createLocalConfigurationFiles` Vitest run passed 30 tests (64 unrelated tests
 were filtered out). The complete `e2e-cli-diagnostics.unit.test.js` controls
 passed 100 tests, including the updated direct-product-wiring control and
 unchanged standalone adapters. Strict CLI TypeScript compilation, Biome checks
 on all five changed code/test files and scoped whitespace checks passed.
-Compilation used this working workspace, which still contains the excluded
-uncommitted regeneration drafts; it is not the parent's clean exact-source
-full CLI gate. No E10 native run or canonical acceptance is claimed.
+That earlier compilation used this working workspace, containing the excluded
+uncommitted regeneration drafts; it was not the parent's clean exact-source
+full CLI gate and did not itself establish native acceptance.
+
+**Subsequent clean-source validation and native acceptance:** The parent
+verified exact source `71084a53d8d6857b41346cb9f8ed5b2665ddc604`, tree
+`bceb22a297b45833268b4a9e7a597cc233746d1a`, with official Node 22.23.4.
+The complete `test:e2e-cli:build` gate exited 0 with a clean checkout before
+and after. Both complete affected Vitest files passed **94/94**, without a
+test-name filter. These are separate later results, not a reinterpretation of
+the earlier filtered run or working-workspace compilation.
+
+Canonical both-OS full23 run `15994233` at that same exact source passed with
+all 23 original producing-attempt artifacts and the protected rollup accepted.
+Linux regeneration's original attempt 1 failed at `vscode-multiple`; Windows
+regeneration's original attempt 1 failed at `vscode-single`. The required
+initialization prompt and real Yes input were absent before the original
+deadline, and pre-cleanup evidence then failed closed. Both native containment
+receipts were clean with no recovery; product proof was unverified on those
+failed attempts. Neither terminal receipt reported a transient `.gitignore`
+mutation. Both regeneration lanes passed unchanged-source attempt 2; all other
+21 original producers passed on attempt 1. The failed originals remain retained.
+These observations neither establish first-attempt stability nor attribute
+the prompt failures to E10, and no additional E10 product fix was introduced.
 
 ### E11. Func task and debug-startup diagnostics
 
@@ -1693,6 +1725,43 @@ boundary if that level of attribution is still required.
 
 **Disposition:** Move/minimize into test/recorder diagnostics; do not call the
 underlying activation-fixture problem a product defect.
+
+**Authorized isolated removal implemented; native acceptance pending:** Remove
+the two product imports/callers and delete the now-unused
+`funcTaskDiagnostics.ts` adapter. Remove only observations, diagnostic state
+and counts, and diagnostic-only catch/rethrow wrappers. No replacement product
+hook is introduced. Exact internal task/map/candidate attribution is intentionally
+retired optional diagnostics; supported task/debug events, logs and original
+exports do not supply equivalent internal attribution. The script's retained
+producer/relay controls are explicitly standalone, not proof of product wiring.
+Canonical families do not require `func-events` or `func-startup` receipts;
+the relay remains optional.
+
+Preserve scope/task classification and exact-key event map behavior, deletion
+iteration, port reset, task execution sequencing, the minimum 600-second map
+readiness deadline, 500-ms polling, HTTP/HTTPS order, exponential request-timeout
+doubling, settings, original errors, listener disposal, sequential candidate
+discovery/cache/selection, and lifecycle behavior. Combined receipt tests retain
+their functional assertions; only adapter-specific privacy/admission assertions
+are retired. E12 original birth/ownership proof and E13 shutdown are untouched.
+
+**Focused working-workspace validation:** Both complete affected Vitest files,
+without a test-name filter, passed **47/47**: 36 in `pickFuncProcess.test.ts` and
+11 in `funcHostTask.test.ts`. Coverage includes pending execution, pending map
+wait, the 600-second timeout, dependency-task error/disposal, exact execute-error
+identity, eight timeout failures followed by request nine at 128000 ms, unchanged
+candidate/cache/platform selection, shell classification and exact-key event map
+mutation. Additional checks preserve HTTP/HTTPS options and non-timeout handling,
+the original host-timeout error, and listener disposal. The complete diagnostics
+controls passed **100/100**, strict CLI TypeScript compilation exited 0, and
+Biome passed all five changed code/test files. This compilation used the working
+workspace with the excluded regeneration drafts; it is not the parent's clean
+exact-source full CLI gate. No E11 native launch or acceptance is claimed.
+
+Before E11 acceptance, the parent must run the complete clean exact-source
+`test:e2e-cli:build` gate and same-source canonical both-OS full23, inspecting
+original producing-attempt artifacts, ordered evidence, lifecycle/terminal
+acceptance and the protected rollup. No family gate or fixture is weakened.
 
 ### E12. Design-time diagnostics and native spawn identity
 
