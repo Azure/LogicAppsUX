@@ -1,4 +1,10 @@
 # Logic Apps Designer
+## [5.961.11](https://github.com/Azure/LogicAppsUX/compare/v5.961.10...v5.961.11) (2026-06-09)
+
+### Bug Fixes
+
+* **vscode:** Node 24 / VS Code 1.123 compatibility and fallback handling for connector prompts ([#9257](https://github.com/Azure/LogicAppsUX/pull/9257))
+
 ## [5.961.10](https://github.com/Azure/LogicAppsUX/compare/v5.959.1...v5.961.10) (2026-06-02)
 
 ### Features
