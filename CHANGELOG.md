@@ -1,4 +1,55 @@
 # Logic Apps Designer
+## [5.1013.1](https://github.com/Azure/LogicAppsUX/compare/v5.996.0...v5.1013.1) (2026-10-28)
+
+### Features
+
+* centralize Standard management APIs with session-token routing ([#9668](https://github.com/Azure/LogicAppsUX/pull/9668))
+* **vscode:** Remove dependency integrity verification on startup after initial download ([#9660](https://github.com/Azure/LogicAppsUX/pull/9660))
+* **vscode:** Move Azurite, C#, and C# dev kit dependencies to extensionPack ([#9663](https://github.com/Azure/LogicAppsUX/pull/9663))
+* **designer:** prototype local workflow extraction ([#9657](https://github.com/Azure/LogicAppsUX/pull/9657))
+* **vscode:** Remove functions extension dependency ([#9653](https://github.com/Azure/LogicAppsUX/pull/9653))
+* **ci:** bootstrap VS Code E2E pipeline registration ([#9639](https://github.com/Azure/LogicAppsUX/pull/9639))
+* **knowledge:** persist Cosmos DB resource ID ([#9598](https://github.com/Azure/LogicAppsUX/pull/9598))
+* **designer-v2:** add node navigation and retain details tabs ([#9621](https://github.com/Azure/LogicAppsUX/pull/9621))
+* **knowledge/designer:** Adding completions and embedding models for dropdown selection ([#9614](https://github.com/Azure/LogicAppsUX/pull/9614))
+* **standalone:** add label-triggered local-only PR previews ([#9616](https://github.com/Azure/LogicAppsUX/pull/9616))
+* **dev:** add Portal local package helper ([#9619](https://github.com/Azure/LogicAppsUX/pull/9619))
+* **vscode:** configure custom-code .NET runtimes ([#9611](https://github.com/Azure/LogicAppsUX/pull/9611))
+* **designerv2:** Adding support for knowledge hub editor in designer ([#9603](https://github.com/Azure/LogicAppsUX/pull/9603))
+* **designer-v2:** Enable runtime connection expressions ([#9609](https://github.com/Azure/LogicAppsUX/pull/9609))
+* **release:** automate hotfix branch creation ([#9605](https://github.com/Azure/LogicAppsUX/pull/9605))
+* **designer:** update Fluent icon snapshot baselines ([#9580](https://github.com/Azure/LogicAppsUX/pull/9580))
+* **designer-v2:** Make per-action code view editable ([#9333](https://github.com/Azure/LogicAppsUX/pull/9333))
+
+### Bug Fixes
+
+* **vscode:** restore .NET 8 custom-code creation ([#9672](https://github.com/Azure/LogicAppsUX/pull/9672))
+* **designer:** show truthful workflow extraction progress ([#9662](https://github.com/Azure/LogicAppsUX/pull/9662))
+* **DesignerV2:** show workflow note controls on hover ([#9661](https://github.com/Azure/LogicAppsUX/pull/9661))
+* **vscode:** remove .NET 8 custom code creation ([#9631](https://github.com/Azure/LogicAppsUX/pull/9631))
+* **designer-v2:** Restore runtime connection UX follow-ups ([#9652](https://github.com/Azure/LogicAppsUX/pull/9652))
+* **vscode:** prevent SMB credential leakage into telemetry ([#9648](https://github.com/Azure/LogicAppsUX/pull/9648))
+* **designer:** isolate and validate agent preview navigation ([#9646](https://github.com/Azure/LogicAppsUX/pull/9646))
+* **vscode:** block NuGet conversion for codeful projects ([#9615](https://github.com/Azure/LogicAppsUX/pull/9615))
+* **deps:** remediate vulnerable form-data 4.x ([#9641](https://github.com/Azure/LogicAppsUX/pull/9641))
+* **Designer:** handle toString schema fields in workflow comparison ([#9637](https://github.com/Azure/LogicAppsUX/pull/9637))
+* **vscode:** Create StorageV2 accounts instead of legacy Storage (v1) ([#9634](https://github.com/Azure/LogicAppsUX/pull/9634))
+* **vscode:** Fix codeful monitoring view with v2 designer enabled ([#9630](https://github.com/Azure/LogicAppsUX/pull/9630))
+* **vscode:** persist managed connector references ([#9627](https://github.com/Azure/LogicAppsUX/pull/9627))
+* **vscode:** persist service provider connections correctly ([#9625](https://github.com/Azure/LogicAppsUX/pull/9625))
+* **standalone:** report only actual preview deployments ([#9624](https://github.com/Azure/LogicAppsUX/pull/9624))
+* **standalone:** block default preview sign-in providers ([#9623](https://github.com/Azure/LogicAppsUX/pull/9623))
+* **standalone:** unblock named preview deployments ([#9622](https://github.com/Azure/LogicAppsUX/pull/9622))
+* **vscode:** correct bundled LSP server archive layout ([#9613](https://github.com/Azure/LogicAppsUX/pull/9613))
+* Codeful connection loading ([#9601](https://github.com/Azure/LogicAppsUX/pull/9601))
+* **designer:** apply disabled styling to Reassign ([#9600](https://github.com/Azure/LogicAppsUX/pull/9600))
+* **designer:** disable connection reassign when read-only ([#9599](https://github.com/Azure/LogicAppsUX/pull/9599))
+* **vs-code-designer:** update agent CodeLens LSP bundle ([#9577](https://github.com/Azure/LogicAppsUX/pull/9577))
+* **vscode:** Make design-time start non-blocking on activate ([#9591](https://github.com/Azure/LogicAppsUX/pull/9591))
+* **vscode:** Remove defaultLogicAppPath context ([#9588](https://github.com/Azure/LogicAppsUX/pull/9588))
+* **designer:** guard undefined operation/action type to prevent renderComponentIntoRoot crash ([#9579](https://github.com/Azure/LogicAppsUX/pull/9579))
+* **designer:** warn before enabling trigger concurrency ([#9576](https://github.com/Azure/LogicAppsUX/pull/9576))
+
 ## [5.996.0](https://github.com/Azure/LogicAppsUX/compare/v5.991.3...v5.996.0) (2026-09-01)
 
 ### Features
