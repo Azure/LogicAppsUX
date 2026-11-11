@@ -1365,8 +1365,13 @@ are true; composite account and returned-tenant presence/match are false.
 The original ordered validators report `valid=true`, `errors=[]` and all 36
 checkpoints. The later receipt may reuse warmup cache. These observations prove
 the actual provider-backed boundary in a successful end-user flow, not an
-identity defect or removal acceptance. Windows unit/regeneration failures mean
-this run is **not accepted full23**.
+identity defect or removal acceptance. The original monitor subsequently ended
+with exit 1 after three failed executions, exhausting its bounded attempt
+budget. The Windows unit OS-contract still failed on actual attempt 3, log
+`1695`. Windows regeneration succeeded on attempt 3, so the other 22 consumer
+lanes ultimately succeeded, but the protected full23 result **failed**. The
+original both-OS MSN receipts remain valid; no requeue or retry reset was
+performed.
 
 The user subsequently authorized removal of E4, intentionally retiring
 raw-token-only synthetic sessions while preserving normal customer auth.
