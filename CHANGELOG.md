@@ -1,4 +1,26 @@
 # Logic Apps Designer
+## [5.996.0](https://github.com/Azure/LogicAppsUX/compare/v5.991.3...v5.996.0) (2026-09-01)
+
+### Features
+
+* **workflows:** Removed unused `issue-sync.yml` workflow ([#9545](https://github.com/Azure/LogicAppsUX/pull/9545))
+* **vscode:** 'Add custom code' command for adding custom code to existing logic app ([#9526](https://github.com/Azure/LogicAppsUX/pull/9526))
+* **vscode:** Fix CFS pipeline npm auth ([#9521](https://github.com/Azure/LogicAppsUX/pull/9521))
+* **vscode:** Onboard release pipelines to CFS ([#9520](https://github.com/Azure/LogicAppsUX/pull/9520))
+
+### Bug Fixes
+
+* **vscode:** Fix multiple extension commands/events ([#9550](https://github.com/Azure/LogicAppsUX/pull/9550))
+* **vscode:** fix 'Operation cancelled' logged as error, clean up activate and createUnitTest* ([#9542](https://github.com/Azure/LogicAppsUX/pull/9542))
+* **iframe-app:** validate agent card postMessage payloads ([#9546](https://github.com/Azure/LogicAppsUX/pull/9546))
+* **vscode:** auto-enable multi-language worker for JDBC connector ([#9535](https://github.com/Azure/LogicAppsUX/pull/9535))
+* **vscode:** Codeful project deploy fix ([#9527](https://github.com/Azure/LogicAppsUX/pull/9527))
+* **vscode:** restore signing packages through CFS ([#9533](https://github.com/Azure/LogicAppsUX/pull/9533))
+* **vscode:** Revert local artifacts workflow-designtime path fix ([#9529](https://github.com/Azure/LogicAppsUX/pull/9529))
+* **vscode:** Fix invalid vscode settings.json values, codeful project deploy, project path cache ([#9525](https://github.com/Azure/LogicAppsUX/pull/9525))
+* **vscode:** Pass CFS npmrc through Turbo ([#9523](https://github.com/Azure/LogicAppsUX/pull/9523))
+* **vscode:** Fix VS Code extension CFS npm install ([#9522](https://github.com/Azure/LogicAppsUX/pull/9522))
+
 ## [5.991.3](https://github.com/Azure/LogicAppsUX/compare/v5.981.1...v5.991.3) (2026-08-14)
 
 ### Features
