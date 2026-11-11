@@ -1,4 +1,4 @@
-/* global __dirname, process, require */
+/* global __dirname, console, process, require */
 const assert = require('assert');
 const { Buffer } = require('node:buffer');
 const fs = require('fs');
@@ -6,6 +6,7 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const test = require('node:test');
+const { buildDirectoryIntegrityManifest, prepareSuiteExtensionsDirectory } = require('./e2e-cli-batch');
 const {
   CONTENT_MANIFEST_NAME,
   CS_DEV_KIT_E2E_VERSION,
@@ -103,6 +104,185 @@ function runTar(args) {
   const result = spawnSync('tar', args, { encoding: 'utf8' });
   assert.strictEqual(result.status, 0, `tar ${args.join(' ')} failed:\n${result.stderr || result.stdout}`);
 }
+
+function createSuiteCopyFixture() {
+  const root = createTempRoot();
+  const seedDir = path.join(root, 'seed');
+  const targetDir = path.join(root, 'installed');
+  const options = { platform: process.platform, arch: process.arch, vscodeVersion: 'stable' };
+  createInstalledFixture(seedDir);
+  const manifest = createContentManifest(seedDir, readSourceContract(), options);
+  fs.writeFileSync(path.join(seedDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  return { root, seedDir, targetDir, ...options };
+}
+
+test('isolated preparation hashes each ordinary payload once per trust boundary and retains exact manifest bytes', (context) => {
+  const fixture = createSuiteCopyFixture();
+  try {
+    const relativePath = path.join('azurite.azurite-3.35.0', 'payload.txt');
+    const payloadReads = [];
+    const originalRead = fs.readFileSync;
+    const read = context.mock.method(fs, 'readFileSync', function (file, ...args) {
+      if (String(file).endsWith(relativePath)) {
+        payloadReads.push(path.resolve(file));
+      }
+      return originalRead.call(this, file, ...args);
+    });
+    const manifestBytes = originalRead(path.join(fixture.seedDir, CONTENT_MANIFEST_NAME));
+    prepareSuiteExtensionsDirectory(fixture);
+    read.mock.restore();
+    assert.deepStrictEqual(payloadReads.sort(), [fixture.seedDir, fixture.targetDir].map((root) => path.join(root, relativePath)).sort());
+    assert.deepStrictEqual(fs.readFileSync(path.join(fixture.seedDir, CONTENT_MANIFEST_NAME)), manifestBytes);
+    assert.deepStrictEqual(fs.readFileSync(path.join(fixture.targetDir, CONTENT_MANIFEST_NAME)), manifestBytes);
+    const registry = JSON.parse(fs.readFileSync(path.join(fixture.targetDir, 'extensions.json'), 'utf8'));
+    assert.ok(registry.length > 0);
+    assert.ok(registry.every((entry) => entry.location.path.includes('/installed/')));
+    assert.strictEqual(fs.readFileSync(path.join(fixture.seedDir, 'extensions.json'), 'utf8'), '[]');
+  } finally {
+    fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+for (const mutation of ['changed', 'missing', 'extra', 'link']) {
+  test(`invalid ${mutation} seed payload fails before copying`, (context) => {
+    const fixture = createSuiteCopyFixture();
+    try {
+      const payload = path.join(fixture.seedDir, 'azurite.azurite-3.35.0', 'payload.txt');
+      if (mutation === 'changed') {
+        fs.writeFileSync(payload, 'x'.repeat(fs.statSync(payload).size));
+      } else if (mutation === 'missing') {
+        fs.rmSync(payload);
+      } else if (mutation === 'extra') {
+        fs.writeFileSync(path.join(fixture.seedDir, 'unexpected'), 'extra');
+      } else {
+        const extension = path.dirname(payload);
+        const displaced = path.join(fixture.root, 'displaced');
+        fs.renameSync(extension, displaced);
+        fs.symlinkSync(displaced, extension, process.platform === 'win32' ? 'junction' : 'dir');
+      }
+      fs.mkdirSync(fixture.targetDir);
+      fs.writeFileSync(path.join(fixture.targetDir, 'sentinel'), 'untouched');
+      const copy = context.mock.method(fs, 'cpSync', () => assert.fail('Invalid seed must never be copied'));
+      assert.throws(
+        () => prepareSuiteExtensionsDirectory(fixture),
+        /does not match|unexpected top-level|symbolic link|missing required ID/
+      );
+      copy.mock.restore();
+      assert.strictEqual(fs.readFileSync(path.join(fixture.targetDir, 'sentinel'), 'utf8'), 'untouched');
+    } finally {
+      fs.rmSync(fixture.root, { recursive: true, force: true });
+    }
+  });
+}
+
+for (const mutation of ['changed', 'missing', 'extra', 'manifest-bytes', 'rebaselined', 'interrupted']) {
+  test(`installed ${mutation} copy cannot pass verification or immutable comparison`, (context) => {
+    const fixture = createSuiteCopyFixture();
+    try {
+      const originalCopy = fs.cpSync;
+      const copy = context.mock.method(fs, 'cpSync', function (...args) {
+        originalCopy.apply(this, args);
+        const payload = path.join(fixture.targetDir, 'azurite.azurite-3.35.0', 'payload.txt');
+        if (mutation === 'changed' || mutation === 'rebaselined') {
+          fs.writeFileSync(payload, 'x'.repeat(fs.statSync(payload).size));
+          if (mutation === 'rebaselined') {
+            const manifest = createContentManifest(fixture.targetDir, readSourceContract(), fixture);
+            fs.writeFileSync(path.join(fixture.targetDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+          }
+        } else if (mutation === 'missing') {
+          fs.rmSync(payload);
+        } else if (mutation === 'extra') {
+          fs.writeFileSync(path.join(fixture.targetDir, 'unexpected'), 'extra');
+        } else if (mutation === 'manifest-bytes') {
+          fs.appendFileSync(path.join(fixture.targetDir, CONTENT_MANIFEST_NAME), '\n');
+        } else {
+          throw new Error('injected interrupted copy');
+        }
+      });
+      assert.throws(
+        () => prepareSuiteExtensionsDirectory(fixture),
+        /does not match|unexpected top-level|changed while copying|interrupted copy/
+      );
+      copy.mock.restore();
+    } finally {
+      fs.rmSync(fixture.root, { recursive: true, force: true });
+    }
+  });
+}
+
+test('batch snapshot cannot be replaced by a newly valid but rebaselined seed', () => {
+  const fixture = createSuiteCopyFixture();
+  try {
+    const expectedManifest = buildDirectoryIntegrityManifest(fixture.seedDir);
+    fs.writeFileSync(path.join(fixture.seedDir, 'azurite.azurite-3.35.0', 'payload.txt'), 'new seed');
+    const manifest = createContentManifest(fixture.seedDir, readSourceContract(), fixture);
+    fs.writeFileSync(path.join(fixture.seedDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+    assert.throws(() => prepareSuiteExtensionsDirectory({ ...fixture, expectedManifest }), /changed since the batch snapshot/);
+    assert.ok(!fs.existsSync(fixture.targetDir));
+  } finally {
+    fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test('a manifest byte change during semantic verification cannot become the copy baseline', (context) => {
+  const fixture = createSuiteCopyFixture();
+  try {
+    const manifestPath = path.join(fixture.seedDir, CONTENT_MANIFEST_NAME);
+    const originalRead = fs.readFileSync;
+    let reads = 0;
+    const read = context.mock.method(fs, 'readFileSync', function (file, ...args) {
+      const bytes = originalRead.call(this, file, ...args);
+      if (path.resolve(String(file)) === manifestPath && ++reads === 2) {
+        fs.appendFileSync(manifestPath, '\n');
+      }
+      return bytes;
+    });
+    assert.throws(() => prepareSuiteExtensionsDirectory(fixture), /content manifest changed during verification/);
+    read.mock.restore();
+    assert.ok(!fs.existsSync(fixture.targetDir));
+  } finally {
+    fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test('phase timing records retain explicit failure and never report a later copy after seed rejection', (context) => {
+  const fixture = createSuiteCopyFixture();
+  try {
+    const records = [];
+    const output = context.mock.method(console, 'log', (line) => records.push(JSON.parse(line.replace('[extensions-preparation] ', ''))));
+    fs.writeFileSync(path.join(fixture.seedDir, 'unexpected'), 'extra');
+    assert.throws(() => prepareSuiteExtensionsDirectory(fixture), /unexpected top-level/);
+    output.mock.restore();
+    assert.strictEqual(records.length, 1);
+    assert.strictEqual(records[0].phase, 'verify-seed');
+    assert.strictEqual(records[0].outcome, 'failed');
+    assert.ok(Number.isInteger(records[0].durationMs) && records[0].durationMs >= 0);
+  } finally {
+    fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test('suite copies remain physically independent and repeated preparation removes stale installed files', () => {
+  const fixture = createSuiteCopyFixture();
+  try {
+    const expectedManifest = buildDirectoryIntegrityManifest(fixture.seedDir);
+    prepareSuiteExtensionsDirectory({ ...fixture, expectedManifest });
+    const relativePath = path.join('azurite.azurite-3.35.0', 'payload.txt');
+    const seedBytes = fs.readFileSync(path.join(fixture.seedDir, relativePath));
+    fs.writeFileSync(path.join(fixture.targetDir, relativePath), 'runtime mutation');
+    fs.writeFileSync(path.join(fixture.targetDir, 'stale'), 'runtime addition');
+    const otherTarget = path.join(fixture.root, 'other');
+    prepareSuiteExtensionsDirectory({ ...fixture, targetDir: otherTarget, expectedManifest });
+    assert.deepStrictEqual(fs.readFileSync(path.join(otherTarget, relativePath)), seedBytes);
+    assert.deepStrictEqual(fs.readFileSync(path.join(fixture.seedDir, relativePath)), seedBytes);
+    prepareSuiteExtensionsDirectory({ ...fixture, expectedManifest });
+    assert.deepStrictEqual(fs.readFileSync(path.join(fixture.targetDir, relativePath)), seedBytes);
+    assert.ok(!fs.existsSync(path.join(fixture.targetDir, 'stale')));
+  } finally {
+    fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
 
 test('reads extension dependencies only from the extension source manifest', () => {
   const root = createTempRoot();

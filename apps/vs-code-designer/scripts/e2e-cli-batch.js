@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { performance } = require('node:perf_hooks');
 const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 const { CONTENT_MANIFEST_NAME, verify: verifyPreparedExtensionDependencies } = require('./prepare-e2e-extension-dependencies');
 const { isProcessCleanupAccepted } = require('./vscode-lifecycle-acceptance');
@@ -417,42 +418,84 @@ function prepareSuiteExtensionsDirectory({
     'Prepared seed and installed extension roots must be disjoint'
   );
 
-  const manifest = expectedManifest ?? buildDirectoryIntegrityManifest(seedDir);
-  if (manifest.files.length === 0) {
-    throw new Error(`[batch] Prepared extensions seed is empty: ${seedDir}`);
-  }
-  if (!manifest.files.some((file) => file.relativePath === 'extensions.json')) {
+  if (!fs.existsSync(path.join(seedDir, 'extensions.json'))) {
     throw new Error(`[batch] Prepared extensions seed is missing extensions.json: ${seedDir}`);
   }
-  if (!manifest.files.some((file) => file.relativePath === CONTENT_MANIFEST_NAME)) {
+  if (!fs.existsSync(path.join(seedDir, CONTENT_MANIFEST_NAME))) {
     throw new Error(`[batch] Prepared extensions seed is missing ${CONTENT_MANIFEST_NAME}: ${seedDir}`);
   }
 
-  verifyPreparedExtensionDependencies({
-    extensionsDir: seedDir,
-    contentManifestPath: path.join(seedDir, CONTENT_MANIFEST_NAME),
-    platform,
-    arch,
-    vscodeVersion,
-    rebuildRegistry: false,
-  });
+  const manifest = measureExtensionsPreparation('verify-seed', () =>
+    verifyPreparedExtensionsInventory({
+      extensionsDir: seedDir,
+      platform,
+      arch,
+      vscodeVersion,
+      rebuildRegistry: false,
+    })
+  );
+  const immutableFiles = (value) => JSON.stringify(value.files.filter((file) => file.relativePath !== 'extensions.json'));
+  if (expectedManifest && immutableFiles(manifest) !== immutableFiles(expectedManifest)) {
+    throw new Error('[batch] Prepared extensions seed changed since the batch snapshot; refusing to run isolated suites.');
+  }
 
-  fs.rmSync(targetDir, { recursive: true, force: true });
-  fs.mkdirSync(path.dirname(targetDir), { recursive: true });
-  fs.cpSync(seedDir, targetDir, { recursive: true, force: true, dereference: false, verbatimSymlinks: true });
-  verifyPreparedExtensionDependencies({
-    extensionsDir: targetDir,
-    contentManifestPath: path.join(targetDir, CONTENT_MANIFEST_NAME),
-    platform,
-    arch,
-    vscodeVersion,
+  measureExtensionsPreparation('copy', () => {
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    fs.mkdirSync(path.dirname(targetDir), { recursive: true });
+    fs.cpSync(seedDir, targetDir, { recursive: true, force: true, dereference: false, verbatimSymlinks: true });
   });
-  const copiedManifest = buildDirectoryIntegrityManifest(targetDir);
-  const immutableFiles = (value) => value.files.filter((file) => file.relativePath !== 'extensions.json');
-  if (JSON.stringify(immutableFiles(copiedManifest)) !== JSON.stringify(immutableFiles(manifest))) {
+  const copiedManifest = measureExtensionsPreparation('verify-installed', () =>
+    verifyPreparedExtensionsInventory({
+      extensionsDir: targetDir,
+      platform,
+      arch,
+      vscodeVersion,
+    })
+  );
+  if (immutableFiles(copiedManifest) !== immutableFiles(manifest)) {
     throw new Error('[batch] Prepared extensions seed changed while copying; refusing to run isolated suites.');
   }
   return targetDir;
+}
+
+function measureExtensionsPreparation(phase, action) {
+  const started = performance.now();
+  let outcome = 'failed';
+  try {
+    const result = action();
+    outcome = 'passed';
+    return result;
+  } finally {
+    console.log(`[extensions-preparation] ${JSON.stringify({ phase, outcome, durationMs: Math.round(performance.now() - started) })}`);
+  }
+}
+
+function verifyPreparedExtensionsInventory(options) {
+  const root = path.resolve(options.extensionsDir);
+  const manifestPath = path.join(root, CONTENT_MANIFEST_NAME);
+  const manifestBytes = fs.readFileSync(manifestPath);
+  const manifest = verifyPreparedExtensionDependencies({ ...options, contentManifestPath: manifestPath });
+  if (!manifestBytes.equals(fs.readFileSync(manifestPath))) {
+    throw new Error('[batch] Prepared extensions content manifest changed during verification.');
+  }
+  // verify() has just hashed every payload and compared its complete inventory.
+  // Reuse those proven hashes, not a second read of the same installed bytes.
+  const files = manifest.extensions.flatMap((extension) =>
+    extension.files.map((file) => ({
+      relativePath: `${extension.relativeLocation}/${file.path}`,
+      bytes: file.size,
+      sha256: file.sha256,
+    }))
+  );
+  const registry = fs.readFileSync(path.join(root, 'extensions.json'));
+  for (const [relativePath, bytes] of [
+    [CONTENT_MANIFEST_NAME, manifestBytes],
+    ['extensions.json', registry],
+  ]) {
+    files.push({ relativePath, bytes: bytes.length, sha256: crypto.createHash('sha256').update(bytes).digest('hex') });
+  }
+  files.sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+  return { schemaVersion: 1, root, files };
 }
 
 function classifySuiteRunResult({ exitCode, signal, error, output = '', terminalResult, cleanupLedger }) {

@@ -5,7 +5,15 @@
 The existing dependency producer's `prepare` and `verify` commands retain the
 full immutable seed inventory and source/version/platform/architecture contract.
 Batch and direct-family wrappers normally copy the validated seed into isolated
-installations. Unwrapped CLI labels retain their supported dependency setup.
+installations. Each copy fully verifies both seed and installed content. Its
+immutable comparison reuses the payload hashes proven by those semantic
+verifications instead of hashing both trees again. The original batch snapshot
+and exact content-manifest bytes remain binding; only `extensions.json` may be
+relocated. No accepted inventory is regenerated from runtime additions.
+`[extensions-preparation]` records separate monotonic durations and outcomes for
+seed verification, physical copying and installed verification. These measure
+preparation, not native test execution, and do not establish an agent, disk or
+antivirus cause. Unwrapped CLI labels retain their supported dependency setup.
 ExTester uses its normal public VS Code **and ChromeDriver** asset setup; a
 supplied seed skips Marketplace dependency installation, not asset setup.
 The type-safe owned cache-path resolver replaces private `ExTester.code` access.
