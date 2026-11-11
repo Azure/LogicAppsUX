@@ -1,6 +1,6 @@
 # Logic Apps SDK language server
 
-This directory contains the .NET 8 language server used by the Logic Apps VS Code extension for C# workflow authoring.
+This directory contains the .NET 10 language server used by the Logic Apps VS Code extension for C# workflow authoring.
 
 The server provides hover, completion, CodeLens, document synchronization, and workflow metadata features. The extension owns the language client, custom commands, asset installation, telemetry configuration, and release.
 

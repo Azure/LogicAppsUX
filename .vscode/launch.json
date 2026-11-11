@@ -13,7 +13,7 @@
       "preLaunchTask": "npm: build:extension",
       "env": {
         "DEBUGTELEMETRY": "v",
-        "LSP_SERVER_DEV_PATH": "${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net8.0/SdkLspServer.dll"
+        "LSP_SERVER_DEV_PATH": "${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net10.0/SdkLspServer.dll"
       }
     },
     {

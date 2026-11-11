@@ -38,6 +38,24 @@ if (!existsSync(publishedServerPath)) {
   throw new Error(`Published LSP server is missing '${publishedServerPath}'.`);
 }
 
+const runtimeConfigPath = path.join(publishDirectory, 'SdkLspServer.runtimeconfig.json');
+if (!existsSync(runtimeConfigPath)) {
+  throw new Error(`Published LSP server is missing '${runtimeConfigPath}'.`);
+}
+
+const runtimeConfig = JSON.parse(readFileSync(runtimeConfigPath, 'utf8'));
+if (runtimeConfig.runtimeOptions?.tfm !== 'net10.0') {
+  throw new Error(`Published LSP server targets '${runtimeConfig.runtimeOptions?.tfm ?? 'unknown'}' instead of 'net10.0'.`);
+}
+
+const runtimeFrameworks = runtimeConfig.runtimeOptions.frameworks ?? [runtimeConfig.runtimeOptions.framework];
+for (const frameworkName of ['Microsoft.NETCore.App', 'Microsoft.AspNetCore.App']) {
+  const framework = runtimeFrameworks.find((candidate) => candidate?.name === frameworkName);
+  if (!framework?.version?.startsWith('10.')) {
+    throw new Error(`Published LSP server requires '${frameworkName} ${framework?.version ?? 'unknown'}' instead of version 10.`);
+  }
+}
+
 const archive = new AdmZip();
 archive.addLocalFolder(publishDirectory, 'LSPServer');
 archive.writeZip(stagedServerArchivePath);

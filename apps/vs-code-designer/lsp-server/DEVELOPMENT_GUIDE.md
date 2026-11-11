@@ -12,7 +12,7 @@ pnpm run build:extension
 Press `F5` and select `Run Designer Extension in Dev Mode`. The launch configuration starts the extension with:
 
 ```text
-LSP_SERVER_DEV_PATH=${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net8.0/SdkLspServer.dll
+LSP_SERVER_DEV_PATH=${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net10.0/SdkLspServer.dll
 ```
 
 The extension starts the server through its managed `dotnet` host and passes the installed SDK nupkg through `--sdk`.
