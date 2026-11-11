@@ -86,7 +86,7 @@ Later documentation-only commits are not another native payload or run.
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
 | Not required; removal accepted | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls, affected 14-lane run `15983333` and canonical full23 run `15984836` accepted at `3e9d343a0`; failed regeneration attempts preserved |
 | Not required; removal accepted | E2 update suppression | Keep normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` and canonical full23 run `15987081` accepted at `c585d2639`; all 23 canonical producing attempts passed on attempt 1 |
-| Test/fixture candidate; retain pending decision | E4 environment-token session fallback | E3 supplies the WIF token without E4; resolve session identity and local raw-token-only coverage before authorizing removal | Real installed SDK controls expose a tenant-only account ID that the connector-details caller misparses. No E4-disabled native acceptance; retaining E3 does not approve E4 |
+| Removal authorized; candidate, not native-accepted | E4 environment-token session fallback | Remove only the synthetic-session helper/fallback; retain E3 WIF, normal Microsoft sessions and independent fixture/API tokens | Both-OS native MSN observations correlate the actual session to WIF despite the known tenant-only parsing mismatch. Raw-token-only synthetic authoring is intentionally retired; no speculative identity fix or E4-disabled native acceptance |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
@@ -1087,13 +1087,17 @@ environment-token fallback.
 
 ### E4. Environment-token fallback session
 
-**Source:** `src/app/utils/codeless/getAuthorizationToken.ts:34-36,68-87`.
+**Historical source:** `src/app/utils/codeless/getAuthorizationToken.ts:34-36,68-87`.
 **Introduced:** `c29cef8af50730d2b27ca2203d6a0a832fbf50e1`.
 **Audit source:** documentation head
 `88566197338ffa819f5c9a937c4275d422772056`, retaining the product implementation
 accepted at `c585d26394dbc6a7c20d07937fbbcc0fed5db663`. The inherited
 `apps/vs-code-designer/src` difference from that accepted code commit is
 `src/test/ui/SKILL.md`, not product source.
+
+The audit and observation-preparation chronology below retains its original
+proof limits. The later [authorized removal candidate](#provider-backed-native-observation-and-authorized-removal-candidate)
+supersedes the earlier retain-pending-decision disposition, not its evidence.
 
 **Before/after:** When silent native session lookup is absent, a
 `VSCODE_RUNNING_TESTS=1` branch can construct a session from E2E environment
@@ -1215,7 +1219,7 @@ reproduction or E4-disabled native acceptance. Existing full23 acceptance at
 `c585d2639` includes E4 and cannot supply that missing proof. Domain, testing and
 senior-review workflows were applied directly for this audit.
 
-**Surgical candidate, only after authorization:**
+**Audit-only proposed scope, before authorization:**
 
 1. Retain all E3 factory/activation/session integration and installed
    SDK/dependency/type/API adaptations. Establish an approved disposition for
@@ -1242,7 +1246,7 @@ senior-review workflows were applied directly for this audit.
    not a substitute. Retain bounded same-run failed-job attempts and all
    original artifacts; do not queue a fresh run to reset attempts.
 
-**Disposition:** **Retain pending the session-identity/local-mode decision and
+**Audit-only disposition:** **Retain pending the session-identity/local-mode decision and
 authorized native proof; not justified as an independent product requirement.**
 The supported WIF token replacement is already present and locally exercised,
 but full session-consumer compatibility and native removal acceptance remain
@@ -1347,6 +1351,76 @@ Native proof still requires coordinator admission and identical-SHA canonical fu
 non-diagnostic validation; targeted native diagnosis is optional. No local
 shared-desktop GUI launch, ADO queue/ref movement or retry-budget reset is
 authorized by this preparation.
+
+#### Provider-backed native observation and authorized removal candidate
+
+Original run `15989189`, source
+`a6ecd02e62ec180151600a19b7d2e388b8168cc4`, produced successful attempt-1 MSN
+flows on both OSes with E4 still present. Linux stdout log `831`, lines
+1426/1870, and Windows stdout log `1265`, lines 1359/1880, record warmup and
+authoring receipts matching the boolean hypothesis above: observed,
+provider-correlated, requested-tenant matching, tenant-only account, returned
+client equal to fixture tenant, connectors enabled, consistent and non-pausing
+are true; composite account and returned-tenant presence/match are false.
+The original ordered validators report `valid=true`, `errors=[]` and all 36
+checkpoints. The later receipt may reuse warmup cache. These observations prove
+the actual provider-backed boundary in a successful end-user flow, not an
+identity defect or removal acceptance. Windows unit/regeneration failures mean
+this run is **not accepted full23**.
+
+The user subsequently authorized removal of E4, intentionally retiring
+raw-token-only synthetic sessions while preserving normal customer auth.
+The removal candidate deletes only `getE2eCliAuthSession` and the silent-path
+fallback expression. E3 provider/session integration, SDK/dependencies, native
+silent/interactive options, tenant selection, error propagation, periodic
+refresh calls and independent fixture/API token minting/forwarding remain.
+The known tenant-only account parsing is characterized without a speculative
+identity or product-auth fix. No new credentials, permissions or resources are
+required by this change.
+
+Before removal, the local complete tree was proved equal to parent baseline
+`b3226e3f2fbe1f1dfb8a3beacd89ec6eb85559b0`, tree
+`6fa9a1823257085448ac2867182ad6fce4b26337`, retaining trusted clicks, Windows
+hash reuse and the observer. The separate observer compatibility commit
+`da954ddba825a5eb8a5e911bad5c07a42f38986e` fixes a deterministically reproduced
+Windows source-URL spelling mismatch: pinned Node `22.23.4` reports literal
+`~` through Inspector where `pathToFileURL` reports `%7E`. Literal-tilde and
+actual DOS 8.3 temporary paths reproduce the failure. Normalizing only these
+URL-equivalent spellings retains exact full-path, unique loaded-script,
+byte-equal disk/source and exact probe binding. Regressions cover tilde and
+percent-encoded-looking names and reject duplicate equivalent loaded scripts.
+The original ADO logs do not establish its actual temporary-path spelling, so
+this reproduction does not attribute that machine's path state. The clean
+compatibility commit passed the complete CLI gate using the checksum-verified
+official Node `22.23.4` Windows distribution.
+
+Removal regression coverage includes no cached session despite an explicit
+raw token/test flag, unchanged native session references/options, native errors,
+provider precedence and subsequent acquisition. The durable offline control
+`scripts/azure-auth-installed-sdk.contract.test.cjs` uses the actual installed
+SDK, unmodified product provider/auth modules and real connector caller with
+synthetic token/ARM responses. Network access is denied before SDK loading;
+inherited auth environment values are not used. Its ten cases cover WIF with
+and without raw tokens, sign-out/reacquisition/new tokens, current caller
+shape, empty/wrong-tenant subscriptions and token/list/config/job-context
+errors. This is construction/contract proof, not live OIDC exchange, RBAC or
+native acceptance. Registration appends to the existing CLI unit chain without
+changing the mandatory first/second commands or any prior command order.
+
+Local authoring now requires a cached Microsoft session for the requested
+tenant/ARM scope or the approved WIF provider. Fixture/API tokens remain
+independently necessary. The disable-fallback environment flag controls only
+wrapper minting, not forwarding of explicit tokens; even historically it did
+not disable E4 when an explicit token was present.
+
+**Current disposition:** **Authorized E4-only removal candidate; canonical
+same-SHA full23 native acceptance pending.** Local controls and the complete
+clean-commit CLI gate precede coordinator admission. Targeted diagnosis is
+optional, not a substitute. Keep every original assertion, ordered checkpoint,
+evidence/source contract, deadline, lifecycle rule and bounded same-run retry.
+Only the coordinator integrates/pushes/moves the shared ref and queues/monitors
+the canonical run; this stream does not launch a shared-desktop GUI or mutate
+live resources.
 
 ### E5. Activation catches workspace identity changes and initializes more paths
 

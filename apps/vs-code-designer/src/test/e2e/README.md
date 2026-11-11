@@ -50,8 +50,9 @@ isolated source-bound consumers, not concurrent local worktrees.
 ### Supplemental connector identity observation
 
 With the existing WIF metadata, MSN authoring observes the real provider/session
-and connector-details boundary in the already-loaded extension. E3/E4 and
-raw-token-only local authoring remain unchanged. The in-process Inspector probes
+and connector-details boundary in the already-loaded extension. E3 WIF and normal
+Microsoft sessions remain supported; the E4-removal candidate retires synthetic
+sessions for raw-token-only local authoring. The in-process Inspector probes
 never open a listener and are removed before debug/runtime or on authoring
 failure. Missing source-bound evidence is an instrumentation failure, not a
 customer-authentication defect.
@@ -1251,7 +1252,18 @@ Use the following repeatable setup for a new developer machine or a new test pro
    pnpm run test:e2e-cli:msn-weather-lifecycle -- --visible-delay-ms 15000
    ```
 
-The wrapper automatically injects an Azure CLI ARM token into the extension host under `VSCODE_RUNNING_TESTS` if the scoped VS Code session is not available. That means the VS Code title bar can still show **Sign in** while the test has a valid ARM token for connector discovery. Set `LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK=1` to debug pure VS Code auth persistence, or set `LA_E2E_CLI_AZURE_ACCESS_TOKEN` yourself to provide a token explicitly.
+Designer authoring requires a cached Microsoft session for the requested tenant
+and ARM scope, or the existing approved ADO WIF subscription provider. A raw ARM
+token alone no longer fabricates a VS Code session, even under
+`VSCODE_RUNNING_TESTS`. A fresh profile with silent authentication and no
+supported session returns no session rather than prompting or inventing identity.
+
+The wrapper still forwards an explicit `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, or mints
+one with Azure CLI outside batch mode, for independent fixture/API requests.
+`LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK=1` disables only wrapper minting; it
+does not suppress an explicitly supplied token or disable any product auth path.
+Azure CLI login and a valid fixture token do not populate the VS Code Microsoft
+session cache.
 
 If you signed in through a one-off visible profile instead of the durable Azure-auth profile, set `LA_E2E_CLI_USER_DATA_DIR` to that exact `user-data` folder before running the lifecycle:
 
@@ -1267,8 +1279,8 @@ Use this target when authoring Azure-backed designer tests locally. It is intent
 LogicAppsUX VS Code E2E can target an owner-approved test tenant for Azure connector tests, but it cannot directly reuse a browser test suite's authentication cache:
 
 - Browser authentication tokens and certificate-based sign-in fixtures are specific to their browser test environment.
-- VS Code E2E runs inside an extension host and uses VS Code Microsoft authentication plus the test-gated Azure CLI ARM-token fallback. Browser `storageState.json` / `session-storage.json` files do not populate `vscode.authentication` sessions.
-- To run this lifecycle against an owner-approved test tenant, sign Azure CLI into that tenant, use an already authorized subscription/resource group where the test identity can create managed API connections, and set the same `LA_E2E_CLI_AZURE_*` variables above. Do not provision resources, expand permissions, or mutate another suite's shared fixtures without separate authorization.
+- VS Code E2E runs inside an extension host and uses a cached Microsoft session or the approved WIF provider, not a synthetic raw-token session. Browser `storageState.json` / `session-storage.json` files do not populate `vscode.authentication` sessions.
+- To run this lifecycle against an owner-approved test tenant, first warm the Microsoft session in the same durable VS Code profile (or use the existing approved WIF provider). Separately sign Azure CLI into that tenant for fixture/API tokens, use an already authorized subscription/resource group where the test identity can create managed API connections, and set the same `LA_E2E_CLI_AZURE_*` variables above. Do not provision resources, expand permissions, or mutate another suite's shared fixtures without separate authorization.
 
 Example local setup:
 
@@ -1285,7 +1297,22 @@ $env:LA_E2E_CLI_AZURE_LOCATION_NAME = 'westus'
 pnpm run test:e2e-cli:msn-weather-lifecycle
 ```
 
-For CI, use the pipeline's existing authorized test-tenant Azure service connection or equivalent approved secretless login rather than importing browser authentication state. Mint an ARM token for `https://management.core.windows.net/`, export it as `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, and pass the tenant/subscription/resource-group/location variables into `@vscode/test-cli`. Keep the run serialized if the resource group or managed connections are shared.
+For CI, retain the pipeline's existing authorized ADO WIF service connection,
+provider metadata and job context rather than importing browser authentication
+state. The provider supplies the Designer session. Independently retain the ARM
+token exported as `LA_E2E_CLI_AZURE_ACCESS_TOKEN` and the approved
+tenant/subscription/resource-group/location variables for fixture/API work;
+the token is not a replacement for provider/session setup. Keep the run
+serialized if the resource group or managed connections are shared.
+
+The registered offline control
+`node --test --test-concurrency=1 scripts/azure-auth-installed-sdk.contract.test.cjs`
+(from `apps/vs-code-designer`) exercises the installed SDK, product provider and
+real connector caller with synthetic external responses and denied network
+access. It covers session precedence, tenant selection, sign-out/reacquisition,
+new token acquisition and error propagation. It is not live OIDC/RBAC or native
+E4-removal acceptance; the known tenant-only account parsing is characterized,
+not repaired.
 
 ### Run NuGet conversion debug/run lifecycle
 ```powershell

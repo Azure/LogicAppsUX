@@ -2770,14 +2770,16 @@ function getMsnWeatherAzureAuthEnv() {
       throw new Error('Azure CLI did not return an accessToken.');
     }
 
-    console.log('[workspace-lifecycle][msn-weather] Using Azure CLI token fallback for connector search in the test host.');
+    console.log(
+      '[workspace-lifecycle][msn-weather] Supplying an Azure CLI token for fixture/API requests; Designer authentication requires a Microsoft or WIF session.'
+    );
     return {
       LA_E2E_CLI_AZURE_ACCESS_TOKEN: token,
     };
   } catch (error) {
     console.warn(
       [
-        '[workspace-lifecycle][msn-weather] Azure CLI token fallback is unavailable; the test will rely on the VS Code Microsoft auth profile.',
+        '[workspace-lifecycle][msn-weather] Azure CLI token minting is unavailable; Designer authentication still requires a Microsoft or WIF session.',
         `Reason: ${error instanceof Error ? error.message : String(error)}`,
       ].join('\n')
     );

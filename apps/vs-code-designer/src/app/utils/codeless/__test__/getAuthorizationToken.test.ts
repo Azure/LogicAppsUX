@@ -1,5 +1,5 @@
 import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import { getAuthData, getAuthorizationToken, getAuthorizationTokenFromNode, getCloudHost } from '../getAuthorizationToken';
@@ -27,6 +27,10 @@ const federatedEnvKeys = [
 ];
 
 describe('getAuthorizationToken', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   beforeEach(() => {
     vi.restoreAllMocks();
     delete process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN;
@@ -95,6 +99,8 @@ describe('getAuthorizationToken', () => {
   });
 
   it('should use provider-backed auth when Azure DevOps federated credentials are configured', async () => {
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_AZURE_ACCESS_TOKEN', 'synthetic-raw-token');
     process.env.FC_SERVICE_CONNECTION_NAME = 'logicapps-e2e';
     process.env.FC_SERVICE_CONNECTION_ID = 'service-connection-id';
     process.env.FC_SERVICE_CONNECTION_TENANT_ID = 'tenant-id';
@@ -124,30 +130,66 @@ describe('getAuthorizationToken', () => {
     expect(getSessionFromVSCode).not.toHaveBeenCalled();
   });
 
-  it('uses a test-gated Azure CLI token fallback when silent auth has no cached session', async () => {
-    vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
-      get: vi.fn(() => true),
-    } as any);
+  it.each(['tenant-1', undefined])('does not fabricate a missing silent session with a raw token (tenant %s)', async (tenantId) => {
+    vi.mocked(vscode.workspace.getConfiguration().get).mockReturnValue(true);
     mocks.getSessionFromVSCode.mockResolvedValue(undefined);
-    process.env.VSCODE_RUNNING_TESTS = '1';
-    process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'azure-cli-token';
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_AZURE_ACCESS_TOKEN', 'synthetic-raw-token');
+    vi.stubEnv('LA_E2E_CLI_AZURE_TENANT_ID', 'environment-tenant');
+    vi.stubEnv('WORKFLOWS_TENANT_ID', 'workflow-tenant');
+    vi.stubEnv('LA_E2E_CLI_AZURE_CLIENT_ID', 'environment-client');
 
-    const authData = await getAuthData('tenant-1');
-
-    expect(authData?.accessToken).toBe('azure-cli-token');
-    expect(authData?.account.id).toBe('e2e-cli.tenant-1');
+    expect(await getAuthData(tenantId)).toBeUndefined();
+    expect(getSessionFromVSCode).toHaveBeenCalledExactlyOnceWith(undefined, tenantId, { silent: true });
   });
 
-  it('does not use the Azure CLI token fallback outside extension tests', async () => {
-    vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
-      get: vi.fn(() => true),
-    } as any);
-    mocks.getSessionFromVSCode.mockResolvedValue(undefined);
-    process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'azure-cli-token';
+  it.each([true, false])('returns the native session unchanged despite a raw token (silent %s)', async (silentAuth) => {
+    vi.mocked(vscode.workspace.getConfiguration().get).mockReturnValue(silentAuth);
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_AZURE_ACCESS_TOKEN', 'synthetic-raw-token');
+    const session = {
+      accessToken: 'native-token',
+      id: 'native-session',
+      account: { id: 'native-account', label: 'Native' },
+      scopes: [],
+    };
+    mocks.getSessionFromVSCode.mockResolvedValue(session);
 
-    const authData = await getAuthData('tenant-1');
+    expect(await getAuthData('tenant-1')).toBe(session);
+    expect(getSessionFromVSCode).toHaveBeenCalledExactlyOnceWith(
+      undefined,
+      'tenant-1',
+      silentAuth ? { silent: true } : { createIfNone: true }
+    );
+  });
 
-    expect(authData).toBeUndefined();
+  it.each([true, false])('propagates native errors despite a raw token (silent %s)', async (silentAuth) => {
+    vi.mocked(vscode.workspace.getConfiguration().get).mockReturnValue(silentAuth);
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_AZURE_ACCESS_TOKEN', 'synthetic-raw-token');
+    const failure = new Error('Synthetic native session failure');
+    mocks.getSessionFromVSCode.mockRejectedValue(failure);
+
+    await expect(getAuthData('tenant-1')).rejects.toBe(failure);
+  });
+
+  it('reacquires native sessions on later calls rather than retaining a token snapshot', async () => {
+    vi.mocked(vscode.workspace.getConfiguration().get).mockReturnValue(true);
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_AZURE_ACCESS_TOKEN', 'synthetic-raw-token');
+    const first = {
+      accessToken: 'first-native-token',
+      id: 'native-session',
+      account: { id: 'native-account', label: 'Native' },
+      scopes: [],
+    };
+    const next = { ...first, accessToken: 'next-native-token' };
+    mocks.getSessionFromVSCode.mockResolvedValueOnce(first).mockResolvedValueOnce(next);
+
+    expect(await getAuthData('tenant-1')).toBe(first);
+    expect(await getAuthData('tenant-1')).toBe(next);
+    expect(first.accessToken).toBe('first-native-token');
+    expect(getSessionFromVSCode).toHaveBeenCalledTimes(2);
   });
 });
 

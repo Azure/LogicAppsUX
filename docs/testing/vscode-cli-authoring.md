@@ -64,7 +64,7 @@ an integration pass does not make every retained product edit necessary.
 | Durable validation alerts and diagnostic DOM state | Durable `getState()/setState()` alert storage and `data-code-view-validation-errors` are not required for the native-file scenario; both removals have both-OS targeted and full23 acceptance. Keep fresh-file recomputation, local Code-save source precedence and real visible-alert observations |
 | Embedded-Code editing | Retain D4 metadata synchronization and D5 deferred baseline adoption unless an independently proved replacement preserves saved definitions and mounted text. Locally clean Code can contain unsaved Designer edits: do not infer an unchanged owner baseline from `hasChanges() === false`. No-change reparsing has conditional graph/view-transition controls, not native public-event proof; assess other initialization guards separately |
 | Visible validation | Native edit/save/close/reopen must use the exact `workflow.json` and a fresh Designer target. If the required alert is absent, selectors, sleeps, terminal errors or synthesized banners cannot supply it; retain/separate the explicit product feature. Do not prescribe arbitrary wrapping geometry |
-| ADO authentication | Keep the supported WIF subscription provider, activation/session integration and related SDK dependency/type/API adaptations. Use the installed SDK contract, not newer upstream examples. An interactive profile is not equivalent WIF proof; the separate environment-token session fallback remains a candidate requiring its own replacement proof |
+| ADO authentication | Keep the supported WIF subscription provider, activation/session integration and related SDK dependency/type/API adaptations. Use the installed SDK contract, not newer upstream examples. E4 synthetic-session removal is authorized and implemented as a candidate, not native-accepted. Authoring requires a cached Microsoft session or approved WIF provider; independent fixture/API tokens remain supported. An interactive profile is not equivalent WIF proof; preserve the observed tenant-only SDK shape without bundling an unproved identity fix |
 | Compilation | Retain/extract runtime-neutral typing needed by the actual compiler/dependencies. Do not skip the real package build or weaken types to avoid a prerequisite |
 | Shutdown and recovery | Preserve original Logic Apps shutdown/resource release. Harness termination of product-owned Func is recovery, not original release; only independently proven dependency survivors can use the exceptional lifecycle policy |
 | Dependency compatibility | Inspect authentic publisher packages and the actual production extraction path before blaming a fixture. Preserve managed executable selection after product-owned container normalization and permit optional files genuinely absent from supported releases. Establish necessity separately for each platform/file; directory metadata and simulated controls are not native installation or full-archive checksum proof |
@@ -307,6 +307,13 @@ $env:LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL = 'https://management.azure.com'
 The snippet deliberately keeps the token in process memory and never writes or
 prints it. Run the native family in the same PowerShell process because
 environment variables do not persist into a new shell.
+
+This token is for independent fixture/API requests, not a VS Code authentication
+session. Before Designer authoring, warm a Microsoft session for the requested
+tenant/ARM scope in the exact profile the test reuses, or use the existing
+approved ADO WIF provider and job metadata. Azure CLI login alone does not
+populate that profile. `LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK=1` only
+disables wrapper minting; explicit tokens are still forwarded.
 
 Azure CLI caches tokens independently by resource audience. If the selected
 approved ARM audience has less than the required 50-minute window, request the
