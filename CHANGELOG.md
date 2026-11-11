@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.961.14](https://github.com/Azure/LogicAppsUX/compare/v5.961.11...v5.961.14) (2026-06-13)
+
+### Features
+
+* **designer:** Add back HL7 ([#9239](https://github.com/Azure/LogicAppsUX/pull/9239))
+
+### Bug Fixes
+
+* **vscode:** Start codeful language server only when codeful projects exist ([#9278](https://github.com/Azure/LogicAppsUX/pull/9278))
+* **designer/mcp:** Updating ConnectionTable component to not read store data directly ([#9274](https://github.com/Azure/LogicAppsUX/pull/9274))
+* **portal:** Fix agent AzureOpenAI resource IDs for conversational ag… ([#9264](https://github.com/Azure/LogicAppsUX/pull/9264))
+
 ## [5.961.11](https://github.com/Azure/LogicAppsUX/compare/v5.961.10...v5.961.11) (2026-06-09)
 
 ### Bug Fixes
