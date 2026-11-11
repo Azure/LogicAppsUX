@@ -21,6 +21,7 @@ export async function resolveSchemaDependencies(
   }
   if (!schema['@_targetNamespace'] && effectiveTargetNamespace !== undefined) {
     schema['@_targetNamespace'] = effectiveTargetNamespace;
+    schema['#chameleonTargetNamespace'] = effectiveTargetNamespace;
   }
 
   const getArray = (value: any): any[] => (value ? (Array.isArray(value) ? value : [value]) : []);
@@ -54,6 +55,7 @@ export async function resolveSchemaDependencies(
     }
     if (dependency.include && !dependencySchema['@_targetNamespace']) {
       dependencySchema['@_targetNamespace'] = schema['@_targetNamespace'] || '';
+      dependencySchema['#chameleonTargetNamespace'] = dependencySchema['@_targetNamespace'];
     }
 
     visited.add(normalizedDependencyPath);
