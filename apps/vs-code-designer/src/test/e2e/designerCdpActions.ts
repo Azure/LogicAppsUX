@@ -2069,7 +2069,35 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
             ready = await probe();
             activity ||= !!ready.activity;
             if (ready.actionable && !(attempt > 1 && activity)) {
-              break;
+              const route = JSON.stringify([ready.bounds, ready.frames?.slice(0, -1), ready.geometry?.binding]);
+              this.assertActive();
+              const armed = await this.cdp.evaluate<OperationClickEvidence>(
+                this.contextId,
+                `(() => {
+                ${visibleDom}
+                ${operationCardVisibilityDom}
+                ${operationCardIdentityDom}
+                const current = (() => { ${operationClickProbeDom} })();
+                if (current.actionable && JSON.stringify([current.bounds, current.frames, current.geometry?.binding]) !==
+                    ${JSON.stringify(route)}) {
+                  current.actionable = false;
+                  current.reason = 'Operation click route changed before dispatch reservation';
+                }
+                if (current.actionable && !(${attempt > 1} && current.activity)) {
+                  window.__laOperationClick.dispatched = true;
+                  window.__laOperationClick.events = [];
+                } else {
+                  current.actionable = false;
+                }
+                return current;
+              })()`,
+                { timeoutMs: Math.min(5000, Math.max(1, deadline - Date.now())) }
+              );
+              activity ||= !!armed.activity;
+              if (armed.actionable) {
+                break;
+              }
+              ready = armed;
             }
           }
           console.log(`[designer-operation-click] ${operationName} refused attempt=${attempt} ${JSON.stringify({ ...ready, activity })}`);
@@ -2089,7 +2117,6 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         this.assertActive();
         attempts++;
         dispatchedAt = Date.now();
-        await this.evaluate('window.__laOperationClick.dispatched = true; window.__laOperationClick.events = []');
         let dispatchError: unknown;
         try {
           await this.dispatchTrustedPoint(ready.targetPoint!, deadline);
@@ -2173,6 +2200,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       return evidence;
     }
     const objectGroup = `operation-geometry-${this.contextId}-${Date.now()}-${Math.random()}`;
+    let browserProof: Pick<OperationClickEvidence, 'targetPoint' | 'frames' | 'actionable' | 'reason'>;
     try {
       const card = (await send('Runtime.evaluate', {
         contextId: this.contextId,
@@ -2243,16 +2271,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         functionDeclaration: 'function() { const card = window.__laOperationClick.card; return card === this || card.contains(this); }',
         returnByValue: true,
       })) as { result?: { result?: { value?: boolean } } };
-      // Protocol calls yield to React/layout. Do not dispatch using a DOM proof
-      // taken before them; also preserve late receipts if insertion removed it.
-      const current = await evaluate<OperationClickEvidence>(
-        `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationCardIdentityDom} ${operationClickProbeDom} })()`
-      );
-      if (!current.actionable || JSON.stringify([current.bounds, current.frames]) !== JSON.stringify([evidence.bounds, evidence.frames])) {
-        return { ...current, actionable: false, reason: current.reason ?? 'Operation card changed during browser geometry read' };
-      }
-      return {
-        ...current,
+      browserProof = {
         targetPoint,
         frames: [...(evidence.frames ?? []), { quad: quad[0], hitFrameId: hit.result.frameId }],
         actionable: matches.result?.result?.value === true,
@@ -2263,6 +2282,19 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         .send('Runtime.releaseObjectGroup', { objectGroup }, { timeoutMs: 1000 })
         .catch((error) => console.warn(`[designer-operation-click] Geometry object cleanup failed: ${String(error)}`));
     }
+    // Cleanup also yields to React/layout. Validate after it, not in a return
+    // whose finally can age the proof; retain late receipts if insertion removed it.
+    const current = await evaluate<OperationClickEvidence>(
+      `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationCardIdentityDom} ${operationClickProbeDom} })()`
+    );
+    if (
+      !current.actionable ||
+      JSON.stringify([current.bounds, current.frames, current.geometry?.binding]) !==
+        JSON.stringify([evidence.bounds, evidence.frames, evidence.geometry?.binding])
+    ) {
+      return { ...current, actionable: false, reason: current.reason ?? 'Operation card changed during browser geometry read' };
+    }
+    return { ...current, ...browserProof };
   }
 
   async clickNodeById(nodeId: string): Promise<DesignerNodeIdentity> {

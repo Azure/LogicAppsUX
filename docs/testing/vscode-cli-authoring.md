@@ -515,7 +515,15 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   matching DOM/viewport/browser-quad/hit proofs. Missing, malformed or zero-area
   quads are not permission to click: report current connectivity, binding,
   route state and returned quads, then poll only while the original budget
-  remains. Ambiguous titles, wrong hits, disabled or hidden cards remain
+  remains. Awaited geometry-object disposal also yields to rendering: validate
+  the retained card, bounds, viewport and binding **after** disposal, including
+  a warned cleanup rejection. Recheck that route in the same DOM evaluation
+  that reserves dispatch and clears receipts, rather than blindly freezing an
+  older proof. Production-helper DOM controls replace the card or collapse a
+  searching row during delayed/rejected cleanup, enforce zero input at expiry
+  and preserve one-click-only behavior after input. These controls are not
+  native validation or proof of a particular renderer-delay cause.
+  Ambiguous titles, wrong hits, disabled or hidden cards remain
   non-actionable. Protocol viewport CSS coordinates must never be DPR-scaled.
   After dispatch, card identity and geometry are frozen. At most one idle
   misclick retry is allowed on that original card, with all trusted

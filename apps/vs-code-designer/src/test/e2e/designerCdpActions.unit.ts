@@ -5,7 +5,12 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import { runInNewContext } from 'vm';
 import type { Point } from './cdpFormHelpers';
-import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
+import {
+  MsnDesignerCdpActions,
+  type OperationClickEvidence,
+  ProvenDesignerCdpActions,
+  resolveDesignerActionProfile,
+} from './designerCdpActions';
 import { originalRunAfterLabel } from './runAfterPredecessorLabel';
 
 interface TestDomWindow {
@@ -540,6 +545,11 @@ async function testOperationClickRetryControls(): Promise<void> {
     obscureAfterClick?: boolean;
     beforeCapture?: 'move' | 'perpetual-move' | 'replace' | 'ambiguous' | 'wrong-title' | 'hide' | 'disable' | 'obscure' | 'expire';
     geometryRace?: 'move' | 'replace' | 'detach' | 'missing' | 'zero-area' | 'expire';
+    cleanupRace?: 'replace' | 'collapse';
+    cleanupOutcome?: 'delayed' | 'rejected';
+    cleanupExpires?: boolean;
+    cleanupAfterInput?: boolean;
+    reservationRace?: 'replace' | 'collapse' | 'expire';
     postGeometryDetach?: boolean;
     scenarioExtraBudget?: boolean;
     cardKind?: 'search' | 'recommendation' | 'search-testid';
@@ -559,6 +569,7 @@ async function testOperationClickRetryControls(): Promise<void> {
     const dom = new JSDOM(
       `<html><body>
       <div id="msla-node-Request">Request</div>
+      ${control.cleanupRace || control.reservationRace ? '<div id="searching-row">Searching for results...</div>' : ''}
       ${operationCardFixture(control.cardKind, control.decoratedCard, operationTitle)}</body></html>`,
       { runScripts: 'outside-only' }
     );
@@ -570,8 +581,9 @@ async function testOperationClickRetryControls(): Promise<void> {
       card.style.visibility = 'visible';
     }
     let left = 20;
+    let top = control.cleanupRace || control.reservationRace ? 60 : 20;
     let obscured = false;
-    const rect = () => ({ left, top: 20, right: left + 100, bottom: 60, width: 100, height: 40 });
+    const rect = () => ({ left, top, right: left + 100, bottom: top + 40, width: 100, height: 40 });
     Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', { configurable: true, value: rect });
     Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [rect()] });
     window.HTMLElement.prototype.scrollIntoView = () => undefined;
@@ -591,6 +603,10 @@ async function testOperationClickRetryControls(): Promise<void> {
     let geometryObjects = 0;
     let geometryReleases = 0;
     let inputEvents = 0;
+    let cleanupMutations = 0;
+    let reservationMutations = 0;
+    let lastDomProof: OperationClickEvidence | undefined;
+    let browserHitMatches = false;
     let disconnected = false;
     let probeListeners: any[] = [];
     const removedListeners: any[] = [];
@@ -615,6 +631,13 @@ async function testOperationClickRetryControls(): Promise<void> {
       activeCard.replaceWith(replacement);
       activeCard = replacement;
     };
+    const collapseSearchRow = (replaceCard: boolean) => {
+      if (replaceCard) {
+        replace();
+      }
+      window.document.getElementById('searching-row').remove();
+      top -= 40;
+    };
     const before = control.operationTitle ? [] : [{ nodeId: 'Request', title: 'Request' }];
     const added = { nodeId: 'Initialize', title: operationTitle };
     const deadline = now + 8000;
@@ -631,7 +654,23 @@ async function testOperationClickRetryControls(): Promise<void> {
           if (!clicks) {
             now += 25;
           }
+          if (
+            expression.includes('Operation click route changed before dispatch reservation') &&
+            control.reservationRace &&
+            !reservationMutations
+          ) {
+            assert.strictEqual(lastDomProof?.actionable, true, 'Reservation race follows a successful post-cleanup proof');
+            assert.strictEqual(inputEvents, 0, 'Reservation race must precede all input');
+            collapseSearchRow(control.reservationRace === 'replace');
+            if (control.reservationRace === 'expire') {
+              now = deadline;
+            }
+            reservationMutations++;
+          }
           const result = window.eval(expression) as T;
+          if (expression.includes('const result = (actionable, reason, targetPoint)')) {
+            lastDomProof = result as OperationClickEvidence;
+          }
           if (window.__laOperationClick) {
             probeListeners = window.__laOperationClick.listeners;
           }
@@ -651,7 +690,7 @@ async function testOperationClickRetryControls(): Promise<void> {
           if (method === 'Page.getFrameTree') {
             return { result: { frameTree: { frame: { id: 'test-input-root' } } } };
           }
-          const browserPoint = control.browserPoint ?? { x: 70, y: 40 };
+          const browserPoint = control.browserPoint ?? { x: 70, y: top + 20 };
           if (method === 'Runtime.evaluate') {
             geometryObjects++;
             assert.strictEqual(params?.contextId, 1, 'Resolve the exact selected Designer context');
@@ -717,10 +756,26 @@ async function testOperationClickRetryControls(): Promise<void> {
           if (method === 'Runtime.callFunctionOn') {
             assert.strictEqual(params?.objectId, 'hit-target');
             const matches = window.eval(`(${params?.functionDeclaration}).call(window.__testOperationHit)`);
+            browserHitMatches = matches && !control.browserHitMismatch;
             return { result: { result: { value: matches && !control.browserHitMismatch } } };
           }
           if (method === 'Runtime.releaseObjectGroup') {
             geometryReleases++;
+            if (control.cleanupRace && geometryReleases === (control.cleanupAfterInput ? 3 : 2)) {
+              assert.strictEqual(lastDomProof?.actionable, true, 'Cleanup race must follow a successful DOM probe');
+              assert.strictEqual(browserHitMatches, true, 'Cleanup race must follow a successful browser hit proof');
+              assert.strictEqual(inputEvents, control.cleanupAfterInput ? 3 : 0, 'Inject only at the specified input boundary');
+              assert.deepStrictEqual(captures, ['1-before'], 'Race must follow the first before screenshot');
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              collapseSearchRow(control.cleanupRace === 'replace');
+              if (control.cleanupExpires) {
+                now = deadline;
+              }
+              cleanupMutations++;
+              if (control.cleanupOutcome === 'rejected') {
+                throw new Error('test geometry cleanup timed out');
+              }
+            }
             return {};
           }
           assert.strictEqual(method, 'Input.dispatchMouseEvent');
@@ -858,12 +913,17 @@ async function testOperationClickRetryControls(): Promise<void> {
       } catch (caught) {
         error = caught;
       }
-      assert.strictEqual(clicks, control.expectedClicks, control.name);
+      assert.strictEqual(clicks, control.expectedClicks, `${control.name}: ${String(error ?? 'no dispatch error')}`);
       assert.strictEqual(!!identity, !!control.expectedSuccess, control.name);
       if (control.expectedSuccess) {
         assert.ifError(error);
       }
-      if ((!control.expectedSuccess && control.beforeCapture) || control.expireOnRetry) {
+      if (
+        (!control.expectedSuccess && control.beforeCapture) ||
+        control.expireOnRetry ||
+        control.cleanupExpires ||
+        control.reservationRace === 'expire'
+      ) {
         assert.ok(error, `${control.name}: unsafe input must fail closed`);
       }
       assert.ok(now <= deadline + 500, `${control.name}: original deadline must not restart`);
@@ -897,9 +957,22 @@ async function testOperationClickRetryControls(): Promise<void> {
       if (
         control.beforeCapture === 'replace' ||
         control.beforeCapture === 'move' ||
+        (control.cleanupRace && control.expectedSuccess) ||
+        (control.reservationRace && control.expectedSuccess) ||
         ['move', 'replace', 'missing', 'zero-area'].includes(control.geometryRace ?? '')
       ) {
         assert.ok(captures.filter((stage) => stage === '1-before').length >= 2, 'Changed proof requires a fresh screenshot');
+      }
+      if (control.cleanupRace) {
+        assert.strictEqual(cleanupMutations, 1, 'Exercise exactly one post-proof cleanup-window mutation');
+        assert.strictEqual(inputEvents, control.expectedClicks * 3, 'Never send partial, stale or duplicate native input');
+      }
+      if (control.reservationRace) {
+        assert.strictEqual(reservationMutations, 1, 'Exercise the last check/dispatch-reservation boundary');
+      }
+      if (control.cleanupAfterInput) {
+        assert.strictEqual(afterEvidence[0]?.events?.length, 3, 'Post-input cleanup must retain every event receipt');
+        assert.strictEqual(afterEvidence[0]?.actionable, false, 'Post-input route mutation must remain sticky');
       }
       assert.strictEqual(geometryReleases, geometryObjects, 'Every geometry object group must be released, including missing quads');
       assert.strictEqual(disconnected, true, 'Always disconnect mutation observation');
@@ -995,6 +1068,43 @@ async function testOperationClickRetryControls(): Promise<void> {
       insertOn: 1,
       expectedClicks: 1,
       expectedSuccess: true,
+    });
+  }
+  const cleanupFailures: unknown[] = [];
+  for (const cleanupRace of ['replace', 'collapse'] as const) {
+    for (const cleanupOutcome of ['delayed', 'rejected'] as const) {
+      for (const boundary of ['pre-input', 'expiry', 'post-input'] as const) {
+        try {
+          await run({
+            name: `post-proof ${cleanupOutcome} cleanup ${cleanupRace} at ${boundary}`,
+            cardKind: 'recommendation',
+            decoratedCard: true,
+            cleanupRace,
+            cleanupOutcome,
+            cleanupExpires: boundary === 'expiry',
+            cleanupAfterInput: boundary === 'post-input',
+            insertOn: boundary === 'pre-input' ? 1 : undefined,
+            expectedClicks: boundary === 'expiry' ? 0 : 1,
+            expectedSuccess: boundary === 'pre-input',
+          });
+        } catch (error) {
+          cleanupFailures.push(error);
+        }
+      }
+    }
+  }
+  if (cleanupFailures.length) {
+    throw new AggregateError(cleanupFailures, 'Post-proof geometry cleanup race controls failed');
+  }
+  for (const reservationRace of ['replace', 'collapse', 'expire'] as const) {
+    await run({
+      name: `final dispatch reservation ${reservationRace} revalidates the current route`,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      reservationRace,
+      insertOn: reservationRace === 'expire' ? undefined : 1,
+      expectedClicks: reservationRace === 'expire' ? 0 : 1,
+      expectedSuccess: reservationRace !== 'expire',
     });
   }
   await run({
