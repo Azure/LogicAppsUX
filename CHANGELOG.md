@@ -1,4 +1,26 @@
 # Logic Apps Designer
+## [5.961.10](https://github.com/Azure/LogicAppsUX/compare/v5.959.1...v5.961.10) (2026-06-02)
+
+### Features
+
+* [cherry-pick] Add Hybrid (Container Apps) deployment script generation for ADO (#9158) ([#9158](https://github.com/Azure/LogicAppsUX/pull/9158))
+* **DesignerV2:** Improve WF Assistant tool calling flow (v5.961) ([#9187](https://github.com/Azure/LogicAppsUX/pull/9187))
+* feat(vscode) - Codeful Public Preview ([#9142](https://github.com/Azure/LogicAppsUX/pull/9142))
+
+### Bug Fixes
+
+* **vscode:** update codeful workflow templates ([#9234](https://github.com/Azure/LogicAppsUX/pull/9234))
+* **vscode:** restore codeful bundle version setting ([#9232](https://github.com/Azure/LogicAppsUX/pull/9232))
+* **DesignerV2:** Fix Consumption resubmit (Retry) URL missing workflowId path (v5.961) ([#9230](https://github.com/Azure/LogicAppsUX/pull/9230))
+* **MCP:** Fix ManagedServiceIdentity auth for MCP connections (v5.961) ([#9209](https://github.com/Azure/LogicAppsUX/pull/9209))
+* **vscode:** Update dependencies for codeful public preview ([#9219](https://github.com/Azure/LogicAppsUX/pull/9219))
+* **designer:** Restore Azure OpenAI as agent model source option ([#9207](https://github.com/Azure/LogicAppsUX/pull/9207))
+* **DesignerV2:** Persist search term in Redux to prevent reset (v5.961) ([#9204](https://github.com/Azure/LogicAppsUX/pull/9204))
+* **DesignerV2:** Added `forceSave` on run button, fixed connection panel issue (v5.961) ([#9201](https://github.com/Azure/LogicAppsUX/pull/9201))
+* **designer-v2:** Fix Agent Activity tab disabled for MCP-only agent (v5.961) ([#9198](https://github.com/Azure/LogicAppsUX/pull/9198))
+* **DesignerV2:** Include connectionReference in discover_connectors tool results ([#9168](https://github.com/Azure/LogicAppsUX/pull/9168))
+* **vscode:** Reduce E2E Test Flakiness ([#9161](https://github.com/Azure/LogicAppsUX/pull/9161))
+
 ## [5.959.1](https://github.com/Azure/LogicAppsUX/compare/v5.230.15...v5.959.1) (2026-05-28)
 
 ### Features
