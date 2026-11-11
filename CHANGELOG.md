@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.1013.2](https://github.com/Azure/LogicAppsUX/compare/v5.1013.1...v5.1013.2) (2026-11-05)
+
+### Bug Fixes
+
+* **vscode:** bump Node.js fallback to 24.22.2 for v5.1013 ([#9690](https://github.com/Azure/LogicAppsUX/pull/9690))
+* **vscode:** reenable .NET 10 and bind experimental bundles on hotfix/v5.1013 ([#9686](https://github.com/Azure/LogicAppsUX/pull/9686))
+
 ## [5.1013.1](https://github.com/Azure/LogicAppsUX/compare/v5.996.0...v5.1013.1) (2026-10-28)
 
 ### Features
