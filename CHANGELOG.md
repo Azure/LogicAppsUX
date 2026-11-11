@@ -1,4 +1,48 @@
 # Logic Apps Designer
+## [5.991.3](https://github.com/Azure/LogicAppsUX/compare/v5.981.1...v5.991.3) (2026-08-14)
+
+### Features
+
+* **vscode:** backport CFS build and release updates to v5.991 ([#9530](https://github.com/Azure/LogicAppsUX/pull/9530))
+* **vscode:** Refactor startup flow and 'nested' commands, improve telemetry for vscode extension ([#9480](https://github.com/Azure/LogicAppsUX/pull/9480))
+* **e2e:** shard chat client suite and cache Playwright browsers ([#9482](https://github.com/Azure/LogicAppsUX/pull/9482))
+* **pipeline:** roll back CFS registry config in setup.yml to unblock releases ([#9476](https://github.com/Azure/LogicAppsUX/pull/9476))
+* **standalone:** auto-refresh ARM and Foundry tokens while the dev server runs ([#9468](https://github.com/Azure/LogicAppsUX/pull/9468))
+* **vscode:** Track azure connectors setup with globalState, refactor state management ([#9461](https://github.com/Azure/LogicAppsUX/pull/9461))
+* **deps-dev:** bump uuid from 14.0.0 to 14.0.1 ([#9459](https://github.com/Azure/LogicAppsUX/pull/9459))
+* **vs-code-designer:** fix extension-host startup — bundle integrity fast-path + telemetry masking freeze ([#9436](https://github.com/Azure/LogicAppsUX/pull/9436))
+* **standalone:** share toolbox modules ([#9431](https://github.com/Azure/LogicAppsUX/pull/9431))
+
+### Bug Fixes
+
+* **vscode:** Cherry picks to v5.991 hotfix ([#9536](https://github.com/Azure/LogicAppsUX/pull/9536))
+* **vscode:** restore signing packages through CFS ([#9532](https://github.com/Azure/LogicAppsUX/pull/9532))
+* **vscode:** self-heal a provisioned-but-unrunnable func Core Tools before blocking F5 ([#9478](https://github.com/Azure/LogicAppsUX/pull/9478))
+* **vscode:** Fix 'Deploy to logic app' from Azure Resources tree ([#9503](https://github.com/Azure/LogicAppsUX/pull/9503))
+* **vscode:** Fix invalid workflow-designtime artifacts path with symlink ([#9501](https://github.com/Azure/LogicAppsUX/pull/9501))
+* **vscode:** Fix local.settings.json ProjectPath consistency check ([#9500](https://github.com/Azure/LogicAppsUX/pull/9500))
+* **vscode:** Fix script content not being loaded in remote workflow designer ([#9515](https://github.com/Azure/LogicAppsUX/pull/9515))
+* **vscode:** NuGet debug lifecycle cleanup ([#9508](https://github.com/Azure/LogicAppsUX/pull/9508))
+* **iframe-app:** restore chat history order and timestamps ([#9511](https://github.com/Azure/LogicAppsUX/pull/9511))
+* **DesignerV2:** separate run selection from run details ([#9502](https://github.com/Azure/LogicAppsUX/pull/9502))
+* **test-utils:** make fluentui-react-icons vitest mock reliably intercept ([#9493](https://github.com/Azure/LogicAppsUX/pull/9493))
+* **designer-v2:** fallback UI for workflows with multiple triggers (IcM 51000001179344) ([#9494](https://github.com/Azure/LogicAppsUX/pull/9494))
+* **designer-v2:** scope panel search to MCP servers while browsing that category ([#9489](https://github.com/Azure/LogicAppsUX/pull/9489))
+* **designer-v2:** keep connector OAuth sign-in for managed MCP servers ([#9488](https://github.com/Azure/LogicAppsUX/pull/9488))
+* **designer-v2:** restore node indicator badges on the canvas action tile ([#9483](https://github.com/Azure/LogicAppsUX/pull/9483))
+* **designer-v2:** don't crash when definition.metadata.notes holds arbitrary content ([#9479](https://github.com/Azure/LogicAppsUX/pull/9479))
+* **vscode:** Fix MI auth workflow-designtime setting not being set ([#9469](https://github.com/Azure/LogicAppsUX/pull/9469))
+* **vs-code-designer:** wait for Azurite readiness before pre-debug validation ([#9470](https://github.com/Azure/LogicAppsUX/pull/9470))
+* **pipeline:** remove temp branch pin left over from PR #9453 testing ([#9474](https://github.com/Azure/LogicAppsUX/pull/9474))
+* **designer:** skip listKeys for Managed Identity agent connections ([#9471](https://github.com/Azure/LogicAppsUX/pull/9471))
+* **designer:** Updated agent loop role assignments ([#9460](https://github.com/Azure/LogicAppsUX/pull/9460))
+* **vscode:** Use single source of truth for project file consistency checks (.vscode, local.settings.json, host.json) ([#9399](https://github.com/Azure/LogicAppsUX/pull/9399))
+* **pipeline:** route npm/pnpm package restores through CFS for SFI Network Isolation (SR21) ([#9453](https://github.com/Azure/LogicAppsUX/pull/9453))
+* **designer-ui:** sanitize HTML-formatted run output before rendering ([#9467](https://github.com/Azure/LogicAppsUX/pull/9467))
+* **vscode:** use Node design-time worker for codeful projects + cross-platform codeful E2E ([#9463](https://github.com/Azure/LogicAppsUX/pull/9463))
+* **agent:** show all chat-completion deployments instead of a hardcoded model list ([#9464](https://github.com/Azure/LogicAppsUX/pull/9464))
+* **ci:** auth agentic workflows via built-in GITHUB_TOKEN + harden pr-ai-validation gate ([#9450](https://github.com/Azure/LogicAppsUX/pull/9450))
+
 ## [5.981.1](https://github.com/Azure/LogicAppsUX/compare/v5.961.19...v5.981.1) (2026-08-04)
 
 ### Features
