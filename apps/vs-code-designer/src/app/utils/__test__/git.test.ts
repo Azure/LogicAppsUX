@@ -59,6 +59,21 @@ describe('removeFromGitIgnore', () => {
     expect(fse.writeFile).not.toHaveBeenCalled();
   });
 
+  it('uses the ordinary string write even when legacy writer diagnostics are requested', async () => {
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_REGENERATION_WRITER_EVENTS', 'unused-writer-events.jsonl');
+    try {
+      const retained = 'bin\r\n# π\r\n';
+      vi.mocked(fse.readFile).mockResolvedValue(Buffer.from(`${retained}.vscode\r\n`));
+
+      await removeFromGitIgnore(workspacePath, vscodePattern());
+
+      expect(fse.writeFile).toHaveBeenCalledExactlyOnceWith(gitignorePath, retained);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('preserves read failures', async () => {
     const error = new Error('read failed');
     vi.mocked(fse.readFile).mockRejectedValue(error);

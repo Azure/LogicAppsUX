@@ -7,7 +7,6 @@ import { ext } from '../../extensionVariables';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import * as path from 'path';
 import * as fse from 'fs-extra';
-import { observeFileOperation, writeFileWithDiagnostics } from '../../../scripts/e2e-cli-diagnostics';
 
 /**
  * Checks if git is installed.
@@ -53,13 +52,6 @@ export const removeFromGitIgnore = async (workspacePath: string, pattern: RegExp
     if (gitignoreContents === originalContents) {
       return;
     }
-    await observeFileOperation(
-      gitignorePath,
-      'removeFromGitIgnore',
-      'gitignore-writeFile',
-      () => fse.writeFile(gitignorePath, gitignoreContents),
-      undefined,
-      (trace, parentOperation) => writeFileWithDiagnostics(gitignorePath, gitignoreContents, trace, parentOperation)
-    );
+    await fse.writeFile(gitignorePath, gitignoreContents);
   }
 };

@@ -1332,7 +1332,17 @@ describe('createLocalConfigurationFiles', () => {
   it('should create .gitignore file by copying from template', async () => {
     await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath);
 
-    expect(fse.copyFile).toHaveBeenCalledWith(expect.stringContaining('GitIgnoreFile'), expect.stringContaining('.gitignore'));
+    expect(fse.copyFile).toHaveBeenCalledExactlyOnceWith(
+      expect.stringContaining('GitIgnoreFile'),
+      actualPath.join(logicAppFolderPath, '.gitignore')
+    );
+  });
+
+  it('preserves the original gitignore template copy failure', async () => {
+    const error = new Error('copy failed');
+    vi.mocked(fse.copyFile).mockRejectedValue(error);
+
+    await expect(CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath)).rejects.toBe(error);
   });
 
   it('should create .funcignore file with proper entries for logic app', async () => {

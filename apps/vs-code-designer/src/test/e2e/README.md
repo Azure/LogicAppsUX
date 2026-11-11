@@ -585,8 +585,14 @@ the full unchanged-state baseline. No later healing file is exempted.
 Project initialization does not rewrite `.gitignore` when removing the requested
 ignore pattern leaves its content unchanged. This avoids an unnecessary
 truncate/write interval during repeated initialization; the strict non-target
-snapshot assertion still rejects any observed mutation. Matching entries retain
-the existing removal/write behavior and writer diagnostics.
+snapshot assertion still rejects any observed mutation. Matching entries use the
+ordinary string `writeFile`; initial template creation uses native `copyFile`.
+The isolated E10 candidate removes only the product writer-attribution hooks;
+its native acceptance is pending. Exact internal writer attribution is intentionally
+retired optional diagnostics, not required acceptance evidence. The existing
+test-side watcher remains explicitly `unknown-writer` and cannot reconstruct that
+attribution. Standalone diagnostic-adapter controls do not imply product use.
+Exact file, prompt, screenshot, lifecycle and cleanup assertions remain unchanged.
 Every real Yes branch must dismiss the prompt, write the expected files durably,
 close Code normally, and persist all file bytes/entries without another initialization
 prompt on a separate fresh reopen. A failed branch stops the sequence; planned but

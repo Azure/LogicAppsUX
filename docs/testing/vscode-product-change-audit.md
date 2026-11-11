@@ -89,8 +89,9 @@ Later documentation-only commits are not another native payload or run.
 | Not required; removal accepted | E4 environment-token session fallback | Keep the synthetic-session helper/fallback removed; retain E3 WIF, normal Microsoft sessions and independent fixture/API tokens | Removal committed as `dea31bfc6`; canonical full23 `15991034` accepted at `84cf43160`, including all 23 original producing-attempt artifacts and protected rollup. Raw-token-only synthetic authoring is retired; no speculative identity fix |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
-| Removal authorized; native acceptance pending | E8 feed retries/deadline cleanup | Restore single-request/configured-timeout behavior; preserve error causes | Focused controls pass; the E4 baseline does not validate this removal. Require exact-source canonical full23; unrelated regeneration-readiness drafts remain excluded |
-| Observation candidates; not removed | E10 writer, E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
+| Not required; removal accepted | E8 feed retries/deadline cleanup | Keep single-request/configured-timeout behavior and preserved error causes | Canonical full23 run `15993682` accepted at source `41ceef4aa`, tree `38e0717840c42e2591abbf3fc81d272845039709`; all 23 original producing artifacts were attempt 1, with protected rollup verified |
+| Isolated removal candidate; native acceptance pending | E10 writer diagnostics | Restore direct string write/native copy; retain E9 and all functional/evidence gates | Committed regeneration acceptance does not require writer receipts. Exact internal attribution is intentionally retired optional diagnostics; watcher events remain `unknown-writer` |
+| Observation candidates; not removed | E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
 | Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
 | Already restored | Designer API timeout override | Keep original fixed product timeout; no new E2E product override | Historical restoration predates these removals; it is not a remaining product cleanup |
 
@@ -1583,14 +1584,16 @@ a second attempt, parse/body errors, cache expiration and failed refresh,
 two-argument caller delegation, configured timeouts including 90 seconds
 without a deadline clamp, and preserved causes.
 
-**Native acceptance pending:** Validate the isolated committed candidate with
-the complete CLI gate and exact-source canonical non-diagnostic Linux/Windows
-full23, retaining original producing-attempt evidence and the protected rollup.
-The accepted E4 baseline `84cf43160`/run `15991034` does not validate E8 removal.
-A pass would establish that these scenarios do not require E8, not equivalent
-resilience under simulated upstream transient outages. A failure requires
-causal diagnosis before attributing it to the removal. Historical local trial
-results are not native acceptance.
+**Native removal accepted:** Canonical non-diagnostic Linux/Windows full23
+run `15993682` succeeded at exact source
+`41ceef4aa09d9e431d07ff789ad50a44ae7bf271`, tree
+`38e0717840c42e2591abbf3fc81d272845039709`. The verifier accepted all 23 current
+producing attempts and their original artifacts, source/run bindings, ordered
+evidence, terminal identities and protected rollup. Every producing artifact
+was attempt 1. This establishes that these suite scenarios do not require E8,
+not equivalent resilience under simulated upstream transient outages.
+Historical local trial results and the earlier accepted E4 baseline
+`84cf43160`/run `15991034` are not this E8 removal proof.
 
 ### E9. Avoid rewriting an unchanged `.gitignore`
 
@@ -1633,6 +1636,41 @@ that diagnostic claim.
 
 **Disposition:** Prefer test/recorder instrumentation. Explain any unavoidable
 minimal observation hook separately from E9's actual no-op guard.
+
+**Authorized isolated removal candidate; native acceptance pending:** Remove
+only the two product imports/wrappers and restore direct
+`fse.writeFile(gitignorePath, gitignoreContents)` and
+`fse.copyFile(templatePath, gitignorePath)`. Preserve E9's unchanged-content
+early return, original copy/string-write semantics and original failures.
+Standalone diagnostic adapters and their controls remain, explicitly without
+claiming product use. No replacement attribution hook is introduced.
+
+Committed-source review at `41ceef4aa` establishes that writer receipts are
+optional diagnostics: `runFreshRegenerationHost` writes `writer-events.jsonl`
+and requests the product receipts, but the regeneration result, evidence
+validator and finalizer do not require or read them. The existing evidence
+validator unit model supplies no writer receipts. Required Code/profile logs,
+exact non-target content/directory assertions, real prompt inputs, ordered
+checkpoints, native lifecycle, cleanup and terminal gates remain unchanged.
+The existing watcher remains explicitly `unknown-writer`; it is not equivalent
+proof of an internal writer.
+
+Loss of exact internal attribution on future runs is intentional retirement of
+optional product diagnostics, not behavior-neutral observation replacement.
+Historical receipts still establish the transient truncation described in E9;
+their causal evidence is not retracted. E8 run `15993682` accepts only its exact
+source, not this E10 candidate. Require isolated exact-source validation before
+claiming E10 native acceptance; unrelated regeneration drafts remain excluded.
+
+**Focused local validation:** The filtered `removeFromGitIgnore` and
+`createLocalConfigurationFiles` Vitest run passed 30 tests (64 unrelated tests
+were filtered out). The complete `e2e-cli-diagnostics.unit.test.js` controls
+passed 100 tests, including the updated direct-product-wiring control and
+unchanged standalone adapters. Strict CLI TypeScript compilation, Biome checks
+on all five changed code/test files and scoped whitespace checks passed.
+Compilation used this working workspace, which still contains the excluded
+uncommitted regeneration drafts; it is not the parent's clean exact-source
+full CLI gate. No E10 native run or canonical acceptance is claimed.
 
 ### E11. Func task and debug-startup diagnostics
 

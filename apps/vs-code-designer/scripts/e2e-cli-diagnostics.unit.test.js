@@ -825,6 +825,8 @@ test('binding selects identity only, with invalid SHA/run omitted', () => {
   assert.ok(!JSON.stringify(binding).includes('secret'));
 });
 
+// Standalone diagnostic-adapter controls, not evidence that product writers use
+// these adapters. Product decoupling is checked separately below.
 test('writer hook absent returns the original promise unchanged and does no diagnostic writes', () => {
   const original = Promise.resolve('result');
   assert.equal(
@@ -1057,19 +1059,17 @@ test('empty content performs real open/truncate and close only, without invented
   );
 });
 
-test('owning product hooks scope only the string write; native copy retains its original operation', () => {
+test('product gitignore writers use ordinary string write and native copy without diagnostic adapters', () => {
   const git = fs.readFileSync(path.join(__dirname, '../src/app/utils/git.ts'), 'utf8');
   const workspace = fs.readFileSync(
     path.join(__dirname, '../src/app/commands/createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace.ts'),
     'utf8'
   );
-  assert.match(git, /\(\) => fse\.writeFile\(gitignorePath, gitignoreContents\)/);
-  assert.match(git, /\(trace, parentOperation\) => writeFileWithDiagnostics\(gitignorePath, gitignoreContents, trace, parentOperation\)/);
-  assert.match(
-    workspace,
-    /observeFileOperation\(gitignorePath, 'CreateLogicAppWorkspace', 'gitignore-copyFile', \(\) =>\s*fse\.copyFile\(templatePath, gitignorePath\)/
-  );
-  assert.ok(!workspace.includes('writeFileWithDiagnostics'));
+  assert.match(git, /await fse\.writeFile\(gitignorePath, gitignoreContents\);/);
+  assert.match(workspace, /await fse\.copyFile\(templatePath, gitignorePath\);/);
+  for (const source of [git, workspace]) {
+    assert.doesNotMatch(source, /\b(?:observeFileOperation|writeFileWithDiagnostics)\b|e2e-cli-diagnostics/);
+  }
 });
 
 test('writer primary failure survives failed receipt append; diagnostics never repairs/truncates the target', async () => {
