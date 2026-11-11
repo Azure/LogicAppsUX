@@ -50,8 +50,8 @@ function invalidateAzureDetailsCache(projectPath) {}
 globalThis.${fixtureKey}.invoke = getAzureConnectorDetailsForLocalProject;
 `;
 
-async function withSyntheticBundle(run: (bundlePath: string) => Promise<void>): Promise<void> {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'logicapps-identity-control-'));
+async function withSyntheticBundle(run: (bundlePath: string) => Promise<void>, prefix = 'logicapps-identity-control-'): Promise<void> {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
   const bundlePath = path.join(root, 'synthetic-product.js');
   fs.writeFileSync(bundlePath, source);
   Object.defineProperty(globalThis, fixtureKey, { configurable: true, value: fixture });
@@ -70,6 +70,41 @@ function invoke(project = fixture.project): Promise<Record<string, unknown>> {
     invoke: (context: object, project: string) => Promise<Record<string, unknown>>;
   };
   return value.invoke({}, project);
+}
+
+async function testFileUrlEscaping(): Promise<void> {
+  for (const marker of ['~', '%7E']) {
+    await withSyntheticBundle(async (bundlePath) => {
+      fixture.session = { account: { id: tenant }, accessToken: token };
+      const observer = await NativeConnectorIdentityObservation.install(bundlePath, fixture.project, tenant);
+      try {
+        await invoke();
+        assert.strictEqual(observer.snapshot().providerSessionCorrelated, true);
+        assert.strictEqual(observer.snapshot().nonPausing, true);
+      } finally {
+        await observer.dispose();
+      }
+      const compiler = new Session();
+      compiler.connect();
+      try {
+        await new Promise<void>((resolve, reject) => compiler.post('Runtime.enable', (error) => (error ? reject(error) : resolve())));
+        await new Promise<void>((resolve, reject) =>
+          compiler.post(
+            'Runtime.compileScript',
+            { expression: source, sourceURL: pathToFileURL(bundlePath).href, persistScript: true },
+            (error, value) => (error || value.exceptionDetails ? reject(new Error('Synthetic duplicate compilation failed')) : resolve())
+          )
+        );
+        await assert.rejects(
+          NativeConnectorIdentityObservation.install(bundlePath, fixture.project, tenant),
+          /expected exactly one loaded product script/,
+          'URL-equivalent spelling must not hide a second loaded script'
+        );
+      } finally {
+        compiler.disconnect();
+      }
+    }, `logicapps-identity-control-${marker}-`);
+  }
 }
 
 async function testSyntheticExecutionAndPrivacy(): Promise<void> {
@@ -397,6 +432,7 @@ async function main(): Promise<void> {
     true
   );
   await testSyntheticExecutionAndPrivacy();
+  await testFileUrlEscaping();
   await testUncorrelatedSessionIsNotAttributedToWif();
   await testConditionFailureCannotReuseStaleEvidence();
   await testMissingOrAmbiguousSourceIsRejected();

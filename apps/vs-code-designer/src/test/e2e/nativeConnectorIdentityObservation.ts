@@ -151,10 +151,12 @@ export class NativeConnectorIdentityObservation {
     const realPath = fs.realpathSync(bundlePath);
     const source = fs.readFileSync(realPath, 'utf8');
     const probes = connectorIdentityProbes(source, this.key);
-    const expectedUrl = pathToFileURL(realPath).href;
+    // V8 emits literal tildes, including in Windows DOS 8.3 aliases.
+    const expectedUrl = pathToFileURL(realPath).href.replace(/%7e/gi, '~');
     const scripts = new Set<string>();
     this.session.on('Debugger.scriptParsed', ({ params }) => {
-      const actual = process.platform === 'win32' ? params.url.toLowerCase() : params.url;
+      const scriptUrl = params.url.replace(/%7e/gi, '~');
+      const actual = process.platform === 'win32' ? scriptUrl.toLowerCase() : scriptUrl;
       const expected = process.platform === 'win32' ? expectedUrl.toLowerCase() : expectedUrl;
       if (actual === expected) {
         scripts.add(params.scriptId);

@@ -67,6 +67,13 @@ The offline control is `node out/test/e2e/nativeConnectorIdentityObservation.uni
 after building the extension and strict CLI compilation; the complete CLI gate
 includes it automatically.
 
+Source binding treats literal `~` and its URL-equivalent `%7E` spelling alike:
+Windows DOS 8.3 temporary paths can expose different spellings through
+`pathToFileURL` and V8 Inspector. This does not relax the unique loaded-script,
+byte-equal disk/source or exact probe-location requirements. Offline controls
+cover literal tilde and percent-encoded-looking filenames and reject duplicate
+loaded scripts; they do not establish the original CI temporary-path spelling.
+
 ## Test Structure
 
 ```
