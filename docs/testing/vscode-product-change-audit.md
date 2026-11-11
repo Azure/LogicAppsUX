@@ -1758,10 +1758,42 @@ Biome passed all five changed code/test files. This compilation used the working
 workspace with the excluded regeneration drafts; it is not the parent's clean
 exact-source full CLI gate. No E11 native launch or acceptance is claimed.
 
-Before E11 acceptance, the parent must run the complete clean exact-source
-`test:e2e-cli:build` gate and same-source canonical both-OS full23, inspecting
-original producing-attempt artifacts, ordered evidence, lifecycle/terminal
-acceptance and the protected rollup. No family gate or fixture is weakened.
+**Clean source and canonical outcome:** Candidate
+`509f008c13b173db7af9d6033bd029f0b4c5759f`, complete tree
+`19380227568e45c9d41aeb70a67c3a81076cd815`, passed the complete
+`test:e2e-cli:build` gate under official Windows Node 22.23.4, with a clean
+checkout before and after. Both complete affected Vitest files also passed
+47/47 on that source.
+
+Canonical both-OS full23 run **15994921 failed** after the original execution
+and both permitted failed-job retries. Windows workspace regeneration failed
+all three attempts at `vscode-single`: the required initialization prompt/real
+Yes was not observed before the original deadline. Its final lifecycle verdict
+was clean infrastructure, no recovery, product proof unverified and acceptance
+false. The other 22 suite jobs succeeded; Windows create-workspace behavior
+needed attempt 2, while those other successful jobs used attempt 1. The
+protected rollup failed. This is **not E11 removal acceptance**; E10 source
+`71084a53d8d6857b41346cb9f8ed5b2665ddc604` remains the last accepted baseline.
+Further removals are paused, and run 15994921's retry budget is exhausted.
+
+The same prompt/Yes symptom occurred in the initial Windows regeneration
+attempt of accepted E10 run 15994233. Its accepted Windows attempt and all three
+failed E11 attempts used Code 1.146.0 with the same executable SHA256
+`4474ce7baf2c78d38e4646f28497a7d4c0980bbe31de6b43eee1b52c3d73eadb`.
+Neither temporal association nor those matching payloads establish causation.
+Windows prompt project-path comparison already normalizes casing; a drive-letter
+case difference is not a demonstrated selector defect.
+
+**Diagnostic publication gap identified:** Rejected-family retention preserved
+the raw per-phase prompt observation files locally, but the pipeline publishes
+only the sanitized `prompt-observations.jsonl` aggregate. Aggregation previously
+ran only during finalized staging, which these failures never reached. The
+published artifacts therefore lack the observations needed to distinguish an
+absent prompt from a visible but unselectable prompt. Do not infer either from
+missing evidence. The isolated wrapper repair reuses the bounded regular-file
+checks and recursive JSON redaction to create that aggregate after retaining
+original failure receipts. It does not repair the native interaction, generate
+missing acceptance receipts, change deadlines/assertions, or reset retry budgets.
 
 ### E12. Design-time diagnostics and native spawn identity
 

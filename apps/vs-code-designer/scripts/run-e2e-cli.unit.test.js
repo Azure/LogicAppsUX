@@ -54,6 +54,9 @@ const {
     requiresDirectFamilyWrapper,
     finalizeOuterRegenerationStageEvidence,
     publishRegenerationDiagnostics,
+    publishRegenerationPromptObservations,
+    publishRegenerationStageEvidence,
+    retainFailedRegenerationDiagnostics,
     runHttpTimeoutLifecycle,
     runRunAfterPersistenceLifecycle,
     runSuiteWrapperProcess,
@@ -164,6 +167,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     await testUnconfirmedCancelClosePreservesExistingApp();
     testDeferredWorkspaceCleanupOwnership();
     await testRegenerationDiagnosticsPublication();
+    testRegenerationPromptObservationRetention();
     testDirectFamilyShortLinuxProfileParent();
     testCliProfilePreservesPreparedExtensionCohort();
     testPreparedExtensionDependencyCohort();
@@ -303,6 +307,90 @@ function testDeferredWorkspaceCleanupOwnership() {
     false,
     'Explicit retention ownership is required'
   );
+}
+
+function testRegenerationPromptObservationRetention() {
+  const root = path.join(tempRoot, 'regeneration-prompt-retention');
+  const reportsRoot = path.join(root, 'reports');
+  const source = path.join(reportsRoot, 'workspace-regeneration');
+  const destination = path.join(root, 'retained');
+  const terminalResultPath = path.join(root, 'outer-terminal.json');
+  const cleanupLedgerPath = path.join(root, 'outer-cleanup.json');
+  const phaseResultsPath = path.join(root, 'outer-phases.jsonl');
+  fs.mkdirSync(source, { recursive: true });
+  fs.writeFileSync(terminalResultPath, '{"complete":false}\n');
+  fs.writeFileSync(cleanupLedgerPath, '{"verified":false}\n');
+  fs.writeFileSync(phaseResultsPath, '{"complete":false}\n');
+  const context = { reportsRoot, terminalResultPath, cleanupLedgerPath, phaseResultsPath };
+  const raw = `${JSON.stringify({
+    ready: true,
+    containers: [{ text: 'Authorization: Bearer synthetic-prompt-token', nested: { clientSecret: 'synthetic-prompt-secret' } }],
+  })}\n`;
+  // Create out of phase order; later phases may be absent on a rejected run.
+  fs.writeFileSync(path.join(source, 'vscode-single-prompt-observations.jsonl'), raw);
+  fs.writeFileSync(path.join(source, 'baseline-prompt-observations.jsonl'), '{"ready":false}\n{"ready":true}\n');
+  fs.writeFileSync(path.join(source, 'unregistered-prompt-observations.jsonl'), 'unpublishable raw input');
+  retainFailedRegenerationDiagnostics(context, destination);
+  const aggregate = fs.readFileSync(path.join(destination, 'prompt-observations.jsonl'), 'utf8');
+  const observations = aggregate.trim().split('\n').map(JSON.parse);
+  assert.deepStrictEqual(
+    observations.map((entry) => entry.phase),
+    ['baseline', 'baseline', 'vscode-single']
+  );
+  assert.deepStrictEqual(
+    observations.slice(0, 2).map((entry) => entry.observation.ready),
+    [false, true]
+  );
+  assert.strictEqual(observations[2].observation.containers[0].nested.clientSecret, '<redacted>');
+  assert.doesNotMatch(aggregate, /synthetic-prompt-token|synthetic-prompt-secret|unpublishable/);
+  assert.strictEqual(fs.readFileSync(path.join(destination, 'vscode-single-prompt-observations.jsonl'), 'utf8'), raw);
+  assert.strictEqual(fs.readFileSync(path.join(destination, 'outer-terminal-result.json'), 'utf8'), '{"complete":false}\n');
+  assert.strictEqual(fs.existsSync(path.join(destination, 'terminal-result.json')), false);
+  assert.strictEqual(fs.existsSync(path.join(destination, 'cleanup-ledger.json')), false);
+  publishRegenerationStageEvidence(
+    { root: source, resultPath: path.join(source, 'final-result.json'), workspaceParent: root, identity: {}, invocation: 'unit' },
+    { complete: false, hosts: [], errors: ['original native rejection'] },
+    [],
+    { verified: false }
+  );
+  assert.strictEqual(fs.readFileSync(path.join(source, 'prompt-observations.jsonl'), 'utf8'), aggregate);
+
+  const invalidRoot = path.join(root, 'invalid');
+  const input = path.join(invalidRoot, 'vscode-single-prompt-observations.jsonl');
+  fs.mkdirSync(invalidRoot);
+  publishRegenerationPromptObservations(invalidRoot);
+  assert.strictEqual(fs.readFileSync(path.join(invalidRoot, 'prompt-observations.jsonl'), 'utf8'), '');
+  fs.mkdirSync(input);
+  assert.throws(() => publishRegenerationPromptObservations(invalidRoot), /original regular file/);
+  fs.rmdirSync(input);
+  fs.writeFileSync(input, '{"secret":"synthetic-malformed-secret"');
+  assert.throws(
+    () => publishRegenerationPromptObservations(invalidRoot),
+    (error) => /invalid JSON/.test(error.message) && !String(error.stack).includes('synthetic-malformed-secret')
+  );
+  fs.writeFileSync(input, '{}' + ' '.repeat(1024 * 1024 - 2));
+  publishRegenerationPromptObservations(invalidRoot);
+  fs.appendFileSync(input, ' ');
+  assert.throws(() => publishRegenerationPromptObservations(invalidRoot), /safe archive size limit/);
+  fs.writeFileSync(input, '{}\n');
+  fs.unlinkSync(path.join(invalidRoot, 'prompt-observations.jsonl'));
+  fs.mkdirSync(path.join(invalidRoot, 'prompt-observations.jsonl'));
+  assert.throws(
+    () => publishRegenerationPromptObservations(invalidRoot),
+    (error) => ['EISDIR', 'EPERM', 'EACCES'].includes(error.code)
+  );
+
+  // Aggregation failure must not discard the original failed-family receipts.
+  fs.writeFileSync(path.join(source, 'vscode-single-prompt-observations.jsonl'), '{invalid');
+  const finalizedDestination = path.join(root, 'finalized-retained');
+  retainFailedRegenerationDiagnostics(context, finalizedDestination);
+  assert.strictEqual(fs.readFileSync(path.join(finalizedDestination, 'prompt-observations.jsonl'), 'utf8'), aggregate);
+  fs.unlinkSync(path.join(source, 'prompt-observations.jsonl'));
+  const rejectedDestination = path.join(root, 'invalid-retained');
+  assert.throws(() => retainFailedRegenerationDiagnostics(context, rejectedDestination), /invalid JSON/);
+  assert.strictEqual(fs.readFileSync(path.join(rejectedDestination, 'outer-terminal-result.json'), 'utf8'), '{"complete":false}\n');
+  assert.strictEqual(fs.readFileSync(path.join(rejectedDestination, 'vscode-single-prompt-observations.jsonl'), 'utf8'), '{invalid');
+  assert.strictEqual(fs.existsSync(path.join(rejectedDestination, 'prompt-observations.jsonl')), false);
 }
 
 async function testRegenerationDiagnosticsPublication() {
@@ -2230,6 +2318,7 @@ async function testDirectRegenerationRetainsRejectedClosureDiagnostics() {
       "fs.mkdirSync(path.join(diagnosticRoot,'vscode-logs'),{recursive:true});",
       `fs.writeFileSync(path.join(diagnosticRoot,'final-result.json'),${JSON.stringify(rawResult)});`,
       "fs.writeFileSync(path.join(diagnosticRoot,'code.log'),'original regular Code diagnostics\\n');",
+      'fs.writeFileSync(path.join(diagnosticRoot,\'vscode-single-prompt-observations.jsonl\'),\'{"ready":true,"containers":[]}\\n\');',
       "fs.writeFileSync(path.join(diagnosticRoot,'vscode-logs','original.log'),'original extension activation diagnostics\\n');",
       "const child=spawn(process.execPath,[__filename,'descendant'],{detached:true,stdio:'ignore',cwd:workspace});",
       'child.unref();',
@@ -2265,6 +2354,10 @@ async function testDirectRegenerationRetainsRejectedClosureDiagnostics() {
     assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'workspaces', 'original-workspace', 'original.txt')), true);
     assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'runtime-dependencies')), true);
     assert.strictEqual(fs.readFileSync(path.join(destination, 'final-result.json'), 'utf8'), rawResult);
+    assert.deepStrictEqual(JSON.parse(fs.readFileSync(path.join(destination, 'prompt-observations.jsonl'), 'utf8')), {
+      phase: 'vscode-single',
+      observation: { ready: true, containers: [] },
+    });
     assert.strictEqual(
       fs.readFileSync(path.join(destination, 'vscode-logs', 'original.log'), 'utf8'),
       'original extension activation diagnostics\n'

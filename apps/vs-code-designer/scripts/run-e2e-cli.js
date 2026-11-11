@@ -673,6 +673,11 @@ function retainFailedRegenerationDiagnostics(context, destination) {
   ]) {
     fs.copyFileSync(sourcePath, path.join(destination, name), fs.constants.COPYFILE_EXCL);
   }
+  // The pipeline publishes only the sanitized aggregate, not raw phase files.
+  // Retain original failure receipts before aggregation can itself fail.
+  if (!fs.existsSync(path.join(destination, 'prompt-observations.jsonl'))) {
+    publishRegenerationPromptObservations(destination);
+  }
   console.error(`[workspace-regeneration] Retained diagnostic-only rejected-family evidence: ${destination}`);
 }
 
@@ -4527,6 +4532,8 @@ module.exports = {
     beginDirectRegenerationEvidence,
     writeDirectRegenerationEvidence,
     publishRegenerationStageEvidence,
+    publishRegenerationPromptObservations,
+    retainFailedRegenerationDiagnostics,
     assertRegenerationStageEvidence,
     shouldFinalizeRegenerationStageEvidence,
     assertSafeRuntimeDependenciesRoot,
@@ -5325,29 +5332,7 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
       2
     )}\n`
   );
-  const promptObservations = [];
-  for (const phaseId of expectedPhaseIds.slice(1)) {
-    const phase = phaseId.slice('workspaceArtifactRegeneration:'.length);
-    const file = path.join(context.root, `${phase}-prompt-observations.jsonl`);
-    if (!fs.existsSync(file)) {
-      continue;
-    }
-    const stat = fs.lstatSync(file);
-    assert.ok(stat.isFile() && !stat.isSymbolicLink(), 'Prompt observations must be an original regular file');
-    assert.ok(stat.size <= vscodeProfileLogMaxFileBytes, 'Prompt observations exceed the safe archive size limit');
-    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean)) {
-      promptObservations.push(
-        JSON.stringify({
-          phase,
-          observation: redactGeneratedWorkspaceJsonValue(JSON.parse(line)),
-        })
-      );
-    }
-  }
-  fs.writeFileSync(
-    path.join(context.root, 'prompt-observations.jsonl'),
-    `${promptObservations.join('\n')}${promptObservations.length ? '\n' : ''}`
-  );
+  publishRegenerationPromptObservations(context.root);
   const codeLogs = ['Sanitized regular Code stdout/stderr; raw per-phase logs are not part of the safe archive.'];
   for (const host of primary.hosts || []) {
     assert.ok(
@@ -5365,6 +5350,38 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
   }
   fs.writeFileSync(path.join(context.root, 'code.log'), `${codeLogs.join('\n')}\n`);
   return terminal;
+}
+
+function publishRegenerationPromptObservations(root) {
+  const promptObservations = [];
+  for (const phaseId of SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases.slice(1)) {
+    const phase = phaseId.slice('workspaceArtifactRegeneration:'.length);
+    const file = path.join(root, `${phase}-prompt-observations.jsonl`);
+    if (!fs.existsSync(file)) {
+      continue;
+    }
+    const stat = fs.lstatSync(file);
+    assert.ok(stat.isFile() && !stat.isSymbolicLink(), 'Prompt observations must be an original regular file');
+    assert.ok(stat.size <= vscodeProfileLogMaxFileBytes, 'Prompt observations exceed the safe archive size limit');
+    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean)) {
+      let observation;
+      try {
+        observation = JSON.parse(line);
+      } catch {
+        throw new Error('Prompt observations contain invalid JSON; raw contents are not publishable');
+      }
+      promptObservations.push(
+        JSON.stringify({
+          phase,
+          observation: redactGeneratedWorkspaceJsonValue(observation),
+        })
+      );
+    }
+  }
+  fs.writeFileSync(
+    path.join(root, 'prompt-observations.jsonl'),
+    `${promptObservations.join('\n')}${promptObservations.length ? '\n' : ''}`
+  );
 }
 
 function assertRegenerationStageEvidence(root, expectedIdentity) {
