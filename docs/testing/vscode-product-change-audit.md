@@ -86,10 +86,10 @@ Later documentation-only commits are not another native payload or run.
 | Not required; removal accepted | E1 minimal-activation early return | Keep normal activation regardless of the legacy minimal flag; runner values remain for the isolated ablation | Six affected families on both OSes and canonical full23 accepted at `82477dc0e`. This does not accept removal of the independent workspace-initialization bypass |
 | Not required; removal accepted | E1 workspace-initialization bypass | Initialize already-open workspaces regardless of the legacy workspace flag; preserve the remaining activation path | Local controls, affected 14-lane run `15983333` and canonical full23 run `15984836` accepted at `3e9d343a0`; failed regeneration attempts preserved |
 | Not required; removal accepted | E2 update suppression | Keep normal persisted update throttling without disabling strict validation or changing fixtures | Six strict-mode regressions fail before removal; 61 focused tests pass after removal. Affected 12-lane run `15986177` and canonical full23 run `15987081` accepted at `c585d2639`; all 23 canonical producing attempts passed on attempt 1 |
-| Removal authorized; candidate, not native-accepted | E4 environment-token session fallback | Remove only the synthetic-session helper/fallback; retain E3 WIF, normal Microsoft sessions and independent fixture/API tokens | Both-OS native MSN observations correlate the actual session to WIF despite the known tenant-only parsing mismatch. Raw-token-only synthetic authoring is intentionally retired; no speculative identity fix or E4-disabled native acceptance |
+| Not required; removal accepted | E4 environment-token session fallback | Keep the synthetic-session helper/fallback removed; retain E3 WIF, normal Microsoft sessions and independent fixture/API tokens | Removal committed as `dea31bfc6`; canonical full23 `15991034` accepted at `84cf43160`, including all 23 original producing-attempt artifacts and protected rollup. Raw-token-only synthetic authoring is retired; no speculative identity fix |
 | Supported-package compatibility; retain or extract | E6 missing root `gozip` guard; E7 direct managed `bin/node` resolution | Authentic publisher layouts and unchanged production normalization reproduce the original incompatibilities | Source/archive controls, not native POSIX installation proof. E6's `in-proc6` guard and E7's npm execution are not independently isolated |
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
-| Uncommitted trial; not accepted | E8 feed retries/deadline cleanup and regeneration-readiness draft | Preserve separately; do not attribute any native pass to them | Local controls are not native acceptance; neither draft was in the tested committed payload |
+| Removal authorized; native acceptance pending | E8 feed retries/deadline cleanup | Restore single-request/configured-timeout behavior; preserve error causes | Focused controls pass; the E4 baseline does not validate this removal. Require exact-source canonical full23; unrelated regeneration-readiness drafts remain excluded |
 | Observation candidates; not removed | E10 writer, E11 task/debug, E12 design-time/spawn diagnostics | Prefer recorder/supported observation; justify any minimal original-identity hook | Do not lose race-safe birth/ownership proof or claim a watcher can reconstruct an already-exited leader |
 | Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
 | Already restored | Designer API timeout override | Keep original fixed product timeout; no new E2E product override | Historical restoration predates these removals; it is not a remaining product cleanup |
@@ -1418,14 +1418,18 @@ independently necessary. The disable-fallback environment flag controls only
 wrapper minting, not forwarding of explicit tokens; even historically it did
 not disable E4 when an explicit token was present.
 
-**Current disposition:** **Authorized E4-only removal candidate; canonical
-same-SHA full23 native acceptance pending.** Local controls and the complete
-clean-commit CLI gate precede coordinator admission. Targeted diagnosis is
-optional, not a substitute. Keep every original assertion, ordered checkpoint,
-evidence/source contract, deadline, lifecycle rule and bounded same-run retry.
-Only the coordinator integrates/pushes/moves the shared ref and queues/monitors
-the canonical run; this stream does not launch a shared-desktop GUI or mutate
-live resources.
+**Current disposition:** **E4 removal accepted.** The product removal is
+committed as `dea31bfc634946f596cd0bb6212a2436fe2a1156`; the final
+documentation-inclusive source is `84cf43160f68d8e7e9e21d5bf6e8316eaf1f44df`,
+tree `518bbbcfe101bd632a83ad9252579b0454519a4a`. Its clean complete CLI gate
+passed under official Windows Node `22.23.4`. Canonical non-diagnostic both-OS
+full23 run `15991034` succeeded at that exact source. Acceptance verified all
+23 original producing-attempt artifacts, their source/run/attempt/ordered and
+terminal identities, and the protected rollup, preserving earlier failed
+attempts. This establishes that the selected suite scenarios do not require
+E4; it does not remove E3 WIF or independent fixture/API tokens. Original
+assertions, checkpoints, evidence/source contracts, deadlines, lifecycle rules
+and bounded same-run retries remain unchanged.
 
 ### E5. Activation catches workspace identity changes and initializes more paths
 
@@ -1536,9 +1540,9 @@ remove it as support for an artificially flattened fixture.
 
 ### E8. Feed retry, deadline and request-error metadata
 
-**Sources:** `src/app/utils/feed.ts:16-107`,
-`src/app/utils/bundleFeed.ts:120,136`,
-`src/app/utils/requestUtils.ts:76-96`.
+**Sources:** `src/app/utils/feed.ts`,
+`src/app/utils/bundleFeed.ts`,
+`src/app/utils/requestUtils.ts`.
 **Introduced:** `5f8bd9f60`.
 
 **Before/after:** A single configured-timeout request with a ten-minute cache
@@ -1563,15 +1567,30 @@ reduces transient resilience; it is not behavior-neutral deletion.
 preservation is a separate small observability change; it does not guarantee
 that telemetry serializes the causes.
 
-**Pending trial:** The working-tree cleanup restores the original single-request
-behavior/configured timeout and retains causes. Its replacement controls cover
-cache expiration, parsing, error identity, single attempts and configured
-timeout delegation. It is uncommitted and has no native acceptance; do not
-attribute baseline success to that trial.
+**Authorized removal:** The user authorized removing E8 and running ADO to
+determine whether these suite scenarios require it. The isolated candidate
+removes the retry options/loop/classification, aggregate deadline, both caller
+opt-ins, shared timeout override and synthetic timeout code. It restores one
+request using the extension's configured timeout, preserves the ten-minute
+cache and JSON parsing, and retains exact original errors as causes. No hidden
+setup retries, dependency substitutions or weakened assertions accompany this
+change. Regeneration-readiness drafts remain separate and uncommitted.
 
-The trial's completed local checks passed: 136 focused tests, strict CLI
-compilation, 150 CLI controls with six skipped, and the extension build.
-These results do not establish native or full-matrix acceptance.
+Focused validation passed 139 tests using
+`pnpm --dir apps/vs-code-designer exec vitest run --config vitest.config.ts --coverage.enabled=false src/app/utils/__test__/feed.test.ts src/app/utils/__test__/bundleFeed.test.ts src/app/utils/__test__/requestUtils.test.ts`.
+The controls cover formerly retryable transport/status/nested failures without
+a second attempt, parse/body errors, cache expiration and failed refresh,
+two-argument caller delegation, configured timeouts including 90 seconds
+without a deadline clamp, and preserved causes.
+
+**Native acceptance pending:** Validate the isolated committed candidate with
+the complete CLI gate and exact-source canonical non-diagnostic Linux/Windows
+full23, retaining original producing-attempt evidence and the protected rollup.
+The accepted E4 baseline `84cf43160`/run `15991034` does not validate E8 removal.
+A pass would establish that these scenarios do not require E8, not equivalent
+resilience under simulated upstream transient outages. A failure requires
+causal diagnosis before attributing it to the removal. Historical local trial
+results are not native acceptance.
 
 ### E9. Avoid rewriting an unchanged `.gitignore`
 
