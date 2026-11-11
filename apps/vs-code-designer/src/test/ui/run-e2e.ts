@@ -27,6 +27,7 @@ import {
 } from './customCodeDotNetVersionShared';
 import { lspDirectory } from '../../constants';
 import {
+  lspAssetsManifestFileName,
   lspSdkRevisionMarkerName,
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
@@ -2115,7 +2116,11 @@ namespace ${namespaceName}
 
     const { depsRoot } = getRuntimeDependencyPaths();
     const lspDirectoryPath = path.join(depsRoot, lspDirectory);
-    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const lspAssetDirectory = path.join(projectDir, 'src', 'assets', 'LSPServer');
+    const lspAssetManifest = JSON.parse(fs.readFileSync(path.join(lspAssetDirectory, lspAssetsManifestFileName), 'utf8')) as {
+      sdkPackage: string;
+    };
+    const sdkPackageSource = path.join(lspAssetDirectory, lspAssetManifest.sdkPackage);
     const sdkPackageDestination = path.join(lspDirectoryPath, path.basename(sdkPackageSource));
     if (!fs.existsSync(sdkPackageSource)) {
       throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);

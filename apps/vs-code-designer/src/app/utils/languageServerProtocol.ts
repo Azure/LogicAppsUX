@@ -3,36 +3,38 @@ import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
 import {
-  lspSdkAssetRevision,
+  lspAssetsManifestFileName,
   lspSdkRevisionMarkerName,
-  lspServerAssetRevision,
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
+  type LspAssetsManifest,
 } from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
 import { ensureRuntimeDependenciesDir } from './binaries';
 
-export { lspSdkAssetRevision, lspSdkRevisionMarkerName, lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName };
+export { lspSdkRevisionMarkerName, lspServerDirectoryName, lspServerRevisionMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
 
 export async function installLSPSDK(): Promise<void> {
   const targetDirectory = await ensureRuntimeDependenciesDir();
+  const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
+  const assetManifest = await readAssetsManifest(assetDirectory);
 
   // Check if LSPServer needs to be extracted or updated
-  const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
+  const serverZipFile = path.join(assetDirectory, assetManifest.serverArchive);
   const serverRevisionMarkerFile = path.join(targetDirectory, lspServerRevisionMarkerName);
   const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
   const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
-  const shouldExtract = await shouldUpdateFromRevision(lspServerAssetRevision, serverRevisionMarkerFile, lspServerDllPath);
+  const shouldExtract = await shouldUpdateFromRevision(assetManifest.serverSha256, serverRevisionMarkerFile, lspServerDllPath);
 
   // Check if SDK needs to be copied or updated
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+  const sdkNupkgFile = path.join(assetDirectory, assetManifest.sdkPackage);
   const sdkRevisionMarkerFile = path.join(targetDirectory, lspSdkRevisionMarkerName);
   const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-  const shouldCopy = await shouldUpdateFromRevision(lspSdkAssetRevision, sdkRevisionMarkerFile, destinationFile);
+  const shouldCopy = await shouldUpdateFromRevision(assetManifest.sdkSha256, sdkRevisionMarkerFile, destinationFile);
 
   if (shouldExtract || shouldCopy) {
     await stopLanguageClientForUpdate();
@@ -51,7 +53,7 @@ export async function installLSPSDK(): Promise<void> {
         throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
       }
 
-      await fse.writeFile(serverRevisionMarkerFile, lspServerAssetRevision);
+      await fse.writeFile(serverRevisionMarkerFile, assetManifest.serverSha256);
       await removeLegacyLspMarkers(targetDirectory);
       await cleanupStaleLspServerFolders(targetDirectory);
     } catch (error) {
@@ -65,12 +67,33 @@ export async function installLSPSDK(): Promise<void> {
 
       await fse.copyFile(sdkNupkgFile, destinationFile);
 
-      await fse.writeFile(sdkRevisionMarkerFile, lspSdkAssetRevision);
+      await fse.writeFile(sdkRevisionMarkerFile, assetManifest.sdkSha256);
       await removeLegacySdkMarkers(targetDirectory);
     } catch (error) {
       throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
     }
   }
+}
+
+async function readAssetsManifest(assetDirectory: string): Promise<LspAssetsManifest> {
+  const manifestPath = path.join(assetDirectory, lspAssetsManifestFileName);
+  const manifest = (await fse.readJson(manifestPath)) as Partial<LspAssetsManifest>;
+  const hashPattern = /^[a-f0-9]{64}$/;
+
+  if (
+    !manifest.serverArchive ||
+    path.basename(manifest.serverArchive) !== manifest.serverArchive ||
+    !manifest.sdkPackage ||
+    path.basename(manifest.sdkPackage) !== manifest.sdkPackage ||
+    !manifest.serverSha256 ||
+    !hashPattern.test(manifest.serverSha256) ||
+    !manifest.sdkSha256 ||
+    !hashPattern.test(manifest.sdkSha256)
+  ) {
+    throw new Error(`Logic Apps language server asset manifest '${manifestPath}' is invalid.`);
+  }
+
+  return manifest as LspAssetsManifest;
 }
 
 /**
