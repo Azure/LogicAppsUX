@@ -33,16 +33,13 @@ vi.mock('../../utils/dotnet/dotnet', () => ({
 }));
 
 vi.mock('../../utils/funcCoreTools/funcHostTask', () => ({
+  executeFuncTaskForCleanup: vi.fn(),
   getRunningFuncTaskForWorkspace: vi.fn(),
   getFuncPortFromTaskOrProject: vi.fn(),
   isFuncHostTask: vi.fn(),
   runningFuncTaskMap: new Map(),
   scopeMatchesWorkspace: vi.fn(),
   stopFuncTaskForWorkspace: vi.fn(),
-}));
-
-vi.mock('../../utils/taskUtils', () => ({
-  executeIfNotActive: vi.fn(),
 }));
 
 vi.mock('@microsoft/vscode-azext-utils', () => ({
@@ -90,13 +87,13 @@ import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { preDebugValidate } from '../../debug/validatePreDebug';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
 import {
+  executeFuncTaskForCleanup,
   getFuncPortFromTaskOrProject,
   getRunningFuncTaskForWorkspace,
   runningFuncTaskMap,
   scopeMatchesWorkspace,
   stopFuncTaskForWorkspace,
 } from '../../utils/funcCoreTools/funcHostTask';
-import { executeIfNotActive } from '../../utils/taskUtils';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -275,8 +272,9 @@ describe('pickFuncProcessInternal', () => {
     });
     (getRunningFuncTaskForWorkspace as any).mockImplementation((folder: vscode.WorkspaceFolder) => runningFuncTaskMap.get(folder));
     (sendRequestWithTimeout as any).mockResolvedValue({ parsedBody: { state: 'Running' } });
-    (executeIfNotActive as any).mockImplementation(async () => {
+    (executeFuncTaskForCleanup as any).mockImplementation(async () => {
       runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
+      return true;
     });
     (vscode.EventEmitter as any).mockImplementation(() => ({ fire: vi.fn() }));
     Object.assign(vscode, { Task: ApiTask, ShellExecution: ApiShellExecution });
@@ -769,7 +767,7 @@ describe('pickFuncProcessInternal', () => {
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
     expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
-    expect(executeIfNotActive).not.toHaveBeenCalled();
+    expect(executeFuncTaskForCleanup).not.toHaveBeenCalled();
   });
 
   it('custom code project skips codeful publish', async () => {
@@ -788,7 +786,7 @@ describe('pickFuncProcessInternal', () => {
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
     expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri);
     expect(publishCodefulProject).not.toHaveBeenCalled();
-    expect(executeIfNotActive).not.toHaveBeenCalled();
+    expect(executeFuncTaskForCleanup).not.toHaveBeenCalled();
   });
 
   it('stops a previous func task before codeful publish', async () => {
@@ -855,7 +853,7 @@ describe('pickFuncProcessInternal', () => {
 
     expect(result).toBe('1234');
     expect(vscode.tasks.fetchTasks).toHaveBeenCalled();
-    expect(executeIfNotActive).toHaveBeenCalledWith(funcTask);
+    expect(executeFuncTaskForCleanup).toHaveBeenCalledWith(funcTask);
     expect(sendRequestWithTimeout).toHaveBeenCalledWith(
       context,
       expect.objectContaining({ url: 'http://localhost:7071/admin/host/status' }),
@@ -865,7 +863,7 @@ describe('pickFuncProcessInternal', () => {
   });
 
   it('waits for the func host task process to start before applying the host status timeout', async () => {
-    (executeIfNotActive as any).mockResolvedValue(undefined);
+    (executeFuncTaskForCleanup as any).mockResolvedValue(true);
     let delayCount = 0;
     (delay as any).mockImplementation(async () => {
       delayCount += 1;
@@ -907,7 +905,7 @@ describe('pickFuncProcessInternal', () => {
 
     expect(result).toBe('1234');
     expect(vscode.tasks.executeTask).toHaveBeenCalledWith(debugTask);
-    expect(executeIfNotActive).toHaveBeenCalledWith(funcTask);
+    expect(executeFuncTaskForCleanup).toHaveBeenCalledWith(funcTask);
   });
 
   it('stops before build and publish when pre-debug validation is cancelled', async () => {
@@ -934,7 +932,7 @@ describe('pickFuncProcessInternal', () => {
     ).rejects.toThrow('The setting "pickProcessTimeout" must be a number');
 
     expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
-    expect(executeIfNotActive).not.toHaveBeenCalled();
+    expect(executeFuncTaskForCleanup).not.toHaveBeenCalled();
   });
 });
 
