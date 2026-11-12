@@ -27,6 +27,11 @@ public class GetWorkflowMetadataParams : IRequest<GetWorkflowMetadataResponse>
     public string? Uri { get; set; }
 
     /// <summary>
+    /// Gets or sets the workflow name to analyze when the document defines multiple workflows.
+    /// </summary>
+    public string? WorkflowName { get; set; }
+
+    /// <summary>
     /// Gets or sets line number where the trigger or action is located (0-based).
     /// Optional - if not provided, will analyze the entire file.
     /// </summary>

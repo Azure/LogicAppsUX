@@ -626,6 +626,71 @@ public class AgentWorkflow
     }
 
     [Fact]
+    public async Task InlineThenChain_UsesTriggerInvocationInsteadOfThenInvocation()
+    {
+        GetWorkflowMetadataResponse result = await AnalyzeWorkflowCode("""
+            using Microsoft.Azure.Workflows.Sdk;
+
+            public class InlineWorkflow
+            {
+                public static FlowDefinition[] GetWorkflows()
+                {
+                    var action = WorkflowActions.BuiltIn.CreateResponseAction();
+                    return new[]
+                    {
+                        WorkflowFactory.CreateStatefulWorkflow(
+                            "inline-workflow",
+                            WorkflowTriggers.BuiltIn.CreateHttpTrigger()
+                                .WithName("inline-trigger")
+                                .Then(action))
+                    };
+                }
+            }
+            """);
+
+        Assert.Equal("inline-workflow", result.WorkflowName);
+        Assert.Equal("inline-trigger", result.TriggerName);
+        Assert.Equal("CreateHttpTrigger", result.MethodName);
+        Assert.Equal("BuiltIn", result.ConnectorName);
+        Assert.Equal("Trigger", result.ElementType);
+    }
+
+    [Fact]
+    public async Task MultipleWorkflows_UsesRequestedWorkflowTrigger()
+    {
+        const string workflowCode = """
+            using Microsoft.Azure.Workflows.Sdk;
+
+            public class MultipleWorkflowProvider
+            {
+                public static FlowDefinition[] GetWorkflows()
+                {
+                    var firstTrigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger()
+                        .WithName("first-trigger");
+                    var secondTrigger = WorkflowTriggers.Managed.Outlook("outlook-connection")
+                        .OnNewEmailV2()
+                        .WithName("second-trigger");
+
+                    return new[]
+                    {
+                        WorkflowFactory.CreateStatefulWorkflow("first-workflow", firstTrigger),
+                        WorkflowFactory.CreateStatefulWorkflow("second-workflow", secondTrigger)
+                    };
+                }
+            }
+            """;
+
+        GetWorkflowMetadataResponse result = await AnalyzeWorkflowCode(workflowCode, "second-workflow");
+
+        Assert.Equal("second-workflow", result.WorkflowName);
+        Assert.Equal("second-trigger", result.TriggerName);
+        Assert.Equal("OnNewEmailV2", result.MethodName);
+        Assert.Equal("Outlook", result.ConnectorName);
+        Assert.Equal("outlook-connection", result.ConnectionId);
+        Assert.Equal("Trigger", result.ElementType);
+    }
+
+    [Fact]
     public async Task AbsoluteFilePath_UsesUnsavedSynchronizedBuffer()
     {
         string testRoot = Path.Combine(Path.GetTempPath(), $"workflow-metadata-{Guid.NewGuid():N}");
@@ -923,7 +988,7 @@ public class ManagedWorkflow
     /// <summary>
     /// Helper method to analyze workflow code and extract metadata.
     /// </summary>
-    private async Task<GetWorkflowMetadataResponse> AnalyzeWorkflowCode(string workflowCode)
+    private async Task<GetWorkflowMetadataResponse> AnalyzeWorkflowCode(string workflowCode, string? workflowName = null)
     {
         string documentUri = "file:///test/workflow.cs";
         bufferManager.UpdateBuffer(documentUri, workflowCode);
@@ -932,7 +997,8 @@ public class ManagedWorkflow
         var handler = new GetWorkflowMetadataHandler(bufferManager, null);
         var request = new GetWorkflowMetadataParams
         {
-            Uri = documentUri
+            Uri = documentUri,
+            WorkflowName = workflowName,
         };
 
         return await handler.Handle(request, CancellationToken.None);

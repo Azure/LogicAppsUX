@@ -102,7 +102,7 @@ export async function getCodefulWorkflowPropertiesList(
       const hasHttpTrigger = isHttpRequestTrigger(resolvedWorkflowData, workflowContent);
       const workflowTriggerName =
         resolvedWorkflowData.triggerName ??
-        (await getCodefulWorkflowMetadata(workflowFilePath)
+        (await getCodefulWorkflowMetadata(workflowFilePath, resolvedWorkflowData.workflowName)
           .then((metadata) => metadata?.triggerName)
           .catch(() => undefined)) ??
         getFallbackCodefulTriggerName(workflowContent, hasHttpTrigger);

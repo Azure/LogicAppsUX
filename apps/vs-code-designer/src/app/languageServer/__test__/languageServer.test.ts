@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import LogicAppsLanguageServer from '../languageServer';
+import { ext } from '../../../extensionVariables';
+import LogicAppsLanguageServer, { getCodefulWorkflowMetadata } from '../languageServer';
 import path from 'path';
 
 const mocks = vi.hoisted(() => ({
@@ -97,6 +98,7 @@ describe('LogicAppsLanguageServer', () => {
 
   beforeEach(() => {
     delete process.env.LSP_WAIT_FOR_DEBUGGER;
+    (ext as any).languageClient = undefined;
     vi.clearAllMocks();
     mocks.createFileSystemWatcher.mockReturnValue({ onDidChange: vi.fn() });
     mocks.getGlobalSetting.mockReturnValue(dependenciesPath);
@@ -242,5 +244,24 @@ describe('LogicAppsLanguageServer', () => {
       expect.any(Object)
     );
     expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('attach a debugger to continue'));
+  });
+
+  it('requests metadata for the selected workflow', async () => {
+    const sendRequest = vi.fn().mockResolvedValue({
+      workflowName: 'workflow-b',
+      triggerName: 'second-trigger',
+    });
+    (ext as any).languageClient = { sendRequest };
+
+    const result = await getCodefulWorkflowMetadata('D:\\workspace\\logic-app\\Workflows.cs', 'workflow-b');
+
+    expect(sendRequest).toHaveBeenCalledWith('custom/getWorkflowMetadata', {
+      uri: 'D:\\workspace\\logic-app\\Workflows.cs',
+      workflowName: 'workflow-b',
+    });
+    expect(result).toEqual({
+      workflowName: 'workflow-b',
+      triggerName: 'second-trigger',
+    });
   });
 });

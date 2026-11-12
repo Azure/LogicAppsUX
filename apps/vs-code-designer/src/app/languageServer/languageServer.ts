@@ -277,10 +277,12 @@ export async function startLanguageServer(): Promise<void> {
  * Gets workflow metadata from the LSP server including trigger names.
  * Uses a custom LSP request to query the workflow structure.
  * @param workflowFilePath - The absolute path to the codeful workflow .cs file
+ * @param workflowName - The workflow to analyze when the file defines multiple workflows
  * @returns Workflow metadata including workflow name and trigger name, or undefined if not available
  */
 export async function getCodefulWorkflowMetadata(
-  workflowFilePath: string
+  workflowFilePath: string,
+  workflowName?: string
 ): Promise<{ workflowName: string; triggerName: string } | undefined> {
   if (!ext.languageClient) {
     console.warn('[LSP] Language client not initialized');
@@ -291,7 +293,7 @@ export async function getCodefulWorkflowMetadata(
     // Use the custom LSP request to get workflow metadata
     const response = await ext.languageClient.sendRequest<{ workflowName: string; triggerName: string } | null>(
       'custom/getWorkflowMetadata',
-      { uri: workflowFilePath }
+      { uri: workflowFilePath, workflowName }
     );
 
     if (!response) {

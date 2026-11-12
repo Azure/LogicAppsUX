@@ -128,14 +128,14 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
 
                 // Analyze the invocation to extract metadata
                 var response = AnalyzeInvocation(invocation, compilation);
-                response.WorkflowName = ExtractWorkflowName(root);
+                response.WorkflowName = request.WorkflowName ?? ExtractWorkflowName(root);
                 return response;
             }
             else
             {
                 // No position provided - analyze entire file for workflow metadata
                 await Console.Error.WriteLineAsync("[GetWorkflowMetadataHandler] Analyzing entire workflow");
-                var response = await AnalyzeEntireWorkflowAsync(root, compilation);
+                var response = await AnalyzeEntireWorkflowAsync(root, compilation, request.WorkflowName);
                 await Console.Error.WriteLineAsync($"[GetWorkflowMetadataHandler] ✅ Returning: WorkflowName={response.WorkflowName}, TriggerName={response.TriggerName}");
                 return response;
             }
@@ -290,27 +290,7 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
     {
         var response = new GetWorkflowMetadataResponse();
 
-        // For chained calls like .OnNewEmailAsync().WithName().WithSettings(), we need to find the actual trigger method
-        // Skip over utility methods like WithName, WithSettings, etc.
-        InvocationExpressionSyntax? actualTriggerInvocation = invocation;
-        while (actualTriggerInvocation.Expression is MemberAccessExpressionSyntax memberAccess)
-        {
-            string methodName = memberAccess.Name.ToString();
-
-            // If this is a utility method, walk back to find the actual trigger method
-            if (methodName == "WithName" || methodName == "WithSettings" || methodName == "WithTimeout")
-            {
-                // Walk back through the expression chain to find the trigger method
-                if (memberAccess.Expression is InvocationExpressionSyntax previousInvocation)
-                {
-                    actualTriggerInvocation = previousInvocation;
-                    continue; // Continue walking back in case there are more utility methods
-                }
-            }
-
-            // Not a utility method, we found the actual trigger invocation
-            break;
-        }
+        InvocationExpressionSyntax actualTriggerInvocation = GetOperationInvocation(invocation);
 
         // Extract method name from the actual trigger invocation
         if (actualTriggerInvocation.Expression is MemberAccessExpressionSyntax triggerMemberAccess)
@@ -524,21 +504,34 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
     /// <summary>
     /// Analyzes the entire workflow file to extract workflow name and trigger information.
     /// </summary>
-    private static async Task<GetWorkflowMetadataResponse> AnalyzeEntireWorkflowAsync(CompilationUnitSyntax root, CSharpCompilation? compilation)
+    private static async Task<GetWorkflowMetadataResponse> AnalyzeEntireWorkflowAsync(
+        CompilationUnitSyntax root,
+        CSharpCompilation? compilation,
+        string? requestedWorkflowName)
     {
         var response = new GetWorkflowMetadataResponse();
 
-        // Extract workflow name from class name or Build method
-        response.WorkflowName = ExtractWorkflowName(root);
+        InvocationExpressionSyntax? workflowInvocation = FindWorkflowFactoryInvocation(root, requestedWorkflowName);
+        if (!string.IsNullOrWhiteSpace(requestedWorkflowName) && workflowInvocation == null)
+        {
+            response.WorkflowName = requestedWorkflowName;
+            response.Error = $"Workflow '{requestedWorkflowName}' was not found in the document";
+            return response;
+        }
 
-        // Debug: Log all invocations to see what we're finding
-        var allInvocations = root.DescendantNodes()
+        response.WorkflowName = requestedWorkflowName ?? ExtractWorkflowName(root, workflowInvocation);
+
+        SyntaxNode triggerSearchRoot = workflowInvocation is null ? root : workflowInvocation;
+        var allInvocations = triggerSearchRoot.DescendantNodesAndSelf()
             .OfType<InvocationExpressionSyntax>()
             .ToList();
         await Console.Error.WriteLineAsync($"[AnalyzeEntireWorkflow] Found {allInvocations.Count} invocations");
 
-        // Find the first trigger invocation
-        var triggerInvocation = allInvocations.FirstOrDefault(inv => IsWorkflowTrigger(inv));
+        InvocationExpressionSyntax? triggerInvocation = allInvocations.FirstOrDefault(IsWorkflowTrigger);
+        if (triggerInvocation == null && workflowInvocation != null)
+        {
+            triggerInvocation = FindReferencedTriggerInvocation(root, workflowInvocation);
+        }
 
         if (triggerInvocation != null)
         {
@@ -570,8 +563,18 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
     /// <summary>
     /// Extracts the workflow name from the class name or Build method parameter.
     /// </summary>
-    private static string? ExtractWorkflowName(CompilationUnitSyntax root)
+    private static string? ExtractWorkflowName(
+        CompilationUnitSyntax root,
+        InvocationExpressionSyntax? workflowInvocation = null)
     {
+        string? factoryWorkflowName = workflowInvocation == null
+            ? null
+            : ExtractWorkflowName(workflowInvocation);
+        if (factoryWorkflowName != null)
+        {
+            return factoryWorkflowName;
+        }
+
         // First, look for builder.WithName("workflow-name") pattern
         var builderWithNameInvocation = root.DescendantNodes()
             .OfType<InvocationExpressionSyntax>()
@@ -600,30 +603,14 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
             }
         }
 
-        // Second, look for Build() method with workflow name parameter (CreateStatefulWorkflow/CreateStatelessWorkflow)
-        var buildMethod = root.DescendantNodes()
-            .OfType<InvocationExpressionSyntax>()
-            .FirstOrDefault(inv =>
-            {
-                if (inv.Expression is MemberAccessExpressionSyntax ma)
-                {
-                    string methodName = ma.Name.ToString();
-                    return methodName.Contains("CreateStatefulWorkflow") ||
-                        methodName.Contains("CreateStatelessWorkflow") ||
-                        methodName.Contains("CreateAgentWorkflow");
-                }
-
-                return false;
-            });
-
-        if (buildMethod?.ArgumentList?.Arguments.Count > 0)
+        // Second, look for a workflow factory call with a workflow name parameter.
+        InvocationExpressionSyntax? buildMethod = FindWorkflowFactoryInvocation(root, null);
+        string? buildMethodWorkflowName = buildMethod == null
+            ? null
+            : ExtractWorkflowName(buildMethod);
+        if (buildMethodWorkflowName != null)
         {
-            var firstArg = buildMethod.ArgumentList.Arguments[0];
-            if (firstArg.Expression is LiteralExpressionSyntax literal &&
-                literal.IsKind(SyntaxKind.StringLiteralExpression))
-            {
-                return literal.Token.ValueText;
-            }
+            return buildMethodWorkflowName;
         }
 
         // Fallback: use class name
@@ -656,7 +643,10 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
         }
 
         string triggerVariableName = triggerVariable.Identifier.ValueText;
-        return root.DescendantNodes()
+        SyntaxNode searchScope = triggerVariable.FirstAncestorOrSelf<MethodDeclarationSyntax>() is { } method
+            ? method
+            : root;
+        return searchScope.DescendantNodes()
             .OfType<InvocationExpressionSyntax>()
             .Where(invocation => invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
                 memberAccess.Name.Identifier.ValueText == "WithName" &&
@@ -682,27 +672,143 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
                 : null;
     }
 
+    private static InvocationExpressionSyntax? FindWorkflowFactoryInvocation(
+        CompilationUnitSyntax root,
+        string? workflowName)
+    {
+        IEnumerable<InvocationExpressionSyntax> invocations = root.DescendantNodes()
+            .OfType<InvocationExpressionSyntax>()
+            .Where(IsWorkflowFactoryInvocation);
+
+        return string.IsNullOrWhiteSpace(workflowName)
+            ? invocations.FirstOrDefault()
+            : invocations.FirstOrDefault(invocation =>
+                string.Equals(ExtractWorkflowName(invocation), workflowName, StringComparison.Ordinal));
+    }
+
+    private static bool IsWorkflowFactoryInvocation(InvocationExpressionSyntax invocation)
+    {
+        string? methodName = invocation.Expression switch
+        {
+            MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.ValueText,
+            IdentifierNameSyntax identifier => identifier.Identifier.ValueText,
+            _ => null,
+        };
+
+        return methodName is "CreateStatefulWorkflow" or "CreateStatelessWorkflow" or "CreateAgentWorkflow";
+    }
+
+    private static string? ExtractWorkflowName(InvocationExpressionSyntax workflowInvocation)
+    {
+        return workflowInvocation.ArgumentList.Arguments
+            .Select(argument => argument.Expression)
+            .OfType<LiteralExpressionSyntax>()
+            .Where(literal => literal.IsKind(SyntaxKind.StringLiteralExpression))
+            .Select(literal => literal.Token.ValueText)
+            .FirstOrDefault();
+    }
+
+    private static InvocationExpressionSyntax? FindReferencedTriggerInvocation(
+        CompilationUnitSyntax root,
+        InvocationExpressionSyntax workflowInvocation)
+    {
+        foreach (ArgumentSyntax argument in workflowInvocation.ArgumentList.Arguments)
+        {
+            InvocationExpressionSyntax? triggerInvocation = ResolveTriggerInvocation(
+                root,
+                argument.Expression,
+                workflowInvocation.SpanStart);
+            if (triggerInvocation != null)
+            {
+                return triggerInvocation;
+            }
+        }
+
+        return null;
+    }
+
+    private static InvocationExpressionSyntax? ResolveTriggerInvocation(
+        CompilationUnitSyntax root,
+        ExpressionSyntax expression,
+        int beforePosition)
+    {
+        InvocationExpressionSyntax? inlineTrigger = expression.DescendantNodesAndSelf()
+            .OfType<InvocationExpressionSyntax>()
+            .FirstOrDefault(IsWorkflowTrigger);
+        if (inlineTrigger != null)
+        {
+            return inlineTrigger;
+        }
+
+        ExpressionSyntax currentExpression = expression;
+        while (currentExpression is ParenthesizedExpressionSyntax parenthesized)
+        {
+            currentExpression = parenthesized.Expression;
+        }
+
+        while (currentExpression is InvocationExpressionSyntax invocation &&
+            invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+            IsOperationChainMethod(memberAccess.Name.Identifier.ValueText))
+        {
+            currentExpression = memberAccess.Expression;
+        }
+
+        if (currentExpression is not IdentifierNameSyntax identifier)
+        {
+            return null;
+        }
+
+        VariableDeclaratorSyntax? variable = root.DescendantNodes()
+            .OfType<VariableDeclaratorSyntax>()
+            .Where(candidate =>
+                candidate.Identifier.ValueText == identifier.Identifier.ValueText &&
+                candidate.SpanStart < beforePosition &&
+                candidate.Initializer != null)
+            .OrderByDescending(candidate => candidate.SpanStart)
+            .FirstOrDefault();
+
+        return variable?.Initializer == null
+            ? null
+            : ResolveTriggerInvocation(root, variable.Initializer.Value, variable.SpanStart);
+    }
+
+    private static InvocationExpressionSyntax GetOperationInvocation(InvocationExpressionSyntax invocation)
+    {
+        InvocationExpressionSyntax operationInvocation = invocation;
+        while (operationInvocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+            IsTriggerDecoratorMethod(memberAccess.Name.Identifier.ValueText) &&
+            memberAccess.Expression is InvocationExpressionSyntax previousInvocation)
+        {
+            operationInvocation = previousInvocation;
+        }
+
+        return operationInvocation;
+    }
+
+    private static bool IsTriggerDecoratorMethod(string methodName)
+    {
+        return methodName is "WithName" or "WithSettings" or "WithTimeout";
+    }
+
+    private static bool IsOperationChainMethod(string methodName)
+    {
+        return methodName == "Then" || IsTriggerDecoratorMethod(methodName);
+    }
+
     /// <summary>
     /// Checks if an invocation is a workflow trigger.
     /// </summary>
     private static bool IsWorkflowTrigger(InvocationExpressionSyntax invocation)
     {
-        // Convert the entire invocation expression to a string and check for trigger patterns
-        string invocationText = invocation.Expression.ToString();
-
-        // Check if it contains WorkflowTriggers pattern
-        if (!invocationText.Contains("WorkflowTriggers", StringComparison.Ordinal))
+        InvocationExpressionSyntax operationInvocation = GetOperationInvocation(invocation);
+        if (operationInvocation.Expression is not MemberAccessExpressionSyntax memberAccess ||
+            memberAccess.Name.Identifier.ValueText == "Then")
         {
             return false;
         }
 
-        // Check for BuiltIn (including BuiltIn.ServiceProviders) or Managed patterns
-        if (invocationText.Contains("WorkflowTriggers.BuiltIn", StringComparison.Ordinal) ||
-            invocationText.Contains("WorkflowTriggers.Managed", StringComparison.Ordinal))
-        {
-            return true;
-        }
-
-        return false;
+        string receiverText = memberAccess.Expression.ToString();
+        return receiverText.Contains("WorkflowTriggers.BuiltIn", StringComparison.Ordinal) ||
+            receiverText.Contains("WorkflowTriggers.Managed", StringComparison.Ordinal);
     }
 }
