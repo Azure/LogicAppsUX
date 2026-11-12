@@ -8,6 +8,7 @@ import * as os from 'os';
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
 import { releaseReservedPort, reserveFreePort } from '../../portReservation';
+import { getExperimentalBundleRuntime } from '../../bundleFeed';
 import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
 
 vi.mock('../../appSettings/localSettings', () => ({
@@ -30,6 +31,14 @@ vi.mock('../../../projectConsistency/projectFilesConsistency', () => ({
 
 vi.mock('../../fs', () => ({
   writeFormattedJson: vi.fn(),
+}));
+
+vi.mock('../../bundleFeed', () => ({
+  getExperimentalBundleRuntime: vi.fn(),
+  ensureExtensionBundleHealthy: vi.fn(),
+  isExtensionBundleDownloadInFlight: vi.fn(() => false),
+  isInsideBundleDownloadScope: vi.fn(() => false),
+  waitForExtensionBundleReady: vi.fn(),
 }));
 
 vi.mock('../common', () => ({
@@ -87,6 +96,7 @@ describe('startAllDesignTimeApis', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getExperimentalBundleRuntime).mockReset();
     ext.designTimeInstances.clear();
     (workspace as any).workspaceFolders = [];
     workspace.fs.createDirectory = vi.fn().mockRejectedValue(new Error('skip startup after logging')) as any;
@@ -94,6 +104,57 @@ describe('startAllDesignTimeApis', () => {
     vi.mocked(axios.get).mockRejectedValue(new Error('API not ready'));
     let nextPort = 7071;
     vi.mocked(reserveFreePort).mockImplementation(async () => nextPort++);
+  });
+
+  it.each([undefined, 'http://127.0.0.1:12345/previous-selection'])(
+    'does not reuse or terminate an experimental host with unknown/stale selection %s',
+    async (previousSource) => {
+      const source = 'http://127.0.0.1:12345/current-selection';
+      vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+        directory: 'synthetic-cache',
+        folderVersion: '1.197.13',
+        manifestVersion: '1.197.0.13',
+        env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: source },
+      });
+      ext.designTimeInstances.set('D:/workspace/app-one', {
+        port: 7071,
+        process: { pid: 111 } as cp.ChildProcess,
+        experimentalBundleSource: previousSource,
+      });
+      vi.mocked(axios.get).mockResolvedValue({});
+      await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow('was not launched with');
+      expect(cp.spawn).not.toHaveBeenCalled();
+      expect(cp.exec).not.toHaveBeenCalled();
+      expect(ext.designTimeInstances.get('D:/workspace/app-one')?.isStarting).toBe(false);
+    }
+  );
+
+  it('reuses a healthy tracked host launched with the same experimental selection', async () => {
+    const source = 'http://127.0.0.1:12345/current-selection';
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'synthetic-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: source },
+    });
+    vi.mocked(os.platform).mockReturnValue('linux');
+    ext.designTimeInstances.set('D:/workspace/experimental-app', {
+      port: 7071,
+      process: { pid: 111 } as cp.ChildProcess,
+      childFuncPid: '222',
+      experimentalBundleSource: source,
+    });
+    vi.mocked(axios.get).mockResolvedValue({});
+    vi.mocked(findProcess).mockResolvedValue([{ pid: 222, name: 'func', ppid: 111, cmd: 'func host start' }]);
+    await startDesignTimeApi(createMockContext(), 'D:/workspace/experimental-app');
+    expect(cp.spawn).not.toHaveBeenCalled();
+  });
+
+  it('does not probe or launch a host if its selected experimental bundle is invalid', async () => {
+    vi.mocked(getExperimentalBundleRuntime).mockRejectedValue(new Error('selected bundle invalid'));
+    await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow('selected bundle invalid');
+    expect(axios.get).not.toHaveBeenCalled();
+    expect(cp.spawn).not.toHaveBeenCalled();
   });
 
   it('logs zero-project startup when the workspace contains no Logic App folders', async () => {
@@ -311,8 +372,24 @@ describe('startDesignTimeProcess', () => {
     } as any);
   });
 
+  it('passes experimental binding only to the owned child environment and preserves inherited values', () => {
+    const before = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+    const environment = {
+      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/synthetic-selection',
+      AzureFunctionsJobHost__extensionBundle__version: '[1.197.13]',
+    };
+    startDesignTimeProcess(outputChannel as any, 'synthetic-designtime', 'func', ['host', 'start'], environment);
+    expect(cp.spawn).toHaveBeenCalledWith('func', ['host', 'start'], expect.objectContaining({ env: { ...process.env, ...environment } }));
+    expect(process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI).toBe(before);
+  });
+
+  it('keeps production spawn environment inheritance unchanged', () => {
+    startDesignTimeProcess(outputChannel as any, 'synthetic-designtime', 'func', ['host', 'start']);
+    expect(cp.spawn).toHaveBeenCalledWith('func', ['host', 'start'], { cwd: 'synthetic-designtime', shell: true });
+  });
+
   it('suppresses repeated failing health-check output while preserving other host output', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stderr.emit('data', '[10:00:00] Health check failed: service is unhealthy\n');
     stderr.emit('data', '[10:00:01] Health check failed: service is unhealthy\n');
@@ -329,7 +406,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('suppresses repeated failing health-check output across chunked stdout lines', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stdout.emit('data', 'Health ');
     stdout.emit('data', 'check failed: service is unhealthy\n');
@@ -344,7 +421,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('normalizes Functions host health-check invocation ids and durations before suppressing repeats', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stderr.emit('data', "Executed 'Functions.HealthCheck' (Failed, Id=11111111-1111-1111-1111-111111111111, Duration=12ms)\n");
     stderr.emit('data', "Executed 'Functions.HealthCheck' (Failed, Id=22222222-2222-2222-2222-222222222222, Duration=48ms)\n");
@@ -357,7 +434,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('suppresses repeated process unhealthy logs with health-check entries', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     const healthCheckEntries =
       'Process reporting unhealthy: Unhealthy. Health check entries are {"azure.functions.web_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.script_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.webjobs.storage":{"status":"Unhealthy","description":"Unable to create client for AzureWebJobsStorage"}}\n';
@@ -373,7 +450,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('flushes final unterminated output when a host stream closes', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stderr.emit('data', 'A real startup error without newline');
     stderr.emit('close');
@@ -384,7 +461,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('keeps stdout and stderr partial-line buffers independent', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stdout.emit('data', 'Health ');
     stderr.emit('data', 'A real startup error\n');
@@ -398,7 +475,7 @@ describe('startDesignTimeProcess', () => {
   });
 
   it('does not suppress unrelated output or existing restart-trigger diagnostics', () => {
-    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', ['host', 'start']);
 
     stdout.emit('data', 'Failed to start a new language worker for runtime: node\n');
     stderr.emit('data', 'Port 7071 is unavailable. Close the process using that port, or specify another port using --port.\n');

@@ -7,9 +7,8 @@
  * Phase 4.15B validates the workspace created by
  * customCodeDotNetVersionCreate.test.ts (Phase 4.15A) without building it.
  * The .NET 10 template intentionally references
- * Microsoft.Azure.Workflows.WebJobs.Sdk 1.4.0, which is not yet released, so
- * build/run lifecycle coverage cannot be enabled until that package is
- * available.
+ * Microsoft.Azure.Workflows.Webjobs.Sdk 1.4.1. This phase covers generated
+ * artifacts only; it does not provide build/run lifecycle coverage.
  *
  * The `net8` target is picker-negative-only in Phase 4.15A and never creates a
  * workspace.
@@ -36,7 +35,7 @@ const {
   workspaceFilePath: WORKSPACE_FILE_PATH,
 } = layout;
 
-const EXPECTED_WORKFLOWS_SDK_VERSION = '1.4.0';
+const EXPECTED_WORKFLOWS_SDK_VERSION = '1.4.1';
 const INVOKE_FUNCTION_ACTION_NAME = 'Call_a_local_function_in_this_logic_app';
 
 interface LocalSettingsJson {

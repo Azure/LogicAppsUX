@@ -58,6 +58,52 @@ describe('funcHostTask', () => {
   });
 
   describe('isFuncHostTask', () => {
+    it.each(['shell', 'func'])('does not track unresolved %s tasks', (type) => {
+      expect(isFuncHostTask({ definition: { type }, execution: undefined } as vscode.Task)).toBe(false);
+    });
+
+    it.each(['func', 'C:\\tools\\func.exe', '/tools/func', '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}'])(
+      'recognizes real ProcessExecution host tasks using %s',
+      (executable) => {
+        const task = {
+          definition: { type: 'process' },
+          execution: new vscode.ProcessExecution(executable, ['host', 'start']),
+          scope: workspaceFolder,
+        } as vscode.Task;
+        expect(isFuncHostTask(task)).toBe(true);
+      }
+    );
+
+    it.each([
+      ['dotnet', ['host', 'start']],
+      ['func', ['extensions', 'install']],
+    ])('does not track unrelated ProcessExecution %s/%j', (executable, args) => {
+      expect(
+        isFuncHostTask({
+          definition: { type: 'process' },
+          execution: new vscode.ProcessExecution(executable, args as string[]),
+        } as vscode.Task)
+      ).toBe(false);
+    });
+
+    it('recognizes actual ShellExecution command-line tasks', () => {
+      expect(
+        isFuncHostTask({
+          definition: { type: 'shell' },
+          execution: new vscode.ShellExecution('func host start'),
+        } as vscode.Task)
+      ).toBe(true);
+    });
+
+    it('recognizes the ShellExecution command/args form without requiring commandLine', () => {
+      expect(
+        isFuncHostTask({
+          definition: { type: 'shell' },
+          execution: { command: { value: 'C:\\tools\\func.exe', quoting: 1 }, args: ['host', 'start'] },
+        } as vscode.Task)
+      ).toBe(true);
+    });
+
     it('returns true for shell tasks using funcCoreToolsBinaryPath config', () => {
       const task = createShellTask('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
 
@@ -84,6 +130,23 @@ describe('funcHostTask', () => {
   });
 
   describe('registerFuncHostTaskEvents', () => {
+    it('tracks and clears a real bound ProcessExecution by its workspace', async () => {
+      registerFuncHostTaskEvents();
+      const startHandler = registerEventMock.mock.calls.find((call) => call[0] === 'azureLogicAppsStandard.onDidStartTask')?.[2];
+      const endHandler = registerEventMock.mock.calls.find((call) => call[0] === 'azureLogicAppsStandard.onDidEndTask')?.[2];
+      const task = {
+        definition: { type: 'process' },
+        scope: workspaceFolder,
+        execution: new vscode.ProcessExecution('C:\\tools\\func.exe', ['host', 'start'], {
+          env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/selected' },
+        }),
+      } as vscode.Task;
+      await startHandler({ errorHandling: {}, telemetry: {} }, { execution: { task }, processId: 1234 });
+      expect(runningFuncTaskMap.get(workspaceFolder)?.processId).toBe(1234);
+      await endHandler({ errorHandling: {}, telemetry: {} }, { execution: { task }, exitCode: 0 });
+      expect(runningFuncTaskMap.has(workspaceFolder)).toBe(false);
+    });
+
     it('tracks running func host tasks when they start', async () => {
       registerFuncHostTaskEvents();
       const startHandler = registerEventMock.mock.calls.find((call) => call[0] === 'azureLogicAppsStandard.onDidStartTask')?.[2];

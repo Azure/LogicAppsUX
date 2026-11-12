@@ -1,5 +1,6 @@
 import {
   getBundleVersionNumber,
+  getLatestBundleVersion,
   getBundleDependencyFeed,
   getExtensionBundleFolder,
   getLatestVersionRange,
@@ -12,6 +13,7 @@ import {
   assertExtensionBundleOnDiskHealthy,
   ensureExtensionBundleHealthy,
   awaitBackgroundBundleFeedRefresh,
+  getExperimentalBundleRuntime,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -36,6 +38,7 @@ vi.mock('fs-extra', async (importOriginal) => {
     readdirSync: vi.fn(),
     statSync: vi.fn(),
     readFile: vi.fn(),
+    readJson: vi.fn(),
     createReadStream: vi.fn(),
     outputFile: vi.fn().mockResolvedValue(undefined),
     move: vi.fn().mockResolvedValue(undefined),
@@ -471,7 +474,9 @@ describe('getBundleVersionNumber', () => {
     const result = await getBundleVersionNumber();
 
     expect(result).toBe('2.1.0');
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Current Logic Apps extension bundle version: 2.1.0');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Highest cached Logic Apps extension bundle folder: 2.1.0 (not loaded-host verification).'
+    );
     expect(mockedFse.readdir).toHaveBeenCalledWith(mockBundleFolder);
   });
 
@@ -682,6 +687,8 @@ describe('downloadExtensionBundle readiness model', () => {
       return Boolean(version) || normalized === defaultExtensionBundlePathValue;
     }) as any);
     mockedFse.readFile.mockResolvedValue('' as any);
+    mockedFse.readJson.mockResolvedValue({ id: extensionBundleId, version: '1.197.0.13' });
+    mockedFse.stat.mockResolvedValue({ isFile: () => true, size: 1 } as any);
     mockedFse.remove.mockImplementation((async (filePath: string) => {
       const normalized = String(filePath);
       if (normalized.endsWith(bundleInstallCompleteFile)) {
@@ -825,5 +832,266 @@ describe('downloadExtensionBundle readiness model', () => {
     release?.();
     await Promise.all([install, waiter]);
     expect(isExtensionBundleDownloadInFlight()).toBe(false);
+  });
+
+  it('installs a second projects selected pin after waiting for another projects download', async () => {
+    await enableExperimental('', '');
+    const localSettingsModule = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsModule.getLocalSettingsJson).mockImplementation(async (_context, projectPath) => ({
+      Values: {
+        AzureFunctionsJobHost_extensionBundle_version: projectPath === 'first-project' ? '1.170.91' : '1.197.13',
+        FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://project-source.invalid/public',
+      },
+    }));
+    mockedGetJsonFeed.mockResolvedValue(['1.170.91', '1.197.13']);
+    let release: (() => void) | undefined;
+    mockedDownloadAndExtract.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = () => {
+            localVersions.add('1.170.91');
+            resolve({ actualSize: 1, actualMd5: 'download-md5' });
+          };
+        })
+    );
+
+    const first = downloadExtensionBundle(createMockContext(), 'first-project');
+    await vi.waitFor(() => expect(release).toBeTypeOf('function'));
+    const second = downloadExtensionBundle(createMockContext(), 'second-project');
+    release?.();
+    await Promise.all([first, second]);
+
+    expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(2);
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(true);
+  });
+
+  const enableExperimental = async (pin = '', source = '') => {
+    const settings = await import('../vsCodeConfig/settings');
+    vi.mocked(settings.getGlobalSetting).mockImplementation((key) => {
+      if (key === 'useExperimentalExtensionBundle') {
+        return true;
+      }
+      if (key === 'experimentalExtensionBundleVersion') {
+        return pin;
+      }
+      return key === 'experimentalExtensionBundleSourceUri' ? source : undefined;
+    });
+  };
+
+  it('checks the experimental pin instead of a newer unmarked cached bundle', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.170.91', '');
+
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.197.13')).toBe(false);
+  });
+
+  it('rechecks the selected experimental pin after preparing its local marker', async () => {
+    configureDisk(['1.170.91', '1.197.13'], []);
+    await enableExperimental('1.170.91', '');
+
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(false);
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('does not reuse another experimental versions health cache after changing the pin', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.170.91', '');
+    await ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true });
+
+    await enableExperimental('1.197.13', '');
+    await expect(ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.197.13')).toBe(true);
+  });
+
+  it('uses the launching projects explicit experimental folder for readiness', async () => {
+    configureDisk(['1.170.91', '1.197.13'], ['1.170.91']);
+    await enableExperimental('1.197.13', '');
+
+    await expect(
+      ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true, version: '1.170.91' })
+    ).resolves.toBeUndefined();
+
+    expect(completedVersions.has('1.197.13')).toBe(false);
+  });
+
+  it('prepares an explicit complete offline bundle without inspecting another project', async () => {
+    configureDisk(['1.170.91', '1.197.13'], []);
+    await enableExperimental('1.197.13', '');
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockRejectedValue(new Error('Unrelated project picker'));
+
+    await expect(
+      ensureExtensionBundleHealthy(createMockContext(), { requireInstalled: true, version: '1.170.91' })
+    ).resolves.toBeUndefined();
+
+    expect(workspaceModule.selectLogicAppRoot).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.170.91')).toBe(true);
+    expect(completedVersions.has('1.197.13')).toBe(false);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { pin: '', source: '', expected: '1.197.13' },
+    { pin: '   ', source: 'https://private.invalid/public', expected: '1.197.13' },
+    { pin: '1.197.0.13', source: '', expected: '1.197.0.13' },
+    { pin: ' 1.170.91 ', source: 'https://private.invalid/public', expected: '1.170.91' },
+  ])('reuses complete experimental cache offline: $pin/$source', async ({ pin, source, expected }) => {
+    configureDisk(['1.170.91', '1.197.0.9', '1.197.0.13', '1.197.13'], []);
+    await enableExperimental(pin, source);
+    mockedGetJsonFeed.mockRejectedValue(new Error('offline'));
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+    await awaitBackgroundBundleFeedRefresh();
+
+    expect(ext.defaultBundleVersion).toBe(expected);
+    expect(completedVersions.has(expected)).toBe(true);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('uses a cached nonlatest four-part project pin ahead of environment and global pins', async () => {
+    configureDisk(['1.170.91', '1.197.0.13', '1.197.13'], []);
+    await enableExperimental('1.197.13');
+    process.env.AzureFunctionsJobHost_extensionBundle_version = '1.170.91';
+    const localSettings = await import('../appSettings/localSettings');
+    vi.mocked(localSettings.getLocalSettingsJson).mockResolvedValue({
+      Values: { AzureFunctionsJobHost_extensionBundle_version: ' 1.197.0.13 ' },
+    } as any);
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+    expect(ext.defaultBundleVersion).toBe('1.197.0.13');
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('retains the inherited experimental pin when the project has no pin', async () => {
+    configureDisk(['1.197.0.13', '1.197.13'], []);
+    await enableExperimental('1.197.13');
+    process.env.AzureFunctionsJobHost_extensionBundle_version = '1.197.0.13';
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+    expect(ext.defaultBundleVersion).toBe('1.197.0.13');
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+  });
+
+  it.each(['../escape', 'invalid', '1.2.3.2147483648'])('rejects invalid experimental pin %s', async (pin) => {
+    await enableExperimental(pin);
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow('valid three- or four-part version');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+  });
+
+  it.each(['', '1.197.0.13'])('fails closed without a source or local bundle for pin %j', async (pin) => {
+    await enableExperimental(pin);
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow('No public bundle will be substituted');
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(getLastBundleInstallResult()).toBe('failed');
+    await expect(getExperimentalBundleRuntime(createMockContext() as any, 'actual-project')).rejects.toThrow(
+      'install or verification failed'
+    );
+  });
+
+  it.each(['', '1.197.0.13'])('does not substitute public after private index failure for pin %j', async (pin) => {
+    await enableExperimental(pin, 'https://private.invalid/public');
+    mockedGetJsonFeed.mockRejectedValue(Object.assign(new Error('offline'), { code: 'ENOTFOUND' }));
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow('No public bundle will be substituted');
+    expect(mockedGetJsonFeed).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      `https://private.invalid/public/ExtensionBundles/${extensionBundleId}/index.json`
+    );
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('does not download a requested pin absent from its configured index', async () => {
+    await enableExperimental('1.197.0.13', 'https://private.invalid/public');
+    mockedGetJsonFeed.mockResolvedValue(['1.170.91']);
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow('No public bundle will be substituted');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it.each(['', '1.197.0.13'])('does not substitute public after private archive failure for pin %j', async (pin) => {
+    await enableExperimental(pin, 'https://private.invalid/public');
+    mockedGetJsonFeed.mockResolvedValue(['1.197.0.13']);
+    mockedDownloadAndExtract.mockRejectedValue(Object.assign(new Error('Synthetic 404'), { response: { status: 404 } }));
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow('No public bundle will be substituted');
+    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+    expect(mockedDownloadAndExtract.mock.calls[0][1]).toContain('https://private.invalid/public/');
+  });
+
+  it.each(['', '1.197.0.13'])('repairs invalid local experimental content only from the effective source for pin %j', async (pin) => {
+    configureDisk(['1.197.0.13']);
+    mockedFse.stat.mockResolvedValue({ isFile: () => true, size: 0 } as any);
+    await enableExperimental(pin, 'https://ignored.invalid/public');
+    const localSettings = await import('../appSettings/localSettings');
+    vi.mocked(localSettings.getLocalSettingsJson).mockResolvedValue({
+      Values: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://project.invalid/public' },
+    } as any);
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(true);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract.mock.calls[0][1]).toContain('https://project.invalid/public/');
+  });
+
+  it('preserves the completion marker when repair download fails', async () => {
+    configureDisk(['1.197.0.13']);
+    mockedFse.readJson.mockResolvedValue({ id: 'foreign-bundle', version: '1.197.0.13' });
+    await enableExperimental('1.197.0.13', 'https://private.invalid/public');
+    mockedDownloadAndExtract.mockRejectedValue(new Error('integrity failure'));
+    await expect(downloadExtensionBundle(createMockContext() as any)).rejects.toThrow();
+    expect(completedVersions.has('1.197.0.13')).toBe(true);
+    expect(mockedFse.remove).not.toHaveBeenCalledWith(path.join(defaultExtensionBundlePathValue, '1.197.0.13', bundleInstallCompleteFile));
+  });
+
+  it('waits for an in-flight experimental installation and rejects launch when it fails', async () => {
+    await enableExperimental('1.197.0.13', 'https://private.invalid/public');
+    mockedGetJsonFeed.mockResolvedValue(['1.197.0.13']);
+    let rejectDownload: ((reason: Error) => void) | undefined;
+    mockedDownloadAndExtract.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectDownload = reject;
+        })
+    );
+    const install = downloadExtensionBundle(createMockContext() as any);
+    const installFailure = expect(install).rejects.toThrow('synthetic failed install');
+    await vi.waitFor(() => expect(rejectDownload).toBeTypeOf('function'));
+    let selectionSettled = false;
+    const launchFailure = expect(
+      getExperimentalBundleRuntime(createMockContext() as any, 'actual-project').finally(() => {
+        selectionSettled = true;
+      })
+    ).rejects.toThrow('install or verification failed');
+    await Promise.resolve();
+    expect(selectionSettled).toBe(false);
+    rejectDownload?.(new Error('synthetic failed install'));
+    await Promise.all([installFailure, launchFailure]);
+    expect(getLastBundleInstallResult()).toBe('failed');
+    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+  });
+
+  it('validates staged runtime content before permitting bundle replacement', async () => {
+    mockedGetJsonFeed.mockResolvedValue(['1.197.0.13']);
+    await downloadExtensionBundle(createMockContext() as any);
+    const validate = mockedDownloadAndExtract.mock.calls[0][6];
+    expect(validate).toBeTypeOf('function');
+    if (!validate) {
+      throw new Error('Missing staged bundle validator');
+    }
+    await expect(validate('staged-content')).resolves.toBeUndefined();
+    mockedFse.readJson.mockResolvedValue({ id: extensionBundleId, version: 'not-a-version' });
+    await expect(validate('staged-content')).rejects.toThrow('archive is missing required runtime content');
+    mockedFse.readJson.mockResolvedValue({ id: extensionBundleId, version: '1.197.0.13' });
+    mockedFse.stat.mockResolvedValue({ isFile: () => true, size: 0 } as any);
+    await expect(validate('staged-content')).rejects.toThrow('archive is missing required runtime content');
   });
 });

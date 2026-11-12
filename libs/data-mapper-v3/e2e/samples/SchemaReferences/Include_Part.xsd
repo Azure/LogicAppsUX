@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:samples:include"
+           xmlns="urn:samples:include"
+           elementFormDefault="qualified">
+  <xs:complexType name="AddressType">
+    <xs:sequence>
+      <xs:element name="Street" type="xs:string"/>
+      <xs:element name="City" type="xs:string"/>
+      <xs:element name="PostalCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

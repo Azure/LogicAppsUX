@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { tokens } from '@fluentui/react-components';
+import { useDebouncedEffect } from '@react-hookz/web';
+import { getViewportForBounds } from '@xyflow/react';
+import { DESIGNER_MIN_ZOOM } from '../designerViewport';
 
 // ── Mock state toggles ──────────────────────────────────────────────────────
 let mockIsInitialized = true;
@@ -9,6 +13,8 @@ let mockIsEmpty = false;
 let mockClampPan = false;
 let mockIsA2AWorkflow = false;
 let mockIsDarkMode = false;
+let mockSharedNodeUi = false;
+let mockNode1Shared = false;
 let mockDisconnectedNodes: string[] = [];
 let mockAllAgentIds: string[] = [];
 let mockPanelSelectedNodeIds: string[] = [];
@@ -28,7 +34,8 @@ vi.mock('react-redux', () => ({
 const mockSetViewport = vi.fn();
 let capturedReactFlowProps: Record<string, any> = {};
 
-vi.mock('@xyflow/react', () => ({
+vi.mock('@xyflow/react', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@xyflow/react')>()),
   ReactFlow: ({ children, ...props }: any) => {
     capturedReactFlowProps = props;
     return (
@@ -40,6 +47,7 @@ vi.mock('@xyflow/react', () => ({
   },
   BezierEdge: () => <div />,
   SelectionMode: { Full: 'full' },
+  useUpdateNodeInternals: () => vi.fn(),
 }));
 
 // ── @react-hookz/web ─────────────────────────────────────────────────────────
@@ -87,21 +95,18 @@ vi.mock('../../core/state/designerView/designerViewSlice', () => ({
 vi.mock('../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => mockIsReadOnly,
   useIsDarkMode: () => mockIsDarkMode,
+  useSharedNodeUi: () => mockSharedNodeUi,
 }));
 
 vi.mock('../../core/graphlayout', () => ({
   useLayout: () => [
     [
-      { id: 'node1', position: { x: 100, y: 50 }, type: 'OPERATION_NODE', width: 200 },
-      { id: 'node2', position: { x: 100, y: 200 }, type: 'OPERATION_NODE', width: 200 },
+      { id: 'node1', position: { x: 100, y: 50 }, type: 'OPERATION_NODE', width: 200, data: { presentation: { shared: mockNode1Shared } } },
+      { id: 'node2', position: { x: 100, y: 200 }, type: 'OPERATION_NODE', width: 200, data: { presentation: { shared: false } } },
     ],
     [{ id: 'edge1', source: 'node1', target: 'node2' }],
     [400, 600],
   ],
-}));
-
-vi.mock('../../core/utils/graph', () => ({
-  DEFAULT_NODE_SIZE: { width: 200, height: 40 },
 }));
 
 vi.mock('../../core/utils/designerLayoutHelpers', () => ({
@@ -175,6 +180,8 @@ describe('DesignerReactFlow (designer-v2)', () => {
     mockClampPan = false;
     mockIsA2AWorkflow = false;
     mockIsDarkMode = false;
+    mockSharedNodeUi = false;
+    mockNode1Shared = false;
     mockDisconnectedNodes = [];
     mockAllAgentIds = [];
     mockPanelSelectedNodeIds = [];
@@ -185,11 +192,43 @@ describe('DesignerReactFlow (designer-v2)', () => {
     capturedReactFlowProps = {};
   });
 
+  it.each([false, true])('does not persist accepted shared sizes during a live shared=%s transition', (sharedOption) => {
+    mockSharedNodeUi = sharedOption;
+    mockNode1Shared = true;
+    render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+    mockDispatch.mockClear();
+    act(() => {
+      capturedReactFlowProps.onNodesChange([
+        { id: 'node1', type: 'dimensions', dimensions: { width: 232, height: 74 } },
+        { id: 'node2', type: 'dimensions', dimensions: { width: 200, height: 64 } },
+      ]);
+    });
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'workflow/updateNodeSizes',
+      payload: [{ id: 'node2', type: 'dimensions', dimensions: { width: 200, height: 64 } }],
+    });
+    expect(mockDispatch.mock.calls.filter(([action]) => action.type === 'workflow/updateNodeSizes')).toHaveLength(1);
+  });
+
   // ──────────────────────────────────────────────────────────
   // MARK: Rendering
   // ──────────────────────────────────────────────────────────
 
   describe('Rendering', () => {
+    it.each([false, true])('preserves the shared flow background without changing dark=%s or the legacy branch', (dark) => {
+      mockIsDarkMode = dark;
+      mockSharedNodeUi = true;
+      const view = render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(capturedReactFlowProps.style).toEqual({
+        backgroundColor: tokens.colorNeutralBackground1,
+      });
+      expect(capturedReactFlowProps.colorMode).toBe(dark ? 'dark' : 'light');
+      mockSharedNodeUi = false;
+      view.rerender(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(capturedReactFlowProps.style).toBeUndefined();
+      expect(capturedReactFlowProps.colorMode).toBe(dark ? 'dark' : 'light');
+    });
+
     it('mounts offscreen DOM before the navigation callback returns, including the first command', () => {
       render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
       expect(screen.getByTestId('react-flow')).toContainElement(screen.getByTestId('node-navigation'));
@@ -478,6 +517,186 @@ describe('DesignerReactFlow (designer-v2)', () => {
     it('should enable onlyRenderVisibleElements by default', () => {
       render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
       expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(true);
+    });
+  });
+
+  describe('host interaction callbacks', () => {
+    it.each(['Shift', 'Control'])('uses %s for marquee selection and clears a held modifier when focus is lost', (key) => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      fireEvent.keyDown(window, { key });
+      expect(capturedReactFlowProps.selectionOnDrag).toBe(true);
+      expect(capturedReactFlowProps.panOnDrag).toBe(false);
+      fireEvent.keyUp(window, { key });
+      expect(capturedReactFlowProps.selectionOnDrag).toBe(false);
+      fireEvent.keyDown(window, { key });
+      fireEvent.blur(window);
+      expect(capturedReactFlowProps.panOnDrag).toBe(true);
+    });
+
+    it('mounts offscreen nodes after repeated actual Tab navigation', () => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      fireEvent.keyDown(document, { key: 'Tab' });
+      fireEvent.keyDown(document, { key: 'Tab' });
+      fireEvent.keyDown(document, { key: 'Tab' });
+      fireEvent.keyDown(document, { key: 'Tab' });
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(true);
+      fireEvent.keyDown(document, { key: 'Tab' });
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(false);
+    });
+
+    it.each([false, true])('fits accepted initial shared=%s geometry exactly once through the public flow API', (shared) => {
+      const callbacks: FrameRequestCallback[] = [];
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+        callbacks.push(callback);
+        return callbacks.length;
+      });
+      mockNode1Shared = shared;
+      const flow = { setViewport: vi.fn(), getNodes: () => [], getNodesBounds: () => ({ x: 0, y: 0, width: 400, height: 600 }) };
+      const canvas = document.createElement('div');
+      canvas.getBoundingClientRect = () => new DOMRect(0, 0, 1000, 800);
+      render(<DesignerReactFlow canvasRef={{ current: canvas }} />);
+      act(() => capturedReactFlowProps.onInit(flow));
+      act(() => callbacks[0](0));
+      expect(flow.setViewport).toHaveBeenCalledOnce();
+      if (shared) {
+        const expected = getViewportForBounds({ x: 0, y: 0, width: 400, height: 600 }, 1000, 800, DESIGNER_MIN_ZOOM, 2, 0.1);
+        expect(Object.values(expected).every(Number.isFinite)).toBe(true);
+        expect(expected).not.toEqual({ x: 300, y: 70, zoom: 1 });
+        expect(flow.setViewport).toHaveBeenCalledWith(expected);
+      } else {
+        expect(flow.setViewport).toHaveBeenCalledWith({ x: 300, y: 70, zoom: 1 });
+      }
+    });
+
+    it('commits normalized action/scope selections after the marquee, excluding containers and notes', () => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      mockDispatch.mockClear();
+      act(() => capturedReactFlowProps.onSelectionStart());
+      act(() =>
+        capturedReactFlowProps.onSelectionChange({
+          nodes: [
+            { id: 'node1', type: 'OPERATION_NODE' },
+            { id: 'Scope-#scope', type: 'SCOPE_CARD_NODE' },
+            { id: 'Scope', type: 'GRAPH_NODE' },
+            { id: 'note', type: 'NOTE_NODE' },
+          ],
+        })
+      );
+      expect(mockDispatch).not.toHaveBeenCalled();
+      act(() => capturedReactFlowProps.onSelectionEnd());
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/setNodeSelection', payload: ['node1', 'Scope'] });
+      mockDispatch.mockClear();
+      act(() => capturedReactFlowProps.onSelectionChange({ nodes: [{ id: 'note', type: 'NOTE_NODE' }] }));
+      expect(mockDispatch).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      { prior: ['node1'], selected: ['node1'], expected: [] },
+      { prior: ['node1'], selected: ['node2'], expected: ['node1', 'node2'] },
+      { prior: ['node1'], selected: [], expected: [] },
+    ])('toggles additive marquee prior=$prior selected=$selected', ({ prior, selected, expected }) => {
+      mockPanelSelectedNodeIds = prior;
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      mockDispatch.mockClear();
+      act(() => capturedReactFlowProps.onSelectionStart());
+      act(() => capturedReactFlowProps.onSelectionChange({ nodes: selected.map((id) => ({ id, type: 'OPERATION_NODE' })) }));
+      act(() => capturedReactFlowProps.onSelectionEnd());
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expected.length ? { type: 'panel/setNodeSelection', payload: expected } : { type: 'panel/clearPanel' }
+      );
+    });
+
+    it('accepts a deferred final selection after quick release but does not dispatch the same set twice', () => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      act(() => capturedReactFlowProps.onSelectionStart());
+      act(() => capturedReactFlowProps.onSelectionEnd());
+      mockDispatch.mockClear();
+      const selection = { nodes: [{ id: 'node2', type: 'OPERATION_NODE' }] };
+      act(() => capturedReactFlowProps.onSelectionChange(selection));
+      act(() => capturedReactFlowProps.onSelectionChange(selection));
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/setNodeSelection', payload: ['node2'] });
+    });
+
+    it.each([false, true])('routes a valid connection through existing a2a=%s commands', (a2a) => {
+      mockIsA2AWorkflow = a2a;
+      mockAllAgentIds = ['node1', 'node2'];
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      mockDispatch.mockClear();
+      act(() => capturedReactFlowProps.onConnectStart());
+      act(() =>
+        capturedReactFlowProps.onConnectEnd(
+          { target: document.body },
+          {
+            isValid: true,
+            fromNode: { id: 'node1-#scope' },
+            toNode: { id: 'node2-#scope' },
+          }
+        )
+      );
+      expect(mockDispatch).toHaveBeenCalledWith(
+        a2a
+          ? { type: 'addAgentHandoff', payload: { sourceId: 'node1', targetId: 'node2' } }
+          : { type: 'addOperationRunAfter', payload: { parentOperationId: 'node1', childOperationId: 'node2' } }
+      );
+    });
+
+    it.each([false, true])('offers the correct a2a=%s insertion when a connection is dropped onto the pane', (a2a) => {
+      mockIsA2AWorkflow = a2a;
+      mockAllAgentIds = ['node1'];
+      mockNodesMetadata = { node1: { graphId: 'root' } };
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      mockDispatch.mockClear();
+      const pane = document.createElement('div');
+      pane.className = 'react-flow__pane';
+      act(() => capturedReactFlowProps.onConnectEnd({ target: pane }, { isValid: false, fromNode: { id: 'node1' } }));
+      if (a2a) {
+        const inserted = mockDispatch.mock.calls.find(([action]) => action.type === 'addOperation')![0].payload.nodeId;
+        expect(inserted).toMatch(/^Agent_/);
+        expect(mockDispatch).toHaveBeenCalledWith({
+          type: 'removeOperationRunAfter',
+          payload: { parentOperationId: 'node1', childOperationId: inserted },
+        });
+        expect(mockDispatch).toHaveBeenCalledWith({ type: 'addAgentHandoff', payload: { sourceId: 'node1', targetId: inserted } });
+      } else {
+        expect(mockDispatch).toHaveBeenCalledWith({
+          type: 'panel/expandDiscoveryPanel',
+          payload: expect.objectContaining({
+            relationshipIds: { graphId: 'root', parentId: 'node1', childId: undefined },
+            isParallelBranch: true,
+          }),
+        });
+      }
+      mockDispatch.mockClear();
+      act(() => capturedReactFlowProps.onPaneClick());
+      expect(mockDispatch).not.toHaveBeenCalled();
+      act(() => capturedReactFlowProps.onPaneClick());
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/clearPanel' });
+    });
+
+    it('persists note movement and dimensions without accepting invalid values or moving operation nodes', () => {
+      mockNotes = { note: { content: 'authored note', metadata: { position: { x: 1, y: 2 } } } };
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      mockDispatch.mockClear();
+      act(() =>
+        capturedReactFlowProps.onNodesChange([
+          { id: 'note', type: 'position', position: { x: 30, y: 40 } },
+          { id: 'node1', type: 'position', position: { x: 90, y: 80 } },
+          { id: 'bad', type: 'position', position: { x: Number.NaN, y: 0 } },
+          { id: 'note', type: 'dimensions', dimensions: { width: 240, height: 120 } },
+        ])
+      );
+      expect(capturedReactFlowProps.nodes.find(({ id }: { id: string }) => id === 'note').position).toEqual({ x: 30, y: 40 });
+      expect(capturedReactFlowProps.nodes.find(({ id }: { id: string }) => id === 'node1').position).toEqual({ x: 100, y: 50 });
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'notes/updateNote',
+        payload: { id: 'note', note: { metadata: { width: 240, height: 120 } } },
+      });
+      act(() => vi.mocked(useDebouncedEffect).mock.calls.at(-1)![0]());
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'notes/updateNote',
+        payload: { id: 'note', note: { metadata: { position: { x: 30, y: 40 } } } },
+      });
     });
   });
 });

@@ -105,6 +105,14 @@ import * as pickFuncProcessModule from '../pickFuncProcess';
 import { publishCodefulProject } from '../publishCodefulProject';
 import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
 import { delay } from '../../utils/delay';
+import { getExperimentalBundleRuntime } from '../../utils/bundleFeed';
+import { activateAzurite } from '../../utils/azurite/activateAzurite';
+import { generateTasksJson } from '../../projectConsistency/fileGenerators/vscodeTasks';
+import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+
+vi.mock('../../utils/bundleFeed', () => ({
+  getExperimentalBundleRuntime: vi.fn(),
+}));
 
 let originalPlatform: NodeJS.Platform;
 let originalKill: typeof process.kill;
@@ -120,6 +128,96 @@ function setProcessPlatform(platform: NodeJS.Platform): void {
 function restoreProcessPlatform(): void {
   Object.defineProperty(process, 'platform', { value: originalPlatform, writable: true, configurable: true });
   process.kill = originalKill;
+}
+
+// Model the relevant VS Code 1.105 Task/executeTask contract, not plain objects:
+// extHostTypes.Task.clear() drops _id AND scope on execution/definition assignment;
+// node/extHostTask.executeTask serializes only a saved handle while _id is present.
+// https://github.com/microsoft/vscode/blob/1.105.0/src/vs/workbench/api/common/extHostTypes.ts
+// https://github.com/microsoft/vscode/blob/1.105.0/src/vs/workbench/api/node/extHostTask.ts
+class ApiTask {
+  _id?: string;
+  private taskScope: vscode.WorkspaceFolder | undefined;
+  private taskExecution: vscode.Task['execution'];
+  private taskDefinition: vscode.TaskDefinition;
+  isBackground = false;
+  group?: vscode.TaskGroup;
+  presentationOptions: vscode.TaskPresentationOptions = {};
+  runOptions: vscode.RunOptions = {};
+  detail?: string;
+
+  constructor(
+    definition: vscode.TaskDefinition,
+    scope: vscode.WorkspaceFolder,
+    public name: string,
+    public source: string,
+    execution: vscode.Task['execution'],
+    public problemMatchers: string[] = []
+  ) {
+    this.taskDefinition = definition;
+    this.taskScope = scope;
+    this.taskExecution = execution;
+  }
+
+  private clearSavedHandle() {
+    if (this._id !== undefined) {
+      this._id = undefined;
+      this.taskScope = undefined;
+    }
+  }
+
+  get scope() {
+    return this.taskScope;
+  }
+  get definition() {
+    return this.taskDefinition;
+  }
+  set definition(value: vscode.TaskDefinition) {
+    this.clearSavedHandle();
+    this.taskDefinition = value;
+  }
+  get execution() {
+    return this.taskExecution;
+  }
+  set execution(value: vscode.Task['execution']) {
+    this.clearSavedHandle();
+    this.taskExecution = value;
+  }
+}
+
+class ApiShellExecution {
+  commandLine?: string;
+  command?: string | vscode.ShellQuotedString;
+  args: Array<string | vscode.ShellQuotedString> = [];
+  options?: vscode.ShellExecutionOptions;
+
+  constructor(
+    command: string | vscode.ShellQuotedString,
+    argsOrOptions?: Array<string | vscode.ShellQuotedString> | vscode.ShellExecutionOptions,
+    options?: vscode.ShellExecutionOptions
+  ) {
+    if (Array.isArray(argsOrOptions)) {
+      this.command = command;
+      this.args = argsOrOptions;
+      this.options = options;
+    } else {
+      this.commandLine = command as string;
+      this.options = argsOrOptions;
+    }
+  }
+}
+
+function serializeTask(task: vscode.Task) {
+  const savedId = (task as unknown as ApiTask)._id;
+  // VS Code sends no execution/options at all when a fetched task retains its id.
+  return savedId
+    ? { kind: 'handle', id: savedId, scope: task.scope }
+    : {
+        kind: 'task',
+        scope: task.scope,
+        execution: task.execution,
+        env: (task.execution as vscode.ProcessExecution | vscode.ShellExecution)?.options?.env,
+      };
 }
 
 describe('pickFuncProcessInternal', () => {
@@ -139,10 +237,27 @@ describe('pickFuncProcessInternal', () => {
     telemetry: { properties: {}, measurements: {} },
     errorHandling: {},
   };
+  const originalTaskConstructor = Object.getOwnPropertyDescriptor(vscode, 'Task')?.value;
+  const originalShellConstructor = vscode.ShellExecution;
+  let taskConfigurations: Array<Record<string, unknown>>;
+  const fetchedTask = (name: string, execution: vscode.Task['execution']): vscode.Task => {
+    const task = new ApiTask(
+      { type: execution instanceof vscode.ProcessExecution ? 'process' : 'shell' },
+      workspaceFolder,
+      name,
+      'Workspace',
+      execution
+    );
+    task._id = `saved:${name}`;
+    return task as unknown as vscode.Task;
+  };
 
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
+    vi.mocked(getExperimentalBundleRuntime).mockReset();
+    funcTask.execution = undefined;
+    debugTask.execution = undefined;
     setProcessPlatform('linux');
     context.telemetry = { properties: {}, measurements: {} };
     context.errorHandling = {};
@@ -164,6 +279,14 @@ describe('pickFuncProcessInternal', () => {
       runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
     });
     (vscode.EventEmitter as any).mockImplementation(() => ({ fire: vi.fn() }));
+    Object.assign(vscode, { Task: ApiTask, ShellExecution: ApiShellExecution });
+    taskConfigurations = [
+      { label: funcTask.name, type: 'shell' },
+      { label: debugTask.name, type: 'process' },
+    ];
+    vi.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+      get: vi.fn((key) => (key === 'tasks' ? taskConfigurations : undefined)),
+    } as any);
     (vscode.tasks as any) = {
       fetchTasks: vi.fn().mockResolvedValue([funcTask]),
       executeTask: vi.fn().mockResolvedValue(undefined),
@@ -171,10 +294,464 @@ describe('pickFuncProcessInternal', () => {
     };
   });
 
+  it('reproduces saved-handle serialization and scope invalidation from the real Task API', () => {
+    const task = fetchedTask('func: host start', new vscode.ProcessExecution('func', ['host', 'start']));
+    (task.execution as vscode.ProcessExecution).options = { env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'ignored' } };
+    expect(serializeTask(task)).toEqual({ kind: 'handle', id: 'saved:func: host start', scope: workspaceFolder });
+    task.execution = new vscode.ProcessExecution('func', ['host', 'start']);
+    expect((task as unknown as ApiTask)._id).toBeUndefined();
+    expect(task.scope).toBeUndefined();
+  });
+
+  it.each(['shell', 'shell-command', 'process'])(
+    'passes the selected runtime binding to the actual %s task execution without persisting it',
+    async (kind) => {
+      vi.mocked(getProjFiles).mockResolvedValue([]);
+      const execution =
+        kind === 'shell'
+          ? new vscode.ShellExecution('func host start', { env: { PATH: 'preserved-path', OTHER: 'preserved' } })
+          : kind === 'shell-command'
+            ? new vscode.ShellExecution('func', ['host', 'start'], {
+                cwd: 'original-cwd',
+                env: { PATH: 'preserved-path', OTHER: 'preserved' },
+              })
+            : new vscode.ProcessExecution('func', ['host', 'start'], { env: { PATH: 'preserved-path', OTHER: 'preserved' } });
+      const savedHost = fetchedTask(funcTask.name, execution);
+      taskConfigurations[0].type = kind === 'process' ? 'process' : 'shell';
+      savedHost.isBackground = true;
+      savedHost.presentationOptions = { reveal: 3 };
+      savedHost.runOptions = { reevaluateOnRerun: false };
+      savedHost.detail = 'original task';
+      savedHost.group = { id: 'build', isDefault: true } as vscode.TaskGroup;
+      savedHost.problemMatchers = ['$func-watch'];
+      vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost]);
+      const binding = {
+        directory: 'synthetic-cache',
+        folderVersion: '1.197.13',
+        manifestVersion: '1.197.0.13',
+        env: {
+          FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/synthetic-selection',
+          AzureFunctionsJobHost__extensionBundle__version: '[1.197.13]',
+        },
+      };
+      vi.mocked(getExperimentalBundleRuntime).mockResolvedValue(binding);
+      vi.mocked(executeIfNotActive).mockImplementation(async (task) => {
+        expect(task).not.toBe(savedHost);
+        expect(serializeTask(task)).toMatchObject({
+          kind: 'task',
+          scope: workspaceFolder,
+          env: { PATH: 'preserved-path', OTHER: 'preserved', ...binding.env },
+        });
+        expect(task.isBackground).toBe(true);
+        expect(task.presentationOptions).toEqual(savedHost.presentationOptions);
+        expect(task.runOptions).toEqual(savedHost.runOptions);
+        expect(task.group).toEqual(savedHost.group);
+        expect(task.detail).toBe(savedHost.detail);
+        expect(task.problemMatchers).toEqual(savedHost.problemMatchers);
+        if (kind === 'shell-command') {
+          expect((task.execution as vscode.ShellExecution).command).toBe('func');
+          expect((task.execution as vscode.ShellExecution).args).toEqual(['host', 'start']);
+          expect((task.execution as vscode.ShellExecution).options?.cwd).toBe('original-cwd');
+        }
+        throw new Error('test stopped at actual task boundary');
+      });
+
+      await expect(
+        pickFuncProcessModule.pickFuncProcessInternal(
+          context,
+          { type: 'logicapp', preLaunchTask: funcTask.name, noDebug: true },
+          workspaceFolder,
+          projectPath
+        )
+      ).rejects.toThrow('test stopped at actual task boundary');
+      expect(getExperimentalBundleRuntime).toHaveBeenCalledWith(context, projectPath);
+      expect(executeIfNotActive).toHaveBeenCalledOnce();
+      expect(serializeTask(savedHost)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+      expect(execution.options?.env).toEqual({ PATH: 'preserved-path', OTHER: 'preserved' });
+    }
+  );
+
+  it.each([
+    { hasFuncBinaries: true, isDevContainer: false, noDebug: false },
+    { hasFuncBinaries: true, isDevContainer: false, noDebug: true },
+    { hasFuncBinaries: false, isDevContainer: false, noDebug: false },
+    { hasFuncBinaries: false, isDevContainer: false, noDebug: true },
+    { hasFuncBinaries: false, isDevContainer: true, noDebug: false },
+    { hasFuncBinaries: false, isDevContainer: true, noDebug: true },
+  ])('binds the actual generated Bundle default: %j', async ({ hasFuncBinaries, isDevContainer, noDebug }) => {
+    const generated = generateTasksJson({
+      projectType: ProjectType.logicApp,
+      projectPackageType: ProjectPackageType.Bundle,
+      hasFuncBinaries,
+      isDevContainer,
+    });
+    taskConfigurations = generated.tasks;
+    const hostConfiguration = generated.tasks.find((task) => task.label === funcTask.name)!;
+    const symbolConfiguration = generated.tasks.find((task) => task.label === debugTask.name)!;
+    expect(hostConfiguration.dependsOn).toBeUndefined();
+    expect(symbolConfiguration.dependsOn).toBeUndefined();
+    expect(hostConfiguration.type).toBe(hasFuncBinaries ? 'shell' : 'func');
+    expect(symbolConfiguration.type).toBe('process');
+    const options = (hostConfiguration.linux as { options?: vscode.ShellExecutionOptions } | undefined)?.options ??
+      (hostConfiguration.options as vscode.ShellExecutionOptions | undefined) ?? {
+        cwd: projectPath,
+        env: { AzureWebJobsStorage: 'UseDevelopmentStorage=true' },
+      };
+    // The Functions provider resolves its generated command to a ShellExecution.
+    const execution = hasFuncBinaries
+      ? new vscode.ShellExecution(hostConfiguration.command as string, hostConfiguration.args as string[], options)
+      : new vscode.ShellExecution('func', ['host', 'start'], options);
+    const host = new ApiTask({ type: hostConfiguration.type as string }, workspaceFolder, funcTask.name, 'Workspace', execution);
+    host.isBackground = true;
+    host._id = 'saved:generated-host';
+    const symbols = fetchedTask(
+      debugTask.name,
+      new vscode.ProcessExecution(symbolConfiguration.command as string, symbolConfiguration.args as string[])
+    );
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([host as unknown as vscode.Task, symbols]);
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(false);
+    const stages: string[] = [];
+    vi.mocked(activateAzurite).mockImplementation(async () => {
+      stages.push('azurite');
+    });
+    vi.mocked(refreshConnectionKeys).mockImplementation(async () => {
+      stages.push('keys');
+    });
+    vi.mocked(preDebugValidate).mockImplementation(async () => {
+      stages.push('predebug');
+      return true;
+    });
+    vi.mocked(tryBuildCustomCodeFunctionsProjectInternal).mockImplementation(async () => {
+      stages.push('custom-code-build');
+      return true;
+    });
+    const environment = {
+      FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/generated-default',
+      AzureFunctionsJobHost__extensionBundle__id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
+      AzureFunctionsJobHost__extensionBundle__version: '[1.197.13]',
+      AzureFunctionsJobHost__extensionBundle__downloadPath: 'selected-cache',
+    };
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: environment,
+    });
+    const listeners = new Set<(event: vscode.TaskProcessEndEvent) => void>();
+    vi.mocked(vscode.tasks.onDidEndTaskProcess).mockImplementation((listener) => {
+      listeners.add(listener);
+      return { dispose: () => listeners.delete(listener) };
+    });
+    vi.mocked(vscode.tasks.executeTask).mockImplementation(async (task) => {
+      expect(task.name).toBe(debugTask.name);
+      expect(serializeTask(task)).toMatchObject({ kind: 'task', scope: workspaceFolder });
+      expect((task.execution as vscode.ProcessExecution).args[0]).toMatch(/selected-cache[/\\]bin[/\\]/);
+      stages.push('symbols');
+      for (const listener of listeners) {
+        listener({ execution: { task }, exitCode: 0 } as vscode.TaskProcessEndEvent);
+      }
+      return { task, terminate: vi.fn() };
+    });
+    vi.mocked(executeIfNotActive).mockImplementation(async (task) => {
+      expect(serializeTask(task)).toMatchObject({
+        kind: 'task',
+        scope: workspaceFolder,
+        env: { ...options?.env, ...environment },
+      });
+      expect(task.definition.type).toBe('shell');
+      expect((task.execution as vscode.ShellExecution).args).toEqual(['host', 'start']);
+      expect((task.execution as vscode.ShellExecution).options?.cwd).toBe(options.cwd);
+      expect(task.isBackground).toBe(true);
+      stages.push('host');
+      throw new Error('generated default bound host reached');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name, noDebug },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('generated default bound host reached');
+    expect(stages).toEqual(['azurite', 'keys', 'predebug', 'custom-code-build', ...(noDebug ? [] : ['symbols']), 'host']);
+    expect(serializeTask(host as unknown as vscode.Task)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+    expect(serializeTask(symbols)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+    expect(listeners.size).toBe(0);
+  });
+
+  it.each([
+    { projectType: ProjectType.logicApp, hasFuncBinaries: true },
+    { projectType: ProjectType.logicApp, hasFuncBinaries: false },
+    { projectType: ProjectType.codeful, hasFuncBinaries: true },
+    { projectType: ProjectType.codeful, hasFuncBinaries: false },
+  ])('retains the generated NuGet/codeful dependency graph: %j', async ({ projectType, hasFuncBinaries }) => {
+    const generated = generateTasksJson({
+      projectType,
+      projectPackageType: ProjectPackageType.Nuget,
+      hasFuncBinaries,
+    });
+    taskConfigurations = generated.tasks;
+    expect(generated.tasks.find((task) => task.label === funcTask.name)?.dependsOn).toBe('build');
+    expect(generated.tasks.find((task) => task.label === 'build')?.dependsOn).toBe('clean');
+    expect(generated.tasks.find((task) => task.label === 'publish')?.dependsOn).toBe('clean release');
+    const host = fetchedTask(funcTask.name, new vscode.ShellExecution('func', ['host', 'start']));
+    vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(projectType === ProjectType.codeful);
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([host]);
+    vi.mocked(executeIfNotActive).mockImplementation(async (task) => {
+      expect(task).toBe(host);
+      expect(serializeTask(task)).toEqual({ kind: 'handle', id: 'saved:func: host start', scope: workspaceFolder });
+      throw new Error('original dependency graph retained');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name, noDebug: true },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('original dependency graph retained');
+    expect(getExperimentalBundleRuntime).not.toHaveBeenCalled();
+    expect(publishCodefulProject).toHaveBeenCalledTimes(projectType === ProjectType.codeful ? 1 : 0);
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledTimes(projectType === ProjectType.codeful ? 0 : 1);
+    expect(taskConfigurations).toEqual(generated.tasks);
+  });
+
+  it('does not execute a task when experimental resolution fails', async () => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    vi.mocked(getExperimentalBundleRuntime).mockRejectedValue(new Error('selected bundle invalid'));
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('selected bundle invalid');
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
+
+  it('rejects unsupported task execution rather than starting an unbound experimental host', async () => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'synthetic-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: {},
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('require a shell or process');
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
   afterEach(() => {
     runningFuncTaskMap.clear();
+    Object.assign(vscode, { Task: originalTaskConstructor, ShellExecution: originalShellConstructor });
     vi.restoreAllMocks();
     restoreProcessPlatform();
+  });
+
+  it('serializes a workspace-scoped selected debug-symbol task without mutating fetched handles', async () => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    const execution = new vscode.ProcessExecution('dotnet', ['${input:getDebugSymbolDll}'], { env: { OTHER: 'preserved' } });
+    const savedSymbols = fetchedTask(debugTask.name, execution);
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost, savedSymbols]);
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.170.91',
+      manifestVersion: '1.170.91',
+      env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/selected' },
+    });
+    vi.mocked(vscode.tasks.executeTask).mockImplementation(async (task) => {
+      expect(task).not.toBe(savedSymbols);
+      expect(serializeTask(task)).toMatchObject({ kind: 'task', scope: workspaceFolder, env: { OTHER: 'preserved' } });
+      expect(task.execution).toBeInstanceOf(vscode.ProcessExecution);
+      const selectedExecution = task.execution as vscode.ProcessExecution;
+      expect(selectedExecution.args[0]).toMatch(
+        /selected-cache[/\\]bin[/\\]Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll$/
+      );
+      expect(selectedExecution.options?.env).toEqual({ OTHER: 'preserved' });
+      throw new Error('test stopped at debug-symbol task boundary');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('test stopped at debug-symbol task boundary');
+    expect(savedSymbols.execution).toBe(execution);
+    expect(serializeTask(savedSymbols)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+    expect(serializeTask(savedHost)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+  });
+
+  it('accepts immediate symbol completion only from the selected workspace and reaches the bound host', async () => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    const savedSymbols = fetchedTask(debugTask.name, new vscode.ProcessExecution('dotnet', ['${input:getDebugSymbolDll}']));
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost, savedSymbols]);
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/selected' },
+    });
+    const listeners = new Set<(event: vscode.TaskProcessEndEvent) => void>();
+    vi.mocked(vscode.tasks.onDidEndTaskProcess).mockImplementation((listener) => {
+      listeners.add(listener);
+      return { dispose: () => listeners.delete(listener) };
+    });
+    vi.mocked(vscode.tasks.executeTask).mockImplementation(async (task) => {
+      expect(serializeTask(task)).toMatchObject({ kind: 'task', scope: workspaceFolder });
+      expect(listeners.size).toBe(1);
+      const otherFolder = { ...workspaceFolder, uri: { fsPath: 'D:\\workspace\\OtherApp' } } as vscode.WorkspaceFolder;
+      const otherTask = new ApiTask(task.definition, otherFolder, task.name, task.source, task.execution);
+      for (const listener of listeners) {
+        listener({ execution: { task: otherTask }, exitCode: 0 } as unknown as vscode.TaskProcessEndEvent);
+      }
+      await Promise.resolve();
+      expect(executeIfNotActive).not.toHaveBeenCalled();
+      expect(listeners.size).toBe(1);
+      // A process can finish before executeTask's promise resolves.
+      for (const listener of listeners) {
+        listener({ execution: { task }, exitCode: 0 } as vscode.TaskProcessEndEvent);
+      }
+      return { task, terminate: vi.fn() };
+    });
+    vi.mocked(executeIfNotActive).mockImplementation(async (task) => {
+      expect(serializeTask(task)).toMatchObject({
+        kind: 'task',
+        scope: workspaceFolder,
+        env: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'http://127.0.0.1:12345/selected' },
+      });
+      throw new Error('reached bound host after symbol completion');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('reached bound host after symbol completion');
+    expect(listeners.size).toBe(0);
+    expect(serializeTask(savedSymbols)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+  });
+
+  it('leaves custom symbol commands and their saved dependency graph caller-owned', async () => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    const savedSymbols = fetchedTask(debugTask.name, new vscode.ProcessExecution('dotnet', ['custom-symbol-generator.dll']));
+    taskConfigurations[1].dependsOn = 'custom-setup';
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost, savedSymbols]);
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: {},
+    });
+    const dispose = vi.fn();
+    vi.mocked(vscode.tasks.onDidEndTaskProcess).mockReturnValue({ dispose });
+    vi.mocked(vscode.tasks.executeTask).mockImplementation(async (task) => {
+      expect(task).toBe(savedSymbols);
+      expect(serializeTask(task)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+      throw new Error('original custom symbol graph');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('original custom symbol graph');
+    expect(dispose).toHaveBeenCalledOnce();
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { name: 'host string', label: 'func: host start', extra: { dependsOn: 'build' } },
+    { name: 'host array', label: 'func: host start', extra: { dependsOn: ['clean', 'build'], dependsOrder: 'sequence' } },
+    { name: 'host platform', label: 'func: host start', extra: { linux: { dependsOn: 'startAzurite' } } },
+    { name: 'symbols', label: 'generateDebugSymbols', extra: { dependsOn: 'build' } },
+  ])('refuses to silently drop the configured $name dependency graph', async ({ label, extra }) => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    const savedSymbols = fetchedTask(debugTask.name, new vscode.ProcessExecution('dotnet', ['${input:getDebugSymbolDll}']));
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost, savedSymbols]);
+    taskConfigurations = taskConfigurations.map((configuration) =>
+      configuration.label === label ? { ...configuration, ...extra } : configuration
+    );
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: {},
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('with dependsOn without losing its prerequisites');
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+    expect(vscode.tasks.executeTask).not.toHaveBeenCalled();
+    expect(serializeTask(savedHost)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+    expect(serializeTask(savedSymbols)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+  });
+
+  it.each(['missing', 'provider'])('fails closed for %s task configurations whose prerequisites cannot be verified', async (kind) => {
+    vi.mocked(getProjFiles).mockResolvedValue([]);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost]);
+    taskConfigurations = kind === 'missing' ? [] : [{ label: funcTask.name, type: 'func' }];
+    vi.mocked(getExperimentalBundleRuntime).mockResolvedValue({
+      directory: 'selected-cache',
+      folderVersion: '1.197.13',
+      manifestVersion: '1.197.0.13',
+      env: {},
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name, noDebug: true },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('explicit workspace shell or process task');
+    expect(executeIfNotActive).not.toHaveBeenCalled();
+  });
+
+  it.each(['nuget', 'nonexperimental-bundle'])('preserves the original saved dependency graph for %s', async (kind) => {
+    vi.mocked(getProjFiles).mockResolvedValue(kind === 'nuget' ? ['app.csproj'] : []);
+    const savedHost = fetchedTask(funcTask.name, new vscode.ProcessExecution('func', ['host', 'start']));
+    taskConfigurations[0].dependsOn = ['build', 'startAzurite'];
+    vi.mocked(vscode.tasks.fetchTasks).mockResolvedValue([savedHost]);
+    vi.mocked(executeIfNotActive).mockImplementation(async (task) => {
+      expect(task).toBe(savedHost);
+      expect(serializeTask(task)).toMatchObject({ kind: 'handle', scope: workspaceFolder });
+      throw new Error('saved dependency graph delegated to VS Code');
+    });
+    await expect(
+      pickFuncProcessModule.pickFuncProcessInternal(
+        context,
+        { type: 'logicapp', preLaunchTask: funcTask.name, noDebug: true },
+        workspaceFolder,
+        projectPath
+      )
+    ).rejects.toThrow('saved dependency graph delegated to VS Code');
+    expect(vscode.workspace.getConfiguration).not.toHaveBeenCalled();
+    expect(preDebugValidate).toHaveBeenCalled();
+    expect(publishCodefulProject).toHaveBeenCalled();
   });
 
   it('codeful project skips custom code build', async () => {

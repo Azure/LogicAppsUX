@@ -183,6 +183,7 @@ export async function switchToDotnetProject(
     workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || projectPath,
     language: ProjectLanguage.CSharp,
     projectPackageType: ProjectPackageType.Nuget,
+    projectTemplateKey: undefined,
     version,
   };
   const wizardContext: IProjectWizardContext = Object.assign(context, wizardOptions);

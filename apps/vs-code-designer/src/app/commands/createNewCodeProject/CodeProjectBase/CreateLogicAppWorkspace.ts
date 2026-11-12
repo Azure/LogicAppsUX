@@ -143,8 +143,7 @@ export const createCodefulWorkflowFile = async (
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
-    const programContent = templateProgramContent
-      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
+    const programContent = templateProgramContent.replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)
@@ -357,10 +356,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
       await createFunctionAppFilesStep.setup(mySubContext);
     }
 
-    // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
-    // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
-    // directory. No-op for rulesEngine, codeful, standard, or NetFx.
-    await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+    await addCustomCodeDotNetVersionSetting(
+      context,
+      mySubContext.projectPath,
+      mySubContext.projectType,
+      mySubContext.targetFramework,
+      true
+    );
 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }

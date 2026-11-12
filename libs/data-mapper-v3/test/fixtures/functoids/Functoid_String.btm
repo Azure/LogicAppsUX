@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid String Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Link LinkID="10" SourceID="/Root/Text1" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Text1"/>
+      <Link LinkID="11" SourceID="/Root/Text2" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Text2"/>
+      <Link LinkID="12" SourceID="/Root/Text1" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Text1"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/Concat" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Concat"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/Upper" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Upper"/>
+      <Functoid FunctoidID="1" TypeID="107" Name="String Concatenate" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="110" Name="Uppercase" X="240" Y="260"/>
+    </Page>
+  </Pages>
+</mapsource>

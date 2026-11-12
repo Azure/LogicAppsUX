@@ -3,8 +3,9 @@ import type { ChildProcessWithoutNullStreams } from 'child_process';
 import { mkdtemp, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from 'path';
+import { PassThrough } from 'stream';
 import { pathToFileURL } from 'url';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -36,9 +37,12 @@ class LspProcess {
     }
   >();
   private readonly stderrChunks: string[] = [];
+  private readonly closed: Promise<void>;
   private disposed = false;
 
   public constructor(private readonly child: ChildProcessWithoutNullStreams) {
+    // Observe close from construction so disposal also works after the event has fired.
+    this.closed = new Promise((resolve) => child.once('close', () => resolve()));
     child.stdout.on('data', (chunk: Buffer) => this.handleStdout(chunk));
     child.stderr.on('data', (chunk: Buffer) => this.stderrChunks.push(chunk.toString('utf8')));
     child.on('exit', (code, signal) => {
@@ -86,18 +90,21 @@ class LspProcess {
   public async dispose(): Promise<void> {
     this.disposed = true;
 
-    try {
-      await this.request('shutdown', undefined);
-      this.notify('exit', undefined);
-    } catch {
-      // The process is being torn down; a failed shutdown request should not hide the test assertion.
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
+      try {
+        await this.request('shutdown', undefined);
+        this.notify('exit', undefined);
+      } catch {
+        // The process is being torn down; a failed shutdown request should not hide the test assertion.
+      }
     }
 
-    if (!this.child.killed) {
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
       this.child.kill();
     }
 
-    await this.waitForExit();
+    // kill() only sends a signal; close confirms termination and closure of the stdio pipes.
+    await this.closed;
   }
 
   private write(message: JsonRpcMessage & { jsonrpc: '2.0' }): void {
@@ -141,25 +148,108 @@ class LspProcess {
       }
     }
   }
-
-  private async waitForExit(): Promise<void> {
-    if (this.child.exitCode !== null || this.child.signalCode !== null) {
-      return;
-    }
-
-    await new Promise<void>((resolve) => {
-      const onExit = () => {
-        clearTimeout(timeout);
-        resolve();
-      };
-      const timeout = setTimeout(() => {
-        this.child.off('exit', onExit);
-        resolve();
-      }, 10_000);
-      this.child.once('exit', onExit);
-    });
-  }
 }
+
+describe('LspProcess disposal', () => {
+  let child: ChildProcessWithoutNullStreams;
+  let server: LspProcess;
+
+  beforeEach(async () => {
+    const { ChildProcess } = await vi.importActual<typeof import('child_process')>('child_process');
+    const stdin = new PassThrough();
+    const stdout = new PassThrough();
+    const stderr = new PassThrough();
+    const stdio: ChildProcessWithoutNullStreams['stdio'] = [stdin, stdout, stderr, null, null];
+    child = Object.assign(new ChildProcess(), { stdin, stdout, stderr, stdio });
+    vi.spyOn(child, 'kill').mockImplementation(() => {
+      Object.assign(child, { killed: true });
+      return true;
+    });
+    server = new LspProcess(child);
+    vi.spyOn(server, 'request').mockResolvedValue(undefined);
+    vi.spyOn(server, 'notify').mockImplementation(() => {});
+  });
+
+  it.each([false, true])('waits for close after exact-child fallback (shutdown fails: %s)', async (shutdownFails) => {
+    if (shutdownFails) {
+      vi.mocked(server.request).mockRejectedValue(new Error('Shutdown failed'));
+    }
+    const onDisposed = vi.fn();
+    const disposal = server.dispose().then(onDisposed);
+
+    // Drain promise continuations without advancing the fake child's lifecycle.
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(server.request).toHaveBeenCalledWith('shutdown', undefined);
+    if (shutdownFails) {
+      expect(server.notify).not.toHaveBeenCalled();
+    } else {
+      expect(server.notify).toHaveBeenCalledWith('exit', undefined);
+      expect(server.notify).toHaveBeenCalledBefore(vi.mocked(child.kill));
+    }
+    expect(child.kill).toHaveBeenCalledOnce();
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    Object.assign(child, { signalCode: 'SIGTERM' });
+    child.emit('exit', null, 'SIGTERM');
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    child.emit('close', null, 'SIGTERM');
+    await disposal;
+    expect(onDisposed).toHaveBeenCalledOnce();
+  });
+
+  it('waits for close when already killed without sending shutdown or another signal', async () => {
+    Object.assign(child, { killed: true });
+    const onDisposed = vi.fn();
+    const disposal = server.dispose().then(onDisposed);
+
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(server.request).not.toHaveBeenCalled();
+    expect(server.notify).not.toHaveBeenCalled();
+    expect(child.kill).not.toHaveBeenCalled();
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    child.emit('close', null, 'SIGTERM');
+    await disposal;
+    expect(onDisposed).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { exitCode: 0, signalCode: null },
+    { exitCode: null, signalCode: 'SIGTERM' },
+  ] satisfies Pick<ChildProcessWithoutNullStreams, 'exitCode' | 'signalCode'>[])(
+    'waits for close after an earlier exit: %j',
+    async ({ exitCode, signalCode }) => {
+      Object.assign(child, { exitCode, signalCode });
+      child.emit('exit', exitCode, signalCode);
+      const onDisposed = vi.fn();
+      const disposal = server.dispose().then(onDisposed);
+
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(server.request).not.toHaveBeenCalled();
+      expect(server.notify).not.toHaveBeenCalled();
+      expect(child.kill).not.toHaveBeenCalled();
+      expect(onDisposed).not.toHaveBeenCalled();
+
+      child.emit('close', exitCode, signalCode);
+      await disposal;
+      expect(onDisposed).toHaveBeenCalledOnce();
+    }
+  );
+
+  it('does not hang when the child already exited and closed before disposal', async () => {
+    Object.assign(child, { exitCode: 0 });
+    child.emit('exit', 0, null);
+    child.emit('close', 0, null);
+
+    await server.dispose();
+
+    expect(server.request).not.toHaveBeenCalled();
+    expect(server.notify).not.toHaveBeenCalled();
+    expect(child.kill).not.toHaveBeenCalled();
+  });
+});
 
 describe('bundled LSP server CodeLens', () => {
   let tempDirectories: string[] = [];

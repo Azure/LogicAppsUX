@@ -1,5 +1,8 @@
 # Skill: ExTester UI E2E Tests for VS Code Logic Apps Extension
 
+The extension provisions .NET 10 for new custom-code projects (fallback SDK `10.0.403`).
+Bundle-feed SDK requirements are retained alongside .NET 10 so existing .NET 8 workspaces remain supported.
+
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
 > **Last updated**: 2026-03-03
@@ -130,7 +133,7 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 | `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
 | `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
 | `src/test/ui/customCodeDotNetVersionCreate.test.ts` | Custom-code .NET picker/create phase. The `net10` target drives the real Create Workspace webview and creates a Stateful workspace; the `net8` target asserts `.NET 8` is hidden from the picker. Phase 4.15A / `E2E_MODE=customcodedotnetonly`. See §20. |
-| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building while Workflows SDK 1.4.0 is pending release. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
+| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building or running the project. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -1157,8 +1160,8 @@ not in `timeout-minutes`.
 
 Phase 4.15 covers the CustomCode wizard's framework availability and .NET 10 workspace
 generation. The `net10` target verifies the Logic App root `local.settings.json`, generated
-project template, and workflow shape. It intentionally does not build or run the project
-while `Microsoft.Azure.Workflows.WebJobs.Sdk` 1.4.0 is pending release. The `net8` target
+project template, and workflow shape. It intentionally does not build or run the project;
+.NET 10 build/run lifecycle coverage is outside this phase's scope. The `net8` target
 verifies that `.NET 8` does not appear in the custom-code framework picker. Existing .NET 8
 project detection and compatibility behavior remains covered outside the new-project wizard.
 
@@ -1167,9 +1170,8 @@ project detection and compatibility behavior remains covered outside the new-pro
   workspace. For `net8`, it opens the framework dropdown and asserts `.NET 8` is absent.
 - `src/test/ui/customCodeDotNetVersionAssert.test.ts` (4.15B) independently recomputes the
   generated net10 workspace layout and asserts the dotnet-version setting, `net10.0`
-  target framework, Workflows SDK 1.4.0 package reference, Request trigger, and generated
-  InvokeFunction action. It does not build or start the workspace until Workflows SDK
-  1.4.0 is released.
+  target framework, Workflows SDK 1.4.1 package reference, Request trigger, and generated
+  InvokeFunction action. It does not build or start the workspace.
 
 **No shared manifest.** Unlike the declarative `scenarios[]` table entries, this pair (like
 Azurite and Codeful debug before it) uses **fixed, deterministic temp paths**
@@ -1186,8 +1188,9 @@ The separate Phase 4.1 shared CustomCode fixture is still consumed by
 `p42-customcode` and `p43-customcode` for existing-project debug/run compatibility.
 `createWorkspace.fixtures.test.ts` creates it through the public .NET 10 wizard option,
 then `run-e2e.ts` normalizes only that shared fixture to the existing .NET 8 project
-template and setting before downstream scenarios consume it. Remove that normalization
-when Workflows SDK 1.4.0 is released and the runtime lifecycle moves to .NET 10.
+template and setting before downstream scenarios consume it. That normalization preserves
+existing-project .NET 8 lifecycle coverage; moving runtime lifecycle coverage to .NET 10
+is a separate change.
 
 **Orchestration**: `runCustomCodeDotNetPhasesForTarget()` / `runCustomCodeDotNetPhases()`
 in `run-e2e.ts` mirror `runAzuriteReadinessPhasesForKind()` / `runAzuriteReadinessPhases()`
