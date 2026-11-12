@@ -10,7 +10,7 @@ import * as path from 'path';
 import { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../workspace', () => ({
-  getWorkspaceLogicAppRoots: vi.fn(),
+  getLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../../commands/azureConnectors/azureConnectorDetails', () => ({

@@ -6,7 +6,7 @@ import { defaultExtensionBundlePathValue } from '../../../constants';
 import * as fse from 'fs-extra';
 import { getJsonFeed } from '../feed';
 import { downloadAndExtractDependency } from '../binaries';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { selectLogicAppRoot } from '../workspace';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 
 const state = vi.hoisted(() => ({
@@ -37,7 +37,7 @@ vi.mock('../appSettings/localSettings', () => ({
     },
   })),
 }));
-vi.mock('../verifyIsProject', () => ({ tryGetLogicAppProjectRoot: vi.fn() }));
+vi.mock('../workspace', () => ({ selectLogicAppRoot: vi.fn() }));
 vi.mock('../vsCodeConfig/settings', () => ({
   getGlobalSetting: (key: string) => {
     if (key === 'useExperimentalExtensionBundle') {
@@ -142,11 +142,11 @@ describe('experimental launch selection', () => {
     state.localSource = 'https://project-source.invalid/public';
     vi.mocked(fse.pathExists).mockResolvedValueOnce(false);
     vi.mocked(getJsonFeed).mockResolvedValue(['1.198.1']);
-    vi.mocked(tryGetLogicAppProjectRoot).mockRejectedValue(new Error('Unrelated workspace must not be inspected'));
+    vi.mocked(selectLogicAppRoot).mockRejectedValue(new Error('Unrelated workspace must not be inspected'));
 
     await getExperimentalBundleRuntime(context, 'second-project');
 
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(getLocalSettingsJson).toHaveBeenCalledWith(context, 'second-project');
     expect(getJsonFeed).toHaveBeenCalledWith(
       context,

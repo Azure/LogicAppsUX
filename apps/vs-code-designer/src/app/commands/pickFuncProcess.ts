@@ -19,7 +19,6 @@ import {
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -31,13 +30,14 @@ import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-app
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
-import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
 
 const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
+import { selectWorkspaceFolderLogicAppRoot } from '../utils/workspace';
 import { getExperimentalBundleRuntime } from '../utils/bundleFeed';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
@@ -59,7 +59,7 @@ export async function pickFuncProcess(
   }
 
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  const projectPath: string | undefined = await selectWorkspaceFolderLogicAppRoot(context, workspaceFolder);
   if (!projectPath) {
     throw new Error(localize('noProjectRoot', 'Unable to find the project root.'));
   }
@@ -126,13 +126,13 @@ export async function pickFuncProcessInternal(
     await callWithTelemetryAndErrorHandling('pickFuncProcess.publishCodefulProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+      await publishCodefulProject(actionContext, projectPath, { skipIfBuildPopulatesCodeful: true });
     });
   } else {
     await callWithTelemetryAndErrorHandling('pickFuncProcess.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);
+      await tryBuildCustomCodeFunctionsProjectInternal(actionContext, projectPath);
     });
   }
 
@@ -204,7 +204,7 @@ export async function pickFuncProcessInternal(
     await startDebugTask(symbolTask, workspaceFolder);
   }
 
-  const taskInfo = await startFuncTask(context, workspaceFolder, hostTask);
+  const taskInfo = await startFuncTask(context, workspaceFolder, projectPath, hostTask);
   const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
   ext.outputChannel.appendLog(
     localize(
@@ -335,11 +335,13 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
  * Executes the start functions task.
  * @param {IActionContext} context - Command context.
  * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
+ * @param {string} projectPath - The path to the Logic App project.
  * @param {vscode.Task} funcTask - Start functions Task.
  */
 async function startFuncTask(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder,
+  projectPath: string,
   funcTask: vscode.Task
 ): Promise<IRunningFuncTask> {
   const funcTaskReadyEmitter = new vscode.EventEmitter<vscode.WorkspaceFolder>();
@@ -368,7 +370,7 @@ async function startFuncTask(
     await executeIfNotActive(funcTask);
 
     const intervalMs = 500;
-    const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
+    const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, projectPath);
     let statusRequestTimeout: number = intervalMs;
     const taskStartMaxTime: number = Date.now() + Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds) * 1000;
     let taskInfo: IRunningFuncTask | undefined = getRunningFuncTaskForWorkspace(workspaceFolder);

@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
     getCodefulWorkflowMetadata: vi.fn().mockResolvedValue({ workflowName: 'workflow-a', triggerName: 'lspManual' }),
     getConnectionsJson: vi.fn().mockResolvedValue('{}'),
     getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: {} }),
-    getLogicAppProjectRoot: vi.fn().mockResolvedValue('D:\\project'),
+    getParentLogicAppRoot: vi.fn().mockResolvedValue('D:\\project'),
     getStandardAppData: vi.fn((workflowName: string, workflowContent: any) => ({
       name: workflowName,
       kind: workflowContent?.kind ?? 'Stateful',
@@ -107,7 +107,10 @@ vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
 
 vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsJson: mocks.getConnectionsJson,
-  getLogicAppProjectRoot: mocks.getLogicAppProjectRoot,
+}));
+
+vi.mock('../../../../../utils/workspace', () => ({
+  getParentLogicAppRoot: mocks.getParentLogicAppRoot,
 }));
 
 vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
@@ -194,7 +197,7 @@ describe('LocalCodefulOverviewPanel', () => {
     mocks.isRuntimeUp.mockResolvedValue(true);
     mocks.readdirSync.mockReturnValue([]);
     mocks.getCodefulWorkflowMetadata.mockResolvedValue({ workflowName: 'workflow-a', triggerName: 'lspManual' });
-    mocks.getLogicAppProjectRoot.mockResolvedValue('D:\\project');
+    mocks.getParentLogicAppRoot.mockResolvedValue('D:\\project');
     mocks.getLocalSettingsJson.mockResolvedValue({ Values: {} });
     mocks.getConnectionsJson.mockResolvedValue('{}');
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({

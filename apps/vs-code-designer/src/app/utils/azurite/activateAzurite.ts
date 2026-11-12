@@ -17,12 +17,9 @@ import { isAzuriteExtensionTerminalError } from '../../azuriteExtension/azuriteE
 import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
 import { getAzureWebJobsStorage } from '../appSettings/localSettings';
 import { delay } from '../delay';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { isAutoStartAzuriteNotificationSuppressed, suppressAutoStartAzuriteNotification } from '../../state/notifications';
-import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, parseError, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -43,110 +40,101 @@ export const azuriteStartupRetryDelayMs = 500;
  * Overrides default Azurite location to new default location.
  * User can specify location.
  */
-export async function activateAzurite(context: IActionContext, projectPath?: string): Promise<void> {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    if (!projectPath) {
-      const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    }
+export async function activateAzurite(context: IActionContext, projectPath: string): Promise<void> {
+  const globalAzuriteLocationSetting = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);
+  context.telemetry.properties.globalAzuriteLocation = globalAzuriteLocationSetting;
 
-    if (projectPath) {
-      const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);
-      context.telemetry.properties.globalAzuriteLocation = globalAzuriteLocationSetting;
+  // Mutable because the prompts below can persist a new value. The start block further down
+  // derives `azurite.location` from this, so it has to keep mirroring what was actually
+  // written -- reading a stale copy would silently discard the directory the user just typed.
+  let azuriteLocationExtSetting = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
 
-      // Mutable because the prompts below can persist a new value. The start block further down
-      // derives `azurite.location` from this, so it has to keep mirroring what was actually
-      // written -- reading a stale copy would silently discard the directory the user just typed.
-      let azuriteLocationExtSetting: string = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
+  let autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
+  context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
 
-      let autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
-      context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
+  if (!autoStartAzurite && !isAutoStartAzuriteNotificationSuppressed()) {
+    const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
 
-      if (!autoStartAzurite && !isAutoStartAzuriteNotificationSuppressed()) {
-        const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
+    const result = await context.ui.showWarningMessage(
+      localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project debug?'),
+      enableMessage,
+      DialogResponses.no,
+      DialogResponses.dontWarnAgain
+    );
 
-        const result = await context.ui.showWarningMessage(
-          localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project debug?'),
-          enableMessage,
-          DialogResponses.no,
-          DialogResponses.dontWarnAgain
-        );
+    if (result === DialogResponses.dontWarnAgain) {
+      await suppressAutoStartAzuriteNotification();
+    } else if (result === enableMessage) {
+      await updateGlobalSetting(autoStartAzuriteSetting, true);
+      autoStartAzurite = true;
+      context.telemetry.properties.autoStartAzurite = 'true';
 
-        if (result === DialogResponses.dontWarnAgain) {
-          await suppressAutoStartAzuriteNotification();
-        } else if (result === enableMessage) {
-          await updateGlobalSetting(autoStartAzuriteSetting, true);
-          autoStartAzurite = true;
-          context.telemetry.properties.autoStartAzurite = 'true';
+      // User has not configured workspace azurite.location.
+      if (!azuriteLocationExtSetting) {
+        const azuriteDir = await context.ui.showInputBox({
+          placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
+          prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
+          value: defaultAzuritePathValue,
+        });
 
-          // User has not configured workspace azurite.location.
-          if (!azuriteLocationExtSetting) {
-            const azuriteDir = await context.ui.showInputBox({
-              placeHolder: localize('configureAzuriteLocation', 'Azurite Location'),
-              prompt: localize('configureWebhookEndpointPrompt', 'Configure Azurite Workspace location folder path'),
-              value: defaultAzuritePathValue,
-            });
-
-            if (azuriteDir) {
-              await updateGlobalSetting(azuriteBinariesLocationSetting, azuriteDir);
-              azuriteLocationExtSetting = azuriteDir;
-            } else {
-              await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
-              azuriteLocationExtSetting = defaultAzuritePathValue;
-            }
-          }
+        if (azuriteDir) {
+          await updateGlobalSetting(azuriteBinariesLocationSetting, azuriteDir);
+          azuriteLocationExtSetting = azuriteDir;
+        } else {
+          await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
+          azuriteLocationExtSetting = defaultAzuritePathValue;
         }
-      } else if (autoStartAzurite && !azuriteLocationExtSetting) {
-        await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
-        azuriteLocationExtSetting = defaultAzuritePathValue;
-        ext.outputChannel.appendLog(localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`));
-      }
-
-      const azureWebJobsStorage = await getAzureWebJobsStorage(context, projectPath);
-      const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, {
-        promptWarningMessage: false,
-        azureWebJobsStorage,
-      });
-
-      if (autoStartAzurite && !isAzuriteRunning) {
-        // Use the configured location, or default to the global default path
-        const azuriteLocation = azuriteLocationExtSetting || defaultAzuritePathValue;
-        // azurite.location is a machine-local absolute path, so write it to the user's global
-        // settings instead of the shared .code-workspace file (which is committed to the repo).
-        await updateGlobalSetting(azuriteLocationSetting, azuriteLocation, azuriteExtensionPrefix);
-        await removeSharedSetting(azuriteLocationSetting, azuriteExtensionPrefix);
-        let terminalStartError: Error | undefined;
-        try {
-          await executeOnAzurite(context, azuriteCommand.start);
-          context.telemetry.properties.azuriteStart = 'true';
-        } catch (error) {
-          // A rejection here is NOT authoritative. The third-party Azurite extension
-          // rejects `azurite.start` when the port is already bound, which is exactly
-          // what happens when a healthy Azurite is already serving another debug
-          // session. Treating that as fatal would break concurrent projects, so the
-          // readiness probe below stays the single source of truth.
-          if (isAzuriteExtensionTerminalError(error)) {
-            // ...but a missing or unactivatable extension cannot be fixed by waiting. The probe
-            // still gets its full budget, because Azurite may be running outside VS Code (Docker,
-            // `npm -g azurite`) with the extension merely disabled. Retain the cause so that IF the
-            // probe never succeeds the user reads why, instead of a generic "is it installed?".
-            terminalStartError = error;
-            context.telemetry.properties.azuriteStartTerminalError = 'true';
-          }
-          context.telemetry.properties.azuriteStart = 'false';
-          context.telemetry.properties.azuriteStartError = parseError(error).message;
-          ext.outputChannel.appendLog(
-            localize(
-              'azuriteStartFailed',
-              'Could not start Azurite via the Azurite extension ({0}). Checking whether it is already running.',
-              parseError(error).message
-            )
-          );
-        }
-        context.telemetry.properties.azuriteLocation = azuriteLocation;
-        await waitForAzuriteReady(context, projectPath, azureWebJobsStorage, terminalStartError);
       }
     }
+  } else if (autoStartAzurite && !azuriteLocationExtSetting) {
+    await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
+    azuriteLocationExtSetting = defaultAzuritePathValue;
+    ext.outputChannel.appendLog(localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`));
+  }
+
+  const azureWebJobsStorage = await getAzureWebJobsStorage(context, projectPath);
+  const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, {
+    promptWarningMessage: false,
+    azureWebJobsStorage,
+  });
+
+  if (autoStartAzurite && !isAzuriteRunning) {
+    // Use the configured location, or default to the global default path
+    const azuriteLocation = azuriteLocationExtSetting || defaultAzuritePathValue;
+    // azurite.location is a machine-local absolute path, so write it to the user's global
+    // settings instead of the shared .code-workspace file (which is committed to the repo).
+    await updateGlobalSetting(azuriteLocationSetting, azuriteLocation, azuriteExtensionPrefix);
+    await removeSharedSetting(azuriteLocationSetting, azuriteExtensionPrefix);
+    let terminalStartError: Error | undefined;
+    try {
+      await executeOnAzurite(context, azuriteCommand.start);
+      context.telemetry.properties.azuriteStart = 'true';
+    } catch (error) {
+      // A rejection here is NOT authoritative. The third-party Azurite extension
+      // rejects `azurite.start` when the port is already bound, which is exactly
+      // what happens when a healthy Azurite is already serving another debug
+      // session. Treating that as fatal would break concurrent projects, so the
+      // readiness probe below stays the single source of truth.
+      if (isAzuriteExtensionTerminalError(error)) {
+        // ...but a missing or unactivatable extension cannot be fixed by waiting. The probe
+        // still gets its full budget, because Azurite may be running outside VS Code (Docker,
+        // `npm -g azurite`) with the extension merely disabled. Retain the cause so that IF the
+        // probe never succeeds the user reads why, instead of a generic "is it installed?".
+        terminalStartError = error;
+        context.telemetry.properties.azuriteStartTerminalError = 'true';
+      }
+      context.telemetry.properties.azuriteStart = 'false';
+      context.telemetry.properties.azuriteStartError = parseError(error).message;
+      ext.outputChannel.appendLog(
+        localize(
+          'azuriteStartFailed',
+          'Could not start Azurite via the Azurite extension ({0}). Checking whether it is already running.',
+          parseError(error).message
+        )
+      );
+    }
+    context.telemetry.properties.azuriteLocation = azuriteLocation;
+    await waitForAzuriteReady(context, projectPath, azureWebJobsStorage, terminalStartError);
   }
 }
 

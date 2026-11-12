@@ -9,15 +9,15 @@ import {
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from '../commands/dataMapper/extensionConfig';
-import { getWorkspaceCustomCodeFunctionsProjectRoots, getWorkspaceFolderWithoutPrompting } from './workspace';
-import { isLogicAppProjectInRoot } from './verifyIsProject';
+import { getCustomCodeRoots, getLogicAppRoots } from './workspace';
 import { getEligibleLogicAppFoldersForCustomCode } from './customCodeUtils';
+import { isCodefulLogicApp } from './codeful';
 
 /**
  * Gets extension version from the package.json version.
  * @returns {string} Extension version.
  */
-export const getExtensionVersion = (): string => {
+export function getExtensionVersion(): string {
   const extension = vscode.extensions.getExtension(logicAppsStandardExtensionId);
 
   if (extension) {
@@ -30,24 +30,30 @@ export const getExtensionVersion = (): string => {
   }
 
   return '';
-};
+}
 
-export const initializeCustomExtensionContext = () => {
-  // Data Mapper context
+export function initializeCustomExtensionContext() {
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedDataMapDefinitionFileExts, supportedDataMapDefinitionFileExts);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedSchemaFileExts, supportedSchemaFileExts);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedFileExts, [...supportedDataMapDefinitionFileExts, ...supportedSchemaFileExts]);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapDmFolders, supportedDataMapperFolders);
-};
+}
 
-export async function updateLogicAppsContext() {
+export async function updateLogicAppsContext(projectPaths?: string[]) {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, false);
+    await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, []);
   } else {
-    const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
-    const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
-    await vscode.commands.executeCommand('setContext', extensionContext.hasProject, logicAppOpened);
-    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeFunctionsProjectRoots());
+    projectPaths ??= await getLogicAppRoots();
+    const hasLogicApp = projectPaths.length > 0;
+    const codefulProjectPathPromises = projectPaths.map(async (projectPath) => {
+      return await isCodefulLogicApp(projectPath) ? projectPath : undefined;
+    });
+    const codefulProjectPaths = (await Promise.all(codefulProjectPathPromises)).filter((path) => path !== undefined);
+    await vscode.commands.executeCommand('setContext', extensionContext.hasProject, hasLogicApp);
+    await vscode.commands.executeCommand('setContext', extensionContext.codefulProjectPaths, codefulProjectPaths);
+    await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, projectPaths);
+    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getCustomCodeRoots());
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeEligibleLogicAppFolders, await getEligibleLogicAppFoldersForCustomCode());
   }
 }

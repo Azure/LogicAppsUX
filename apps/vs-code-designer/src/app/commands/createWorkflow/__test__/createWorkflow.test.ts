@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as vscode from 'vscode';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import type * as vscode from 'vscode';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
@@ -24,11 +24,13 @@ vi.mock('../../shared/workspaceWebviewCommandHandler', () => ({
 }));
 
 vi.mock('../../../utils/codeful', () => ({
-  hasCodefulWorkflowSetting: vi.fn(),
+  isCodefulLogicApp: vi.fn(),
 }));
 
-vi.mock('../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../../../utils/workspace', () => ({
+  getLogicAppRoots: vi.fn(),
+  isLogicApp: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../../../utils/codeless/common', () => ({
@@ -40,8 +42,9 @@ vi.mock('../createLogicAppWorkflow', () => ({
 }));
 
 import { createWorkspaceWebviewCommandHandler } from '../../shared/workspaceWebviewCommandHandler';
-import { hasCodefulWorkflowSetting } from '../../../utils/codeful';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { isCodefulLogicApp } from '../../../utils/codeful';
+import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
+import { getLogicAppRoots, isLogicApp, selectLogicAppRoot } from '../../../utils/workspace';
 import { createLogicAppWorkflow } from '../createLogicAppWorkflow';
 import { createWorkflow } from '../createWorkflow';
 
@@ -55,28 +58,20 @@ describe('createWorkflow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (vscode.workspace as any).workspaceFolders = undefined;
-    (vscode.workspace.getWorkspaceFolder as any) = vi.fn();
-    vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(false);
+    vi.mocked(getLogicAppRoots).mockResolvedValue([]);
+    vi.mocked(isCodefulLogicApp).mockResolvedValue(false);
+    vi.mocked(isLogicApp).mockResolvedValue(false);
+    vi.mocked(selectLogicAppRoot).mockResolvedValue(undefined);
+    vi.mocked(getWorkflowsInLocalProject).mockResolvedValue({});
   });
 
   describe('project collection and selection', () => {
-    it('collects all projects from workspace folders and sends to webview', async () => {
-      const folderA = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
-      const folderB = { name: 'ProjectB', uri: { fsPath: 'D:\\workspace\\ProjectB' }, index: 1 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
-      vi.mocked(tryGetLogicAppProjectRoot).mockImplementation(async (_ctx, folder) => {
-        if (folder === 'D:\\workspace\\ProjectA') {
-          return 'D:\\workspace\\ProjectA';
-        }
-        if (folder === 'D:\\workspace\\ProjectB') {
-          return 'D:\\workspace\\ProjectB';
-        }
-        return undefined;
-      });
-      vi.mocked(hasCodefulWorkflowSetting).mockImplementation(async (projectPath) => {
-        return projectPath === 'D:\\workspace\\ProjectB';
-      });
+    it('collects all projects and sends their metadata to the webview', async () => {
+      const projectA = 'D:\\workspace\\ProjectA';
+      const projectB = 'D:\\workspace\\ProjectB';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectA);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectA, projectB]);
+      vi.mocked(isCodefulLogicApp).mockImplementation(async (projectPath) => projectPath === projectB);
 
       await createWorkflow(context);
 
@@ -84,19 +79,19 @@ describe('createWorkflow', () => {
         expect.objectContaining({
           extraInitializeData: expect.objectContaining({
             availableProjects: [
-              { name: 'ProjectA', path: 'D:\\workspace\\ProjectA', isCodeful: false, existingWorkflows: [] },
-              { name: 'ProjectB', path: 'D:\\workspace\\ProjectB', isCodeful: true, existingWorkflows: [] },
+              { name: 'ProjectA', path: projectA, isCodeful: false, existingWorkflows: [] },
+              { name: 'ProjectB', path: projectB, isCodeful: true, existingWorkflows: [] },
             ],
           }),
         })
       );
     });
 
-    it('auto-selects when only one project exists', async () => {
-      const folder = { name: 'OnlyProject', uri: { fsPath: 'D:\\workspace\\OnlyProject' }, index: 0 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folder];
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:\\workspace\\OnlyProject');
-      vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(true);
+    it('auto-selects the only project', async () => {
+      const projectPath = 'D:\\workspace\\OnlyProject';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectPath);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
+      vi.mocked(isCodefulLogicApp).mockResolvedValue(true);
 
       await createWorkflow(context);
 
@@ -110,26 +105,19 @@ describe('createWorkflow', () => {
       );
     });
 
-    it('does not pre-select when multiple projects and no URI', async () => {
-      const folderA = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
-      const folderB = { name: 'ProjectB', uri: { fsPath: 'D:\\workspace\\ProjectB' }, index: 1 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
-      vi.mocked(tryGetLogicAppProjectRoot).mockImplementation(async (_ctx, folder) => {
-        if (folder === 'D:\\workspace\\ProjectA') {
-          return 'D:\\workspace\\ProjectA';
-        }
-        if (folder === 'D:\\workspace\\ProjectB') {
-          return 'D:\\workspace\\ProjectB';
-        }
-        return undefined;
-      });
+    it('pre-selects the project chosen by the shared selector when multiple projects exist', async () => {
+      const projectA = 'D:\\workspace\\ProjectA';
+      const projectB = 'D:\\workspace\\ProjectB';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectB);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectA, projectB]);
 
       await createWorkflow(context);
 
+      expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
       expect(createWorkspaceWebviewCommandHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           extraInitializeData: expect.objectContaining({
-            logicAppName: '',
+            logicAppName: 'ProjectB',
             logicAppType: '',
           }),
         })
@@ -138,26 +126,17 @@ describe('createWorkflow', () => {
   });
 
   describe('URI-based project pre-selection', () => {
-    it('pre-selects project from right-click URI', async () => {
-      const folderA = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
-      const folderB = { name: 'ControlFlow', uri: { fsPath: 'D:\\workspace\\ControlFlow' }, index: 1 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
-
-      const clickedUri = { fsPath: 'D:\\workspace\\ControlFlow' } as vscode.Uri;
-      vi.mocked(vscode.workspace.getWorkspaceFolder).mockReturnValue(folderB);
-      vi.mocked(tryGetLogicAppProjectRoot).mockImplementation(async (_ctx, folder) => {
-        if (folder === 'D:\\workspace\\ProjectA') {
-          return 'D:\\workspace\\ProjectA';
-        }
-        if (folder === 'D:\\workspace\\ControlFlow') {
-          return 'D:\\workspace\\ControlFlow';
-        }
-        return undefined;
-      });
-      vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(true);
+    it('pre-selects a Logic App project from the right-click URI', async () => {
+      const projectA = 'D:\\workspace\\ProjectA';
+      const controlFlowProject = 'D:\\workspace\\ControlFlow';
+      const clickedUri = { fsPath: controlFlowProject } as vscode.Uri;
+      vi.mocked(isLogicApp).mockResolvedValue(true);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectA, controlFlowProject]);
+      vi.mocked(isCodefulLogicApp).mockImplementation(async (projectPath) => projectPath === controlFlowProject);
 
       await createWorkflow(context, clickedUri);
 
+      expect(selectLogicAppRoot).not.toHaveBeenCalled();
       expect(createWorkspaceWebviewCommandHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           extraInitializeData: expect.objectContaining({
@@ -169,11 +148,11 @@ describe('createWorkflow', () => {
     });
   });
 
-  describe('create handler resolves project from webview data', () => {
-    it('uses logicAppName from webview to find project path', async () => {
-      const folder = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folder];
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:\\workspace\\ProjectA');
+  describe('create handler project resolution', () => {
+    it('uses logicAppName from webview data to find the project path', async () => {
+      const projectPath = 'D:\\workspace\\ProjectA';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectPath);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
 
       await createWorkflow(context);
 
@@ -181,22 +160,14 @@ describe('createWorkflow', () => {
       const data = { workflowName: 'MyWorkflow', logicAppName: 'ProjectA' };
       await webviewOptions.createHandler(data);
 
-      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, 'D:\\workspace\\ProjectA');
+      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, projectPath);
     });
 
-    it('resolves to first matching project when duplicate basenames exist in multi-root workspace', async () => {
-      const folderA = { name: 'FolderA', uri: { fsPath: 'D:\\workspace\\FolderA' }, index: 0 } as vscode.WorkspaceFolder;
-      const folderB = { name: 'FolderB', uri: { fsPath: 'D:\\workspace\\FolderB' }, index: 1 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
-      vi.mocked(tryGetLogicAppProjectRoot).mockImplementation(async (_ctx, folder) => {
-        if (folder === 'D:\\workspace\\FolderA') {
-          return 'D:\\repoA\\SharedProject';
-        }
-        if (folder === 'D:\\workspace\\FolderB') {
-          return 'D:\\repoB\\SharedProject';
-        }
-        return undefined;
-      });
+    it('resolves to the first matching project when duplicate basenames exist', async () => {
+      const firstProject = 'D:\\repoA\\SharedProject';
+      const secondProject = 'D:\\repoB\\SharedProject';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(firstProject);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([firstProject, secondProject]);
 
       await createWorkflow(context);
 
@@ -204,12 +175,13 @@ describe('createWorkflow', () => {
       const data = { workflowName: 'MyWorkflow', logicAppName: 'SharedProject' };
       await webviewOptions.createHandler(data);
 
-      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, 'D:\\repoA\\SharedProject');
+      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, firstProject);
     });
-    it('throws when webview sends unrecognized project name', async () => {
-      const folder = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folder];
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:\\workspace\\ProjectA');
+
+    it('throws when the webview sends an unrecognized project name', async () => {
+      const projectPath = 'D:\\workspace\\ProjectA';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectPath);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
 
       await createWorkflow(context);
 
@@ -221,10 +193,10 @@ describe('createWorkflow', () => {
   });
 
   describe('panel naming', () => {
-    it('uses generic panel name without project-specific suffix', async () => {
-      const folder = { name: 'MyProject', uri: { fsPath: 'D:\\workspace\\MyProject' }, index: 0 } as vscode.WorkspaceFolder;
-      (vscode.workspace as any).workspaceFolders = [folder];
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:\\workspace\\MyProject');
+    it('uses a generic panel name without a project-specific suffix', async () => {
+      const projectPath = 'D:\\workspace\\MyProject';
+      vi.mocked(selectLogicAppRoot).mockResolvedValue(projectPath);
+      vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
 
       await createWorkflow(context);
 
@@ -237,20 +209,17 @@ describe('createWorkflow', () => {
   });
 
   describe('error cases', () => {
-    it('throws when no projects found in workspace', async () => {
-      (vscode.workspace as any).workspaceFolders = [
-        { name: 'Empty', uri: { fsPath: 'D:\\workspace\\Empty' }, index: 0 } as vscode.WorkspaceFolder,
-      ];
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(undefined);
-
-      await expect(createWorkflow(context)).rejects.toThrow('No Logic App project found in the current workspace.');
+    it('throws when the shared selector cannot determine a project root', async () => {
+      await expect(createWorkflow(context)).rejects.toThrow('Unable to determine logic app project root.');
       expect(createWorkspaceWebviewCommandHandler).not.toHaveBeenCalled();
     });
 
-    it('throws when no workspace folders exist', async () => {
-      (vscode.workspace as any).workspaceFolders = undefined;
+    it('throws when the selected project is no longer present in the workspace project list', async () => {
+      vi.mocked(selectLogicAppRoot).mockResolvedValue('D:\\workspace\\MissingProject');
+      vi.mocked(getLogicAppRoots).mockResolvedValue([]);
 
       await expect(createWorkflow(context)).rejects.toThrow('No Logic App project found in the current workspace.');
+      expect(createWorkspaceWebviewCommandHandler).not.toHaveBeenCalled();
     });
   });
 });

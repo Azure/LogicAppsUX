@@ -8,12 +8,7 @@ import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import { removeWebviewPanelFromCache, cacheWebviewPanel, getStandardAppData } from '../../../../utils/codeless/common';
 import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
-import {
-  getConnectionsFromFile,
-  getCustomCodeFromFiles,
-  getLogicAppProjectRoot,
-  getParametersFromFile,
-} from '../../../../utils/codeless/connection';
+import { getConnectionsFromFile, getCustomCodeFromFiles, getParametersFromFile } from '../../../../utils/codeless/connection';
 import { sendRequest } from '../../../../utils/requestUtils';
 import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { MonitoringPanel } from './monitoringPanel';
@@ -28,6 +23,7 @@ import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 export default class LocalMonitoringPanel extends MonitoringPanel {
   private projectPath: string | undefined;
@@ -50,16 +46,15 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       return;
     }
 
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-
+    this.projectPath = await getParentLogicAppRoot(this.workflowFilePath);
     if (!this.projectPath) {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
 
     this.baseUrl = ext.getWorkflowRuntimeBaseUrl();
     if (!this.baseUrl) {
       throw new Error(
-        localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.')
+        localize('LogicAppRuntimeNotStarted', 'Unable to determine logic app runtime base url. Please ensure the local runtime is started.')
       );
     }
 
@@ -190,16 +185,15 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
   }
 
   private async getDesignerPanelMetadata(): Promise<DesignerPanelMetadata> {
-    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-
+    const projectPath: string | undefined = await getParentLogicAppRoot(this.workflowFilePath);
     if (!projectPath) {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
 
     const [connectionsData, parametersData, customCodeData, bundleVersionNumber, azureDetails, artifacts, workflowContent] =
       await Promise.all([
-        getConnectionsFromFile(this.context, this.workflowFilePath),
-        getParametersFromFile(this.context, this.workflowFilePath),
+        getConnectionsFromFile(this.workflowFilePath),
+        getParametersFromFile(this.workflowFilePath),
         getCustomCodeFromFiles(this.workflowFilePath),
         getBundleVersionNumber(projectPath),
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),

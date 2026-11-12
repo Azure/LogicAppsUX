@@ -29,7 +29,7 @@ import { ext } from '../../extensionVariables';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { selectLogicAppRoot } from './workspace';
 import { ExperimentalBundleSource, type ExperimentalBundleRuntime, isBundleVersion } from './experimentalBundleRuntime';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
@@ -124,8 +124,7 @@ interface ExtensionBundleBaseUrlResult {
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext, projectPath?: string): Promise<ExtensionBundleBaseUrlResult> {
   if (!projectPath) {
-    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    projectPath = await selectLogicAppRoot(context, { suppressPrompt: true });
   }
 
   let localSettingsUri: string | undefined;
@@ -824,10 +823,7 @@ export async function ensureExtensionBundleHealthy(
   }
 
   const experimental = getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) === true;
-  const projectPath =
-    experimental && !options.version
-      ? await tryGetLogicAppProjectRoot(context, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath)
-      : undefined;
+  const projectPath = experimental && !options.version ? await selectLogicAppRoot(context, { suppressPrompt: true }) : undefined;
   const selectedVersion = options.version ?? (experimental ? await getExperimentalBundleVersion(context, projectPath) : undefined);
 
   if (experimental && selectedVersion && selectedVersion !== '0.0.0') {
@@ -1013,8 +1009,7 @@ async function downloadExtensionBundleCore(context: IActionContext, projectPath?
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     if (!projectPath) {
-      const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      projectPath = await selectLogicAppRoot(context, { suppressPrompt: true });
     }
 
     if (projectPath) {
