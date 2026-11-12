@@ -40,28 +40,33 @@ public class ApiService
     {
         string cacheKey = $"GET:{url}";
 
-        return await cache.GetOrSetAsync<string?>(
-            cacheKey,
-            async (ctx, ct) =>
-            {
-                try
+        try
+        {
+            return await cache.GetOrSetAsync<string?>(
+                cacheKey,
+                async (ctx, ct) =>
                 {
                     HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
-                    HttpResponseMessage response = await client.GetAsync(url, ct);
+                    using HttpResponseMessage response = await client.GetAsync(url, ct);
+                    response.EnsureSuccessStatusCode();
 
-                    return response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync(ct) : null;
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync($"[ApiService] GET {url} error: {ex.Message}");
-                    return null;
-                }
-            },
-            options => options
-                .SetDuration(TimeSpan.FromMinutes(5))
-                .SetFailSafe(true, TimeSpan.FromHours(1))
-                .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
-            cancellationToken);
+                    return await response.Content.ReadAsStringAsync(ct);
+                },
+                options => options
+                    .SetDuration(TimeSpan.FromMinutes(5))
+                    .SetFailSafe(true, TimeSpan.FromHours(1))
+                    .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"[ApiService] GET {url} error: {ex.Message}");
+            return null;
+        }
     }
 
     /// <summary>
@@ -76,11 +81,11 @@ public class ApiService
     {
         string cacheKey = $"GET_JSON:{typeof(T).FullName}:{url}";
 
-        return await cache.GetOrSetAsync<T?>(
-            cacheKey,
-            async (ctx, ct) =>
-            {
-                try
+        try
+        {
+            return await cache.GetOrSetAsync<T?>(
+                cacheKey,
+                async (ctx, ct) =>
                 {
                     HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
 
@@ -96,18 +101,22 @@ public class ApiService
                     }
 
                     return await client.GetFromJsonAsync<T>(url, jsonOptions, ct);
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync($"[ApiService] GET JSON {url} error: {ex.Message}");
-                    return default;
-                }
-            },
-            options => options
-                .SetDuration(TimeSpan.FromMinutes(5))
-                .SetFailSafe(true, TimeSpan.FromHours(1))
-                .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
-            cancellationToken);
+                },
+                options => options
+                    .SetDuration(TimeSpan.FromMinutes(5))
+                    .SetFailSafe(true, TimeSpan.FromHours(1))
+                    .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"[ApiService] GET JSON {url} error: {ex.Message}");
+            return default;
+        }
     }
 
     /// <summary>
@@ -124,11 +133,11 @@ public class ApiService
         string payloadHash = JsonSerializer.Serialize(payload, jsonOptions).GetHashCode().ToString();
         string cacheKey = $"POST:{url}:{payloadHash}";
 
-        return await cache.GetOrSetAsync<string?>(
-            cacheKey,
-            async (ctx, ct) =>
-            {
-                try
+        try
+        {
+            return await cache.GetOrSetAsync<string?>(
+                cacheKey,
+                async (ctx, ct) =>
                 {
                     HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
 
@@ -143,27 +152,25 @@ public class ApiService
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
 
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, payload, jsonOptions, ct);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return await response.Content.ReadAsStringAsync(ct);
-                    }
-
-                    string responseBody = await response.Content.ReadAsStringAsync(ct);
-                    return null;
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
-                    return null;
-                }
-            },
-            options => options
-                .SetDuration(TimeSpan.FromMinutes(5))
-                .SetFailSafe(true, TimeSpan.FromHours(1))
-                .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
-            cancellationToken);
+                    using HttpResponseMessage response = await client.PostAsJsonAsync(url, payload, jsonOptions, ct);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync(ct);
+                },
+                options => options
+                    .SetDuration(TimeSpan.FromMinutes(5))
+                    .SetFailSafe(true, TimeSpan.FromHours(1))
+                    .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
+            return null;
+        }
     }
 
     /// <summary>
@@ -181,11 +188,11 @@ public class ApiService
         string payloadHash = JsonSerializer.Serialize(payload, jsonOptions).GetHashCode().ToString();
         string cacheKey = $"POST_JSON:{typeof(TResponse).FullName}:{url}:{payloadHash}";
 
-        return await cache.GetOrSetAsync<TResponse?>(
-            cacheKey,
-            async (ctx, ct) =>
-            {
-                try
+        try
+        {
+            return await cache.GetOrSetAsync<TResponse?>(
+                cacheKey,
+                async (ctx, ct) =>
                 {
                     HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
 
@@ -200,29 +207,25 @@ public class ApiService
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
 
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, payload, jsonOptions, ct);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string successBody = await response.Content.ReadAsStringAsync(ct);
-
-                        // Deserialize from the string
-                        return JsonSerializer.Deserialize<TResponse>(successBody, jsonOptions);
-                    }
-
-                    string responseBody = await response.Content.ReadAsStringAsync(ct);
-                    return default;
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
-                    return default;
-                }
-            },
-            options => options
-                .SetDuration(TimeSpan.FromMinutes(5))
-                .SetFailSafe(true, TimeSpan.FromHours(1))
-                .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
-            cancellationToken);
+                    using HttpResponseMessage response = await client.PostAsJsonAsync(url, payload, jsonOptions, ct);
+                    response.EnsureSuccessStatusCode();
+                    string successBody = await response.Content.ReadAsStringAsync(ct);
+                    return JsonSerializer.Deserialize<TResponse>(successBody, jsonOptions);
+                },
+                options => options
+                    .SetDuration(TimeSpan.FromMinutes(5))
+                    .SetFailSafe(true, TimeSpan.FromHours(1))
+                    .SetFactoryTimeouts(TimeSpan.FromSeconds(10), keepTimedOutFactoryResult: false),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
+            return default;
+        }
     }
 }

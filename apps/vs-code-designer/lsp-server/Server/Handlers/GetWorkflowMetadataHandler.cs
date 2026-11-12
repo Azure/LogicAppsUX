@@ -34,11 +34,10 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
 
         try
         {
-            // Support both DocumentUri and Uri properties
-            string? documentPath = request.DocumentUri?.ToString() ?? request.Uri;
-            await Console.Error.WriteLineAsync($"[GetWorkflowMetadataHandler] Resolved documentPath: {documentPath}");
+            DocumentUri? documentUri = ResolveDocumentUri(request);
+            await Console.Error.WriteLineAsync($"[GetWorkflowMetadataHandler] Resolved documentUri: {documentUri}");
 
-            if (string.IsNullOrEmpty(documentPath))
+            if (documentUri is null)
             {
                 return new GetWorkflowMetadataResponse
                 {
@@ -47,17 +46,15 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
             }
 
             // Get document content from buffer
-            string? documentText = bufferManager.GetBuffer(documentPath);
-            if (string.IsNullOrEmpty(documentText))
+            string? documentText = bufferManager.GetBuffer(documentUri.ToString());
+            if (documentText is null)
             {
                 // Fallback: try to read from disk
                 try
                 {
-                    // Parse the URI to get file path
-                    var uri = new Uri(documentPath);
-                    if (uri.Scheme == "file")
+                    string filePath = documentUri.GetFileSystemPath();
+                    if (!string.IsNullOrWhiteSpace(filePath))
                     {
-                        string filePath = uri.LocalPath;
                         documentText = await File.ReadAllTextAsync(filePath, cancellationToken);
                     }
                     else
@@ -68,6 +65,7 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
                         };
                     }
                 }
+
                 catch (Exception ex)
                 {
                     return new GetWorkflowMetadataResponse
@@ -151,6 +149,23 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
                 Error = $"Internal error: {ex.Message}",
             };
         }
+    }
+
+    private static DocumentUri? ResolveDocumentUri(GetWorkflowMetadataParams request)
+    {
+        if (request.DocumentUri is not null)
+        {
+            return request.DocumentUri;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Uri))
+        {
+            return null;
+        }
+
+        return Path.IsPathFullyQualified(request.Uri)
+            ? DocumentUri.FromFileSystemPath(request.Uri)
+            : DocumentUri.From(request.Uri);
     }
 
     /// <summary>
@@ -593,7 +608,9 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
                 if (inv.Expression is MemberAccessExpressionSyntax ma)
                 {
                     string methodName = ma.Name.ToString();
-                    return methodName.Contains("CreateStatefulWorkflow") || methodName.Contains("CreateStatelessWorkflow");
+                    return methodName.Contains("CreateStatefulWorkflow") ||
+                        methodName.Contains("CreateStatelessWorkflow") ||
+                        methodName.Contains("CreateAgentWorkflow");
                 }
 
                 return false;

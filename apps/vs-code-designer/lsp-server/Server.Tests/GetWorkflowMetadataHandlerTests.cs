@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using OmniSharp.Extensions.LanguageServer.Protocol;
+
 using SdkLspServer;
 using SdkLspServer.Handlers;
 
@@ -621,6 +623,103 @@ public class AgentWorkflow
         Assert.NotNull(result.DefaultName);
         Assert.Equal(result.DefaultName, result.TriggerName);
         Assert.NotEqual("WeatherAgent", result.TriggerName);
+    }
+
+    [Fact]
+    public async Task AbsoluteFilePath_UsesUnsavedSynchronizedBuffer()
+    {
+        string testRoot = Path.Combine(Path.GetTempPath(), $"workflow-metadata-{Guid.NewGuid():N}");
+        string filePath = Path.Combine(testRoot, "workflow.cs");
+        Directory.CreateDirectory(testRoot);
+
+        try
+        {
+            await File.WriteAllTextAsync(filePath, """
+                public class SavedWorkflow
+                {
+                }
+                """);
+            string documentUri = DocumentUri.FromFileSystemPath(filePath).ToString();
+            bufferManager.UpdateBuffer(documentUri, """
+                using Microsoft.Azure.Workflows.Sdk;
+
+                public class UnsavedWorkflow
+                {
+                    public static FlowDefinition[] GetWorkflows()
+                    {
+                        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+                        return new[] { WorkflowFactory.CreateStatefulWorkflow("unsaved-workflow", trigger) };
+                    }
+                }
+                """);
+
+            var handler = new GetWorkflowMetadataHandler(bufferManager, null);
+            GetWorkflowMetadataResponse result = await handler.Handle(
+                new GetWorkflowMetadataParams { Uri = filePath },
+                CancellationToken.None);
+
+            Assert.Equal("unsaved-workflow", result.WorkflowName);
+        }
+        finally
+        {
+            Directory.Delete(testRoot, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task EmptySynchronizedBuffer_DoesNotReloadSavedFile()
+    {
+        string testRoot = Path.Combine(Path.GetTempPath(), $"workflow-metadata-{Guid.NewGuid():N}");
+        string filePath = Path.Combine(testRoot, "workflow.cs");
+        Directory.CreateDirectory(testRoot);
+
+        try
+        {
+            await File.WriteAllTextAsync(filePath, """
+                using Microsoft.Azure.Workflows.Sdk;
+
+                public class SavedWorkflow
+                {
+                    public static FlowDefinition[] GetWorkflows()
+                    {
+                        var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+                        return new[] { WorkflowFactory.CreateStatefulWorkflow("saved-workflow", trigger) };
+                    }
+                }
+                """);
+            bufferManager.UpdateBuffer(DocumentUri.FromFileSystemPath(filePath).ToString(), string.Empty);
+
+            var handler = new GetWorkflowMetadataHandler(bufferManager, null);
+            GetWorkflowMetadataResponse result = await handler.Handle(
+                new GetWorkflowMetadataParams { Uri = filePath },
+                CancellationToken.None);
+
+            Assert.Null(result.WorkflowName);
+            Assert.Null(result.TriggerName);
+        }
+        finally
+        {
+            Directory.Delete(testRoot, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task AgentWorkflowFactory_ClassNameDiffers_UsesWorkflowNameArgument()
+    {
+        GetWorkflowMetadataResponse result = await AnalyzeWorkflowCode("""
+            using Microsoft.Azure.Workflows.Sdk;
+
+            public class ChatProvider
+            {
+                public static FlowDefinition[] GetWorkflows()
+                {
+                    var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+                    return new[] { WorkflowFactory.CreateAgentWorkflow("customer-chat", trigger) };
+                }
+            }
+            """);
+
+        Assert.Equal("customer-chat", result.WorkflowName);
     }
 
     [Fact]

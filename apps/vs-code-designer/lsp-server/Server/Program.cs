@@ -24,6 +24,7 @@ internal static class Program
         ITelemetryService? telemetryService = null;
         ILanguageServerFacade? initializedServer = null;
         SdkIndex? index = null;
+        bool supportsCodeLensRefresh = false;
 
         try
         {
@@ -60,7 +61,7 @@ internal static class Program
             {
                 if (initializedServer != null)
                 {
-                    TryRequestCodeLensRefresh(initializedServer);
+                    CodeLensRefreshService.TryRequest(initializedServer, supportsCodeLensRefresh);
                 }
             };
 
@@ -152,7 +153,7 @@ internal static class Program
                     // Additional handlers for enhanced SDK support.
                     .OnInitialize(async (s, request, ct) =>
                     {
-                        initializedServer = s;
+                        supportsCodeLensRefresh = CodeLensRefreshService.IsSupported(request.Capabilities);
 
                         // Get telemetry service from DI
                         var telemetryService = s.Services.GetService(typeof(ITelemetryService)) as ITelemetryService;
@@ -231,6 +232,7 @@ internal static class Program
                         }
 
                         s.Window.LogInfo($"Loaded SDK: {index?.Summary} (source: {sdkSource})");
+                        initializedServer = s;
                     })
                     .WithHandler<TextDocumentSyncHandler>()
                     .WithHandler<HoverHandler>()
@@ -390,55 +392,4 @@ internal static class Program
         }
     }
 
-    private static void TryRequestCodeLensRefresh(ILanguageServerFacade router)
-    {
-        try
-        {
-            const string methodName = "workspace/codeLens/refresh";
-
-            // 1) Direct SendNotification(string)
-            var sendNotif = router.GetType().GetMethod("SendNotification", [typeof(string)]);
-            if (sendNotif != null)
-            {
-                sendNotif.Invoke(router, new object[] { methodName });
-                return;
-            }
-
-            // 2) Client.SendNotification(string)
-            var clientProp = router.GetType().GetProperty("Client");
-            object? client = clientProp?.GetValue(router);
-            if (client != null)
-            {
-                var clientSend = client.GetType().GetMethod("SendNotification", [typeof(string)]);
-                if (clientSend != null)
-                {
-                    clientSend.Invoke(client, new object[] { methodName });
-                    return;
-                }
-            }
-
-            // 3) Workspace.RefreshCodeLens() if available
-            var wsProp = router.GetType().GetProperty("Workspace");
-            object? workspace = wsProp?.GetValue(router);
-            if (workspace != null)
-            {
-                var refresh = workspace.GetType().GetMethod("RefreshCodeLens", Type.EmptyTypes);
-                if (refresh != null)
-                {
-                    refresh.Invoke(workspace, []);
-                    return;
-                }
-
-                var wsSendNotif = workspace.GetType().GetMethod("SendNotification", [typeof(string)]);
-                if (wsSendNotif != null)
-                {
-                    wsSendNotif.Invoke(workspace, new object[] { methodName });
-                }
-            }
-        }
-        catch
-        {
-            // Best-effort only.
-        }
-    }
 }

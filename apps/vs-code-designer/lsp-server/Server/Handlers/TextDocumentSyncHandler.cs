@@ -21,6 +21,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
     private readonly ILanguageServerFacade router = router;
     private readonly BufferManager bufferManager = bufferManager;
     private readonly SdkIndex? sdkIndex = sdkIndex;
+    private bool supportsCodeLensRefresh;
 
     public TextDocumentSyncKind Change { get; } = TextDocumentSyncKind.Full;
 
@@ -42,6 +43,8 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
     protected override TextDocumentSyncRegistrationOptions CreateRegistrationOptions(TextSynchronizationCapability capability, ClientCapabilities clientCapabilities)
     {
+        supportsCodeLensRefresh = CodeLensRefreshService.IsSupported(clientCapabilities);
+
         return new TextDocumentSyncRegistrationOptions()
         {
             DocumentSelector = DocumentSelector,
@@ -61,7 +64,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
         // Always trigger CodeLens refresh on document changes
         // The CodeLensHandler will determine if any lenses should be shown based on the current document state
-        TryRequestCodeLensRefresh(router);
+        CodeLensRefreshService.TryRequest(router, supportsCodeLensRefresh);
 
         return Unit.Task;
     }
@@ -73,7 +76,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
         router.Window.LogInfo($"[TextDocumentSyncHandler] Opened document: {request.TextDocument.Uri}");
 
         // Always trigger CodeLens refresh when opening a document
-        TryRequestCodeLensRefresh(router);
+        CodeLensRefreshService.TryRequest(router, supportsCodeLensRefresh);
 
         return Unit.Task;
     }
@@ -83,7 +86,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
         router.Window.LogInfo($"[TextDocumentSyncHandler] Saved document: {request.TextDocument.Uri}");
 
         // On save, trigger a refresh to ensure lenses appear immediately
-        TryRequestCodeLensRefresh(router);
+        CodeLensRefreshService.TryRequest(router, supportsCodeLensRefresh);
         return Unit.Task;
     }
 
@@ -108,75 +111,6 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
         }
 
         return false;
-    }
-
-    private static void TryRequestCodeLensRefresh(ILanguageServerFacade router)
-    {
-        try
-        {
-            // Best-effort: try common shapes to send the standard LSP request
-            const string methodName = "workspace/codeLens/refresh";
-
-            router.Window.LogInfo($"[TryRequestCodeLensRefresh] Attempting to send {methodName}");
-
-            // 1) Direct SendNotification(string)
-            MethodInfo? sendNotif = router.GetType().GetMethod("SendNotification", [typeof(string)]);
-            if (sendNotif != null)
-            {
-                router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found SendNotification method, invoking...");
-                sendNotif.Invoke(router, new object[] { methodName });
-                router.Window.LogInfo($"[TryRequestCodeLensRefresh] Successfully invoked SendNotification");
-                return;
-            }
-
-            // 2) Client.SendNotification(string)
-            PropertyInfo? clientProp = router.GetType().GetProperty("Client", BindingFlags.Public | BindingFlags.Instance);
-            object? client = clientProp?.GetValue(router);
-            if (client != null)
-            {
-                router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found Client property, checking for SendNotification...");
-                MethodInfo? clientSend = client.GetType().GetMethod("SendNotification", [typeof(string)]);
-                if (clientSend != null)
-                {
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found Client.SendNotification, invoking...");
-                    clientSend.Invoke(client, new object[] { methodName });
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Successfully invoked Client.SendNotification");
-                    return;
-                }
-            }
-
-            // 3) Workspace.RefreshCodeLens() if available in this version
-            PropertyInfo? wsProp = router.GetType().GetProperty("Workspace", BindingFlags.Public | BindingFlags.Instance);
-            object? workspace = wsProp?.GetValue(router);
-            if (workspace != null)
-            {
-                router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found Workspace property, checking for RefreshCodeLens...");
-                MethodInfo? refresh = workspace.GetType().GetMethod("RefreshCodeLens", Type.EmptyTypes);
-                if (refresh != null)
-                {
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found Workspace.RefreshCodeLens, invoking...");
-                    refresh.Invoke(workspace, []);
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Successfully invoked Workspace.RefreshCodeLens");
-                    return;
-                }
-
-                // 4) Workspace.SendNotification(string)
-                MethodInfo? wsSendNotif = workspace.GetType().GetMethod("SendNotification", [typeof(string)]);
-                if (wsSendNotif != null)
-                {
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Found Workspace.SendNotification, invoking...");
-                    wsSendNotif.Invoke(workspace, new object[] { methodName });
-                    router.Window.LogInfo($"[TryRequestCodeLensRefresh] Successfully invoked Workspace.SendNotification");
-                    return;
-                }
-            }
-
-            router.Window.LogWarning($"[TryRequestCodeLensRefresh] Could not find any method to send {methodName}");
-        }
-        catch (Exception ex)
-        {
-            router.Window.LogError($"[TryRequestCodeLensRefresh] Error sending refresh: {ex.Message}");
-        }
     }
 
     private bool MightContainSdkUsage(string text)

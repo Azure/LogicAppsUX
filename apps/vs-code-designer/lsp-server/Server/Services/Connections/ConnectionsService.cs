@@ -10,6 +10,8 @@ public class ConnectionsService
 {
     private readonly object lockObject = new();
     private ConnectionsConfig? connections;
+    private ConnectionsConfig? runtimeConnections;
+    private bool connectionsAreDiskBacked;
     private string? loadedConnectionsPath;
     private DateTime loadedConnectionsLastWriteUtc;
     private FileSystemWatcher? connectionsWatcher;
@@ -33,6 +35,27 @@ public class ConnectionsService
     /// </summary>
     /// <param name="config">The new connections configuration, or null to clear.</param>
     public void UpdateConnections(ConnectionsConfig? config)
+    {
+        lock (lockObject)
+        {
+            runtimeConnections = config;
+            connectionsAreDiskBacked = false;
+        }
+
+        SetActiveConnections(config);
+    }
+
+    private void UpdateConnectionsFromDisk(ConnectionsConfig? config)
+    {
+        lock (lockObject)
+        {
+            connectionsAreDiskBacked = true;
+        }
+
+        SetActiveConnections(config);
+    }
+
+    private void SetActiveConnections(ConnectionsConfig? config)
     {
         bool changed;
         lock (lockObject)
@@ -73,6 +96,7 @@ public class ConnectionsService
         string? connectionsPath = FindNearestConnectionsFile(documentFilePath);
         if (string.IsNullOrWhiteSpace(connectionsPath) || !File.Exists(connectionsPath))
         {
+            ClearMissingDiskConnections();
             return;
         }
 
@@ -105,7 +129,7 @@ public class ConnectionsService
             }
 
             EnsureWatcher(connectionsPath);
-            UpdateConnections(config);
+            UpdateConnectionsFromDisk(config);
         }
         catch
         {
@@ -157,6 +181,7 @@ public class ConnectionsService
 
             connectionsWatcher.Changed += (_, _) => ReloadWatchedConnections();
             connectionsWatcher.Created += (_, _) => ReloadWatchedConnections();
+            connectionsWatcher.Deleted += (_, _) => ReloadWatchedConnections();
             connectionsWatcher.Renamed += (_, _) => ReloadWatchedConnections();
         }
     }
@@ -169,11 +194,37 @@ public class ConnectionsService
             path = loadedConnectionsPath;
         }
 
-        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        if (string.IsNullOrWhiteSpace(path))
         {
             return;
         }
 
+        if (!File.Exists(path))
+        {
+            ClearMissingDiskConnections();
+            return;
+        }
+
         EnsureConnectionsLoadedForDocument(path);
+    }
+
+    private void ClearMissingDiskConnections()
+    {
+        ConnectionsConfig? fallbackConnections;
+        lock (lockObject)
+        {
+            if (!connectionsAreDiskBacked ||
+                string.IsNullOrWhiteSpace(loadedConnectionsPath) ||
+                File.Exists(loadedConnectionsPath))
+            {
+                return;
+            }
+
+            connectionsAreDiskBacked = false;
+            loadedConnectionsLastWriteUtc = default;
+            fallbackConnections = runtimeConnections;
+        }
+
+        SetActiveConnections(fallbackConnections);
     }
 }
