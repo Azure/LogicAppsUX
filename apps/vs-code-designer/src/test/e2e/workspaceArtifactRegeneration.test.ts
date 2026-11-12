@@ -151,7 +151,7 @@ async function captureRegenerationFailureDiagnostics(
     center.reason = 'no-owned-target';
     return;
   }
-  const deadline = Date.now() + 6500;
+  const deadline = Date.now() + 10000;
   const capture = async (target: typeof first, suffix: 'failure' | 'notification-center') => {
     const checkpoint = `workspace-regeneration-${phase.phase}-${suffix}`;
     target.checkpoint = checkpoint;
@@ -220,6 +220,20 @@ async function captureRegenerationFailureDiagnostics(
         { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
         revealDeadline
       );
+      const revealedState = await diagnostics.stopAndSample();
+      if (
+        !revealedState ||
+        !diagnostics.hasSampleSince(decisionAt) ||
+        !revealedState.shellOwned ||
+        !revealedState.documentVisible ||
+        !revealedState.documentFocused ||
+        revealedState.documentChanged ||
+        revealedState.blockingUiVisible ||
+        revealedState.truncated ||
+        !revealedState.centerVisible
+      ) {
+        return skip('notification-center-reveal-failed');
+      }
     } catch {
       return skip('notification-center-reveal-failed');
     }

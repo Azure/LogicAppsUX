@@ -124,10 +124,10 @@ export const regenerationDiagnosticDomScript = `(() => {
       disabledYesCount: Math.min(states.filter(state => state.disabled).length, 64),
       ariaDisabledYesCount: Math.min(states.filter(state => state.ariaDisabled).length, 64),
       obstructedYesCount: Math.min(states.filter(state => state.obstructed).length, 64),
-      optionsTruncated: allOptions.length > 128,
+      truncated: relevant && (raw.length > 8192 || allOptions.length > 128 || states.length > 64),
     };
   });
-  const centers = Array.from(document.querySelectorAll('.notifications-center, .notifications-list-container, [aria-label="Notifications"]'));
+  const centers = Array.from(document.querySelectorAll('.notifications-center'));
   const labeled = Array.from(document.querySelectorAll('[aria-label], [title]'));
   const dndControls = labeled.slice(0, 2000).filter(element =>
     visible(element) && /do not disturb/i.test((element.getAttribute('aria-label') || '') + ' ' + (element.getAttribute('title') || ''))
@@ -144,8 +144,7 @@ export const regenerationDiagnosticDomScript = `(() => {
     toastCount: Math.min(document.querySelectorAll('.notification-toast').length, 64),
     retainedCount: Math.min(document.querySelectorAll('.notification-list-item').length, 64),
     dnd: labeled.length <= 2000 && dndStates.length === 1 ? (dndStates[0] === 'true' ? 'on' : 'off') : 'unknown',
-    truncated: found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.optionsTruncated) ||
-      all.some(element => (element.textContent || '').length > 8192),
+    truncated: found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.truncated),
     candidates,
   };
 })()`;
@@ -164,7 +163,9 @@ export function sanitizeRegenerationDiagnosticState(
   firstTimeOrigin: number | undefined,
   appDir: string
 ): SafeWorkbenchState {
-  const relevant = raw.candidates.map((candidate) => ({ candidate, category: category(candidate.text, appDir, candidate.kind) }));
+  const relevant = raw.candidates
+    .map((candidate) => ({ candidate, category: category(candidate.text, appDir, candidate.kind) }))
+    .filter((entry) => entry.category !== 'other');
   const duplicateInitialization = relevant.filter((entry) => entry.category === 'initialization' && entry.candidate.inViewport).length > 1;
   const duplicateOverwrite = relevant.filter((entry) => entry.category === 'overwrite' && entry.candidate.inViewport).length > 1;
   return {
@@ -179,53 +180,50 @@ export function sanitizeRegenerationDiagnosticState(
     dnd: raw.dnd,
     blockingUiVisible: raw.candidates.some((candidate) => candidate.kind !== 'notification' && candidate.inViewport && !candidate.inactive),
     truncated: raw.truncated || relevant.length > maxCandidates,
-    candidates: relevant
-      .filter((entry) => entry.category !== 'other')
-      .slice(0, maxCandidates)
-      .map(({ candidate, category: candidateCategory }) => {
-        const reasonCodes: string[] = [];
-        if (candidateCategory === 'other-project') {
-          reasonCodes.push('wrong-project');
-        }
-        if (!candidate.displayed) {
-          reasonCodes.push('hidden');
-        } else if (!candidate.inViewport) {
-          reasonCodes.push('out-of-viewport');
-        }
-        if (candidate.inactive) {
-          reasonCodes.push('inactive');
-        }
-        if (candidate.yesCount === 0) {
-          reasonCodes.push('missing-yes');
-        } else if (candidate.visibleYesCount === 0) {
-          reasonCodes.push('yes-not-visible');
-        }
-        if (candidate.disabledYesCount > 0) {
-          reasonCodes.push('disabled-yes');
-        }
-        if (candidate.ariaDisabledYesCount > 0) {
-          reasonCodes.push('aria-disabled-yes');
-        }
-        if (candidate.obstructedYesCount > 0) {
-          reasonCodes.push('obstructed-yes');
-        }
-        if (
-          (candidateCategory === 'initialization' && duplicateInitialization) ||
-          (candidateCategory === 'overwrite' && duplicateOverwrite)
-        ) {
-          reasonCodes.push('duplicate-candidate');
-        }
-        if (!shellOwned) {
-          reasonCodes.push('workbench-not-owned');
-        }
-        if (firstTimeOrigin !== undefined && raw.timeOrigin !== firstTimeOrigin) {
-          reasonCodes.push('document-changed');
-        }
-        if (reasonCodes.length === 0) {
-          reasonCodes.push('candidate-observed');
-        }
-        return { kind: candidate.kind, category: candidateCategory, yesCount: candidate.yesCount, reasonCodes };
-      }),
+    candidates: relevant.slice(0, maxCandidates).map(({ candidate, category: candidateCategory }) => {
+      const reasonCodes: string[] = [];
+      if (candidateCategory === 'other-project') {
+        reasonCodes.push('wrong-project');
+      }
+      if (!candidate.displayed) {
+        reasonCodes.push('hidden');
+      } else if (!candidate.inViewport) {
+        reasonCodes.push('out-of-viewport');
+      }
+      if (candidate.inactive) {
+        reasonCodes.push('inactive');
+      }
+      if (candidate.yesCount === 0) {
+        reasonCodes.push('missing-yes');
+      } else if (candidate.visibleYesCount === 0) {
+        reasonCodes.push('yes-not-visible');
+      }
+      if (candidate.disabledYesCount > 0) {
+        reasonCodes.push('disabled-yes');
+      }
+      if (candidate.ariaDisabledYesCount > 0) {
+        reasonCodes.push('aria-disabled-yes');
+      }
+      if (candidate.obstructedYesCount > 0) {
+        reasonCodes.push('obstructed-yes');
+      }
+      if (
+        (candidateCategory === 'initialization' && duplicateInitialization) ||
+        (candidateCategory === 'overwrite' && duplicateOverwrite)
+      ) {
+        reasonCodes.push('duplicate-candidate');
+      }
+      if (!shellOwned) {
+        reasonCodes.push('workbench-not-owned');
+      }
+      if (firstTimeOrigin !== undefined && raw.timeOrigin !== firstTimeOrigin) {
+        reasonCodes.push('document-changed');
+      }
+      if (reasonCodes.length === 0) {
+        reasonCodes.push('candidate-observed');
+      }
+      return { kind: candidate.kind, category: candidateCategory, yesCount: candidate.yesCount, reasonCodes };
+    }),
   };
 }
 

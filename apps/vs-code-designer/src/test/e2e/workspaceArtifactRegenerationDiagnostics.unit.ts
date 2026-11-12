@@ -318,6 +318,66 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   assert.ok(safe.candidates[2].reasonCodes.includes('hidden'));
   assert.ok(!JSON.stringify(safe).includes('private-'));
   assert.ok(!JSON.stringify(safe).includes(root));
+  const otherCandidates = Array.from({ length: 20 }, () => ({ ...candidate, text: '' }));
+  const withOtherCandidates = sanitizeRegenerationDiagnosticState(
+    { ...raw, candidates: [...otherCandidates, candidate] },
+    true,
+    42,
+    appDir
+  );
+  assert.strictEqual(withOtherCandidates.truncated, false, 'Unrelated candidates do not consume the relevant-candidate limit');
+  assert.strictEqual(withOtherCandidates.candidates.length, 1);
+  const tooManyRelevant = sanitizeRegenerationDiagnosticState(
+    { ...raw, candidates: Array.from({ length: 17 }, () => candidate) },
+    true,
+    42,
+    appDir
+  );
+  assert.strictEqual(tooManyRelevant.truncated, true, 'Dropped relevant candidates must still invalidate coverage');
+  assert.strictEqual(tooManyRelevant.candidates.length, 16);
+  assert.strictEqual(sanitizeRegenerationDiagnosticState({ ...raw, truncated: true }, true, 42, appDir).truncated, true);
+
+  const { JSDOM } = require('jsdom') as {
+    JSDOM: new (html: string, options: Record<string, unknown>) => { window: { eval: (script: string) => unknown; close: () => void } };
+  };
+  const domState = (body: string): { truncated: boolean; centerMounted: boolean; centerVisible: boolean } => {
+    const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
+    try {
+      dom.window.eval(
+        'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 10, bottom: 10, width: 10, height: 10})'
+      );
+      return dom.window.eval(regenerationDiagnosticDomScript) as { truncated: boolean; centerMounted: boolean; centerVisible: boolean };
+    } finally {
+      dom.window.close();
+    }
+  };
+  const options = '<button>No</button>'.repeat(129);
+  assert.strictEqual(
+    domState(`<div role="dialog">${'unrelated'.repeat(1000)}${options}</div>`).truncated,
+    false,
+    'Large unrelated dialogs must not invalidate prompt sampling'
+  );
+  assert.strictEqual(
+    domState(`<div role="dialog">${'x'.repeat(8193)}${prompt(appDir)}</div>`).truncated,
+    true,
+    'Truncated text containing a relevant prompt must remain unverified'
+  );
+  assert.strictEqual(
+    domState(`<div role="dialog">${prompt(appDir)}${options}</div>`).truncated,
+    true,
+    'Truncated options on a relevant prompt must remain unverified'
+  );
+  assert.strictEqual(
+    domState('<div role="dialog"></div>'.repeat(129)).truncated,
+    true,
+    'A truncated container search must remain unverified'
+  );
+  const bellOnly = domState('<button aria-label="Notifications">Notifications</button>');
+  assert.strictEqual(bellOnly.centerMounted, false, 'The notification bell is not the notification center');
+  assert.strictEqual(bellOnly.centerVisible, false);
+  const center = domState('<div class="notifications-center"></div>');
+  assert.strictEqual(center.centerMounted, true);
+  assert.strictEqual(center.centerVisible, true);
   const summary = summarizeRegenerationPromptObservation(
     { ready: true, timeOrigin: 42, containers: [{ kind: 'notification', text: candidate.text, buttons: [{ text: 'Yes' }], rows: [] }] },
     appDir,
