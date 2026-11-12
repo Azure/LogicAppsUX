@@ -9,8 +9,6 @@ import type {
   BuiltInOperation,
 } from '../../../utils/src';
 import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
-import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
-import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
@@ -19,6 +17,13 @@ import type { ISearchService } from '../search';
 import * as ClientOperationsData from './operations';
 
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
+
+export interface SearchServiceDevData {
+  azureOperations?: DiscoveryOpArray;
+  azureConnectors?: Connector[];
+  builtInOperations?: DiscoveryOpArray;
+  builtInConnectors?: Connector[];
+}
 
 export interface BaseSearchServiceOptions {
   apiHubServiceDetails: {
@@ -29,6 +34,8 @@ export interface BaseSearchServiceOptions {
   };
   httpClient: IHttpClient;
   isDev?: boolean;
+  /** Required for each fixture-backed search method used when isDev is true. */
+  devData?: SearchServiceDevData;
   locale?: string;
   unsupportedConnectorIds?: string[];
 }
@@ -80,6 +87,14 @@ export abstract class BaseSearchService implements ISearchService {
 
   public abstract getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   public abstract getBuiltInOperations(): Promise<DiscoveryOpArray>;
+
+  protected getDevData<K extends keyof SearchServiceDevData>(key: K): NonNullable<SearchServiceDevData[K]> {
+    const data = this.options.devData?.[key];
+    if (!data) {
+      throw new Error(`Search service devData.${key} is required when isDev is true`);
+    }
+    return data;
+  }
 
   async getAzureResourceByPage(
     uri: string,
@@ -167,7 +182,7 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     if (this._isDev) {
-      return Promise.resolve(azureOperationsResponse);
+      return this.getDevData('azureOperations');
     }
 
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
@@ -213,7 +228,7 @@ export abstract class BaseSearchService implements ISearchService {
     } = this.options;
     if (this._isDev) {
       if (page === 0) {
-        return Promise.resolve(azureOperationsResponse);
+        return this.getDevData('azureOperations');
       }
       return Promise.resolve([]);
     }
@@ -233,7 +248,7 @@ export abstract class BaseSearchService implements ISearchService {
 
   async getAllAzureConnectors(): Promise<Connector[]> {
     if (this._isDev) {
-      const connectors = AzureConnectorMock.value as Connector[];
+      const connectors = this.getDevData('azureConnectors');
       const formattedConnectors = this.moveGeneralInformation(connectors);
       return Promise.resolve(formattedConnectors);
     }
@@ -251,7 +266,7 @@ export abstract class BaseSearchService implements ISearchService {
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
     if (this._isDev) {
       if (page === 0) {
-        const connectors = AzureConnectorMock.value as Connector[];
+        const connectors = this.getDevData('azureConnectors');
         const formattedConnectors = this.moveGeneralInformation(connectors);
         return Promise.resolve(formattedConnectors);
       }
