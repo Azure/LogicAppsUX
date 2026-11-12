@@ -742,7 +742,8 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 xsltPath,
                 inputXml,
                 btmDir,
-                fs.existsSync(extensionObjectPath) ? extensionObjectPath : undefined
+                fs.existsSync(extensionObjectPath) ? extensionObjectPath : undefined,
+                message.data.map.customXsltPath ? path.resolve(btmDir, message.data.map.customXsltPath) : undefined
               );
               if (dotnetResult.success) {
                 outputXml = dotnetResult.output;
@@ -1149,7 +1150,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     const baseDirectory = path.dirname(document.uri.fsPath);
     if (map.customXsltPath) {
       const xsltPath = path.resolve(baseDirectory, map.customXsltPath);
-      hydrated.customXslt = readTextFileSync(xsltPath) ?? '';
+      const xslt = readTextFileSync(xsltPath);
+      if (xslt === undefined) {
+        throw new Error(`Custom XSLT file could not be read: ${xsltPath}`);
+      }
+      hydrated.customXslt = xslt;
     }
     if (map.customExtensionXmlPath) {
       const extensionPath = path.resolve(baseDirectory, map.customExtensionXmlPath);
@@ -1297,7 +1302,8 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     xsltPath: string,
     inputXml: string,
     btmDir: string,
-    extensionObjectPath?: string
+    extensionObjectPath?: string,
+    stylesheetPath?: string
   ): Promise<{ success: boolean; output?: string; error?: string }> {
     const started = Date.now();
     this.logger.info('Test Map: starting .NET worker transformation.');
@@ -1308,6 +1314,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         extensionObjectXml:
           extensionObjectPath && fs.existsSync(extensionObjectPath) ? fs.readFileSync(extensionObjectPath, 'utf-8') : undefined,
         workingDirectory: btmDir,
+        stylesheetPath,
       });
       this.logger.info(
         `Test Map: .NET transformation completed in ${Date.now() - started}ms; ${result.diagnostics.length} diagnostics; output=${Buffer.byteLength(result.outputXml)} bytes.`

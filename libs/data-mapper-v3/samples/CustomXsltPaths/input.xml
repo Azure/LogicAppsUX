@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Source>
+  <Item>
+    <Code>US</Code>
+    <Value>first-item</Value>
+  </Item>
+  <Item>
+    <Code>IN</Code>
+    <Value>second-item</Value>
+  </Item>
+  <Item>
+    <Code>GB</Code>
+    <Value>third-item</Value>
+  </Item>
+</Source>

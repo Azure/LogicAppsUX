@@ -1,5 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { create } from 'xmlbuilder2';
+import { XMLValidator } from 'fast-xml-parser';
 import { BtmSerializer } from './btmSerializer';
 import { getSchemaDependencyLocations, readTextFileSync, resolveSchemaFilePath } from './schemaFileResolver';
 
@@ -13,6 +16,7 @@ export interface MapImportPlan {
   mapName: string;
   mapContent: string;
   schemaFiles: PlannedSchemaFile[];
+  artifactFiles?: PlannedSchemaFile[];
   warnings: string[];
 }
 
@@ -29,10 +33,6 @@ interface SchemaClosureFile {
 const isWindows = process.platform === 'win32';
 const pathKey = (filePath: string): string => (isWindows ? path.resolve(filePath).toLowerCase() : path.resolve(filePath));
 const isRemoteLocation = (location: string): boolean => /^[a-z][a-z0-9+.-]*:\/\//i.test(location);
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 function escapeXmlAttribute(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -108,10 +108,17 @@ function getCommonDirectory(filePaths: string[]): string | undefined {
 }
 
 function rewriteSchemaLocations(xml: string, replacements: Map<string, string>): string {
-  let result = xml;
+  const encodedReplacements = new Map<string, string>();
   for (const [location, replacement] of replacements) {
-    result = result.replace(new RegExp(`(schemaLocation\\s*=\\s*)(["'])${escapeRegExp(location)}\\2`, 'g'), `$1$2${replacement}$2`);
+    const encodedLocation = escapeXmlAttribute(location).replace(/'/g, '&apos;');
+    encodedReplacements.set(location, replacement);
+    encodedReplacements.set(escapeXmlAttribute(location), replacement);
+    encodedReplacements.set(encodedLocation, replacement);
   }
+  const result = xml.replace(/(\bschemaLocation\s*=\s*)(["'])(.*?)\2/g, (match, prefix, quote, location) => {
+    const replacement = encodedReplacements.get(location);
+    return replacement === undefined ? match : `${prefix}${quote}${escapeXmlAttribute(replacement).replace(/'/g, '&apos;')}${quote}`;
+  });
   return result.replace(/(<\?xml[^?]*encoding\s*=\s*["'])utf-16[^"']*(["'])/i, '$1utf-8$2');
 }
 
@@ -123,23 +130,256 @@ function rewriteTreeSchemaLocations(mapContent: string, treeTag: 'SrcTree' | 'Tr
 function replaceTreeLocation(mapContent: string, treeTag: 'SrcTree' | 'TrgTree', location: string): string {
   const treePattern = new RegExp(`<${treeTag}\\b[\\s\\S]*?<\\/${treeTag}>`);
   return mapContent.replace(treePattern, (tree) =>
-    tree.replace(/(<Reference\b[^>]*?\bLocation\s*=\s*)(["'])[^"']*\2/, `$1"${escapeXmlAttribute(location)}"`)
+    tree.replace(/(<Reference\b[^>]*?\bLocation\s*=\s*)(["'])[^"']*\2/, (_match, prefix) => `${prefix}"${escapeXmlAttribute(location)}"`)
   );
 }
 
+function buildArtifactFiles(
+  btmDirectory: string,
+  stylesheetLocation: string | undefined,
+  extensionLocation: string | undefined,
+  mapName: string,
+  warnings: string[]
+): { artifactFiles: PlannedSchemaFile[]; locations: Map<string, string> } {
+  const files = new Map<string, { filePath: string; data: Buffer; document?: ReturnType<typeof create> }>();
+  const references: {
+    filePath: string;
+    baseDirectory: string;
+    directory: boolean;
+    suffix: string;
+    filesystemPath?: boolean;
+    rewrite: (value: string) => void;
+  }[] = [];
+  const basePaths: string[] = [];
+  let totalBytes = 0;
+  const resolveLocation = (location: string, baseUri: URL): URL | undefined => {
+    const normalized = location.replace(/\\/g, '/');
+    const uri =
+      path.win32.isAbsolute(location) || path.isAbsolute(location)
+        ? pathToFileURL(path.resolve(location.replace(/[\\/]/g, path.sep)))
+        : new URL(normalized, baseUri);
+    if (uri.protocol !== 'file:') {
+      warnings.push(`Custom artifact reference "${location}" is not a local file and was not copied.`);
+      return undefined;
+    }
+    return uri;
+  };
+  const collect = (filePath: string, kind: 'stylesheet' | 'extension' | 'data'): void => {
+    const key = pathKey(filePath);
+    let file = files.get(key);
+    if (!file) {
+      const data = fs.readFileSync(filePath);
+      totalBytes += data.length;
+      if (files.size >= 512 || totalBytes > 128 * 1024 * 1024) {
+        throw new Error('Custom artifact dependencies exceed the import limit of 512 files or 128 MB.');
+      }
+      file = { filePath, data };
+      files.set(key, file);
+    }
+    if (kind === 'data' || file.document) {
+      return;
+    }
+    const content = readTextFileSync(filePath);
+    if (content === undefined || XMLValidator.validate(content) !== true) {
+      throw new Error(`Could not parse custom artifact "${filePath}".`);
+    }
+    const document = create(content);
+    file.document = document;
+    const root = document.root().node.ownerDocument!.documentElement!;
+    const fileUri = pathToFileURL(filePath);
+    const visit = (element: typeof root, parentUri: URL): void => {
+      let baseUri = parentUri;
+      const xmlBase = element.getAttributeNS('http://www.w3.org/XML/1998/namespace', 'base');
+      if (xmlBase) {
+        const resolved = resolveLocation(xmlBase, parentUri);
+        if (!resolved) {
+          return;
+        }
+        baseUri = resolved;
+        references.push({
+          filePath: fileURLToPath(baseUri),
+          baseDirectory: fileURLToPath(new URL('.', parentUri)),
+          directory: baseUri.pathname.endsWith('/'),
+          suffix: baseUri.search + baseUri.hash,
+          rewrite: (value) => element.setAttribute('xml:base', value),
+        });
+      }
+      const baseDirectory = fileURLToPath(new URL('.', baseUri));
+      basePaths.push(path.join(baseDirectory, '.base'));
+      const addReference = (
+        location: string,
+        dependencyKind: 'stylesheet' | 'extension' | 'data',
+        rewrite: (value: string) => void,
+        filesystemPath = false
+      ): void => {
+        if (!location) {
+          return;
+        }
+        const referenceBaseDirectory = filesystemPath ? path.dirname(filePath) : baseDirectory;
+        const uri = filesystemPath
+          ? pathToFileURL(path.resolve(referenceBaseDirectory, location.replace(/[\\/]/g, path.sep)))
+          : resolveLocation(location, baseUri);
+        if (!uri) {
+          return;
+        }
+        let resolvedPath = fileURLToPath(uri);
+        if (kind === 'extension' && !fs.existsSync(resolvedPath) && fs.existsSync(`${resolvedPath}.dll`)) {
+          resolvedPath += '.dll';
+        }
+        references.push({
+          filePath: resolvedPath,
+          baseDirectory: referenceBaseDirectory,
+          directory: false,
+          suffix: uri.search + uri.hash,
+          filesystemPath,
+          rewrite,
+        });
+        collect(resolvedPath, dependencyKind);
+      };
+      if (kind === 'stylesheet') {
+        if (element.namespaceURI === 'http://www.w3.org/1999/XSL/Transform' && ['include', 'import'].includes(element.localName)) {
+          const href = element.getAttribute('href');
+          if (href) {
+            addReference(href, 'stylesheet', (value) => element.setAttribute('href', value));
+          }
+        }
+        for (const attribute of Array.from(element.attributes)) {
+          if (
+            attribute.namespaceURI === 'http://www.w3.org/2000/xmlns/' ||
+            attribute.namespaceURI === 'http://www.w3.org/XML/1998/namespace'
+          ) {
+            continue;
+          }
+          const value = attribute.value;
+          const isXPath =
+            element.namespaceURI === 'http://www.w3.org/1999/XSL/Transform' &&
+            [
+              'select',
+              'test',
+              'match',
+              'use',
+              'count',
+              'from',
+              'value',
+              'group-by',
+              'group-adjacent',
+              'group-starting-with',
+              'group-ending-with',
+              'initial-value',
+            ].includes(attribute.localName);
+          const expressions = isXPath
+            ? [{ text: value, offset: 0 }]
+            : [...value.matchAll(/\{\{|\}\}|\{((?:"[^"]*"|'[^']*'|[^{}])*)\}/g)]
+                .filter((match) => match[1] !== undefined)
+                .map((match) => ({ text: match[1], offset: match.index! + 1 }));
+          const edits: { start: number; end: number; value: string }[] = [];
+          for (const expression of expressions) {
+            const tokens = expression.text.matchAll(/"(?:[^"]|"")*"|'(?:[^']|'')*'|(?<![\w.:-])(?:fn:)?(?:document|doc)\s*\(/g);
+            for (const token of tokens) {
+              if (token[0].startsWith('"') || token[0].startsWith("'")) {
+                continue;
+              }
+              const argument = expression.text
+                .slice(token.index! + token[0].length)
+                .match(/^\s*(?:'((?:[^']|'')*)'|"((?:[^"]|"")*)")\s*\)/);
+              if (!argument) {
+                warnings.push(`Stylesheet "${filePath}" contains a dynamic document() reference; copy its additional resources manually.`);
+                continue;
+              }
+              const location = argument[1] !== undefined ? argument[1].replace(/''/g, "'") : argument[2].replace(/""/g, '"');
+              const start = expression.offset + token.index! + token[0].length;
+              const quote = argument[1] !== undefined ? "'" : '"';
+              addReference(location, 'data', (replacement) => {
+                edits.push({ start, end: start + argument[0].length, value: `${quote}${replacement}${quote})` });
+                let updated = value;
+                for (const edit of [...edits].sort((left, right) => right.start - left.start)) {
+                  updated = updated.slice(0, edit.start) + edit.value + updated.slice(edit.end);
+                }
+                element.setAttribute(attribute.name, updated);
+              });
+            }
+          }
+        }
+      }
+      const assemblyAttribute =
+        kind === 'extension' && element.localName === 'ExtensionObject'
+          ? 'AssemblyName'
+          : kind === 'stylesheet' && element.namespaceURI === 'urn:schemas-microsoft-com:xslt' && element.localName === 'assembly'
+            ? 'name'
+            : undefined;
+      if (assemblyAttribute) {
+        const assemblyName = element.getAttribute(assemblyAttribute);
+        if (assemblyName && (/[\\/]/.test(assemblyName) || /\.(dll|exe)$/i.test(assemblyName))) {
+          addReference(assemblyName, 'data', (value) => element.setAttribute(assemblyAttribute, value), true);
+        }
+      }
+      for (const child of Array.from(element.childNodes)) {
+        if (child?.nodeType === 1) {
+          visit(child as typeof root, baseUri);
+        }
+      }
+    };
+    visit(root, fileUri);
+  };
+  const roots = new Map<string, string>();
+  for (const [attribute, location, kind] of [
+    ['XsltPath', stylesheetLocation, 'stylesheet'],
+    ['ExtObjXmlPath', extensionLocation, 'extension'],
+  ] as const) {
+    if (!location) {
+      continue;
+    }
+    const filePath = path.resolve(btmDirectory, location.replace(/[\\/]/g, path.sep));
+    roots.set(attribute, filePath);
+    collect(filePath, kind);
+  }
+  if (files.size === 0) {
+    return { artifactFiles: [], locations: new Map() };
+  }
+  const commonDirectory = getCommonDirectory([...files.values()].map((file) => file.filePath).concat(basePaths));
+  if (!commonDirectory) {
+    throw new Error('The custom artifacts used by this map are on different drives and cannot be copied together.');
+  }
+  for (const reference of references) {
+    const relative =
+      path
+        .relative(reference.baseDirectory, reference.filePath)
+        .split(path.sep)
+        .map((part) => (reference.filesystemPath ? part : encodeURIComponent(part).replace(/'/g, '%27')))
+        .join('/') || '.';
+    reference.rewrite(`${relative}${reference.directory && !relative.endsWith('/') ? '/' : ''}${reference.suffix}`);
+  }
+  const relativePath = (filePath: string): string => `${mapName}/${path.relative(commonDirectory, filePath).split(path.sep).join('/')}`;
+  return {
+    artifactFiles: [...files.values()].map((file) => ({
+      relativePath: relativePath(file.filePath),
+      data: file.document
+        ? Buffer.from(file.document.end().replace(/(<\?xml[^?]*encoding\s*=\s*["'])utf-16[^"']*(["'])/i, '$1utf-8$2'), 'utf8')
+        : file.data,
+    })),
+    locations: new Map([...roots].map(([attribute, filePath]) => [attribute, `Artifacts/${relativePath(filePath)}`])),
+  };
+}
+
 // Lays a schema closure out under a common folder and rewrites references that only resolved through a fallback lookup.
-function buildSchemaFiles(closure: Map<string, SchemaClosureFile>): {
+function buildSchemaFiles(
+  closure: Map<string, SchemaClosureFile>,
+  destinationPaths?: Map<string, string>
+): {
   schemaFiles: PlannedSchemaFile[];
   relativePaths: Map<string, string>;
 } {
   const files = [...closure.values()];
   const commonDirectory = files.length > 0 ? getCommonDirectory(files.map((file) => file.filePath)) : undefined;
-  if (files.length > 0 && !commonDirectory) {
+  if (!destinationPaths && files.length > 0 && !commonDirectory) {
     throw new Error('The schemas used by this map are on different drives and cannot be copied into a single Schemas folder.');
   }
 
-  const relativePaths = new Map<string, string>();
+  const relativePaths = new Map<string, string>(destinationPaths);
   for (const file of files) {
+    if (destinationPaths) {
+      continue;
+    }
     relativePaths.set(
       pathKey(file.filePath),
       path
@@ -154,12 +394,17 @@ function buildSchemaFiles(closure: Map<string, SchemaClosureFile>): {
     // A reference that only resolved through a fallback lookup must be repointed at the copied dependency.
     const replacements = new Map<string, string>();
     for (const edge of file.edges) {
-      const literalPath = path.resolve(path.dirname(file.filePath), edge.location);
-      if (pathKey(literalPath) === pathKey(edge.resolvedPath)) {
-        continue;
-      }
+      const location = edge.location.replace(/[\\/]/g, path.sep);
+      const literalPath = path.resolve(path.dirname(file.filePath), location);
       const dependencyRelativePath = relativePaths.get(pathKey(edge.resolvedPath)) as string;
       const rewritten = path.posix.relative(path.posix.dirname(relativePath), dependencyRelativePath);
+      if (
+        destinationPaths
+          ? location.split(path.sep).join('/') === rewritten
+          : !path.isAbsolute(location) && !path.win32.isAbsolute(edge.location) && pathKey(literalPath) === pathKey(edge.resolvedPath)
+      ) {
+        continue;
+      }
       replacements.set(edge.location, rewritten);
     }
     if (replacements.size === 0) {
@@ -169,6 +414,62 @@ function buildSchemaFiles(closure: Map<string, SchemaClosureFile>): {
     return { relativePath, data: Buffer.from(rewriteSchemaLocations(xml, replacements), 'utf8') };
   });
   return { schemaFiles, relativePaths };
+}
+
+function buildFlatSchemaFiles(
+  closure: Map<string, SchemaClosureFile>,
+  mapName: string,
+  schemasDirectory: string
+): {
+  schemaFiles: PlannedSchemaFile[];
+  relativePaths: Map<string, string>;
+} {
+  const files = [...closure.values()];
+  const relativePaths = new Map(files.map((file) => [pathKey(file.filePath), path.basename(file.filePath)]));
+  const existing = new Map<string, { name: string; data?: Buffer }>();
+  if (fs.existsSync(schemasDirectory)) {
+    for (const entry of fs.readdirSync(schemasDirectory, { withFileTypes: true })) {
+      existing.set(entry.name.toLowerCase(), {
+        name: entry.name,
+        data: entry.isFile() ? fs.readFileSync(path.join(schemasDirectory, entry.name)) : undefined,
+      });
+    }
+  }
+  for (let pass = 0; pass <= files.length + 1; pass++) {
+    let changed = false;
+    const planned = new Map<string, { name: string; data?: Buffer }>(existing);
+    const rendered = buildSchemaFiles(closure, relativePaths);
+    for (const [index, file] of files.entries()) {
+      const key = pathKey(file.filePath);
+      let name = path.basename(file.filePath);
+      const data = rendered.schemaFiles[index].data;
+      const extension = path.extname(file.filePath);
+      const stem = path.basename(file.filePath, extension);
+      for (let suffix = 0; ; suffix++) {
+        const collision = planned.get(name.toLowerCase());
+        if (!collision || (collision.data && collision.data.equals(data))) {
+          name = collision?.name ?? name;
+          break;
+        }
+        name = `${stem}_${mapName}${suffix === 0 ? '' : `(${suffix})`}${extension}`;
+      }
+      if (relativePaths.get(key) !== name) {
+        relativePaths.set(key, name);
+        changed = true;
+      }
+      planned.set(name.toLowerCase(), { name, data });
+    }
+    if (!changed) {
+      const uniqueFiles = new Map<string, PlannedSchemaFile>();
+      for (const file of rendered.schemaFiles) {
+        if (!existing.get(file.relativePath.toLowerCase())?.data?.equals(file.data)) {
+          uniqueFiles.set(file.relativePath.toLowerCase(), file);
+        }
+      }
+      return { schemaFiles: [...uniqueFiles.values()], relativePaths };
+    }
+  }
+  throw new Error('Could not resolve schema filename conflicts without changing existing schemas.');
 }
 
 export interface SchemaImportPlan {
@@ -214,7 +515,22 @@ export function planSchemaImport(schemaPath: string): SchemaImportPlan {
 
 // Builds the set of files needed to bring a .btm into a mapper project: the map itself with its schema references
 // repointed at the Schemas folder, plus each referenced schema and its imports in their original relative layout.
-export function planMapImport(btmPath: string, mapContentOverride?: string): MapImportPlan {
+export function planMapImport(
+  btmPath: string,
+  mapContentOverride?: string,
+  options?: { destinationMapName: string; schemasDirectory?: string }
+): MapImportPlan {
+  const destinationMapName = options?.destinationMapName;
+  if (
+    destinationMapName !== undefined &&
+    (!destinationMapName ||
+      /[<>:"/\\|?*]/.test(destinationMapName) ||
+      [...destinationMapName].some((character) => character.charCodeAt(0) < 32) ||
+      /^\.+$/.test(destinationMapName) ||
+      /[. ]$/.test(destinationMapName))
+  ) {
+    throw new Error('The imported map name must be a valid folder name.');
+  }
   const mapContent = mapContentOverride ?? readTextFileSync(btmPath);
   if (mapContent === undefined) {
     throw new Error(`Could not read "${btmPath}".`);
@@ -265,7 +581,10 @@ export function planMapImport(btmPath: string, mapContentOverride?: string): Map
     collectSchemaClosure(resolvedPath, closure, warnings);
   }
 
-  const { schemaFiles, relativePaths } = buildSchemaFiles(closure);
+  const { schemaFiles, relativePaths } =
+    destinationMapName && options?.schemasDirectory
+      ? buildFlatSchemaFiles(closure, destinationMapName, options.schemasDirectory)
+      : buildSchemaFiles(closure);
 
   let updatedMapContent = mapContent;
   for (const [treeTag, rootPath] of rootPaths) {
@@ -280,12 +599,27 @@ export function planMapImport(btmPath: string, mapContentOverride?: string): Map
       updatedMapContent = rewriteTreeSchemaLocations(updatedMapContent, treeTag, replacements);
     }
   }
+  let artifactFiles: PlannedSchemaFile[] | undefined;
+  if (destinationMapName) {
+    const artifacts = buildArtifactFiles(btmDirectory, map.customXsltPath, map.customExtensionXmlPath, destinationMapName, warnings);
+    artifactFiles = artifacts.artifactFiles;
+    updatedMapContent = updatedMapContent.replace(/<CustomXSLT\b[^>]*>/, (element) => {
+      for (const [attribute, location] of artifacts.locations) {
+        element = element.replace(
+          new RegExp(`(\\b${attribute}\\s*=\\s*)(["'])[^"']*\\2`),
+          (_match, prefix) => `${prefix}"${escapeXmlAttribute(location)}"`
+        );
+      }
+      return element;
+    });
+  }
   updatedMapContent = updatedMapContent.replace(/(<\?xml[^?]*encoding\s*=\s*["'])utf-16[^"']*(["'])/i, '$1utf-8$2');
 
   return {
     mapName: path.basename(btmPath, path.extname(btmPath)),
     mapContent: updatedMapContent,
     schemaFiles,
+    ...(artifactFiles ? { artifactFiles } : {}),
     warnings,
   };
 }

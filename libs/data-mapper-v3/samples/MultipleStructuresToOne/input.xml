@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:Input xmlns:ns0="http://PreserveSequenceOrder.Input">
+  <FootballPlayers>
+    <Name>Alex</Name>
+    <Gender>Female</Gender>
+    <Team>Falcons</Team>
+  </FootballPlayers>
+  <FootballPlayers>
+    <Name>Sam</Name>
+    <Gender>Male</Gender>
+    <Team>Rovers</Team>
+  </FootballPlayers>
+  <HockeyPlayers>
+    <Name>Jordan</Name>
+    <Gender>Female</Gender>
+    <Team>Comets</Team>
+  </HockeyPlayers>
+  <HockeyPlayers>
+    <Name>Taylor</Name>
+    <Gender>Male</Gender>
+    <Team>Wolves</Team>
+  </HockeyPlayers>
+</ns0:Input>

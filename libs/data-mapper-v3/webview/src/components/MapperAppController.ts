@@ -219,9 +219,9 @@ export class MapperAppController {
     this.publishingRequests.clear();
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('contextmenu', this.handleContextMenu);
-    document.removeEventListener('pointermove', this.handleLinkPointerMove);
+    document.removeEventListener('pointermove', this.handleLinkPointerMove, true);
     document.removeEventListener('pointerdown', this.handleEndpointPointerDown, true);
-    document.removeEventListener('pointerup', this.handleLinkPointerUp);
+    document.removeEventListener('pointerup', this.handleLinkPointerUp, true);
     window.removeEventListener('resize', this.handleResize);
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
@@ -245,9 +245,9 @@ export class MapperAppController {
   private setupKeyboardShortcuts(): void {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('contextmenu', this.handleContextMenu);
-    document.addEventListener('pointermove', this.handleLinkPointerMove);
+    document.addEventListener('pointermove', this.handleLinkPointerMove, true);
     document.addEventListener('pointerdown', this.handleEndpointPointerDown, true);
-    document.addEventListener('pointerup', this.handleLinkPointerUp);
+    document.addEventListener('pointerup', this.handleLinkPointerUp, true);
   }
 
   private readonly handleEndpointPointerDown = (event: PointerEvent): void => {
@@ -286,7 +286,7 @@ export class MapperAppController {
   };
 
   private readonly handleLinkPointerUp = (event: PointerEvent): void => {
-    if (this.replacingLink && this.pendingLink && this.linkPointerMoved) {
+    if (this.pendingLink && this.linkPointerMoved) {
       const connectors = document.elementsFromPoint(event.clientX, event.clientY);
       const connector = connectors.find((element) => element.matches('.node-connector, .functoid-connector'));
       if (connector) {
@@ -300,6 +300,34 @@ export class MapperAppController {
           if (id) {
             this.onFunctoidConnectorPointerUp(id, connector.classList.contains('input-connector') ? 'input' : 'output');
           }
+        }
+      } else {
+        const viewport = this.canvas.getBoundingClientRect();
+        const insideCanvas =
+          event.clientX >= viewport.left &&
+          event.clientX <= viewport.right &&
+          event.clientY >= viewport.top &&
+          event.clientY <= viewport.bottom;
+        const functoid = insideCanvas
+          ? Array.from(this.canvas.querySelectorAll<SVGElement>('.functoid-node'))
+              .reverse()
+              .find((node) => {
+                const body = node.querySelector('.functoid-body');
+                if (!body || body.getClientRects().length === 0) {
+                  return false;
+                }
+                const bounds = body.getBoundingClientRect();
+                return (
+                  event.clientX >= bounds.left &&
+                  event.clientX <= bounds.right &&
+                  event.clientY >= bounds.top &&
+                  event.clientY <= bounds.bottom
+                );
+              })
+          : undefined;
+        const id = functoid?.getAttribute('data-id');
+        if (id) {
+          this.onFunctoidConnectorPointerUp(id, this.pendingLink.side === 'source' ? 'input' : 'output');
         }
       }
     }
@@ -1257,6 +1285,11 @@ export class MapperAppController {
       },
       onFunctoidOutputPointerUp: (fId) => {
         this.onFunctoidConnectorPointerUp(fId, 'output');
+      },
+      onFunctoidBodyPointerUp: (fId) => {
+        if (this.pendingLink) {
+          this.onFunctoidConnectorPointerUp(fId, this.pendingLink.side === 'source' ? 'input' : 'output');
+        }
       },
       onLinkPointerDown: (clientX, clientY) => this.beginLinkPointer(clientX, clientY),
       onDeselect: () => {
@@ -2431,7 +2464,9 @@ export class MapperAppController {
     );
     const minInputs = definition?.minInputs ?? 0;
     const maxInputs = definition?.maxInputs ?? 100;
-    const description = definition?.description || definition?.tooltip || 'No description is available for this functoid.';
+    const description = definition
+      ? definition.description || definition.tooltip || 'No description is available for this functoid.'
+      : `Functoid not found (FID ${functoid?.functoidId ?? ''}). Its implementation is unavailable in this mapper.`;
 
     const inputs: FunctoidConfigInput[] = (this.functoidInputsDraft || []).map((input) => {
       const isConstant = input.type === ParameterType.Constant;

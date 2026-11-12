@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Countries>
+  <Country code="US" name="United States"/>
+  <Country code="IN" name="India"/>
+  <Country code="GB" name="United Kingdom"/>
+</Countries>

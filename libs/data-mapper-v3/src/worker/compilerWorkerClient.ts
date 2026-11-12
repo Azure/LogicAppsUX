@@ -31,6 +31,7 @@ export interface WorkerTestMapRequest {
   inputXml: string;
   extensionObjectXml?: string;
   workingDirectory?: string;
+  stylesheetPath?: string;
 }
 
 export interface WorkerTestMapResult {

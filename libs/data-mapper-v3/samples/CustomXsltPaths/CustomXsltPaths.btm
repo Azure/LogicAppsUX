@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Custom XSLT Relative Paths" Version="2" XRange="100" YRange="420" OmitXmlDeclaration="No" TreatElementsAsRecords="No" OptimizeValueMapping="Yes" GenerateDefaultFixedNodes="No" PreserveSequenceOrder="No" IgnoreNamespacesForLinks="No">
+  <SrcTree RootNode_Name="Source">
+    <Reference Location="Source.xsd"/>
+  </SrcTree>
+  <TrgTree RootNode_Name="Result">
+    <Reference Location="Target.xsd"/>
+  </TrgTree>
+  <CustomXSLT XsltPath="xslt/main.xsl" ExtObjXmlPath=""/>
+  <Pages>
+    <Page Name="Custom XSLT"/>
+  </Pages>
+</mapsource>

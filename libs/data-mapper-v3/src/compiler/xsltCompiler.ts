@@ -2029,6 +2029,20 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return !!this.findSourceNode(srcPath)?.children.length;
   }
 
+  private isRecordLink(link: MapLink): boolean {
+    if (
+      link.sourceType !== LinkEndpointType.SchemaNode ||
+      link.targetType !== LinkEndpointType.SchemaNode ||
+      !link.sourcePath ||
+      !link.targetPath ||
+      (link.sourceLinkOption && link.sourceLinkOption !== SourceLinkOption.ValueCopy)
+    ) {
+      return false;
+    }
+    const target = this.targetPaths.resolve(link.targetPath);
+    return !!target && !target.attribute && !this.isEffectiveLeaf(target.node) && this.isContainerSourcePath(link.sourcePath);
+  }
+
   /**
    * Convert a source path to a for-each select expression (without /text())
    */
@@ -2088,9 +2102,25 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
           link.sourceType === LinkEndpointType.Functoid &&
           page.functoids.some((functoid) => functoid.id === link.sourceId && (functoid.functoidId === 424 || functoid.functoidId === 801))
       )?.sourceId;
-      for (const loopPath of sourceForEachPaths) {
+      const orderedLoopVariables = this.currentMap?.options.preserveSequenceOrder
+        ? sourceForEachPaths.map((loopPath) => {
+            const variable = `var:v${++this.variableCounter}`;
+            result += `${pad}<xsl:variable name="${variable}" select="${this.pathToForEachXPath(loopPath, contextPath)}" />\n`;
+            return `$${variable}`;
+          })
+        : [];
+      if (orderedLoopVariables.length > 0) {
+        result += `${pad}<xsl:for-each select="${orderedLoopVariables.join(' | ')}">\n`;
+        this.variableScopeStack.push(new Set());
+        indent += 2;
+      }
+      const branchPad = ' '.repeat(indent);
+      for (const [index, loopPath] of sourceForEachPaths.entries()) {
         const loopSelect = this.pathToForEachXPath(loopPath, contextPath);
-        result += `${pad}<xsl:for-each select="${loopSelect}">\n`;
+        const orderedNodes = orderedLoopVariables[index];
+        result += orderedNodes
+          ? `${branchPad}<xsl:if test="count(. | ${orderedNodes}) = count(${orderedNodes})">\n`
+          : `${branchPad}<xsl:for-each select="${loopSelect}">\n`;
         this.variableScopeStack.push(new Set());
         if (loopFunctoidId) {
           this.activeLoopContexts.push({
@@ -2102,6 +2132,10 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         if (loopFunctoidId) {
           this.activeLoopContexts.pop();
         }
+        this.variableScopeStack.pop();
+        result += orderedNodes ? `${branchPad}</xsl:if>\n` : `${branchPad}</xsl:for-each>\n`;
+      }
+      if (orderedLoopVariables.length > 0) {
         this.variableScopeStack.pop();
         result += `${pad}</xsl:for-each>\n`;
       }
@@ -2197,6 +2231,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         });
     const valueLinks = directLinks.filter(
       (link) =>
+        !this.isRecordLink(link) &&
         !logicalRecordLinks.includes(link) &&
         !this.isFunctoidSource(link, page, 424) &&
         !this.isFunctoidSource(link, page, 801) &&
@@ -2216,6 +2251,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         this.linkHasConditionalSource(link, page) &&
         !isRoot &&
         !attributeContexts.get(link.id) &&
+        !this.linkCrossesLoopBoundary(node, link, page, activeContextPath) &&
         this.linkAllowedInActiveLoop(link, page)
     );
     result += this.compileVariablesForLinks(
@@ -2825,12 +2861,16 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
           continue;
         }
         const compilation = this.compiledFunctoids.get(this.functoidCacheKey(functoid.id, contextPath));
-        if (compilation?.conditionalTest) {
-          conditions.push(compilation.conditionalTest);
+        const linkConditions = [
+          ...new Set([...(compilation?.conditionalTest ? [compilation.conditionalTest] : []), ...(compilation?.guardConditions || [])]),
+        ];
+        if (linkConditions.length > 0) {
+          conditions.push(
+            linkConditions.length === 1 ? linkConditions[0] : linkConditions.map((condition) => `(${condition})`).join(' and ')
+          );
         }
-        conditions.push(...(compilation?.guardConditions || []));
-        if (targetPath !== false && (compilation?.conditionalTest || compilation?.guardConditions?.length)) {
-          this.recordCompilerSources(compilation.sourcePaths || [], targetPath || link.targetPath);
+        if (targetPath !== false && linkConditions.length > 0) {
+          this.recordCompilerSources(compilation?.sourcePaths || [], targetPath || link.targetPath);
         }
       }
     }
@@ -2851,6 +2891,9 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     if (links.length === 0) {
       return [];
     }
+    if (links.some((link) => this.linkCrossesLoopBoundary(node, link, page, contextPath))) {
+      return [];
+    }
     const conditionsByLink = links.map((link) => this.getTargetConditions([link], page, contextPath, false));
     if (conditionsByLink.some((conditions) => conditions.length === 0)) {
       return [];
@@ -2859,6 +2902,46 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       this.getTargetConditions([link], page, contextPath, node.path);
     }
     return [...new Set(conditionsByLink.flat())];
+  }
+
+  private linkCrossesLoopBoundary(node: SchemaNode, link: MapLink, page: MapPage, contextPath?: string): boolean {
+    if (!link.targetPath) {
+      return false;
+    }
+    const resolved = this.targetPaths.resolve(link.targetPath);
+    const ancestors = resolved?.ancestors || [];
+    const nodeIndex = ancestors.findIndex((ancestor) => ancestor.path === node.path);
+    if (nodeIndex < 0) {
+      return false;
+    }
+    for (let index = nodeIndex + 1; index < ancestors.length; index++) {
+      const descendant = ancestors[index];
+      const parent = ancestors[index - 1];
+      const sequenceMappings = this.findSequenceOrderedMappings(parent.children, page, contextPath);
+      if (sequenceMappings?.some((mapping) => mapping.child.path === descendant.path)) {
+        return true;
+      }
+      const directLinks = page.links.filter(
+        (candidate) =>
+          candidate.targetType === LinkEndpointType.SchemaNode &&
+          candidate.targetPath === descendant.path &&
+          this.linkAllowedInActiveLoop(candidate, page)
+      );
+      if (directLinks.length > 0 && this.isEffectiveLeaf(descendant) && descendant.attributes.length === 0) {
+        continue;
+      }
+      if (directLinks.some((candidate) => this.isFunctoidSource(candidate, page, 703))) {
+        return true;
+      }
+      const repeats = descendant.maxOccurs === 'unbounded' || (typeof descendant.maxOccurs === 'number' && descendant.maxOccurs > 1);
+      const hasExplicitLoop = directLinks.some(
+        (candidate) => this.isFunctoidSource(candidate, page, 424) || this.isFunctoidSource(candidate, page, 801)
+      );
+      if ((repeats || hasExplicitLoop) && this.findForEachSourcePaths(descendant, page).length > 0) {
+        return true;
+      }
+    }
+    return !!resolved?.attribute && !!this.findFlattenedAttributeSourcePath(link, page, contextPath);
   }
 
   private linkAllowedInActiveLoop(link: MapLink, page: MapPage): boolean {
@@ -2962,13 +3045,11 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return node.fixedValue ?? node.defaultValue;
   }
 
-  private generateSequenceOrderedChildren(
+  private findSequenceOrderedMappings(
     children: SchemaNode[],
     page: MapPage,
-    linkGraph: Map<string, MapLink[]>,
-    indent: number,
     contextPath?: string
-  ): string | undefined {
+  ): { child: SchemaNode; sourcePath: string; sourceNode: SchemaNode | undefined }[] | undefined {
     if (!this.currentMap?.options.preserveSequenceOrder || children.length < 2) {
       return undefined;
     }
@@ -3025,6 +3106,20 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       return undefined;
     }
 
+    return mappings;
+  }
+
+  private generateSequenceOrderedChildren(
+    children: SchemaNode[],
+    page: MapPage,
+    linkGraph: Map<string, MapLink[]>,
+    indent: number,
+    contextPath?: string
+  ): string | undefined {
+    const mappings = this.findSequenceOrderedMappings(children, page, contextPath);
+    if (!mappings) {
+      return undefined;
+    }
     const pad = ' '.repeat(indent);
     let result = `${pad}<xsl:for-each select="*">\n`;
     this.variableScopeStack.push(new Set());
@@ -3116,6 +3211,13 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       return this.findLoopingInputLinks(loopFunctoid, page)
         .map((link) => link.sourcePath)
         .filter((path): path is string => !!path);
+    }
+
+    const recordPaths = page.links
+      .filter((link) => link.targetPath === node.path && this.isRecordLink(link) && this.linkAllowedInActiveLoop(link, page))
+      .map((link) => link.sourcePath!);
+    if (recordPaths.length > 0) {
+      return [...new Set(recordPaths)];
     }
 
     const descendantLinks = page.links.filter(

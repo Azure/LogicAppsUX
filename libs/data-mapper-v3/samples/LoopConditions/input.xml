@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Source>
+  <Order>
+    <Line>
+      <FlagA>N</FlagA>
+      <FlagB>Y</FlagB>
+      <Value>A-false-B-true</Value>
+    </Line>
+    <Line>
+      <FlagA>Y</FlagA>
+      <FlagB>Y</FlagB>
+      <Value>both-true</Value>
+    </Line>
+    <Line>
+      <FlagA>Y</FlagA>
+      <FlagB>N</FlagB>
+      <Value>A-true-B-false</Value>
+    </Line>
+    <Line>
+      <FlagA>N</FlagA>
+      <FlagB>N</FlagB>
+      <Value>both-false</Value>
+    </Line>
+  </Order>
+  <Order>
+    <Line>
+      <FlagA>Y</FlagA>
+      <FlagB>Y</FlagB>
+      <Value>second-order</Value>
+    </Line>
+  </Order>
+</Source>

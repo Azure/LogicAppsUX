@@ -1,4 +1,6 @@
 import { IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
+import * as fs from 'fs';
+import * as path from 'path';
 import { planLmlImport } from './lml/lmlImportPlanner';
 import { lmlEditorViewType } from './lml/editorProtocol';
 import { planMapImport } from './schema/mapImportPlanner';
@@ -227,13 +229,6 @@ export async function importExistingMap(
 
   const isLml = selected[0].path.toLowerCase().endsWith('.lml');
   const extension = isLml ? '.lml' : '.btm';
-  let plan: MapImportPlan;
-  try {
-    plan = isLml ? planLmlImport(selected[0].fsPath) : planMapImport(selected[0].fsPath);
-  } catch (error) {
-    vscode.window.showErrorMessage(`Could not import "${selected[0].fsPath}": ${error instanceof Error ? error.message : String(error)}`);
-    return;
-  }
 
   let projectUri: vscode.Uri | undefined;
   const selectedUri = resourceUri(value);
@@ -266,51 +261,127 @@ export async function importExistingMap(
 
   await ensureWorkspaceFolders(projectUri);
   const schemasUri = vscode.Uri.joinPath(projectUri, schemasFolderName);
+  const artifactsUri = vscode.Uri.joinPath(projectUri, 'Artifacts');
+  const existingNames = await readDirectoryNames(projectUri);
+  if (!isLml) {
+    for (const name of await readDirectoryNames(artifactsUri)) {
+      existingNames.push(`${name}${extension}`);
+    }
+  }
+  const sourceName = path.basename(selected[0].fsPath, path.extname(selected[0].fsPath));
+  const mapFileName = getDuplicateSafeName(sourceName, extension, existingNames);
+  const destinationMapName = mapFileName.slice(0, -extension.length);
+  if (!isLml) {
+    const nameError = validateWorkspaceName(destinationMapName);
+    if (nameError) {
+      throw new Error(nameError);
+    }
+  }
+  const mapUri = vscode.Uri.joinPath(projectUri, mapFileName);
+  let plan: MapImportPlan;
+  try {
+    plan = isLml
+      ? planLmlImport(selected[0].fsPath)
+      : planMapImport(selected[0].fsPath, undefined, { destinationMapName, schemasDirectory: schemasUri.fsPath });
+  } catch (error) {
+    vscode.window.showErrorMessage(`Could not import "${selected[0].fsPath}": ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
   const filesToWrite: { uri: vscode.Uri; data: Buffer }[] = [];
   const conflicts: { uri: vscode.Uri; data: Buffer; relativePath: string }[] = [];
   for (const schemaFile of plan.schemaFiles) {
     const uri = vscode.Uri.joinPath(schemasUri, ...schemaFile.relativePath.split('/'));
+    if (!isLml) {
+      filesToWrite.push({ uri, data: schemaFile.data });
+      continue;
+    }
     if (!(await pathExists(uri))) {
       filesToWrite.push({ uri, data: schemaFile.data });
     } else if (Buffer.compare(Buffer.from(await vscode.workspace.fs.readFile(uri)), schemaFile.data) !== 0) {
       conflicts.push({ uri, data: schemaFile.data, relativePath: schemaFile.relativePath });
     }
   }
+  for (const artifact of plan.artifactFiles ?? []) {
+    filesToWrite.push({ uri: vscode.Uri.joinPath(artifactsUri, ...artifact.relativePath.split('/')), data: artifact.data });
+  }
   if (conflicts.length > 0) {
-    if (isLml) {
-      vscode.window.showErrorMessage(
-        `LML import would replace existing schemas: ${conflicts.map((conflict) => conflict.relativePath).join(', ')}. Import into a separate mapper project to keep existing maps unchanged.`
-      );
-      return;
-    }
-    const overwrite = 'Overwrite';
-    const keep = 'Keep Existing';
-    const choice = await vscode.window.showWarningMessage(
-      `${conflicts.length} schema file(s) already exist in ${schemasFolderName} with different content: ${conflicts
-        .map((conflict) => conflict.relativePath)
-        .join(', ')}`,
-      { modal: true },
-      overwrite,
-      keep
+    vscode.window.showErrorMessage(
+      `LML import would replace existing schemas: ${conflicts.map((conflict) => conflict.relativePath).join(', ')}. Import into a separate mapper project to keep existing maps unchanged.`
     );
-    if (!choice) {
-      return;
-    }
-    if (choice === overwrite) {
-      filesToWrite.push(...conflicts);
-    }
+    return;
   }
 
-  for (const file of filesToWrite) {
-    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(file.uri, '..'));
-    await vscode.workspace.fs.writeFile(file.uri, file.data);
+  const createdScopes: vscode.Uri[] = [];
+  const createdSchemas: string[] = [];
+  let createdMap = false;
+  try {
+    if (!isLml) {
+      if (plan.artifactFiles?.length) {
+        await vscode.workspace.fs.createDirectory(artifactsUri);
+        const scope = vscode.Uri.joinPath(artifactsUri, destinationMapName);
+        await fs.promises.mkdir(scope.fsPath);
+        createdScopes.push(scope);
+      }
+      const destinations = new Set<string>();
+      for (const file of filesToWrite) {
+        const destination = path.resolve(file.uri.fsPath).toLocaleLowerCase();
+        if (
+          destinations.has(destination) ||
+          !(
+            path.resolve(path.dirname(file.uri.fsPath)) === path.resolve(schemasUri.fsPath) ||
+            createdScopes.some((scope) => {
+              const relative = path.relative(scope.fsPath, file.uri.fsPath);
+              return relative !== '' && !relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative);
+            })
+          )
+        ) {
+          throw new Error(`Unsafe or duplicate imported dependency path: ${file.uri.fsPath}`);
+        }
+        destinations.add(destination);
+      }
+    }
+    for (const file of filesToWrite) {
+      await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(file.uri, '..'));
+      if (isLml) {
+        await vscode.workspace.fs.writeFile(file.uri, file.data);
+      } else {
+        const handle = await fs.promises.open(file.uri.fsPath, 'wx');
+        if (path.resolve(path.dirname(file.uri.fsPath)) === path.resolve(schemasUri.fsPath)) {
+          createdSchemas.push(file.uri.fsPath);
+        }
+        try {
+          await handle.writeFile(file.data);
+        } finally {
+          await handle.close();
+        }
+      }
+    }
+    if (isLml) {
+      await vscode.workspace.fs.writeFile(mapUri, Buffer.from(plan.mapContent, 'utf8'));
+    } else {
+      const handle = await fs.promises.open(mapUri.fsPath, 'wx');
+      createdMap = true;
+      try {
+        await handle.writeFile(plan.mapContent, { encoding: 'utf8' });
+      } finally {
+        await handle.close();
+      }
+    }
+  } catch (error) {
+    if (createdMap) {
+      await fs.promises.unlink(mapUri.fsPath).catch(() => undefined);
+    }
+    for (const schemaPath of createdSchemas.reverse()) {
+      await fs.promises.unlink(schemaPath).catch(() => undefined);
+    }
+    for (const scope of createdScopes.reverse()) {
+      await Promise.resolve(vscode.workspace.fs.delete(scope, { recursive: true })).catch(() => undefined);
+    }
+    throw error;
   }
-  const existingNames = await readDirectoryNames(projectUri);
-  const mapUri = vscode.Uri.joinPath(projectUri, getDuplicateSafeName(plan.mapName, extension, existingNames));
-  await vscode.workspace.fs.writeFile(mapUri, Buffer.from(plan.mapContent, 'utf8'));
   onChanged();
 
-  const summary = `Imported "${plan.mapName}${extension}" with ${plan.schemaFiles.length} schema file(s).`;
+  const summary = `Imported "${mapFileName}" with ${plan.schemaFiles.length} schema file(s) and ${plan.artifactFiles?.length ?? 0} custom artifact file(s).`;
   if (plan.warnings.length > 0) {
     vscode.window.showWarningMessage(`${summary} ${plan.warnings.join(' ')}`);
   } else {

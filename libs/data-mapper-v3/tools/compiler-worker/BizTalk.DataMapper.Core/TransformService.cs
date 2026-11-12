@@ -8,7 +8,8 @@ public sealed record TransformRequest(
     string Xslt,
     string InputXml,
     string? ExtensionObjectXml,
-    string? WorkingDirectory);
+    string? WorkingDirectory,
+    string? StylesheetPath = null);
 
 public sealed record TransformResult(
     bool Success,
@@ -18,6 +19,17 @@ public sealed record TransformResult(
 
 public sealed class TransformService
 {
+    private static bool ContainsExtensionObjects(string? extensionObjectXml)
+    {
+        if (string.IsNullOrWhiteSpace(extensionObjectXml))
+        {
+            return false;
+        }
+        var document = new XmlDocument();
+        document.LoadXml(extensionObjectXml);
+        return document.SelectSingleNode("/ExtensionObjects/ExtensionObject") is not null;
+    }
+
     public TransformResult Transform(TransformRequest request)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Xslt);
@@ -34,6 +46,10 @@ public sealed class TransformService
         Directory.CreateDirectory(operationDirectory);
 
         string xsltPath = Path.Combine(operationDirectory, "map.xslt");
+        string stylesheetBaseUri = new Uri(Path.GetFullPath(
+            string.IsNullOrWhiteSpace(request.StylesheetPath)
+                ? xsltPath
+                : Path.Combine(workingDirectory, request.StylesheetPath))).AbsoluteUri;
         string inputPath = Path.Combine(operationDirectory, "input.xml");
         string outputPath = Path.Combine(operationDirectory, "output.xml");
         string? extensionPath = request.ExtensionObjectXml is null
@@ -58,13 +74,14 @@ public sealed class TransformService
             string? frameworkHost = FindFrameworkTransformHost();
             bool requiresFrameworkHost =
                 ContainsScriptBlock(request.Xslt) ||
-                RequiresXslt20Processor(request.Xslt);
+                RequiresXslt20Processor(request.Xslt) ||
+                ContainsExtensionObjects(request.ExtensionObjectXml);
             if (requiresFrameworkHost)
             {
                 if (frameworkHost is null)
                 {
                     const string message =
-                        "The packaged .NET Framework transform host required for scripts and XSLT 2.0 or later was not found.";
+                        "The packaged .NET Framework transform host required for scripts, extension objects, and XSLT 2.0 or later was not found.";
                     return new TransformResult(false, null, message, message);
                 }
 
@@ -73,18 +90,15 @@ public sealed class TransformService
                     xsltPath,
                     inputPath,
                     outputPath,
-                    extensionPath);
+                    extensionPath,
+                    stylesheetBaseUri);
             }
 
             Console.SetOut(standardOutput);
             Console.SetError(standardError);
             Environment.CurrentDirectory = workingDirectory;
 
-            var args = new List<string> { xsltPath, inputPath, outputPath };
-            if (extensionPath is not null)
-            {
-                args.Add(extensionPath);
-            }
+            var args = new List<string> { xsltPath, inputPath, outputPath, extensionPath ?? "", stylesheetBaseUri };
 
             int exitCode = global::Program.Main(args.ToArray());
             string diagnostics = JoinDiagnostics(standardOutput, standardError);
@@ -187,7 +201,8 @@ public sealed class TransformService
         string xsltPath,
         string inputPath,
         string outputPath,
-        string? extensionPath)
+        string? extensionPath,
+        string stylesheetBaseUri)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -201,10 +216,8 @@ public sealed class TransformService
         startInfo.ArgumentList.Add(xsltPath);
         startInfo.ArgumentList.Add(inputPath);
         startInfo.ArgumentList.Add(outputPath);
-        if (extensionPath is not null)
-        {
-            startInfo.ArgumentList.Add(extensionPath);
-        }
+        startInfo.ArgumentList.Add(extensionPath ?? "");
+        startInfo.ArgumentList.Add(stylesheetBaseUri);
 
         using var process = Process.Start(startInfo)
             ?? throw new InvalidOperationException("Failed to start the .NET Framework transform host.");

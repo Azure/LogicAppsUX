@@ -31,11 +31,15 @@ import {
 } from '@fluentui/react-icons';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { SchemaPathResolver } from '../../../src/schema/schemaPathResolver';
 import { getVsCodeFluentTheme } from '../fluentTheme';
 
 export interface SchemaNodeView {
   name: string;
   path: string;
+  schemaPath?: string;
+  structuralPath?: string;
+  instancePath?: string;
   type?: string;
   dataType?: string;
   dataTypeNamespace?: string;
@@ -943,6 +947,7 @@ export class SchemaTreeRenderer extends HTMLElement {
 
   public getNodePositions(paths: Iterable<string>): Map<string, { x: number; y: number }> {
     const positions = new Map<string, { x: number; y: number }>();
+    const resolver = new SchemaPathResolver<SchemaNodeView>(this.schema);
     const visibleNodes = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'));
     const nodesByPath = new Map<string, HTMLElement>();
     for (const node of visibleNodes) {
@@ -962,7 +967,7 @@ export class SchemaTreeRenderer extends HTMLElement {
     const maxY = Math.max(minY, viewportRect.bottom);
 
     for (const path of new Set(paths)) {
-      let visiblePath = path;
+      let visiblePath = resolver.resolve(path)?.path ?? path;
       let node = nodesByPath.get(visiblePath);
       while (!node) {
         const separatorIndex = visiblePath.lastIndexOf('/');

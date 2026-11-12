@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="MapToOnlyOneStructure" Version="2" XRange="100" YRange="420" OmitXmlDeclaration="No" TreatElementsAsRecords="No" OptimizeValueMapping="Yes" GenerateDefaultFixedNodes="No" PreserveSequenceOrder="No" IgnoreNamespacesForLinks="No">
+  <SrcTree RootNode_Name="Input">
+    <Reference Location="Input.xsd"/>
+  </SrcTree>
+  <TrgTree RootNode_Name="Output">
+    <Reference Location="AnotherOutput.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Link LinkID="100" SourceType="schemaNode" TargetType="functoid" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='FootballPlayers' and namespace-uri()='']" TargetID="1"/>
+      <Link LinkID="101" SourceType="schemaNode" TargetType="functoid" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='HockeyPlayers' and namespace-uri()='']" TargetID="1"/>
+      <Link LinkID="102" SourceType="functoid" TargetType="schemaNode" SourceID="1" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']"/>
+      <Link LinkID="103" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='FootballPlayers' and namespace-uri()='']/*[local-name()='Name' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Name' and namespace-uri()='']"/>
+      <Link LinkID="104" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='FootballPlayers' and namespace-uri()='']/*[local-name()='Gender' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Gender' and namespace-uri()='']"/>
+      <Link LinkID="105" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='FootballPlayers' and namespace-uri()='']/*[local-name()='Team' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Team' and namespace-uri()='']"/>
+      <Link LinkID="106" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='HockeyPlayers' and namespace-uri()='']/*[local-name()='Name' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Name' and namespace-uri()='']"/>
+      <Link LinkID="107" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='HockeyPlayers' and namespace-uri()='']/*[local-name()='Gender' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Gender' and namespace-uri()='']"/>
+      <Link LinkID="108" SourceID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Input' and namespace-uri()='http://PreserveSequenceOrder.Input']/*[local-name()='&lt;Choice&gt;']/*[local-name()='HockeyPlayers' and namespace-uri()='']/*[local-name()='Team' and namespace-uri()='']" TargetID="/*[local-name()='&lt;Schema&gt;']/*[local-name()='Output' and namespace-uri()='http://PreserveSequenceOrder.AnotherOutput']/*[local-name()='Player' and namespace-uri()='']/*[local-name()='Team' and namespace-uri()='']"/>
+      <Functoid FunctoidID="1" TypeID="424" Name="Looping" X="50" Y="80">
+        <Input-Parameters>
+          <Parameter Index="0" Type="link" Value="100"/>
+          <Parameter Index="1" Type="link" Value="101"/>
+        </Input-Parameters>
+      </Functoid>
+    </Page>
+  </Pages>
+</mapsource>

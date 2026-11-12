@@ -15,7 +15,7 @@ using Microsoft.CSharp;
 /// XSLT transform tool that handles msxsl:script by extracting C# code,
 /// compiling it dynamically, and registering as extension objects.
 /// Mimics BizTalk Server's Test Map transform engine.
-/// Usage: XsltTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath]
+/// Usage: XsltTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath] [stylesheetBaseUri]
 /// </summary>
 class Program
 {
@@ -23,7 +23,7 @@ class Program
     {
         if (args.Length < 3)
         {
-            Console.Error.WriteLine("Usage: XsltTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath]");
+            Console.Error.WriteLine("Usage: XsltTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath] [stylesheetBaseUri]");
             return 1;
         }
 
@@ -31,6 +31,9 @@ class Program
         string inputPath = args[1];
         string outputPath = args[2];
         string? extensionObjectPath = args.Length > 3 ? args[3] : null;
+        string stylesheetBaseUri = args.Length > 4 && !string.IsNullOrWhiteSpace(args[4])
+            ? args[4]
+            : new Uri(Path.GetFullPath(xsltPath)).AbsoluteUri;
 
         try
         {
@@ -79,11 +82,13 @@ class Program
             try
             {
                 var transform = new XslCompiledTransform();
-                transform.Load(tempXsltPath, settings, resolver);
+                using var stylesheetStream = File.OpenRead(tempXsltPath);
+                using var stylesheetReader = XmlReader.Create(stylesheetStream, new XmlReaderSettings(), stylesheetBaseUri);
+                transform.Load(stylesheetReader, settings, resolver);
 
                 using var inputReader = XmlReader.Create(inputPath);
                 using var outputWriter = XmlWriter.Create(outputPath, transform.OutputSettings);
-                transform.Transform(inputReader, argList, outputWriter);
+                transform.Transform(inputReader, argList, outputWriter, resolver);
             }
             finally
             {

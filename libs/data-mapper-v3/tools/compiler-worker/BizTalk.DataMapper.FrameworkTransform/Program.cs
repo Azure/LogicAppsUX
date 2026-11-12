@@ -15,7 +15,7 @@ namespace BizTalk.DataMapper.FrameworkTransform
             if (args.Length < 3)
             {
                 Console.Error.WriteLine(
-                    "Usage: FrameworkTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath]");
+                    "Usage: FrameworkTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath] [stylesheetBaseUri]");
                 return 1;
             }
 
@@ -42,15 +42,20 @@ namespace BizTalk.DataMapper.FrameworkTransform
                 }
 
                 var transform = new XslCompiledTransform();
-                transform.Load(
-                    args[0],
-                    new XsltSettings(enableDocumentFunction: true, enableScript: true),
-                    new XmlUrlResolver());
+                var resolver = new XmlUrlResolver();
+                using (FileStream stylesheetStream = File.OpenRead(args[0]))
+                using (XmlReader stylesheet = XmlReader.Create(stylesheetStream, new XmlReaderSettings(), GetStylesheetBaseUri(args).AbsoluteUri))
+                {
+                    transform.Load(
+                        stylesheet,
+                        new XsltSettings(enableDocumentFunction: true, enableScript: true),
+                        resolver);
+                }
 
                 using (XmlReader input = XmlReader.Create(args[1]))
                 using (XmlWriter output = XmlWriter.Create(args[2], transform.OutputSettings))
                 {
-                    transform.Transform(input, arguments, output);
+                    transform.Transform(input, arguments, output, resolver);
                 }
 
                 Console.WriteLine("OK: " + args[2]);
@@ -83,6 +88,13 @@ namespace BizTalk.DataMapper.FrameworkTransform
             }
         }
 
+        private static Uri GetStylesheetBaseUri(string[] args)
+        {
+            return args.Length > 4 && !string.IsNullOrWhiteSpace(args[4])
+                ? new Uri(args[4], UriKind.Absolute)
+                : new Uri(Path.GetFullPath(args[0]));
+        }
+
         private static void TransformWithSaxon(string[] args)
         {
             var processor = new Processor();
@@ -92,7 +104,13 @@ namespace BizTalk.DataMapper.FrameworkTransform
             }
 
             XsltCompiler compiler = processor.NewXsltCompiler();
-            XsltExecutable executable = compiler.Compile(new Uri(Path.GetFullPath(args[0])));
+            compiler.BaseUri = GetStylesheetBaseUri(args);
+            XsltExecutable executable;
+            using (FileStream stylesheetStream = File.OpenRead(args[0]))
+            using (XmlReader stylesheet = XmlReader.Create(stylesheetStream, new XmlReaderSettings(), compiler.BaseUri.AbsoluteUri))
+            {
+                executable = compiler.Compile(stylesheet);
+            }
             Xslt30Transformer transformer = executable.Load30();
             transformer.InputXmlResolver = new XmlUrlResolver();
 

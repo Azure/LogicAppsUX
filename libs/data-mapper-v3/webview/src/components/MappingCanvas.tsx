@@ -13,6 +13,7 @@ import {
   ArrowRouting20Regular,
   Code20Regular,
   Color20Regular,
+  ErrorCircle16Filled,
   Eye20Regular,
   Filter20Regular,
   ReOrderDotsVertical20Regular,
@@ -43,6 +44,7 @@ export interface CanvasCallbacks {
   onFunctoidOutputClick?: (functoidId: string) => void;
   onFunctoidInputPointerUp?: (functoidId: string) => void;
   onFunctoidOutputPointerUp?: (functoidId: string) => void;
+  onFunctoidBodyPointerUp?: (functoidId: string) => void;
   onLinkPointerDown?: (clientX: number, clientY: number) => void;
   onDeselect?: () => void;
 }
@@ -559,6 +561,7 @@ const MappingLinksOverlay = forwardRef<
 
 function FunctoidNode({
   functoid,
+  missing,
   selected,
   highlighted,
   zoom,
@@ -571,6 +574,7 @@ function FunctoidNode({
   setDragTarget,
 }: {
   functoid: MapFunctoid;
+  missing: boolean;
   selected: boolean;
   highlighted: boolean;
   zoom: number;
@@ -597,12 +601,20 @@ function FunctoidNode({
   const connectorPointerStarted = useRef<'input' | 'output' | null>(null);
   const FunctoidIcon = getFunctoidIcon(functoid.name, functoid.category);
   const brand = getFunctoidBrand(functoid.category);
+  const errorColor = 'var(--vscode-errorForeground, #f48771)';
+  const tooltip = missing ? `Functoid not found (FID ${functoid.functoidId})` : functoid.name;
 
   return (
     <g
-      className={`functoid-node${dragging ? ' dragging' : ''}`}
+      className={`functoid-node${missing ? ' missing' : ''}${dragging ? ' dragging' : ''}`}
       data-id={functoid.id}
+      aria-label={tooltip}
       transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
+      onPointerUp={(event) => {
+        if (event.button === 0 && !didDrag.current && !dragTarget.current) {
+          callbacks.onFunctoidBodyPointerUp?.(functoid.id);
+        }
+      }}
       onClick={(event) => {
         event.stopPropagation();
         if (didDrag.current) {
@@ -660,7 +672,7 @@ function FunctoidNode({
         cancelPendingDrag.current = stopPendingDrag;
       }}
     >
-      <title>{functoid.name}</title>
+      <title>{tooltip}</title>
       <rect
         x={-functoidHalfWidth}
         y={-functoidHalfHeight}
@@ -676,10 +688,10 @@ function FunctoidNode({
         width={functoidWidth}
         height={functoidHeight}
         rx={functoidHalfHeight}
-        fill={brand.color}
+        fill={missing ? errorColor : brand.color}
         fillOpacity={0.2}
-        stroke={selected ? '#007fd4' : highlighted ? 'var(--vscode-charts-yellow, #cca700)' : brand.color}
-        strokeWidth={selected || highlighted ? 2 : 1}
+        stroke={selected ? '#007fd4' : highlighted ? 'var(--vscode-charts-yellow, #cca700)' : missing ? errorColor : brand.color}
+        strokeWidth={selected || highlighted || missing ? 2 : 1}
       />
       <foreignObject x={-functoidHalfWidth + 9} y={-iconSize / 2} width={iconSize} height={iconSize} style={{ pointerEvents: 'none' }}>
         <div
@@ -701,6 +713,25 @@ function FunctoidNode({
       <text x={-functoidHalfWidth + 32} textAnchor="start" dominantBaseline="middle" fill="var(--vscode-foreground, #fff)" fontSize="10">
         {getFunctoidShortName(functoid.name)}
       </text>
+      {missing && (
+        <foreignObject x={functoidHalfWidth - 14} y={-functoidHalfHeight - 9} width="18" height="18" style={{ pointerEvents: 'none' }}>
+          <div
+            aria-hidden="true"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 18,
+              height: 18,
+              borderRadius: '50%',
+              color: errorColor,
+              backgroundColor: 'var(--vscode-editor-background, #1e1e1e)',
+            }}
+          >
+            <ErrorCircle16Filled />
+          </div>
+        </foreignObject>
+      )}
       <circle
         cx={-functoidHalfWidth}
         cy="0"
@@ -1205,6 +1236,7 @@ function MappingCanvasView({
             <FunctoidNode
               key={functoid.id}
               functoid={functoid}
+              missing={!state.functoids.some((definition) => definition.id === functoid.functoidId)}
               selected={state.selectedFunctoids ? state.selectedFunctoids.includes(functoid.id) : state.selectedFunctoid === functoid.id}
               highlighted={state.highlightedFunctoids?.includes(functoid.id) ?? false}
               zoom={zoom}

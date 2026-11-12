@@ -713,6 +713,10 @@
 	cursor: grab;
 }
 
+.mapping-svg:focus:not(:focus-visible) {
+	outline: none;
+}
+
 .mapping-nodes {
 	z-index: 6;
 	pointer-events: none;

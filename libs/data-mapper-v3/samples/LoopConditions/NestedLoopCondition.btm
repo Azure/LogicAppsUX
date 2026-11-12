@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Nested Loop Condition" Version="2" XRange="100" YRange="420" OmitXmlDeclaration="No" TreatElementsAsRecords="No" OptimizeValueMapping="Yes" GenerateDefaultFixedNodes="No" PreserveSequenceOrder="No" IgnoreNamespacesForLinks="No">
+  <SrcTree RootNode_Name="Source">
+    <Reference Location="Source.xsd"/>
+  </SrcTree>
+  <TrgTree RootNode_Name="Result">
+    <Reference Location="Target.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Condition Inside Nested Loops">
+      <Link LinkID="100" SourceID="/Source/Order" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Source/Order"/>
+      <Link LinkID="101" SourceID="1" TargetID="/Result/Order" SourceType="functoid" TargetType="schemaNode" TargetPath="/Result/Order"/>
+      <Link LinkID="102" SourceID="/Source/Order/Line" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Source/Order/Line"/>
+      <Link LinkID="103" SourceID="2" TargetID="/Result/Order/Line" SourceType="functoid" TargetType="schemaNode" TargetPath="/Result/Order/Line"/>
+      <Link LinkID="104" SourceID="/Source/Order/Line/FlagA" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Source/Order/Line/FlagA"/>
+      <Link LinkID="105" SourceID="3" TargetID="4" SourceType="functoid" TargetType="functoid"/>
+      <Link LinkID="106" SourceID="/Source/Order/Line/Value" TargetID="4" SourceType="schemaNode" TargetType="functoid" SourcePath="/Source/Order/Line/Value"/>
+      <Link LinkID="107" SourceID="4" TargetID="/Result/Order/Line/Value" SourceType="functoid" TargetType="schemaNode" TargetPath="/Result/Order/Line/Value"/>
+      <Functoid FunctoidID="1" TypeID="424" Name="Looping" X="20" Y="60">
+        <Input-Parameters>
+          <Parameter Index="0" Type="link" Value="100"/>
+        </Input-Parameters>
+      </Functoid>
+      <Functoid FunctoidID="2" TypeID="424" Name="Looping" X="20" Y="140">
+        <Input-Parameters>
+          <Parameter Index="0" Type="link" Value="102"/>
+        </Input-Parameters>
+      </Functoid>
+      <Functoid FunctoidID="3" TypeID="315" Name="Equal" X="45" Y="220">
+        <Input-Parameters>
+          <Parameter Index="0" Type="link" Value="104"/>
+          <Parameter Index="1" Type="constant" Value="Y"/>
+        </Input-Parameters>
+      </Functoid>
+      <Functoid FunctoidID="4" TypeID="375" Name="Value Mapping" X="75" Y="240">
+        <Input-Parameters>
+          <Parameter Index="0" Type="link" Value="105"/>
+          <Parameter Index="1" Type="link" Value="106"/>
+        </Input-Parameters>
+      </Functoid>
+    </Page>
+  </Pages>
+</mapsource>
