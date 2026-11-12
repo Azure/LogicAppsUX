@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import LogicAppsLanguageServer from '../languageServer';
 import path from 'path';
 
 const mocks = vi.hoisted(() => ({
+  appendLog: vi.fn(),
   createFileSystemWatcher: vi.fn(),
   getAzureConnectorDetailsForLocalProject: vi.fn(),
   getGlobalSetting: vi.fn(),
@@ -10,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   languageClient: vi.fn(),
   pathExists: vi.fn(),
   readFile: vi.fn(),
+  readJson: vi.fn(),
   readdir: vi.fn(),
   showWarningMessage: vi.fn(),
   tryGetLogicAppProjectRoot: vi.fn(),
@@ -58,6 +60,7 @@ vi.mock('../../utils/dotnet/dotnet', () => ({
 vi.mock('fs-extra', () => ({
   pathExists: mocks.pathExists,
   readFile: mocks.readFile,
+  readJson: mocks.readJson,
   readdir: mocks.readdir,
 }));
 
@@ -77,6 +80,9 @@ vi.mock('../../../extensionVariables', () => ({
       subscriptions: [],
     },
     languageClient: undefined,
+    outputChannel: {
+      appendLog: mocks.appendLog,
+    },
     telemetryString: 'setInGitHubBuild',
   },
 }));
@@ -86,8 +92,11 @@ describe('LogicAppsLanguageServer', () => {
   const projectPath = 'D:\\workspace\\logic-app';
   const sdkFolderPath = path.join(dependenciesPath, 'LanguageServerLogicApps');
   const lspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
+  const sdkPackageName = 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg';
+  const sdkPackagePath = path.join(sdkFolderPath, sdkPackageName);
 
   beforeEach(() => {
+    delete process.env.LSP_WAIT_FOR_DEBUGGER;
     vi.clearAllMocks();
     mocks.createFileSystemWatcher.mockReturnValue({ onDidChange: vi.fn() });
     mocks.getGlobalSetting.mockReturnValue(dependenciesPath);
@@ -95,6 +104,12 @@ describe('LogicAppsLanguageServer', () => {
     mocks.languageClient.mockImplementation(() => ({ start: vi.fn().mockResolvedValue(undefined) }));
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
+    mocks.readJson.mockResolvedValue({
+      serverArchive: 'LSPServer.zip',
+      serverSha256: 'a'.repeat(64),
+      sdkPackage: sdkPackageName,
+      sdkSha256: 'b'.repeat(64),
+    });
     mocks.readdir.mockResolvedValue([]);
     mocks.tryGetLogicAppProjectRoot.mockResolvedValue(projectPath);
     mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
@@ -105,12 +120,16 @@ describe('LogicAppsLanguageServer', () => {
     });
   });
 
+  afterEach(() => {
+    delete process.env.LSP_WAIT_FOR_DEBUGGER;
+  });
+
   it('does not start or read metadata when no Logic App project root is found', async () => {
     mocks.tryGetLogicAppProjectRoot.mockResolvedValue(undefined);
 
     await new LogicAppsLanguageServer({} as any).start();
 
-    expect(mocks.readdir).not.toHaveBeenCalled();
+    expect(mocks.readJson).not.toHaveBeenCalled();
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
     expect(mocks.languageClient).not.toHaveBeenCalled();
     expect(mocks.showWarningMessage).not.toHaveBeenCalled();
@@ -130,13 +149,12 @@ describe('LogicAppsLanguageServer', () => {
     );
   });
 
-  it('does not join an undefined SDK package path when no SDK package is installed', async () => {
+  it('does not start when the SDK package selected by the manifest is not installed', async () => {
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
-    mocks.readdir.mockResolvedValue(['readme.txt']);
 
     await new LogicAppsLanguageServer({} as any).start();
 
-    expect(mocks.readdir).toHaveBeenCalledWith(sdkFolderPath);
+    expect(mocks.pathExists).toHaveBeenCalledWith(sdkPackagePath);
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
     expect(mocks.languageClient).not.toHaveBeenCalled();
     expect(mocks.showWarningMessage).toHaveBeenCalledWith(
@@ -147,8 +165,9 @@ describe('LogicAppsLanguageServer', () => {
   it('starts the language client when project and language server dependencies are available', async () => {
     const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
     mocks.languageClient.mockReturnValue(languageClient);
-    mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
-    mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg']);
+    mocks.pathExists.mockImplementation(
+      async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath || filePath === sdkPackagePath
+    );
 
     await new LogicAppsLanguageServer({} as any).start();
 
@@ -159,11 +178,11 @@ describe('LogicAppsLanguageServer', () => {
       {
         run: {
           command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
-          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
+          args: [lspServerPath, '--sdk', sdkPackagePath],
         },
         debug: {
           command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
-          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
+          args: [lspServerPath, '--sdk', sdkPackagePath],
         },
       },
       expect.objectContaining({
@@ -177,5 +196,51 @@ describe('LogicAppsLanguageServer', () => {
       })
     );
     expect(languageClient.start).toHaveBeenCalledOnce();
+  });
+
+  it('uses the manifest-selected SDK when older SDK packages are also installed', async () => {
+    const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.pathExists.mockImplementation(
+      async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath || filePath === sdkPackagePath
+    );
+    mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.0.9.0.nupkg', sdkPackageName]);
+
+    await new LogicAppsLanguageServer({} as any).start();
+
+    expect(mocks.readdir).not.toHaveBeenCalled();
+    expect(mocks.languageClient).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.objectContaining({
+        run: expect.objectContaining({
+          args: [lspServerPath, '--sdk', sdkPackagePath],
+        }),
+      }),
+      expect.any(Object)
+    );
+  });
+
+  it('adds debugger wait mode without requiring console input', async () => {
+    process.env.LSP_WAIT_FOR_DEBUGGER = 'true';
+    const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.pathExists.mockImplementation(
+      async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath || filePath === sdkPackagePath
+    );
+
+    await new LogicAppsLanguageServer({} as any).start();
+
+    expect(mocks.languageClient).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.objectContaining({
+        run: expect.objectContaining({
+          args: [lspServerPath, '--sdk', sdkPackagePath, '--wait-for-debugger'],
+        }),
+      }),
+      expect.any(Object)
+    );
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('attach a debugger to continue'));
   });
 });

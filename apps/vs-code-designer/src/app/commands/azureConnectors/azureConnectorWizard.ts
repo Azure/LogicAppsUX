@@ -114,7 +114,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
 
     ext?.languageClient?.sendNotification('custom/updateApiConfig', {
       subscriptionId: subscriptionId,
-      resourceGroup: resourceGroup,
+      resourceGroup: resourceGroup?.name || '',
     });
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);

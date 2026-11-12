@@ -2,15 +2,10 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
-import {
-  lspAssetsManifestFileName,
-  lspSdkRevisionMarkerName,
-  lspServerDirectoryName,
-  lspServerRevisionMarkerName,
-  type LspAssetsManifest,
-} from './languageServerProtocolConstants';
+import { lspSdkRevisionMarkerName, lspServerDirectoryName, lspServerRevisionMarkerName } from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
 import { ensureRuntimeDependenciesDir } from './binaries';
+import { readLspAssetsManifest } from './languageServerAssets';
 
 export { lspSdkRevisionMarkerName, lspServerDirectoryName, lspServerRevisionMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
@@ -20,7 +15,7 @@ const lockedFileRetryAttempts = 3;
 export async function installLSPSDK(): Promise<void> {
   const targetDirectory = await ensureRuntimeDependenciesDir();
   const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
-  const assetManifest = await readAssetsManifest(assetDirectory);
+  const assetManifest = await readLspAssetsManifest(assetDirectory);
 
   // Check if LSPServer needs to be extracted or updated
   const serverZipFile = path.join(assetDirectory, assetManifest.serverArchive);
@@ -73,27 +68,6 @@ export async function installLSPSDK(): Promise<void> {
       throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
     }
   }
-}
-
-async function readAssetsManifest(assetDirectory: string): Promise<LspAssetsManifest> {
-  const manifestPath = path.join(assetDirectory, lspAssetsManifestFileName);
-  const manifest = (await fse.readJson(manifestPath)) as Partial<LspAssetsManifest>;
-  const hashPattern = /^[a-f0-9]{64}$/;
-
-  if (
-    !manifest.serverArchive ||
-    path.basename(manifest.serverArchive) !== manifest.serverArchive ||
-    !manifest.sdkPackage ||
-    path.basename(manifest.sdkPackage) !== manifest.sdkPackage ||
-    !manifest.serverSha256 ||
-    !hashPattern.test(manifest.serverSha256) ||
-    !manifest.sdkSha256 ||
-    !hashPattern.test(manifest.sdkSha256)
-  ) {
-    throw new Error(`Logic Apps language server asset manifest '${manifestPath}' is invalid.`);
-  }
-
-  return manifest as LspAssetsManifest;
 }
 
 /**

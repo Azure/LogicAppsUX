@@ -12,8 +12,10 @@ namespace SdkLspServer;
 /// assemblies and type names discovered in the package. The index is loaded
 /// eagerly on startup to avoid reflection during request handling.
 /// </summary>
-public sealed class SdkIndex
+public sealed class SdkIndex : IDisposable
 {
+    private bool disposed;
+
     /// <summary>Gets the source .nupkg path used to create this index.</summary>
     public string SourceNupkgPath { get; }
 
@@ -72,7 +74,35 @@ public sealed class SdkIndex
         catch (Exception ex)
         {
             await Console.Error.WriteLineAsync($"[SdkLspServer] Indexing failed: {ex}");
+            DeleteExtractedFiles(extractRoot);
             return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        disposed = true;
+        DeleteExtractedFiles(ExtractRoot);
+        GC.SuppressFinalize(this);
+    }
+
+    private static void DeleteExtractedFiles(string extractRoot)
+    {
+        try
+        {
+            if (Directory.Exists(extractRoot))
+            {
+                Directory.Delete(extractRoot, recursive: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[SdkLspServer] Failed to clean extracted SDK directory '{extractRoot}': {ex.Message}");
         }
     }
 

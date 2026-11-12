@@ -22,7 +22,7 @@ public class ApiServiceConfig
     public string ResourceGroup { get; set; } = string.Empty;
 
     [JsonPropertyName("bearerToken")]
-    public string BearerToken { get; set; } = "PLACEHOLDER_TOKEN";
+    public string BearerToken { get; set; } = string.Empty;
 
     [JsonPropertyName("apiVersion")]
     public string ApiVersion { get; set; } = "2018-07-01-preview";

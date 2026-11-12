@@ -596,6 +596,34 @@ public class EmptyWorkflow
     }
 
     [Fact]
+    public async Task AgentActionWithName_UnnamedTrigger_UsesTriggerDefaultName()
+    {
+        string workflowCode = @"
+using Microsoft.Azure.Workflows.Sdk;
+
+public class AgentWorkflow
+{
+    public static FlowDefinition[] GetWorkflows()
+    {
+        var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+        var agent = WorkflowActions.BuiltIn.Agent(
+            agentModelType: AgentModelType.AzureOpenAI,
+            deploymentId: ""gpt-4.1"",
+            messages: () => Array.Empty<AgentPromptMessage>())
+            .WithName(""WeatherAgent"");
+
+        return new[] { WorkflowFactory.CreateAgentWorkflow(""AgentWorkflow"", trigger.Then(agent)) };
+    }
+}";
+
+        GetWorkflowMetadataResponse result = await AnalyzeWorkflowCode(workflowCode);
+
+        Assert.NotNull(result.DefaultName);
+        Assert.Equal(result.DefaultName, result.TriggerName);
+        Assert.NotEqual("WeatherAgent", result.TriggerName);
+    }
+
+    [Fact]
     public async Task CamelCaseConversion_ShouldFormatCorrectly()
     {
         // Arrange - Test various method name formats

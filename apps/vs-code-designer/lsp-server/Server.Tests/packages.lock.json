@@ -348,11 +348,6 @@
           "OmniSharp.Extensions.LanguageProtocol": "0.19.9"
         }
       },
-      "SharpZipLib": {
-        "type": "Transitive",
-        "resolved": "1.4.2",
-        "contentHash": "yjj+3zgz8zgXpiiC3ZdF/iyTBbz2fFvMxZFEBPUcwZjIvXOf37Ylm+K58hqMfIBt5JgU/Z2uoUS67JmTLe973A=="
-      },
       "System.Composition": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -466,7 +461,6 @@
           "Microsoft.ApplicationInsights": "[2.22.0, )",
           "Microsoft.CodeAnalysis": "[4.13.0, )",
           "OmniSharp.Extensions.LanguageServer": "[0.19.9, )",
-          "SharpZipLib": "[1.4.2, )",
           "System.Reflection.MetadataLoadContext": "[9.0.0, )",
           "ZiggyCreatures.FusionCache": "[2.4.0, )"
         }

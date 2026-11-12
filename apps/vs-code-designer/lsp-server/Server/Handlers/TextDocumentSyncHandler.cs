@@ -89,8 +89,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
     public override Task<Unit> Handle(DidCloseTextDocumentParams request, CancellationToken cancellationToken)
     {
-        // Optional: Clean up buffer when document is closed
-        // bufferManager.RemoveBuffer(request.TextDocument.Uri.ToString());
+        bufferManager.RemoveBuffer(request.TextDocument.Uri.ToString());
 
         router.Window.LogInfo($"[TextDocumentSyncHandler] Closed document: {request.TextDocument.Uri}");
         return Unit.Task;

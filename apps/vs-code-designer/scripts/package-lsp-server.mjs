@@ -20,6 +20,9 @@ const testProject = path.join(lspRoot, 'Server.Tests', 'Server.Tests.csproj');
 const serverProject = path.join(lspRoot, 'Server', 'SdkLspServer.csproj');
 const nugetConfig = path.join(lspRoot, 'NuGet.config');
 const dotnetCommand = process.env.DOTNET_HOST_PATH || 'dotnet';
+const portableDirectoryMode = 0o040755;
+const portableFileMode = 0o100644;
+const msDosDirectoryFlag = 0x10;
 
 const sdkPackagePath = resolveSdkPackagePath(process.argv.slice(2));
 
@@ -58,12 +61,15 @@ for (const frameworkName of ['Microsoft.NETCore.App', 'Microsoft.AspNetCore.App'
 
 const archive = new AdmZip();
 archive.addLocalFolder(publishDirectory, 'LSPServer');
+normalizeArchivePermissions(archive);
+validateArchivePermissions(archive);
 archive.writeZip(stagedServerArchivePath);
 
 const verificationArchive = new AdmZip(stagedServerArchivePath);
 if (!verificationArchive.getEntry('LSPServer/SdkLspServer.dll')) {
   throw new Error(`Archive '${stagedServerArchivePath}' does not contain 'LSPServer/SdkLspServer.dll'.`);
 }
+validateArchivePermissions(verificationArchive);
 
 const sdkPackageName = path.basename(sdkPackagePath);
 mkdirSync(assetDirectory, { recursive: true });
@@ -141,4 +147,24 @@ function runDotNet(argumentsList, additionalEnvironment = {}) {
 
 function sha256(filePath) {
   return createHash('sha256').update(readFileSync(filePath)).digest('hex');
+}
+
+function normalizeArchivePermissions(archiveToNormalize) {
+  for (const entry of archiveToNormalize.getEntries()) {
+    entry.attr = toExternalAttributes(entry.isDirectory ? portableDirectoryMode : portableFileMode, entry.isDirectory);
+  }
+}
+
+function validateArchivePermissions(archiveToValidate) {
+  for (const entry of archiveToValidate.getEntries()) {
+    const expectedMode = entry.isDirectory ? portableDirectoryMode : portableFileMode;
+    const actualMode = (entry.attr >>> 16) & 0xffff;
+    if (actualMode !== expectedMode) {
+      throw new Error(`Archive entry '${entry.entryName}' has mode '${actualMode.toString(8)}' instead of '${expectedMode.toString(8)}'.`);
+    }
+  }
+}
+
+function toExternalAttributes(unixMode, isDirectory) {
+  return ((unixMode << 16) | (isDirectory ? msDosDirectoryFlag : 0)) >>> 0;
 }

@@ -1,6 +1,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
+  assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
   lspDirectory,
@@ -22,6 +23,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
+import { readLspAssetsManifest } from '../utils/languageServerAssets';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
@@ -80,9 +82,7 @@ export default class LogicAppsLanguageServer {
     // Support for debugger wait mode in development
     if (process.env.LSP_WAIT_FOR_DEBUGGER === 'true') {
       serverArgs.push('--wait-for-debugger');
-      ext.outputChannel.appendLog(
-        localize('lspWaitForDebugger', 'LSP Server starting in debug mode - attach debugger and press any key in the server console')
-      );
+      ext.outputChannel.appendLog(localize('lspWaitForDebugger', 'LSP Server starting in debug mode - attach a debugger to continue'));
     }
 
     const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.cs');
@@ -199,15 +199,12 @@ export default class LogicAppsLanguageServer {
       return { lspServerPath, sdkNupkgPath: undefined };
     }
 
-    const files = await fse.readdir(sdkFolderPath);
-    const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
-    });
-    if (!sdkNupkgFile) {
+    const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
+    const assetManifest = await readLspAssetsManifest(assetDirectory);
+    const sdkNupkgPath = path.join(sdkFolderPath, assetManifest.sdkPackage);
+    if (!(await fse.pathExists(sdkNupkgPath))) {
       return { lspServerPath, sdkNupkgPath: undefined };
     }
-
-    const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
 
     return { lspServerPath, sdkNupkgPath };
   }

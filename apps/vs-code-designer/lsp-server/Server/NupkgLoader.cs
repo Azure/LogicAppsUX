@@ -1,16 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace SdkLspServer;
 
 /// <summary>
 /// Utility for extracting a NuGet package (.nupkg) and finding assemblies
-/// within it. NuGet packages are simply ZIP archives; this class uses
-/// SharpZipLib to perform extraction. Only DLL files are returned.
+/// within it. NuGet packages are ZIP archives. Only DLL files are returned.
 /// </summary>
 public static class NupkgLoader
 {
@@ -27,21 +25,8 @@ public static class NupkgLoader
     {
         return Task.Run(() =>
         {
-            using FileStream fs = File.OpenRead(nupkgPath);
-            using var zip = new ZipFile(fs);
-            foreach (ZipEntry entry in zip)
-            {
-                if (!entry.IsFile)
-                {
-                    continue;
-                }
-
-                string outPath = Path.Combine(extractRoot, entry.Name.Replace('/', Path.DirectorySeparatorChar));
-                Directory.CreateDirectory(Path.GetDirectoryName(outPath)!);
-                using Stream input = zip.GetInputStream(entry);
-                using FileStream output = File.Create(outPath);
-                input.CopyTo(output);
-            }
+            Directory.CreateDirectory(extractRoot);
+            ZipFile.ExtractToDirectory(nupkgPath, extractRoot, overwriteFiles: true);
 
             var dlls = Directory.GetFiles(extractRoot, "*.dll", SearchOption.AllDirectories)
                 .OrderBy(p => p, System.StringComparer.OrdinalIgnoreCase)

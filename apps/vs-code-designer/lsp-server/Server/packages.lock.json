@@ -39,12 +39,6 @@
           "OmniSharp.Extensions.LanguageServer.Shared": "0.19.9"
         }
       },
-      "SharpZipLib": {
-        "type": "Direct",
-        "requested": "[1.4.2, )",
-        "resolved": "1.4.2",
-        "contentHash": "yjj+3zgz8zgXpiiC3ZdF/iyTBbz2fFvMxZFEBPUcwZjIvXOf37Ylm+K58hqMfIBt5JgU/Z2uoUS67JmTLe973A=="
-      },
       "System.Reflection.MetadataLoadContext": {
         "type": "Direct",
         "requested": "[9.0.0, )",

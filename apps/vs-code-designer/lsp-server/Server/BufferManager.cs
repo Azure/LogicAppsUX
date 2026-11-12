@@ -13,4 +13,9 @@ public class BufferManager
     {
         return buffers.TryGetValue(documentPath, out string? buffer) ? buffer : null;
     }
+
+    public bool RemoveBuffer(string documentPath)
+    {
+        return buffers.TryRemove(documentPath, out _);
+    }
 }

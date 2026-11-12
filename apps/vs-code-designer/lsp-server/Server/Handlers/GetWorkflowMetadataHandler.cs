@@ -531,7 +531,7 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
             var triggerMetadata = AnalyzeInvocation(triggerInvocation, compilation);
             await Console.Error.WriteLineAsync($"[AnalyzeEntireWorkflow] Trigger metadata: ConnectorName={triggerMetadata.ConnectorName}, MethodName={triggerMetadata.MethodName}, DefaultName={triggerMetadata.DefaultName}");
 
-            response.TriggerName = ExtractTriggerName(root) ?? triggerMetadata.DefaultName;
+            response.TriggerName = ExtractTriggerName(root, triggerInvocation) ?? triggerMetadata.DefaultName;
             response.DefaultName = triggerMetadata.DefaultName;
             response.ElementType = triggerMetadata.ElementType;
             response.ConnectorName = triggerMetadata.ConnectorName;
@@ -618,48 +618,51 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
     }
 
     /// <summary>
-    /// Extracts the trigger name from trigger.WithName() call.
+    /// Extracts the trigger name from the selected trigger's WithName() call.
     /// </summary>
-    private static string? ExtractTriggerName(CompilationUnitSyntax root)
+    private static string? ExtractTriggerName(CompilationUnitSyntax root, InvocationExpressionSyntax triggerInvocation)
     {
-        // Look for trigger.WithName("name") pattern, excluding builder.WithName()
-        var withNameInvocation = root.DescendantNodes()
+        string? chainedName = triggerInvocation.DescendantNodesAndSelf()
             .OfType<InvocationExpressionSyntax>()
-            .FirstOrDefault(inv =>
-            {
-                if (inv.Expression is MemberAccessExpressionSyntax ma)
-                {
-                    // Check if it's a WithName call
-                    if (ma.Name.ToString() != "WithName")
-                    {
-                        return false;
-                    }
+            .Select(ExtractWithNameLiteral)
+            .FirstOrDefault(name => name != null);
 
-                    // Exclude builder.WithName() - we want trigger.WithName() or similar
-                    // Builder.WithName has a simple identifier as the expression
-                    if (ma.Expression is IdentifierNameSyntax identifier &&
-                        identifier.Identifier.Text == "builder")
-                    {
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                return false;
-            });
-
-        if (withNameInvocation?.ArgumentList?.Arguments.Count > 0)
+        if (chainedName != null)
         {
-            var firstArg = withNameInvocation.ArgumentList.Arguments[0];
-            if (firstArg.Expression is LiteralExpressionSyntax literal &&
-                literal.IsKind(SyntaxKind.StringLiteralExpression))
-            {
-                return literal.Token.ValueText;
-            }
+            return chainedName;
         }
 
-        return null;
+        VariableDeclaratorSyntax? triggerVariable = triggerInvocation.FirstAncestorOrSelf<VariableDeclaratorSyntax>();
+        if (triggerVariable == null)
+        {
+            return null;
+        }
+
+        string triggerVariableName = triggerVariable.Identifier.ValueText;
+        return root.DescendantNodes()
+            .OfType<InvocationExpressionSyntax>()
+            .Where(invocation => invocation.Expression is MemberAccessExpressionSyntax memberAccess &&
+                memberAccess.Name.Identifier.ValueText == "WithName" &&
+                memberAccess.Expression.DescendantNodesAndSelf()
+                    .OfType<IdentifierNameSyntax>()
+                    .Any(identifier => identifier.Identifier.ValueText == triggerVariableName))
+            .Select(ExtractWithNameLiteral)
+            .FirstOrDefault(name => name != null);
+    }
+
+    private static string? ExtractWithNameLiteral(InvocationExpressionSyntax invocation)
+    {
+        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess ||
+            memberAccess.Name.Identifier.ValueText != "WithName" ||
+            invocation.ArgumentList.Arguments.Count == 0)
+        {
+            return null;
+        }
+
+        return invocation.ArgumentList.Arguments[0].Expression is LiteralExpressionSyntax literal &&
+            literal.IsKind(SyntaxKind.StringLiteralExpression)
+                ? literal.Token.ValueText
+                : null;
     }
 
     /// <summary>

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using OmniSharp.Extensions.LanguageServer.Protocol.Window;
@@ -21,6 +23,7 @@ internal static class Program
     {
         ITelemetryService? telemetryService = null;
         ILanguageServerFacade? initializedServer = null;
+        SdkIndex? index = null;
 
         try
         {
@@ -28,7 +31,11 @@ internal static class Program
             if (args.Contains("--wait-for-debugger"))
             {
                 await Console.Error.WriteLineAsync($"[SdkLspServer] Waiting for debugger to attach... (PID: {Environment.ProcessId})");
-                Console.ReadKey(true);
+                while (!Debugger.IsAttached)
+                {
+                    await Task.Delay(100);
+                }
+
                 await Console.Error.WriteLineAsync("[SdkLspServer] Debugger attached, continuing...");
             }
 
@@ -37,7 +44,7 @@ internal static class Program
 
             // Index the provided NuGet package, if any. This happens on startup
             // so that handlers can supply information to clients.
-            SdkIndex? index = await SdkIndex.TryCreateAsync(sdkPath);
+            index = await SdkIndex.TryCreateAsync(sdkPath);
             if (index is null)
             {
                 await Console.Error.WriteLineAsync($"[SdkLspServer] Could not load SDK from: {sdkPath ?? "(none)"}");
@@ -279,6 +286,10 @@ internal static class Program
             telemetryService?.Flush();
 
             throw;
+        }
+        finally
+        {
+            index?.Dispose();
         }
     }
 
