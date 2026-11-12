@@ -290,7 +290,7 @@ export interface RegenerationPromptObservation {
   failure?: string;
 }
 
-function initializationPromptProjectPath(text: string): string | undefined {
+export function initializationPromptProjectPath(text: string): string | undefined {
   return /Detected an Azure Logic App project "([^"]+)"[\s\S]*Initialize for optimal use with VS Code\?/i.exec(text)?.[1];
 }
 
@@ -298,7 +298,7 @@ function isWindowsAbsolutePath(value: string): boolean {
   return /^[a-z]:[\\/]/i.test(value) || /^\\\\/.test(value);
 }
 
-function isSamePromptProjectPath(actual: string, expected: string): boolean {
+export function isSamePromptProjectPath(actual: string, expected: string): boolean {
   const actualIsWindows = isWindowsAbsolutePath(actual);
   const expectedIsWindows = isWindowsAbsolutePath(expected);
   if (actualIsWindows !== expectedIsWindows) {

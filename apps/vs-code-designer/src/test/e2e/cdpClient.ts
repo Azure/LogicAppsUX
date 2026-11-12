@@ -30,6 +30,41 @@ interface CdpExecutionContext {
   };
 }
 
+/** Deliberately excludes console arguments, messages, URLs and stack traces. */
+export interface CdpConsoleDiagnostic {
+  source: 'runtime' | 'log';
+  type: string;
+  severity: 'error' | 'warning' | 'info' | 'debug' | 'unknown';
+  timestamp: number | null;
+}
+
+function consoleDiagnostic(message: CdpResponse): CdpConsoleDiagnostic | undefined {
+  if (message.method === 'Runtime.exceptionThrown') {
+    const timestamp =
+      typeof message.params?.timestamp === 'number' && Number.isFinite(message.params.timestamp) ? message.params.timestamp : null;
+    return { source: 'runtime', type: 'exception', severity: 'error', timestamp };
+  }
+  if (message.method === 'Runtime.consoleAPICalled') {
+    const raw = message.params?.type;
+    const allowed = ['log', 'debug', 'info', 'error', 'warning', 'assert', 'trace', 'dir', 'table', 'count', 'timeEnd'];
+    const type = typeof raw === 'string' && allowed.includes(raw) ? raw : 'other';
+    const severity = type === 'error' || type === 'assert' ? 'error' : type === 'warning' ? 'warning' : type === 'debug' ? 'debug' : 'info';
+    const timestamp =
+      typeof message.params?.timestamp === 'number' && Number.isFinite(message.params.timestamp) ? message.params.timestamp : null;
+    return { source: 'runtime', type, severity, timestamp };
+  }
+  if (message.method === 'Log.entryAdded') {
+    const level = message.params?.entry?.level;
+    const severity = level === 'error' || level === 'warning' || level === 'info' ? level : level === 'verbose' ? 'debug' : 'unknown';
+    const timestamp =
+      typeof message.params?.entry?.timestamp === 'number' && Number.isFinite(message.params.entry.timestamp)
+        ? message.params.entry.timestamp
+        : null;
+    return { source: 'log', type: 'entry', severity, timestamp };
+  }
+  return undefined;
+}
+
 type CdpSocketFactory = (port: number, host: string) => net.Socket;
 
 const defaultCdpSocketFactory: CdpSocketFactory = (port, host) => net.connect(port, host);
@@ -74,6 +109,8 @@ export class CdpConnection {
   private readonly timedOut = new Map<number, CdpRequestDiagnostic | undefined>();
   private readonly contextListeners: Array<(context: CdpExecutionContext) => void> = [];
   private readonly lifecycleListeners: Array<(event: CdpResponse) => void> = [];
+  private readonly consoleListeners = new Map<(event: CdpConsoleDiagnostic) => void, (() => void) | undefined>();
+  private consoleListenerFailureReported = false;
   private readonly contexts = new Map<number, CdpExecutionContext>();
   private generation = 0;
 
@@ -220,6 +257,11 @@ export class CdpConnection {
     this.lifecycleListeners.push(listener);
   }
 
+  onConsoleDiagnostic(listener: (event: CdpConsoleDiagnostic) => void, onFailure?: () => void): () => void {
+    this.consoleListeners.set(listener, onFailure);
+    return () => this.consoleListeners.delete(listener);
+  }
+
   getExecutionContextIds(): number[] {
     return [...this.contexts.keys()];
   }
@@ -253,6 +295,26 @@ export class CdpConnection {
       }
 
       const message = JSON.parse(frame.payload.toString('utf8')) as CdpResponse;
+      if (this.consoleListeners.size > 0) {
+        const event = consoleDiagnostic(message);
+        if (event) {
+          for (const [listener, onFailure] of this.consoleListeners) {
+            try {
+              listener(event);
+            } catch {
+              if (!this.consoleListenerFailureReported) {
+                this.consoleListenerFailureReported = true;
+                console.warn('[cdp] optional-console-listener-failed');
+              }
+              try {
+                onFailure?.();
+              } catch {
+                console.warn('[cdp] optional-console-listener-status-failed');
+              }
+            }
+          }
+        }
+      }
       if (typeof message.id === 'number') {
         const pending = this.pending.get(message.id);
         if (pending) {

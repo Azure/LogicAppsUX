@@ -172,7 +172,9 @@ const SUITE_ALIASES = Object.freeze({
   windows: Object.freeze(suiteIdsForPlatform('win32')),
 });
 
+const DIAGNOSTIC_CONTROL_ENV_PATTERN = /^LA_E2E_CLI_(?:DIAGNOSTIC_ONLY|REGENERATION_(?:PROBE|TRACE_(?:FILE|PHASE|INVOCATION)))$/i;
 const SUITE_CONTROL_ENV_PATTERNS = [
+  DIAGNOSTIC_CONTROL_ENV_PATTERN,
   /^LA_E2E_CLI_SUITE_WRAPPER_CHILD$/,
   /^LA_E2E_CLI_STATELESS_VARIABLES_MODE$/,
   /^LA_E2E_CLI_RUN_AFTER_PERSISTENCE_(?:MODE|HANDOFF)$/,
@@ -344,7 +346,7 @@ function shouldRemoveEnvKey(key) {
   return SUITE_CONTROL_ENV_PATTERNS.some((pattern) => pattern.test(key));
 }
 
-function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
+function buildSuiteEnvironment(baseEnv, context, extraEnv = {}, { diagnosticOnly = false } = {}) {
   const env = {};
   for (const [key, value] of Object.entries(baseEnv)) {
     if (value !== undefined && !shouldRemoveEnvKey(key)) {
@@ -352,9 +354,13 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
     }
   }
 
+  // Only native diagnostic arming may inject product probe variables.
+  // The runner's diagnostic selector is restored only for an explicit regeneration opt-in.
+  const scopedExtraEnv = Object.fromEntries(Object.entries(extraEnv).filter(([key]) => !DIAGNOSTIC_CONTROL_ENV_PATTERN.test(key)));
   return {
     ...env,
-    ...extraEnv,
+    ...scopedExtraEnv,
+    ...(context.id === 'workspaceArtifactRegeneration' && diagnosticOnly === true ? { LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' } : {}),
     ...(context.id === 'workspaceArtifactRegeneration'
       ? { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(context.reportsRoot, 'workspace-regeneration') }
       : {}),
@@ -669,7 +675,9 @@ async function runBatchSuites({
     const timeoutMs = Number(process.env.LA_E2E_CLI_SUITE_TIMEOUT_MS) || DEFAULT_SUITE_TIMEOUT_MS;
     const executionUserDataParent = getBatchExecutionUserDataParent(baseEnv, context.userDataParent, { platform });
     const env = {
-      ...buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs)),
+      ...buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs), {
+        diagnosticOnly: diagnosticOnly === true,
+      }),
       // The pipeline owns this short parent and is responsible for its final
       // removal. The suite continues to delete only roots represented by its
       // cleanup ledger; it must never recursively delete the external parent.

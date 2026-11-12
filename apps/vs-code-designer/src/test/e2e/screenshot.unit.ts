@@ -33,6 +33,9 @@ async function main(): Promise<void> {
   await testAbsoluteDeadlineRejectsDelayedStability(captureCdpScreenshot);
   await testReadinessUnavailableRecordsLastSampleDiagnostics(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticStorageFailureDoesNotThrow(captureCdpScreenshot, setScreenshotFileSystemForTests);
+  await testImmediateDiagnosticSurvivesMetadataFailure(captureCdpScreenshot, setScreenshotFileSystemForTests, screenshotDir);
+  await testStaleDiagnosticImageIsNotCurrentCapture(captureCdpScreenshot, setScreenshotFileSystemForTests, screenshotDir);
+  await testDiagnosticOrderedRegistrationFailureIsReported(captureCdpScreenshot, screenshotDir);
   await testDiagnosticDoesNotRequireSemanticBindingOrLatch(captureCdpScreenshot);
   await testEvidenceStorageFailureStillThrows(captureCdpScreenshot, setScreenshotFileSystemForTests);
   testFailureAttachmentStorageFailureDoesNotThrow(appendFailureAttachmentSafely, setScreenshotFileSystemForTests);
@@ -63,6 +66,174 @@ async function main(): Promise<void> {
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
+}
+
+async function testImmediateDiagnosticSurvivesMetadataFailure(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests,
+  screenshotDir: string
+): Promise<void> {
+  const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 1]);
+  const cdp = {
+    targetId: 'owned-unit-target',
+    contextGeneration: 1,
+    send: async (method: string) => (method === 'Page.captureScreenshot' ? { result: { data: png.toString('base64') } } : { result: {} }),
+    evaluate: async () => {
+      throw new Error('private-readiness-error');
+    },
+  };
+  let firstMetadataWrite = true;
+  const restore = setScreenshotFileSystemForTests({
+    writeFileSync: (file, data) => {
+      if (String(file).endsWith('.json') && firstMetadataWrite) {
+        firstMetadataWrite = false;
+        throw new Error('unit-metadata-write-failure');
+      }
+      fs.writeFileSync(file, data);
+    },
+  });
+  let failed = false;
+  let registration = '';
+  let captureStartedAt = 0;
+  const previousEnabled = process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+  process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = '0';
+  try {
+    const file = await captureCdpScreenshot(cdp, 'unit-immediate-preserved', {
+      classification: 'diagnostic',
+      captureBeforeObservation: true,
+      expectation: { kind: 'diagnostic', label: 'unit-immediate-preserved', reason: 'unit' },
+      timeoutMs: 2000,
+      onDiagnosticFailure: () => {
+        failed = true;
+      },
+      onImmediateCaptureStart: (value) => {
+        captureStartedAt = value;
+      },
+      onOrderedEvidenceStatus: (value) => {
+        registration = value;
+      },
+    });
+    assert.strictEqual(file, path.join(screenshotDir, 'unit-immediate-preserved.png'));
+    assert.deepStrictEqual(fs.readFileSync(file!), png);
+    assert.strictEqual(failed, true);
+    assert.ok(captureStartedAt > 0 && captureStartedAt <= Date.now());
+    assert.strictEqual(registration, 'not-configured');
+    const metadata = JSON.parse(fs.readFileSync(file!.replace(/\.png$/, '.json'), 'utf8'));
+    assert.ok(metadata.reasonCodes.includes('metadata-after-capture-failed'));
+    assert.strictEqual(metadata.verdict, 'diagnostic');
+  } finally {
+    restore();
+    if (previousEnabled === undefined) {
+      delete process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+    } else {
+      process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = previousEnabled;
+    }
+  }
+}
+
+async function testDiagnosticOrderedRegistrationFailureIsReported(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  screenshotDir: string
+): Promise<void> {
+  const previousDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
+  const previousInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  const previousEnabled = process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+  process.env.LA_E2E_CLI_EVIDENCE_DIR = path.join(screenshotDir, 'missing-manifest');
+  process.env.LA_E2E_CLI_EVIDENCE_INVOCATION = 'unit-invocation';
+  delete process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+  let registration = '';
+  try {
+    const file = await captureCdpScreenshot(
+      {
+        targetId: 'owned-unit-target',
+        send: async (method: string) =>
+          method === 'Page.captureScreenshot' ? { result: { data: Buffer.from('unit-png').toString('base64') } } : { result: {} },
+        evaluate: async () => {
+          throw new Error('private-readiness-error');
+        },
+      },
+      'unit-registration-unavailable',
+      {
+        classification: 'diagnostic',
+        captureBeforeObservation: true,
+        expectation: { kind: 'diagnostic', label: 'unit-registration-unavailable', reason: 'unit' },
+        timeoutMs: 2000,
+        onOrderedEvidenceStatus: (value) => {
+          registration = value;
+        },
+      }
+    );
+    assert.ok(file && fs.existsSync(file));
+    assert.strictEqual(registration, 'unavailable', 'Missing ordered evidence must be explicitly reported');
+  } finally {
+    if (previousDir === undefined) {
+      delete process.env.LA_E2E_CLI_EVIDENCE_DIR;
+    } else {
+      process.env.LA_E2E_CLI_EVIDENCE_DIR = previousDir;
+    }
+    if (previousInvocation === undefined) {
+      delete process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+    } else {
+      process.env.LA_E2E_CLI_EVIDENCE_INVOCATION = previousInvocation;
+    }
+    if (previousEnabled === undefined) {
+      delete process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+    } else {
+      process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = previousEnabled;
+    }
+  }
+}
+
+async function testStaleDiagnosticImageIsNotCurrentCapture(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests,
+  screenshotDir: string
+): Promise<void> {
+  const stalePath = path.join(screenshotDir, 'unit-stale-capture.png');
+  fs.writeFileSync(stalePath, Buffer.from('stale-pixels'));
+  let captureAttempts = 0;
+  const restore = setScreenshotFileSystemForTests({
+    rmSync: (file, options) => {
+      if (String(file) !== stalePath) {
+        fs.rmSync(file, options);
+      }
+    },
+    writeFileSync: (file, data) => {
+      if (String(file).endsWith('.json')) {
+        throw new Error('unit-metadata-write-failure');
+      }
+      fs.writeFileSync(file, data);
+    },
+  });
+  try {
+    const file = await captureCdpScreenshot(
+      {
+        targetId: 'owned-unit-target',
+        send: async (method: string) => {
+          if (method === 'Page.captureScreenshot') {
+            captureAttempts++;
+            throw new Error('unit-cdp-capture-failure');
+          }
+          return { result: {} };
+        },
+        evaluate: async () => {
+          throw new Error('unit-readiness-failure');
+        },
+      },
+      'unit-stale-capture',
+      {
+        classification: 'diagnostic',
+        captureBeforeObservation: true,
+        expectation: { kind: 'diagnostic', label: 'unit-stale-capture', reason: 'unit' },
+        timeoutMs: 2000,
+      }
+    );
+    assert.strictEqual(captureAttempts, 1);
+    assert.strictEqual(file, undefined, 'A stale PNG cannot be credited to a failed current CDP capture');
+    assert.strictEqual(fs.readFileSync(stalePath, 'utf8'), 'stale-pixels');
+  } finally {
+    restore();
+  }
 }
 
 function testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId: (value: string) => string): void {

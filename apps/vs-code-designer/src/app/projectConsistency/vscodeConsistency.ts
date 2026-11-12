@@ -35,6 +35,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { beginRegenerationWarning, recordRegenerationEvent } from '../utils/regenerationProbe';
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
@@ -45,7 +46,14 @@ import { getWorkspaceLogicAppRoots } from '../utils/workspace';
 export async function ensureVSCodeFiles(context: IActionContext, projectPaths?: string[]): Promise<void> {
   projectPaths ??= await getWorkspaceLogicAppRoots();
 
-  if (!projectPaths || projectPaths.length === 0 || !isProjectConsistencyCheckEnabled()) {
+  if (!projectPaths || projectPaths.length === 0) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-projects' });
+    return;
+  }
+  const consistencyEnabled = isProjectConsistencyCheckEnabled();
+  recordRegenerationEvent({ event: 'consistency-setting', enabled: consistencyEnabled });
+  if (!consistencyEnabled) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
     return;
   }
 
@@ -84,10 +92,24 @@ export async function ensureProjectVSCodeFiles(context: IActionContext, projectP
  * @returns {boolean} `true` if the project is initialized for VS Code, `false` otherwise (user disabled warning).
  */
 export function isProjectInitializedForVSCode(projectPath: string): boolean {
-  const hasAllVSCodeFiles = getVSCodeFilePaths(projectPath).every((filePath) => fse.existsSync(filePath));
+  const fileKinds = ['tasks', 'launch', 'settings', 'extensions'] as const;
+  let firstMissing: (typeof fileKinds)[number] | 'none' = 'none';
+  const hasAllVSCodeFiles = getVSCodeFilePaths(projectPath).every((filePath, index) => {
+    const exists = fse.existsSync(filePath);
+    if (!exists) {
+      firstMissing = fileKinds[index];
+    }
+    return exists;
+  });
   const language = getWorkspaceSetting(projectLanguageSetting, projectPath);
   const funcVersion = getWorkspaceSetting(funcVersionSetting, projectPath);
 
+  recordRegenerationEvent({
+    event: 'initialization-check',
+    firstMissing,
+    hasLanguage: !!language,
+    hasFuncVersion: !!funcVersion,
+  });
   return hasAllVSCodeFiles && !!language && !!funcVersion;
 }
 
@@ -103,12 +125,34 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
     'Detected an Azure Logic App project "{0}" that may have been created outside of VS Code or is missing configuration files. Initialize for optimal use with VS Code?',
     projectPath
   );
-  const result: MessageItem | undefined = await context.ui.showWarningMessage(
-    message,
-    {},
-    DialogResponses.yes,
-    DialogResponses.dontWarnAgain
-  );
+  const warningId = beginRegenerationWarning('initialization');
+  let result: MessageItem | undefined;
+  try {
+    const warning = context.ui.showWarningMessage(message, {}, DialogResponses.yes, DialogResponses.dontWarnAgain);
+    recordRegenerationEvent({ event: 'warning-call-returned', kind: 'initialization', warningId });
+    result = await warning;
+  } catch (error) {
+    recordRegenerationEvent({
+      event: 'warning-error',
+      kind: 'initialization',
+      warningId,
+      errorKind: error instanceof Error ? 'error' : 'non-error',
+    });
+    throw error;
+  }
+  recordRegenerationEvent({
+    event: 'warning-result',
+    kind: 'initialization',
+    warningId,
+    result:
+      result === DialogResponses.yes
+        ? 'yes'
+        : result === DialogResponses.dontWarnAgain
+          ? 'dont-warn-again'
+          : result === undefined
+            ? 'undefined'
+            : 'other',
+  });
 
   if (result === DialogResponses.yes) {
     await callWithTelemetryAndErrorHandling('ensureVSCodeFiles.initProjectForVSCode', async (actionContext: IActionContext) => {
@@ -168,12 +212,34 @@ async function promptToRegenerateVSCodeFiles(context: IActionContext, projectPat
     'Detected out of date .vscode configuration files for Logic App project "{0}". Regenerate to match current project settings?',
     projectPath
   );
-  const result: MessageItem | undefined = await context.ui.showWarningMessage(
-    message,
-    {},
-    DialogResponses.yes,
-    DialogResponses.dontWarnAgain
-  );
+  const warningId = beginRegenerationWarning('outdated');
+  let result: MessageItem | undefined;
+  try {
+    const warning = context.ui.showWarningMessage(message, {}, DialogResponses.yes, DialogResponses.dontWarnAgain);
+    recordRegenerationEvent({ event: 'warning-call-returned', kind: 'outdated', warningId });
+    result = await warning;
+  } catch (error) {
+    recordRegenerationEvent({
+      event: 'warning-error',
+      kind: 'outdated',
+      warningId,
+      errorKind: error instanceof Error ? 'error' : 'non-error',
+    });
+    throw error;
+  }
+  recordRegenerationEvent({
+    event: 'warning-result',
+    kind: 'outdated',
+    warningId,
+    result:
+      result === DialogResponses.yes
+        ? 'yes'
+        : result === DialogResponses.dontWarnAgain
+          ? 'dont-warn-again'
+          : result === undefined
+            ? 'undefined'
+            : 'other',
+  });
 
   if (result === DialogResponses.yes) {
     config = config || (await getExpectedVSCodeConfigJson(projectPath));

@@ -25,6 +25,16 @@ import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initPr
 import { ensureVSCodeFiles } from '../vscodeConsistency';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
 
+const probeEvents = vi.hoisted(() => ({ record: vi.fn() }));
+
+vi.mock('../../utils/regenerationProbe', () => ({
+  recordRegenerationEvent: probeEvents.record,
+  beginRegenerationWarning: (kind: string) => {
+    probeEvents.record({ event: 'warning-call-entered', kind, warningId: 1 });
+    return 1;
+  },
+}));
+
 vi.mock('../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
 }));
@@ -163,6 +173,66 @@ describe('vscodeConsistency', () => {
       DialogResponses.dontWarnAgain
     );
     expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
+  });
+
+  it('does not read the consistency setting when no project is discovered', async () => {
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
+
+    await ensureVSCodeFiles(context);
+
+    expect(isProjectConsistencyCheckEnabled).not.toHaveBeenCalled();
+    expect(probeEvents.record).toHaveBeenCalledWith({ event: 'consistency-check-skipped', reason: 'no-projects' });
+    expect(showWarningMessage).not.toHaveBeenCalled();
+  });
+
+  it('records an unresolved warning without changing the file checks or resolving it early', async () => {
+    vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
+    let resolveWarning!: (value: typeof DialogResponses.yes) => void;
+    showWarningMessage.mockReturnValue(
+      new Promise<typeof DialogResponses.yes>((resolve) => {
+        resolveWarning = resolve;
+      })
+    );
+
+    const pending = ensureVSCodeFiles(context, [projectPath]);
+    await vi.waitFor(() =>
+      expect(probeEvents.record).toHaveBeenCalledWith({ event: 'warning-call-returned', kind: 'initialization', warningId: 1 })
+    );
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'initialization-check',
+      firstMissing: 'tasks',
+      hasLanguage: true,
+      hasFuncVersion: true,
+    });
+    expect(probeEvents.record).not.toHaveBeenCalledWith(expect.objectContaining({ event: 'warning-result' }));
+    expect(fse.existsSync).toHaveBeenCalledTimes(1);
+
+    resolveWarning(DialogResponses.yes);
+    await pending;
+
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'warning-result',
+      kind: 'initialization',
+      warningId: 1,
+      result: 'yes',
+    });
+    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
+  });
+
+  it('classifies a rejected warning without exposing its contents or replacing the error', async () => {
+    vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
+    const error = new Error('synthetic-private-warning-error');
+    showWarningMessage.mockRejectedValue(error);
+
+    await expect(ensureVSCodeFiles(context, [projectPath])).rejects.toBe(error);
+
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'warning-error',
+      kind: 'initialization',
+      warningId: 1,
+      errorKind: 'error',
+    });
+    expect(JSON.stringify(probeEvents.record.mock.calls)).not.toContain('synthetic-private-warning-error');
   });
 
   it('suppresses the initialization prompt when the warning setting is disabled', async () => {

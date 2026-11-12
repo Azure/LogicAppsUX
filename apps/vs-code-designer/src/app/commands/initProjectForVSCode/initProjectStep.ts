@@ -16,7 +16,12 @@ import { binariesExistSync } from '../../utils/binaries';
 import { detectCustomCodeTargetFramework } from '../../utils/customCodeUtils';
 import { isSubpath, writeFormattedJson } from '../../utils/fs';
 import { removeFromGitIgnore } from '../../utils/git';
-import { generateTasksJson, generateLaunchJson, generateSettingsJson, generateExtensionsJson } from '../../projectConsistency/fileGenerators';
+import {
+  generateTasksJson,
+  generateLaunchJson,
+  generateSettingsJson,
+  generateExtensionsJson,
+} from '../../projectConsistency/fileGenerators';
 import type { VSCodeProjectConfig } from '../../projectConsistency/fileGenerators';
 import { AzureWizardExecuteStep, DialogResponses, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
@@ -24,6 +29,8 @@ import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-log
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { getOrCreateDesignTimeDirectory } from '../../utils/codeless/startDesignTimeApi';
+import { beginRegenerationWarning, recordRegenerationEvent } from '../../utils/regenerationProbe';
+import type { MessageItem } from 'vscode';
 
 export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
@@ -88,7 +95,27 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
         'overwriteVSCodeFiles',
         'The .vscode configuration files will be regenerated to match the current project settings. This will overwrite any custom modifications. Continue?'
       );
-      const result = await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+      const warningId = beginRegenerationWarning('overwrite');
+      let result: MessageItem | undefined;
+      try {
+        const warning = context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+        recordRegenerationEvent({ event: 'warning-call-returned', kind: 'overwrite', warningId });
+        result = await warning;
+      } catch (error) {
+        recordRegenerationEvent({
+          event: 'warning-error',
+          kind: 'overwrite',
+          warningId,
+          errorKind: error instanceof Error ? 'error' : 'non-error',
+        });
+        throw error;
+      }
+      recordRegenerationEvent({
+        event: 'warning-result',
+        kind: 'overwrite',
+        warningId,
+        result: result === DialogResponses.yes ? 'yes' : result === undefined ? 'undefined' : 'other',
+      });
       if (result !== DialogResponses.yes) {
         return;
       }

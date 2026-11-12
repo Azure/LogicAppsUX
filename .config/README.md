@@ -104,6 +104,20 @@ regression; publication collisions alone are not product regressions.
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
+For a diagnostic `workspaceArtifactRegeneration` job, the producing attempt's
+`log/regeneration/regeneration-diagnostics.jsonl` contains allowlisted,
+invocation-bound product markers, sampled workbench observations, renderer
+console classifications, and explicit coverage or unavailable statuses. The
+staging step recomputes the sanitized projection and rejects missing or changed
+aggregates; raw per-phase diagnostic files are not uploaded. Failure screenshots
+are post-decision evidence staged only through the ordered-evidence manifest.
+Renderer observations are sampled and begin after attachment, so they cannot
+exclude a transient notification between polls or before attachment. Console
+classifications omit raw messages and cover only the renderer; sanitized VS Code
+profile logs remain separate supporting evidence. See the
+[CLI diagnostic contract](../apps/vs-code-designer/src/test/e2e/README.md#diagnostic-only-regeneration-observations)
+for coverage and privacy limits.
+
 Use diagnostic selection as the first native proof step, not the last. Bind the
 run to the full admitted source SHA, inspect native JSON/JUnit, phase and
 terminal receipts, cleanup ledgers, ordered-evidence validation and staged

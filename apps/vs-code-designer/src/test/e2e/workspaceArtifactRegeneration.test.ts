@@ -15,6 +15,17 @@ import { type CdpConnection, waitForDevToolsActivePort } from './cdpClient';
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
 import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
 import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications, revealWorkbenchPromptOption } from './workbenchPrompts';
+import { captureCdpScreenshot } from './screenshot';
+import {
+  armRegenerationProbe,
+  finishRegenerationProductCoverage,
+  type RegenerationProbe,
+} from './workspaceArtifactRegenerationDiagnostics';
+import {
+  type RegenerationInputTracker,
+  RegenerationObservation,
+  regenerationPromptObservationForLog,
+} from './workspaceArtifactRegenerationObservation';
 import {
   assertRegenerationComplete,
   assertRegenerationPromptObservation,
@@ -90,7 +101,7 @@ export interface RegenerationResult {
   complete: boolean;
 }
 
-function boundedConnection(cdp: CdpConnection, phase: RegenerationDeadline) {
+function boundedConnection(cdp: CdpConnection, phase: RegenerationDeadline, input?: RegenerationInputTracker) {
   return {
     targetId: cdp.targetId,
     targetUrl: cdp.targetUrl,
@@ -104,9 +115,119 @@ function boundedConnection(cdp: CdpConnection, phase: RegenerationDeadline) {
       cdp.evaluate<T>(contextId, expression, {
         timeoutMs: Math.min(options?.timeoutMs ?? 1500, remainingRegenerationBudget(phase)),
       }),
-    send: (method: string, params?: Record<string, unknown>, options?: { timeoutMs?: number }) =>
-      cdp.send(method, params, { timeoutMs: Math.min(options?.timeoutMs ?? 1500, remainingRegenerationBudget(phase)) }),
+    send: (method: string, params?: Record<string, unknown>, options?: { timeoutMs?: number }) => {
+      const request = () =>
+        cdp.send(method, params, { timeoutMs: Math.min(options?.timeoutMs ?? 1500, remainingRegenerationBudget(phase)) });
+      return input ? input.send(method, request) : request();
+    },
   };
+}
+
+function diagnosticConnection(cdp: CdpConnection, deadline: number, input: RegenerationInputTracker): CdpEvaluator {
+  const budget = (requested = 1000) => Math.max(1, Math.min(requested, deadline - Date.now()));
+  return {
+    targetId: cdp.targetId,
+    get contextGeneration() {
+      return cdp.contextGeneration;
+    },
+    evaluate: (contextId, expression, options) => cdp.evaluate(contextId, expression, { timeoutMs: budget(options?.timeoutMs) }),
+    send: (method, params, options) => input.send(method, () => cdp.send(method, params, { timeoutMs: budget(options?.timeoutMs) })),
+  };
+}
+
+async function captureRegenerationFailureDiagnostics(
+  cdp: CdpConnection | undefined,
+  diagnostics: RegenerationObservation,
+  context: RegenerationContext,
+  handoff: RegenerationHandoff,
+  phase: RegenerationDeadline,
+  decisionAt: number
+): Promise<void> {
+  const first = diagnostics.screenshots.beforeTeardown;
+  const center = diagnostics.screenshots.notificationCenter;
+  if (!cdp) {
+    first.reason = 'no-owned-target';
+    center.status = 'skipped';
+    center.reason = 'no-owned-target';
+    return;
+  }
+  const deadline = Date.now() + 6500;
+  const capture = async (target: typeof first, suffix: 'failure' | 'notification-center') => {
+    const checkpoint = `workspace-regeneration-${phase.phase}-${suffix}`;
+    target.checkpoint = checkpoint;
+    target.postDeadline = Date.now() >= phase.deadline;
+    let failed = false;
+    try {
+      const file = await captureCdpScreenshot(cdp, checkpoint, {
+        classification: 'diagnostic',
+        captureBeforeObservation: true,
+        expectation: { kind: 'diagnostic', label: checkpoint, reason: 'regeneration-phase-failure' },
+        deadlineMs: Math.min(deadline, Date.now() + 2000),
+        timeoutMs: 2000,
+        allowWindowsDiagnosticFallback: false,
+        diagnosticContext: {
+          operationId: `workspaceArtifactRegeneration-${phase.phase}-${suffix}`,
+          nativeInvocation: context.invocation,
+          phase: phase.phase,
+        },
+        onDiagnosticFailure: () => {
+          failed = true;
+        },
+        onImmediateCaptureStart: (startedAt) => {
+          target.postDeadline = startedAt >= phase.deadline;
+        },
+        onOrderedEvidenceStatus: (status) => {
+          target.registration = status;
+        },
+      });
+      target.status = file ? 'captured' : 'unavailable';
+      target.reason = file ? (failed ? 'captured-metadata-incomplete' : 'captured') : 'capture-unavailable';
+    } catch {
+      target.status = 'unavailable';
+      target.reason = 'capture-failed';
+    }
+  };
+  // Capture before any optional post-failure input or CDP disposal.
+  await capture(first, 'failure');
+  const state = await diagnostics.stopAndSample();
+  const skip = (reason: string) => {
+    center.status = 'skipped';
+    center.reason = reason;
+  };
+  if (Date.now() >= deadline) {
+    return skip('diagnostic-budget-exhausted');
+  }
+  if (diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    return skip('uncertain-input');
+  }
+  if (!state || !diagnostics.hasSampleSince(decisionAt)) {
+    return skip('current-state-unavailable');
+  }
+  if (!state.shellOwned || !state.documentVisible || !state.documentFocused) {
+    return skip('workbench-not-active');
+  }
+  if (state.documentChanged) {
+    return skip('document-changed');
+  }
+  if (state.blockingUiVisible || state.truncated) {
+    return skip('blocking-or-ambiguous-ui');
+  }
+  if (!state.centerVisible) {
+    try {
+      const revealDeadline = Math.min(deadline, Date.now() + 1800);
+      await revealRetainedWorkbenchNotifications(
+        diagnosticConnection(cdp, revealDeadline, diagnostics.input),
+        { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
+        revealDeadline
+      );
+    } catch {
+      return skip('notification-center-reveal-failed');
+    }
+  }
+  if (Date.now() >= deadline || diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    return skip('diagnostic-budget-or-input-uncertain');
+  }
+  await capture(center, 'notification-center');
 }
 
 async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: string, appDir: string): Promise<RegenerationPromptObservation> {
@@ -185,13 +306,104 @@ async function runFreshRegenerationHost(
   env: NodeJS.ProcessEnv,
   result: RegenerationResult,
   phaseName: string,
-  observe: (cdp: CdpConnection, phase: RegenerationDeadline) => Promise<void>
+  observe: (cdp: CdpConnection, phase: RegenerationDeadline, diagnostics?: RegenerationObservation) => Promise<void>
 ): Promise<void> {
   const phase = regenerationDeadline(phaseName);
   setOperationDiagnosticScope({ suite: 'workspaceArtifactRegeneration', phase: phaseName });
   const host: RegenerationHostPhase = { phase: phaseName, close: null, observationPassed: false, errors: [] };
   result.hosts.push(host);
   result.originalCodeClose = null;
+  const probe = armRegenerationProbe({
+    root: context.root,
+    phase: phaseName,
+    invocation: context.invocation,
+    identity: context.identity,
+    env,
+  });
+  const diagnostics = probe.requested
+    ? new RegenerationObservation(
+        context.root,
+        phaseName,
+        context.invocation,
+        phase.deadline,
+        { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
+        handoff.workspace.appDir
+      )
+    : undefined;
+  diagnostics?.boundary('phase-start');
+  diagnostics?.boundary(probe.receipt ? 'arm-ready' : 'arm-unavailable');
+  let diagnosticsFinalized = false;
+  const finalizeDiagnostics = async (cdp: CdpConnection | undefined, observed: boolean) => {
+    if (!diagnostics || diagnosticsFinalized) {
+      return;
+    }
+    diagnosticsFinalized = true;
+    const decisionAt = Date.now();
+    diagnostics.boundary('decision');
+    try {
+      if (observed) {
+        diagnostics.screenshots.beforeTeardown.status = 'skipped';
+        diagnostics.screenshots.beforeTeardown.reason = 'observation-succeeded';
+        diagnostics.screenshots.notificationCenter.status = 'skipped';
+        diagnostics.screenshots.notificationCenter.reason = 'observation-succeeded';
+        await diagnostics.stopAndSample();
+      } else {
+        await captureRegenerationFailureDiagnostics(cdp, diagnostics, context, handoff, phase, decisionAt);
+      }
+    } catch {
+      // The original native failure and existing acceptance remain authoritative.
+      if (diagnostics.screenshots.beforeTeardown.reason === 'not-attempted') {
+        diagnostics.screenshots.beforeTeardown.reason = 'diagnostic-collection-failed';
+      }
+      if (diagnostics.screenshots.notificationCenter.reason === 'not-attempted') {
+        diagnostics.screenshots.notificationCenter.reason = 'diagnostic-collection-failed';
+      }
+    }
+    try {
+      await finishRegenerationProductCoverage(probe, decisionAt);
+    } catch {
+      console.warn('[workspace-regeneration-diagnostics] product-collection-unavailable');
+    }
+    try {
+      diagnostics.boundary('teardown-start');
+      await diagnostics.finish(decisionAt);
+    } catch {
+      console.warn('[workspace-regeneration-diagnostics] summary-unavailable');
+    }
+  };
+  try {
+    await runFreshRegenerationHostCore(
+      context,
+      handoff,
+      env,
+      result,
+      phaseName,
+      phase,
+      host,
+      probe,
+      diagnostics,
+      observe,
+      finalizeDiagnostics
+    );
+  } finally {
+    // Setup can fail before a child or an owned CDP connection exists.
+    await finalizeDiagnostics(undefined, false);
+  }
+}
+
+async function runFreshRegenerationHostCore(
+  context: RegenerationContext,
+  handoff: RegenerationHandoff,
+  env: NodeJS.ProcessEnv,
+  result: RegenerationResult,
+  phaseName: string,
+  phase: RegenerationDeadline,
+  host: RegenerationHostPhase,
+  probe: RegenerationProbe,
+  diagnostics: RegenerationObservation | undefined,
+  observe: (cdp: CdpConnection, phase: RegenerationDeadline, diagnostics?: RegenerationObservation) => Promise<void>,
+  finalizeDiagnostics: (cdp: CdpConnection | undefined, observed: boolean) => Promise<void>
+): Promise<void> {
   const profile = path.join(
     env.LA_E2E_CLI_USER_DATA_PARENT || path.dirname(context.root),
     `rg-${createHash('sha256').update(`${context.invocation}/${phaseName}`).digest('hex').slice(0, 8)}`
@@ -229,6 +441,8 @@ async function runFreshRegenerationHost(
   const log = fs.createWriteStream(path.join(context.root, `${phaseName}-code.log`), { flags: 'wx' });
   const errors: unknown[] = [];
   log.on('error', (error) => errors.push(error));
+  probe.spawnRequestedAt = Date.now();
+  diagnostics?.boundary('spawn-requested');
   const child = spawn(
     handoff.launch.executable,
     [
@@ -252,7 +466,7 @@ async function runFreshRegenerationHost(
     ],
     {
       env: {
-        ...env,
+        ...probe.childEnv,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
         VSCODE_RUNNING_TESTS: '1',
@@ -264,6 +478,10 @@ async function runFreshRegenerationHost(
       stdio: ['ignore', 'pipe', 'pipe'],
     }
   );
+  child.once('spawn', () => {
+    probe.spawnObservedAt = Date.now();
+    diagnostics?.boundary('spawn-observed');
+  });
   const completion = new Promise<void>((resolve, reject) => {
     child.once('error', reject);
     child.once('close', (code, signal) => {
@@ -279,7 +497,9 @@ async function runFreshRegenerationHost(
   }
   let cdp: CdpConnection | undefined;
   let observed = false;
+  let observationSettled = false;
   try {
+    diagnostics?.boundary('attach-start');
     const cdpPort = await waitForDevToolsActivePort(profile, phase.deadline);
     process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort);
     const ownedWorkbench = await connectToOwnedRegularWorkbench({
@@ -290,11 +510,16 @@ async function runFreshRegenerationHost(
       deadline: phase.deadline,
       connectionTimeoutMs: Math.min(15000, remainingRegenerationBudget(phase)),
       activate: false,
+      onConnection: diagnostics ? (connection) => diagnostics.onConnection(connection) : undefined,
     });
     cdp = ownedWorkbench.cdp;
+    diagnostics?.start(cdp, ownedWorkbench.state.timeOrigin);
     assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
+    const observation = observe(cdp, phase, diagnostics).finally(() => {
+      observationSettled = true;
+    });
     await Promise.race([
-      observe(cdp, phase),
+      observation,
       completion.then(() => {
         throw new Error('Regular Code closed before the regeneration observation finished');
       }),
@@ -306,6 +531,10 @@ async function runFreshRegenerationHost(
   } catch (error) {
     errors.push(error);
   } finally {
+    if (diagnostics && cdp && !observationSettled) {
+      diagnostics.input.uncertain = true;
+    }
+    await finalizeDiagnostics(cdp, observed);
     watcher?.close();
     cdp?.dispose();
     if (!host.close) {
@@ -415,27 +644,17 @@ export async function runWorkspaceArtifactRegeneration(
       deleteRegenerationTargets(context.workspaceParent, workspaceDir, appDir, entry.targets, before);
       let after: RegenerationSnapshot | undefined;
       let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
-      await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase) => {
-        const bounded = boundedConnection(cdp, phase);
+      await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase, diagnostics) => {
+        const bounded = boundedConnection(cdp, phase, diagnostics?.input);
         await revealRetainedWorkbenchNotifications(bounded, { workspaceFilePath, rootPaths: [appDir] }, phase.deadline);
         const observationsPath = path.join(context.root, `${entry.name}-prompt-observations.jsonl`);
         let previousPromptObservation: string | undefined;
         const read = async () => {
           const observation = await readRegenerationWorkbench(bounded, workspaceFilePath, appDir);
-          const promptObservation = JSON.stringify({
-            ready: observation.ready,
-            timeOrigin: observation.timeOrigin,
-            missingTargets: entry.targets.filter((target) => !fs.existsSync(path.join(appDir, target))),
-            containers: observation.containers.map((container) => ({
-              kind: container.kind,
-              text: container.text,
-              buttons: container.buttons.map((button) => ({
-                text: button.text,
-                hitTestable: Boolean(button.point),
-                point: button.point,
-              })),
-            })),
-          });
+          const missingTargets = entry.targets.filter((target) => !fs.existsSync(path.join(appDir, target)));
+          const promptObservation = JSON.stringify(
+            regenerationPromptObservationForLog(observation, appDir, missingTargets, Boolean(diagnostics))
+          );
           if (promptObservation !== previousPromptObservation) {
             fs.appendFileSync(
               observationsPath,

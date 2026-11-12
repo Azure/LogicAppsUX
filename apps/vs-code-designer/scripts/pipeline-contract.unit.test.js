@@ -14,6 +14,7 @@ const {
   recordScreenshotMetadata,
 } = require('./vscode-e2e-evidence-manifest');
 const { getSuiteDescriptor } = require('./vscode-e2e-evidence-plans');
+const { publishProductDiagnostics } = require('./regeneration-diagnostic-publication');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const CANONICAL_FULL_GATE_SUITES = [
@@ -199,6 +200,7 @@ testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
 testFullRollupGateCanonicalInventoryContract();
 testLifecycleFamilyRoutingContract();
+testRegenerationDiagnosticGatingContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
 testSuiteAttemptPublicationContract();
 testAzureCliIdentityScriptBehavior();
@@ -245,6 +247,7 @@ testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
 testPrivateTraceabilityConfigurationContract();
 testGenericEvidencePipelineContract();
 testAllPlatformLaneEvidenceStagingFixtures();
+testRegenerationDiagnosticStagingFixtures();
 testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
 console.log('[pipeline-contract.unit] all tests passed');
@@ -1650,6 +1653,19 @@ function testSelectorResolutionScriptBehavior() {
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehavior;isOutput=true]false/);
 
+  const diagnosticWindowsRegenerationResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'false',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_LINUX_SUITES: 'linux',
+    LA_E2E_CLI_WINDOWS_SUITES: 'workspaceArtifactRegeneration',
+  });
+  assert.strictEqual(diagnosticWindowsRegenerationResult.status, 0, diagnosticWindowsRegenerationResult.output);
+  assert.match(diagnosticWindowsRegenerationResult.output, /Selected Linux suites: <none>/);
+  assert.match(diagnosticWindowsRegenerationResult.output, /Selected Windows suites: workspaceArtifactRegeneration/);
+  assert.match(diagnosticWindowsRegenerationResult.output, /variable=windows_workspaceArtifactRegeneration;isOutput=true]true/);
+  assert.match(diagnosticWindowsRegenerationResult.output, /variable=windows_workspaceMultiRoot;isOutput=true]false/);
+
   const diagnosticPartialResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
     LA_E2E_CLI_RUN_LINUX: 'true',
@@ -1760,6 +1776,60 @@ function testFullRollupGateCanonicalInventoryContract() {
   assert.deepStrictEqual(validationRecords, CANONICAL_FULL_GATE_SUITES, 'full gate must validate exactly all 23 registered platform lanes');
 }
 
+function testRegenerationDiagnosticGatingContract() {
+  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const suiteTemplate = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const consumerParameter = consumer.parameters.find((entry) => entry.name === 'diagnosticOnly');
+  assert.strictEqual(consumerParameter?.type, 'boolean');
+  assert.strictEqual(consumerParameter?.default, false, 'Pipeline diagnostics must default off');
+  const parameter = suiteTemplate.parameters.find((entry) => entry.name === 'diagnosticOnly');
+  assert.strictEqual(parameter?.type, 'boolean');
+  assert.strictEqual(parameter?.default, false, 'Suite diagnostics must default off');
+
+  const suiteJobs = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter(
+    (entry) => entry.template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self'
+  );
+  assert.strictEqual(suiteJobs.length, 23);
+  assert.deepStrictEqual(
+    suiteJobs
+      .filter(({ parameters }) => parameters.suiteId === 'workspaceArtifactRegeneration')
+      .map(({ parameters }) => parameters.platform),
+    ['linux', 'windows'],
+    'Only the Linux and Windows regeneration jobs may forward the pipeline opt-in'
+  );
+  for (const { parameters } of suiteJobs) {
+    assert.strictEqual(
+      parameters.diagnosticOnly,
+      parameters.suiteId === 'workspaceArtifactRegeneration' ? '${{ parameters.diagnosticOnly }}' : undefined,
+      `${parameters.jobName} must not inherit another suite's diagnostic opt-in`
+    );
+  }
+
+  const conditional = "${{ if and(eq(parameters.suiteId, 'workspaceArtifactRegeneration'), eq(parameters.diagnosticOnly, true)) }}";
+  const nativeBranches = suiteTemplate.jobs[0].steps.filter((step) =>
+    Object.keys(step).some((key) => key.includes('parameters.requiresAzureAccessToken'))
+  );
+  assert.strictEqual(nativeBranches.length, 4);
+  for (const branch of nativeBranches) {
+    const nativeStep = Object.values(branch)
+      .flat()
+      .find((step) => step.displayName === 'Run vscode-test CLI (${{ parameters.suiteId }})');
+    assert.ok(nativeStep, 'Every platform/auth path must expose its runner step');
+    assert.strictEqual(nativeStep.env[conditional]?.LA_E2E_CLI_DIAGNOSTIC_ONLY, 'true');
+    assert.strictEqual(
+      nativeStep.env['${{ else }}']?.LA_E2E_CLI_DIAGNOSTIC_ONLY,
+      'false',
+      'Canonical and non-regeneration runners must override inherited values'
+    );
+    assert.strictEqual(nativeStep.env.LA_E2E_CLI_DIAGNOSTIC_ONLY, undefined);
+  }
+  assert.strictEqual(
+    findYamlKeyPaths(suiteTemplate, 'LA_E2E_CLI_DIAGNOSTIC_ONLY').length,
+    8,
+    'Diagnostic opt-in and off overrides must appear only in the four runner environments'
+  );
+}
+
 function testLifecycleFamilyRoutingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
   const runner = read('apps/vs-code-designer/scripts/run-e2e-cli.js');
@@ -1833,6 +1903,11 @@ function testLifecycleFamilyRoutingContract() {
   assert.ok(
     staging.pwsh.includes('scripts/stage-vscode-e2e-evidence.js'),
     'Ordered evidence screenshots must be staged by the cross-platform manifest allowlist'
+  );
+  assert.ok(staging.pwsh.includes('scripts/regeneration-diagnostic-publication.js'), 'Sanitized diagnostic aggregate requires validation');
+  assert.ok(
+    staging.pwsh.includes('aggregate-missing-or-invalid'),
+    'Missing diagnostic aggregation must have an explicit unavailable record'
   );
   assert.ok(!staging.pwsh.includes("Copy-Item (Join-Path $screenshotsRoot '*')"));
   assert.ok(!staging.pwsh.includes("Name -like '*-code.log'"), 'Raw per-phase Code logs must never enter the diagnostics artifact');
@@ -3508,6 +3583,89 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
     } finally {
       fs.rmSync(tempRoot, { recursive: true, force: true });
     }
+  }
+}
+
+function testRegenerationDiagnosticStagingFixtures() {
+  const script = extractStageDiagnosticsScript(read('.config/templates/vscode-e2e-cli-run-suite.yml'));
+  const begin = script.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration')");
+  const end = script.indexOf("if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle'", begin);
+  assert.ok(begin >= 0 && end > begin, 'Expected a separate regeneration staging block');
+  const block = script.slice(begin, end);
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-regeneration-diagnostics-'));
+  try {
+    const source = path.join(root, 'source');
+    fs.mkdirSync(source);
+    for (const name of [
+      'invocation.json',
+      'final-result.json',
+      'terminal-result.json',
+      'cleanup-ledger.json',
+      'phase-results.jsonl',
+      'code.log',
+      'prompt-observations.jsonl',
+    ]) {
+      fs.writeFileSync(
+        path.join(source, name),
+        name === 'invocation.json' ? '{"invocation":"11111111-1111-4111-8111-111111111111"}\n' : '{}\n'
+      );
+    }
+    fs.writeFileSync(path.join(source, 'vscode-single-product-events.jsonl'), '{"raw":"synthetic-private-do-not-stage"}\n');
+    const phaseNames = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases
+      .filter((name) => name !== 'workspaceArtifactRegeneration:create')
+      .map((name) => name.slice('workspaceArtifactRegeneration:'.length));
+    publishProductDiagnostics(source, phaseNames, true);
+    const run = (name, enabled, nodeUnavailable = false) => {
+      const logDestination = path.join(root, name);
+      fs.mkdirSync(logDestination);
+      const powershell = [
+        "$ErrorActionPreference = 'Stop'",
+        ...(nodeUnavailable ? ['function Get-Command { return $null }'] : []),
+        '$regenerationEvidenceRoot = $env:REGEN_SOURCE',
+        '$logDestination = $env:REGEN_LOG',
+        '$missingRequiredFiles = @()',
+        'function Redact-DiagnosticText { param([string]$Value) return $Value }',
+        block
+          .replaceAll('${{ parameters.suiteId }}', 'workspaceArtifactRegeneration')
+          .replaceAll('${{ parameters.diagnosticOnly }}', enabled ? 'true' : 'false')
+          .replaceAll('$(Build.SourcesDirectory)', repoRoot),
+        'Write-Output ("missing=" + $missingRequiredFiles.Count)',
+      ].join('\n');
+      const result = runPowerShellScript(powershell, { REGEN_SOURCE: source, REGEN_LOG: logDestination });
+      assert.strictEqual(result.status, 0, result.output);
+      return { result, destination: path.join(logDestination, 'regeneration') };
+    };
+
+    const canonical = run('canonical', false);
+    assert.match(canonical.result.output, /missing=0/);
+    assert.strictEqual(fs.existsSync(path.join(canonical.destination, 'regeneration-diagnostics.jsonl')), false);
+
+    const diagnostic = run('diagnostic', true);
+    assert.match(diagnostic.result.output, /missing=0/);
+    const staged = fs.readFileSync(path.join(diagnostic.destination, 'regeneration-diagnostics.jsonl'), 'utf8');
+    assert.doesNotMatch(staged, /synthetic-private/);
+    assert.strictEqual(fs.existsSync(path.join(diagnostic.destination, 'vscode-single-product-events.jsonl')), false);
+
+    const noNode = run('no-node', true, true);
+    assert.match(noNode.result.output, /node-unavailable/);
+    assert.match(noNode.result.output, /missing=1/);
+    assert.equal(
+      JSON.parse(fs.readFileSync(path.join(noNode.destination, 'regeneration-diagnostics.jsonl'), 'utf8')).reason,
+      'aggregate-missing-or-invalid'
+    );
+
+    fs.appendFileSync(path.join(source, 'regeneration-diagnostics.jsonl'), '{"synthetic-private":"raw"}\n');
+    const invalid = run('invalid', true);
+    assert.match(invalid.result.output, /missing=1/);
+    const status = JSON.parse(fs.readFileSync(path.join(invalid.destination, 'regeneration-diagnostics.jsonl'), 'utf8'));
+    assert.deepStrictEqual(status, {
+      schemaVersion: 1,
+      type: 'publication',
+      availability: 'unavailable',
+      reason: 'aggregate-missing-or-invalid',
+    });
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
   }
 }
 

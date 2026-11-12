@@ -22,6 +22,9 @@ parameters:
       - windows
   - name: selected
     type: string
+  - name: diagnosticOnly
+    type: boolean
+    default: false
   - name: requiresAzureAccessToken
     type: boolean
     default: false
@@ -406,6 +409,10 @@ jobs:
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if and(eq(parameters.suiteId, 'workspaceArtifactRegeneration'), eq(parameters.diagnosticOnly, true)) }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true'
+              ${{ else }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false'
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
@@ -506,6 +513,10 @@ jobs:
                 exit "$status"
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if and(eq(parameters.suiteId, 'workspaceArtifactRegeneration'), eq(parameters.diagnosticOnly, true)) }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true'
+              ${{ else }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false'
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
@@ -560,6 +571,10 @@ jobs:
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if and(eq(parameters.suiteId, 'workspaceArtifactRegeneration'), eq(parameters.diagnosticOnly, true)) }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true'
+              ${{ else }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false'
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
@@ -653,6 +668,10 @@ jobs:
                 exit $status
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if and(eq(parameters.suiteId, 'workspaceArtifactRegeneration'), eq(parameters.diagnosticOnly, true)) }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true'
+              ${{ else }}:
+                LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false'
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
@@ -765,8 +784,8 @@ jobs:
             Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
           }
           if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration') {
+            $regenerationDestination = Join-Path $logDestination 'regeneration'
             if (Test-Path $regenerationEvidenceRoot) {
-              $regenerationDestination = Join-Path $logDestination 'regeneration'
               New-Item -ItemType Directory -Force -Path $regenerationDestination | Out-Null
               $requiredRegenerationFiles = @(
                 'invocation.json',
@@ -797,6 +816,32 @@ jobs:
               }
             } else {
               $missingRequiredFiles += $regenerationEvidenceRoot
+            }
+            if ('${{ parameters.diagnosticOnly }}' -eq 'true') {
+              New-Item -ItemType Directory -Force -Path $regenerationDestination | Out-Null
+              $aggregateName = 'regeneration-diagnostics.jsonl'
+              $aggregateDestination = Join-Path $regenerationDestination $aggregateName
+              $aggregateStaged = $false
+              if (Get-Command node -ErrorAction SilentlyContinue) {
+                try {
+                  node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/regeneration-diagnostic-publication.js" `
+                    --stage "$regenerationEvidenceRoot" "$aggregateDestination"
+                  $aggregateStaged = $LASTEXITCODE -eq 0
+                } catch {
+                  Write-Host '[workspace-regeneration-diagnostics] aggregate-staging-command-unavailable'
+                }
+              } else {
+                Write-Host '[workspace-regeneration-diagnostics] node-unavailable'
+              }
+              if (-not $aggregateStaged) {
+                [ordered]@{
+                  schemaVersion = 1
+                  type = 'publication'
+                  availability = 'unavailable'
+                  reason = 'aggregate-missing-or-invalid'
+                } | ConvertTo-Json -Compress | Set-Content -LiteralPath $aggregateDestination -Encoding utf8
+                $missingRequiredFiles += $aggregateName
+              }
             }
           }
           if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle' -and (Test-Path $processEvidenceRoot)) {

@@ -35,6 +35,7 @@ async function main(): Promise<void> {
   await testDiagnosticProtocolErrorAndDisconnect();
   await testDiagnosticFailurePreservesPrimaryOutcomes();
   await testDiagnosticBoundsAndLateHistory();
+  testPrivateRendererConsoleAndExceptions();
   console.log('[cdpClient.unit] all tests passed');
 }
 
@@ -56,8 +57,59 @@ function diagnosticHarness(maxEvents = 256) {
 
 function respond(socket: FakeSocket, message: unknown): void {
   const payload = Buffer.from(JSON.stringify(message));
-  assert.ok(payload.length < 126);
-  socket.emit('data', Buffer.concat([Buffer.from([0x81, payload.length]), payload]));
+  assert.ok(payload.length < 65536);
+  const header =
+    payload.length < 126 ? Buffer.from([0x81, payload.length]) : Buffer.from([0x81, 126, payload.length >> 8, payload.length & 255]);
+  socket.emit('data', Buffer.concat([header, payload]));
+}
+
+function testPrivateRendererConsoleAndExceptions(): void {
+  const h = diagnosticHarness();
+  const observed: unknown[] = [];
+  let listenerFailures = 0;
+  try {
+    const remove = h.connection.onConsoleDiagnostic((event) => observed.push(event));
+    h.connection.onConsoleDiagnostic(
+      () => {
+        throw new Error('secondary observer failure');
+      },
+      () => {
+        listenerFailures++;
+      }
+    );
+    respond(h.socket, {
+      method: 'Runtime.consoleAPICalled',
+      params: { type: 'warning', timestamp: 123, args: [{ value: 'private-console-argument' }] },
+    });
+    respond(h.socket, {
+      method: 'Log.entryAdded',
+      params: { entry: { level: 'error', timestamp: 124, text: 'private-log-message', url: 'https://private.test/' } },
+    });
+    respond(h.socket, {
+      method: 'Runtime.exceptionThrown',
+      params: {
+        timestamp: 125,
+        exceptionDetails: {
+          text: 'private-exception-message',
+          url: 'https://private.test/',
+          stackTrace: { callFrames: ['private-stack'] },
+        },
+      },
+    });
+    assert.deepStrictEqual(observed, [
+      { source: 'runtime', type: 'warning', severity: 'warning', timestamp: 123 },
+      { source: 'log', type: 'entry', severity: 'error', timestamp: 124 },
+      { source: 'runtime', type: 'exception', severity: 'error', timestamp: 125 },
+    ]);
+    assert.ok(!JSON.stringify(observed).includes('private-'));
+    assert.strictEqual(listenerFailures, 3, 'Observer failures are counted without interrupting the CDP transport');
+    remove();
+    respond(h.socket, { method: 'Runtime.exceptionThrown', params: { timestamp: 126, exceptionDetails: { text: 'private-again' } } });
+    assert.strictEqual(observed.length, 3, 'A detached observer must not receive later events');
+  } finally {
+    h.restore();
+    h.connection.dispose();
+  }
 }
 
 async function testWebviewDiscoveryEnableHonorsOriginalDeadline(): Promise<void> {

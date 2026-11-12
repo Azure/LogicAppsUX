@@ -731,6 +731,7 @@ extends:
               cliArguments: --workspace-artifact-regeneration
               artifactName: linux-workspace-regeneration
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_workspaceArtifactRegeneration'] ]
+              diagnosticOnly: ${{ parameters.diagnosticOnly }}
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
@@ -753,6 +754,7 @@ extends:
               cliArguments: --workspace-artifact-regeneration
               artifactName: windows-workspace-regeneration
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_workspaceArtifactRegeneration'] ]
+              diagnosticOnly: ${{ parameters.diagnosticOnly }}
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]

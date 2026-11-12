@@ -40,6 +40,7 @@ const {
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
 const { getEvidenceManifestPath, initializeSuiteEvidenceManifest } = require('./vscode-e2e-evidence-manifest');
+const { publishProductDiagnostics } = require('./regeneration-diagnostic-publication');
 
 const forbiddenOutputPatterns = [
   {
@@ -105,6 +106,9 @@ const generatedWorkspaceSnapshotDangerousExtensions = new Set([
 ]);
 const generatedWorkspaceSnapshotDangerousFileNames = new Set(['.env', '.env.local', '.npmrc']);
 const workspaceParentsWithDiagnosticFailures = new Set();
+const regenerationDiagnosticPhases = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases
+  .filter((phase) => phase !== 'workspaceArtifactRegeneration:create')
+  .map((phase) => phase.slice('workspaceArtifactRegeneration:'.length));
 const directFamilySuiteIds = new Set([
   'httpTimeoutLifecycle',
   'workspaceArtifactRegeneration',
@@ -589,7 +593,9 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
       // ambient Azure CLI fallback, new grants, or resource creation.
       const credentials = await getSuiteScopedCredentialEnv(process.env, suite, options.timeoutMs || 45 * 60 * 1000);
       const env = {
-        ...buildSuiteEnvironment(process.env, context, credentials),
+        ...buildSuiteEnvironment(process.env, context, credentials, {
+          diagnosticOnly: suite.id === 'workspaceArtifactRegeneration' && process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY === 'true',
+        }),
         LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent,
         LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: seedDir,
       };
@@ -660,6 +666,7 @@ function retainFailedRegenerationDiagnostics(context, destination) {
     false,
     'Failure retention requires the actual rejected outer terminal'
   );
+  publishRegenerationDiagnosticAggregate(source, process.env);
   assert.equal(fs.existsSync(destination), false, `Refusing to overwrite workspace regeneration failure diagnostics: ${destination}`);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   // Keep the original partial evidence byte-for-byte, including missing family
@@ -745,6 +752,7 @@ function publishRegenerationDiagnostics(context, env) {
   if (!fs.existsSync(source)) {
     throw new Error(`Workspace regeneration diagnostics were not produced at the wrapper-owned path: ${source}`);
   }
+  publishRegenerationDiagnosticAggregate(source, env);
   assertRequiredRegenerationDiagnosticsFiles(source);
   const resolvedSource = path.resolve(source);
   const resolvedDestination = path.resolve(destination);
@@ -760,6 +768,18 @@ function publishRegenerationDiagnostics(context, env) {
     throw new Error(`Workspace regeneration diagnostics publication did not create the destination: ${resolvedDestination}`);
   }
   return resolvedDestination;
+}
+
+function publishRegenerationDiagnosticAggregate(root, env) {
+  if (env.LA_E2E_CLI_DIAGNOSTIC_ONLY !== 'true') {
+    return;
+  }
+  try {
+    publishProductDiagnostics(root, regenerationDiagnosticPhases, true);
+  } catch {
+    // Secondary diagnostics must never replace the native outcome or lifecycle evidence.
+    console.error('[workspace-regeneration-diagnostics] aggregate-publication-unavailable');
+  }
 }
 
 const requiredRegenerationDiagnosticsFiles = [
@@ -3382,6 +3402,7 @@ async function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTes
           console.error(`[workspace-regeneration] ${String(error)}`);
         } finally {
           diagnosticsErrors.push(...collectRegenerationProfileLogs(regenerationContext.root, childEnv));
+          publishRegenerationDiagnosticAggregate(regenerationContext.root, childEnv);
           if (previousScreenshotDir === undefined) {
             delete process.env.LA_E2E_CLI_SCREENSHOT_DIR;
           } else {

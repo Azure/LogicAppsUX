@@ -168,6 +168,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     testDeferredWorkspaceCleanupOwnership();
     await testRegenerationDiagnosticsPublication();
     testRegenerationPromptObservationRetention();
+    testDiagnosticRegenerationFailurePublication();
     testDirectFamilyShortLinuxProfileParent();
     testCliProfilePreservesPreparedExtensionCohort();
     testPreparedExtensionDependencyCohort();
@@ -205,6 +206,8 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
+    testRegenerationDiagnosticEnvironmentIsolation();
+    await testBatchRegenerationDiagnosticPropagation();
     await testBatchRejectsInvalidExtensionSeedBeforeLaunch();
     testBatchShortProfileParentOwnership();
     await testExternalProfileParentSurvivesSuiteCleanup();
@@ -217,6 +220,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     await testBatchStopsAfterContainmentBreach();
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testBatchRegenerationRejectsMissingStagingEvidence();
+    await testDirectRegenerationDiagnosticPropagation();
     await testDirectRegenerationRetainsRejectedClosureDiagnostics();
     await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
@@ -393,6 +397,37 @@ function testRegenerationPromptObservationRetention() {
   assert.strictEqual(fs.existsSync(path.join(rejectedDestination, 'prompt-observations.jsonl')), false);
 }
 
+function testDiagnosticRegenerationFailurePublication() {
+  const root = path.join(tempRoot, 'regeneration-diagnostic-failure');
+  const reportsRoot = path.join(root, 'reports');
+  const source = path.join(reportsRoot, 'workspace-regeneration');
+  const terminalResultPath = path.join(root, 'terminal.json');
+  const cleanupLedgerPath = path.join(root, 'cleanup.json');
+  const phaseResultsPath = path.join(root, 'phases.jsonl');
+  fs.mkdirSync(source, { recursive: true });
+  fs.writeFileSync(path.join(source, 'invocation.json'), '{"invocation":"11111111-1111-4111-8111-111111111111"}\n');
+  fs.writeFileSync(terminalResultPath, '{"complete":false}\n');
+  fs.writeFileSync(cleanupLedgerPath, '{"verified":false}\n');
+  fs.writeFileSync(phaseResultsPath, '{"complete":false}\n');
+  const context = { reportsRoot, terminalResultPath, cleanupLedgerPath, phaseResultsPath };
+  const previous = process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY;
+  process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY = 'true';
+  try {
+    const destination = path.join(root, 'retained');
+    retainFailedRegenerationDiagnostics(context, destination);
+    const records = fs.readFileSync(path.join(destination, 'regeneration-diagnostics.jsonl'), 'utf8').trim().split('\n').map(JSON.parse);
+    assert.ok(records.some((record) => record.type === 'product-capture' && record.availability === 'unavailable'));
+    assert.ok(records.some((record) => record.type === 'detector-capture' && record.availability === 'unavailable'));
+    assert.strictEqual(fs.readFileSync(path.join(destination, 'outer-terminal-result.json'), 'utf8'), '{"complete":false}\n');
+  } finally {
+    if (previous === undefined) {
+      delete process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY;
+    } else {
+      process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY = previous;
+    }
+  }
+}
+
 async function testRegenerationDiagnosticsPublication() {
   const reportsRoot = path.join(tempRoot, 'regeneration-publication-reports');
   const source = path.join(reportsRoot, 'workspace-regeneration');
@@ -404,7 +439,7 @@ async function testRegenerationDiagnosticsPublication() {
   const regenerationContext = {
     root: source,
     identity,
-    invocation: 'regeneration-publication-unit',
+    invocation: '11111111-1111-4111-8111-111111111111',
     workspaceParent,
     resultPath: path.join(source, 'final-result.json'),
   };
@@ -457,6 +492,19 @@ async function testRegenerationDiagnosticsPublication() {
   for (const name of requiredNames) {
     assert.ok(fs.statSync(path.join(destination, name)).isFile(), `Published regeneration diagnostics are missing ${name}`);
   }
+  assert.strictEqual(fs.existsSync(path.join(destination, 'regeneration-diagnostics.jsonl')), false);
+  const diagnosticDestination = path.join(tempRoot, 'regeneration-publication-diagnostic');
+  publishRegenerationDiagnostics(
+    { reportsRoot },
+    { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: diagnosticDestination, LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' }
+  );
+  const records = fs
+    .readFileSync(path.join(diagnosticDestination, 'regeneration-diagnostics.jsonl'), 'utf8')
+    .trim()
+    .split('\n')
+    .map(JSON.parse);
+  assert.ok(records.some((record) => record.type === 'product-capture' && record.availability === 'unavailable'));
+  assert.ok(records.some((record) => record.type === 'detector-capture' && record.availability === 'unavailable'));
   assert.throws(
     () => publishRegenerationDiagnostics({ reportsRoot }, { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: destination }),
     /Refusing to overwrite/
@@ -1948,6 +1996,111 @@ function testBatchSuiteEnvironmentIsolation() {
   );
 }
 
+function diagnosticEnvironmentKeys(env) {
+  return Object.keys(env).filter((key) => key.toLowerCase() === 'la_e2e_cli_diagnostic_only');
+}
+
+const REGENERATION_PROBE_VARIABLES = [
+  'LA_E2E_CLI_REGENERATION_PROBE',
+  'LA_E2E_CLI_REGENERATION_TRACE_FILE',
+  'LA_E2E_CLI_REGENERATION_TRACE_PHASE',
+  'LA_E2E_CLI_REGENERATION_TRACE_INVOCATION',
+];
+
+function regenerationProbeEnvironmentKeys(env) {
+  const blocked = new Set(REGENERATION_PROBE_VARIABLES.map((key) => key.toLowerCase()));
+  return Object.keys(env).filter((key) => blocked.has(key.toLowerCase()));
+}
+
+function testRegenerationDiagnosticEnvironmentIsolation() {
+  const batchRoot = path.join(tempRoot, 'regeneration-diagnostic-env');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const regeneration = createSuiteContext({
+    batchRoot,
+    suite: SUITE_REGISTRY.workspaceArtifactRegeneration,
+    index: 0,
+    total: 2,
+  });
+  const otherSuite = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 1, total: 2 });
+  const inherited = {
+    PATH: process.env.PATH,
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    la_e2e_cli_diagnostic_only: 'true',
+    ...Object.fromEntries(
+      REGENERATION_PROBE_VARIABLES.flatMap((key) => [
+        [key, 'inherited'],
+        [key.toLowerCase(), 'inherited-lower'],
+      ])
+    ),
+  };
+  const extra = {
+    La_E2E_Cli_Diagnostic_Only: 'true',
+    ...Object.fromEntries(
+      REGENERATION_PROBE_VARIABLES.flatMap((key) => [
+        [key, 'scoped'],
+        [key.replace('LA_E2E_CLI_', 'lA_E2e_ClI_'), 'scoped-mixed'],
+      ])
+    ),
+    LA_E2E_CLI_REGENERATION_PROBE_EXTRA: 'retained',
+    UNRELATED_SUITE_VALUE: 'retained',
+  };
+
+  for (const options of [{}, { diagnosticOnly: false }, { diagnosticOnly: 'true' }, { diagnosticOnly: 1 }]) {
+    const canonical = buildSuiteEnvironment(inherited, regeneration, extra, options);
+    assert.deepStrictEqual(diagnosticEnvironmentKeys(canonical), [], 'Inherited and extra diagnostic values must be stripped');
+    assert.deepStrictEqual(regenerationProbeEnvironmentKeys(canonical), [], 'Canonical runs must strip inherited and scoped probes');
+    assert.strictEqual(canonical.LA_E2E_CLI_REGENERATION_PROBE_EXTRA, 'retained');
+    assert.strictEqual(canonical.UNRELATED_SUITE_VALUE, 'retained');
+  }
+  const optedIn = buildSuiteEnvironment(inherited, regeneration, extra, { diagnosticOnly: true });
+  assert.deepStrictEqual(diagnosticEnvironmentKeys(optedIn), ['LA_E2E_CLI_DIAGNOSTIC_ONLY']);
+  assert.strictEqual(optedIn.LA_E2E_CLI_DIAGNOSTIC_ONLY, 'true');
+  assert.deepStrictEqual(regenerationProbeEnvironmentKeys(optedIn), [], 'The runner must not arm product probes in diagnostic mode');
+  const optedInOtherSuite = buildSuiteEnvironment(inherited, otherSuite, extra, { diagnosticOnly: true });
+  assert.deepStrictEqual(
+    diagnosticEnvironmentKeys(optedInOtherSuite),
+    [],
+    'Diagnostic mode must not enable product diagnostics for a different suite'
+  );
+  assert.deepStrictEqual(regenerationProbeEnvironmentKeys(optedInOtherSuite), []);
+}
+
+async function testBatchRegenerationDiagnosticPropagation() {
+  const seedDir = path.join(tempRoot, 'batch-diagnostic-seed');
+  createPreparedExtensionsSeed(seedDir);
+  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.workspaceArtifactRegeneration];
+  for (const diagnosticOnly of [false, true]) {
+    const seen = new Map();
+    const aggregate = await runBatchSuites({
+      suites,
+      batchRoot: path.join(tempRoot, `batch-diagnostic-${diagnosticOnly}`),
+      seedDir,
+      baseEnv: {
+        PATH: process.env.PATH,
+        LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+        la_e2e_cli_diagnostic_only: 'true',
+        ...Object.fromEntries(REGENERATION_PROBE_VARIABLES.map((key, index) => [index % 2 ? key : key.toLowerCase(), 'inherited'])),
+      },
+      diagnosticOnly,
+      runSuite: async ({ suite, context, env }) => {
+        seen.set(suite.id, {
+          diagnostic: diagnosticEnvironmentKeys(env).map((key) => [key, env[key]]),
+          probe: regenerationProbeEnvironmentKeys(env),
+        });
+        writeSuiteTerminalAndCleanup(context);
+        return { exitCode: 0, signal: null, output: '1 passing\n' };
+      },
+    });
+    assert.deepStrictEqual(seen.get('unitTests'), { diagnostic: [], probe: [] });
+    assert.deepStrictEqual(seen.get('workspaceArtifactRegeneration'), {
+      diagnostic: diagnosticOnly ? [['LA_E2E_CLI_DIAGNOSTIC_ONLY', 'true']] : [],
+      probe: [],
+    });
+    assert.strictEqual(aggregate.diagnosticOnly, diagnosticOnly);
+    assert.strictEqual(aggregate.fullRollup, false, 'A partial diagnostic selection cannot become a full rollup');
+  }
+}
+
 async function testBatchRejectsInvalidExtensionSeedBeforeLaunch() {
   const seedDir = path.join(tempRoot, 'invalid-extensions-seed');
   fs.mkdirSync(seedDir, { recursive: true });
@@ -2290,6 +2443,57 @@ async function testBatchRegenerationRejectsMissingStagingEvidence() {
   const directTerminal = JSON.parse(fs.readFileSync(path.join(resultsDir, `${suite.id}.terminal-result.json`), 'utf8'));
   assert.strictEqual(directTerminal.complete, false);
   assert.strictEqual(directTerminal.cleanupVerified, false);
+}
+
+async function testDirectRegenerationDiagnosticPropagation() {
+  const root = path.join(tempRoot, 'direct-regeneration-diagnostic-env');
+  const seedDir = path.join(root, 'seed');
+  const scriptPath = path.join(root, 'capture-environment.js');
+  fs.mkdirSync(root, { recursive: true });
+  createPreparedExtensionsSeed(seedDir);
+  fs.writeFileSync(
+    scriptPath,
+    [
+      "const fs = require('node:fs');",
+      "const keys = Object.keys(process.env).filter((key) => key.toLowerCase() === 'la_e2e_cli_diagnostic_only');",
+      'const probes = Object.keys(process.env).filter((key) => /^la_e2e_cli_regeneration_(?:probe|trace_(?:file|phase|invocation))$/i.test(key));',
+      'fs.writeFileSync(process.env.E2E_GATE_TEST_OUTPUT, JSON.stringify({ diagnostic: keys.map((key) => [key, process.env[key]]), probes }));',
+      'process.exit(1);',
+    ].join('\n')
+  );
+  const previousFlag = process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY;
+  const previousOutput = process.env.E2E_GATE_TEST_OUTPUT;
+  const inheritedProbeKeys = REGENERATION_PROBE_VARIABLES.map((key, index) => (index % 2 ? key : key.toLowerCase()));
+  const previousProbeValues = Object.fromEntries(inheritedProbeKeys.map((key) => [key, process.env[key]]));
+  try {
+    for (const key of inheritedProbeKeys) process.env[key] = 'inherited-untrusted';
+    for (const value of ['false', '1', 'true']) {
+      const capturePath = path.join(root, `capture-${value}.json`);
+      process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY = value;
+      process.env.E2E_GATE_TEST_OUTPUT = capturePath;
+      const exitCode = await runDirectFamily('workspaceArtifactRegeneration', undefined, {
+        batchRoot: path.join(root, `batch-${value}`),
+        resultsDir: path.join(root, `results-${value}`),
+        seedDir,
+        timeoutMs: 10_000,
+        scriptPath,
+      });
+      assert.strictEqual(exitCode, 1, 'The intentionally failing fixture must remain a failed suite');
+      assert.deepStrictEqual(JSON.parse(fs.readFileSync(capturePath, 'utf8')), {
+        diagnostic: value === 'true' ? [['LA_E2E_CLI_DIAGNOSTIC_ONLY', 'true']] : [],
+        probes: [],
+      });
+    }
+  } finally {
+    if (previousFlag === undefined) delete process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY;
+    else process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY = previousFlag;
+    if (previousOutput === undefined) delete process.env.E2E_GATE_TEST_OUTPUT;
+    else process.env.E2E_GATE_TEST_OUTPUT = previousOutput;
+    for (const key of inheritedProbeKeys) {
+      if (previousProbeValues[key] === undefined) delete process.env[key];
+      else process.env[key] = previousProbeValues[key];
+    }
+  }
 }
 
 async function testDirectRegenerationRetainsRejectedClosureDiagnostics() {

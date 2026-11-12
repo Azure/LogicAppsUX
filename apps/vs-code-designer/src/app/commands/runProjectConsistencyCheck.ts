@@ -7,15 +7,20 @@ import { ensureProjectFiles } from '../projectConsistency/projectFilesConsistenc
 import { ensureVSCodeFiles } from '../projectConsistency/vscodeConsistency';
 import * as vscode from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { recordRegenerationEvent } from '../utils/regenerationProbe';
 
 export async function runProjectConsistencyCheck(context: IActionContext): Promise<void> {
+  recordRegenerationEvent({ event: 'consistency-check-entered' });
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-workspace' });
     return;
   }
   const projectPaths = await getWorkspaceLogicAppRoots();
+  recordRegenerationEvent({ event: 'consistency-project-discovery-returned', projectCount: projectPaths.length });
 
   const ensureProjectFilesTasks = projectPaths.map((projectPath) => ensureProjectFiles(context, projectPath));
   const ensureVSCodeFilesTask = ensureVSCodeFiles(context, projectPaths);
 
   await Promise.all([...ensureProjectFilesTasks, ensureVSCodeFilesTask]);
+  recordRegenerationEvent({ event: 'consistency-check-returned' });
 }

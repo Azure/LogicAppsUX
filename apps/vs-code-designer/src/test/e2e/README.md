@@ -506,13 +506,13 @@ The original wizard host must finish first. The supplement uses its resolved Cod
 executable/hash/version and prepared extensions directory, then reopens that same
 generated `.code-workspace` in fresh **regular** Code hosts (without
 `--extensionTestsPath`). Normal activation/consistency checks remain enabled.
-Each observation retains a 30-second deadline starting before launch; polling,
+Each observation retains a 120-second deadline starting before launch; polling,
 CDP operations, file settlement, and required screenshots consume that same budget.
 Ordinary Close Window has its existing separate 10-second teardown budget, never
 a forced process kill or an extension of the observation deadline.
 
-Each partial deletion leaves existing `.vscode` files. Consequently the product
-requires **two distinct renderer controls**, in this order:
+The three `.vscode` deletion cases require **two distinct renderer controls**, in
+this order:
 
 1. The project-scoped notification, `Detected an Azure Logic App project "..."`
    / `Initialize for optimal use with VS Code?` → its real **Yes**.
@@ -571,9 +571,9 @@ The planned sequence is a valid-project fresh-reopen baseline, then:
 | `vscode-single` | `.vscode/tasks.json` | Real initialization prompt, actual Yes mouse input |
 | `vscode-multiple` | `.vscode/launch.json`, `settings.json`, `extensions.json` | Same real prompt/Yes |
 | `vscode-repeat` | `.vscode/tasks.json` again | Another real prompt/Yes, not a fabricated repeat |
-| `root-single` | Root `host.json` | Required initialization prompt/Yes; silent repair fails |
-| `root-multiple` | Root `host.json`, `local.settings.json` | Required initialization prompt/Yes; silent repair fails |
-| `root-repeat` | Root `local.settings.json` again | Required initialization prompt/Yes; silent repair fails |
+| `root-single` | Root `host.json` | Silent repair, zero Yes clicks, `after-repair` and fresh-reopen evidence |
+| `root-multiple` | Root `host.json`, `local.settings.json` | Silent repair, zero Yes clicks, `after-repair` and fresh-reopen evidence |
+| `root-repeat` | Root `local.settings.json` again | Silent repeat repair, zero Yes clicks, `after-repair` and fresh-reopen evidence |
 
 Before deletion the test retains the exact JSON contracts of **all six** original
 wizard artifacts. Regenerated JSON must deep-equal those contracts; existence or
@@ -593,20 +593,64 @@ retired optional diagnostics, not required acceptance evidence. The existing
 test-side watcher remains explicitly `unknown-writer` and cannot reconstruct that
 attribution. Standalone diagnostic-adapter controls do not imply product use.
 Exact file, prompt, screenshot, lifecycle and cleanup assertions remain unchanged.
-Every real Yes branch must dismiss the prompt, write the expected files durably,
-close Code normally, and persist all file bytes/entries without another initialization
-prompt on a separate fresh reopen. A failed branch stops the sequence; planned but
-unobserved branches cannot receive credit.
+Every real Yes branch must dismiss the prompts and write the expected files
+durably. Root-only cases must repair silently without either prompt. All cases
+close Code normally and persist all file bytes/entries without another
+initialization prompt on a separate fresh reopen. A failed branch stops the
+sequence; planned but unobserved branches cannot receive credit. These are the
+current harness assertions, not a claim of a new native outcome or an independent
+adjudication of the original source request.
 
-**Known source/product boundary, not a waiver:** the retained source requires
-initialization/Yes for missing `.vscode` artifacts and repeats deletion for root
-`host.json` / `local.settings.json` with the original template oracle. Its root
-repeat wording does not independently spell out another Yes; this family keeps the
-requested strict root/repeated-Yes interpretation explicit for expectation review.
-Current product activation repairs root files before `.vscode` consistency prompting.
-Consequently root-only branches may heal silently and fail the required prompt/Yes
-assertion. No native outcome is claimed here, and neither the source interpretation
-nor an initial/intentionally changed expectation baseline is auto-approved.
+#### Diagnostic-only regeneration observations
+
+The runner may explicitly forward `LA_E2E_CLI_DIAGNOSTIC_ONLY=true` to this family.
+It is a runner-only gate, not a product feature flag. Each regular host then
+exclusively precreates `<phase>-product-events.jsonl` and the sibling
+`<phase>-product-arming.json` under the invocation-owned root before launch. The
+receipt carries the family UUID, registered phase slug, fresh `armId`, trace
+basename, opaque identity binding, and UTC arming time. Only that diagnostic
+regular host receives the four product-probe variables; its inherited probe
+variables are scrubbed first. The runner must separately scrub them from the
+wizard and every other/canonical host.
+
+The optional product producer must use the matching receipt and append bounded
+JSONL records starting with `recorder-armed`, followed by activation and
+heartbeats. `<phase>-product-collection.json` records arming, spawn, decision and
+heartbeat boundaries, counts and fixed reason codes. Missing, mismatched,
+discontinuous, overflowing, failed or insufficient coverage is unavailable;
+partial observations are never proof that a warning was not issued or displayed.
+`warning-call-entered` identifies entry into the UI wrapper; `warning-call-returned`
+means the call returned a promise, not that VS Code rendered the warning. A
+`warning-result` records the eventual response. Compare each event's timestamp
+with the decision boundary: post-decision events cannot satisfy the test.
+`<phase>-detector-timeline.jsonl` and `<phase>-diagnostic-summary.json` contain
+bounded reason-coded workbench observations and renderer-console source/type/
+severity and UTC receipt time, not message text, console arguments, URLs, stacks,
+or paths. Renderer exceptions are represented as `runtime` / `exception` /
+`error`. The sampler starts after the regular workbench shell attaches and proves
+the expected workspace and document by discrete polls. Buffered events, events
+without a usable timestamp, and events outside a proved ownership interval are
+discarded and counted, including gaps during a new poll, after a CDP context
+generation change, and after the final poll. Listener registration,
+failures, Log-domain state and dropped counts are reported; console coverage is
+always partial or unavailable. Earlier UI and extension-host console events are
+unobserved. Detection is sampled: even complete sampling coverage cannot rule out
+a transient prompt between polls. The aggregate downgrades coverage when a
+recorded candidate list is truncated. Notification and Do Not Disturb state may
+be unknown.
+
+On observation failure the harness attempts an immediate screenshot of the same
+owned CDP target before disposal or teardown. A separately bounded post-decision
+diagnostic capture may be labeled post-deadline; it does not extend or satisfy the
+120-second acceptance budget. The Notification Center is opened for a second
+image only when the current target, document, active UI and input state are safe;
+otherwise a fixed skip reason is recorded. Images can contain sensitive pixels:
+publish them only with restricted handling. The runner and pipeline recompute and
+validate an allowlisted `regeneration-diagnostics.jsonl` aggregate containing
+product, detector, console, and status observations; a missing or tampered
+aggregate is explicitly unavailable. Screenshots are staged through the existing
+ordered-evidence manifest. Raw Code/profile logs and rich sidecars are not safe
+to publish by default.
 
 Set `LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR` to a fresh job-owned path for
 `invocation.json`, `wizard-handoff.json`, `final-result.json`, per-phase Code logs,

@@ -67,6 +67,8 @@ interface ScreenshotCaptureOptions {
   captureBeforeObservation?: boolean;
   diagnosticContext?: ScreenshotReadinessMetadata['diagnosticContext'];
   onDiagnosticFailure?: (error: unknown) => void;
+  onImmediateCaptureStart?: (startedAtMs: number) => void;
+  onOrderedEvidenceStatus?: (status: 'registered' | 'not-configured' | 'unavailable') => void;
   expectation?: ScreenshotExpectation;
   classification?: ScreenshotClassification;
   semanticCdp?: CdpClient;
@@ -193,11 +195,50 @@ export async function captureCdpScreenshot(
   options: ScreenshotCaptureOptions = {}
 ): Promise<string | undefined> {
   const classification = options.classification ?? 'evidence';
+  let immediatePixelsWritten = false;
   try {
-    return await captureCdpScreenshotCore(cdp, name, options, classification);
+    return await captureCdpScreenshotCore(cdp, name, options, classification, () => {
+      immediatePixelsWritten = true;
+    });
   } catch (error) {
     if (classification === 'diagnostic') {
       reportDiagnosticFailure(options, error);
+      if (options.captureBeforeObservation && immediatePixelsWritten) {
+        const safeName = sanitizeScreenshotSegment(name);
+        const screenshotPath = path.join(screenshotRoot, `${safeName}.png`);
+        if (screenshotFileSystem.existsSync(screenshotPath)) {
+          // A later metadata/readiness failure must not discard pixels already
+          // returned by this exact owned CDP target.
+          try {
+            writeScreenshotMetadata(
+              path.join(screenshotRoot, `${safeName}.json`),
+              buildScreenshotMetadata({
+                checkpoint: safeName,
+                diagnosticContext: options.diagnosticContext,
+                phase: 'diagnostic',
+                classification: 'diagnostic',
+                verdict: 'diagnostic',
+                targetId: cdp.targetId ?? 'unknown-workbench-target',
+                frameId: 'main-frame',
+                generation: cdp.contextGeneration ?? 0,
+                timeoutMs: options.timeoutMs ?? 5000,
+                elapsedMs: 0,
+                samples: [],
+                captureAttempts: 1,
+                reasonCodes: ['metadata-after-capture-failed'],
+              }),
+              options.onOrderedEvidenceStatus
+            );
+          } catch {
+            try {
+              options.onOrderedEvidenceStatus?.('unavailable');
+            } catch {
+              // Secondary observers cannot replace the original failure.
+            }
+          }
+          return screenshotPath;
+        }
+      }
       console.warn(`[screenshot] Diagnostic CDP screenshot failed: ${error instanceof Error ? error.message : String(error)}`);
       return undefined;
     }
@@ -209,7 +250,8 @@ async function captureCdpScreenshotCore(
   cdp: CdpClient,
   name: string,
   options: ScreenshotCaptureOptions,
-  classification: ScreenshotClassification
+  classification: ScreenshotClassification,
+  onImmediatePixelsWritten: () => void
 ): Promise<string | undefined> {
   screenshotFileSystem.mkdirSync(screenshotRoot, { recursive: true });
 
@@ -236,9 +278,16 @@ async function captureCdpScreenshotCore(
   let generation = cdp.contextGeneration ?? 0;
   const immediateDiagnostic = classification === 'diagnostic' && options.captureBeforeObservation === true;
   let data: string | undefined;
+  let immediatePixelsPersisted = false;
   if (immediateDiagnostic) {
     captureAttempts++;
-    events.push({ name: 'capture-start', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
+    const captureStartedAt = Date.now();
+    events.push({ name: 'capture-start', elapsedMs: captureStartedAt - startedAt, attempt: captureAttempts, generation });
+    try {
+      options.onImmediateCaptureStart?.(captureStartedAt);
+    } catch {
+      // Timing observers cannot change capture acceptance.
+    }
     try {
       const response = (await cdp.send(
         'Page.captureScreenshot',
@@ -246,8 +295,14 @@ async function captureCdpScreenshotCore(
         { timeoutMs: remaining(deadline, 5000) }
       )) as { result?: { data?: string } };
       data = response.result?.data;
+      if (data) {
+        screenshotFileSystem.writeFileSync(screenshotPath, Buffer.from(data, 'base64'));
+        immediatePixelsPersisted = true;
+        onImmediatePixelsWritten();
+      }
       events.push({ name: 'capture-end', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
     } catch (error) {
+      data = undefined;
       reportDiagnosticFailure(options, error);
       events.push({
         name: 'capture-rpc-failed',
@@ -507,7 +562,8 @@ async function captureCdpScreenshotCore(
         captureAttempts,
         reasonCodes,
         events,
-      })
+      }),
+      options.onOrderedEvidenceStatus
     );
     if (classification === 'diagnostic') {
       console.warn(`[screenshot] Diagnostic capture unavailable for ${safeName}: ${reasonCodes.join(', ')}`);
@@ -516,7 +572,9 @@ async function captureCdpScreenshotCore(
     throw new Error(`Screenshot readiness failed for ${name}: ${reasonCodes.join(', ')}`);
   }
 
-  screenshotFileSystem.writeFileSync(screenshotPath, Buffer.from(data, 'base64'));
+  if (!immediatePixelsPersisted) {
+    screenshotFileSystem.writeFileSync(screenshotPath, Buffer.from(data, 'base64'));
+  }
   writeScreenshotMetadata(
     metadataPath,
     buildScreenshotMetadata({
@@ -534,7 +592,8 @@ async function captureCdpScreenshotCore(
       captureAttempts,
       reasonCodes: samples.at(-1)?.reasonCodes,
       events,
-    })
+    }),
+    options.onOrderedEvidenceStatus
   );
   console.log(`[screenshot] Saved: ${screenshotPath}`);
   return screenshotPath;
@@ -1445,17 +1504,29 @@ function getMainFrameId(frameTree: unknown): string | undefined {
   return value?.result?.frameTree?.frame?.id;
 }
 
-function writeScreenshotMetadata(metadataPath: string, metadata: ScreenshotReadinessMetadata): void {
+function writeScreenshotMetadata(
+  metadataPath: string,
+  metadata: ScreenshotReadinessMetadata,
+  onOrderedEvidenceStatus?: ScreenshotCaptureOptions['onOrderedEvidenceStatus']
+): void {
   screenshotFileSystem.mkdirSync(path.dirname(metadataPath), { recursive: true });
   screenshotFileSystem.writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`);
-  recordOrderedEvidenceMetadata(metadataPath, metadata);
+  const status = recordOrderedEvidenceMetadata(metadataPath, metadata);
+  try {
+    onOrderedEvidenceStatus?.(status);
+  } catch {
+    // A diagnostic observer must not change capture acceptance.
+  }
 }
 
-function recordOrderedEvidenceMetadata(metadataPath: string, metadata: ScreenshotReadinessMetadata): void {
+function recordOrderedEvidenceMetadata(
+  metadataPath: string,
+  metadata: ScreenshotReadinessMetadata
+): 'registered' | 'not-configured' | 'unavailable' {
   const evidenceDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
   const expectedInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
   if (!evidenceDir || !expectedInvocation || process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED === '0') {
-    return;
+    return 'not-configured';
   }
   try {
     const manifestModulePath = path.resolve(__dirname, '..', '..', '..', 'scripts', 'vscode-e2e-evidence-manifest.js');
@@ -1474,10 +1545,11 @@ function recordOrderedEvidenceMetadata(metadataPath: string, metadata: Screensho
       metadata,
       expectedInvocation,
     });
+    return 'registered';
   } catch (error) {
     if (metadata.classification === 'diagnostic') {
       console.warn(`[screenshot] Ordered diagnostic evidence update failed: ${error instanceof Error ? error.message : String(error)}`);
-      return;
+      return 'unavailable';
     }
     throw error;
   }

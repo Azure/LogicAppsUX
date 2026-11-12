@@ -179,6 +179,7 @@ export async function connectToOwnedRegularWorkbench(options: {
   connectionTimeoutMs?: number;
   activate?: boolean;
   connect?: typeof connectToVsCodeWorkbenchCdp;
+  onConnection?: (cdp: CdpConnection) => void;
 }): Promise<OwnedRegularWorkbench> {
   const connectionDeadline = Math.min(options.deadline, Date.now() + (options.connectionTimeoutMs ?? 15000));
   const cdp = await (options.connect ?? connectToVsCodeWorkbenchCdp)({
@@ -187,6 +188,13 @@ export async function connectToOwnedRegularWorkbench(options: {
     timeoutMs: remainingWorkbenchBudget(connectionDeadline),
   });
   try {
+    try {
+      // Register bounded observers before Runtime.enable replays console events.
+      options.onConnection?.(cdp);
+    } catch {
+      // Diagnostics cannot affect regular-workbench admission.
+      console.warn('[workbench-cdp] optional-observer-registration-failed');
+    }
     const client = boundedCdp(cdp, options.deadline);
     await client.send('Runtime.enable');
     await client.send('Page.enable');
