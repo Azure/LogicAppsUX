@@ -1,0 +1,110 @@
+{
+  "name": "LoopsPager",
+  "source": "__mocks__/workflows/LoopsPager.json",
+  "useSharedNodeUi": false,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "When_a_HTTP_request_is_received",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Initialize_variable",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Until",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Until-#subgraph",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Increment_variable",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Until-#footer",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Until-#subgraph-Increment_variable",
+            "sources": ["Until-#subgraph"],
+            "targets": ["Increment_variable"],
+            "layoutOptions": { "edgeType": "HEADING_EDGE" }
+          },
+          {
+            "id": "Increment_variable-Until-#footer",
+            "sources": ["Increment_variable"],
+            "targets": ["Until-#footer"],
+            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=0,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "When_a_HTTP_request_is_received-Initialize_variable",
+        "sources": ["When_a_HTTP_request_is_received"],
+        "targets": ["Initialize_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-Until",
+        "sources": ["Initialize_variable"],
+        "targets": ["Until"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":false}"
+    }
+  }
+}

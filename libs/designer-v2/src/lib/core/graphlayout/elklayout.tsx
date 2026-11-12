@@ -576,6 +576,8 @@ export const exportForTesting = {
   convertElkGraphToReactFlow,
   convertWorkflowGraphToElkGraph,
   elkLayout,
+  defaultLayoutOptions,
+  readOnlyOptions,
 };
 
 export const useLayout = (): LayoutContextType => {

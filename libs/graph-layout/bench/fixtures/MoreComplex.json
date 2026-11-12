@@ -1,0 +1,310 @@
+{
+  "name": "MoreComplex",
+  "source": "__mocks__/workflows/MoreComplex.json",
+  "useSharedNodeUi": false,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "Recurrence",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Create_a_goal",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Delay",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Delay_2",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Initialize_variable",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Set_variable",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Update_a_goal",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Verify_property_changes",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Verify_property_changes-#scope",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Verify_property_changes-actions",
+            "children": [
+              {
+                "id": "Verify_property_changes-actions-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=60,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "Verify_property_changes-elseActions",
+            "children": [
+              {
+                "id": "Verify_property_changes-elseActions-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Terminate",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Verify_property_changes-elseActions-#subgraph-Terminate",
+                "sources": ["Verify_property_changes-elseActions-#subgraph"],
+                "targets": ["Terminate"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Verify_property_changes-#scope-Verify_property_changes-actions",
+            "sources": ["Verify_property_changes-#scope"],
+            "targets": ["Verify_property_changes-actions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Verify_property_changes-#scope-Verify_property_changes-elseActions",
+            "sources": ["Verify_property_changes-#scope"],
+            "targets": ["Verify_property_changes-elseActions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      },
+      {
+        "id": "Verify_trigger_fired",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Verify_trigger_fired-#scope",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Verify_trigger_fired-actions",
+            "children": [
+              {
+                "id": "Verify_trigger_fired-actions-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=60,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "Verify_trigger_fired-elseActions",
+            "children": [
+              {
+                "id": "Verify_trigger_fired-elseActions-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Terminate_2",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Verify_trigger_fired-elseActions-#subgraph-Terminate_2",
+                "sources": ["Verify_trigger_fired-elseActions-#subgraph"],
+                "targets": ["Terminate_2"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Verify_trigger_fired-#scope-Verify_trigger_fired-actions",
+            "sources": ["Verify_trigger_fired-#scope"],
+            "targets": ["Verify_trigger_fired-actions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Verify_trigger_fired-#scope-Verify_trigger_fired-elseActions",
+            "sources": ["Verify_trigger_fired-#scope"],
+            "targets": ["Verify_trigger_fired-elseActions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      },
+      {
+        "id": "When_a_property_of_some_goal_changes",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      }
+    ],
+    "edges": [
+      {
+        "id": "Recurrence-Create_a_goal",
+        "sources": ["Recurrence"],
+        "targets": ["Create_a_goal"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-Delay",
+        "sources": ["Initialize_variable"],
+        "targets": ["Delay"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Update_a_goal-Delay_2",
+        "sources": ["Update_a_goal"],
+        "targets": ["Delay_2"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Create_a_goal-Initialize_variable",
+        "sources": ["Create_a_goal"],
+        "targets": ["Initialize_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Verify_property_changes-Set_variable",
+        "sources": ["Verify_property_changes"],
+        "targets": ["Set_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "Delay-Update_a_goal", "sources": ["Delay"], "targets": ["Update_a_goal"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "When_a_property_of_some_goal_changes-Verify_property_changes",
+        "sources": ["When_a_property_of_some_goal_changes"],
+        "targets": ["Verify_property_changes"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Delay_2-Verify_trigger_fired",
+        "sources": ["Delay_2"],
+        "targets": ["Verify_trigger_fired"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-When_a_property_of_some_goal_changes",
+        "sources": ["Initialize_variable"],
+        "targets": ["When_a_property_of_some_goal_changes"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":false}"
+    }
+  }
+}

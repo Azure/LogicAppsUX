@@ -1785,6 +1785,15 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
 
+  libs/graph-layout:
+    devDependencies:
+      elkjs:
+        specifier: 0.8.2
+        version: 0.8.2
+      esbuild:
+        specifier: 0.25.5
+        version: 0.25.5
+
   libs/logic-apps-shared:
     dependencies:
       '@formatjs/intl':

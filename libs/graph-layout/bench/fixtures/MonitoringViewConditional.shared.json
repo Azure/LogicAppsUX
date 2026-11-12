@@ -1,0 +1,900 @@
+{
+  "name": "MonitoringViewConditional.shared",
+  "source": "__mocks__/workflows/MonitoringViewConditional.json",
+  "useSharedNodeUi": true,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "When_a_HTTP_request_is_received",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Response",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Initialize_variable",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Parse_JSON",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Increment_variable",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Decrement_variable",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Condition",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Condition-#scope",
+            "height": 74,
+            "width": 160,
+            "layoutOptions": {
+              "nodeType": "SCOPE_CARD_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"if\",\"size\":{\"width\":160,\"height\":74}}",
+              "branchPorts": "[{\"id\":\"Condition-actions\",\"subgraphType\":\"CONDITIONAL_TRUE\"},{\"id\":\"Condition-elseActions\",\"subgraphType\":\"CONDITIONAL_FALSE\"}]",
+              "elk.portConstraints": "FIXED_POS"
+            },
+            "ports": [
+              {
+                "id": "Condition-#scope::Condition-actions",
+                "x": 66,
+                "y": 74,
+                "width": 0,
+                "height": 0,
+                "layoutOptions": { "elk.port.side": "SOUTH" }
+              },
+              {
+                "id": "Condition-#scope::Condition-elseActions",
+                "x": 94,
+                "y": 74,
+                "width": 0,
+                "height": 0,
+                "layoutOptions": { "elk.port.side": "SOUTH" }
+              }
+            ]
+          },
+          {
+            "id": "Condition-actions",
+            "children": [
+              {
+                "id": "Condition-actions-#subgraph",
+                "height": 36,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "SUBGRAPH_CARD_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                  "subgraphType": "CONDITIONAL_TRUE"
+                }
+              },
+              {
+                "id": "Condition_1",
+                "height": 40,
+                "width": 200,
+                "children": [
+                  {
+                    "id": "Condition_1-#scope",
+                    "height": 74,
+                    "width": 160,
+                    "layoutOptions": {
+                      "nodeType": "SCOPE_CARD_NODE",
+                      "presentation": "{\"shared\":true,\"family\":\"if\",\"size\":{\"width\":160,\"height\":74}}",
+                      "branchPorts": "[{\"id\":\"Condition_1-actions\",\"subgraphType\":\"CONDITIONAL_TRUE\"},{\"id\":\"Condition_1-elseActions\",\"subgraphType\":\"CONDITIONAL_FALSE\"}]",
+                      "elk.portConstraints": "FIXED_POS"
+                    },
+                    "ports": [
+                      {
+                        "id": "Condition_1-#scope::Condition_1-actions",
+                        "x": 66,
+                        "y": 74,
+                        "width": 0,
+                        "height": 0,
+                        "layoutOptions": { "elk.port.side": "SOUTH" }
+                      },
+                      {
+                        "id": "Condition_1-#scope::Condition_1-elseActions",
+                        "x": 94,
+                        "y": 74,
+                        "width": 0,
+                        "height": 0,
+                        "layoutOptions": { "elk.port.side": "SOUTH" }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "Condition_1-actions",
+                    "children": [
+                      {
+                        "id": "Condition_1-actions-#subgraph",
+                        "height": 36,
+                        "width": 232,
+                        "layoutOptions": {
+                          "nodeType": "SUBGRAPH_CARD_NODE",
+                          "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                          "subgraphType": "CONDITIONAL_TRUE"
+                        }
+                      },
+                      {
+                        "id": "Compose",
+                        "height": 74,
+                        "width": 232,
+                        "layoutOptions": {
+                          "nodeType": "OPERATION_NODE",
+                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                        }
+                      },
+                      {
+                        "id": "Increment_variable_2",
+                        "height": 74,
+                        "width": 232,
+                        "layoutOptions": {
+                          "nodeType": "OPERATION_NODE",
+                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                        }
+                      },
+                      {
+                        "id": "Scope_1",
+                        "height": 40,
+                        "width": 200,
+                        "children": [
+                          {
+                            "id": "Scope_1-#scope",
+                            "height": 74,
+                            "width": 232,
+                            "layoutOptions": {
+                              "nodeType": "SCOPE_CARD_NODE",
+                              "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                            }
+                          },
+                          {
+                            "id": "Scope_2",
+                            "height": 40,
+                            "width": 200,
+                            "children": [
+                              {
+                                "id": "Scope_2-#scope",
+                                "height": 74,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "SCOPE_CARD_NODE",
+                                  "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                                }
+                              },
+                              {
+                                "id": "Increment_variable_5",
+                                "height": 74,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "OPERATION_NODE",
+                                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                                }
+                              }
+                            ],
+                            "edges": [
+                              {
+                                "id": "Scope_2-#scope-Increment_variable_5",
+                                "sources": ["Scope_2-#scope"],
+                                "targets": ["Increment_variable_5"],
+                                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                              }
+                            ],
+                            "layoutOptions": {
+                              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                              "elk.position": "(0, 0)",
+                              "nodeType": "GRAPH_NODE",
+                              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                              "operationType": "scope",
+                              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                              "elk.nodeSize.minimum": "(232,106)"
+                            }
+                          }
+                        ],
+                        "edges": [
+                          {
+                            "id": "Scope_1-#scope-Scope_2",
+                            "sources": ["Scope_1-#scope"],
+                            "targets": ["Scope_2"],
+                            "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                          }
+                        ],
+                        "layoutOptions": {
+                          "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                          "elk.position": "(0, 0)",
+                          "nodeType": "GRAPH_NODE",
+                          "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                          "operationType": "scope",
+                          "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                          "elk.nodeSize.minimum": "(232,106)"
+                        }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Scope_1-Compose",
+                        "sources": ["Scope_1"],
+                        "targets": ["Compose"],
+                        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                      },
+                      {
+                        "id": "Compose-Increment_variable_2",
+                        "sources": ["Compose"],
+                        "targets": ["Increment_variable_2"],
+                        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                      },
+                      {
+                        "id": "Condition_1-actions-#subgraph-Scope_1",
+                        "sources": ["Condition_1-actions-#subgraph"],
+                        "targets": ["Scope_1"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "SUBGRAPH_NODE",
+                      "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                      "subgraphType": "CONDITIONAL_TRUE",
+                      "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                      "elk.nodeSize.minimum": "(232,106)"
+                    }
+                  },
+                  {
+                    "id": "Condition_1-elseActions",
+                    "children": [
+                      {
+                        "id": "Condition_1-elseActions-#subgraph",
+                        "height": 36,
+                        "width": 232,
+                        "layoutOptions": {
+                          "nodeType": "SUBGRAPH_CARD_NODE",
+                          "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                          "subgraphType": "CONDITIONAL_FALSE"
+                        }
+                      },
+                      {
+                        "id": "Switch",
+                        "height": 40,
+                        "width": 200,
+                        "children": [
+                          {
+                            "id": "Switch-#scope",
+                            "height": 74,
+                            "width": 160,
+                            "layoutOptions": {
+                              "nodeType": "SCOPE_CARD_NODE",
+                              "presentation": "{\"shared\":true,\"family\":\"switch\",\"size\":{\"width\":160,\"height\":74}}",
+                              "branchPorts": "[{\"id\":\"Case\",\"subgraphType\":\"SWITCH_CASE\"},{\"id\":\"Switch-defaultCase\",\"subgraphType\":\"SWITCH_DEFAULT\"}]",
+                              "elk.portConstraints": "FIXED_POS"
+                            },
+                            "ports": [
+                              {
+                                "id": "Switch-#scope::Case",
+                                "x": 70,
+                                "y": 74,
+                                "width": 0,
+                                "height": 0,
+                                "layoutOptions": { "elk.port.side": "SOUTH" }
+                              },
+                              {
+                                "id": "Switch-#scope::Switch-defaultCase",
+                                "x": 90,
+                                "y": 74,
+                                "width": 0,
+                                "height": 0,
+                                "layoutOptions": { "elk.port.side": "SOUTH" }
+                              }
+                            ]
+                          },
+                          {
+                            "id": "Case",
+                            "children": [
+                              {
+                                "id": "Case-#subgraph",
+                                "height": 36,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "SUBGRAPH_CARD_NODE",
+                                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                                  "subgraphType": "SWITCH_CASE"
+                                }
+                              },
+                              {
+                                "id": "Scope",
+                                "height": 40,
+                                "width": 200,
+                                "children": [
+                                  {
+                                    "id": "Scope-#scope",
+                                    "height": 74,
+                                    "width": 232,
+                                    "layoutOptions": {
+                                      "nodeType": "SCOPE_CARD_NODE",
+                                      "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                                    }
+                                  },
+                                  {
+                                    "id": "Increment_variable_1",
+                                    "height": 74,
+                                    "width": 232,
+                                    "layoutOptions": {
+                                      "nodeType": "OPERATION_NODE",
+                                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                                    }
+                                  }
+                                ],
+                                "edges": [
+                                  {
+                                    "id": "Scope-#scope-Increment_variable_1",
+                                    "sources": ["Scope-#scope"],
+                                    "targets": ["Increment_variable_1"],
+                                    "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                                  }
+                                ],
+                                "layoutOptions": {
+                                  "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                                  "elk.position": "(0, 0)",
+                                  "nodeType": "GRAPH_NODE",
+                                  "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                                  "operationType": "scope",
+                                  "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                                  "elk.nodeSize.minimum": "(232,106)"
+                                }
+                              }
+                            ],
+                            "edges": [
+                              {
+                                "id": "Case-#subgraph-Scope",
+                                "sources": ["Case-#subgraph"],
+                                "targets": ["Scope"],
+                                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                              }
+                            ],
+                            "layoutOptions": {
+                              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                              "elk.position": "(0, 0)",
+                              "nodeType": "SUBGRAPH_NODE",
+                              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                              "subgraphType": "SWITCH_CASE",
+                              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                              "elk.nodeSize.minimum": "(232,106)"
+                            }
+                          },
+                          {
+                            "id": "Switch-addCase",
+                            "children": [
+                              {
+                                "id": "Switch-addCase-#subgraph",
+                                "height": 44,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "SUBGRAPH_CARD_NODE",
+                                  "presentation": "{\"shared\":true,\"family\":\"add\",\"size\":{\"width\":232,\"height\":44}}",
+                                  "subgraphType": "SWITCH_ADD_CASE"
+                                }
+                              }
+                            ],
+                            "layoutOptions": {
+                              "nodeType": "HIDDEN_NODE",
+                              "presentation": "{\"shared\":false}",
+                              "subgraphType": "SWITCH_ADD_CASE"
+                            }
+                          },
+                          {
+                            "id": "Switch-defaultCase",
+                            "children": [
+                              {
+                                "id": "Switch-defaultCase-#subgraph",
+                                "height": 36,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "SUBGRAPH_CARD_NODE",
+                                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                                  "subgraphType": "SWITCH_DEFAULT"
+                                }
+                              },
+                              {
+                                "id": "Increment_variable_3",
+                                "height": 74,
+                                "width": 232,
+                                "layoutOptions": {
+                                  "nodeType": "OPERATION_NODE",
+                                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                                }
+                              }
+                            ],
+                            "edges": [
+                              {
+                                "id": "Switch-defaultCase-#subgraph-Increment_variable_3",
+                                "sources": ["Switch-defaultCase-#subgraph"],
+                                "targets": ["Increment_variable_3"],
+                                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                              }
+                            ],
+                            "layoutOptions": {
+                              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                              "elk.position": "(0, 0)",
+                              "nodeType": "SUBGRAPH_NODE",
+                              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                              "subgraphType": "SWITCH_DEFAULT",
+                              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                              "elk.nodeSize.minimum": "(232,106)"
+                            }
+                          }
+                        ],
+                        "edges": [
+                          {
+                            "id": "Switch-#scope-Case",
+                            "sources": ["Switch-#scope::Case"],
+                            "targets": ["Case"],
+                            "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "Case" }
+                          },
+                          {
+                            "id": "Switch-#scope-Switch-addCase",
+                            "sources": ["Switch-#scope"],
+                            "targets": ["Switch-addCase"],
+                            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+                          },
+                          {
+                            "id": "Switch-#scope-Switch-defaultCase",
+                            "sources": ["Switch-#scope::Switch-defaultCase"],
+                            "targets": ["Switch-defaultCase"],
+                            "layoutOptions": {
+                              "edgeType": "ONLY_EDGE",
+                              "originalSource": "Switch-#scope",
+                              "sourceHandle": "Switch-defaultCase"
+                            }
+                          }
+                        ],
+                        "layoutOptions": {
+                          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+                          "elk.position": "(0, 0)",
+                          "nodeType": "GRAPH_NODE",
+                          "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                          "operationType": "switch",
+                          "elk.layered.nodePlacement.strategy": "SIMPLE",
+                          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+                          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+                          "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+                          "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                          "elk.nodeSize.minimum": "(232,106)"
+                        }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Condition_1-elseActions-#subgraph-Switch",
+                        "sources": ["Condition_1-elseActions-#subgraph"],
+                        "targets": ["Switch"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "SUBGRAPH_NODE",
+                      "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                      "subgraphType": "CONDITIONAL_FALSE",
+                      "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                      "elk.nodeSize.minimum": "(232,106)"
+                    }
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "Condition_1-#scope-Condition_1-actions",
+                    "sources": ["Condition_1-#scope::Condition_1-actions"],
+                    "targets": ["Condition_1-actions"],
+                    "layoutOptions": {
+                      "edgeType": "ONLY_EDGE",
+                      "originalSource": "Condition_1-#scope",
+                      "sourceHandle": "Condition_1-actions"
+                    }
+                  },
+                  {
+                    "id": "Condition_1-#scope-Condition_1-elseActions",
+                    "sources": ["Condition_1-#scope::Condition_1-elseActions"],
+                    "targets": ["Condition_1-elseActions"],
+                    "layoutOptions": {
+                      "edgeType": "ONLY_EDGE",
+                      "originalSource": "Condition_1-#scope",
+                      "sourceHandle": "Condition_1-elseActions"
+                    }
+                  }
+                ],
+                "layoutOptions": {
+                  "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+                  "elk.position": "(0, 0)",
+                  "nodeType": "GRAPH_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+                  "operationType": "if",
+                  "elk.layered.nodePlacement.strategy": "SIMPLE",
+                  "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+                  "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+                  "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+                  "elk.nodeSize.constraints": "MINIMUM_SIZE",
+                  "elk.nodeSize.minimum": "(232,106)"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Condition-actions-#subgraph-Condition_1",
+                "sources": ["Condition-actions-#subgraph"],
+                "targets": ["Condition_1"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+              "subgraphType": "CONDITIONAL_TRUE",
+              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+              "elk.nodeSize.minimum": "(232,106)"
+            }
+          },
+          {
+            "id": "Condition-elseActions",
+            "children": [
+              {
+                "id": "Condition-elseActions-#subgraph",
+                "height": 36,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "SUBGRAPH_CARD_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                  "subgraphType": "CONDITIONAL_FALSE"
+                }
+              },
+              {
+                "id": "Increment_variable_4",
+                "height": 74,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "OPERATION_NODE",
+                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Condition-elseActions-#subgraph-Increment_variable_4",
+                "sources": ["Condition-elseActions-#subgraph"],
+                "targets": ["Increment_variable_4"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+              "subgraphType": "CONDITIONAL_FALSE",
+              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+              "elk.nodeSize.minimum": "(232,106)"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Condition-#scope-Condition-actions",
+            "sources": ["Condition-#scope::Condition-actions"],
+            "targets": ["Condition-actions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Condition-#scope", "sourceHandle": "Condition-actions" }
+          },
+          {
+            "id": "Condition-#scope-Condition-elseActions",
+            "sources": ["Condition-#scope::Condition-elseActions"],
+            "targets": ["Condition-elseActions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Condition-#scope", "sourceHandle": "Condition-elseActions" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+          "operationType": "if",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+          "elk.nodeSize.constraints": "MINIMUM_SIZE",
+          "elk.nodeSize.minimum": "(232,106)"
+        }
+      },
+      {
+        "id": "HTTP",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Select",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Initialize_variable_1",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Filter_array",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Condition_2",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Condition_2-#scope",
+            "height": 74,
+            "width": 160,
+            "layoutOptions": {
+              "nodeType": "SCOPE_CARD_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"if\",\"size\":{\"width\":160,\"height\":74}}",
+              "branchPorts": "[{\"id\":\"Condition_2-actions\",\"subgraphType\":\"CONDITIONAL_TRUE\"},{\"id\":\"Condition_2-elseActions\",\"subgraphType\":\"CONDITIONAL_FALSE\"}]",
+              "elk.portConstraints": "FIXED_POS"
+            },
+            "ports": [
+              {
+                "id": "Condition_2-#scope::Condition_2-actions",
+                "x": 66,
+                "y": 74,
+                "width": 0,
+                "height": 0,
+                "layoutOptions": { "elk.port.side": "SOUTH" }
+              },
+              {
+                "id": "Condition_2-#scope::Condition_2-elseActions",
+                "x": 94,
+                "y": 74,
+                "width": 0,
+                "height": 0,
+                "layoutOptions": { "elk.port.side": "SOUTH" }
+              }
+            ]
+          },
+          {
+            "id": "Condition_2-actions",
+            "children": [
+              {
+                "id": "Condition_2-actions-#subgraph",
+                "height": 36,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "SUBGRAPH_CARD_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                  "subgraphType": "CONDITIONAL_TRUE"
+                }
+              },
+              {
+                "id": "Compose_1",
+                "height": 74,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "OPERATION_NODE",
+                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                }
+              },
+              {
+                "id": "Compose_3",
+                "height": 74,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "OPERATION_NODE",
+                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Compose_3-Compose_1",
+                "sources": ["Compose_3"],
+                "targets": ["Compose_1"],
+                "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+              },
+              {
+                "id": "Condition_2-actions-#subgraph-Compose_3",
+                "sources": ["Condition_2-actions-#subgraph"],
+                "targets": ["Compose_3"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+              "subgraphType": "CONDITIONAL_TRUE",
+              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+              "elk.nodeSize.minimum": "(232,106)"
+            }
+          },
+          {
+            "id": "Condition_2-elseActions",
+            "children": [
+              {
+                "id": "Condition_2-elseActions-#subgraph",
+                "height": 36,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "SUBGRAPH_CARD_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"branch\",\"size\":{\"width\":232,\"height\":36}}",
+                  "subgraphType": "CONDITIONAL_FALSE"
+                }
+              },
+              {
+                "id": "Compose_2",
+                "height": 74,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "OPERATION_NODE",
+                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Condition_2-elseActions-#subgraph-Compose_2",
+                "sources": ["Condition_2-elseActions-#subgraph"],
+                "targets": ["Compose_2"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+              "subgraphType": "CONDITIONAL_FALSE",
+              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+              "elk.nodeSize.minimum": "(232,106)"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Condition_2-#scope-Condition_2-actions",
+            "sources": ["Condition_2-#scope::Condition_2-actions"],
+            "targets": ["Condition_2-actions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Condition_2-#scope", "sourceHandle": "Condition_2-actions" }
+          },
+          {
+            "id": "Condition_2-#scope-Condition_2-elseActions",
+            "sources": ["Condition_2-#scope::Condition_2-elseActions"],
+            "targets": ["Condition_2-elseActions"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Condition_2-#scope", "sourceHandle": "Condition_2-elseActions" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+          "operationType": "if",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+          "elk.nodeSize.constraints": "MINIMUM_SIZE",
+          "elk.nodeSize.minimum": "(232,106)"
+        }
+      },
+      {
+        "id": "Delay",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      }
+    ],
+    "edges": [
+      {
+        "id": "When_a_HTTP_request_is_received-Delay",
+        "sources": ["When_a_HTTP_request_is_received"],
+        "targets": ["Delay"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "Parse_JSON-Response", "sources": ["Parse_JSON"], "targets": ["Response"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "HTTP-Initialize_variable",
+        "sources": ["HTTP"],
+        "targets": ["Initialize_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "Condition-Parse_JSON", "sources": ["Condition"], "targets": ["Parse_JSON"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "Initialize_variable-Increment_variable",
+        "sources": ["Initialize_variable"],
+        "targets": ["Increment_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Increment_variable-Decrement_variable",
+        "sources": ["Increment_variable"],
+        "targets": ["Decrement_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Decrement_variable-Condition",
+        "sources": ["Decrement_variable"],
+        "targets": ["Condition"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "Select-HTTP", "sources": ["Select"], "targets": ["HTTP"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "Filter_array-Select", "sources": ["Filter_array"], "targets": ["Select"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "Condition_2-Initialize_variable_1",
+        "sources": ["Condition_2"],
+        "targets": ["Initialize_variable_1"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable_1-Filter_array",
+        "sources": ["Initialize_variable_1"],
+        "targets": ["Filter_array"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "Delay-Condition_2", "sources": ["Delay"], "targets": ["Condition_2"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+      "elk.nodeSize.constraints": "MINIMUM_SIZE",
+      "elk.nodeSize.minimum": "(232,106)"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@microsoft/logic-apps-graph-layout",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Small, fast layered graph layout for Logic Apps designers with an elkjs-compatible API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "package.json"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "build:lib": "tsup",
+    "test:lib": "vitest run --retry=3",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p bench/tsconfig.json",
+    "bench": "vitest bench --run",
+    "bench:report": "tsup && node bench/report.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "elkjs": "0.8.2",
+    "esbuild": "0.25.5"
+  }
+}

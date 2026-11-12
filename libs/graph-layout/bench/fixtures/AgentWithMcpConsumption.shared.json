@@ -1,0 +1,141 @@
+{
+  "name": "AgentWithMcpConsumption.shared",
+  "source": "__mocks__/workflows/AgentWithMcpConsumption.json",
+  "useSharedNodeUi": true,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "When_a_HTTP_request_is_received",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "WorkflowAgent",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "WorkflowAgent-#scope",
+            "height": 181,
+            "width": 280,
+            "layoutOptions": {
+              "nodeType": "SCOPE_CARD_NODE",
+              "presentation": "{\"shared\":true,\"family\":\"agent\",\"size\":{\"width\":280,\"height\":181}}"
+            }
+          },
+          {
+            "id": "WorkflowAgent::tools",
+            "children": [
+              {
+                "id": "BuiltIn_MCP_Server",
+                "height": 56,
+                "width": 232,
+                "layoutOptions": {
+                  "nodeType": "OPERATION_NODE",
+                  "presentation": "{\"shared\":true,\"family\":\"tool\",\"toolKind\":\"mcp\",\"size\":{\"width\":232,\"height\":56}}",
+                  "subgraphType": "MCP_CLIENT"
+                }
+              },
+              {
+                "id": "WorkflowAgent-addCase",
+                "children": [
+                  {
+                    "id": "WorkflowAgent-addCase-#subgraph",
+                    "height": 44,
+                    "width": 232,
+                    "layoutOptions": {
+                      "nodeType": "SUBGRAPH_CARD_NODE",
+                      "presentation": "{\"shared\":true,\"family\":\"add\",\"size\":{\"width\":232,\"height\":44}}",
+                      "subgraphType": "AGENT_ADD_CONDITON"
+                    }
+                  }
+                ],
+                "layoutOptions": { "nodeType": "HIDDEN_NODE", "presentation": "{\"shared\":false}", "subgraphType": "AGENT_ADD_CONDITON" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "BuiltIn_MCP_Server::layout::WorkflowAgent-addCase",
+                "sources": ["BuiltIn_MCP_Server"],
+                "targets": ["WorkflowAgent-addCase"],
+                "layoutOptions": { "layoutOnly": "true" }
+              }
+            ],
+            "layoutOptions": {
+              "toolGroup": "true",
+              "elk.padding": "[top=52,left=16,bottom=16,right=16]",
+              "elk.layered.spacing.nodeNodeBetweenLayers": "12",
+              "elk.layered.spacing.edgeNodeBetweenLayers": "12",
+              "elk.nodeSize.constraints": "MINIMUM_SIZE",
+              "elk.nodeSize.minimum": "(280,0)",
+              "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "WorkflowAgent::tools-layout",
+            "sources": ["WorkflowAgent-#scope"],
+            "targets": ["WorkflowAgent::tools"],
+            "layoutOptions": { "layoutOnly": "true" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=0,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+          "operationType": "agent",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "0",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "0",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+          "elk.nodeSize.constraints": "MINIMUM_SIZE",
+          "elk.nodeSize.minimum": "(0,0)",
+          "toolAssociations": "[{\"id\":\"WorkflowAgent-#scope-BuiltIn_MCP_Server\",\"sources\":[\"WorkflowAgent-#scope\"],\"targets\":[\"BuiltIn_MCP_Server\"],\"layoutOptions\":{\"edgeType\":\"ONLY_EDGE\",\"embeddedToolAssociation\":\"true\"}},{\"id\":\"WorkflowAgent-#scope-WorkflowAgent-addCase\",\"sources\":[\"WorkflowAgent-#scope\"],\"targets\":[\"WorkflowAgent-addCase\"],\"layoutOptions\":{\"edgeType\":\"HIDDEN_EDGE\"}}]"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "When_a_HTTP_request_is_received-WorkflowAgent",
+        "sources": ["When_a_HTTP_request_is_received"],
+        "targets": ["WorkflowAgent"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+      "elk.nodeSize.constraints": "MINIMUM_SIZE",
+      "elk.nodeSize.minimum": "(232,106)"
+    }
+  }
+}

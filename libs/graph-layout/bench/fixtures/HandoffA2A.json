@@ -1,0 +1,440 @@
+{
+  "name": "HandoffA2A",
+  "source": "__mocks__/workflows/HandoffA2A.json",
+  "useSharedNodeUi": false,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "When_a_new_chat_session_started",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "InitialState",
+        "height": 40,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "TriageAgent",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "TriageAgent-#scope",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "handoff_from_TriageAgent_to_SalesAgent_tool",
+            "children": [
+              {
+                "id": "handoff_from_TriageAgent_to_SalesAgent_tool-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "handoff_from_TriageAgent_to_SalesAgent",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "handoff_from_TriageAgent_to_SalesAgent_tool-#subgraph-handoff_from_TriageAgent_to_SalesAgent",
+                "sources": ["handoff_from_TriageAgent_to_SalesAgent_tool-#subgraph"],
+                "targets": ["handoff_from_TriageAgent_to_SalesAgent"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "handoff_from_TriageAgent_to_RefundAgent_tool",
+            "children": [
+              {
+                "id": "handoff_from_TriageAgent_to_RefundAgent_tool-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "handoff_from_TriageAgent_to_RefundAgent",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "handoff_from_TriageAgent_to_RefundAgent_tool-#subgraph-handoff_from_TriageAgent_to_RefundAgent",
+                "sources": ["handoff_from_TriageAgent_to_RefundAgent_tool-#subgraph"],
+                "targets": ["handoff_from_TriageAgent_to_RefundAgent"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "TriageAgent-addCase",
+            "children": [
+              {
+                "id": "TriageAgent-addCase-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "layoutOptions": { "nodeType": "HIDDEN_NODE", "presentation": "{\"shared\":false}" }
+          }
+        ],
+        "edges": [
+          {
+            "id": "TriageAgent-#scope-handoff_from_TriageAgent_to_SalesAgent_tool",
+            "sources": ["TriageAgent-#scope"],
+            "targets": ["handoff_from_TriageAgent_to_SalesAgent_tool"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "TriageAgent-#scope-handoff_from_TriageAgent_to_RefundAgent_tool",
+            "sources": ["TriageAgent-#scope"],
+            "targets": ["handoff_from_TriageAgent_to_RefundAgent_tool"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "TriageAgent-#scope-TriageAgent-addCase",
+            "sources": ["TriageAgent-#scope"],
+            "targets": ["TriageAgent-addCase"],
+            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      },
+      {
+        "id": "SalesAgent",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "SalesAgent-#scope",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "handoff_from_SalesAgent_to_TriageAgent_tool",
+            "children": [
+              {
+                "id": "handoff_from_SalesAgent_to_TriageAgent_tool-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "handoff_from_SalesAgent_to_TriageAgent",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "handoff_from_SalesAgent_to_TriageAgent_tool-#subgraph-handoff_from_SalesAgent_to_TriageAgent",
+                "sources": ["handoff_from_SalesAgent_to_TriageAgent_tool-#subgraph"],
+                "targets": ["handoff_from_SalesAgent_to_TriageAgent"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "place_order",
+            "children": [
+              {
+                "id": "place_order-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "set_order_parameters",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "resetset_state_variable_from_sales_to_triage",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "complete_order",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "place_order-#subgraph-set_order_parameters",
+                "sources": ["place_order-#subgraph"],
+                "targets": ["set_order_parameters"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              },
+              {
+                "id": "place_order-#subgraph-resetset_state_variable_from_sales_to_triage",
+                "sources": ["place_order-#subgraph"],
+                "targets": ["resetset_state_variable_from_sales_to_triage"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              },
+              {
+                "id": "place_order-#subgraph-complete_order",
+                "sources": ["place_order-#subgraph"],
+                "targets": ["complete_order"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "SalesAgent-addCase",
+            "children": [
+              {
+                "id": "SalesAgent-addCase-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "layoutOptions": { "nodeType": "HIDDEN_NODE", "presentation": "{\"shared\":false}" }
+          }
+        ],
+        "edges": [
+          {
+            "id": "SalesAgent-#scope-handoff_from_SalesAgent_to_TriageAgent_tool",
+            "sources": ["SalesAgent-#scope"],
+            "targets": ["handoff_from_SalesAgent_to_TriageAgent_tool"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "SalesAgent-#scope-place_order",
+            "sources": ["SalesAgent-#scope"],
+            "targets": ["place_order"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "SalesAgent-#scope-SalesAgent-addCase",
+            "sources": ["SalesAgent-#scope"],
+            "targets": ["SalesAgent-addCase"],
+            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      },
+      {
+        "id": "RefundAgent",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "RefundAgent-#scope",
+            "height": 40,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "handoff_from_RefundAgent_to_TriageAgent_tool",
+            "children": [
+              {
+                "id": "handoff_from_RefundAgent_to_TriageAgent_tool-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "handoff_from_RefundAgent_to_TriageAgent",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "handoff_from_RefundAgent_to_TriageAgent_tool-#subgraph-handoff_from_RefundAgent_to_TriageAgent",
+                "sources": ["handoff_from_RefundAgent_to_TriageAgent_tool-#subgraph"],
+                "targets": ["handoff_from_RefundAgent_to_TriageAgent"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "handoff_from_RefundAgent_to_SalesAgent_tool",
+            "children": [
+              {
+                "id": "handoff_from_RefundAgent_to_SalesAgent_tool-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "handoff_from_RefundAgent_to_SalesAgent",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "handoff_from_RefundAgent_to_SalesAgent_tool-#subgraph-handoff_from_RefundAgent_to_SalesAgent",
+                "sources": ["handoff_from_RefundAgent_to_SalesAgent_tool-#subgraph"],
+                "targets": ["handoff_from_RefundAgent_to_SalesAgent"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "RefundAgent-addCase",
+            "children": [
+              {
+                "id": "RefundAgent-addCase-#subgraph",
+                "height": 40,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "layoutOptions": { "nodeType": "HIDDEN_NODE", "presentation": "{\"shared\":false}" }
+          }
+        ],
+        "edges": [
+          {
+            "id": "RefundAgent-#scope-handoff_from_RefundAgent_to_TriageAgent_tool",
+            "sources": ["RefundAgent-#scope"],
+            "targets": ["handoff_from_RefundAgent_to_TriageAgent_tool"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "RefundAgent-#scope-handoff_from_RefundAgent_to_SalesAgent_tool",
+            "sources": ["RefundAgent-#scope"],
+            "targets": ["handoff_from_RefundAgent_to_SalesAgent_tool"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "RefundAgent-#scope-RefundAgent-addCase",
+            "sources": ["RefundAgent-#scope"],
+            "targets": ["RefundAgent-addCase"],
+            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "When_a_new_chat_session_started-InitialState",
+        "sources": ["When_a_new_chat_session_started"],
+        "targets": ["InitialState"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "InitialState-TriageAgent",
+        "sources": ["InitialState"],
+        "targets": ["TriageAgent"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":false}"
+    }
+  }
+}

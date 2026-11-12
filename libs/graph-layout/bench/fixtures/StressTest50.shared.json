@@ -1,0 +1,429 @@
+{
+  "name": "StressTest50.shared",
+  "source": "__mocks__/workflows/StressTest50.json",
+  "useSharedNodeUi": true,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "manual",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "Initialize_variable",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_1",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_2",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_3",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_4",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_5",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_6",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_7",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_8",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_9",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_10",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_11",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_12",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_13",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_14",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_15",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_16",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_17",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_18",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_19",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_20",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_21",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_22",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_23",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_24",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_25",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_26",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_27",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_28",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_29",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_30",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_31",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_32",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_33",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_34",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_35",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_36",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_37",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_38",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_39",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_40",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_41",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_42",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_43",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_44",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_45",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_46",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_47",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_48",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      },
+      {
+        "id": "action_49",
+        "height": 74,
+        "width": 232,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+      }
+    ],
+    "edges": [
+      {
+        "id": "manual-Initialize_variable",
+        "sources": ["manual"],
+        "targets": ["Initialize_variable"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-action_1",
+        "sources": ["Initialize_variable"],
+        "targets": ["action_1"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-action_2",
+        "sources": ["Initialize_variable"],
+        "targets": ["action_2"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      {
+        "id": "Initialize_variable-action_3",
+        "sources": ["Initialize_variable"],
+        "targets": ["action_3"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "action_1-action_4", "sources": ["action_1"], "targets": ["action_4"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "Initialize_variable-action_5",
+        "sources": ["Initialize_variable"],
+        "targets": ["action_5"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "action_1-action_6", "sources": ["action_1"], "targets": ["action_6"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_1-action_7", "sources": ["action_1"], "targets": ["action_7"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_4-action_8", "sources": ["action_4"], "targets": ["action_8"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_6-action_9", "sources": ["action_6"], "targets": ["action_9"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_3-action_10", "sources": ["action_3"], "targets": ["action_10"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_7-action_11", "sources": ["action_7"], "targets": ["action_11"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_9-action_12", "sources": ["action_9"], "targets": ["action_12"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "Initialize_variable-action_13",
+        "sources": ["Initialize_variable"],
+        "targets": ["action_13"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      },
+      { "id": "action_11-action_14", "sources": ["action_11"], "targets": ["action_14"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_12-action_15", "sources": ["action_12"], "targets": ["action_15"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_12-action_16", "sources": ["action_12"], "targets": ["action_16"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_12-action_17", "sources": ["action_12"], "targets": ["action_17"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_18", "sources": ["action_13"], "targets": ["action_18"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_2-action_19", "sources": ["action_2"], "targets": ["action_19"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_20", "sources": ["action_13"], "targets": ["action_20"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_21", "sources": ["action_13"], "targets": ["action_21"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_22", "sources": ["action_13"], "targets": ["action_22"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_10-action_23", "sources": ["action_10"], "targets": ["action_23"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_16-action_24", "sources": ["action_16"], "targets": ["action_24"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_23-action_25", "sources": ["action_23"], "targets": ["action_25"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_11-action_26", "sources": ["action_11"], "targets": ["action_26"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_10-action_27", "sources": ["action_10"], "targets": ["action_27"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_2-action_28", "sources": ["action_2"], "targets": ["action_28"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_4-action_29", "sources": ["action_4"], "targets": ["action_29"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_4-action_30", "sources": ["action_4"], "targets": ["action_30"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_8-action_31", "sources": ["action_8"], "targets": ["action_31"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_17-action_32", "sources": ["action_17"], "targets": ["action_32"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_2-action_33", "sources": ["action_2"], "targets": ["action_33"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_10-action_34", "sources": ["action_10"], "targets": ["action_34"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_30-action_35", "sources": ["action_30"], "targets": ["action_35"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_36", "sources": ["action_13"], "targets": ["action_36"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_8-action_37", "sources": ["action_8"], "targets": ["action_37"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_4-action_38", "sources": ["action_4"], "targets": ["action_38"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_9-action_39", "sources": ["action_9"], "targets": ["action_39"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_28-action_40", "sources": ["action_28"], "targets": ["action_40"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_31-action_41", "sources": ["action_31"], "targets": ["action_41"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_42", "sources": ["action_13"], "targets": ["action_42"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_19-action_43", "sources": ["action_19"], "targets": ["action_43"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_13-action_44", "sources": ["action_13"], "targets": ["action_44"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_2-action_45", "sources": ["action_2"], "targets": ["action_45"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_25-action_46", "sources": ["action_25"], "targets": ["action_46"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_44-action_47", "sources": ["action_44"], "targets": ["action_47"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_15-action_48", "sources": ["action_15"], "targets": ["action_48"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      { "id": "action_12-action_49", "sources": ["action_12"], "targets": ["action_49"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":true,\"family\":\"frame\"}",
+      "elk.nodeSize.constraints": "MINIMUM_SIZE",
+      "elk.nodeSize.minimum": "(232,106)"
+    }
+  }
+}
