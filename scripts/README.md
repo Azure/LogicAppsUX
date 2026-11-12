@@ -18,16 +18,6 @@ The helper discovers the intersection of Portal dependencies and publishable Log
 
 The `tar` command must be available, and only one helper can target a given Portal worktree at a time. After a successful build, the local packages remain installed in that Portal worktree; run the Portal checkout's normal `npm ci` to restore its published dependencies. If installation, verification, or the Portal build fails, the helper restores the original packages automatically.
 
-## Update the VS Code extension changelog from published versions
-`generate-published-changelog.js` queries the VS Code Marketplace for every stable published version of `ms-azuretools.vscode-azurelogicapps` since a baseline, then prepends one `CHANGELOG.md` entry per version that is missing, listing the PRs in `git log v<previous>..v<current>`. It requires an exact `v<version>` tag for every published version and skips versions already in the changelog.
-
-```bash
-git fetch --tags
-node scripts/generate-published-changelog.js --since 5.185.10 --dry-run
-```
-
-Run it in CI with the **Update Changelog** workflow using `mode: published-versions`.
-
 ## Shared Utilities
 
 ### version-utils.ts
