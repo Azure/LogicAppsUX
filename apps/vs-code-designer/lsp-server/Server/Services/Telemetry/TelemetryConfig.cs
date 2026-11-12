@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SdkLspServer.Services.Telemetry;
+namespace LogicAppsLanguageServer.Services.Telemetry;
 
 /// <summary>
 /// Configuration for Application Insights telemetry.

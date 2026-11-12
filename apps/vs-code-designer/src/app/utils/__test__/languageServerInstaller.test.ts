@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultDependencyPathValue, lspDirectory } from '../../../constants';
+import { defaultDependencyPathValue, languageServerSdkDirectoryName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { ensureRuntimeDependenciesDir } from '../binaries';
-import { formatLockedFileError, installLSPSDK } from '../languageServerProtocol';
+import { formatLockedFileError, installLogicAppsLanguageServerAssets } from '../languageServerInstaller';
 import {
   lspSdkRevisionMarkerName,
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
   type LspAssetsManifest,
-} from '../languageServerProtocolConstants';
+} from '../languageServerAssetConstants';
 import path from 'path';
 
 const assetManifest: LspAssetsManifest = {
@@ -69,12 +69,12 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-describe('installLSPSDK', () => {
+describe('installLogicAppsLanguageServerAssets', () => {
   const targetDirectory = 'D:\\runtime-dependencies';
   const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
-  const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
+  const lspServerDllPath = path.join(lspServerPath, 'LogicAppsLanguageServer.dll');
   const lspRevisionMarker = path.join(targetDirectory, lspServerRevisionMarkerName);
-  const sdkDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const sdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
   const sdkRevisionMarker = path.join(targetDirectory, lspSdkRevisionMarkerName);
   const sdkPackageName = assetManifest.sdkPackage;
   const sdkDestinationFile = path.join(sdkDirectoryPath, sdkPackageName);
@@ -107,7 +107,9 @@ describe('installLSPSDK', () => {
   function setExistingPaths(paths: string[]): void {
     const existingPaths = new Set(paths);
     mocks.pathExists.mockImplementation(async (filePath: string) => {
-      return existingPaths.has(filePath) || (filePath.endsWith(path.join('LSPServer', 'SdkLspServer.dll')) && lspServerExtracted);
+      return (
+        existingPaths.has(filePath) || (filePath.endsWith(path.join('LSPServer', 'LogicAppsLanguageServer.dll')) && lspServerExtracted)
+      );
     });
   }
 
@@ -133,7 +135,7 @@ describe('installLSPSDK', () => {
       sdkPackage: '../unexpected.nupkg',
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('language server asset manifest');
+    await expect(installLogicAppsLanguageServerAssets()).rejects.toThrow('language server asset manifest');
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.copyFile).not.toHaveBeenCalled();
   });
@@ -141,7 +143,7 @@ describe('installLSPSDK', () => {
   it('extracts the LSP server and copies the SDK when target directories are missing', async () => {
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining(assetManifest.serverArchive));
@@ -157,7 +159,7 @@ describe('installLSPSDK', () => {
     const defaultLspServerPath = path.join(defaultDependencyPathValue, 'LSPServer');
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
@@ -166,7 +168,7 @@ describe('installLSPSDK', () => {
   it('updates both assets when target files exist but revision markers are missing', async () => {
     setExistingPaths([lspServerPath, lspServerDllPath, sdkDestinationFile]);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(mocks.remove).toHaveBeenCalledWith(lspServerPath);
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
@@ -176,7 +178,7 @@ describe('installLSPSDK', () => {
   it('updates both assets when asset revisions differ from their stored markers', async () => {
     setExistingPaths([lspServerPath, lspServerDllPath, lspRevisionMarker, sdkDestinationFile, sdkRevisionMarker]);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
     expect(mocks.copyFile).toHaveBeenCalledOnce();
@@ -191,7 +193,7 @@ describe('installLSPSDK', () => {
       sdkRevisionMarker: assetManifest.sdkSha256,
     });
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.copyFile).not.toHaveBeenCalled();
@@ -201,7 +203,7 @@ describe('installLSPSDK', () => {
 
   it('treats legacy mtime markers as stale and refreshes assets', async () => {
     setExistingPaths([lspServerPath, lspServerDllPath, legacyLspVersionMarker, sdkDestinationFile, legacySdkVersionMarker]);
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
     expect(mocks.copyFile).toHaveBeenCalledOnce();
@@ -213,7 +215,7 @@ describe('installLSPSDK', () => {
     setExistingPaths([lspServerPath]);
     mocks.readdir.mockResolvedValue(['LSPServer', 'LSPServer-1778130324219', 'LanguageServerLogicApps']);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(mocks.remove).toHaveBeenCalledWith(staleVersionedLspFolder);
   });
@@ -223,7 +225,7 @@ describe('installLSPSDK', () => {
       throw new Error('zip failed');
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('Error extracting LSP server: Error: zip failed');
+    await expect(installLogicAppsLanguageServerAssets()).rejects.toThrow('Error extracting LSP server: Error: zip failed');
     expect(mocks.copyFile).not.toHaveBeenCalled();
   });
 
@@ -238,7 +240,7 @@ describe('installLSPSDK', () => {
       }
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+    await expect(installLogicAppsLanguageServerAssets()).rejects.toThrow('stop the dotnet process running LogicAppsLanguageServer.dll');
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.copyFile).not.toHaveBeenCalled();
   });
@@ -253,8 +255,8 @@ describe('installLSPSDK', () => {
     });
 
     try {
-      const installPromise = installLSPSDK();
-      const expectation = expect(installPromise).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+      const installPromise = installLogicAppsLanguageServerAssets();
+      const expectation = expect(installPromise).rejects.toThrow('stop the dotnet process running LogicAppsLanguageServer.dll');
       await vi.advanceTimersByTimeAsync(4000);
 
       await expectation;
@@ -283,11 +285,11 @@ describe('installLSPSDK', () => {
       extractionSucceeded = true;
     });
     mocks.pathExists.mockImplementation(async (filePath: string) => {
-      return filePath.endsWith('SdkLspServer.dll') && extractionSucceeded;
+      return filePath.endsWith('LogicAppsLanguageServer.dll') && extractionSucceeded;
     });
 
     try {
-      const installPromise = installLSPSDK();
+      const installPromise = installLogicAppsLanguageServerAssets();
       await vi.advanceTimersByTimeAsync(2000);
       await installPromise;
 
@@ -311,9 +313,9 @@ describe('installLSPSDK', () => {
     });
 
     try {
-      const installPromise = installLSPSDK();
+      const installPromise = installLogicAppsLanguageServerAssets();
       const expectation = expect(installPromise).rejects.toThrow(
-        /Error extracting LSP server:.*stop the dotnet process running SdkLspServer.dll/
+        /Error extracting LSP server:.*stop the dotnet process running LogicAppsLanguageServer.dll/
       );
       await vi.advanceTimersByTimeAsync(4000);
 
@@ -331,10 +333,10 @@ describe('installLSPSDK', () => {
       code: 'EPERM',
     });
 
-    expect(formatLockedFileError(lockedError)).toContain('stop the dotnet process running SdkLspServer.dll');
+    expect(formatLockedFileError(lockedError)).toContain('stop the dotnet process running LogicAppsLanguageServer.dll');
   });
 
-  it('installLSPSDK retries on EPERM', async () => {
+  it('installLogicAppsLanguageServerAssets retries on EPERM', async () => {
     vi.useFakeTimers();
     try {
       const lockedError = Object.assign(new Error("EPERM: operation not permitted, unlink 'ICSharpCode.SharpZipLib.dll'"), {
@@ -343,7 +345,7 @@ describe('installLSPSDK', () => {
       setExistingPaths([lspServerPath]);
       mocks.remove.mockRejectedValueOnce(lockedError).mockRejectedValueOnce(lockedError).mockResolvedValue(undefined);
 
-      const installPromise = installLSPSDK();
+      const installPromise = installLogicAppsLanguageServerAssets();
       await vi.advanceTimersByTimeAsync(4000);
       await installPromise;
 
@@ -360,7 +362,7 @@ describe('installLSPSDK', () => {
     ext.languageClient = { stop } as any;
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLogicAppsLanguageServerAssets();
 
     expect(stop).toHaveBeenCalledOnce();
     expect(ext.languageClient).toBeUndefined();
@@ -372,7 +374,9 @@ describe('installLSPSDK', () => {
     const stop = vi.fn().mockRejectedValue(new Error('stop failed'));
     ext.languageClient = { stop } as any;
 
-    await expect(installLSPSDK()).rejects.toThrow('Error stopping LSP server before update: Error: stop failed');
+    await expect(installLogicAppsLanguageServerAssets()).rejects.toThrow(
+      'Error stopping language client before update: Error: stop failed'
+    );
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.copyFile).not.toHaveBeenCalled();
     expect(ext.languageClient).toBeDefined();
@@ -385,7 +389,7 @@ describe('installLSPSDK', () => {
     });
     mocks.copyFile.mockRejectedValue(new Error('copy failed'));
 
-    await expect(installLSPSDK()).rejects.toThrow('Error copying sdk: Error: copy failed');
+    await expect(installLogicAppsLanguageServerAssets()).rejects.toThrow('Error copying sdk: Error: copy failed');
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
   });
 });

@@ -16,8 +16,8 @@ const stagedServerArchivePath = path.join(artifactDirectory, 'LSPServer.zip');
 const serverArchivePath = path.join(assetDirectory, 'LSPServer.zip');
 const manifestPath = path.join(assetDirectory, 'lsp-assets.json');
 const stagedManifestPath = path.join(artifactDirectory, 'lsp-assets.json');
-const testProject = path.join(lspRoot, 'Server.Tests', 'Server.Tests.csproj');
-const serverProject = path.join(lspRoot, 'Server', 'SdkLspServer.csproj');
+const testProject = path.join(lspRoot, 'Server.Tests', 'LogicAppsLanguageServer.Tests.csproj');
+const serverProject = path.join(lspRoot, 'Server', 'LogicAppsLanguageServer.csproj');
 const nugetConfig = path.join(lspRoot, 'NuGet.config');
 const dotnetCommand = process.env.DOTNET_HOST_PATH || 'dotnet';
 const portableDirectoryMode = 0o040755;
@@ -36,12 +36,12 @@ rmSync(artifactDirectory, { recursive: true, force: true });
 mkdirSync(publishDirectory, { recursive: true });
 runDotNet(['publish', serverProject, '--configuration', 'Release', '--no-restore', '--output', publishDirectory]);
 
-const publishedServerPath = path.join(publishDirectory, 'SdkLspServer.dll');
+const publishedServerPath = path.join(publishDirectory, 'LogicAppsLanguageServer.dll');
 if (!existsSync(publishedServerPath)) {
   throw new Error(`Published LSP server is missing '${publishedServerPath}'.`);
 }
 
-const runtimeConfigPath = path.join(publishDirectory, 'SdkLspServer.runtimeconfig.json');
+const runtimeConfigPath = path.join(publishDirectory, 'LogicAppsLanguageServer.runtimeconfig.json');
 if (!existsSync(runtimeConfigPath)) {
   throw new Error(`Published LSP server is missing '${runtimeConfigPath}'.`);
 }
@@ -66,8 +66,8 @@ validateArchivePermissions(archive);
 archive.writeZip(stagedServerArchivePath);
 
 const verificationArchive = new AdmZip(stagedServerArchivePath);
-if (!verificationArchive.getEntry('LSPServer/SdkLspServer.dll')) {
-  throw new Error(`Archive '${stagedServerArchivePath}' does not contain 'LSPServer/SdkLspServer.dll'.`);
+if (!verificationArchive.getEntry('LSPServer/LogicAppsLanguageServer.dll')) {
+  throw new Error(`Archive '${stagedServerArchivePath}' does not contain 'LSPServer/LogicAppsLanguageServer.dll'.`);
 }
 validateArchivePermissions(verificationArchive);
 

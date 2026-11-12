@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using OmniSharp.Extensions.LanguageServer.Protocol;
 
-using SdkLspServer;
-using SdkLspServer.Handlers;
+using LogicAppsLanguageServer;
+using LogicAppsLanguageServer.Handlers;
 
 using Xunit;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
 /// <summary>
 /// Unit tests for GetWorkflowMetadataHandler pattern matching logic.
@@ -20,11 +20,11 @@ namespace Server.Tests;
 /// </summary>
 public class GetWorkflowMetadataHandlerTests
 {
-    private readonly BufferManager bufferManager;
+    private readonly DocumentBufferStore documentBufferStore;
 
     public GetWorkflowMetadataHandlerTests()
     {
-        bufferManager = new BufferManager();
+        documentBufferStore = new DocumentBufferStore();
     }
 
     [Fact]
@@ -705,7 +705,7 @@ public class AgentWorkflow
                 }
                 """);
             string documentUri = DocumentUri.FromFileSystemPath(filePath).ToString();
-            bufferManager.UpdateBuffer(documentUri, """
+            documentBufferStore.UpdateBuffer(documentUri, """
                 using Microsoft.Azure.Workflows.Sdk;
 
                 public class UnsavedWorkflow
@@ -718,7 +718,7 @@ public class AgentWorkflow
                 }
                 """);
 
-            var handler = new GetWorkflowMetadataHandler(bufferManager, null);
+            var handler = new GetWorkflowMetadataHandler(documentBufferStore, null);
             GetWorkflowMetadataResponse result = await handler.Handle(
                 new GetWorkflowMetadataParams { Uri = filePath },
                 CancellationToken.None);
@@ -752,9 +752,9 @@ public class AgentWorkflow
                     }
                 }
                 """);
-            bufferManager.UpdateBuffer(DocumentUri.FromFileSystemPath(filePath).ToString(), string.Empty);
+            documentBufferStore.UpdateBuffer(DocumentUri.FromFileSystemPath(filePath).ToString(), string.Empty);
 
-            var handler = new GetWorkflowMetadataHandler(bufferManager, null);
+            var handler = new GetWorkflowMetadataHandler(documentBufferStore, null);
             GetWorkflowMetadataResponse result = await handler.Handle(
                 new GetWorkflowMetadataParams { Uri = filePath },
                 CancellationToken.None);
@@ -991,10 +991,10 @@ public class ManagedWorkflow
     private async Task<GetWorkflowMetadataResponse> AnalyzeWorkflowCode(string workflowCode, string? workflowName = null)
     {
         string documentUri = "file:///test/workflow.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        // Pass null for sdkIndex - tests will use fallback programmatic name generation
-        var handler = new GetWorkflowMetadataHandler(bufferManager, null);
+        // Pass null for sdkMetadataIndex - tests will use fallback programmatic name generation
+        var handler = new GetWorkflowMetadataHandler(documentBufferStore, null);
         var request = new GetWorkflowMetadataParams
         {
             Uri = documentUri,
@@ -1007,12 +1007,12 @@ public class ManagedWorkflow
     /// <summary>
     /// Helper method to analyze workflow code with SDK loaded.
     /// </summary>
-    private async Task<GetWorkflowMetadataResponse> AnalyzeWorkflowCodeWithSdkAsync(string workflowCode, SdkIndex sdkIndex)
+    private async Task<GetWorkflowMetadataResponse> AnalyzeWorkflowCodeWithSdkAsync(string workflowCode, WorkflowSdkMetadataIndex sdkMetadataIndex)
     {
         string documentUri = "file:///test/workflow.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new GetWorkflowMetadataHandler(bufferManager, sdkIndex);
+        var handler = new GetWorkflowMetadataHandler(documentBufferStore, sdkMetadataIndex);
         var request = new GetWorkflowMetadataParams
         {
             Uri = documentUri
@@ -1073,8 +1073,8 @@ public class ManagedWorkflow
             return;
         }
 
-        SdkIndex? sdkIndex = await SdkIndex.TryCreateAsync(sdkPath);
-        Assert.NotNull(sdkIndex);
+        WorkflowSdkMetadataIndex? sdkMetadataIndex = await WorkflowSdkMetadataIndex.TryCreateAsync(sdkPath);
+        Assert.NotNull(sdkMetadataIndex);
 
         string workflowCode = @"
 using Microsoft.Azure.Workflows.Sdk;
@@ -1091,7 +1091,7 @@ public class TestWorkflow : Workflow
 ";
 
         // Act
-        var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkIndex);
+        var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkMetadataIndex);
 
         // Assert - With SDK loaded, should extract metadata correctly
         Assert.NotNull(result);
@@ -1112,8 +1112,8 @@ public class TestWorkflow : Workflow
             return;
         }
 
-        SdkIndex? sdkIndex = await SdkIndex.TryCreateAsync(sdkPath);
-        Assert.NotNull(sdkIndex);
+        WorkflowSdkMetadataIndex? sdkMetadataIndex = await WorkflowSdkMetadataIndex.TryCreateAsync(sdkPath);
+        Assert.NotNull(sdkMetadataIndex);
 
         string workflowCode = @"
 using Microsoft.Azure.Workflows.Sdk;
@@ -1130,7 +1130,7 @@ public class TestWorkflow : Workflow
 ";
 
         // Act
-        var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkIndex);
+        var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkMetadataIndex);
 
         // Assert - Custom name should override SDK parameter default
         Assert.NotNull(result);
@@ -1173,9 +1173,9 @@ public class TestWorkflow : Workflow
             return;
         }
 
-        SdkIndex? sdkIndex = await SdkIndex.TryCreateAsync(sdkPath);
-        Assert.NotNull(sdkIndex);
-        var resultWithSdk = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkIndex);
+        WorkflowSdkMetadataIndex? sdkMetadataIndex = await WorkflowSdkMetadataIndex.TryCreateAsync(sdkPath);
+        Assert.NotNull(sdkMetadataIndex);
+        var resultWithSdk = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkMetadataIndex);
 
         // Assert - Both should work and produce valid results
         Assert.NotNull(resultWithoutSdk);

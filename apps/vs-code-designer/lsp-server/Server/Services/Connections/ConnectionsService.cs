@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace SdkLspServer.Services.Connections;
+namespace LogicAppsLanguageServer.Services.Connections;
 
 /// <summary>
 /// Service for managing connections configuration with support for runtime updates.

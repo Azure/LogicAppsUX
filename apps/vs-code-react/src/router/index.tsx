@@ -1,4 +1,4 @@
-import { LanguageServerConnectionView } from '../app/languageServer/connectionView';
+import { ConnectionView } from '../app/connectionView/connectionView';
 import { DataMapperApp } from '../app/dataMapper/app';
 import { DesignerApp } from '../app/designer/app';
 // import { DesignerApp } from '../app/designer/appV2';
@@ -37,9 +37,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
-        <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>
-          <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
-        </Route>
+        <Route path={`/${RouteName.connectionView}`} element={<ConnectionView />} />
         <Route path={`/${RouteName.createWorkspace}`} element={<CreateWorkspace />} />
         <Route path={`/${RouteName.createWorkspaceFromPackage}`} element={<CreateWorkspaceFromPackage />} />
         <Route path={`/${RouteName.createLogicApp}`} element={<CreateLogicApp />} />

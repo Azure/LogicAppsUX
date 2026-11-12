@@ -4,7 +4,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace SdkLspServer.Services.Telemetry;
+namespace LogicAppsLanguageServer.Services.Telemetry;
 
 /// <summary>
 /// Implementation of telemetry service using Application Insights SDK.

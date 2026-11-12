@@ -2,13 +2,13 @@ using System.Net;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using SdkLspServer.Services.Api;
+using LogicAppsLanguageServer.Services.DynamicInvoke;
 
 using ZiggyCreatures.Caching.Fusion;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
-public class ApiServiceTests
+public class DynamicInvokeClientTests
 {
     [Fact]
     public async Task GetAsync_ExpiredEntryAndHttpFailure_ReturnsStaleValue()
@@ -21,7 +21,7 @@ public class ApiServiceTests
             },
             new HttpResponseMessage(HttpStatusCode.InternalServerError));
         using ServiceProvider serviceProvider = CreateServiceProvider(handler);
-        ApiService service = serviceProvider.GetRequiredService<ApiService>();
+        DynamicInvokeClient service = serviceProvider.GetRequiredService<DynamicInvokeClient>();
         IFusionCache cache = serviceProvider.GetRequiredService<IFusionCache>();
 
         Assert.Equal("cached-value", await service.GetAsync(url));
@@ -34,10 +34,10 @@ public class ApiServiceTests
     {
         var services = new ServiceCollection();
         services.AddFusionCache();
-        services.AddHttpClient("SdkLspClient")
+        services.AddHttpClient("DynamicInvokeClient")
             .ConfigurePrimaryHttpMessageHandler(() => handler);
-        services.AddSingleton(new ApiServiceConfig());
-        services.AddSingleton<ApiService>();
+        services.AddSingleton(new DynamicInvokeClientOptions());
+        services.AddSingleton<DynamicInvokeClient>();
         return services.BuildServiceProvider();
     }
 

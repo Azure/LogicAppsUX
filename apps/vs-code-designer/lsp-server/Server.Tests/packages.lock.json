@@ -342,7 +342,7 @@
         "resolved": "2.4.0",
         "contentHash": "5lkrQ5yVCcXeobP4SbO5wu1Beo2w3aN5PPIwb4yRQ1/pIe21q33ElkTa0gRJrgqo2smH2eZkGE+S4ReX3uesMQ=="
       },
-      "sdklspserver": {
+      "logicappslanguageserver": {
         "type": "Project",
         "dependencies": {
           "ICSharpCode.Decompiler": "[9.1.0.7988, )",

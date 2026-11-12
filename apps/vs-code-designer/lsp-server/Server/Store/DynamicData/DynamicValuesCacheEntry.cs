@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace SdkLspServer.Store.DynamicData;
+namespace LogicAppsLanguageServer.Store.DynamicData;
 
 /// <summary>
 /// Represents a cached entry in the dynamic values store.

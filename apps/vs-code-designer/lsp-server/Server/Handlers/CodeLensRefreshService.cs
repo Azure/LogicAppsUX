@@ -4,7 +4,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 internal static class CodeLensRefreshService
 {

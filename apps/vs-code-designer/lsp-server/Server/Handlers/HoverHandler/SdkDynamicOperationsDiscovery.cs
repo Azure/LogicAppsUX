@@ -7,7 +7,7 @@ using ICSharpCode.Decompiler.TypeSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace SdkLspServer.Handlers.HoverHandler;
+namespace LogicAppsLanguageServer.Handlers.HoverHandler;
 
 /// <summary>
 /// Discovers dynamic operations from SDK assemblies using Roslyn's metadata API.
@@ -22,7 +22,7 @@ internal static partial class SdkDynamicOperationsDiscovery
     /// Discovers all dynamic operations from the SDK assemblies using Roslyn's metadata API.
     /// </summary>
     /// <returns>A dictionary of discovered dynamic operations where the key is in the format "connector:operation" and the value contains the operation metadata.</returns>
-    public static Dictionary<string, DynamicOperationMetadata> DiscoverOperations(SdkIndex? sdkIndex)
+    public static Dictionary<string, DynamicOperationMetadata> DiscoverOperations(WorkflowSdkMetadataIndex? sdkMetadataIndex)
     {
         lock (LockObject)
         {
@@ -33,7 +33,7 @@ internal static partial class SdkDynamicOperationsDiscovery
 
             cachedOperations = new Dictionary<string, DynamicOperationMetadata>(StringComparer.OrdinalIgnoreCase);
 
-            if (sdkIndex == null)
+            if (sdkMetadataIndex == null)
             {
                 Console.Error.WriteLine("[SdkDynamicOperationsDiscovery] ❌ No SDK index available");
                 return cachedOperations;
@@ -42,7 +42,7 @@ internal static partial class SdkDynamicOperationsDiscovery
             // Create a Roslyn compilation to access SDK metadata
             try
             {
-                CSharpCompilation compilation = CreateCompilationWithSdk(sdkIndex);
+                CSharpCompilation compilation = CreateCompilationWithSdk(sdkMetadataIndex);
                 DiscoverFromCompilation(compilation, cachedOperations);
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ internal static partial class SdkDynamicOperationsDiscovery
     /// <summary>
     /// Creates a Roslyn compilation with SDK assemblies as metadata references.
     /// </summary>
-    private static CSharpCompilation CreateCompilationWithSdk(SdkIndex sdkIndex)
+    private static CSharpCompilation CreateCompilationWithSdk(WorkflowSdkMetadataIndex sdkMetadataIndex)
     {
         var references = new List<MetadataReference>();
         var seenPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -66,7 +66,7 @@ internal static partial class SdkDynamicOperationsDiscovery
         AddCoreReferences(references, seenPaths);
 
         // Add SDK assemblies as metadata references
-        foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+        foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
         {
             if (File.Exists(assemblyPath) && !seenPaths.Contains(assemblyPath))
             {

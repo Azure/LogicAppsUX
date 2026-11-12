@@ -1,6 +1,6 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { lspAssetsManifestFileName, type LspAssetsManifest } from './languageServerProtocolConstants';
+import { lspAssetsManifestFileName, type LspAssetsManifest } from './languageServerAssetConstants';
 
 export async function readLspAssetsManifest(assetDirectory: string): Promise<LspAssetsManifest> {
   const manifestPath = path.join(assetDirectory, lspAssetsManifestFileName);

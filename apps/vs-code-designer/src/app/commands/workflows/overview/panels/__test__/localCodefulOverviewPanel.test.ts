@@ -141,7 +141,7 @@ vi.mock('../../../../../utils/codeful', () => ({
   hasHttpRequestTrigger: mocks.hasHttpRequestTrigger,
 }));
 
-vi.mock('../../../../../languageServer/languageServer', () => ({
+vi.mock('../../../../../languageServer/languageClient', () => ({
   getCodefulWorkflowMetadata: mocks.getCodefulWorkflowMetadata,
 }));
 

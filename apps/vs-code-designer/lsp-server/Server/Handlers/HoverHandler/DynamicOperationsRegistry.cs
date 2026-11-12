@@ -1,4 +1,4 @@
-namespace SdkLspServer.Handlers.HoverHandler;
+namespace LogicAppsLanguageServer.Handlers.HoverHandler;
 
 /// <summary>
 /// Registry for dynamic operations that discovers metadata from SDK assemblies via reflection.
@@ -7,7 +7,7 @@ namespace SdkLspServer.Handlers.HoverHandler;
 internal static class DynamicOperationsRegistry
 {
     private static readonly object LockObject = new();
-    private static SdkIndex? sdkIndex;
+    private static WorkflowSdkMetadataIndex? sdkMetadataIndex;
     private static Dictionary<string, DynamicOperationMetadata>? discoveredOperations;
     private static bool discoveryAttempted = false;
 
@@ -15,11 +15,11 @@ internal static class DynamicOperationsRegistry
     /// Initialize the registry with the SDK index.
     /// This should be called once at startup.
     /// </summary>
-    public static void Initialize(SdkIndex? index)
+    public static void Initialize(WorkflowSdkMetadataIndex? index)
     {
         lock (LockObject)
         {
-            sdkIndex = index;
+            sdkMetadataIndex = index;
             discoveryAttempted = false;
             discoveredOperations = null;
 
@@ -46,7 +46,7 @@ internal static class DynamicOperationsRegistry
             {
                 if (!discoveryAttempted)
                 {
-                    discoveredOperations = SdkDynamicOperationsDiscovery.DiscoverOperations(sdkIndex);
+                    discoveredOperations = SdkDynamicOperationsDiscovery.DiscoverOperations(sdkMetadataIndex);
                     discoveryAttempted = true;
                 }
             }

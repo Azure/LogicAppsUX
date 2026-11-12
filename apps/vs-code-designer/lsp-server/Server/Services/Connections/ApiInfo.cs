@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SdkLspServer.Services.Connections;
+namespace LogicAppsLanguageServer.Services.Connections;
 
 /// <summary>
 /// Represents API information for a managed API connection.

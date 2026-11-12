@@ -9,18 +9,18 @@ using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 /// <summary>
 /// Handler for custom/getWorkflowMetadata request.
 /// Analyzes workflow code to extract metadata about triggers and actions.
 /// </summary>
 [Method("custom/getWorkflowMetadata")]
-public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? sdkIndex) :
+public class GetWorkflowMetadataHandler(DocumentBufferStore documentBufferStore, WorkflowSdkMetadataIndex? sdkMetadataIndex) :
     IJsonRpcRequestHandler<GetWorkflowMetadataParams, GetWorkflowMetadataResponse>
 {
-    private readonly BufferManager bufferManager = bufferManager;
-    private readonly SdkIndex? sdkIndex = sdkIndex;
+    private readonly DocumentBufferStore documentBufferStore = documentBufferStore;
+    private readonly WorkflowSdkMetadataIndex? sdkMetadataIndex = sdkMetadataIndex;
 
     public void SetParams(GetWorkflowMetadataParams value)
     {
@@ -46,7 +46,7 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
             }
 
             // Get document content from buffer
-            string? documentText = bufferManager.GetBuffer(documentUri.ToString());
+            string? documentText = documentBufferStore.GetBuffer(documentUri.ToString());
             if (documentText is null)
             {
                 // Fallback: try to read from disk
@@ -173,13 +173,13 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
     /// </summary>
     private CSharpCompilation? CreateCompilationWithSdkReferences(SyntaxTree tree)
     {
-        if (sdkIndex == null)
+        if (sdkMetadataIndex == null)
         {
-            Console.Error.WriteLine("[CreateCompilationWithSdkReferences] sdkIndex is null - cannot create compilation");
+            Console.Error.WriteLine("[CreateCompilationWithSdkReferences] sdkMetadataIndex is null - cannot create compilation");
             return null;
         }
 
-        Console.Error.WriteLine($"[CreateCompilationWithSdkReferences] SDK loaded with {sdkIndex.AssemblyPaths.Length} assemblies");
+        Console.Error.WriteLine($"[CreateCompilationWithSdkReferences] SDK loaded with {sdkMetadataIndex.AssemblyPaths.Length} assemblies");
 
         var references = new List<MetadataReference>();
 
@@ -208,9 +208,9 @@ public class GetWorkflowMetadataHandler(BufferManager bufferManager, SdkIndex? s
 
         // Add SDK assembly references
         // Note: XML documentation is typically stored in .xml files next to the DLLs in NuGet packages
-        // The ExtractRoot from SdkIndex should contain the extracted NuGet package structure
+        // The ExtractRoot from WorkflowSdkMetadataIndex should contain the extracted NuGet package structure
         int sdkRefCount = 0;
-        foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+        foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
         {
             if (File.Exists(assemblyPath))
             {

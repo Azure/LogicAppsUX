@@ -1,4 +1,4 @@
-namespace SdkLspServer.Handlers.CompletionHandler;
+namespace LogicAppsLanguageServer.Handlers.CompletionHandler;
 
 /// <summary>
 /// Response model for dynamic completion API calls.

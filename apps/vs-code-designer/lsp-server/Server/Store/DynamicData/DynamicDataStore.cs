@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace SdkLspServer.Store.DynamicData;
+namespace LogicAppsLanguageServer.Store.DynamicData;
 
 /// <summary>
 /// Dynamic data slice of the LSP store.
@@ -68,7 +68,7 @@ public class DynamicDataStore
     public void Clear()
     {
         cache.Clear();
-        Console.Error.WriteLine("[LSPStore.DynamicData] Cleared all cached values");
+        Console.Error.WriteLine("[DynamicDataStore] Cleared all cached values");
     }
 
     /// <summary>

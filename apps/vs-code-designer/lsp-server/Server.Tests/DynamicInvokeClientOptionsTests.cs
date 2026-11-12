@@ -1,15 +1,15 @@
 using System.Text.Json;
 
-using SdkLspServer.Services.Api;
+using LogicAppsLanguageServer.Services.DynamicInvoke;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
-public class ApiServiceConfigTests
+public class DynamicInvokeClientOptionsTests
 {
     [Fact]
     public void Deserialize_ResourceGroupName_UsesStringContract()
     {
-        ApiServiceConfig? config = JsonSerializer.Deserialize<ApiServiceConfig>(
+        DynamicInvokeClientOptions? config = JsonSerializer.Deserialize<DynamicInvokeClientOptions>(
             """{"subscriptionId":"subscription-id","resourceGroup":"resource-group"}""");
 
         Assert.NotNull(config);
@@ -19,13 +19,13 @@ public class ApiServiceConfigTests
     [Fact]
     public void UpdateFrom_BearerTokenOmitted_PreservesExistingToken()
     {
-        var config = new ApiServiceConfig
+        var config = new DynamicInvokeClientOptions
         {
             BearerToken = "existing-token",
             SubscriptionId = "old-subscription",
         };
 
-        config.UpdateFrom(new ApiServiceConfig
+        config.UpdateFrom(new DynamicInvokeClientOptions
         {
             SubscriptionId = "new-subscription",
         });

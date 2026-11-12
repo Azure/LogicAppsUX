@@ -1,8 +1,8 @@
 using System.Text.Json;
 
-using SdkLspServer.Services.Connections;
+using LogicAppsLanguageServer.Services.Connections;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
 public class ConnectionsServiceTests
 {

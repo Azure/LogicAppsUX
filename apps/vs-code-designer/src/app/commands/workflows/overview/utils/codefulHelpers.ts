@@ -14,7 +14,7 @@ import {
   extractHttpTriggerName,
   hasHttpRequestTrigger,
 } from '../../../../utils/codeful';
-import { getCodefulWorkflowMetadata } from '../../../../languageServer/languageServer';
+import { getCodefulWorkflowMetadata } from '../../../../languageServer/languageClient';
 import { getWorkflowProperties } from './overviewHelpers';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';

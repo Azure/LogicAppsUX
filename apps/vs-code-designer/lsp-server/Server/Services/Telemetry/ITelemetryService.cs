@@ -1,6 +1,6 @@
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace SdkLspServer.Services.Telemetry;
+namespace LogicAppsLanguageServer.Services.Telemetry;
 
 /// <summary>
 /// Service for tracking telemetry events, metrics, and exceptions.

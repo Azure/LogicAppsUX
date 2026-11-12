@@ -1,8 +1,8 @@
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 
-using SdkLspServer.Handlers;
+using LogicAppsLanguageServer.Handlers;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
 public class CodeLensRefreshServiceTests
 {

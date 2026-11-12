@@ -1,4 +1,4 @@
-namespace SdkLspServer.Store.DynamicData;
+namespace LogicAppsLanguageServer.Store.DynamicData;
 
 /// <summary>
 /// Represents a single dynamic value item (e.g., a form, a file, etc.)

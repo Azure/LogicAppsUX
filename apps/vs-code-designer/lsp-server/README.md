@@ -1,4 +1,4 @@
-# Logic Apps SDK language server
+# Logic Apps language server
 
 This directory contains the .NET 10 language server used by the Logic Apps VS Code extension for C# workflow authoring.
 
@@ -38,7 +38,7 @@ The packaging command:
 5. Creates `src/assets/LSPServer/LSPServer.zip`.
 6. Copies the selected SDK package into the asset directory.
 7. Updates `src/assets/LSPServer/lsp-assets.json`.
-8. Verifies that the archive contains `LSPServer/SdkLspServer.dll`.
+8. Verifies that the archive contains `LSPServer/LogicAppsLanguageServer.dll`.
 
 The normal TypeScript build and pull-request validation do not rebuild the server. Commit the updated ZIP, SDK package, and manifest with source changes that affect the shipped server.
 
@@ -55,7 +55,7 @@ The ZIP must preserve this layout:
 
 ```text
 LSPServer/
-  SdkLspServer.dll
+  LogicAppsLanguageServer.dll
   ...
 ```
 
@@ -63,7 +63,7 @@ LSPServer/
 
 Use the `Run Designer Extension in Dev Mode` launch configuration. Its prelaunch task builds the extension and a Debug LSP server, then sets `LSP_SERVER_DEV_PATH` to the local DLL.
 
-Use `Attach to Logic Apps SDK LSP Server` to attach the .NET debugger to the running server process.
+Use `Attach to Logic Apps Language Server` to attach the .NET debugger to the running server process.
 
 The server and extension share these contracts:
 

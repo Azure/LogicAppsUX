@@ -1,16 +1,16 @@
 using System.Text.Json.Serialization;
 
-namespace SdkLspServer.Services.Api;
+namespace LogicAppsLanguageServer.Services.DynamicInvoke;
 
 /// <summary>
-/// Configuration class for API service settings, including Azure subscription details and authentication.
+/// Options for Azure dynamic invoke requests.
 /// </summary>
 /// <remarks>
-/// This class is used to store and manage API service configuration such as base URL,
+/// This class stores dynamic invoke configuration such as base URL,
 /// subscription ID, resource group, bearer token, and API version. It supports JSON serialization
 /// and provides a method to update configuration values from another instance.
 /// </remarks>
-public class ApiServiceConfig
+public class DynamicInvokeClientOptions
 {
     [JsonPropertyName("baseUrl")]
     public string BaseUrl { get; set; } = string.Empty;
@@ -27,7 +27,7 @@ public class ApiServiceConfig
     [JsonPropertyName("apiVersion")]
     public string ApiVersion { get; set; } = "2018-07-01-preview";
 
-    public void UpdateFrom(ApiServiceConfig? updateConfig)
+    public void UpdateFrom(DynamicInvokeClientOptions? updateConfig)
     {
         if (updateConfig == null)
         {

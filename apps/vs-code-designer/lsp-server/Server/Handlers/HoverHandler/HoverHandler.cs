@@ -12,15 +12,14 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-using SdkLspServer.Services.Api;
-using SdkLspServer.Services.Connections;
-using SdkLspServer.Services.Telemetry;
-using SdkLspServer.Store;
-using SdkLspServer.Store.DynamicData;
+using LogicAppsLanguageServer.Services.DynamicInvoke;
+using LogicAppsLanguageServer.Services.Connections;
+using LogicAppsLanguageServer.Services.Telemetry;
+using LogicAppsLanguageServer.Store.DynamicData;
 
-namespace SdkLspServer.Handlers.HoverHandler;
+namespace LogicAppsLanguageServer.Handlers.HoverHandler;
 
-public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, ConnectionsService connectionsService, ApiService apiService, LSPStore lspStore, ITelemetryService telemetryService) : HoverHandlerBase
+public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBufferStore documentBufferStore, ConnectionsService connectionsService, DynamicInvokeClient dynamicInvokeClient, DynamicDataStore dynamicDataStore, ITelemetryService telemetryService) : HoverHandlerBase
 {
     private static readonly SymbolDisplayFormat ShortTypeFormat = new(
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
@@ -34,11 +33,11 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
     private const int ParameterContextCacheMaxAgeMinutes = 2;
     private const int ParameterContextCacheMaxSize = 100;
 
-    private readonly SdkIndex? sdkIndex = sdkIndex;
-    private readonly BufferManager bufferManager = bufferManager;
+    private readonly WorkflowSdkMetadataIndex? sdkMetadataIndex = sdkMetadataIndex;
+    private readonly DocumentBufferStore documentBufferStore = documentBufferStore;
     private readonly ConnectionsService connectionsService = connectionsService;
-    private readonly ApiService apiService = apiService;
-    private readonly LSPStore lspStore = lspStore;
+    private readonly DynamicInvokeClient dynamicInvokeClient = dynamicInvokeClient;
+    private readonly DynamicDataStore dynamicDataStore = dynamicDataStore;
     private readonly ITelemetryService telemetry = telemetryService;
     private int hoverRequestCount = 0;
 
@@ -59,7 +58,7 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
     private void EnsureRegistryInitialized()
     {
         // Initialize registry with SDK index (lazy, thread-safe in registry)
-        DynamicOperationsRegistry.Initialize(sdkIndex);
+        DynamicOperationsRegistry.Initialize(sdkMetadataIndex);
     }
 
     private readonly TextDocumentSelector documentSelector = new(
@@ -93,8 +92,8 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
         {
             string documentPath = request.TextDocument.Uri.ToString();
 
-            // Get the document content from BufferManager
-            string? documentText = bufferManager.GetBuffer(documentPath);
+            // Get the document content from DocumentBufferStore
+            string? documentText = documentBufferStore.GetBuffer(documentPath);
             if (string.IsNullOrEmpty(documentText))
             {
                 // Fallback: try to read file from disk if not in buffer
@@ -122,9 +121,9 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
             if (string.IsNullOrEmpty(symbolInfo))
             {
                 // Fallback to SDK summary if no specific symbol found
-                if (sdkIndex != null)
+                if (sdkMetadataIndex != null)
                 {
-                    symbolInfo = $"**SDK Loaded**\n\n{sdkIndex.Summary}";
+                    symbolInfo = $"**SDK Loaded**\n\n{sdkMetadataIndex.Summary}";
                 }
                 else
                 {
@@ -699,10 +698,10 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
             AddCoreReferences(references, referencePaths);
 
             // Add SDK assembly references if available
-            if (sdkIndex != null)
+            if (sdkMetadataIndex != null)
             {
                 int loadedCount = 0;
-                foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+                foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
                 {
                     try
                     {
@@ -1220,7 +1219,7 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
 
     private bool IsSymbolFromSdk(ISymbol symbol)
     {
-        if (sdkIndex == null)
+        if (sdkMetadataIndex == null)
         {
             return false;
         }
@@ -1232,7 +1231,7 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
         }
 
         // Check if any SDK assembly matches
-        return sdkIndex.AssemblyPaths.Any(path =>
+        return sdkMetadataIndex.AssemblyPaths.Any(path =>
             System.IO.Path.GetFileNameWithoutExtension(path)
                 .Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
     }
@@ -2179,10 +2178,10 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
             }
 
             // Check if values are already in the LSP store
-            List<DynamicValueItem>? cachedValues = lspStore.DynamicData.Get(connectorName, operationName, connectionName);
+            List<DynamicValueItem>? cachedValues = dynamicDataStore.Get(connectorName, operationName, connectionName);
             if (cachedValues != null)
             {
-                await Console.Error.WriteLineAsync($"[FetchDynamicValues] Using cached values from LSPStore ({cachedValues.Count} items)");
+                await Console.Error.WriteLineAsync($"[FetchDynamicValues] Using cached values from DynamicDataStore ({cachedValues.Count} items)");
                 return cachedValues.Select(v => new HoverHandlerTypes.ParameterValue
                 {
                     Value = v.Value,
@@ -2219,8 +2218,8 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
                     Value = v.Value,
                     Description = v.Description,
                 }).ToList();
-                lspStore.DynamicData.Set(connectorName, operationName, connectionName, storeItems);
-                await Console.Error.WriteLineAsync($"[FetchDynamicValues] Stored {storeItems.Count} values in LSPStore");
+                dynamicDataStore.Set(connectorName, operationName, connectionName, storeItems);
+                await Console.Error.WriteLineAsync($"[FetchDynamicValues] Stored {storeItems.Count} values in DynamicDataStore");
             }
 
             return values;
@@ -2349,12 +2348,12 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
         try
         {
             await Console.Error.WriteLineAsync("[FetchDynamicValuesAsync] About to call API...");
-            await Console.Error.WriteLineAsync($"[FetchDynamicValuesAsync] API Config - BearerToken is null: {apiService.Config.BearerToken == null}");
-            await Console.Error.WriteLineAsync($"[FetchDynamicValuesAsync] API Config - BearerToken length: {apiService.Config.BearerToken?.Length ?? 0}");
+            await Console.Error.WriteLineAsync($"[FetchDynamicValuesAsync] API Config - BearerToken is null: {dynamicInvokeClient.Options.BearerToken == null}");
+            await Console.Error.WriteLineAsync($"[FetchDynamicValuesAsync] API Config - BearerToken length: {dynamicInvokeClient.Options.BearerToken?.Length ?? 0}");
 
             // Call Azure dynamicInvoke API with the payload
             // The body is an array directly, not wrapped in an object
-            HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>? dynamicResponse = await apiService.PostJsonAsync<HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>>(apiUrl, payload, CancellationToken.None);
+            HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>? dynamicResponse = await dynamicInvokeClient.PostJsonAsync<HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>>(apiUrl, payload, CancellationToken.None);
 
             await Console.Error.WriteLineAsync("[FetchDynamicValuesAsync] API call completed");
             await Console.Error.WriteLineAsync("[FetchDynamicValuesAsync] Response received:");
@@ -2428,14 +2427,14 @@ public class HoverHandler(SdkIndex? sdkIndex, BufferManager bufferManager, Conne
     /// </summary>
     private string? BuildDynamicApiUrl(string connectorName, string operationName, HoverHandlerTypes.ParameterContext context)
     {
-        ApiServiceConfig apiConfiguration = apiService.Config;
+        DynamicInvokeClientOptions options = dynamicInvokeClient.Options;
 
         // Extract connection name from the method call
         string? connectionName = ExtractConnectionNameFromMethodCall(context);
 
         return string.IsNullOrEmpty(connectionName)
             ? null
-            : $"{apiConfiguration.BaseUrl}/subscriptions/{apiConfiguration.SubscriptionId}/resourceGroups/{apiConfiguration.ResourceGroup}/providers/Microsoft.Web/connections/{connectionName}/dynamicInvoke?api-version={apiConfiguration.ApiVersion}";
+            : $"{options.BaseUrl}/subscriptions/{options.SubscriptionId}/resourceGroups/{options.ResourceGroup}/providers/Microsoft.Web/connections/{connectionName}/dynamicInvoke?api-version={options.ApiVersion}";
     }
 
     /// <summary>

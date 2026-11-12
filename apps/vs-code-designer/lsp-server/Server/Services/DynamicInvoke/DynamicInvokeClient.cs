@@ -3,24 +3,24 @@ using System.Text.Json;
 
 using ZiggyCreatures.Caching.Fusion;
 
-namespace SdkLspServer.Services.Api;
+namespace LogicAppsLanguageServer.Services.DynamicInvoke;
 
 /// <summary>
-/// Service for making dynamic API calls based on user input.
+/// Client for making dynamic invoke API calls based on user input.
 /// This can be used to fetch real-time data, SDK metadata, or other external resources
 /// to enhance LSP features like completions, hover info, etc.
 /// </summary>
-public class ApiService
+public class DynamicInvokeClient
 {
-    public ApiServiceConfig Config;
+    public DynamicInvokeClientOptions Options { get; }
     private readonly IHttpClientFactory httpClientFactory;
     private readonly JsonSerializerOptions jsonOptions;
     private readonly IFusionCache cache;
 
-    public ApiService(IHttpClientFactory httpClientFactory, ApiServiceConfig config, IFusionCache fusionCache)
+    public DynamicInvokeClient(IHttpClientFactory httpClientFactory, DynamicInvokeClientOptions options, IFusionCache fusionCache)
     {
         this.httpClientFactory = httpClientFactory;
-        Config = config;
+        Options = options;
         cache = fusionCache;
         jsonOptions = new JsonSerializerOptions
         {
@@ -46,7 +46,7 @@ public class ApiService
                 cacheKey,
                 async (ctx, ct) =>
                 {
-                    HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
+                    HttpClient client = httpClientFactory.CreateClient("DynamicInvokeClient");
                     using HttpResponseMessage response = await client.GetAsync(url, ct);
                     response.EnsureSuccessStatusCode();
 
@@ -64,7 +64,7 @@ public class ApiService
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[ApiService] GET {url} error: {ex.Message}");
+            await Console.Error.WriteLineAsync($"[DynamicInvokeClient] GET {url} error: {ex.Message}");
             return null;
         }
     }
@@ -87,15 +87,15 @@ public class ApiService
                 cacheKey,
                 async (ctx, ct) =>
                 {
-                    HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
+                    HttpClient client = httpClientFactory.CreateClient("DynamicInvokeClient");
 
                     // Add Authorization header if bearer token is configured
-                    if (!string.IsNullOrEmpty(Config.BearerToken))
+                    if (!string.IsNullOrEmpty(Options.BearerToken))
                     {
                         // Remove "Bearer " prefix if it exists in the token
-                        string token = Config.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                            ? Config.BearerToken[7..].Trim()
-                            : Config.BearerToken;
+                        string token = Options.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                            ? Options.BearerToken[7..].Trim()
+                            : Options.BearerToken;
 
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
@@ -114,7 +114,7 @@ public class ApiService
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[ApiService] GET JSON {url} error: {ex.Message}");
+            await Console.Error.WriteLineAsync($"[DynamicInvokeClient] GET JSON {url} error: {ex.Message}");
             return default;
         }
     }
@@ -139,15 +139,15 @@ public class ApiService
                 cacheKey,
                 async (ctx, ct) =>
                 {
-                    HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
+                    HttpClient client = httpClientFactory.CreateClient("DynamicInvokeClient");
 
                     // Add Authorization header if bearer token is configured
-                    if (!string.IsNullOrEmpty(Config.BearerToken))
+                    if (!string.IsNullOrEmpty(Options.BearerToken))
                     {
                         // Remove "Bearer " prefix if it exists in the token
-                        string token = Config.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                            ? Config.BearerToken[7..].Trim()
-                            : Config.BearerToken;
+                        string token = Options.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                            ? Options.BearerToken[7..].Trim()
+                            : Options.BearerToken;
 
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
@@ -168,7 +168,7 @@ public class ApiService
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
+            await Console.Error.WriteLineAsync($"[DynamicInvokeClient] POST {url} error: {ex.Message}");
             return null;
         }
     }
@@ -194,15 +194,15 @@ public class ApiService
                 cacheKey,
                 async (ctx, ct) =>
                 {
-                    HttpClient client = httpClientFactory.CreateClient("SdkLspClient");
+                    HttpClient client = httpClientFactory.CreateClient("DynamicInvokeClient");
 
                     // Add Authorization header if bearer token is configured
-                    if (!string.IsNullOrEmpty(Config.BearerToken))
+                    if (!string.IsNullOrEmpty(Options.BearerToken))
                     {
                         // Remove "Bearer " prefix if it exists in the token
-                        string token = Config.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
-                            ? Config.BearerToken[7..].Trim()
-                            : Config.BearerToken;
+                        string token = Options.BearerToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                            ? Options.BearerToken[7..].Trim()
+                            : Options.BearerToken;
 
                         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                     }
@@ -224,7 +224,7 @@ public class ApiService
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[ApiService] POST {url} error: {ex.Message}");
+            await Console.Error.WriteLineAsync($"[DynamicInvokeClient] POST {url} error: {ex.Message}");
             return default;
         }
     }

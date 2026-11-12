@@ -1,8 +1,8 @@
 using System.IO.Compression;
 
-using SdkLspServer;
+using LogicAppsLanguageServer;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
 public class NupkgLoaderTests
 {

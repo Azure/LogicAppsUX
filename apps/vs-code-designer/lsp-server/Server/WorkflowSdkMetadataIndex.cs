@@ -5,14 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SdkLspServer;
+namespace LogicAppsLanguageServer;
 
 /// <summary>
 /// Represents an indexed SDK extracted from a NuGet package. It holds lists of
 /// assemblies and type names discovered in the package. The index is loaded
 /// eagerly on startup to avoid reflection during request handling.
 /// </summary>
-public sealed class SdkIndex : IDisposable
+public sealed class WorkflowSdkMetadataIndex : IDisposable
 {
     private bool disposed;
 
@@ -31,7 +31,7 @@ public sealed class SdkIndex : IDisposable
     /// <summary>Gets a human‑readable summary describing how many assemblies and types were loaded.</summary>
     public string Summary => $"{AssemblyPaths.Length} assemblies, {TypeNames.Length} types";
 
-    private SdkIndex(string nupkg, string root, IEnumerable<string> assemblies, IEnumerable<string> types)
+    private WorkflowSdkMetadataIndex(string nupkg, string root, IEnumerable<string> assemblies, IEnumerable<string> types)
     {
         SourceNupkgPath = nupkg;
         ExtractRoot = root;
@@ -46,7 +46,7 @@ public sealed class SdkIndex : IDisposable
     /// calling thread.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public static async Task<SdkIndex?> TryCreateAsync(string? nupkgPath)
+    public static async Task<WorkflowSdkMetadataIndex?> TryCreateAsync(string? nupkgPath)
     {
         if (string.IsNullOrWhiteSpace(nupkgPath) || !File.Exists(nupkgPath))
         {
@@ -54,7 +54,7 @@ public sealed class SdkIndex : IDisposable
         }
 
         // Generate a temporary directory to extract contents into.
-        string extractRoot = Path.Combine(Path.GetTempPath(), "sdk-lsp-server", Path.GetFileNameWithoutExtension(nupkgPath) + "-" + Guid.NewGuid().ToString("N"));
+        string extractRoot = Path.Combine(Path.GetTempPath(), "logic-apps-language-server", Path.GetFileNameWithoutExtension(nupkgPath) + "-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(extractRoot);
 
         try
@@ -65,15 +65,15 @@ public sealed class SdkIndex : IDisposable
             (List<string> types, List<(string Path, string Error)> failures) = MetadataReader.ReadTypeNames(assemblies);
             if (failures.Count > 0)
             {
-                await Console.Error.WriteLineAsync("[SdkLspServer] Failed to read some assemblies:\n  " +
+                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] Failed to read some assemblies:\n  " +
                     string.Join("\n  ", failures.Select(f => $"{f.Path}: {f.Error}")));
             }
 
-            return new SdkIndex(nupkgPath, extractRoot, assemblies, types);
+            return new WorkflowSdkMetadataIndex(nupkgPath, extractRoot, assemblies, types);
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[SdkLspServer] Indexing failed: {ex}");
+            await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] Indexing failed: {ex}");
             DeleteExtractedFiles(extractRoot);
             return null;
         }
@@ -102,7 +102,7 @@ public sealed class SdkIndex : IDisposable
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"[SdkLspServer] Failed to clean extracted SDK directory '{extractRoot}': {ex.Message}");
+            Console.Error.WriteLine($"[LogicAppsLanguageServer] Failed to clean extracted SDK directory '{extractRoot}': {ex.Message}");
         }
     }
 

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 /// <summary>
 /// Contains data types and helper classes used by the HoverHandler.

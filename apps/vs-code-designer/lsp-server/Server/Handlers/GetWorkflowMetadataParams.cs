@@ -9,7 +9,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 /// <summary>
 /// Request parameters for custom/getWorkflowMetadata.

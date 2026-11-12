@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace SdkLspServer.Services.Connections;
+namespace LogicAppsLanguageServer.Services.Connections;
 
 /// <summary>
 /// Helper class for extracting information from connection configurations.

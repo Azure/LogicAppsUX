@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 
-public class BufferManager
+namespace LogicAppsLanguageServer;
+
+public class DocumentBufferStore
 {
     private readonly ConcurrentDictionary<string, string> buffers = new();
 

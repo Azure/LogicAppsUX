@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 /// <summary>
 /// Metadata for a dynamic operation including API path, method, and query parameters.

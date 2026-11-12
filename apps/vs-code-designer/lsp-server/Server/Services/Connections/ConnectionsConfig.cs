@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SdkLspServer.Services.Connections;
+namespace LogicAppsLanguageServer.Services.Connections;
 
 /// <summary>
 /// Represents the structure of a connections.json file used in Azure Logic Apps workflows.

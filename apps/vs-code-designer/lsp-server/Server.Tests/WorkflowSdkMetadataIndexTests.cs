@@ -1,10 +1,10 @@
 using System.IO.Compression;
 
-using SdkLspServer;
+using LogicAppsLanguageServer;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
-public class SdkIndexTests
+public class WorkflowSdkMetadataIndexTests
 {
     [Fact]
     public async Task Dispose_RemovesExtractedSdkDirectory()
@@ -19,7 +19,7 @@ public class SdkIndexTests
             {
             }
 
-            SdkIndex? index = await SdkIndex.TryCreateAsync(packagePath);
+            WorkflowSdkMetadataIndex? index = await WorkflowSdkMetadataIndex.TryCreateAsync(packagePath);
             Assert.NotNull(index);
             string extractRoot = index.ExtractRoot;
             Assert.True(Directory.Exists(extractRoot));
@@ -40,13 +40,13 @@ public class SdkIndexTests
         string testRoot = Path.Combine(Path.GetTempPath(), $"sdk-index-{Guid.NewGuid():N}");
         string packageName = $"invalid-{Guid.NewGuid():N}";
         string packagePath = Path.Combine(testRoot, $"{packageName}.nupkg");
-        string extractionParent = Path.Combine(Path.GetTempPath(), "sdk-lsp-server");
+        string extractionParent = Path.Combine(Path.GetTempPath(), "logic-apps-language-server");
         Directory.CreateDirectory(testRoot);
         await File.WriteAllTextAsync(packagePath, "not a zip");
 
         try
         {
-            SdkIndex? index = await SdkIndex.TryCreateAsync(packagePath);
+            WorkflowSdkMetadataIndex? index = await WorkflowSdkMetadataIndex.TryCreateAsync(packagePath);
 
             Assert.Null(index);
             Assert.Empty(Directory.Exists(extractionParent)

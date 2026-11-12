@@ -20,8 +20,8 @@ export class UriHandler extends vscode.EventEmitter<vscode.Uri> implements vscod
 function handleOAuthRedirect(uri: vscode.Uri): void {
   const queryParams = uri.query ? (query.parse(uri.query) as Record<string, string>) : {};
   const designerPanel = tryGetWebviewPanel(ext.webViewKey.designerLocal, queryParams['pid']);
-  const languageServerPanel = tryGetWebviewPanel(ext.webViewKey.languageServer, queryParams['pid']);
-  const viewPanel = designerPanel ?? languageServerPanel;
+  const connectionViewPanel = tryGetWebviewPanel(ext.webViewKey.connectionView, queryParams['pid']);
+  const viewPanel = designerPanel ?? connectionViewPanel;
 
   if (viewPanel) {
     const value: Record<string, string> = {

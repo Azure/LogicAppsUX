@@ -13,14 +13,14 @@ using Newtonsoft.Json.Linq;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-using SdkLspServer;
-using SdkLspServer.Handlers;
-using SdkLspServer.Services.Connections;
-using SdkLspServer.Services.Telemetry;
+using LogicAppsLanguageServer;
+using LogicAppsLanguageServer.Handlers;
+using LogicAppsLanguageServer.Services.Connections;
+using LogicAppsLanguageServer.Services.Telemetry;
 
 using Xunit;
 
-namespace Server.Tests;
+namespace LogicAppsLanguageServer.Tests;
 
 /// <summary>
 /// Unit tests for CodeLensHandler to verify code lens display and refresh behavior.
@@ -28,13 +28,13 @@ namespace Server.Tests;
 /// </summary>
 public class CodeLensHandlerTests
 {
-    private readonly BufferManager bufferManager;
+    private readonly DocumentBufferStore documentBufferStore;
     private readonly ITelemetryService telemetryService;
     private readonly ConnectionsService connectionsService;
 
     public CodeLensHandlerTests()
     {
-        bufferManager = new BufferManager();
+        documentBufferStore = new DocumentBufferStore();
         telemetryService = new NoOpTelemetryService();
         connectionsService = new ConnectionsService();
     }
@@ -61,9 +61,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/weather.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -91,9 +91,9 @@ public class WeatherWorkflow
     {
         // Arrange - Empty document
         string documentUri = "file:///test/empty.cs";
-        bufferManager.UpdateBuffer(documentUri, string.Empty);
+        documentBufferStore.UpdateBuffer(documentUri, string.Empty);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -126,9 +126,9 @@ public class Calculator
 }";
 
         string documentUri = "file:///test/calculator.cs";
-        bufferManager.UpdateBuffer(documentUri, nonWorkflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, nonWorkflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -167,9 +167,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/old-weather.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -220,9 +220,9 @@ public class MultiActionWorkflow
 }";
 
         string documentUri = "file:///test/multi-action.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -270,9 +270,9 @@ public class ManagedWorkflow
 }";
 
         string documentUri = "file:///test/managed-old.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -320,9 +320,9 @@ public class ActionWorkflow
 }";
 
         string documentUri = "file:///test/action-managed.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -366,9 +366,9 @@ public class BuiltInWorkflow
 }";
 
         string documentUri = "file:///test/builtin.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -414,9 +414,9 @@ public class ChainedWorkflow
 }";
 
         string documentUri = "file:///test/chained.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -467,9 +467,9 @@ public class MixedPatternsWorkflow
 }";
 
         string documentUri = "file:///test/mixed.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -519,9 +519,9 @@ public class ConnectionIdWorkflow
 }";
 
         string documentUri = "file:///test/connection-id.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -578,9 +578,9 @@ public class NestedWorkflow
 }";
 
         string documentUri = "file:///test/nested.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -620,9 +620,9 @@ public class SingleConnectorWorkflow
 }";
 
         string documentUri = "file:///test/single-connector.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -674,9 +674,9 @@ public class ChainedSingleWorkflow
 }";
 
         string documentUri = "file:///test/chained-single.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -725,9 +725,9 @@ public class OldPatternSingleWorkflow
 }";
 
         string documentUri = "file:///test/old-pattern-single.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -780,9 +780,9 @@ public class VariableAssignmentWorkflow
 }";
 
         string documentUri = "file:///test/variable-assignment.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -833,9 +833,9 @@ public class TwoDistinctWorkflow
 }";
 
         string documentUri = "file:///test/two-distinct.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -891,8 +891,8 @@ public class IncrementalWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, initialCode);
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        documentBufferStore.UpdateBuffer(documentUri, initialCode);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -919,7 +919,7 @@ public class IncrementalWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, codeWithNewConnector);
+        documentBufferStore.UpdateBuffer(documentUri, codeWithNewConnector);
 
         // Act 2 - After adding connector: should immediately show code lens
         var updatedLenses = await handler.Handle(request, CancellationToken.None);
@@ -956,8 +956,8 @@ public class CommentTestWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, activeCode);
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        documentBufferStore.UpdateBuffer(documentUri, activeCode);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -987,7 +987,7 @@ public class CommentTestWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, commentedCode);
+        documentBufferStore.UpdateBuffer(documentUri, commentedCode);
 
         // Act 2 - After commenting: should no longer show code lens
         var updatedLenses = await handler.Handle(request, CancellationToken.None);
@@ -1023,8 +1023,8 @@ public class UncommentTestWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, commentedCode);
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        documentBufferStore.UpdateBuffer(documentUri, commentedCode);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -1054,7 +1054,7 @@ public class UncommentTestWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, activeCode);
+        documentBufferStore.UpdateBuffer(documentUri, activeCode);
 
         // Act 2 - After uncommenting: should show code lens
         var updatedLenses = await handler.Handle(request, CancellationToken.None);
@@ -1094,9 +1094,9 @@ public class MultilineCommentWorkflow
 }";
 
         string documentUri = "file:///test/multiline-comment.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -1138,8 +1138,8 @@ public class PartialTypingWorkflow
     }
 }";
 
-        bufferManager.UpdateBuffer(documentUri, partialCode);
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        documentBufferStore.UpdateBuffer(documentUri, partialCode);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -1159,7 +1159,7 @@ public class PartialTypingWorkflow
         // Arrange - Simulate rapid editing of connector code
         string documentUri = "file:///test/rapid-edits.cs";
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier { Uri = DocumentUri.From(documentUri) }
@@ -1179,7 +1179,7 @@ public class RapidEditsWorkflow
         });
     }
 }";
-        bufferManager.UpdateBuffer(documentUri, code1);
+        documentBufferStore.UpdateBuffer(documentUri, code1);
         var lenses1 = (await handler.Handle(request, CancellationToken.None)).ToList();
 
         // Edit 2: Add Msnweather
@@ -1197,7 +1197,7 @@ public class RapidEditsWorkflow
         });
     }
 }";
-        bufferManager.UpdateBuffer(documentUri, code2);
+        documentBufferStore.UpdateBuffer(documentUri, code2);
         var lenses2 = (await handler.Handle(request, CancellationToken.None)).ToList();
 
         // Edit 3: Change to Teams
@@ -1215,7 +1215,7 @@ public class RapidEditsWorkflow
         });
     }
 }";
-        bufferManager.UpdateBuffer(documentUri, code3);
+        documentBufferStore.UpdateBuffer(documentUri, code3);
         var lenses3 = (await handler.Handle(request, CancellationToken.None)).ToList();
 
         // Assert - Each state should reflect the correct connectors
@@ -1263,9 +1263,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/weather-manage.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsWithWeather);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsWithWeather);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1329,9 +1329,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/weather-create.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsWithoutWeather);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsWithoutWeather);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1395,9 +1395,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/weather-runtime-update.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, runtimeConnections);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, runtimeConnections);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1462,9 +1462,9 @@ public class WeatherWorkflow
 ";
 
         string documentUri = "file:///test/noarg-connector-location-target.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1530,9 +1530,9 @@ public class WeatherWorkflow
 ";
 
         string documentUri = "file:///test/variable-based-connector-target.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1621,10 +1621,10 @@ public class WeatherWorkflow
             File.WriteAllText(workflowFilePath, workflowCode);
 
             string documentUri = new Uri(workflowFilePath).AbsoluteUri;
-            bufferManager.UpdateBuffer(documentUri, workflowCode);
+            documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
             var localConnectionsService = new ConnectionsService();
-            var handler = new CodeLensHandler(null, bufferManager, telemetryService, localConnectionsService);
+            var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, localConnectionsService);
             var request = new CodeLensParams
             {
                 TextDocument = new TextDocumentIdentifier
@@ -1687,9 +1687,9 @@ public class WeatherWorkflow
 }";
 
         string documentUri = "file:///test/weather-managed-identity.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, localConnectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, localConnectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1754,9 +1754,9 @@ public class MixedWorkflow
 }";
 
         string documentUri = "file:///test/mixed-auth-formats.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, localConnectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, localConnectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1828,9 +1828,9 @@ public class GuidWorkflow
 }";
 
         string documentUri = "file:///test/builtin-customcode.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1884,9 +1884,9 @@ public class AgentWorkflow
 }";
 
         string documentUri = "file:///test/builtin-agent-create.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -1953,9 +1953,9 @@ public class AgentWorkflow
 }";
 
         string documentUri = "file:///test/builtin-agent-manage.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsWithAgent);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsWithAgent);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -2000,9 +2000,9 @@ public class AgentWorkflow
 }";
 
         string documentUri = "file:///test/builtin-agents-plural.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -2047,9 +2047,9 @@ public class HybridWorkflow
 }";
 
         string documentUri = "file:///test/builtin-nested-connector.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -2105,9 +2105,9 @@ public class HttpWorkflow
 }";
 
         string documentUri = "file:///test/builtin-http.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(null, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(null, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier
@@ -2141,8 +2141,8 @@ public class HttpWorkflow
             return;
         }
 
-        SdkIndex? sdkIndex = await SdkIndex.TryCreateAsync(sdkPath);
-        Assert.NotNull(sdkIndex);
+        WorkflowSdkMetadataIndex? sdkMetadataIndex = await WorkflowSdkMetadataIndex.TryCreateAsync(sdkPath);
+        Assert.NotNull(sdkMetadataIndex);
 
         string workflowCode = @"
 using Microsoft.Extensions.Hosting;
@@ -2163,9 +2163,9 @@ public static class Program
 ";
 
         string documentUri = "file:///test/functions-startup.cs";
-        bufferManager.UpdateBuffer(documentUri, workflowCode);
+        documentBufferStore.UpdateBuffer(documentUri, workflowCode);
 
-        var handler = new CodeLensHandler(sdkIndex, bufferManager, telemetryService, connectionsService);
+        var handler = new CodeLensHandler(sdkMetadataIndex, documentBufferStore, telemetryService, connectionsService);
         var request = new CodeLensParams
         {
             TextDocument = new TextDocumentIdentifier

@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SdkLspServer;
+namespace LogicAppsLanguageServer;
 
 /// <summary>
 /// Utility for extracting a NuGet package (.nupkg) and finding assemblies

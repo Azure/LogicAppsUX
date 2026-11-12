@@ -1,4 +1,4 @@
-namespace SdkLspServer.Handlers.CompletionHandler;
+namespace LogicAppsLanguageServer.Handlers.CompletionHandler;
 
 /// <summary>
 /// Individual completion suggestion from an external API.

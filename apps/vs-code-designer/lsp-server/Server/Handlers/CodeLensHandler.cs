@@ -11,20 +11,20 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-using SdkLspServer.Services.Connections;
-using SdkLspServer.Services.Telemetry;
+using LogicAppsLanguageServer.Services.Connections;
+using LogicAppsLanguageServer.Services.Telemetry;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
 /// <summary>
 /// Provides CodeLens information for text documents, offering actionable insights
 /// for SDK methods and types. CodeLens items appear as clickable text above methods
 /// and provide quick actions like documentation links and usage examples.
 /// </summary>
-public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, ITelemetryService telemetryService, ConnectionsService connectionsService) : CodeLensHandlerBase
+public class CodeLensHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBufferStore documentBufferStore, ITelemetryService telemetryService, ConnectionsService connectionsService) : CodeLensHandlerBase
 {
-    private readonly SdkIndex? sdkIndex = sdkIndex;
-    private readonly BufferManager bufferManager = bufferManager;
+    private readonly WorkflowSdkMetadataIndex? sdkMetadataIndex = sdkMetadataIndex;
+    private readonly DocumentBufferStore documentBufferStore = documentBufferStore;
     private readonly ITelemetryService telemetry = telemetryService;
     private readonly ConnectionsService connectionsService = connectionsService;
     private int codeLensRequestCount = 0;
@@ -1088,8 +1088,8 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
                 }
             }
 
-            // Get the document content from BufferManager
-            string? documentText = bufferManager.GetBuffer(documentPath);
+            // Get the document content from DocumentBufferStore
+            string? documentText = documentBufferStore.GetBuffer(documentPath);
             if (string.IsNullOrEmpty(documentText))
             {
                 // Fallback: try to read file from disk if not in buffer
@@ -1171,9 +1171,9 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
             AddCoreReferences(references, referencePaths);
 
             // Add SDK assembly references if available
-            if (sdkIndex != null)
+            if (sdkMetadataIndex != null)
             {
-                foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+                foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
                 {
                     TryAddReference(references, referencePaths, assemblyPath);
                 }
@@ -1608,7 +1608,7 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
 
     private bool MethodUsesSdk(MethodDeclarationSyntax method, SemanticModel semanticModel)
     {
-        if (sdkIndex == null)
+        if (sdkMetadataIndex == null)
         {
             return false;
         }
@@ -1737,13 +1737,13 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
 
     private (string? ConnectorType, string? ConnectorName) TryGetConnectorOperationInfoViaMetadata(IMethodSymbol method)
     {
-        if (sdkIndex is null)
+        if (sdkMetadataIndex is null)
         {
             return (null, null);
         }
 
         string? targetAsmName = method.ContainingAssembly?.Name;
-        IEnumerable<string> candidateAsmPaths = sdkIndex.AssemblyPaths;
+        IEnumerable<string> candidateAsmPaths = sdkMetadataIndex.AssemblyPaths;
         if (!string.IsNullOrWhiteSpace(targetAsmName))
         {
             candidateAsmPaths = candidateAsmPaths.OrderByDescending(p => string.Equals(Path.GetFileNameWithoutExtension(p), targetAsmName, StringComparison.OrdinalIgnoreCase));
@@ -1753,7 +1753,7 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
         {
             string coreDir = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             string[] core = Directory.GetFiles(coreDir, "*.dll", SearchOption.TopDirectoryOnly);
-            using var mlc = new MetadataLoadContext(new PathAssemblyResolver(core.Concat(sdkIndex.AssemblyPaths)));
+            using var mlc = new MetadataLoadContext(new PathAssemblyResolver(core.Concat(sdkMetadataIndex.AssemblyPaths)));
 
             string? fullTypeName = BuildReflectionFullTypeName(method.ContainingType);
             if (string.IsNullOrWhiteSpace(fullTypeName))
@@ -1858,7 +1858,7 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
 
     private bool IsSymbolFromSdk(ISymbol symbol)
     {
-        if (sdkIndex == null)
+        if (sdkMetadataIndex == null)
         {
             return false;
         }
@@ -1870,7 +1870,7 @@ public class CodeLensHandler(SdkIndex? sdkIndex, BufferManager bufferManager, IT
         }
 
         // Check if any SDK assembly matches
-        return sdkIndex.AssemblyPaths.Any(path =>
+        return sdkMetadataIndex.AssemblyPaths.Any(path =>
             Path.GetFileNameWithoutExtension(path)
                 .Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
     }

@@ -12,7 +12,7 @@ pnpm run build:extension
 Press `F5` and select `Run Designer Extension in Dev Mode`. The launch configuration starts the extension with:
 
 ```text
-LSP_SERVER_DEV_PATH=${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net10.0/SdkLspServer.dll
+LSP_SERVER_DEV_PATH=${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net10.0/LogicAppsLanguageServer.dll
 ```
 
 The extension starts the server through its managed `dotnet` host and passes the installed SDK nupkg through `--sdk`.
@@ -21,8 +21,8 @@ The extension starts the server through its managed `dotnet` host and passes the
 
 1. Start `Run Designer Extension in Dev Mode`.
 2. Open or create a C# workflow project in the Extension Development Host.
-3. Select `Attach to Logic Apps SDK LSP Server`.
-4. Choose the `dotnet` process whose command line contains `SdkLspServer.dll`.
+3. Select `Attach to Logic Apps Language Server`.
+4. Choose the `dotnet` process whose command line contains `LogicAppsLanguageServer.dll`.
 
 Reload the Extension Development Host after rebuilding the server.
 
@@ -48,6 +48,6 @@ pnpm --dir apps/vs-code-designer run lsp:package -- --sdk-package <path-to-sdk-p
 ## Common failures
 
 - **SDK failed to load:** Check the nupkg path passed through `--sdk`.
-- **Locked files during asset installation:** Stop the running `SdkLspServer.dll` process or reload VS Code.
+- **Locked files during asset installation:** Stop the running `LogicAppsLanguageServer.dll` process or reload VS Code.
 - **Changes do not appear:** Rebuild the Debug server and reload the Extension Development Host.
 - **SDK compatibility test fails:** Review the SDK surface change before updating the expected behavior or asset manifest.

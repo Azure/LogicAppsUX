@@ -6,16 +6,17 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using OmniSharp.Extensions.LanguageServer.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 
-using SdkLspServer.Handlers;
-using SdkLspServer.Handlers.CompletionHandler;
-using SdkLspServer.Handlers.HoverHandler;
-using SdkLspServer.Services.Api;
-using SdkLspServer.Services.Connections;
-using SdkLspServer.Services.Telemetry;
+using LogicAppsLanguageServer.Handlers;
+using LogicAppsLanguageServer.Handlers.CompletionHandler;
+using LogicAppsLanguageServer.Handlers.HoverHandler;
+using LogicAppsLanguageServer.Services.Connections;
+using LogicAppsLanguageServer.Services.DynamicInvoke;
+using LogicAppsLanguageServer.Services.Telemetry;
+using LogicAppsLanguageServer.Store.DynamicData;
 
 using ZiggyCreatures.Caching.Fusion;
 
-namespace SdkLspServer;
+namespace LogicAppsLanguageServer;
 
 internal static class Program
 {
@@ -23,7 +24,7 @@ internal static class Program
     {
         ITelemetryService? telemetryService = null;
         ILanguageServerFacade? initializedServer = null;
-        SdkIndex? index = null;
+        WorkflowSdkMetadataIndex? sdkMetadataIndex = null;
         bool supportsCodeLensRefresh = false;
 
         try
@@ -31,13 +32,13 @@ internal static class Program
             // Support for debugger attachment at startup
             if (args.Contains("--wait-for-debugger"))
             {
-                await Console.Error.WriteLineAsync($"[SdkLspServer] Waiting for debugger to attach... (PID: {Environment.ProcessId})");
+                await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] Waiting for debugger to attach... (PID: {Environment.ProcessId})");
                 while (!Debugger.IsAttached)
                 {
                     await Task.Delay(100);
                 }
 
-                await Console.Error.WriteLineAsync("[SdkLspServer] Debugger attached, continuing...");
+                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] Debugger attached, continuing...");
             }
 
             // Determine the SDK path from command line, environment variable, or local SDK folder
@@ -45,14 +46,14 @@ internal static class Program
 
             // Index the provided NuGet package, if any. This happens on startup
             // so that handlers can supply information to clients.
-            index = await SdkIndex.TryCreateAsync(sdkPath);
-            if (index is null)
+            sdkMetadataIndex = await WorkflowSdkMetadataIndex.TryCreateAsync(sdkPath);
+            if (sdkMetadataIndex is null)
             {
-                await Console.Error.WriteLineAsync($"[SdkLspServer] Could not load SDK from: {sdkPath ?? "(none)"}");
+                await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] Could not load SDK from: {sdkPath ?? "(none)"}");
             }
 
-            // Create config instance that will be populated from initializationOptions
-            ApiServiceConfig apiConfig = new();
+            // Create dynamic invoke options that will be populated from initializationOptions
+            DynamicInvokeClientOptions dynamicInvokeClientOptions = new();
 
             // Create connections service for runtime updates
             ConnectionsService connectionsService = new();
@@ -65,8 +66,8 @@ internal static class Program
                 }
             };
 
-            // Create buffer manager (will be registered as singleton)
-            BufferManager bufferManager = new();
+            // Create the document buffer store (registered as a singleton below)
+            DocumentBufferStore documentBufferStore = new();
 
             LanguageServer server = await LanguageServer.From((options) =>
             {
@@ -77,36 +78,35 @@ internal static class Program
                     {
                         ConfigureServices(services);
 
-                        // Make SdkIndex available for dependency injection
-                        if (index != null)
+                        // Make WorkflowSdkMetadataIndex available for dependency injection
+                        if (sdkMetadataIndex != null)
                         {
-                            services.AddSingleton(index);
+                            services.AddSingleton(sdkMetadataIndex);
                         }
                         else
                         {
-                            services.AddSingleton(typeof(SdkIndex), provider => null!);
+                            services.AddSingleton(typeof(WorkflowSdkMetadataIndex), provider => null!);
                         }
 
                         // Register ConnectionsService as singleton
                         services.AddSingleton(connectionsService);
 
-                        // Register BufferManager as singleton (override the one from ConfigureServices)
-                        services.AddSingleton(bufferManager);
+                        // Register DocumentBufferStore as singleton (override the one from ConfigureServices)
+                        services.AddSingleton(documentBufferStore);
 
-                        // Make ApiServiceConfig available for dependency injection
-                        services.AddSingleton(apiConfig);
+                        services.AddSingleton(dynamicInvokeClientOptions);
                     })
 
                      // Register custom notification handler for API config updates
-                     .OnNotification("custom/updateApiConfig", async (ApiServiceConfig? updateConfig) =>
+                     .OnNotification("custom/updateApiConfig", async (DynamicInvokeClientOptions? updateConfig) =>
                      {
                          try
                          {
-                             apiConfig.UpdateFrom(updateConfig);
+                             dynamicInvokeClientOptions.UpdateFrom(updateConfig);
                          }
                          catch (Exception ex)
                          {
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] ❌ Failed to update apiConfig: {ex.Message}");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ❌ Failed to update apiConfig: {ex.Message}");
                          }
                      })
 
@@ -117,32 +117,32 @@ internal static class Program
                          {
                              connectionsService.UpdateConnections(updatedConnections);
                              int count = connectionsService.GetConnectionCount();
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] ✅ Connections updated via notification: {count} connection(s)");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ✅ Connections updated via notification: {count} connection(s)");
                          }
                          catch (Exception ex)
                          {
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] ❌ Failed to update connections: {ex.Message}");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ❌ Failed to update connections: {ex.Message}");
                          }
                      })
 
                      // Register custom request handler for workflow metadata using OnRequest pattern
                      .OnRequest("custom/getWorkflowMetadata", async (GetWorkflowMetadataParams request, CancellationToken ct) =>
                      {
-                         await Console.Error.WriteLineAsync($"[SdkLspServer] ✅ Received custom/getWorkflowMetadata request via OnRequest");
-                         await Console.Error.WriteLineAsync($"[SdkLspServer] Request params: Uri={request.Uri}, DocumentUri={request.DocumentUri}");
+                         await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ✅ Received custom/getWorkflowMetadata request via OnRequest");
+                         await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] Request params: Uri={request.Uri}, DocumentUri={request.DocumentUri}");
 
                          try
                          {
-                             var handler = new GetWorkflowMetadataHandler(bufferManager, index);
+                             var handler = new GetWorkflowMetadataHandler(documentBufferStore, sdkMetadataIndex);
                              var response = await handler.Handle(request, ct);
 
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] ✅ Response: WorkflowName={response.WorkflowName}, TriggerName={response.TriggerName}, Error={response.Error}");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ✅ Response: WorkflowName={response.WorkflowName}, TriggerName={response.TriggerName}, Error={response.Error}");
                              return response;
                          }
                          catch (Exception ex)
                          {
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] ❌ Exception in getWorkflowMetadata: {ex.Message}");
-                             await Console.Error.WriteLineAsync($"[SdkLspServer] StackTrace: {ex.StackTrace}");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ❌ Exception in getWorkflowMetadata: {ex.Message}");
+                             await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] StackTrace: {ex.StackTrace}");
                              return new GetWorkflowMetadataResponse
                              {
                                  Error = $"Internal error: {ex.Message}",
@@ -161,16 +161,16 @@ internal static class Program
                         // 🎯 Parse initializationOptions
                         try
                         {
-                            InitializationOptionsWrapper? initOptions = System.Text.Json.JsonSerializer.Deserialize<InitializationOptionsWrapper>(
+                            LanguageServerInitializationOptions? initOptions = System.Text.Json.JsonSerializer.Deserialize<LanguageServerInitializationOptions>(
                                 request.InitializationOptions?.ToString() ?? "{}");
 
                             // Handle API Config
-                            if (initOptions?.ApiConfig != null)
+                            if (initOptions?.DynamicInvokeOptions != null)
                             {
-                                apiConfig.BaseUrl = initOptions.ApiConfig.BaseUrl;
-                                apiConfig.SubscriptionId = initOptions.ApiConfig.SubscriptionId;
-                                apiConfig.ResourceGroup = initOptions.ApiConfig.ResourceGroup;
-                                apiConfig.BearerToken = initOptions.ApiConfig.BearerToken;
+                                dynamicInvokeClientOptions.BaseUrl = initOptions.DynamicInvokeOptions.BaseUrl;
+                                dynamicInvokeClientOptions.SubscriptionId = initOptions.DynamicInvokeOptions.SubscriptionId;
+                                dynamicInvokeClientOptions.ResourceGroup = initOptions.DynamicInvokeOptions.ResourceGroup;
+                                dynamicInvokeClientOptions.BearerToken = initOptions.DynamicInvokeOptions.BearerToken;
                             }
 
                             // Handle Connections Config
@@ -178,12 +178,12 @@ internal static class Program
                             {
                                 connectionsService.UpdateConnections(initOptions.Connections);
                                 int count = connectionsService.GetConnectionCount();
-                                await Console.Error.WriteLineAsync($"[SdkLspServer] ✅ Connections loaded from initializationOptions: {count} connection(s)");
+                                await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ✅ Connections loaded from initializationOptions: {count} connection(s)");
                                 s.Window.LogInfo($"✅ Loaded {count} connection(s)");
                             }
                             else
                             {
-                                await Console.Error.WriteLineAsync("[SdkLspServer] ⚠️  No connections provided in initializationOptions");
+                                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] ⚠️  No connections provided in initializationOptions");
                             }
 
                             // Handle Telemetry Config
@@ -194,14 +194,14 @@ internal static class Program
                                 // Track initialization event
                                 telemetryService.TrackEvent("LSP_Server_Initialized", new Dictionary<string, string>
                                 {
-                                { "SdkLoaded", (index != null).ToString() },
+                                { "SdkLoaded", (sdkMetadataIndex != null).ToString() },
                                 { "ConnectionsCount", connectionsService.GetConnectionCount().ToString() },
-                                { "HasApiConfig", (initOptions.ApiConfig != null).ToString() },
+                                { "HasApiConfig", (initOptions.DynamicInvokeOptions != null).ToString() },
                                 });
                             }
                             else if (telemetryService != null)
                             {
-                                await Console.Error.WriteLineAsync("[SdkLspServer] ⚠️  No telemetry config provided in initializationOptions");
+                                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] ⚠️  No telemetry config provided in initializationOptions");
                             }
                         }
                         catch (Exception ex)
@@ -212,8 +212,8 @@ internal static class Program
                             });
                         }
 
-                        // Report whether the SDK index was loaded successfully.
-                        if (index is null)
+                        // Report whether the SDK metadata index was loaded successfully.
+                        if (sdkMetadataIndex is null)
                         {
                             s.Window.ShowError($"SDK failed to load (source: {sdkSource}). Provide a .nupkg path via --sdk /path/file.nupkg");
 
@@ -227,11 +227,11 @@ internal static class Program
                             telemetryService?.TrackEvent("SDK_Load_Success", new Dictionary<string, string>
                             {
                             { "Source", sdkSource },
-                            { "Summary", index.Summary ?? "unknown" },
+                            { "Summary", sdkMetadataIndex.Summary ?? "unknown" },
                             });
                         }
 
-                        s.Window.LogInfo($"Loaded SDK: {index?.Summary} (source: {sdkSource})");
+                        s.Window.LogInfo($"Loaded SDK: {sdkMetadataIndex?.Summary} (source: {sdkSource})");
                         initializedServer = s;
                     })
                     .WithHandler<TextDocumentSyncHandler>()
@@ -244,25 +244,25 @@ internal static class Program
             // Register the custom request handler manually after server creation
             try
             {
-                await Console.Error.WriteLineAsync("[SdkLspServer] Attempting to register GetWorkflowMetadataHandler...");
+                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] Attempting to register GetWorkflowMetadataHandler...");
                 server.Register(registry =>
                 {
-                    registry.AddHandler(new GetWorkflowMetadataHandler(bufferManager, index));
-                    Console.Error.WriteLineAsync("[SdkLspServer] ✅ AddHandler called inside Register lambda").Wait();
+                    registry.AddHandler(new GetWorkflowMetadataHandler(documentBufferStore, sdkMetadataIndex));
+                    Console.Error.WriteLineAsync("[LogicAppsLanguageServer] ✅ AddHandler called inside Register lambda").Wait();
                 });
-                await Console.Error.WriteLineAsync("[SdkLspServer] ✅ GetWorkflowMetadataHandler registered via server.Register()");
+                await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] ✅ GetWorkflowMetadataHandler registered via server.Register()");
             }
             catch (Exception ex)
             {
-                await Console.Error.WriteLineAsync($"[SdkLspServer] ❌ Failed to register handler: {ex.GetType().Name}: {ex.Message}");
-                await Console.Error.WriteLineAsync($"[SdkLspServer] StackTrace: {ex.StackTrace}");
+                await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ❌ Failed to register handler: {ex.GetType().Name}: {ex.Message}");
+                await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] StackTrace: {ex.StackTrace}");
             }
 
             // Track server started event
             telemetryService = server.Services.GetService(typeof(ITelemetryService)) as ITelemetryService;
             telemetryService?.TrackEvent("LSP_Server_Started");
 
-            await Console.Error.WriteLineAsync("[SdkLspServer] Server started successfully");
+            await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] Server started successfully");
 
             // Wait for the server to exit. This call blocks until the client shuts
             // down the server.
@@ -273,12 +273,12 @@ internal static class Program
             telemetryService?.Flush();
             await Task.Delay(1000); // Give telemetry time to flush
 
-            await Console.Error.WriteLineAsync("[SdkLspServer] Server shutdown complete");
+            await Console.Error.WriteLineAsync("[LogicAppsLanguageServer] Server shutdown complete");
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"[SdkLspServer] ❌ Fatal error: {ex.Message}");
-            await Console.Error.WriteLineAsync($"[SdkLspServer] Stack trace: {ex.StackTrace}");
+            await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] ❌ Fatal error: {ex.Message}");
+            await Console.Error.WriteLineAsync($"[LogicAppsLanguageServer] Stack trace: {ex.StackTrace}");
 
             telemetryService?.TrackException(ex, new Dictionary<string, string>
             {
@@ -291,19 +291,19 @@ internal static class Program
         }
         finally
         {
-            index?.Dispose();
+            sdkMetadataIndex?.Dispose();
         }
     }
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<BufferManager>();
+        services.AddSingleton<DocumentBufferStore>();
 
         // Add HttpClient for making dynamic API calls
-        services.AddHttpClient("SdkLspClient", client =>
+        services.AddHttpClient("DynamicInvokeClient", client =>
         {
             client.Timeout = TimeSpan.FromSeconds(30);
-            client.DefaultRequestHeaders.Add("User-Agent", "SdkLspServer/1.0");
+            client.DefaultRequestHeaders.Add("User-Agent", "LogicAppsLanguageServer/1.0");
         });
 
         // Register FusionCache with default options optimized for LSP scenarios
@@ -324,14 +324,13 @@ internal static class Program
                 options.AllowTimedOutFactoryBackgroundCompletion = false;
             });
 
-        // Register ApiService for handlers to use
-        services.AddSingleton<ApiService>();
+        // Register DynamicInvokeClient for handlers to use
+        services.AddSingleton<DynamicInvokeClient>();
 
         // Register TelemetryService for telemetry tracking
         services.AddSingleton<ITelemetryService, TelemetryService>();
 
-        // Register shared LSPStore for cross-handler communication (includes DynamicData slice)
-        services.AddSingleton<Store.LSPStore>();
+        services.AddSingleton<DynamicDataStore>();
     }
 
     /// <summary>

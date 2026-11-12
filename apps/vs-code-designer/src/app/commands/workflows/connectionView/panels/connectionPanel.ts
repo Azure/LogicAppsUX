@@ -51,7 +51,7 @@ export default class ConnectionPanel extends DesignerPanel {
     currentConnectionId: string
   ) {
     const panelName: string = `Connection view - ${connectorName} - ${methodName}`;
-    const panelGroupKey = ext.webViewKey.languageServer;
+    const panelGroupKey = ext.webViewKey.connectionView;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
     this.workflowFilePath = filePath;
     this.range = range;
@@ -209,7 +209,7 @@ export default class ConnectionPanel extends DesignerPanel {
         this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
-            project: ProjectName.languageServer,
+            project: ProjectName.connectionView,
             route: RouteName.connectionView,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,

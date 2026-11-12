@@ -14,7 +14,7 @@ describe('UriHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
-    (ext.webViewKey as any).languageServer = 'languageServer';
+    (ext.webViewKey as any).connectionView = 'connectionView';
     (tryGetWebviewPanel as any).mockReturnValue(undefined);
   });
 
@@ -40,8 +40,8 @@ describe('UriHandler', () => {
     });
   });
 
-  it('posts error redirects to the language server panel without replacing the payload', () => {
-    (tryGetWebviewPanel as any).mockImplementation((key: string) => (key === 'languageServer' ? { webview: { postMessage } } : undefined));
+  it('posts error redirects to the connection view panel without replacing the payload', () => {
+    (tryGetWebviewPanel as any).mockImplementation((key: string) => (key === 'connectionView' ? { webview: { postMessage } } : undefined));
 
     new UriHandler().handleUri({
       path: '/authcomplete',

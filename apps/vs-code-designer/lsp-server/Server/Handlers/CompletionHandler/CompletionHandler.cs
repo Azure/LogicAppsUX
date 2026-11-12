@@ -7,28 +7,27 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-using SdkLspServer.Handlers.HoverHandler;
-using SdkLspServer.Services.Api;
-using SdkLspServer.Services.Connections;
-using SdkLspServer.Services.Telemetry;
-using SdkLspServer.Store;
-using SdkLspServer.Store.DynamicData;
+using LogicAppsLanguageServer.Handlers.HoverHandler;
+using LogicAppsLanguageServer.Services.DynamicInvoke;
+using LogicAppsLanguageServer.Services.Connections;
+using LogicAppsLanguageServer.Services.Telemetry;
+using LogicAppsLanguageServer.Store.DynamicData;
 
-namespace SdkLspServer.Handlers.CompletionHandler;
+namespace LogicAppsLanguageServer.Handlers.CompletionHandler;
 
 /// <summary>
 /// Provides completion items for SDK usage. In particular, when the user types
 /// "WorkflowActions.Managed." or "WorkflowActions.BuiltIn.ServiceProviders." this handler suggests available connector names
-/// (e.g., Msnweather) based on the SDK assemblies loaded via <see cref="SdkIndex"/>.
+/// (e.g., Msnweather) based on the SDK assemblies loaded via <see cref="WorkflowSdkMetadataIndex"/>.
 /// Can also make dynamic API calls to fetch additional completion suggestions.
 /// </summary>
-public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, ConnectionsService connectionsService, ApiService apiService, LSPStore lspStore, ITelemetryService telemetryService) : CompletionHandlerBase
+public class CompletionHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBufferStore documentBufferStore, ConnectionsService connectionsService, DynamicInvokeClient dynamicInvokeClient, DynamicDataStore dynamicDataStore, ITelemetryService telemetryService) : CompletionHandlerBase
 {
-    private readonly SdkIndex? sdkIndex = sdkIndex;
-    private readonly BufferManager bufferManager = bufferManager;
+    private readonly WorkflowSdkMetadataIndex? sdkMetadataIndex = sdkMetadataIndex;
+    private readonly DocumentBufferStore documentBufferStore = documentBufferStore;
     private readonly ConnectionsService connectionsService = connectionsService;
-    private readonly ApiService apiService = apiService;
-    private readonly LSPStore lspStore = lspStore;
+    private readonly DynamicInvokeClient dynamicInvokeClient = dynamicInvokeClient;
+    private readonly DynamicDataStore dynamicDataStore = dynamicDataStore;
     private readonly ITelemetryService telemetry = telemetryService;
     private int completionRequestCount = 0;
 
@@ -76,7 +75,7 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
         try
         {
             string documentPath = request.TextDocument.Uri.ToString();
-            string? documentText = bufferManager.GetBuffer(documentPath);
+            string? documentText = documentBufferStore.GetBuffer(documentPath);
             if (string.IsNullOrEmpty(documentText))
             {
                 if (request.TextDocument.Uri.Scheme == "file")
@@ -173,9 +172,9 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
                 MetadataReference.CreateFromFile(typeof(System.Linq.Enumerable).Assembly.Location),
             };
 
-            if (sdkIndex != null)
+            if (sdkMetadataIndex != null)
             {
-                foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+                foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
                 {
                     try
                     {
@@ -602,7 +601,7 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
             string commentPrefix = needsComma ? ", // " : " // ";
 
             // 4. Check if values are already in the shared store
-            List<DynamicValueItem>? cachedValues = lspStore.DynamicData.Get(connectorName, operationName, connectionName);
+            List<DynamicValueItem>? cachedValues = dynamicDataStore.Get(connectorName, operationName, connectionName);
             if (cachedValues != null)
             {
                 return cachedValues.ConvertAll(v => new CompletionItem
@@ -653,8 +652,8 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
 
             // 7. Store in shared store for future use
             var storeItems = dynamicValues.Select(v => new DynamicValueItem(v.Value, v.Description)).ToList();
-            lspStore.DynamicData.Set(connectorName, operationName, connectionName, storeItems);
-            await Console.Error.WriteLineAsync($"[CompletionHandler] Stored {storeItems.Count} items in LSPStore.DynamicData");
+            dynamicDataStore.Set(connectorName, operationName, connectionName, storeItems);
+            await Console.Error.WriteLineAsync($"[CompletionHandler] Stored {storeItems.Count} items in DynamicDataStore");
 
             // 8. Convert to completion items with additional text edits for comments
             items = dynamicValues.Select(v => new CompletionItem
@@ -700,9 +699,9 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
         };
 
-        if (sdkIndex != null)
+        if (sdkMetadataIndex != null)
         {
-            foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+            foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
             {
                 try
                 {
@@ -888,7 +887,7 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
 
     /// <summary>
     /// Builds the API URL for fetching dynamic values based on connector and connection name.
-    /// Uses ApiServiceConfig for subscription, resource group, and API version.
+    /// Uses DynamicInvokeClientOptions for subscription, resource group, and API version.
     /// </summary>
     private string? BuildDynamicApiUrl(string connectionName)
     {
@@ -897,9 +896,9 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
             return null;
         }
 
-        ApiServiceConfig apiConfiguration = apiService.Config;
+        DynamicInvokeClientOptions options = dynamicInvokeClient.Options;
 
-        return $"{apiConfiguration.BaseUrl}/subscriptions/{apiConfiguration.SubscriptionId}/resourceGroups/{apiConfiguration.ResourceGroup}/providers/Microsoft.Web/connections/{connectionName}/dynamicInvoke?api-version={apiConfiguration.ApiVersion}";
+        return $"{options.BaseUrl}/subscriptions/{options.SubscriptionId}/resourceGroups/{options.ResourceGroup}/providers/Microsoft.Web/connections/{connectionName}/dynamicInvoke?api-version={options.ApiVersion}";
     }
 
     private static HoverHandlerTypes.DynamicInvokePayload? BuildDynamicApiPayload(string connectorName, string operationName)
@@ -928,7 +927,7 @@ public class CompletionHandler(SdkIndex? sdkIndex, BufferManager bufferManager, 
         try
         {
             // Call Azure dynamicInvoke API
-            HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>? dynamicResponse = await apiService.PostJsonAsync<HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>>(
+            HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>? dynamicResponse = await dynamicInvokeClient.PostJsonAsync<HoverHandlerTypes.DynamicInvokeResponse<List<HoverHandlerTypes.FormItem>>>(
                 apiUrl,
                 payload,
                 cancellationToken);

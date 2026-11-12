@@ -14,13 +14,13 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 
-namespace SdkLspServer.Handlers;
+namespace LogicAppsLanguageServer.Handlers;
 
-internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManager bufferManager, SdkIndex? sdkIndex) : TextDocumentSyncHandlerBase
+internal class TextDocumentSyncHandler(ILanguageServerFacade router, DocumentBufferStore documentBufferStore, WorkflowSdkMetadataIndex? sdkMetadataIndex) : TextDocumentSyncHandlerBase
 {
     private readonly ILanguageServerFacade router = router;
-    private readonly BufferManager bufferManager = bufferManager;
-    private readonly SdkIndex? sdkIndex = sdkIndex;
+    private readonly DocumentBufferStore documentBufferStore = documentBufferStore;
+    private readonly WorkflowSdkMetadataIndex? sdkMetadataIndex = sdkMetadataIndex;
     private bool supportsCodeLensRefresh;
 
     public TextDocumentSyncKind Change { get; } = TextDocumentSyncKind.Full;
@@ -58,7 +58,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
         string documentPath = request.TextDocument.Uri.ToString();
         string? text = request.ContentChanges.FirstOrDefault()?.Text;
 
-        bufferManager.UpdateBuffer(documentPath, text ?? string.Empty);
+        documentBufferStore.UpdateBuffer(documentPath, text ?? string.Empty);
 
         router.Window.LogInfo($"[TextDocumentSyncHandler] Updated buffer for document: {documentPath}");
 
@@ -71,7 +71,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
     public override Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
     {
-        bufferManager.UpdateBuffer(request.TextDocument.Uri.ToString(), request.TextDocument.Text);
+        documentBufferStore.UpdateBuffer(request.TextDocument.Uri.ToString(), request.TextDocument.Text);
 
         router.Window.LogInfo($"[TextDocumentSyncHandler] Opened document: {request.TextDocument.Uri}");
 
@@ -92,7 +92,7 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
     public override Task<Unit> Handle(DidCloseTextDocumentParams request, CancellationToken cancellationToken)
     {
-        bufferManager.RemoveBuffer(request.TextDocument.Uri.ToString());
+        documentBufferStore.RemoveBuffer(request.TextDocument.Uri.ToString());
 
         router.Window.LogInfo($"[TextDocumentSyncHandler] Closed document: {request.TextDocument.Uri}");
         return Unit.Task;
@@ -199,9 +199,9 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
             // If all else fails, continue with empty references - Roslyn can still work for basic syntax analysis
         }
 
-        if (sdkIndex != null)
+        if (sdkMetadataIndex != null)
         {
-            foreach (string assemblyPath in sdkIndex.AssemblyPaths)
+            foreach (string assemblyPath in sdkMetadataIndex.AssemblyPaths)
             {
                 try
                 {
@@ -259,14 +259,14 @@ internal class TextDocumentSyncHandler(ILanguageServerFacade router, BufferManag
 
     private bool IsSymbolFromSdk(ISymbol symbol)
     {
-        if (sdkIndex is null)
+        if (sdkMetadataIndex is null)
         {
             return false;
         }
 
         string? assemblyName = symbol.ContainingAssembly?.Name;
         return !string.IsNullOrEmpty(assemblyName)
-            && sdkIndex.AssemblyPaths.Any(path =>
+            && sdkMetadataIndex.AssemblyPaths.Any(path =>
             Path.GetFileNameWithoutExtension(path)
                 .Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
     }
