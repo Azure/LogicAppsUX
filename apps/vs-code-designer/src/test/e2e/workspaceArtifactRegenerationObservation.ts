@@ -316,6 +316,8 @@ export class RegenerationObservation {
   private firstTimeOrigin: number | undefined;
   private previousState = '';
   private latestState: SafeWorkbenchState | undefined;
+  private decisionState: SafeWorkbenchState | null = null;
+  private decisionSampleCaptured = false;
   private cdp: CdpConnection | undefined;
   private detachConsole: (() => void) | undefined;
   private consoleCount = 0;
@@ -644,6 +646,10 @@ export class RegenerationObservation {
     }
     await this.inFlight;
     await this.sample(Date.now() + 1000, true);
+    if (!this.decisionSampleCaptured) {
+      this.decisionState = this.latestState ?? null;
+      this.decisionSampleCaptured = true;
+    }
     return this.latestState;
   }
 
@@ -727,7 +733,7 @@ export class RegenerationObservation {
         preOwnedDiscardedCount: this.consolePreOwnedDiscarded,
         logDomain: this.logDomain,
       },
-      notification: this.latestState ?? null,
+      notification: this.decisionState,
       screenshots: this.screenshots,
       input: { uncertain: this.input.uncertain, pending: this.input.pending > 0 },
     };

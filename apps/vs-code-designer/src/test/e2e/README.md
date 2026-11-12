@@ -644,7 +644,10 @@ owned CDP target before disposal or teardown. A separately bounded post-decision
 diagnostic capture may be labeled post-deadline; it does not extend or satisfy the
 120-second acceptance budget. The Notification Center is opened for a second
 image only when the current target, document, active UI and input state are safe;
-otherwise a fixed skip reason is recorded. Images can contain sensitive pixels:
+otherwise a fixed skip reason is recorded. The summary retains the first
+post-decision sample; a later sample after revealing the center appears separately
+in the timeline. Neither is proof of what was visible before the deadline.
+Images can contain sensitive pixels:
 publish them only with restricted handling. The runner and pipeline recompute and
 validate an allowlisted `regeneration-diagnostics.jsonl` aggregate containing
 product, detector, console, and status observations; a missing or tampered

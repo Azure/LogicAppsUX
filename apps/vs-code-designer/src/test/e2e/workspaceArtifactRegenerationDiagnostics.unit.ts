@@ -346,6 +346,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
       dom.window.eval(
         'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 10, bottom: 10, width: 10, height: 10})'
       );
+      dom.window.eval('document.elementFromPoint = () => document.body');
       return dom.window.eval(regenerationDiagnosticDomScript) as { truncated: boolean; centerMounted: boolean; centerVisible: boolean };
     } finally {
       dom.window.close();
@@ -366,6 +367,11 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     domState(`<div role="dialog">${prompt(appDir)}${options}</div>`).truncated,
     true,
     'Truncated options on a relevant prompt must remain unverified'
+  );
+  assert.strictEqual(
+    domState(`<div role="dialog">${prompt(appDir)}${'<button>Yes</button>'.repeat(65)}</div>`).truncated,
+    true,
+    'Capped Yes-option counts on a relevant prompt must remain unverified'
   );
   assert.strictEqual(
     domState('<div role="dialog"></div>'.repeat(129)).truncated,
@@ -469,7 +475,12 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   }
   const decisionAt = Date.now();
   observation.boundary('decision');
-  await observation.stopAndSample();
+  const decisionState = await observation.stopAndSample();
+  assert.strictEqual(decisionState?.centerVisible, false);
+  raw.centerVisible = true;
+  const revealedState = await observation.stopAndSample();
+  raw.centerVisible = false;
+  assert.strictEqual(revealedState?.centerVisible, true);
   listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: Date.now() });
   await observation.finish(decisionAt);
   const timeline = fs.readFileSync(path.join(root, 'root-single-detector-timeline.jsonl'), 'utf8');
@@ -479,6 +490,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   const parsed = JSON.parse(diagnostic);
   assert.strictEqual(parsed.detector.preAttachUnobserved, true);
   assert.strictEqual(parsed.detector.samplingIsDiscrete, true);
+  assert.strictEqual(parsed.notification.centerVisible, false, 'The summary must retain the first post-decision state');
   assert.ok(parsed.console.droppedCount > 0, 'Console telemetry must remain bounded');
   assert.strictEqual(parsed.console.preOwnedDiscardedCount, 5, 'Buffered and unverified console events are count-only');
   const timelineEvents = timeline
@@ -488,6 +500,8 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   const finalSample = timelineEvents.find((event) => event.event === 'detector-poll' && event.finalSample === true);
   assert.strictEqual(finalSample?.outcome, 'observed');
   assert.ok(Date.parse(finalSample.sampledAtUtc) >= decisionAt, 'The final poll must independently cover the decision time');
+  const revealedSample = timelineEvents.filter((event) => event.event === 'detector-poll' && event.finalSample === true).at(-1);
+  assert.strictEqual(revealedSample?.state?.centerVisible, true, 'A later notification-center reveal remains separately observable');
   assert.ok(
     timelineEvents.filter((event) => event.event === 'detector-poll' && event.outcome === 'observed').length >= 2,
     'An unchanged final state must still produce its own poll record'
@@ -633,6 +647,39 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   const failedSummary = JSON.parse(fs.readFileSync(path.join(root, 'root-repeat-diagnostic-summary.json'), 'utf8'));
   assert.strictEqual(failedSummary.detector.finalSampleSucceeded, false);
   assert.strictEqual(failedSummary.detector.decisionCovered, false);
+
+  let canSample = false;
+  const recoveringCdp = {
+    contextGeneration: 1,
+    onConsoleDiagnostic: () => () => undefined,
+    send: async () => ({ result: {} }),
+    evaluate: async (_context: unknown, expression: string) => {
+      if (!canSample) {
+        throw new Error('private-cdp-failure');
+      }
+      return expression === regenerationDiagnosticDomScript
+        ? { ...raw, sampledAtMs: Date.now() }
+        : { timeOrigin: 42, title: 'unit (workspace) - Visual Studio Code', ready: true, roots: ['private-app-path'] };
+    },
+  } as unknown as CdpConnection;
+  const recovering = new RegenerationObservation(
+    root,
+    'recovering-sample',
+    invocation,
+    Date.now() + 5000,
+    { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir
+  );
+  recovering.onConnection(recoveringCdp);
+  recovering.start(recoveringCdp, 42);
+  const recoveringDecision = Date.now();
+  assert.strictEqual(await recovering.stopAndSample(), undefined);
+  canSample = true;
+  assert.strictEqual((await recovering.stopAndSample())?.centerVisible, false);
+  await recovering.finish(recoveringDecision);
+  const recoveredSummary = JSON.parse(fs.readFileSync(path.join(root, 'recovering-sample-diagnostic-summary.json'), 'utf8'));
+  assert.strictEqual(recoveredSummary.notification, null, 'A failed first decision sample must not be replaced by a later sample');
+  assert.strictEqual(recoveredSummary.detector.finalSampleSucceeded, true, 'Coverage checks still use the latest sample');
 
   const registrationFailureCdp = {
     onConsoleDiagnostic: () => {
