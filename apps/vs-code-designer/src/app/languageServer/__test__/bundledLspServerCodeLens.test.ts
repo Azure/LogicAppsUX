@@ -3,8 +3,10 @@ import type { ChildProcessWithoutNullStreams } from 'child_process';
 import { mkdtemp, readFile, rm } from 'fs/promises';
 import path from 'path';
 import { PassThrough } from 'stream';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -314,16 +316,15 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const assetDirectory = path.join(process.cwd(), 'src', 'assets', 'LSPServer');
-    const assetManifest = JSON.parse(await readFile(path.join(assetDirectory, 'lsp-assets.json'), 'utf8')) as {
+    const assetManifest = JSON.parse(await readFile(path.join(lspServerAssetsDirectory, 'lsp-assets.json'), 'utf8')) as {
       serverArchive: string;
       sdkPackage: string;
     };
-    const zipPath = path.join(assetDirectory, assetManifest.serverArchive);
+    const zipPath = path.join(lspServerAssetsDirectory, assetManifest.serverArchive);
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(assetDirectory, assetManifest.sdkPackage);
+    const sdkPackagePath = path.join(lspServerAssetsDirectory, assetManifest.sdkPackage);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
