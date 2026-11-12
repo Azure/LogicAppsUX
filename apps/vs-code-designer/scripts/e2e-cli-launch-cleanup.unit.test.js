@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { test } = require('node:test');
 // Registered in test:e2e-cli:unit through this existing native runner-control file.
@@ -60,6 +61,59 @@ test('Windows aliases resolve both sides without weakening physical containment'
     assert.equal(resolveOwnedWorkspacePath(workspaceRoot, parent).toLowerCase(), parent.toLowerCase());
   } finally {
     fs.realpathSync.native = realpath;
+    fs.rmSync(root, { force: true, recursive: true });
+  }
+});
+
+test('direct ordinary hosts cannot inherit or inject regeneration probes', { timeout: 30_000 }, async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-direct-probe-'));
+  const previousEnv = { ...process.env };
+  try {
+    const workspace = path.join(root, 'workspace');
+    const profile = path.join(root, 'profile');
+    const trace = path.join(root, 'prior-trace.jsonl');
+    const observed = path.join(root, 'observed.json');
+    const fixture = path.join(root, 'inspect-env.js');
+    fs.mkdirSync(workspace);
+    fs.mkdirSync(path.join(profile, 'logs'), { recursive: true });
+    fs.writeFileSync(path.join(profile, 'logs', 'original.log'), 'unit fixture original logs\n');
+    fs.writeFileSync(trace, 'previous invocation\n');
+    fs.writeFileSync(
+      fixture,
+      [
+        "const fs=require('node:fs');",
+        'const keys=Object.keys(process.env).filter(k=>/^LA_E2E_CLI_(?:DIAGNOSTIC_ONLY|REGENERATION_(?:PROBE|TRACE_(?:FILE|PHASE|INVOCATION)))$/i.test(k));',
+        "if(process.env.LA_E2E_CLI_REGENERATION_PROBE==='1') fs.appendFileSync(process.env.LA_E2E_CLI_REGENERATION_TRACE_FILE,'unexpected\\n');",
+        'fs.writeFileSync(process.argv[2],JSON.stringify(keys));',
+      ].join('\n')
+    );
+    Object.assign(process.env, {
+      LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: root,
+      LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: path.join(root, 'generated'),
+      LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+      LA_E2E_CLI_REGENERATION_PROBE: '1',
+      LA_E2E_CLI_REGENERATION_TRACE_FILE: trace,
+      LA_E2E_CLI_REGENERATION_TRACE_PHASE: 'vscode-single',
+      LA_E2E_CLI_REGENERATION_TRACE_INVOCATION: '11111111-1111-4111-8111-111111111111',
+    });
+    const code = await runVscodeTest(
+      ['--label', 'unitTests'],
+      {
+        workspaceParent: workspace,
+        extraEnv: {
+          LA_E2E_CLI_USER_DATA_DIR: profile,
+          LA_E2E_CLI_VSCODE_LOG_DIR: path.join(root, 'profile-artifacts'),
+          la_e2e_cli_regeneration_probe: '1',
+          la_e2e_cli_regeneration_trace_file: trace,
+        },
+      },
+      { commandForArgs: () => ({ command: process.execPath, commandArgs: [fixture, observed] }) }
+    );
+    assert.equal(code, 0);
+    assert.deepEqual(JSON.parse(fs.readFileSync(observed, 'utf8')), []);
+    assert.equal(fs.readFileSync(trace, 'utf8'), 'previous invocation\n');
+  } finally {
+    process.env = previousEnv;
     fs.rmSync(root, { force: true, recursive: true });
   }
 });

@@ -35,12 +35,13 @@ const {
   getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
   runBatchSuites,
+  stripRegenerationProbeEnvironment,
   SUITE_REGISTRY,
 } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
 const { getEvidenceManifestPath, initializeSuiteEvidenceManifest } = require('./vscode-e2e-evidence-manifest');
-const { publishProductDiagnostics } = require('./regeneration-diagnostic-publication');
+const { publishProductDiagnostics, regenerationDiagnosticIdentity } = require('./regeneration-diagnostic-publication');
 
 const forbiddenOutputPatterns = [
   {
@@ -171,12 +172,16 @@ function main() {
       return;
     }
     try {
-      assertRegenerationStageEvidence(path.resolve(process.argv[3]), {
-        source: process.env.BUILD_SOURCEVERSION || 'local',
-        run: process.env.BUILD_BUILDID || 'local',
-        job: process.env.SYSTEM_JOBID || 'local',
-        platform: process.platform,
-      });
+      const identity =
+        process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY === 'true'
+          ? regenerationDiagnosticIdentity(process.env)
+          : {
+              source: process.env.BUILD_SOURCEVERSION || 'local',
+              run: process.env.BUILD_BUILDID || 'local',
+              job: process.env.SYSTEM_JOBID || 'local',
+              platform: process.platform,
+            };
+      assertRegenerationStageEvidence(path.resolve(process.argv[3]), identity);
       console.log(
         '[workspace-regeneration] Diagnostic evidence structure complete; original identities unverified; no supplementary acceptance.'
       );
@@ -666,7 +671,10 @@ function retainFailedRegenerationDiagnostics(context, destination) {
     false,
     'Failure retention requires the actual rejected outer terminal'
   );
-  publishRegenerationDiagnosticAggregate(source, process.env);
+  publishRegenerationDiagnosticAggregate(source, {
+    ...process.env,
+    LA_E2E_CLI_EVIDENCE_INVOCATION: context.evidenceInvocation,
+  });
   assert.equal(fs.existsSync(destination), false, `Refusing to overwrite workspace regeneration failure diagnostics: ${destination}`);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   // Keep the original partial evidence byte-for-byte, including missing family
@@ -752,7 +760,10 @@ function publishRegenerationDiagnostics(context, env) {
   if (!fs.existsSync(source)) {
     throw new Error(`Workspace regeneration diagnostics were not produced at the wrapper-owned path: ${source}`);
   }
-  publishRegenerationDiagnosticAggregate(source, env);
+  publishRegenerationDiagnosticAggregate(source, {
+    ...env,
+    LA_E2E_CLI_EVIDENCE_INVOCATION: context.evidenceInvocation ?? env.LA_E2E_CLI_EVIDENCE_INVOCATION,
+  });
   assertRequiredRegenerationDiagnosticsFiles(source);
   const resolvedSource = path.resolve(source);
   const resolvedDestination = path.resolve(destination);
@@ -775,7 +786,7 @@ function publishRegenerationDiagnosticAggregate(root, env) {
     return;
   }
   try {
-    publishProductDiagnostics(root, regenerationDiagnosticPhases, true);
+    publishProductDiagnostics(root, regenerationDiagnosticPhases, true, regenerationDiagnosticIdentity(env));
   } catch {
     // Secondary diagnostics must never replace the native outcome or lifecycle evidence.
     console.error('[workspace-regeneration-diagnostics] aggregate-publication-unavailable');
@@ -3235,19 +3246,21 @@ async function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTes
   const deferredWorkspaceParent = options.workspaceParent ?? getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = commandForArgs(args);
-  let childEnv = sanitizeInheritedGitCommandConfigEnv({
-    ...process.env,
-    LA_E2E_CLI_LABEL: label ?? '',
-    LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
-    ...(options.visibleDelayMs ? { LA_E2E_CLI_VISIBLE_DELAY_MS: options.visibleDelayMs } : {}),
-    ...(deferredWorkspaceParent
-      ? {
-          LA_E2E_CLI_CREATE_WORKSPACE_PARENT: deferredWorkspaceParent,
-          LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
-        }
-      : {}),
-    ...(options.extraEnv ?? {}),
-  });
+  let childEnv = stripRegenerationProbeEnvironment(
+    sanitizeInheritedGitCommandConfigEnv({
+      ...process.env,
+      LA_E2E_CLI_LABEL: label ?? '',
+      LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
+      ...(options.visibleDelayMs ? { LA_E2E_CLI_VISIBLE_DELAY_MS: options.visibleDelayMs } : {}),
+      ...(deferredWorkspaceParent
+        ? {
+            LA_E2E_CLI_CREATE_WORKSPACE_PARENT: deferredWorkspaceParent,
+            LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
+          }
+        : {}),
+      ...(options.extraEnv ?? {}),
+    })
+  );
   childEnv = applyControlledFuncEnvironment(childEnv, options.controlledFuncDirectory);
   const cancelRequired =
     cancelCheck.required(childEnv) &&
@@ -3274,6 +3287,9 @@ async function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTes
     : undefined;
   const cancelContext = cancelRequired ? cancelCheck.prepareCancelContext(childEnv, deferredWorkspaceParent) : undefined;
   if (regenerationContext) {
+    if (childEnv.LA_E2E_CLI_DIAGNOSTIC_ONLY === 'true') {
+      regenerationContext.identity = regenerationDiagnosticIdentity(childEnv);
+    }
     beginDirectRegenerationEvidence(regenerationContext);
     const runtime = require('../out/test/e2e/workspaceArtifactRegenerationRuntime');
     regenerationContext.runtimeAdmission = {
@@ -3304,9 +3320,8 @@ async function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTes
       phaseResults: [],
     });
   }
-  const launch = spawnContainedProcess(command, commandArgs, {
-    env: childEnv,
-  });
+  const wizardEnv = Object.fromEntries(Object.entries(childEnv).filter(([key]) => key.toUpperCase() !== 'LA_E2E_CLI_DIAGNOSTIC_ONLY'));
+  const launch = spawnContainedProcess(command, commandArgs, { env: wizardEnv });
   const { child } = launch;
 
   let output = '';

@@ -14,7 +14,7 @@ const {
   recordScreenshotMetadata,
 } = require('./vscode-e2e-evidence-manifest');
 const { getSuiteDescriptor } = require('./vscode-e2e-evidence-plans');
-const { publishProductDiagnostics } = require('./regeneration-diagnostic-publication');
+const { publishProductDiagnostics, regenerationDiagnosticIdentity } = require('./regeneration-diagnostic-publication');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const CANONICAL_FULL_GATE_SUITES = [
@@ -1779,6 +1779,11 @@ function testFullRollupGateCanonicalInventoryContract() {
 function testRegenerationDiagnosticGatingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
   const suiteTemplate = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const unitGate = JSON.parse(read('apps/vs-code-designer/package.json')).scripts['test:e2e-cli:unit'];
+  assert.ok(
+    unitGate.includes('node --unhandled-rejections=strict out/test/e2e/regenerationPhysicalWorkspaceAuthority.unit.js'),
+    'Physical-workspace authority controls must run in the mandatory CLI unit gate'
+  );
   const consumerParameter = consumer.parameters.find((entry) => entry.name === 'diagnosticOnly');
   assert.strictEqual(consumerParameter?.type, 'boolean');
   assert.strictEqual(consumerParameter?.default, false, 'Pipeline diagnostics must default off');
@@ -3595,7 +3600,26 @@ function testRegenerationDiagnosticStagingFixtures() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-regeneration-diagnostics-'));
   try {
     const source = path.join(root, 'source');
+    const evidenceManifest = path.join(root, 'suite-evidence-manifest.json');
+    const evidenceInvocation = 'workspaceArtifactRegeneration-33333333-3333-4333-8333-333333333333';
+    const pipelineEnv = {
+      BUILD_SOURCEVERSION: 'a'.repeat(40),
+      BUILD_BUILDID: '42',
+      SYSTEM_JOBID: '44444444-4444-4444-8444-444444444444',
+      SYSTEM_JOBATTEMPT: '1',
+    };
+    const identity = regenerationDiagnosticIdentity(pipelineEnv, evidenceInvocation);
     fs.mkdirSync(source);
+    fs.writeFileSync(
+      evidenceManifest,
+      JSON.stringify({
+        schemaVersion: 2,
+        kind: 'logicappsux.vscodeE2E.orderedEvidence',
+        suiteId: 'workspaceArtifactRegeneration',
+        invocation: evidenceInvocation,
+        platform: process.platform,
+      })
+    );
     for (const name of [
       'invocation.json',
       'final-result.json',
@@ -3607,15 +3631,17 @@ function testRegenerationDiagnosticStagingFixtures() {
     ]) {
       fs.writeFileSync(
         path.join(source, name),
-        name === 'invocation.json' ? '{"invocation":"11111111-1111-4111-8111-111111111111"}\n' : '{}\n'
+        name === 'invocation.json'
+          ? JSON.stringify({ schemaVersion: 1, invocation: '11111111-1111-4111-8111-111111111111', identity })
+          : '{}\n'
       );
     }
     fs.writeFileSync(path.join(source, 'vscode-single-product-events.jsonl'), '{"raw":"synthetic-private-do-not-stage"}\n');
     const phaseNames = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases
       .filter((name) => name !== 'workspaceArtifactRegeneration:create')
       .map((name) => name.slice('workspaceArtifactRegeneration:'.length));
-    publishProductDiagnostics(source, phaseNames, true);
-    const run = (name, enabled, nodeUnavailable = false) => {
+    publishProductDiagnostics(source, phaseNames, true, identity);
+    const run = (name, enabled, nodeUnavailable = false, overrides = {}) => {
       const logDestination = path.join(root, name);
       fs.mkdirSync(logDestination);
       const powershell = [
@@ -3623,6 +3649,7 @@ function testRegenerationDiagnosticStagingFixtures() {
         ...(nodeUnavailable ? ['function Get-Command { return $null }'] : []),
         '$regenerationEvidenceRoot = $env:REGEN_SOURCE',
         '$logDestination = $env:REGEN_LOG',
+        '$evidenceManifestSource = $env:REGEN_MANIFEST',
         '$missingRequiredFiles = @()',
         'function Redact-DiagnosticText { param([string]$Value) return $Value }',
         block
@@ -3631,7 +3658,13 @@ function testRegenerationDiagnosticStagingFixtures() {
           .replaceAll('$(Build.SourcesDirectory)', repoRoot),
         'Write-Output ("missing=" + $missingRequiredFiles.Count)',
       ].join('\n');
-      const result = runPowerShellScript(powershell, { REGEN_SOURCE: source, REGEN_LOG: logDestination });
+      const result = runPowerShellScript(powershell, {
+        ...pipelineEnv,
+        REGEN_SOURCE: source,
+        REGEN_LOG: logDestination,
+        REGEN_MANIFEST: evidenceManifest,
+        ...overrides,
+      });
       assert.strictEqual(result.status, 0, result.output);
       return { result, destination: path.join(logDestination, 'regeneration') };
     };
@@ -3645,6 +3678,26 @@ function testRegenerationDiagnosticStagingFixtures() {
     const staged = fs.readFileSync(path.join(diagnostic.destination, 'regeneration-diagnostics.jsonl'), 'utf8');
     assert.doesNotMatch(staged, /synthetic-private/);
     assert.strictEqual(fs.existsSync(path.join(diagnostic.destination, 'vscode-single-product-events.jsonl')), false);
+
+    for (const [name, overrides] of [
+      ['different-attempt', { SYSTEM_JOBATTEMPT: '2' }],
+      ['missing-attempt', { SYSTEM_JOBATTEMPT: '' }],
+      ['different-job', { SYSTEM_JOBID: '55555555-5555-4555-8555-555555555555' }],
+    ]) {
+      const stale = run(name, true, false, overrides);
+      assert.match(stale.result.output, /missing=1/);
+      assert.equal(
+        JSON.parse(fs.readFileSync(path.join(stale.destination, 'regeneration-diagnostics.jsonl'), 'utf8')).reason,
+        'aggregate-missing-or-invalid'
+      );
+    }
+
+    const otherManifest = path.join(root, 'other-evidence-manifest.json');
+    const other = JSON.parse(fs.readFileSync(evidenceManifest, 'utf8'));
+    other.invocation = 'workspaceArtifactRegeneration-66666666-6666-4666-8666-666666666666';
+    fs.writeFileSync(otherManifest, JSON.stringify(other));
+    const wrongManifest = run('different-invocation', true, false, { REGEN_MANIFEST: otherManifest });
+    assert.match(wrongManifest.result.output, /missing=1/);
 
     const noNode = run('no-node', true, true);
     assert.match(noNode.result.output, /node-unavailable/);

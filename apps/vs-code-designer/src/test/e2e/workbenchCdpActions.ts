@@ -120,27 +120,29 @@ export function matchesRegularWorkbenchOwnership(
   );
 }
 
+export const regularWorkbenchOwnershipScript = `(() => { ${workbenchVisibleScript}
+  return {
+    timeOrigin: performance.timeOrigin,
+    title: document.title,
+    ready: document.readyState === 'complete' && Array.from(document.querySelectorAll('.monaco-workbench')).some(visible),
+    roots: (() => {
+      const folderView = Array.from(document.querySelectorAll('.explorer-folders-view')).find(visible);
+      if (!folderView) return [];
+      const rows = Array.from(folderView.querySelectorAll('.monaco-list-row[aria-level="1"] .label-name')).filter(visible).map(text);
+      if (rows.length > 0) return rows;
+      const paneTitle = folderView.closest('.pane')?.querySelector('.pane-header .title');
+      return paneTitle && visible(paneTitle) ? [text(paneTitle)] : [];
+    })(),
+  };
+})()`;
+
 export async function readRegularWorkbenchOwnership(
   cdp: CdpEvaluator,
   expectation: RegularWorkbenchOwnershipExpectation
 ): Promise<RegularWorkbenchOwnershipState> {
   const state = await cdp.evaluate<Omit<RegularWorkbenchOwnershipState, 'shellOwned' | 'owned'>>(
     undefined,
-    `(() => { ${workbenchVisibleScript}
-      return {
-        timeOrigin: performance.timeOrigin,
-        title: document.title,
-        ready: document.readyState === 'complete' && Array.from(document.querySelectorAll('.monaco-workbench')).some(visible),
-        roots: (() => {
-          const folderView = Array.from(document.querySelectorAll('.explorer-folders-view')).find(visible);
-          if (!folderView) return [];
-          const rows = Array.from(folderView.querySelectorAll('.monaco-list-row[aria-level="1"] .label-name')).filter(visible).map(text);
-          if (rows.length > 0) return rows;
-          const paneTitle = folderView.closest('.pane')?.querySelector('.pane-header .title');
-          return paneTitle && visible(paneTitle) ? [text(paneTitle)] : [];
-        })(),
-      };
-    })()`
+    regularWorkbenchOwnershipScript
   );
   return {
     ...state,

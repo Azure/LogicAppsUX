@@ -1,14 +1,17 @@
 import * as assert from 'assert';
-import { randomUUID } from 'crypto';
+import { createHash, createHmac, randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import type { CdpConnection, CdpConsoleDiagnostic } from './cdpClient';
+import type { CdpEvaluator } from './cdpFormHelpers';
+import { pinPhysicalWorkspacePaths, type LivePhysicalWorkspace } from './physicalWorkspaceIdentity';
 import {
   armRegenerationProbe,
   assessRegenerationProductCoverage,
   finishRegenerationProductCoverage,
   regenerationProbeVariables,
+  type RegenerationProbe,
   validRegenerationProductPayload,
 } from './workspaceArtifactRegenerationDiagnostics';
 import {
@@ -16,9 +19,13 @@ import {
   RegenerationObservation,
   regenerationPromptObservationForLog,
   regenerationDiagnosticDomScript,
+  regenerationDiagnosticSampleExpression,
+  samplePhysicalRegenerationWorkbench,
   sanitizeRegenerationDiagnosticState,
   summarizeRegenerationPromptObservation,
+  type RawWorkbenchState,
 } from './workspaceArtifactRegenerationObservation';
+import { readRegularWorkbenchOwnership } from './workbenchCdpActions';
 
 export async function runRegenerationDiagnosticsControls(): Promise<void> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'regeneration-diagnostics-'));
@@ -31,6 +38,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
       LA_E2E_CLI_REGENERATION_TRACE_PHASE: 'private-inherited-phase',
       LA_E2E_CLI_REGENERATION_TRACE_INVOCATION: 'private-inherited-invocation',
       LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+      la_e2e_cli_regeneration_trace_file: 'private-lowercase-path',
       UNIT_ONLY: 'kept',
     };
     const canonical = armRegenerationProbe({ root, phase: 'baseline', invocation, identity, env: inherited });
@@ -39,6 +47,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
       assert.strictEqual(canonical.childEnv[variable], undefined);
     }
     assert.strictEqual(canonical.childEnv.LA_E2E_CLI_DIAGNOSTIC_ONLY, undefined);
+    assert.strictEqual(canonical.childEnv.la_e2e_cli_regeneration_trace_file, undefined);
     assert.strictEqual(canonical.childEnv.UNIT_ONLY, 'kept');
     assert.strictEqual(inherited.LA_E2E_CLI_REGENERATION_TRACE_FILE, 'private-inherited-path', 'Never mutate the parent environment');
     assert.deepStrictEqual(fs.readdirSync(root), [], 'Canonical launches must not arm product collection');
@@ -133,6 +142,9 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     assert.strictEqual(coverage.reason, 'complete');
     assert.strictEqual(coverage.recordCount, records.length);
     assert.strictEqual(coverage.decisionAtUtc, new Date(decisionAt).toISOString());
+    const snapshot = fs.readFileSync(probe.tracePath);
+    assert.strictEqual(coverage.traceByteLength, snapshot.length);
+    assert.strictEqual(coverage.traceSha256, createHash('sha256').update(snapshot).digest('hex'));
     assert.ok(!JSON.stringify(coverage).includes('private-'));
 
     write(records.slice(0, -1));
@@ -224,7 +236,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
 
     const eventOnly = armRegenerationProbe({
       root,
-      phase: 'vscode-repeat',
+      phase: 'vscode-multiple',
       invocation,
       identity,
       env: { LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' },
@@ -241,7 +253,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     ].map(({ event, timestamp }, index) => ({
       schemaVersion: 1,
       invocation,
-      phase: 'vscode-repeat',
+      phase: 'vscode-multiple',
       armId: eventOnly.receipt!.armId,
       sequence: index + 1,
       timestampUtc: new Date(timestamp).toISOString(),
@@ -261,15 +273,277 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     assert.strictEqual(invalid.reason, 'invalid-host-binding');
     assert.strictEqual(invalid.childEnv.LA_E2E_CLI_REGENERATION_PROBE, undefined);
 
-    await testSafeDetectorAndInput(root, invocation);
-    console.log('[workspaceArtifactRegenerationDiagnostics.unit] native controls passed');
-    testNativePublisherContract(root, invocation);
+    await testUnprovedPhysicalIdentity(root, invocation, identity);
+    await testPhysicalWorkspaceSamples(root);
+    await testSafeDetectorAndInput(root, invocation, identity);
+    console.log('[workspaceArtifactRegenerationDiagnostics.unit] modeled observation controls passed');
+    testNativePublisherContract(root, invocation, identity);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
 }
 
-async function testSafeDetectorAndInput(root: string, invocation: string): Promise<void> {
+export async function runRegenerationObservationControls(): Promise<void> {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'regeneration-observation-controls-'));
+  try {
+    const invocation = randomUUID();
+    const identity = { source: 'unit', run: 'unit', job: 'unit', platform: process.platform };
+    await testUnprovedPhysicalIdentity(root, invocation, identity);
+    await testSafeDetectorAndInput(root, invocation, identity);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+}
+
+// These pre-existing tests exercise the sanitizer and coverage machinery as a
+// label-only model. They do not prove physical ownership in a native host.
+function enableLegacyLabelOnlyObservationModelForUnit(observation: RegenerationObservation): void {
+  observation.setSamplerForTests(async (cdp, expectation) => {
+    const before = await readRegularWorkbenchOwnership(cdp, expectation);
+    const raw = await cdp.evaluate<RawWorkbenchState>(undefined, regenerationDiagnosticDomScript);
+    const owner = await readRegularWorkbenchOwnership(cdp, expectation);
+    return { before, raw, owner };
+  });
+}
+
+function armBoundUnitProbe(root: string, phase: string, invocation: string, identity: Record<string, string>): RegenerationProbe {
+  const probe = armRegenerationProbe({ root, phase, invocation, identity, env: { LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' } });
+  assert.ok(probe.receipt && probe.tracePath);
+  probe.spawnRequestedAt = Date.parse(probe.receipt.armedAtUtc);
+  probe.spawnObservedAt = probe.spawnRequestedAt;
+  return probe;
+}
+
+async function finishBoundUnitProbe(probe: RegenerationProbe, decisionAt: number): Promise<void> {
+  assert.ok(probe.receipt && probe.tracePath);
+  const armedAt = Date.parse(probe.receipt.armedAtUtc);
+  assert.ok(decisionAt >= armedAt);
+  const records = [
+    { event: 'recorder-armed', timestamp: armedAt },
+    { event: 'activation-start', timestamp: armedAt },
+    { event: 'heartbeat', timestamp: decisionAt },
+  ].map(({ event, timestamp }, index) => ({
+    schemaVersion: 1,
+    invocation: probe.invocation,
+    phase: probe.phase,
+    armId: probe.receipt!.armId,
+    sequence: index + 1,
+    timestampUtc: new Date(timestamp).toISOString(),
+    event,
+  }));
+  fs.writeFileSync(probe.tracePath, `${records.map((record) => JSON.stringify(record)).join('\n')}\n`);
+  const result = await finishRegenerationProductCoverage(probe, decisionAt);
+  assert.strictEqual(result.availability, 'available');
+}
+
+async function testUnprovedPhysicalIdentity(root: string, invocation: string, identity: Record<string, string>): Promise<void> {
+  const controlRoot = path.join(root, 'physical-identity-control');
+  const expectedParent = path.join(root, 'expected');
+  const foreignParent = path.join(root, 'foreign');
+  const expectedWorkspace = path.join(expectedParent, 'same.code-workspace');
+  const foreignWorkspace = path.join(foreignParent, 'same.code-workspace');
+  const expectedRoot = path.join(expectedParent, 'same-root');
+  const foreignRoot = path.join(foreignParent, 'same-root');
+  fs.mkdirSync(controlRoot);
+  fs.mkdirSync(expectedRoot, { recursive: true });
+  fs.mkdirSync(foreignRoot, { recursive: true });
+  fs.writeFileSync(expectedWorkspace, '{}');
+  fs.writeFileSync(foreignWorkspace, '{}');
+  assert.notStrictEqual(fs.realpathSync(expectedWorkspace), fs.realpathSync(foreignWorkspace));
+  assert.notStrictEqual(fs.realpathSync(expectedRoot), fs.realpathSync(foreignRoot));
+  const probe = armBoundUnitProbe(controlRoot, 'baseline', invocation, identity);
+
+  let listener: ((event: CdpConsoleDiagnostic) => void) | undefined;
+  let reads = 0;
+  let generation = 1;
+  const fake = {
+    get contextGeneration() {
+      return generation;
+    },
+    onConsoleDiagnostic: (callback: (event: CdpConsoleDiagnostic) => void) => {
+      listener = callback;
+      return () => {
+        listener = undefined;
+      };
+    },
+    send: async () => ({ result: {} }),
+    evaluate: async () => {
+      reads++;
+      // The exact same shell labels are consistent with both physical paths.
+      return { timeOrigin: 42, title: 'same (workspace) - Visual Studio Code', ready: true, roots: ['same-root'] };
+    },
+  } as unknown as CdpConnection;
+  const observation = new RegenerationObservation(
+    controlRoot,
+    'baseline',
+    invocation,
+    Date.now() + 5000,
+    { workspaceFilePath: expectedWorkspace, rootPaths: [expectedRoot] },
+    expectedRoot
+  );
+  observation.boundary('phase-start');
+  observation.onConnection(fake);
+  observation.start(fake, 42);
+  const controlled = observation as unknown as { timer?: NodeJS.Timeout; sample: (deadline: number) => Promise<void> };
+  clearTimeout(controlled.timer);
+  await controlled.sample(Date.now() + 1000);
+  listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: Date.now() });
+  generation++;
+  await controlled.sample(Date.now() + 1000);
+  listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: Date.now() });
+  const decisionAt = Date.now();
+  observation.boundary('decision');
+  assert.strictEqual(await observation.stopAndSample(), undefined, 'Labels alone must not produce an owned detector state');
+  await observation.finish(decisionAt);
+  await finishBoundUnitProbe(probe, decisionAt);
+
+  const timeline = fs.readFileSync(path.join(controlRoot, 'baseline-detector-timeline.jsonl'), 'utf8');
+  const summaryText = fs.readFileSync(path.join(controlRoot, 'baseline-diagnostic-summary.json'), 'utf8');
+  const summary = JSON.parse(summaryText);
+  const events = timeline
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line));
+  assert.strictEqual(reads, 0, 'No label-only CDP read can prove the physical workspace');
+  assert.ok(events.some((event) => event.reason === 'workspace-root-unproved'));
+  assert.ok(!events.some((event) => event.event === 'attach-owned' || event.event === 'renderer-console' || event.outcome === 'observed'));
+  assert.strictEqual(summary.detector.availability, 'unavailable');
+  assert.strictEqual(summary.detector.decisionCovered, false);
+  assert.strictEqual(summary.detector.sampleCount, 0);
+  assert.strictEqual(summary.console.availability, 'unavailable');
+  assert.strictEqual(summary.console.eventCount, 0);
+  assert.strictEqual(summary.console.preOwnedDiscardedCount, 2);
+  assert.strictEqual(summary.notification, null);
+  assert.ok(!timeline.includes(expectedParent) && !timeline.includes(foreignParent));
+  assert.ok(!summaryText.includes(expectedParent) && !summaryText.includes(foreignParent));
+
+  const { collectDetectorDiagnostics } = require('../../../scripts/regeneration-diagnostic-publication') as {
+    collectDetectorDiagnostics: (
+      rootPath: string,
+      phases: string[],
+      family: string,
+      enabled: boolean,
+      expectedIdentity: Record<string, string>
+    ) => Array<{
+      type: string;
+      availability?: string;
+      summary?: { detector: { availability: string; decisionCovered: boolean }; console: { availability: string } };
+    }>;
+  };
+  const published = collectDetectorDiagnostics(controlRoot, ['baseline'], invocation, true, identity);
+  const capture = published.find((event) => event.type === 'detector-capture');
+  assert.notStrictEqual(capture?.availability, 'available');
+  assert.strictEqual(capture?.summary?.detector.availability, 'unavailable');
+  assert.strictEqual(capture?.summary?.detector.decisionCovered, false);
+  assert.strictEqual(capture?.summary?.console.availability, 'unavailable');
+  assert.ok(!JSON.stringify(published).includes(expectedParent) && !JSON.stringify(published).includes(foreignParent));
+}
+
+async function testPhysicalWorkspaceSamples(root: string): Promise<void> {
+  const expectedParent = path.join(root, 'sample-expected');
+  const foreignParent = path.join(root, 'sample-foreign');
+  const expectedRoot = path.join(expectedParent, 'same-root');
+  const foreignRoot = path.join(foreignParent, 'same-root');
+  const expectedWorkspace = path.join(expectedParent, 'same.code-workspace');
+  const foreignWorkspace = path.join(foreignParent, 'same.code-workspace');
+  fs.mkdirSync(expectedRoot, { recursive: true });
+  fs.mkdirSync(foreignRoot, { recursive: true });
+  fs.writeFileSync(expectedWorkspace, '{}');
+  fs.writeFileSync(foreignWorkspace, '{}');
+  const expectation = { workspaceFilePath: expectedWorkspace, rootPaths: [expectedRoot] };
+  const pinned = await pinPhysicalWorkspacePaths(expectation);
+  const physical: LivePhysicalWorkspace = {
+    timeOrigin: 42,
+    workspaceFilePath: expectedWorkspace,
+    rootPaths: [expectedRoot],
+    uiRootPaths: [expectedRoot],
+  };
+  const raw: RawWorkbenchState = {
+    timeOrigin: 42,
+    sampledAtMs: Date.now(),
+    documentVisible: true,
+    documentFocused: true,
+    centerMounted: false,
+    centerVisible: false,
+    toastCount: 0,
+    retainedCount: 0,
+    dnd: 'unknown',
+    truncated: false,
+    candidates: [],
+  };
+  let actual = physical;
+  let generation = 1;
+  let targetId = 'owned-target';
+  let alterGeneration = false;
+  let alterTarget = false;
+  const fake: CdpEvaluator = {
+    get targetId() {
+      return targetId;
+    },
+    get contextGeneration() {
+      return generation;
+    },
+    send: async () => ({}),
+    evaluate: async <T>(_context: number | undefined, expression: string) => {
+      assert.strictEqual(expression, regenerationDiagnosticSampleExpression);
+      if (alterGeneration) {
+        generation++;
+      }
+      if (alterTarget) {
+        targetId = 'foreign-target';
+      }
+      return {
+        physical: actual,
+        raw: { ...raw, sampledAtMs: Date.now() },
+        owner: { timeOrigin: 42, title: 'same (workspace) - Visual Studio Code', ready: true, roots: ['same-root'] },
+      } as T;
+    },
+  };
+  const sample = () => samplePhysicalRegenerationWorkbench(fake, expectation, Date.now() + 2000, pinned);
+  assert.strictEqual((await sample()).owner.owned, true);
+  if (process.platform === 'win32') {
+    actual = {
+      ...physical,
+      workspaceFilePath: expectedWorkspace.toLowerCase(),
+      rootPaths: [expectedRoot.toLowerCase()],
+      uiRootPaths: [expectedRoot.toLowerCase()],
+    };
+    assert.strictEqual((await sample()).owner.owned, true, 'Windows path spelling must resolve to the actual physical casing');
+  }
+  for (const foreign of [
+    { ...physical, workspaceFilePath: foreignWorkspace },
+    { ...physical, rootPaths: [foreignRoot] },
+    { ...physical, uiRootPaths: [foreignRoot] },
+    { ...physical, uiRootPaths: [] },
+    { ...physical, timeOrigin: 43 },
+  ]) {
+    actual = foreign;
+    await assert.rejects(sample(), 'Same-name foreign or transitioning workspaces must fail closed');
+  }
+  actual = physical;
+  alterGeneration = true;
+  await assert.rejects(sample(), 'A changed renderer context must fail closed');
+  alterGeneration = false;
+  alterTarget = true;
+  await assert.rejects(sample(), 'A changed CDP target must fail closed');
+  alterTarget = false;
+  targetId = 'owned-target';
+  const displaced = `${expectedWorkspace}.displaced`;
+  fs.renameSync(expectedWorkspace, displaced);
+  fs.writeFileSync(expectedWorkspace, '{}');
+  try {
+    await assert.rejects(sample(), 'A workspace file substituted after pinning must fail closed');
+  } finally {
+    fs.unlinkSync(expectedWorkspace);
+    fs.renameSync(displaced, expectedWorkspace);
+  }
+  await assert.rejects(
+    samplePhysicalRegenerationWorkbench(fake, expectation, Date.now() + 2000),
+    'Samples without a setup-time physical identity are unavailable'
+  );
+}
+
+async function testSafeDetectorAndInput(root: string, invocation: string, identity: Record<string, string>): Promise<void> {
   const appDir = path.join(root, 'private-app-path');
   const prompt = (project: string) =>
     `Detected an Azure Logic App project "${project}" that may be missing files. Initialize for optimal use with VS Code? private-message`;
@@ -340,14 +614,14 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   const { JSDOM } = require('jsdom') as {
     JSDOM: new (html: string, options: Record<string, unknown>) => { window: { eval: (script: string) => unknown; close: () => void } };
   };
-  const domState = (body: string): { truncated: boolean; centerMounted: boolean; centerVisible: boolean } => {
+  const domState = (body: string): Parameters<typeof sanitizeRegenerationDiagnosticState>[0] => {
     const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
     try {
       dom.window.eval(
         'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 10, bottom: 10, width: 10, height: 10})'
       );
       dom.window.eval('document.elementFromPoint = () => document.body');
-      return dom.window.eval(regenerationDiagnosticDomScript) as { truncated: boolean; centerMounted: boolean; centerVisible: boolean };
+      return dom.window.eval(regenerationDiagnosticDomScript) as Parameters<typeof sanitizeRegenerationDiagnosticState>[0];
     } finally {
       dom.window.close();
     }
@@ -384,6 +658,38 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   const center = domState('<div class="notifications-center"></div>');
   assert.strictEqual(center.centerMounted, true);
   assert.strictEqual(center.centerVisible, true);
+  const retainedYes = `
+    <div class="notifications-center"><div class="notifications-list-container"><div class="monaco-list" role="list">
+      <div class="monaco-list-row" role="dialog"><div class="notification-list-item">${prompt(appDir)}<button>Yes</button></div></div>
+      <div class="monaco-list-row" role="dialog"><div class="notification-list-item">Another notification</div></div>
+    </div></div></div>`;
+  const retainedState = sanitizeRegenerationDiagnosticState(domState(retainedYes), true, undefined, appDir);
+  assert.strictEqual(retainedState.centerVisible, true);
+  assert.strictEqual(retainedState.retainedCount, 2);
+  assert.strictEqual(retainedState.blockingUiVisible, false, 'The notification list ARIA role is not a blocking modal');
+  assert.strictEqual(retainedState.candidates[0]?.kind, 'notification');
+  assert.strictEqual(retainedState.candidates[0]?.yesCount, 1);
+  assert.ok(retainedState.candidates[0]?.reasonCodes.includes('obstructed-yes'));
+  const withModal = sanitizeRegenerationDiagnosticState(
+    domState(`${retainedYes}<div role="dialog">Blocking modal</div>`),
+    true,
+    undefined,
+    appDir
+  );
+  assert.strictEqual(withModal.blockingUiVisible, true, 'A separate genuine dialog still blocks diagnostic reveal');
+  const nestedModal = sanitizeRegenerationDiagnosticState(
+    domState(
+      `<div class="notifications-center"><div class="notifications-list-container"><div class="monaco-list" role="list">
+        <div class="monaco-list-row" role="dialog">
+          <div class="notification-list-item">Notification<div class="monaco-dialog-box" role="dialog">Blocking modal</div></div>
+        </div>
+      </div></div></div>`
+    ),
+    true,
+    undefined,
+    appDir
+  );
+  assert.strictEqual(nestedModal.blockingUiVisible, true, 'A real dialog nested inside a notification remains blocking');
   const summary = summarizeRegenerationPromptObservation(
     { ready: true, timeOrigin: 42, containers: [{ kind: 'notification', text: candidate.text, buttons: [{ text: 'Yes' }], rows: [] }] },
     appDir,
@@ -442,6 +748,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
       return { timeOrigin: 42, title: 'unit (workspace) - Visual Studio Code', ready: true, roots: ['private-app-path'] };
     },
   } as unknown as CdpConnection;
+  const probe = armBoundUnitProbe(root, 'root-single', invocation, identity);
   const observation = new RegenerationObservation(
     root,
     'root-single',
@@ -450,6 +757,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(observation);
   observation.boundary('phase-start');
   observation.onConnection(fake);
   listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: 1 });
@@ -483,6 +791,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   assert.strictEqual(revealedState?.centerVisible, true);
   listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: Date.now() });
   await observation.finish(decisionAt);
+  await finishBoundUnitProbe(probe, decisionAt);
   const timeline = fs.readFileSync(path.join(root, 'root-single-detector-timeline.jsonl'), 'utf8');
   const diagnostic = fs.readFileSync(path.join(root, 'root-single-diagnostic-summary.json'), 'utf8');
   assert.ok(!timeline.includes('private-') && !timeline.includes(root));
@@ -497,6 +806,9 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     .trim()
     .split('\n')
     .map((line) => JSON.parse(line));
+  const phaseStart = timelineEvents.find((event) => event.event === 'phase-start');
+  assert.strictEqual(phaseStart?.phaseStartedAtUtc, parsed.phaseStartedAtUtc);
+  assert.strictEqual(phaseStart?.acceptanceDeadlineUtc, parsed.acceptanceDeadlineUtc);
   const finalSample = timelineEvents.find((event) => event.event === 'detector-poll' && event.finalSample === true);
   assert.strictEqual(finalSample?.outcome, 'observed');
   assert.ok(Date.parse(finalSample.sampledAtUtc) >= decisionAt, 'The final poll must independently cover the decision time');
@@ -535,6 +847,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(lost);
   lost.onConnection(changingCdp);
   lost.start(changingCdp, 42);
   const controlledLost = lost as unknown as { timer?: NodeJS.Timeout; sample: (deadline: number) => Promise<void> };
@@ -596,6 +909,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(writeFailure);
   writeFailure.onConnection(writeFailureCdp);
   writeFailure.start(writeFailureCdp, 42);
   const controlledWrite = writeFailure as unknown as {
@@ -631,6 +945,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(failing);
   failing.onConnection(failingCdp);
   failing.start(failingCdp, 42);
   const failedDecision = Date.now();
@@ -670,6 +985,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(recovering);
   recovering.onConnection(recoveringCdp);
   recovering.start(recoveringCdp, 42);
   const recoveringDecision = Date.now();
@@ -699,6 +1015,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(noRegistration);
   noRegistration.onConnection(registrationFailureCdp);
   noRegistration.start(registrationFailureCdp, 42);
   const registrationDecision = Date.now();
@@ -727,6 +1044,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(listenerFailure);
   listenerFailure.onConnection(listenerFailureCdp);
   listenerFailure.start(listenerFailureCdp, 42);
   const listenerDecision = Date.now();
@@ -762,6 +1080,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(lostDuringSample);
   lostDuringSample.onConnection(lostDuringSampleCdp);
   lostDuringSample.start(lostDuringSampleCdp, 42);
   await lostDuringSample.finish(Date.now());
@@ -791,6 +1110,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(changedDocument);
   changedDocument.onConnection(changedDocumentCdp);
   changedDocument.start(changedDocumentCdp, 42);
   const changedDecision = Date.now();
@@ -825,6 +1145,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
     { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
     appDir
   );
+  enableLegacyLabelOnlyObservationModelForUnit(staleSample);
   staleSample.onConnection(staleSampleCdp);
   staleSample.start(staleSampleCdp, 42);
   const staleDecision = Date.now();
@@ -854,13 +1175,13 @@ async function testSafeDetectorAndInput(root: string, invocation: string): Promi
   assert.strictEqual(noConnectionFinal.sampledAtUtc, null);
 }
 
-function testNativePublisherContract(root: string, invocation: string): void {
+function testNativePublisherContract(root: string, invocation: string, identity: Record<string, string>): void {
   type PublishedProductRecord = {
     type: string;
     event?: string;
     availability?: string;
     eventCount?: number;
-    collection?: { status?: string };
+    collection?: { status?: string; coverageThroughDecision?: boolean };
     payload?: { result?: string };
   };
   type PublishedDetectorRecord = {
@@ -877,11 +1198,24 @@ function testNativePublisherContract(root: string, invocation: string): void {
     };
   };
   const { collectDetectorDiagnostics, collectProductDiagnostics } = require('../../../scripts/regeneration-diagnostic-publication') as {
-    collectDetectorDiagnostics: (rootPath: string, phases: string[], family: string, enabled: boolean) => PublishedDetectorRecord[];
-    collectProductDiagnostics: (rootPath: string, phases: string[], family: string, enabled: boolean) => PublishedProductRecord[];
+    collectDetectorDiagnostics: (
+      rootPath: string,
+      phases: string[],
+      family: string,
+      enabled: boolean,
+      expectedIdentity: Record<string, string>
+    ) => PublishedDetectorRecord[];
+    collectProductDiagnostics: (
+      rootPath: string,
+      phases: string[],
+      family: string,
+      enabled: boolean,
+      expectedIdentity: Record<string, string>
+    ) => PublishedProductRecord[];
   };
-  const product = collectProductDiagnostics(root, ['vscode-single'], invocation, true);
+  const product = collectProductDiagnostics(root, ['vscode-single'], invocation, true, identity);
   assert.strictEqual(product.find((event) => event.type === 'product-capture')?.availability, 'available');
+  assert.strictEqual(product.find((event) => event.type === 'product-capture')?.collection?.coverageThroughDecision, true);
   assert.ok(product.some((event) => event.event === 'warning-result' && event.payload?.result === 'dont-warn-again'));
 
   const tamperedRoot = path.join(root, 'publisher-gap');
@@ -900,7 +1234,9 @@ function testNativePublisherContract(root: string, invocation: string): void {
       phase,
       armId,
       traceFile: `${phase}-product-events.jsonl`,
-      identityBinding: 'a'.repeat(64),
+      identityBinding: createHmac('sha256', armId)
+        .update(JSON.stringify(Object.entries(identity).sort(([a], [b]) => a.localeCompare(b))))
+        .digest('hex'),
       armedAtUtc: stamp(0),
     })
   );
@@ -918,10 +1254,8 @@ function testNativePublisherContract(root: string, invocation: string): void {
     timestampUtc: stamp(offset),
     event,
   }));
-  fs.writeFileSync(
-    path.join(tamperedRoot, `${phase}-product-events.jsonl`),
-    `${gapRecords.map((record) => JSON.stringify(record)).join('\n')}\n`
-  );
+  const gapTrace = `${gapRecords.map((record) => JSON.stringify(record)).join('\n')}\n`;
+  fs.writeFileSync(path.join(tamperedRoot, `${phase}-product-events.jsonl`), gapTrace);
   fs.writeFileSync(
     path.join(tamperedRoot, `${phase}-product-collection.json`),
     JSON.stringify({
@@ -944,22 +1278,25 @@ function testNativePublisherContract(root: string, invocation: string): void {
       decisionAtUtc: stamp(6200),
       lastEventAtUtc: stamp(6300),
       lastHeartbeatAtUtc: stamp(6300),
+      traceByteLength: Buffer.byteLength(gapTrace),
+      traceSha256: createHash('sha256').update(gapTrace).digest('hex'),
     })
   );
-  const forgedCoverage = collectProductDiagnostics(tamperedRoot, [phase], invocation, true);
+  const forgedCoverage = collectProductDiagnostics(tamperedRoot, [phase], invocation, true, identity);
   const forgedCapture = forgedCoverage.find((event) => event.type === 'product-capture');
   assert.strictEqual(forgedCapture?.collection?.status, 'ok');
   assert.strictEqual(forgedCapture?.eventCount, gapRecords.length);
   assert.notStrictEqual(forgedCapture?.availability, 'available', 'A forged receipt cannot hide a producer gap over five seconds');
 
-  const eventOnly = collectProductDiagnostics(root, ['vscode-repeat'], invocation, true);
+  const eventOnly = collectProductDiagnostics(root, ['vscode-multiple'], invocation, true, identity);
   assert.strictEqual(
     eventOnly.find((event) => event.type === 'product-capture')?.availability,
     'available',
     'A fixed event can independently cover the decision without a later heartbeat'
   );
+  assert.strictEqual(eventOnly.find((event) => event.type === 'product-capture')?.collection?.coverageThroughDecision, true);
 
-  const published = collectDetectorDiagnostics(root, ['root-single'], invocation, true);
+  const published = collectDetectorDiagnostics(root, ['root-single'], invocation, true, identity);
   const publishedCapture = published.find((event) => event.type === 'detector-capture');
   assert.strictEqual(publishedCapture?.summaryStatus, 'ok', 'The sanitizer must accept the actual native detector summary');
   assert.strictEqual(publishedCapture?.availability, 'available', 'The sanitizer must verify this genuinely covered native timeline');
@@ -971,6 +1308,8 @@ function testNativePublisherContract(root: string, invocation: string): void {
   assert.strictEqual(publishedFinal?.outcome, 'observed', 'The sanitizer must retain the actual final post-decision poll');
   const nativeSummary = JSON.parse(fs.readFileSync(path.join(root, 'root-single-diagnostic-summary.json'), 'utf8'));
   assert.ok(Date.parse(publishedFinal?.sampledAtUtc ?? '') >= Date.parse(nativeSummary.decisionAtUtc));
+  const boundProduct = collectProductDiagnostics(root, ['root-single'], invocation, true, identity);
+  assert.strictEqual(boundProduct.find((event) => event.type === 'product-capture')?.availability, 'available');
   assert.ok(!JSON.stringify(published).includes('private-') && !JSON.stringify(published).includes(root));
 }
 

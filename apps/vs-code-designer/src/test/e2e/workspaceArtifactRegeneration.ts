@@ -93,8 +93,10 @@ export interface RegenerationDeadline {
   deadline: number;
 }
 
+export const regenerationTimeoutMs = 120000;
+
 export function regenerationDeadline(phase: string, now = Date.now()): RegenerationDeadline {
-  return { phase, startedAt: now, deadline: now + 120000 };
+  return { phase, startedAt: now, deadline: now + regenerationTimeoutMs };
 }
 
 export function remainingRegenerationBudget(phase: RegenerationDeadline, now = Date.now()): number {

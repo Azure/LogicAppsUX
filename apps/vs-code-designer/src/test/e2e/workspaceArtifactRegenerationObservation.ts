@@ -3,12 +3,25 @@ import * as path from 'path';
 import type { CdpConnection, CdpConsoleDiagnostic } from './cdpClient';
 import type { CdpEvaluator } from './cdpFormHelpers';
 import {
+  livePhysicalWorkspaceExpression,
+  physicalWorkspacePaths,
+  type LivePhysicalWorkspace,
+  type PhysicalPathIdentity,
+} from './physicalWorkspaceIdentity';
+import {
   initializationPromptProjectPath,
   isSamePromptProjectPath,
   regenerationOverwriteMessage,
+  regenerationTimeoutMs,
   type RegenerationPromptObservation,
 } from './workspaceArtifactRegeneration';
-import { readRegularWorkbenchOwnership, type RegularWorkbenchOwnershipExpectation } from './workbenchCdpActions';
+import {
+  matchesRegularWorkbenchOwnership,
+  matchesRegularWorkbenchShell,
+  regularWorkbenchOwnershipScript,
+  type RegularWorkbenchOwnershipExpectation,
+  type RegularWorkbenchOwnershipState,
+} from './workbenchCdpActions';
 
 type CandidateKind = 'quickInput' | 'dialog' | 'notification';
 type CandidateCategory = 'initialization' | 'other-project' | 'overwrite' | 'other';
@@ -33,7 +46,7 @@ interface RawCandidate {
   obstructedYesCount: number;
 }
 
-interface RawWorkbenchState {
+export interface RawWorkbenchState {
   timeOrigin: number;
   sampledAtMs: number;
   documentVisible: boolean;
@@ -89,10 +102,15 @@ export const regenerationDiagnosticDomScript = `(() => {
   const visible = element => geometry(element).inViewport;
   const found = Array.from(document.querySelectorAll(
     '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
+  )).filter(element => !(
+    element.classList.contains('monaco-list-row') && element.getAttribute('role') === 'dialog' &&
+    element.closest('.notifications-center .notifications-list-container') && element.querySelector('.notification-list-item')
   ));
   const all = found.slice(0, 128);
   const distinct = all.filter(container => !all.some(other =>
-    other !== container && other.contains(container) && geometry(other).inViewport === geometry(container).inViewport
+    other !== container && other.contains(container) && geometry(other).inViewport === geometry(container).inViewport &&
+    !((other.classList.contains('notification-toast') || other.classList.contains('notification-list-item')) &&
+      !(container.classList.contains('notification-toast') || container.classList.contains('notification-list-item')))
   ));
   const candidates = distinct.slice(0, 64).map(container => {
     const g = geometry(container);
@@ -148,6 +166,80 @@ export const regenerationDiagnosticDomScript = `(() => {
     candidates,
   };
 })()`;
+
+export const regenerationDiagnosticSampleExpression = `(() => ({
+  physical: ${livePhysicalWorkspaceExpression},
+  owner: ${regularWorkbenchOwnershipScript},
+  raw: ${regenerationDiagnosticDomScript}
+}))()`;
+
+export type RegenerationWorkbenchSampler = (
+  cdp: CdpEvaluator,
+  expectation: RegularWorkbenchOwnershipExpectation,
+  deadline: number,
+  pinnedPaths?: readonly PhysicalPathIdentity[]
+) => Promise<{ before: RegularWorkbenchOwnershipState; raw: RawWorkbenchState; owner: RegularWorkbenchOwnershipState }>;
+
+class PhysicalWorkspaceUnavailable extends Error {}
+
+/** The model and DOM are read in one renderer task; the result is still a discrete sample. */
+export const samplePhysicalRegenerationWorkbench: RegenerationWorkbenchSampler = async (cdp, expectation, deadline, pinnedPaths) => {
+  const targetId = cdp.targetId;
+  const generation = cdp.contextGeneration;
+  if (!pinnedPaths || !targetId || typeof generation !== 'number' || !Number.isSafeInteger(generation)) {
+    throw new PhysicalWorkspaceUnavailable();
+  }
+  let sample: {
+    physical: LivePhysicalWorkspace;
+    owner: Omit<RegularWorkbenchOwnershipState, 'shellOwned' | 'owned'>;
+    raw: RawWorkbenchState;
+  };
+  try {
+    sample = await cdp.evaluate(undefined, regenerationDiagnosticSampleExpression, {
+      timeoutMs: Math.max(1, Math.min(750, deadline - Date.now())),
+    });
+  } catch (error) {
+    if (error instanceof Error && /timed out/i.test(error.message)) {
+      throw error;
+    }
+    throw new PhysicalWorkspaceUnavailable();
+  }
+  if (
+    !sample?.physical ||
+    !sample.owner ||
+    !sample.raw ||
+    sample.physical.timeOrigin !== sample.owner.timeOrigin ||
+    sample.physical.timeOrigin !== sample.raw.timeOrigin
+  ) {
+    throw new PhysicalWorkspaceUnavailable();
+  }
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) {
+      throw new PhysicalWorkspaceUnavailable();
+    }
+    await Promise.race([
+      physicalWorkspacePaths(sample.physical, expectation, pinnedPaths),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new PhysicalWorkspaceUnavailable()), remaining);
+      }),
+    ]);
+  } catch {
+    throw new PhysicalWorkspaceUnavailable();
+  } finally {
+    clearTimeout(timer);
+  }
+  if (cdp.targetId !== targetId || cdp.contextGeneration !== generation) {
+    throw new PhysicalWorkspaceUnavailable();
+  }
+  const owner: RegularWorkbenchOwnershipState = {
+    ...sample.owner,
+    shellOwned: matchesRegularWorkbenchShell(sample.owner, expectation),
+    owned: matchesRegularWorkbenchOwnership(sample.owner, expectation),
+  };
+  return { before: owner, owner, raw: sample.raw };
+};
 
 function category(text: string, appDir: string, kind: CandidateKind): CandidateCategory {
   const project = initializationPromptProjectPath(text);
@@ -317,6 +409,7 @@ export class RegenerationObservation {
   private previousState = '';
   private latestState: SafeWorkbenchState | undefined;
   private decisionState: SafeWorkbenchState | null = null;
+  private decisionStateSampledAt: number | undefined;
   private decisionSampleCaptured = false;
   private cdp: CdpConnection | undefined;
   private detachConsole: (() => void) | undefined;
@@ -335,14 +428,15 @@ export class RegenerationObservation {
   private ownershipProvedAt: number | undefined;
   private ownershipGeneration: number | undefined;
   private attachAt: number | undefined;
-
   constructor(
     private readonly root: string,
     private readonly phase: string,
     private readonly invocation: string,
     private readonly deadline: number,
     private readonly expectation: RegularWorkbenchOwnershipExpectation,
-    private readonly appDir: string
+    private readonly appDir: string,
+    private readonly pinnedPaths?: readonly PhysicalPathIdentity[],
+    private sampler: RegenerationWorkbenchSampler = samplePhysicalRegenerationWorkbench
   ) {
     const initial: CaptureStatus = {
       status: 'unavailable',
@@ -368,6 +462,10 @@ export class RegenerationObservation {
     }
   }
 
+  setSamplerForTests(sampler: RegenerationWorkbenchSampler): void {
+    this.sampler = sampler;
+  }
+
   boundary(
     event:
       | 'phase-start'
@@ -380,7 +478,15 @@ export class RegenerationObservation {
       | 'decision'
       | 'teardown-start'
   ): void {
-    this.emit(event, {});
+    this.emit(
+      event,
+      event === 'phase-start'
+        ? {
+            phaseStartedAtUtc: new Date(this.deadline - regenerationTimeoutMs).toISOString(),
+            acceptanceDeadlineUtc: new Date(this.deadline).toISOString(),
+          }
+        : {}
+    );
   }
 
   onConnection(cdp: CdpConnection): void {
@@ -544,6 +650,10 @@ export class RegenerationObservation {
     const cdp = this.cdp;
     const budget = () => Math.max(1, Math.min(750, sampleDeadline - Date.now()));
     const bounded: CdpEvaluator = {
+      targetId: cdp.targetId,
+      get contextGeneration() {
+        return cdp.contextGeneration;
+      },
       evaluate: (contextId, expression, options) =>
         cdp.evaluate(contextId, expression, { timeoutMs: Math.min(options?.timeoutMs ?? 750, budget()) }),
       send: (method, params, options) => cdp.send(method, params, { timeoutMs: Math.min(options?.timeoutMs ?? 750, budget()) }),
@@ -551,9 +661,7 @@ export class RegenerationObservation {
     this.pollCount++;
     const attemptedAt = Date.now();
     try {
-      const before = await readRegularWorkbenchOwnership(bounded, this.expectation);
-      const raw = await bounded.evaluate<RawWorkbenchState>(undefined, regenerationDiagnosticDomScript);
-      const owner = await readRegularWorkbenchOwnership(bounded, this.expectation);
+      const { before, raw, owner } = await this.sampler(bounded, this.expectation, sampleDeadline, this.pinnedPaths);
       const now = Date.now();
       const sampledAt = raw.sampledAtMs;
       if (
@@ -621,7 +729,11 @@ export class RegenerationObservation {
         this.lastHeartbeatAt = now;
       }
     } catch (error) {
-      this.sampleErrorCount++;
+      if (error instanceof PhysicalWorkspaceUnavailable) {
+        this.ownershipLossCount++;
+      } else {
+        this.sampleErrorCount++;
+      }
       this.latestState = undefined;
       const now = Date.now();
       if (finalSample || now - this.lastHeartbeatAt >= heartbeatIntervalMs) {
@@ -632,22 +744,32 @@ export class RegenerationObservation {
           sampledAtUtc: null,
           attemptedAtUtc: new Date(attemptedAt).toISOString(),
           finalSample,
-          reason: error instanceof Error && /timed out/i.test(error.message) ? 'cdp-timeout' : 'cdp-observation-failed',
+          reason:
+            error instanceof PhysicalWorkspaceUnavailable
+              ? 'workspace-root-unproved'
+              : error instanceof Error && /timed out/i.test(error.message)
+                ? 'cdp-timeout'
+                : 'cdp-observation-failed',
         });
         this.lastHeartbeatAt = now;
       }
     }
   }
 
-  async stopAndSample(): Promise<SafeWorkbenchState | undefined> {
+  async stopSampling(): Promise<void> {
     this.stopped = true;
     if (this.timer) {
       clearTimeout(this.timer);
     }
     await this.inFlight;
+  }
+
+  async stopAndSample(): Promise<SafeWorkbenchState | undefined> {
+    await this.stopSampling();
     await this.sample(Date.now() + 1000, true);
     if (!this.decisionSampleCaptured) {
       this.decisionState = this.latestState ?? null;
+      this.decisionStateSampledAt = this.latestState ? this.lastSampleAt : undefined;
       this.decisionSampleCaptured = true;
     }
     return this.latestState;
@@ -698,6 +820,9 @@ export class RegenerationObservation {
       suiteId: 'workspaceArtifactRegeneration',
       invocation: this.invocation,
       phase: this.phase,
+      phaseStartedAtUtc: new Date(this.deadline - regenerationTimeoutMs).toISOString(),
+      acceptanceDeadlineUtc: new Date(this.deadline).toISOString(),
+      acceptanceCutoffUtc: new Date(Math.min(this.deadline, decisionAt)).toISOString(),
       decisionAtUtc: new Date(decisionAt).toISOString(),
       attachmentScope: 'owned-regular-workbench',
       detector: {
@@ -734,6 +859,7 @@ export class RegenerationObservation {
         logDomain: this.logDomain,
       },
       notification: this.decisionState,
+      notificationSampledAtUtc: this.decisionStateSampledAt === undefined ? null : new Date(this.decisionStateSampledAt).toISOString(),
       screenshots: this.screenshots,
       input: { uncertain: this.input.uncertain, pending: this.input.pending > 0 },
     };

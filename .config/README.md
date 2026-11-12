@@ -107,13 +107,20 @@ The E2E Run Pipeline form intentionally exposes only test-selection controls: `d
 For a diagnostic `workspaceArtifactRegeneration` job, the producing attempt's
 `log/regeneration/regeneration-diagnostics.jsonl` contains allowlisted,
 invocation-bound product markers, sampled workbench observations, renderer
-console classifications, and explicit coverage or unavailable statuses. The
-staging step recomputes the sanitized projection and rejects missing or changed
-aggregates; raw per-phase diagnostic files are not uploaded. Failure screenshots
-are post-decision evidence staged only through the ordered-evidence manifest.
+console classifications, deadline attribution, and explicit coverage or unavailable
+statuses. The staging step checks the current source, run, job, attempt and
+ordered-evidence invocation independently, recomputes the sanitized projection,
+and rejects missing or changed aggregates. Product traces are projected from the
+receipt-bound byte prefix, not later appends; raw per-phase files are not uploaded.
+Failure screenshots are post-decision evidence staged only through the ordered-evidence manifest.
 Renderer observations are sampled and begin after attachment, so they cannot
-exclude a transient notification between polls or before attachment. Console
-classifications omit raw messages and cover only the renderer; sanitized VS Code
+exclude a transient notification or workspace change between polls. Console
+classifications omit raw messages and identify only the renderer window, not a
+continuously verified workspace or extension-host process. Failure screenshots
+use a post-decision renderer pause and physical-workspace checks, with explicit
+unavailable states and no guarantee against external fixture swaps. The optional
+Notification Center image is skipped when the center is closed; diagnostics do
+not send input to open it. Sanitized VS Code
 profile logs remain separate supporting evidence. See the
 [CLI diagnostic contract](../apps/vs-code-designer/src/test/e2e/README.md#diagnostic-only-regeneration-observations)
 for coverage and privacy limits.

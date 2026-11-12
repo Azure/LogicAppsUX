@@ -11,11 +11,18 @@ import { setOperationDiagnosticScope } from './operationDiagnostics';
 import { createDiagnosticProducer, diagnosticBinding, fileDiagnosticSnapshot } from '../../../scripts/e2e-cli-diagnostics';
 import * as fs from 'fs';
 import * as path from 'path';
-import { type CdpConnection, waitForDevToolsActivePort } from './cdpClient';
+import { type CdpConnection, type CdpMainDocumentIdentity, waitForDevToolsActivePort } from './cdpClient';
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
+import { pinPhysicalWorkspacePaths, type PhysicalPathIdentity } from './physicalWorkspaceIdentity';
 import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
 import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications, revealWorkbenchPromptOption } from './workbenchPrompts';
-import { captureCdpScreenshot } from './screenshot';
+import {
+  captureCdpScreenshot,
+  ScreenshotCaptureCleanupError,
+  ScreenshotCaptureOwnershipError,
+  type PhysicalWorkspaceIdentityAuthority,
+} from './screenshot';
+import { regenerationPhysicalWorkspaceAuthority } from './regenerationPhysicalWorkspaceAuthority';
 import {
   armRegenerationProbe,
   finishRegenerationProductCoverage,
@@ -73,6 +80,17 @@ interface RegenerationHandoff {
 
 export { buildRegenerationPhaseResults };
 
+export async function closeRegenerationWindowAfterDiagnostics(
+  cleanupReason: string | undefined,
+  observationFailed: boolean,
+  close: (observationFailed: boolean) => Promise<void> = closeWorkspacePromptCancelWindow
+): Promise<void> {
+  if (cleanupReason === 'renderer-cleanup-failed') {
+    throw new Error('Renderer cleanup was not confirmed; no further window input was sent');
+  }
+  await close(observationFailed);
+}
+
 export interface RegenerationResult {
   schemaVersion: 1;
   suiteId: 'workspaceArtifactRegeneration';
@@ -123,55 +141,77 @@ function boundedConnection(cdp: CdpConnection, phase: RegenerationDeadline, inpu
   };
 }
 
-function diagnosticConnection(cdp: CdpConnection, deadline: number, input: RegenerationInputTracker): CdpEvaluator {
-  const budget = (requested = 1000) => Math.max(1, Math.min(requested, deadline - Date.now()));
-  return {
-    targetId: cdp.targetId,
-    get contextGeneration() {
-      return cdp.contextGeneration;
-    },
-    evaluate: (contextId, expression, options) => cdp.evaluate(contextId, expression, { timeoutMs: budget(options?.timeoutMs) }),
-    send: (method, params, options) => input.send(method, () => cdp.send(method, params, { timeoutMs: budget(options?.timeoutMs) })),
-  };
-}
-
-async function captureRegenerationFailureDiagnostics(
+export async function captureRegenerationFailureDiagnostics(
   cdp: CdpConnection | undefined,
   diagnostics: RegenerationObservation,
   context: RegenerationContext,
   handoff: RegenerationHandoff,
   phase: RegenerationDeadline,
-  decisionAt: number
+  decisionAt: number,
+  admittedTimeOrigin: number | undefined,
+  admittedContextGeneration: number | undefined,
+  admittedTargetId: string | undefined,
+  physicalIdentity?: PhysicalWorkspaceIdentityAuthority,
+  pinnedPaths?: readonly PhysicalPathIdentity[],
+  admittedDocument?: CdpMainDocumentIdentity
 ): Promise<void> {
   const first = diagnostics.screenshots.beforeTeardown;
   const center = diagnostics.screenshots.notificationCenter;
+  await diagnostics.stopSampling();
+  first.postDeadline = Date.now() >= phase.deadline;
+  center.postDeadline = first.postDeadline;
   if (!cdp) {
     first.reason = 'no-owned-target';
-    center.status = 'skipped';
+    center.status = 'unavailable';
     center.reason = 'no-owned-target';
     return;
   }
+  if (diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    first.reason = 'uncertain-input';
+    center.reason = 'uncertain-input';
+    first.postDeadline = Date.now() >= phase.deadline;
+    center.postDeadline = first.postDeadline;
+    await diagnostics.stopAndSample();
+    return;
+  }
   const deadline = Date.now() + 10000;
+  let rendererCleanupFailed = false;
   const capture = async (target: typeof first, suffix: 'failure' | 'notification-center') => {
     const checkpoint = `workspace-regeneration-${phase.phase}-${suffix}`;
     target.checkpoint = checkpoint;
     target.postDeadline = Date.now() >= phase.deadline;
     let failed = false;
+    let unavailableReason: 'capture-unavailable' | 'document-changed' = 'capture-unavailable';
     try {
       const file = await captureCdpScreenshot(cdp, checkpoint, {
         classification: 'diagnostic',
         captureBeforeObservation: true,
+        immediateCaptureOwnership: {
+          expectation: { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
+          expectedTargetId: admittedTargetId,
+          expectedTimeOrigin: admittedTimeOrigin,
+          expectedContextGeneration: admittedContextGeneration,
+          admittedDocument,
+          physicalIdentity,
+          pinnedPaths,
+        },
         expectation: { kind: 'diagnostic', label: checkpoint, reason: 'regeneration-phase-failure' },
-        deadlineMs: Math.min(deadline, Date.now() + 2000),
-        timeoutMs: 2000,
+        deadlineMs: Math.min(deadline, Date.now() + 5000),
+        timeoutMs: 5000,
         allowWindowsDiagnosticFallback: false,
         diagnosticContext: {
           operationId: `workspaceArtifactRegeneration-${phase.phase}-${suffix}`,
           nativeInvocation: context.invocation,
           phase: phase.phase,
         },
-        onDiagnosticFailure: () => {
+        onDiagnosticFailure: (error) => {
           failed = true;
+          if (error instanceof ScreenshotCaptureOwnershipError) {
+            unavailableReason = error.reason;
+          }
+          if (error instanceof ScreenshotCaptureCleanupError) {
+            rendererCleanupFailed = true;
+          }
         },
         onImmediateCaptureStart: (startedAt) => {
           target.postDeadline = startedAt >= phase.deadline;
@@ -181,7 +221,7 @@ async function captureRegenerationFailureDiagnostics(
         },
       });
       target.status = file ? 'captured' : 'unavailable';
-      target.reason = file ? (failed ? 'captured-metadata-incomplete' : 'captured') : 'capture-unavailable';
+      target.reason = file ? (failed ? 'captured-metadata-incomplete' : 'captured') : unavailableReason;
     } catch {
       target.status = 'unavailable';
       target.reason = 'capture-failed';
@@ -189,7 +229,25 @@ async function captureRegenerationFailureDiagnostics(
   };
   // Capture before any optional post-failure input or CDP disposal.
   await capture(first, 'failure');
+  if (rendererCleanupFailed) {
+    center.status = 'unavailable';
+    center.reason = 'renderer-cleanup-failed';
+    center.checkpoint = `workspace-regeneration-${phase.phase}-notification-center`;
+    center.postDeadline = Date.now() >= phase.deadline;
+    return;
+  }
+  if (first.status !== 'captured') {
+    // Without a proved first capture there is no authority to reveal the
+    // center. Report both images unavailable, without sending any input.
+    center.status = 'unavailable';
+    center.reason = first.reason === 'document-changed' ? 'document-changed' : 'capture-unavailable';
+    center.checkpoint = `workspace-regeneration-${phase.phase}-notification-center`;
+    center.postDeadline = Date.now() >= phase.deadline;
+    await diagnostics.stopAndSample();
+    return;
+  }
   const state = await diagnostics.stopAndSample();
+  center.postDeadline = Date.now() >= phase.deadline;
   const skip = (reason: string) => {
     center.status = 'skipped';
     center.reason = reason;
@@ -201,47 +259,36 @@ async function captureRegenerationFailureDiagnostics(
     return skip('uncertain-input');
   }
   if (!state || !diagnostics.hasSampleSince(decisionAt)) {
-    return skip('current-state-unavailable');
+    center.status = 'unavailable';
+    center.reason = 'capture-unavailable';
+    return;
   }
-  if (!state.shellOwned || !state.documentVisible || !state.documentFocused) {
+  if (!state.shellOwned) {
+    center.status = 'unavailable';
+    center.reason = 'capture-unavailable';
+    return;
+  }
+  if (!state.documentVisible || !state.documentFocused) {
     return skip('workbench-not-active');
   }
   if (state.documentChanged) {
-    return skip('document-changed');
+    center.status = 'unavailable';
+    center.reason = 'document-changed';
+    return;
   }
   if (state.blockingUiVisible || state.truncated) {
     return skip('blocking-or-ambiguous-ui');
   }
   if (!state.centerVisible) {
-    try {
-      const revealDeadline = Math.min(deadline, Date.now() + 1800);
-      await revealRetainedWorkbenchNotifications(
-        diagnosticConnection(cdp, revealDeadline, diagnostics.input),
-        { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
-        revealDeadline
-      );
-      const revealedState = await diagnostics.stopAndSample();
-      if (
-        !revealedState ||
-        !diagnostics.hasSampleSince(decisionAt) ||
-        !revealedState.shellOwned ||
-        !revealedState.documentVisible ||
-        !revealedState.documentFocused ||
-        revealedState.documentChanged ||
-        revealedState.blockingUiVisible ||
-        revealedState.truncated ||
-        !revealedState.centerVisible
-      ) {
-        return skip('notification-center-reveal-failed');
-      }
-    } catch {
-      return skip('notification-center-reveal-failed');
-    }
+    return skip('notification-center-not-open');
   }
   if (Date.now() >= deadline || diagnostics.input.uncertain || diagnostics.input.pending > 0) {
     return skip('diagnostic-budget-or-input-uncertain');
   }
   await capture(center, 'notification-center');
+  if (rendererCleanupFailed) {
+    center.reason = 'renderer-cleanup-failed';
+  }
 }
 
 async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: string, appDir: string): Promise<RegenerationPromptObservation> {
@@ -334,6 +381,22 @@ async function runFreshRegenerationHost(
     identity: context.identity,
     env,
   });
+  let pinnedPaths: readonly PhysicalPathIdentity[] | undefined;
+  if (probe.requested) {
+    let timer: NodeJS.Timeout | undefined;
+    try {
+      pinnedPaths = await Promise.race([
+        pinPhysicalWorkspacePaths({ workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] }),
+        new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => reject(new Error('physical workspace pin timed out')), 1000);
+        }),
+      ]);
+    } catch {
+      console.warn('[workspace-regeneration-diagnostics] physical-workspace-pin-unavailable');
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   const diagnostics = probe.requested
     ? new RegenerationObservation(
         context.root,
@@ -341,20 +404,30 @@ async function runFreshRegenerationHost(
         context.invocation,
         phase.deadline,
         { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
-        handoff.workspace.appDir
+        handoff.workspace.appDir,
+        pinnedPaths
       )
     : undefined;
   diagnostics?.boundary('phase-start');
   diagnostics?.boundary(probe.receipt ? 'arm-ready' : 'arm-unavailable');
   let diagnosticsFinalized = false;
-  const finalizeDiagnostics = async (cdp: CdpConnection | undefined, observed: boolean) => {
+  const finalizeDiagnostics = async (
+    cdp: CdpConnection | undefined,
+    observed: boolean,
+    admittedTimeOrigin?: number,
+    admittedContextGeneration?: number,
+    admittedTargetId?: string,
+    admittedDocumentPromise?: Promise<CdpMainDocumentIdentity | undefined>
+  ) => {
     if (!diagnostics || diagnosticsFinalized) {
       return;
     }
     diagnosticsFinalized = true;
     const decisionAt = Date.now();
     diagnostics.boundary('decision');
+    let admittedDocument: CdpMainDocumentIdentity | undefined;
     try {
+      admittedDocument = await admittedDocumentPromise;
       if (observed) {
         diagnostics.screenshots.beforeTeardown.status = 'skipped';
         diagnostics.screenshots.beforeTeardown.reason = 'observation-succeeded';
@@ -362,7 +435,20 @@ async function runFreshRegenerationHost(
         diagnostics.screenshots.notificationCenter.reason = 'observation-succeeded';
         await diagnostics.stopAndSample();
       } else {
-        await captureRegenerationFailureDiagnostics(cdp, diagnostics, context, handoff, phase, decisionAt);
+        await captureRegenerationFailureDiagnostics(
+          cdp,
+          diagnostics,
+          context,
+          handoff,
+          phase,
+          decisionAt,
+          admittedTimeOrigin,
+          admittedContextGeneration,
+          admittedTargetId,
+          cdp && pinnedPaths ? regenerationPhysicalWorkspaceAuthority(cdp) : undefined,
+          pinnedPaths,
+          admittedDocument
+        );
       }
     } catch {
       // The original native failure and existing acceptance remain authoritative.
@@ -372,6 +458,8 @@ async function runFreshRegenerationHost(
       if (diagnostics.screenshots.notificationCenter.reason === 'not-attempted') {
         diagnostics.screenshots.notificationCenter.reason = 'diagnostic-collection-failed';
       }
+    } finally {
+      admittedDocument?.dispose();
     }
     try {
       await finishRegenerationProductCoverage(probe, decisionAt);
@@ -416,7 +504,14 @@ async function runFreshRegenerationHostCore(
   probe: RegenerationProbe,
   diagnostics: RegenerationObservation | undefined,
   observe: (cdp: CdpConnection, phase: RegenerationDeadline, diagnostics?: RegenerationObservation) => Promise<void>,
-  finalizeDiagnostics: (cdp: CdpConnection | undefined, observed: boolean) => Promise<void>
+  finalizeDiagnostics: (
+    cdp: CdpConnection | undefined,
+    observed: boolean,
+    admittedTimeOrigin?: number,
+    admittedContextGeneration?: number,
+    admittedTargetId?: string,
+    admittedDocumentPromise?: Promise<CdpMainDocumentIdentity | undefined>
+  ) => Promise<void>
 ): Promise<void> {
   const profile = path.join(
     env.LA_E2E_CLI_USER_DATA_PARENT || path.dirname(context.root),
@@ -510,6 +605,10 @@ async function runFreshRegenerationHostCore(
     stream.on('data', (data: Buffer) => log.write(data));
   }
   let cdp: CdpConnection | undefined;
+  let admittedTimeOrigin: number | undefined;
+  let admittedContextGeneration: number | undefined;
+  let admittedTargetId: string | undefined;
+  let admittedDocumentPromise: Promise<CdpMainDocumentIdentity | undefined> | undefined;
   let observed = false;
   let observationSettled = false;
   try {
@@ -527,7 +626,27 @@ async function runFreshRegenerationHostCore(
       onConnection: diagnostics ? (connection) => diagnostics.onConnection(connection) : undefined,
     });
     cdp = ownedWorkbench.cdp;
-    diagnostics?.start(cdp, ownedWorkbench.state.timeOrigin);
+    admittedTimeOrigin = ownedWorkbench.state.timeOrigin;
+    admittedContextGeneration = cdp.contextGeneration;
+    admittedTargetId = cdp.targetId;
+    if (diagnostics) {
+      const admissionConnection = cdp;
+      const admissionGeneration = admittedContextGeneration;
+      admittedDocumentPromise = admissionConnection
+        .send('Page.getFrameTree', undefined, { timeoutMs: Math.min(1000, remainingRegenerationBudget(phase)) })
+        .then((response) => {
+          const document = admissionConnection.trackMainDocument(response.result?.frameTree, admissionGeneration);
+          if (!document) {
+            console.warn('[workspace-regeneration-diagnostics] main-document-tracking-unavailable');
+          }
+          return document;
+        })
+        .catch(() => {
+          console.warn('[workspace-regeneration-diagnostics] main-document-tracking-unavailable');
+          return undefined;
+        });
+    }
+    diagnostics?.start(cdp, admittedTimeOrigin);
     assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
     const observation = observe(cdp, phase, diagnostics).finally(() => {
       observationSettled = true;
@@ -548,7 +667,7 @@ async function runFreshRegenerationHostCore(
     if (diagnostics && cdp && !observationSettled) {
       diagnostics.input.uncertain = true;
     }
-    await finalizeDiagnostics(cdp, observed);
+    await finalizeDiagnostics(cdp, observed, admittedTimeOrigin, admittedContextGeneration, admittedTargetId, admittedDocumentPromise);
     watcher?.close();
     cdp?.dispose();
     if (!host.close) {
@@ -556,7 +675,7 @@ async function runFreshRegenerationHostCore(
       try {
         await Promise.race([
           (async () => {
-            await closeWorkspacePromptCancelWindow(!observed);
+            await closeRegenerationWindowAfterDiagnostics(diagnostics?.screenshots.notificationCenter.reason, !observed);
             await completion;
           })(),
           new Promise<void>((_resolve, reject) => {

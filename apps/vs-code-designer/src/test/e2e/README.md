@@ -608,10 +608,14 @@ It is a runner-only gate, not a product feature flag. Each regular host then
 exclusively precreates `<phase>-product-events.jsonl` and the sibling
 `<phase>-product-arming.json` under the invocation-owned root before launch. The
 receipt carries the family UUID, registered phase slug, fresh `armId`, trace
-basename, opaque identity binding, and UTC arming time. Only that diagnostic
+basename, identity binding, and UTC arming time. The binding is checked against
+the current source, run, job, attempt, platform and ordered-evidence invocation;
+it is a consistency check, not an authentication signature. Only that diagnostic
 regular host receives the four product-probe variables; its inherited probe
 variables are scrubbed first. The runner must separately scrub them from the
-wizard and every other/canonical host.
+wizard and every other/canonical host. Probe writes and workbench sampling can
+affect timing, so a diagnostic result alone does not establish the behavior of
+an uninstrumented run.
 
 The optional product producer must use the matching receipt and append bounded
 JSONL records starting with `recorder-armed`, followed by activation and
@@ -619,34 +623,61 @@ heartbeats. `<phase>-product-collection.json` records arming, spawn, decision an
 heartbeat boundaries, counts and fixed reason codes. Missing, mismatched,
 discontinuous, overflowing, failed or insufficient coverage is unavailable;
 partial observations are never proof that a warning was not issued or displayed.
+The collection receipt also seals the byte length and SHA-256 of the trace read
+for coverage. Publication validates only that exact prefix, so later producer
+appends cannot change it; a missing, shortened or changed prefix is unavailable.
 `warning-call-entered` identifies entry into the UI wrapper; `warning-call-returned`
 means the call returned a promise, not that VS Code rendered the warning. A
-`warning-result` records the eventual response. Compare each event's timestamp
-with the decision boundary: post-decision events cannot satisfy the test.
+`warning-result` records the eventual response. The aggregate records the original
+phase start, 120-second deadline, decision time and earlier cutoff. Product events
+and detector samples are classified against that cutoff using their event and
+sample timestamps respectively; console classifications use receipt time.
+Observations at or after the cutoff cannot establish an in-budget interaction.
 `<phase>-detector-timeline.jsonl` and `<phase>-diagnostic-summary.json` contain
 bounded reason-coded workbench observations and renderer-console source/type/
 severity and UTC receipt time, not message text, console arguments, URLs, stacks,
 or paths. Renderer exceptions are represented as `runtime` / `exception` /
-`error`. The sampler starts after the regular workbench shell attaches and proves
-the expected workspace and document by discrete polls. Buffered events, events
-without a usable timestamp, and events outside a proved ownership interval are
-discarded and counted, including gaps during a new poll, after a CDP context
-generation change, and after the final poll. Listener registration,
-failures, Log-domain state and dropped counts are reported; console coverage is
-always partial or unavailable. Earlier UI and extension-host console events are
-unobserved. Detection is sampled: even complete sampling coverage cannot rule out
-a transient prompt between polls. The aggregate downgrades coverage when a
+`error`. The sampler starts after the regular workbench shell attaches. Each
+discrete poll reads the live renderer workspace model and Explorer root paths in
+the same renderer task as the DOM observation, and checks them against physical
+file identities pinned before host launch. Missing or unsupported model access
+is unavailable, not a label-only match. Buffered console events, events without
+a usable timestamp, and events received before an owned sample, during a new
+poll, after a CDP context-generation change, or after the final poll are
+discarded and counted. Between polls, however, workspace ownership is not
+continuously fenced: retained console classifications are renderer-window
+evidence, not proof of the workspace or extension-host process that emitted them.
+Listener registration, failures, Log-domain state and dropped counts are
+reported; console coverage is always partial or unavailable. Earlier UI and
+extension-host console events are unobserved. Detection is sampled: even complete
+sampling coverage cannot rule out a transient prompt between polls. The aggregate
+downgrades coverage when a
 recorded candidate list is truncated. Notification and Do Not Disturb state may
 be unknown.
 
-On observation failure the harness attempts an immediate screenshot of the same
-owned CDP target before disposal or teardown. A separately bounded post-decision
-diagnostic capture may be labeled post-deadline; it does not extend or satisfy the
-120-second acceptance budget. The Notification Center is opened for a second
-image only when the current target, document, active UI and input state are safe;
-otherwise a fixed skip reason is recorded. The summary retains the first
-post-decision sample; a later sample after revealing the center appears separately
-in the timeline. Neither is proof of what was visible before the deadline.
+On observation failure the harness attempts a screenshot of the same owned CDP
+target before disposal or teardown. After the native decision, it briefly pauses
+the renderer, checks the pinned physical workspace file, model roots, Explorer
+root paths, target and document before and after the capture, and then resumes it.
+When the main frame and its contexts can be bound at admission, proven child-frame
+events before capture do not invalidate that document; main-frame or ambiguous
+events do. If binding is unavailable, any context churn since admission prevents
+capture. All context churn during the paused capture still invalidates it.
+The model bridge uses version-specific VS Code smoke-driver internals and fails
+closed when unavailable. It assumes no external process swaps the invocation's
+isolated fixture during capture; a swap away and back between filesystem checks
+cannot be excluded. A renderer pause does not prove that the separate extension
+host remained running or unchanged, nor that composited pixels correspond to an
+earlier moment. Capture is skipped if an in-flight input is uncertain. This
+separately bounded post-decision capture may be labeled post-deadline; it does
+not extend or satisfy the 120-second acceptance budget. A second image is
+attempted only if the Notification Center is already open and the sampled UI is
+safe; the diagnostic does not send input to reveal a closed center because
+workspace ownership cannot be fenced through command dispatch. A closed center
+is therefore uninspected and reported as skipped. The post-decision sample does
+not prove what was visible before the deadline. If renderer cleanup cannot be
+confirmed, the harness sends no further window input and reports the incomplete
+ordinary-close outcome for its process-containment checks.
 Images can contain sensitive pixels:
 publish them only with restricted handling. The runner and pipeline recompute and
 validate an allowlisted `regeneration-diagnostics.jsonl` aggregate containing
@@ -853,6 +884,10 @@ the admitted source/compiled tests and the same current-job identity environment
 ```text
 node apps/vs-code-designer/scripts/run-e2e-cli.js --check-workspace-artifact-regeneration <staged-family-root>
 ```
+
+For a diagnostic-only archive, also provide `LA_E2E_CLI_DIAGNOSTIC_ONLY=true`
+and the original `LA_E2E_CLI_EVIDENCE_INVOCATION` alongside the source, run,
+job and attempt environment values.
 
 This read-only checker starts no Code/runtime. It rejects stale/wrong invocation,
 job/source/platform, incomplete/reordered/failed phase records, unsuccessful

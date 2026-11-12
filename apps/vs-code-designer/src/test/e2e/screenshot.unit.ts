@@ -3,7 +3,9 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { mock } from 'node:test';
+import type { PhysicalWorkspaceIdentityAuthority, PhysicalWorkspaceIdentityLease } from './screenshot';
 import type { ScreenshotReadinessSnapshot } from './screenshotReadiness';
+import { runRegenerationPhysicalAuthorityControls } from './regenerationPhysicalWorkspaceAuthority.unit';
 
 const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Record<string, unknown>) => { window: SerializedDomWindow } };
 
@@ -17,7 +19,19 @@ async function main(): Promise<void> {
     sanitizeDiagnosticCheckpointId,
     setScreenshotFileSystemForTests,
   } = await import('./screenshot');
+  const { captureRegenerationFailureDiagnostics, closeRegenerationWindowAfterDiagnostics } = await import(
+    './workspaceArtifactRegeneration.test'
+  );
 
+  await runRegenerationPhysicalAuthorityControls();
+  let closeCalls = 0;
+  const close = async () => {
+    closeCalls++;
+  };
+  await assert.rejects(closeRegenerationWindowAfterDiagnostics('renderer-cleanup-failed', true, close));
+  assert.strictEqual(closeCalls, 0, 'Unconfirmed renderer cleanup must not send ordinary close input');
+  await closeRegenerationWindowAfterDiagnostics(undefined, true, close);
+  assert.strictEqual(closeCalls, 1, 'The ordinary close path is unchanged when renderer cleanup succeeds');
   testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
   testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId);
   await testOwnerBindingDeadlineRetainsContext(captureCdpScreenshot, screenshotDir);
@@ -34,6 +48,12 @@ async function main(): Promise<void> {
   await testReadinessUnavailableRecordsLastSampleDiagnostics(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticStorageFailureDoesNotThrow(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testImmediateDiagnosticSurvivesMetadataFailure(captureCdpScreenshot, setScreenshotFileSystemForTests, screenshotDir);
+  await testRegenerationScreenshotOwnership(
+    captureCdpScreenshot,
+    captureRegenerationFailureDiagnostics,
+    setScreenshotFileSystemForTests,
+    screenshotDir
+  );
   await testStaleDiagnosticImageIsNotCurrentCapture(captureCdpScreenshot, setScreenshotFileSystemForTests, screenshotDir);
   await testDiagnosticOrderedRegistrationFailureIsReported(captureCdpScreenshot, screenshotDir);
   await testDiagnosticDoesNotRequireSemanticBindingOrLatch(captureCdpScreenshot);
@@ -68,16 +88,878 @@ async function main(): Promise<void> {
   console.log('[screenshot.unit] all tests passed');
 }
 
+type OwnershipFault = 'foreign-root' | 'foreign-title' | 'different-document' | 'invalid-time-origin' | 'generation-change' | 'read-error';
+type PhysicalIdentityFault =
+  | 'foreign-workspace-before'
+  | 'foreign-root-before'
+  | 'foreign-workspace-after'
+  | 'foreign-root-after'
+  | 'foreign-workspace-center-before'
+  | 'foreign-root-center-after'
+  | 'lease-invalidated-during'
+  | 'lease-invalidated-during-center'
+  | 'root-change-during'
+  | 'lease-invalidated-and-renderer-changed'
+  | 'lease-invalidated-and-renderer-changed-center'
+  | 'renderer-id-change-during'
+  | 'cleanup-failed'
+  | 'cleanup-failed-center'
+  | 'missing-root'
+  | 'wrong-target'
+  | 'lease-getter-error-before'
+  | 'lease-getter-error-after'
+  | 'lease-read-error-before'
+  | 'lease-read-error-after'
+  | 'arm-timeout'
+  | 'read-timeout';
+
+/**
+ * An in-memory lease model. These controls verify fail-closed handling of
+ * reported invalidation, not detection of external swaps or host restarts.
+ */
+function fakePhysicalIdentity(
+  workspaceFilePath: string,
+  rootPath: string,
+  foreignWorkspace: string,
+  foreignRoot: string,
+  fault?: PhysicalIdentityFault
+): { authority: PhysicalWorkspaceIdentityAuthority; onCapture: () => void } {
+  let invalidated = false;
+  let rendererInstance = 'modeled-renderer-1';
+  let revision = 0;
+  let rootPaths = [rootPath];
+  let reads = 0;
+  let captures = 0;
+  let leaseChecks = 0;
+  return {
+    authority: {
+      arm: async (targetId, timeOrigin): Promise<PhysicalWorkspaceIdentityLease> => {
+        if (fault === 'arm-timeout') {
+          return new Promise(() => undefined);
+        }
+        return {
+          get invalidated() {
+            leaseChecks++;
+            if (fault === 'lease-getter-error-before' || (fault === 'lease-getter-error-after' && leaseChecks >= 5)) {
+              throw new Error('private-physical-identity-error');
+            }
+            return invalidated;
+          },
+          read: async () => {
+            if (fault === 'read-timeout') {
+              return new Promise(() => undefined);
+            }
+            reads++;
+            if (fault === 'lease-read-error-before' || (fault === 'lease-read-error-after' && reads >= 2)) {
+              throw new Error('private-physical-identity-error');
+            }
+            return {
+              targetId: fault === 'wrong-target' ? 'foreign-target' : targetId,
+              timeOrigin,
+              rendererInstance,
+              revision,
+              workspaceFilePath:
+                fault === 'foreign-workspace-before' ||
+                (fault === 'foreign-workspace-after' && reads >= 2) ||
+                (fault === 'foreign-workspace-center-before' && reads >= 3)
+                  ? foreignWorkspace
+                  : workspaceFilePath,
+              rootPaths:
+                fault === 'foreign-root-before' ||
+                (fault === 'foreign-root-after' && reads >= 2) ||
+                (fault === 'foreign-root-center-after' && reads >= 4)
+                  ? [foreignRoot]
+                  : fault === 'missing-root'
+                    ? []
+                    : rootPaths,
+              uiRootPaths: rootPaths,
+            };
+          },
+          dispose: () => {
+            if (fault === 'cleanup-failed' || (fault === 'cleanup-failed-center' && captures === 2)) {
+              throw new Error('private-cleanup-error');
+            }
+          },
+        };
+      },
+    },
+    onCapture: () => {
+      captures++;
+      if (
+        fault === 'lease-invalidated-during' ||
+        fault === 'lease-invalidated-and-renderer-changed' ||
+        (captures === 2 && (fault === 'lease-invalidated-during-center' || fault === 'lease-invalidated-and-renderer-changed-center'))
+      ) {
+        invalidated = true;
+        revision++;
+      }
+      if (
+        fault === 'lease-invalidated-and-renderer-changed' ||
+        fault === 'renderer-id-change-during' ||
+        (captures === 2 && fault === 'lease-invalidated-and-renderer-changed-center')
+      ) {
+        rendererInstance = 'modeled-renderer-2';
+      }
+      if (fault === 'root-change-during') {
+        rootPaths = [foreignRoot];
+      }
+    },
+  };
+}
+
+class FakeRegenerationScreenshotCdp {
+  targetId: string | undefined = 'unit-workbench-target';
+  contextGeneration: number | undefined = 1;
+  readonly events: string[] = [];
+  ownerReads = 0;
+  captureAttempts = 0;
+
+  constructor(
+    private readonly options: {
+      faults?: Record<number, OwnershipFault>;
+      changeGenerationOnCapture?: number;
+      changeTargetOnCapture?: number;
+      missingGeneration?: boolean;
+      onCapture?: () => void;
+    } = {}
+  ) {
+    if (options.missingGeneration) {
+      this.contextGeneration = undefined;
+    }
+  }
+
+  async evaluate<T>(_contextId: number | undefined, expression: string): Promise<T> {
+    if (expression.includes('roots: (() => {')) {
+      const read = ++this.ownerReads;
+      this.events.push(`owner:${read}`);
+      const fault = this.options.faults?.[read];
+      if (fault === 'read-error') {
+        throw new Error('private-workspace-read-error');
+      }
+      if (fault === 'generation-change') {
+        this.contextGeneration = (this.contextGeneration ?? 0) + 1;
+      }
+      return {
+        timeOrigin: fault === 'different-document' ? 43 : fault === 'invalid-time-origin' ? Number.NaN : 42,
+        title: fault === 'foreign-title' ? 'other-workspace - Visual Studio Code' : 'unit-workspace (workspace) - Visual Studio Code',
+        ready: true,
+        roots: fault === 'foreign-root' ? ['other-app'] : ['unit-app'],
+      } as T;
+    }
+    if (expression.includes('.quick-input-widget input')) {
+      return true as T;
+    }
+    if (expression.includes('.quick-input-list .monaco-list-row .label-name')) {
+      return { x: 10, y: 20 } as T;
+    }
+    if (expression.includes('.notifications-list-container')) {
+      return true as T;
+    }
+    return snapshot({ revision: 0, expectationKind: 'diagnostic' }) as T;
+  }
+
+  async send(method: string): Promise<unknown> {
+    if (method === 'Page.captureScreenshot') {
+      const attempt = ++this.captureAttempts;
+      this.events.push(`capture:${attempt}`);
+      if (this.options.changeGenerationOnCapture === attempt) {
+        this.contextGeneration = (this.contextGeneration ?? 0) + 1;
+      }
+      if (this.options.changeTargetOnCapture === attempt) {
+        this.targetId = 'different-target';
+      }
+      this.options.onCapture?.();
+      return { result: { data: Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, attempt]).toString('base64') } };
+    }
+    if (method.startsWith('Input.')) {
+      this.events.push(method);
+    }
+    if (method === 'Page.getFrameTree') {
+      return { result: { frameTree: { frame: { id: 'unit-workbench-frame' } } } };
+    }
+    return { result: {} };
+  }
+}
+
+async function testRegenerationScreenshotOwnership(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  captureRegenerationFailureDiagnostics: typeof import('./workspaceArtifactRegeneration.test').captureRegenerationFailureDiagnostics,
+  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests,
+  screenshotDir: string
+): Promise<void> {
+  const evidenceDir = fs.mkdtempSync(path.join(os.tmpdir(), 'la-screenshot-owner-evidence-'));
+  const previous = {
+    dir: process.env.LA_E2E_CLI_EVIDENCE_DIR,
+    invocation: process.env.LA_E2E_CLI_EVIDENCE_INVOCATION,
+    enabled: process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED,
+  };
+  const { initializeSuiteEvidenceManifest, manifestFileName, readEvidenceManifest } =
+    require('../../../scripts/vscode-e2e-evidence-manifest') as {
+      initializeSuiteEvidenceManifest: (options: {
+        suiteId: string;
+        invocation: string;
+        platform: string;
+        evidenceDir: string;
+      }) => void;
+      manifestFileName: string;
+      readEvidenceManifest: (manifestPath: string) => {
+        attachments: Array<{ id: string; evidence?: { screenshot?: { path: string; sha256: string } } }>;
+      };
+    };
+  const invocation = 'regeneration-screenshot-ownership-unit';
+  const workspaceFilePath = path.join(screenshotDir, 'unit-workspace.code-workspace');
+  const appDir = path.join(screenshotDir, 'unit-app');
+  const foreignParent = path.join(screenshotDir, 'foreign');
+  const foreignWorkspace = path.join(foreignParent, path.basename(workspaceFilePath));
+  const foreignRoot = path.join(foreignParent, path.basename(appDir));
+  fs.mkdirSync(appDir);
+  fs.mkdirSync(foreignRoot, { recursive: true });
+  fs.writeFileSync(workspaceFilePath, '{}');
+  fs.writeFileSync(foreignWorkspace, '{}');
+  const expectation = { workspaceFilePath, rootPaths: [appDir] };
+  const attachments = () => readEvidenceManifest(path.join(evidenceDir, manifestFileName)).attachments.map((entry) => entry.id);
+
+  try {
+    initializeSuiteEvidenceManifest({ suiteId: 'unitTests', invocation, platform: process.platform, evidenceDir });
+    process.env.LA_E2E_CLI_EVIDENCE_DIR = evidenceDir;
+    process.env.LA_E2E_CLI_EVIDENCE_INVOCATION = invocation;
+    delete process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+
+    const cases: Array<{
+      name: string;
+      options?: ConstructorParameters<typeof FakeRegenerationScreenshotCdp>[0];
+      admittedTimeOrigin?: number | null;
+      admittedGeneration?: number | null;
+      admittedTargetId?: string | null;
+      admittedDocument?: 'valid' | 'invalid' | 'wrong-target';
+      invalidateDocumentDuringCapture?: boolean;
+      physicalFault?: PhysicalIdentityFault;
+      noAuthority?: boolean;
+      replacePathDuringCapture?: 'file' | 'root';
+      attempts: number;
+      reason?: 'capture-unavailable' | 'document-changed';
+    }> = [
+      { name: 'owned', attempts: 1 },
+      { name: 'root-before', options: { faults: { 1: 'foreign-root' } }, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'root-after', options: { faults: { 2: 'foreign-root' } }, attempts: 1, reason: 'capture-unavailable' },
+      { name: 'title-before', options: { faults: { 1: 'foreign-title' } }, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'document-before', options: { faults: { 1: 'different-document' } }, attempts: 0, reason: 'document-changed' },
+      { name: 'document-after', options: { faults: { 2: 'different-document' } }, attempts: 1, reason: 'document-changed' },
+      { name: 'invalid-origin', options: { faults: { 2: 'invalid-time-origin' } }, attempts: 1, reason: 'document-changed' },
+      { name: 'generation-before', options: { faults: { 1: 'generation-change' } }, attempts: 0, reason: 'document-changed' },
+      { name: 'generation-during', options: { changeGenerationOnCapture: 1 }, attempts: 1, reason: 'document-changed' },
+      { name: 'generation-after', options: { faults: { 2: 'generation-change' } }, attempts: 1, reason: 'document-changed' },
+      { name: 'target-during', options: { changeTargetOnCapture: 1 }, attempts: 1, reason: 'document-changed' },
+      { name: 'no-generation', options: { missingGeneration: true }, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'no-admitted-document', admittedTimeOrigin: null, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'no-admitted-generation', admittedGeneration: null, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'generation-changed-since-admission', admittedGeneration: 0, attempts: 0, reason: 'document-changed' },
+      { name: 'tracked-child-churn-before-capture', admittedGeneration: 0, admittedDocument: 'valid', attempts: 1 },
+      { name: 'tracked-main-document-changed', admittedDocument: 'invalid', attempts: 0, reason: 'document-changed' },
+      { name: 'tracked-document-wrong-target', admittedDocument: 'wrong-target', attempts: 0, reason: 'document-changed' },
+      {
+        name: 'tracked-document-changed-during-capture',
+        admittedDocument: 'valid',
+        invalidateDocumentDuringCapture: true,
+        attempts: 1,
+        reason: 'document-changed',
+      },
+      { name: 'no-admitted-target', admittedTargetId: null, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'target-changed-since-admission', admittedTargetId: 'original-target', attempts: 0, reason: 'document-changed' },
+      { name: 'read-error-before', options: { faults: { 1: 'read-error' } }, attempts: 0, reason: 'capture-unavailable' },
+      { name: 'read-error-after', options: { faults: { 2: 'read-error' } }, attempts: 1, reason: 'capture-unavailable' },
+      { name: 'product-never-activated-no-authority', noAuthority: true, attempts: 0, reason: 'capture-unavailable' },
+      {
+        name: 'same-name-foreign-workspace-before',
+        physicalFault: 'foreign-workspace-before',
+        attempts: 0,
+        reason: 'capture-unavailable',
+      },
+      { name: 'same-name-foreign-root-before', physicalFault: 'foreign-root-before', attempts: 0, reason: 'capture-unavailable' },
+      {
+        name: 'same-name-foreign-workspace-after',
+        physicalFault: 'foreign-workspace-after',
+        attempts: 1,
+        reason: 'capture-unavailable',
+      },
+      { name: 'same-name-foreign-root-after', physicalFault: 'foreign-root-after', attempts: 1, reason: 'capture-unavailable' },
+      { name: 'lease-invalidated-during', physicalFault: 'lease-invalidated-during', attempts: 1, reason: 'document-changed' },
+      { name: 'root-change-during', physicalFault: 'root-change-during', attempts: 1, reason: 'capture-unavailable' },
+      {
+        name: 'lease-invalidated-and-renderer-changed',
+        physicalFault: 'lease-invalidated-and-renderer-changed',
+        attempts: 1,
+        reason: 'document-changed',
+      },
+      { name: 'renderer-id-change-during', physicalFault: 'renderer-id-change-during', attempts: 1, reason: 'document-changed' },
+      { name: 'missing-physical-root', physicalFault: 'missing-root', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'wrong-physical-target', physicalFault: 'wrong-target', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'identity-getter-error-before', physicalFault: 'lease-getter-error-before', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'identity-getter-error-after', physicalFault: 'lease-getter-error-after', attempts: 1, reason: 'capture-unavailable' },
+      { name: 'identity-read-error-before', physicalFault: 'lease-read-error-before', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'identity-read-error-after', physicalFault: 'lease-read-error-after', attempts: 1, reason: 'capture-unavailable' },
+      { name: 'identity-arm-timeout', physicalFault: 'arm-timeout', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'identity-read-timeout', physicalFault: 'read-timeout', attempts: 0, reason: 'capture-unavailable' },
+      { name: 'workspace-file-replaced-during', replacePathDuringCapture: 'file', attempts: 1, reason: 'document-changed' },
+      { name: 'root-directory-replaced-during', replacePathDuringCapture: 'root', attempts: 1, reason: 'document-changed' },
+    ];
+    for (const test of cases) {
+      const name = `guarded-${test.name}`;
+      const identity = fakePhysicalIdentity(workspaceFilePath, appDir, foreignWorkspace, foreignRoot, test.physicalFault);
+      const admittedDocument = test.admittedDocument
+        ? {
+            targetId: test.admittedDocument === 'wrong-target' ? 'other-target' : 'unit-workbench-target',
+            invalidated: test.admittedDocument === 'invalid',
+            dispose: () => undefined,
+          }
+        : undefined;
+      const replacePath = test.replacePathDuringCapture === 'file' ? workspaceFilePath : appDir;
+      const savedPath = `${replacePath}-saved`;
+      const cdp = new FakeRegenerationScreenshotCdp({
+        ...test.options,
+        onCapture: () => {
+          test.options?.onCapture?.();
+          identity.onCapture();
+          if (test.invalidateDocumentDuringCapture && admittedDocument) {
+            admittedDocument.invalidated = true;
+          }
+          if (test.replacePathDuringCapture) {
+            fs.renameSync(replacePath, savedPath);
+            if (test.replacePathDuringCapture === 'file') {
+              fs.writeFileSync(replacePath, '{}');
+            } else {
+              fs.mkdirSync(replacePath);
+            }
+          }
+        },
+      });
+      const writes: string[] = [];
+      const registrations: string[] = [];
+      let failure: unknown;
+      if (test.name === 'root-after') {
+        fs.writeFileSync(path.join(screenshotDir, `${name}.png`), Buffer.from('stale-pixels'));
+      }
+      const restore = setScreenshotFileSystemForTests({
+        writeFileSync: (file, data) => {
+          writes.push(String(file));
+          if (String(file).endsWith('.png')) {
+            cdp.events.push('png-write');
+          }
+          fs.writeFileSync(file, data);
+        },
+      });
+      try {
+        const file = await captureCdpScreenshot(cdp, name, {
+          classification: 'diagnostic',
+          captureBeforeObservation: true,
+          immediateCaptureOwnership: {
+            expectation,
+            expectedTargetId: test.admittedTargetId === null ? undefined : (test.admittedTargetId ?? 'unit-workbench-target'),
+            expectedTimeOrigin: test.admittedTimeOrigin === null ? undefined : (test.admittedTimeOrigin ?? 42),
+            expectedContextGeneration: test.admittedGeneration === null ? undefined : (test.admittedGeneration ?? 1),
+            admittedDocument,
+            physicalIdentity: test.noAuthority ? undefined : identity.authority,
+          },
+          expectation: { kind: 'diagnostic', label: name, reason: 'regeneration-phase-failure' },
+          timeoutMs: test.physicalFault === 'arm-timeout' || test.physicalFault === 'read-timeout' ? 50 : 2000,
+          onDiagnosticFailure: (error) => {
+            failure = error;
+          },
+          onOrderedEvidenceStatus: (status) => registrations.push(status),
+        });
+        assert.strictEqual(cdp.captureAttempts, test.attempts, name);
+        if (test.reason) {
+          assert.strictEqual(file, undefined, name);
+          assert.deepStrictEqual(writes, [], `${name} must not write even a stale/failed diagnostic attachment`);
+          assert.deepStrictEqual(registrations, [], `${name} must not register the unowned capture`);
+          assert.strictEqual(fs.existsSync(path.join(screenshotDir, `${name}.png`)), false, name);
+          assert.strictEqual(attachments().includes(name), false, name);
+          if (test.physicalFault === 'arm-timeout') {
+            assert.strictEqual((failure as Error)?.name, 'ScreenshotCaptureCleanupError', name);
+          } else {
+            assert.strictEqual((failure as { reason?: string })?.reason, test.reason, name);
+          }
+          assert.ok(!String(failure).includes('private-workspace-read-error'), 'Ownership failures must not expose raw CDP errors');
+          assert.ok(!String(failure).includes('private-physical-identity-error'), 'Identity failures must not expose raw bridge errors');
+        } else {
+          assert.ok(file && fs.existsSync(file));
+          assert.deepStrictEqual(cdp.events.slice(0, 4), ['owner:1', 'capture:1', 'owner:2', 'png-write']);
+          assert.deepStrictEqual(registrations, ['registered']);
+          assert.ok(attachments().includes(name));
+          assert.ok(!fs.readFileSync(path.join(screenshotDir, `${name}.json`), 'utf8').includes(workspaceFilePath));
+          assert.ok(!fs.readFileSync(path.join(screenshotDir, `${name}.json`), 'utf8').includes(appDir));
+        }
+      } finally {
+        restore();
+        if (test.replacePathDuringCapture && fs.existsSync(savedPath)) {
+          fs.rmSync(replacePath, { recursive: true, force: true });
+          fs.renameSync(savedPath, replacePath);
+        }
+      }
+    }
+
+    let resolveLateLease: ((lease: PhysicalWorkspaceIdentityLease) => void) | undefined;
+    let lateLeaseDisposed = false;
+    const lateAuthority: PhysicalWorkspaceIdentityAuthority = {
+      arm: async () => new Promise((resolve) => (resolveLateLease = resolve)),
+    };
+    const lateCdp = new FakeRegenerationScreenshotCdp();
+    const lateRegistrations: string[] = [];
+    let lateFailure: unknown;
+    const lateFile = await captureCdpScreenshot(lateCdp, 'guarded-late-identity', {
+      classification: 'diagnostic',
+      captureBeforeObservation: true,
+      immediateCaptureOwnership: {
+        expectation,
+        expectedTargetId: 'unit-workbench-target',
+        expectedTimeOrigin: 42,
+        expectedContextGeneration: 1,
+        physicalIdentity: lateAuthority,
+      },
+      expectation: { kind: 'diagnostic', label: 'guarded-late-identity', reason: 'regeneration-phase-failure' },
+      timeoutMs: 50,
+      onDiagnosticFailure: (error) => {
+        lateFailure = error;
+      },
+      onOrderedEvidenceStatus: (status) => lateRegistrations.push(status),
+    });
+    assert.strictEqual(lateFile, undefined);
+    assert.strictEqual(lateCdp.captureAttempts, 0);
+    assert.deepStrictEqual(lateRegistrations, []);
+    assert.strictEqual(attachments().includes('guarded-late-identity'), false);
+    assert.strictEqual((lateFailure as Error)?.name, 'ScreenshotCaptureCleanupError');
+    resolveLateLease?.({
+      invalidated: false,
+      read: async () => {
+        throw new Error('late identity must not be read');
+      },
+      dispose: () => {
+        lateLeaseDisposed = true;
+      },
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    assert.strictEqual(lateLeaseDisposed, true, 'An identity lease arriving after timeout must be disposed');
+
+    let now = Date.now();
+    const clock = mock.method(Date, 'now', () => now);
+    const expiredIdentity = fakePhysicalIdentity(workspaceFilePath, appDir, foreignWorkspace, foreignRoot);
+    const expiredCdp = new FakeRegenerationScreenshotCdp({ onCapture: () => (now += 3000) });
+    const expiredWrites: string[] = [];
+    let expiredFailure: unknown;
+    const restoreExpired = setScreenshotFileSystemForTests({
+      writeFileSync: (file, data) => {
+        expiredWrites.push(String(file));
+        fs.writeFileSync(file, data);
+      },
+    });
+    try {
+      const file = await captureCdpScreenshot(expiredCdp, 'guarded-expired-after-capture', {
+        classification: 'diagnostic',
+        captureBeforeObservation: true,
+        immediateCaptureOwnership: {
+          expectation,
+          expectedTargetId: 'unit-workbench-target',
+          expectedTimeOrigin: 42,
+          expectedContextGeneration: 1,
+          physicalIdentity: expiredIdentity.authority,
+        },
+        expectation: { kind: 'diagnostic', label: 'guarded-expired-after-capture', reason: 'regeneration-phase-failure' },
+        timeoutMs: 2000,
+        onDiagnosticFailure: (error) => {
+          expiredFailure = error;
+        },
+      });
+      assert.strictEqual(file, undefined);
+      assert.strictEqual(expiredCdp.captureAttempts, 1);
+      assert.deepStrictEqual(expiredWrites, [], 'Pixels returned after the capture deadline must not be persisted');
+      assert.strictEqual(attachments().includes('guarded-expired-after-capture'), false);
+      assert.strictEqual((expiredFailure as { reason?: string })?.reason, 'capture-unavailable');
+    } finally {
+      restoreExpired();
+      clock.mock.restore();
+    }
+
+    const metadataFailureCdp = new FakeRegenerationScreenshotCdp();
+    const metadataIdentity = fakePhysicalIdentity(workspaceFilePath, appDir, foreignWorkspace, foreignRoot);
+    let firstMetadataWrite = true;
+    const restoreMetadataFailure = setScreenshotFileSystemForTests({
+      writeFileSync: (file, data) => {
+        if (String(file).endsWith('.json') && firstMetadataWrite) {
+          firstMetadataWrite = false;
+          throw new Error('unit-metadata-write-failure');
+        }
+        fs.writeFileSync(file, data);
+      },
+    });
+    try {
+      const file = await captureCdpScreenshot(metadataFailureCdp, 'guarded-verified-metadata-failure', {
+        classification: 'diagnostic',
+        captureBeforeObservation: true,
+        immediateCaptureOwnership: {
+          expectation,
+          expectedTargetId: 'unit-workbench-target',
+          expectedTimeOrigin: 42,
+          expectedContextGeneration: 1,
+          physicalIdentity: metadataIdentity.authority,
+        },
+        expectation: { kind: 'diagnostic', label: 'guarded-verified-metadata-failure', reason: 'regeneration-phase-failure' },
+        timeoutMs: 2000,
+      });
+      assert.ok(file && fs.existsSync(file), 'A later metadata failure may preserve only already-verified pixels');
+      assert.deepStrictEqual(metadataFailureCdp.events.slice(0, 3), ['owner:1', 'capture:1', 'owner:2']);
+      assert.ok(attachments().includes('guarded-verified-metadata-failure'));
+    } finally {
+      restoreMetadataFailure();
+    }
+
+    for (const failMetadata of [false, true]) {
+      const name = `guarded-verified-bytes-${failMetadata ? 'fallback' : 'normal'}`;
+      const cdp = new FakeRegenerationScreenshotCdp();
+      const identity = fakePhysicalIdentity(workspaceFilePath, appDir, foreignWorkspace, foreignRoot);
+      let metadataFailurePending = failMetadata;
+      const restore = setScreenshotFileSystemForTests({
+        writeFileSync: (file, data) => {
+          if (String(file).endsWith('.json') && metadataFailurePending) {
+            metadataFailurePending = false;
+            throw new Error('unit-metadata-write-failure');
+          }
+          fs.writeFileSync(file, data);
+          if (String(file).endsWith('.png')) {
+            fs.writeFileSync(file, Buffer.from('foreign-pixels'));
+          }
+        },
+      });
+      try {
+        const file = await captureCdpScreenshot(cdp, name, {
+          classification: 'diagnostic',
+          captureBeforeObservation: true,
+          immediateCaptureOwnership: {
+            expectation,
+            expectedTargetId: 'unit-workbench-target',
+            expectedTimeOrigin: 42,
+            expectedContextGeneration: 1,
+            physicalIdentity: identity.authority,
+          },
+          expectation: { kind: 'diagnostic', label: name, reason: 'regeneration-phase-failure' },
+          timeoutMs: 2000,
+        });
+        assert.ok(file);
+        assert.deepStrictEqual(fs.readFileSync(file), Buffer.from('foreign-pixels'));
+        const attachment = readEvidenceManifest(path.join(evidenceDir, manifestFileName)).attachments.find((entry) => entry.id === name);
+        assert.ok(attachment?.evidence?.screenshot);
+        const reference = attachment.evidence.screenshot;
+        const bundled = fs.readFileSync(path.join(evidenceDir, ...reference.path.split('/')));
+        assert.deepStrictEqual(bundled, Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 1]));
+      } finally {
+        restore();
+      }
+    }
+
+    const state = (centerVisible: boolean) => ({
+      shellOwned: true,
+      documentVisible: true,
+      documentFocused: true,
+      documentChanged: false,
+      centerMounted: centerVisible,
+      centerVisible,
+      toastCount: 0,
+      retainedCount: centerVisible ? 4 : 0,
+      dnd: 'unknown',
+      blockingUiVisible: false,
+      truncated: false,
+      candidates: centerVisible ? [{ kind: 'notification', category: 'initialization', yesCount: 1, reasonCodes: ['obstructed-yes'] }] : [],
+    });
+    const hostCases: Array<{
+      name: string;
+      options?: ConstructorParameters<typeof FakeRegenerationScreenshotCdp>[0];
+      physicalFault?: PhysicalIdentityFault;
+      noAuthority?: boolean;
+      uncertainInput?: boolean;
+      modal?: 'before';
+      centerClosed?: boolean;
+      first: 'captured' | 'unavailable';
+      center: 'captured' | 'unavailable' | 'skipped';
+      reason?: 'capture-unavailable' | 'document-changed' | 'uncertain-input' | 'renderer-cleanup-failed';
+      centerReason?: string;
+      attempts: number;
+    }> = [
+      { name: 'center-retained-obstructed-yes', first: 'captured', center: 'captured', attempts: 2 },
+      {
+        name: 'renderer-cleanup-failed',
+        physicalFault: 'cleanup-failed',
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'renderer-cleanup-failed',
+        attempts: 1,
+      },
+      {
+        name: 'renderer-arm-timeout-leaves-cleanup-unconfirmed',
+        physicalFault: 'arm-timeout',
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        centerReason: 'renderer-cleanup-failed',
+        attempts: 0,
+      },
+      {
+        name: 'center-renderer-cleanup-failed',
+        physicalFault: 'cleanup-failed-center',
+        first: 'captured',
+        center: 'captured',
+        centerReason: 'renderer-cleanup-failed',
+        attempts: 2,
+      },
+      {
+        name: 'uncertain-input',
+        uncertainInput: true,
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'uncertain-input',
+        attempts: 0,
+      },
+      {
+        name: 'no-identity-bridge',
+        noAuthority: true,
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 0,
+      },
+      {
+        name: 'same-name-foreign-root',
+        physicalFault: 'foreign-root-before',
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 0,
+      },
+      {
+        name: 'first-unowned-before',
+        options: { faults: { 1: 'foreign-root' } },
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 0,
+      },
+      {
+        name: 'first-unowned-after',
+        options: { faults: { 2: 'foreign-root' } },
+        first: 'unavailable',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 1,
+      },
+      {
+        name: 'blocking-dialog-before',
+        modal: 'before',
+        first: 'captured',
+        center: 'skipped',
+        centerReason: 'blocking-or-ambiguous-ui',
+        attempts: 1,
+      },
+      {
+        name: 'closed-center-is-not-revealed',
+        centerClosed: true,
+        first: 'captured',
+        center: 'skipped',
+        centerReason: 'notification-center-not-open',
+        attempts: 1,
+      },
+      {
+        name: 'center-unowned-before',
+        options: { faults: { 3: 'foreign-root' } },
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 1,
+      },
+      {
+        name: 'center-same-name-foreign-workspace-before',
+        physicalFault: 'foreign-workspace-center-before',
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 1,
+      },
+      {
+        name: 'center-same-name-foreign-root-after',
+        physicalFault: 'foreign-root-center-after',
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 2,
+      },
+      {
+        name: 'center-lease-invalidated',
+        physicalFault: 'lease-invalidated-during-center',
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'document-changed',
+        attempts: 2,
+      },
+      {
+        name: 'center-lease-invalidated-and-renderer-changed',
+        physicalFault: 'lease-invalidated-and-renderer-changed-center',
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'document-changed',
+        attempts: 2,
+      },
+      {
+        name: 'center-unowned-after',
+        options: { faults: { 4: 'foreign-root' } },
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'capture-unavailable',
+        attempts: 2,
+      },
+      {
+        name: 'center-document-after',
+        options: { faults: { 4: 'different-document' } },
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'document-changed',
+        attempts: 2,
+      },
+      {
+        name: 'center-generation-during',
+        options: { changeGenerationOnCapture: 2 },
+        first: 'captured',
+        center: 'unavailable',
+        reason: 'document-changed',
+        attempts: 2,
+      },
+    ];
+    type CaptureArgs = Parameters<typeof captureRegenerationFailureDiagnostics>;
+    for (const test of hostCases) {
+      const identity = fakePhysicalIdentity(workspaceFilePath, appDir, foreignWorkspace, foreignRoot, test.physicalFault);
+      const cdp = new FakeRegenerationScreenshotCdp({
+        ...test.options,
+        onCapture: () => {
+          test.options?.onCapture?.();
+          identity.onCapture();
+        },
+      });
+      const initialStatus = () => ({
+        status: 'unavailable',
+        reason: 'not-attempted',
+        checkpoint: null as string | null,
+        postDeadline: false,
+        registration: 'unavailable',
+      });
+      let samples = 0;
+      const diagnostics = {
+        screenshots: { beforeTeardown: initialStatus(), notificationCenter: initialStatus() },
+        input: {
+          uncertain: test.uncertainInput ?? false,
+          pending: 0,
+          send: async <T>(_method: string, action: () => Promise<T>) => action(),
+        },
+        stopSampling: async () => undefined,
+        stopAndSample: async () => {
+          cdp.events.push(`sample:${++samples}`);
+          if (test.first === 'unavailable') {
+            return undefined;
+          }
+          return {
+            ...state(!test.centerClosed),
+            blockingUiVisible: test.modal === 'before',
+          };
+        },
+        hasSampleSince: () => true,
+      };
+      const phaseName = `unit-${test.name}`;
+      const firstName = `workspace-regeneration-${phaseName}-failure`;
+      const centerName = `workspace-regeneration-${phaseName}-notification-center`;
+      const restore = setScreenshotFileSystemForTests({
+        writeFileSync: (file, data) => {
+          if (String(file).endsWith('.png')) {
+            cdp.events.push(`png:${path.basename(String(file), '.png')}`);
+          }
+          fs.writeFileSync(file, data);
+        },
+      });
+      try {
+        const decisionAt = Date.now();
+        await captureRegenerationFailureDiagnostics(
+          cdp as unknown as CaptureArgs[0],
+          diagnostics as unknown as CaptureArgs[1],
+          { invocation } as CaptureArgs[2],
+          { workspace: { appDir, workspaceFilePath } } as CaptureArgs[3],
+          { phase: phaseName, startedAt: decisionAt - 120_001, deadline: decisionAt - 1 },
+          decisionAt,
+          42,
+          1,
+          'unit-workbench-target',
+          test.noAuthority ? undefined : identity.authority
+        );
+        const { beforeTeardown: first, notificationCenter: center } = diagnostics.screenshots;
+        assert.strictEqual(first.status, test.first, test.name);
+        assert.strictEqual(center.status, test.center, test.name);
+        assert.strictEqual(cdp.captureAttempts, test.attempts, test.name);
+        assert.ok(!cdp.events.some((event) => event.startsWith('Input.')), `${test.name} must not send post-decision input`);
+        for (const [status, name] of [
+          [first, firstName],
+          [center, centerName],
+        ] as const) {
+          const captured = status.status === 'captured';
+          assert.strictEqual(fs.existsSync(path.join(screenshotDir, `${name}.png`)), captured, name);
+          assert.strictEqual(attachments().includes(name), captured, name);
+          assert.strictEqual(status.registration, captured ? 'registered' : 'unavailable', name);
+          assert.strictEqual(status.postDeadline, true, 'Diagnostics do not extend the expired acceptance deadline');
+        }
+        const unavailable = first.status === 'unavailable' ? first : center.status === 'unavailable' ? center : undefined;
+        if (unavailable) {
+          assert.strictEqual(unavailable.reason, test.reason, test.name);
+        }
+        if (test.centerReason) {
+          assert.strictEqual(center.reason, test.centerReason, test.name);
+        }
+        if (test.first === 'captured') {
+          assert.ok(cdp.events.indexOf('owner:1') < cdp.events.indexOf('capture:1'));
+          assert.ok(cdp.events.indexOf('capture:1') < cdp.events.indexOf('owner:2'));
+          assert.ok(cdp.events.indexOf('owner:2') < cdp.events.indexOf(`png:${firstName}`));
+        }
+        if (test.center === 'captured') {
+          assert.ok(cdp.events.indexOf('sample:1') < cdp.events.indexOf('owner:3'));
+          assert.ok(cdp.events.indexOf('owner:3') < cdp.events.indexOf('capture:2'));
+          assert.ok(cdp.events.indexOf('capture:2') < cdp.events.indexOf('owner:4'));
+          assert.ok(cdp.events.indexOf('owner:4') < cdp.events.indexOf(`png:${centerName}`));
+        }
+      } finally {
+        restore();
+      }
+    }
+  } finally {
+    for (const [key, value] of [
+      ['LA_E2E_CLI_EVIDENCE_DIR', previous.dir],
+      ['LA_E2E_CLI_EVIDENCE_INVOCATION', previous.invocation],
+      ['LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED', previous.enabled],
+    ] as const) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+    fs.rmSync(evidenceDir, { recursive: true, force: true });
+  }
+}
+
 async function testImmediateDiagnosticSurvivesMetadataFailure(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
   setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests,
   screenshotDir: string
 ): Promise<void> {
   const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 1]);
+  const methods: string[] = [];
   const cdp = {
     targetId: 'owned-unit-target',
     contextGeneration: 1,
-    send: async (method: string) => (method === 'Page.captureScreenshot' ? { result: { data: png.toString('base64') } } : { result: {} }),
+    send: async (method: string) => {
+      methods.push(method);
+      return method === 'Page.captureScreenshot' ? { result: { data: png.toString('base64') } } : { result: {} };
+    },
     evaluate: async () => {
       throw new Error('private-readiness-error');
     },
@@ -115,6 +997,7 @@ async function testImmediateDiagnosticSurvivesMetadataFailure(
     });
     assert.strictEqual(file, path.join(screenshotDir, 'unit-immediate-preserved.png'));
     assert.deepStrictEqual(fs.readFileSync(file!), png);
+    assert.strictEqual(methods[0], 'Page.captureScreenshot', 'Other immediate diagnostics must remain capture-first');
     assert.strictEqual(failed, true);
     assert.ok(captureStartedAt > 0 && captureStartedAt <= Date.now());
     assert.strictEqual(registration, 'not-configured');

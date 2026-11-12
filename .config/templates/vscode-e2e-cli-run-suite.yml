@@ -825,7 +825,7 @@ jobs:
               if (Get-Command node -ErrorAction SilentlyContinue) {
                 try {
                   node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/regeneration-diagnostic-publication.js" `
-                    --stage "$regenerationEvidenceRoot" "$aggregateDestination"
+                    --stage "$regenerationEvidenceRoot" "$aggregateDestination" "$evidenceManifestSource"
                   $aggregateStaged = $LASTEXITCODE -eq 0
                 } catch {
                   Write-Host '[workspace-regeneration-diagnostics] aggregate-staging-command-unavailable'

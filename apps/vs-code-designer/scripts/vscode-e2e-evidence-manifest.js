@@ -5,6 +5,7 @@
 /* global module, process, require */
 const fs = require('node:fs');
 const path = require('node:path');
+const { Buffer } = require('node:buffer');
 const { createHash, randomUUID } = require('node:crypto');
 const { getSuiteDescriptor } = require('./vscode-e2e-evidence-plans');
 
@@ -123,7 +124,7 @@ function declareMultiRootEvidenceCheckpoints({ manifestPath, rootLabels, expecte
   });
 }
 
-function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expectedInvocation }) {
+function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expectedInvocation, verifiedScreenshotBytes }) {
   const checkpointId = requireSafeId(metadata.checkpoint, 'screenshot checkpoint');
   const classification = requireClassification(metadata.classification);
   const verdict = requireVerdict(metadata.verdict);
@@ -143,6 +144,7 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
         reasonCodes: metadata.reasonCodes,
         metadata,
         screenshotPath,
+        verifiedScreenshotBytes,
         bundleDirectory: path.dirname(manifestPath),
       });
       return manifest;
@@ -155,12 +157,13 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
     const bundleDirectory = path.dirname(manifestPath);
     const relativeDirectory = classification === 'diagnostic' ? 'diagnostics' : 'screenshots';
     const screenshotReference =
-      fs.existsSync(screenshotPath) && verdict !== 'disabled' && verdict !== 'failed'
+      (verifiedScreenshotBytes !== undefined || fs.existsSync(screenshotPath)) && verdict !== 'disabled' && verdict !== 'failed'
         ? copyBundleFile({
             sourcePath: screenshotPath,
             bundleDirectory,
             relativePath: `${relativeDirectory}/${checkpointId}.png`,
             maxBytes: 20 * 1024 * 1024,
+            verifiedBytes: verifiedScreenshotBytes,
           })
         : undefined;
     if ((verdict === 'accepted' || verdict === 'diagnostic') && !screenshotReference) {
@@ -462,15 +465,19 @@ function publicCaptureSummary(metadata) {
   return summary;
 }
 
-function recordAttachment(manifest, { id, phase, classification, verdict, reasonCodes, metadata, screenshotPath, bundleDirectory }) {
+function recordAttachment(
+  manifest,
+  { id, phase, classification, verdict, reasonCodes, metadata, screenshotPath, verifiedScreenshotBytes, bundleDirectory }
+) {
   const relativeDirectory = 'diagnostics';
   const screenshotReference =
-    fs.existsSync(screenshotPath) && verdict === 'diagnostic'
+    (verifiedScreenshotBytes !== undefined || fs.existsSync(screenshotPath)) && verdict === 'diagnostic'
       ? copyBundleFile({
           sourcePath: screenshotPath,
           bundleDirectory,
           relativePath: `${relativeDirectory}/${id}.png`,
           maxBytes: 20 * 1024 * 1024,
+          verifiedBytes: verifiedScreenshotBytes,
         })
       : undefined;
   const publicSidecar = {
@@ -541,15 +548,34 @@ function statusFromVerdict(verdict) {
   }[verdict];
 }
 
-function copyBundleFile({ sourcePath, bundleDirectory, relativePath, maxBytes }) {
+function copyBundleFile({ sourcePath, bundleDirectory, relativePath, maxBytes, verifiedBytes }) {
+  const normalized = requireRelativeBundlePath(relativePath);
+  const destination = resolveBundlePath(bundleDirectory, normalized);
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  if (verifiedBytes !== undefined) {
+    if (!Buffer.isBuffer(verifiedBytes) || verifiedBytes.length > maxBytes) {
+      throw new Error('Verified screenshot bytes are invalid or too large');
+    }
+    const expectedHash = createHash('sha256').update(verifiedBytes).digest('hex');
+    const temporary = `${destination}.${randomUUID()}.tmp`;
+    try {
+      fs.writeFileSync(temporary, verifiedBytes, { flag: 'wx', mode: 0o600 });
+      fs.renameSync(temporary, destination);
+    } finally {
+      fs.rmSync(temporary, { force: true });
+    }
+    const reference = describeFile(destination, normalized);
+    if (reference.sha256 !== expectedHash || reference.size !== verifiedBytes.length) {
+      fs.rmSync(destination, { force: true });
+      throw new Error('Verified screenshot changed during evidence registration');
+    }
+    return reference;
+  }
   const source = path.resolve(sourcePath);
   const stat = fs.lstatSync(source);
   if (!stat.isFile() || stat.isSymbolicLink() || stat.size > maxBytes) {
     throw new Error(`Evidence source file is unsafe or exceeds ${maxBytes} bytes: ${source}`);
   }
-  const normalized = requireRelativeBundlePath(relativePath);
-  const destination = resolveBundlePath(bundleDirectory, normalized);
-  fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.copyFileSync(source, destination);
   return describeFile(destination, normalized);
 }

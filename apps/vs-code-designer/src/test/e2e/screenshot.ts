@@ -3,7 +3,13 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
-import { connectToVsCodeWorkbenchCdp, hasExactVisibleWorkbenchIframeForTarget } from './cdpClient';
+import { connectToVsCodeWorkbenchCdp, hasExactVisibleWorkbenchIframeForTarget, type CdpMainDocumentIdentity } from './cdpClient';
+import {
+  physicalWorkspacePaths,
+  samePhysicalPath,
+  ScreenshotCaptureCleanupError,
+  type PhysicalPathIdentity,
+} from './physicalWorkspaceIdentity';
 import {
   buildScreenshotMetadata,
   buildScreenshotReadinessExpression,
@@ -17,6 +23,7 @@ import {
   type ScreenshotReadinessMetadata,
   type ScreenshotReadinessSnapshot,
 } from './screenshotReadiness';
+import { readRegularWorkbenchOwnership, type RegularWorkbenchOwnershipExpectation } from './workbenchCdpActions';
 
 type SemanticTextGroup = string | string[];
 
@@ -65,6 +72,15 @@ interface CdpClient {
 
 interface ScreenshotCaptureOptions {
   captureBeforeObservation?: boolean;
+  immediateCaptureOwnership?: {
+    expectation: RegularWorkbenchOwnershipExpectation;
+    expectedTargetId: string | undefined;
+    expectedTimeOrigin: number | undefined;
+    expectedContextGeneration: number | undefined;
+    admittedDocument?: CdpMainDocumentIdentity;
+    physicalIdentity?: PhysicalWorkspaceIdentityAuthority;
+    pinnedPaths?: readonly PhysicalPathIdentity[];
+  };
   diagnosticContext?: ScreenshotReadinessMetadata['diagnosticContext'];
   onDiagnosticFailure?: (error: unknown) => void;
   onImmediateCaptureStart?: (startedAtMs: number) => void;
@@ -87,6 +103,236 @@ interface ScreenshotCaptureOptions {
 interface OwnerBindingInvalidationLatch {
   readRevision(): Promise<number>;
   dispose(): Promise<void>;
+}
+
+/**
+ * The opt-in lease binds the live workspace model to the admitted renderer.
+ * It must prevent renderer workspace changes during capture, or invalidate
+ * before any such change is visible. Paths are used only in memory.
+ */
+export interface PhysicalWorkspaceIdentityAuthority {
+  arm(targetId: string, timeOrigin: number, deadlineMs: number): Promise<PhysicalWorkspaceIdentityLease>;
+}
+
+export interface PhysicalWorkspaceIdentityLease {
+  readonly invalidated: boolean;
+  read(deadlineMs: number): Promise<{
+    targetId: string;
+    timeOrigin: number;
+    rendererInstance: string;
+    revision: number;
+    workspaceFilePath: string;
+    rootPaths: readonly string[];
+    uiRootPaths: readonly string[];
+  }>;
+  evaluate?<T>(expression: string, deadlineMs: number): Promise<T>;
+  dispose(): void | Promise<void>;
+}
+
+export class ScreenshotCaptureOwnershipError extends Error {
+  constructor(readonly reason: 'capture-unavailable' | 'document-changed') {
+    super(
+      reason === 'document-changed' ? 'Diagnostic screenshot document or context changed' : 'Diagnostic screenshot ownership unavailable'
+    );
+    this.name = 'ScreenshotCaptureOwnershipError';
+  }
+}
+
+export { ScreenshotCaptureCleanupError } from './physicalWorkspaceIdentity';
+
+interface ImmediateCaptureOwner {
+  targetId: string;
+  generation: number;
+  timeOrigin: number;
+  rendererInstance: string;
+  revision: number;
+  physicalPaths: PhysicalPathIdentity[];
+}
+
+async function armPhysicalWorkspaceIdentity(
+  authority: PhysicalWorkspaceIdentityAuthority | undefined,
+  targetId: string | undefined,
+  timeOrigin: number | undefined,
+  deadline: number
+): Promise<PhysicalWorkspaceIdentityLease> {
+  if (!authority || !targetId || typeof timeOrigin !== 'number' || !Number.isFinite(timeOrigin) || timeOrigin <= 0) {
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+  let abandoned = false;
+  let settled = false;
+  let resolvedLease: PhysicalWorkspaceIdentityLease | undefined;
+  const pending = Promise.resolve().then(() => authority.arm(targetId, timeOrigin, deadline));
+  // A timed-out arm may eventually return a lease; do not leave it active.
+  pending.then(
+    (lease) => {
+      settled = true;
+      resolvedLease = lease;
+      if (abandoned) {
+        Promise.resolve()
+          .then(() => lease.dispose())
+          .catch(() => {
+            console.warn('[screenshot] physical-identity-cleanup-failed');
+          });
+      }
+    },
+    () => {
+      settled = true;
+    }
+  );
+  try {
+    const lease = await withTimeout(pending, remaining(deadline, 4000), 'physical workspace identity');
+    remaining(deadline, 1000);
+    if (!lease || lease.invalidated !== false || typeof lease.read !== 'function' || typeof lease.dispose !== 'function') {
+      throw new Error('identity lease unavailable');
+    }
+    return lease;
+  } catch (error) {
+    abandoned = true;
+    console.warn('[screenshot] physical-identity-arm-unavailable');
+    if (!settled) {
+      console.warn('[screenshot] physical-identity-cleanup-unconfirmed');
+      throw new ScreenshotCaptureCleanupError();
+    }
+    try {
+      await resolvedLease?.dispose();
+    } catch {
+      console.warn('[screenshot] physical-identity-cleanup-failed');
+      throw new ScreenshotCaptureCleanupError();
+    }
+    if (error instanceof ScreenshotCaptureCleanupError) {
+      throw error;
+    }
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+}
+
+function assertPhysicalLeaseActive(lease: PhysicalWorkspaceIdentityLease): void {
+  let invalidated: boolean;
+  try {
+    invalidated = lease.invalidated;
+  } catch {
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+  if (invalidated === true) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+  if (invalidated !== false) {
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+}
+
+async function checkImmediateCaptureOwner(
+  cdp: CdpClient,
+  ownership: NonNullable<ScreenshotCaptureOptions['immediateCaptureOwnership']>,
+  lease: PhysicalWorkspaceIdentityLease,
+  deadline: number,
+  before?: ImmediateCaptureOwner
+): Promise<ImmediateCaptureOwner> {
+  const { targetId, contextGeneration: generation } = cdp;
+  const { expectedTargetId, expectedTimeOrigin, expectedContextGeneration, admittedDocument } = ownership;
+  if (
+    !targetId ||
+    !expectedTargetId ||
+    typeof generation !== 'number' ||
+    !Number.isSafeInteger(generation) ||
+    generation < 0 ||
+    typeof expectedContextGeneration !== 'number' ||
+    !Number.isSafeInteger(expectedContextGeneration) ||
+    expectedContextGeneration < 0 ||
+    typeof expectedTimeOrigin !== 'number' ||
+    !Number.isFinite(expectedTimeOrigin) ||
+    expectedTimeOrigin <= 0
+  ) {
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+  assertPhysicalLeaseActive(lease);
+  if (admittedDocument && (admittedDocument.targetId !== expectedTargetId || admittedDocument.invalidated !== false)) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+  if (
+    targetId !== expectedTargetId ||
+    (!admittedDocument && generation !== expectedContextGeneration) ||
+    (before && (targetId !== before.targetId || generation !== before.generation))
+  ) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+
+  let state: Awaited<ReturnType<typeof readRegularWorkbenchOwnership>>;
+  try {
+    const bounded: CdpClient = {
+      evaluate: (contextId, expression, options) =>
+        lease.evaluate && contextId === undefined
+          ? lease.evaluate(expression, Math.min(deadline, Date.now() + Math.min(options?.timeoutMs ?? 1000, 1000)))
+          : cdp.evaluate(contextId, expression, { timeoutMs: remaining(deadline, Math.min(options?.timeoutMs ?? 1000, 1000)) }),
+      send: (method, params, options) =>
+        cdp.send(method, params, { timeoutMs: remaining(deadline, Math.min(options?.timeoutMs ?? 1000, 1000)) }),
+    };
+    const timeoutMs = remaining(deadline, 1000);
+    state = await withTimeout(readRegularWorkbenchOwnership(bounded, ownership.expectation), timeoutMs, 'diagnostic screenshot ownership');
+    remaining(deadline, 1000);
+  } catch {
+    // Neither raw workbench content nor transport errors belong in the
+    // diagnostic status; failed or late ownership reads are unavailable.
+    console.warn('[screenshot] workbench-ownership-read-unavailable');
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+
+  if (cdp.targetId !== targetId || cdp.contextGeneration !== generation) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+  if (!state.owned) {
+    console.warn('[screenshot] workbench-ownership-mismatch');
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+  if (!Number.isFinite(state.timeOrigin) || state.timeOrigin !== expectedTimeOrigin || (before && state.timeOrigin !== before.timeOrigin)) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+  let identity: Awaited<ReturnType<PhysicalWorkspaceIdentityLease['read']>>;
+  let physicalPaths: PhysicalPathIdentity[];
+  try {
+    identity = await withTimeout(lease.read(deadline), remaining(deadline, 1000), 'physical workspace identity');
+    if (
+      identity.targetId !== targetId ||
+      identity.timeOrigin !== state.timeOrigin ||
+      typeof identity.rendererInstance !== 'string' ||
+      identity.rendererInstance.length === 0 ||
+      !Number.isSafeInteger(identity.revision) ||
+      identity.revision < 0 ||
+      !Array.isArray(identity.rootPaths) ||
+      identity.rootPaths.length !== ownership.expectation.rootPaths.length
+    ) {
+      throw new Error('physical identity unavailable');
+    }
+    physicalPaths = await withTimeout(
+      physicalWorkspacePaths(identity, ownership.expectation, ownership.pinnedPaths),
+      remaining(deadline, 1000),
+      'physical workspace paths'
+    );
+    remaining(deadline, 1000);
+  } catch {
+    console.warn('[screenshot] physical-workspace-paths-unavailable');
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
+  assertPhysicalLeaseActive(lease);
+  if (
+    cdp.targetId !== targetId ||
+    cdp.contextGeneration !== generation ||
+    (before &&
+      (identity.rendererInstance !== before.rendererInstance ||
+        identity.revision !== before.revision ||
+        physicalPaths.length !== before.physicalPaths.length ||
+        physicalPaths.some((value, index) => !samePhysicalPath(value, before.physicalPaths[index]))))
+  ) {
+    throw new ScreenshotCaptureOwnershipError('document-changed');
+  }
+  return {
+    targetId,
+    generation,
+    timeOrigin: state.timeOrigin,
+    rendererInstance: identity.rendererInstance,
+    revision: identity.revision,
+    physicalPaths,
+  };
 }
 
 export function installFailureScreenshotHook(): void {
@@ -196,9 +442,11 @@ export async function captureCdpScreenshot(
 ): Promise<string | undefined> {
   const classification = options.classification ?? 'evidence';
   let immediatePixelsWritten = false;
+  let immediatePixels: Buffer | undefined;
   try {
-    return await captureCdpScreenshotCore(cdp, name, options, classification, () => {
+    return await captureCdpScreenshotCore(cdp, name, options, classification, (pixels) => {
       immediatePixelsWritten = true;
+      immediatePixels = pixels;
     });
   } catch (error) {
     if (classification === 'diagnostic') {
@@ -227,7 +475,8 @@ export async function captureCdpScreenshot(
                 captureAttempts: 1,
                 reasonCodes: ['metadata-after-capture-failed'],
               }),
-              options.onOrderedEvidenceStatus
+              options.onOrderedEvidenceStatus,
+              immediatePixels
             );
           } catch {
             try {
@@ -251,7 +500,7 @@ async function captureCdpScreenshotCore(
   name: string,
   options: ScreenshotCaptureOptions,
   classification: ScreenshotClassification,
-  onImmediatePixelsWritten: () => void
+  onImmediatePixelsWritten: (pixels: Buffer) => void
 ): Promise<string | undefined> {
   screenshotFileSystem.mkdirSync(screenshotRoot, { recursive: true });
 
@@ -277,40 +526,94 @@ async function captureCdpScreenshotCore(
   let frameId = 'main-frame';
   let generation = cdp.contextGeneration ?? 0;
   const immediateDiagnostic = classification === 'diagnostic' && options.captureBeforeObservation === true;
+  if (options.immediateCaptureOwnership && !immediateDiagnostic) {
+    throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+  }
   let data: string | undefined;
   let immediatePixelsPersisted = false;
   if (immediateDiagnostic) {
-    captureAttempts++;
-    const captureStartedAt = Date.now();
-    events.push({ name: 'capture-start', elapsedMs: captureStartedAt - startedAt, attempt: captureAttempts, generation });
+    const ownership = options.immediateCaptureOwnership;
+    let lease: PhysicalWorkspaceIdentityLease | undefined;
+    let captureFailed = false;
+    let captureError: unknown;
+    let cleanupFailed = false;
     try {
-      options.onImmediateCaptureStart?.(captureStartedAt);
-    } catch {
-      // Timing observers cannot change capture acceptance.
-    }
-    try {
-      const response = (await cdp.send(
-        'Page.captureScreenshot',
-        { format: 'png', captureBeyondViewport: options.captureBeyondViewport ?? false },
-        { timeoutMs: remaining(deadline, 5000) }
-      )) as { result?: { data?: string } };
-      data = response.result?.data;
-      if (data) {
-        screenshotFileSystem.writeFileSync(screenshotPath, Buffer.from(data, 'base64'));
-        immediatePixelsPersisted = true;
-        onImmediatePixelsWritten();
+      if (ownership) {
+        if (!ownership.expectedTargetId) {
+          throw new ScreenshotCaptureOwnershipError('capture-unavailable');
+        }
+        if (cdp.targetId !== ownership.expectedTargetId) {
+          throw new ScreenshotCaptureOwnershipError('document-changed');
+        }
+        lease = await armPhysicalWorkspaceIdentity(ownership.physicalIdentity, cdp.targetId, ownership.expectedTimeOrigin, deadline);
       }
-      events.push({ name: 'capture-end', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
+      const before = ownership && lease ? await checkImmediateCaptureOwner(cdp, ownership, lease, deadline) : undefined;
+      if (before && lease) {
+        assertPhysicalLeaseActive(lease);
+        if (cdp.targetId !== before.targetId || cdp.contextGeneration !== before.generation) {
+          throw new ScreenshotCaptureOwnershipError('document-changed');
+        }
+      }
+      captureAttempts++;
+      const captureStartedAt = Date.now();
+      events.push({ name: 'capture-start', elapsedMs: captureStartedAt - startedAt, attempt: captureAttempts, generation });
+      try {
+        options.onImmediateCaptureStart?.(captureStartedAt);
+      } catch {
+        // Timing observers cannot change capture acceptance.
+      }
+      try {
+        const response = (await cdp.send(
+          'Page.captureScreenshot',
+          { format: 'png', captureBeyondViewport: options.captureBeyondViewport ?? false },
+          { timeoutMs: remaining(deadline, 5000) }
+        )) as { result?: { data?: string } };
+        const candidateData = response.result?.data;
+        if (candidateData) {
+          if (ownership && before && lease) {
+            await checkImmediateCaptureOwner(cdp, ownership, lease, deadline, before);
+            assertPhysicalLeaseActive(lease);
+            if (cdp.targetId !== before.targetId || cdp.contextGeneration !== before.generation) {
+              throw new ScreenshotCaptureOwnershipError('document-changed');
+            }
+          }
+          data = candidateData;
+          const pixels = Buffer.from(candidateData, 'base64');
+          screenshotFileSystem.writeFileSync(screenshotPath, pixels);
+          immediatePixelsPersisted = true;
+          onImmediatePixelsWritten(pixels);
+        }
+        events.push({ name: 'capture-end', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
+      } catch (error) {
+        if (error instanceof ScreenshotCaptureOwnershipError) {
+          throw error;
+        }
+        data = undefined;
+        reportDiagnosticFailure(options, error);
+        events.push({
+          name: 'capture-rpc-failed',
+          elapsedMs: Date.now() - startedAt,
+          attempt: captureAttempts,
+          generation,
+          reasonCodes: ['capture-rpc-failed'],
+        });
+      }
     } catch (error) {
-      data = undefined;
-      reportDiagnosticFailure(options, error);
-      events.push({
-        name: 'capture-rpc-failed',
-        elapsedMs: Date.now() - startedAt,
-        attempt: captureAttempts,
-        generation,
-        reasonCodes: ['capture-rpc-failed'],
-      });
+      captureFailed = true;
+      captureError = error;
+    } finally {
+      try {
+        await lease?.dispose();
+      } catch {
+        console.warn('[screenshot] physical-identity-cleanup-failed');
+        cleanupFailed = true;
+      }
+    }
+    if (cleanupFailed) {
+      throw new ScreenshotCaptureCleanupError();
+    }
+    if (captureFailed) {
+      throw captureError;
     }
   }
 
@@ -593,7 +896,8 @@ async function captureCdpScreenshotCore(
       reasonCodes: samples.at(-1)?.reasonCodes,
       events,
     }),
-    options.onOrderedEvidenceStatus
+    options.onOrderedEvidenceStatus,
+    immediateDiagnostic ? Buffer.from(data, 'base64') : undefined
   );
   console.log(`[screenshot] Saved: ${screenshotPath}`);
   return screenshotPath;
@@ -1507,11 +1811,12 @@ function getMainFrameId(frameTree: unknown): string | undefined {
 function writeScreenshotMetadata(
   metadataPath: string,
   metadata: ScreenshotReadinessMetadata,
-  onOrderedEvidenceStatus?: ScreenshotCaptureOptions['onOrderedEvidenceStatus']
+  onOrderedEvidenceStatus?: ScreenshotCaptureOptions['onOrderedEvidenceStatus'],
+  verifiedScreenshotBytes?: Buffer
 ): void {
   screenshotFileSystem.mkdirSync(path.dirname(metadataPath), { recursive: true });
   screenshotFileSystem.writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`);
-  const status = recordOrderedEvidenceMetadata(metadataPath, metadata);
+  const status = recordOrderedEvidenceMetadata(metadataPath, metadata, verifiedScreenshotBytes);
   try {
     onOrderedEvidenceStatus?.(status);
   } catch {
@@ -1521,7 +1826,8 @@ function writeScreenshotMetadata(
 
 function recordOrderedEvidenceMetadata(
   metadataPath: string,
-  metadata: ScreenshotReadinessMetadata
+  metadata: ScreenshotReadinessMetadata,
+  verifiedScreenshotBytes?: Buffer
 ): 'registered' | 'not-configured' | 'unavailable' {
   const evidenceDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
   const expectedInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
@@ -1537,6 +1843,7 @@ function recordOrderedEvidenceMetadata(
         metadataPath: string;
         metadata: ScreenshotReadinessMetadata;
         expectedInvocation: string;
+        verifiedScreenshotBytes?: Buffer;
       }) => void;
     };
     recordScreenshotMetadata({
@@ -1544,6 +1851,7 @@ function recordOrderedEvidenceMetadata(
       metadataPath,
       metadata,
       expectedInvocation,
+      verifiedScreenshotBytes,
     });
     return 'registered';
   } catch (error) {

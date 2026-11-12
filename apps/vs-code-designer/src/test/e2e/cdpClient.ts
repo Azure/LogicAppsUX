@@ -30,12 +30,173 @@ interface CdpExecutionContext {
   };
 }
 
+export interface CdpMainDocumentIdentity {
+  readonly targetId: string;
+  readonly invalidated: boolean;
+  dispose(): void;
+}
+
+class MainDocumentIdentity implements CdpMainDocumentIdentity {
+  private lost = false;
+
+  constructor(
+    readonly targetId: string,
+    private readonly mainFrameId: string,
+    private readonly frames: Map<string, string | undefined>,
+    private readonly contextFrames: Map<number, string>,
+    private readonly detach: () => void
+  ) {}
+
+  get invalidated(): boolean {
+    return this.lost;
+  }
+
+  invalidate(): void {
+    this.lost = true;
+  }
+
+  dispose(): void {
+    this.invalidate();
+    this.detach();
+  }
+
+  observe(message: CdpResponse): void {
+    if (this.lost) {
+      return;
+    }
+    const params = message.params;
+    switch (message.method) {
+      case 'Runtime.executionContextsCleared':
+      case 'Target.detachedFromTarget': {
+        this.invalidate();
+        return;
+      }
+      case 'Runtime.executionContextCreated': {
+        const id = params?.context?.id;
+        const frameId = params?.context?.auxData?.frameId;
+        if (
+          !Number.isSafeInteger(id) ||
+          typeof frameId !== 'string' ||
+          !this.frames.has(frameId) ||
+          frameId === this.mainFrameId ||
+          this.contextFrames.has(id) ||
+          this.contextFrames.size >= 4096
+        ) {
+          this.invalidate();
+          return;
+        }
+        this.contextFrames.set(id, frameId);
+        return;
+      }
+      case 'Runtime.executionContextDestroyed': {
+        const id = params?.executionContextId;
+        const frameId = this.contextFrames.get(id);
+        if (!Number.isSafeInteger(id) || !frameId || frameId === this.mainFrameId) {
+          this.invalidate();
+          return;
+        }
+        this.contextFrames.delete(id);
+        return;
+      }
+      case 'Page.frameAttached': {
+        const id = params?.frameId;
+        const parentId = params?.parentFrameId;
+        if (
+          typeof id !== 'string' ||
+          !id ||
+          typeof parentId !== 'string' ||
+          !this.frames.has(parentId) ||
+          id === this.mainFrameId ||
+          (!this.frames.has(id) && this.frames.size >= 1024) ||
+          (this.frames.has(id) && this.frames.get(id) !== parentId)
+        ) {
+          this.invalidate();
+          return;
+        }
+        this.frames.set(id, parentId);
+        return;
+      }
+      case 'Page.frameNavigated': {
+        const id = params?.frame?.id;
+        const parentId = params?.frame?.parentId;
+        if (
+          typeof id !== 'string' ||
+          !id ||
+          typeof parentId !== 'string' ||
+          !this.frames.has(parentId) ||
+          id === this.mainFrameId ||
+          (!this.frames.has(id) && this.frames.size >= 1024) ||
+          (this.frames.has(id) && this.frames.get(id) !== parentId)
+        ) {
+          this.invalidate();
+          return;
+        }
+        this.frames.set(id, parentId);
+        return;
+      }
+      case 'Page.frameDetached': {
+        const id = params?.frameId;
+        if (typeof id !== 'string' || id === this.mainFrameId || !this.frames.has(id)) {
+          this.invalidate();
+          return;
+        }
+        const removed = new Set([id]);
+        let changed = true;
+        while (changed) {
+          changed = false;
+          for (const [frameId, parentId] of this.frames) {
+            if (parentId && removed.has(parentId) && !removed.has(frameId)) {
+              removed.add(frameId);
+              changed = true;
+            }
+          }
+        }
+        for (const frameId of removed) {
+          this.frames.delete(frameId);
+        }
+      }
+    }
+  }
+}
+
+function documentFrames(value: unknown): { mainFrameId: string; frames: Map<string, string | undefined> } | undefined {
+  const frames = new Map<string, string | undefined>();
+  const visit = (node: unknown, parentId?: string): boolean => {
+    if (!node || typeof node !== 'object' || frames.size >= 1024) {
+      return false;
+    }
+    const entry = node as { frame?: { id?: unknown; parentId?: unknown }; childFrames?: unknown };
+    const id = entry.frame?.id;
+    if (
+      typeof id !== 'string' ||
+      !id ||
+      frames.has(id) ||
+      (parentId === undefined ? entry.frame?.parentId !== undefined : entry.frame?.parentId !== parentId) ||
+      (entry.childFrames !== undefined && !Array.isArray(entry.childFrames))
+    ) {
+      return false;
+    }
+    frames.set(id, parentId);
+    return (entry.childFrames ?? []).every((child: unknown) => visit(child, id));
+  };
+  if (!visit(value)) {
+    return undefined;
+  }
+  return { mainFrameId: frames.keys().next().value!, frames };
+}
+
 /** Deliberately excludes console arguments, messages, URLs and stack traces. */
 export interface CdpConsoleDiagnostic {
   source: 'runtime' | 'log';
   type: string;
   severity: 'error' | 'warning' | 'info' | 'debug' | 'unknown';
   timestamp: number | null;
+}
+
+export interface CdpDebuggerEvent {
+  method: 'Debugger.paused' | 'Debugger.resumed';
+  callFrameId?: string;
+  reason?: string;
 }
 
 function consoleDiagnostic(message: CdpResponse): CdpConsoleDiagnostic | undefined {
@@ -110,6 +271,8 @@ export class CdpConnection {
   private readonly contextListeners: Array<(context: CdpExecutionContext) => void> = [];
   private readonly lifecycleListeners: Array<(event: CdpResponse) => void> = [];
   private readonly consoleListeners = new Map<(event: CdpConsoleDiagnostic) => void, (() => void) | undefined>();
+  private readonly debuggerListeners = new Map<(event: CdpDebuggerEvent) => void, (() => void) | undefined>();
+  private readonly mainDocuments = new Set<MainDocumentIdentity>();
   private consoleListenerFailureReported = false;
   private readonly contexts = new Map<number, CdpExecutionContext>();
   private generation = 0;
@@ -122,12 +285,18 @@ export class CdpConnection {
   ) {
     socket.on('data', (chunk) => this.onData(chunk));
     socket.on('error', (error) => {
+      for (const document of this.mainDocuments) {
+        document.invalidate();
+      }
       recordCdpDiagnostic(this.diagnosticConnection, 0, 'socket-error', this.pending.size, undefined, error);
       this.rejectAll(error);
     });
     socket.on('close', () => {
       recordCdpDiagnostic(this.diagnosticConnection, 0, 'connection-close', this.pending.size);
       this.generation++;
+      for (const document of this.mainDocuments) {
+        document.invalidate();
+      }
       this.rejectAll(new Error('CDP WebSocket closed'));
       this.timedOut.clear();
     });
@@ -184,6 +353,34 @@ export class CdpConnection {
 
   get contextGeneration(): number {
     return this.generation;
+  }
+
+  trackMainDocument(frameTree: unknown, expectedGeneration: number): CdpMainDocumentIdentity | undefined {
+    if (!this.targetId || this.generation !== expectedGeneration) {
+      return undefined;
+    }
+    const tree = documentFrames(frameTree);
+    if (!tree) {
+      return undefined;
+    }
+    const contextFrames = new Map<number, string>();
+    let mainContextFound = false;
+    for (const [id, context] of this.contexts) {
+      const frameId = context.auxData?.frameId;
+      if (!Number.isSafeInteger(id) || !frameId || !tree.frames.has(frameId) || contextFrames.size >= 4096) {
+        return undefined;
+      }
+      mainContextFound ||= frameId === tree.mainFrameId;
+      contextFrames.set(id, frameId);
+    }
+    if (!mainContextFound) {
+      return undefined;
+    }
+    const document = new MainDocumentIdentity(this.targetId, tree.mainFrameId, tree.frames, contextFrames, () =>
+      this.mainDocuments.delete(document)
+    );
+    this.mainDocuments.add(document);
+    return document;
   }
 
   async send(method: string, params?: Record<string, unknown>, options: { timeoutMs?: number } = {}): Promise<CdpResponse> {
@@ -262,6 +459,11 @@ export class CdpConnection {
     return () => this.consoleListeners.delete(listener);
   }
 
+  onDebuggerEvent(listener: (event: CdpDebuggerEvent) => void, onFailure?: () => void): () => void {
+    this.debuggerListeners.set(listener, onFailure);
+    return () => this.debuggerListeners.delete(listener);
+  }
+
   getExecutionContextIds(): number[] {
     return [...this.contexts.keys()];
   }
@@ -295,6 +497,31 @@ export class CdpConnection {
       }
 
       const message = JSON.parse(frame.payload.toString('utf8')) as CdpResponse;
+      if (typeof message.id !== 'number') {
+        for (const document of this.mainDocuments) {
+          document.observe(message);
+        }
+      }
+      if (this.debuggerListeners.size > 0 && (message.method === 'Debugger.paused' || message.method === 'Debugger.resumed')) {
+        const event: CdpDebuggerEvent = {
+          method: message.method,
+          ...(typeof message.params?.callFrames?.[0]?.callFrameId === 'string'
+            ? { callFrameId: message.params.callFrames[0].callFrameId }
+            : {}),
+          ...(typeof message.params?.reason === 'string' ? { reason: message.params.reason } : {}),
+        };
+        for (const [listener, onFailure] of this.debuggerListeners) {
+          try {
+            listener(event);
+          } catch {
+            try {
+              onFailure?.();
+            } catch {
+              console.warn('[cdp] optional-debugger-listener-status-failed');
+            }
+          }
+        }
+      }
       if (this.consoleListeners.size > 0) {
         const event = consoleDiagnostic(message);
         if (event) {

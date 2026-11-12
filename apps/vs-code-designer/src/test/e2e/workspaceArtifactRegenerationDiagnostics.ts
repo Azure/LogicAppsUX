@@ -152,6 +152,8 @@ export interface RegenerationProductCoverage {
   decisionAtUtc: string;
   lastEventAtUtc: string | null;
   lastHeartbeatAtUtc: string | null;
+  traceByteLength: number | null;
+  traceSha256: string | null;
 }
 
 function iso(value: number | undefined): string | null {
@@ -171,10 +173,12 @@ export function armRegenerationProbe(options: {
   identity: Record<string, string>;
   env: NodeJS.ProcessEnv;
 }): RegenerationProbe {
-  const childEnv = { ...options.env };
-  for (const variable of regenerationProbeVariables) {
-    delete childEnv[variable];
-  }
+  const probeVariables = new Set<string>(regenerationProbeVariables);
+  const childEnv = Object.fromEntries(
+    Object.entries(options.env).filter(
+      ([key]) => !probeVariables.has(key.toUpperCase()) && key.toUpperCase() !== 'LA_E2E_CLI_DIAGNOSTIC_ONLY'
+    )
+  );
   const probe: RegenerationProbe = {
     requested: options.env.LA_E2E_CLI_DIAGNOSTIC_ONLY === 'true',
     childEnv,
@@ -182,8 +186,6 @@ export function armRegenerationProbe(options: {
     invocation: options.invocation,
     root: options.root,
   };
-  // The runner-only switch is not an extension-host feature flag.
-  delete childEnv.LA_E2E_CLI_DIAGNOSTIC_ONLY;
   if (!probe.requested) {
     return probe;
   }
@@ -261,7 +263,7 @@ export function armRegenerationProbe(options: {
   return probe;
 }
 
-function readOwnedTrace(probe: RegenerationProbe): string {
+function readOwnedTrace(probe: RegenerationProbe): Buffer {
   if (!probe.tracePath || !probe.receiptPath || !probe.traceIdentity || !probe.receiptIdentity || !probe.receiptHash) {
     throw new Error('unarmed');
   }
@@ -320,7 +322,7 @@ function readOwnedTrace(probe: RegenerationProbe): string {
     if (fs.fstatSync(fd).size !== actual.size) {
       throw new Error('changing');
     }
-    return buffer.toString('utf8');
+    return buffer;
   } finally {
     fs.closeSync(fd);
   }
@@ -351,6 +353,8 @@ export function assessRegenerationProductCoverage(probe: RegenerationProbe, deci
     decisionAtUtc: iso(decisionAt)!,
     lastEventAtUtc: null,
     lastHeartbeatAtUtc: null,
+    traceByteLength: null,
+    traceSha256: null,
   };
   const reject = (reason: string) => {
     if (!result.reasonCodes.includes(reason)) {
@@ -374,7 +378,10 @@ export function assessRegenerationProductCoverage(probe: RegenerationProbe, deci
   }
   let contents: string;
   try {
-    contents = readOwnedTrace(probe);
+    const bytes = readOwnedTrace(probe);
+    result.traceByteLength = bytes.length;
+    result.traceSha256 = createHash('sha256').update(bytes).digest('hex');
+    contents = bytes.toString('utf8');
   } catch (error) {
     const kind = error instanceof Error ? error.message : '';
     reject(

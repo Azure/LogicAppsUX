@@ -346,6 +346,12 @@ function shouldRemoveEnvKey(key) {
   return SUITE_CONTROL_ENV_PATTERNS.some((pattern) => pattern.test(key));
 }
 
+function stripRegenerationProbeEnvironment(env) {
+  return Object.fromEntries(
+    Object.entries(env).filter(([key]) => !DIAGNOSTIC_CONTROL_ENV_PATTERN.test(key) || key.toUpperCase() === 'LA_E2E_CLI_DIAGNOSTIC_ONLY')
+  );
+}
+
 function buildSuiteEnvironment(baseEnv, context, extraEnv = {}, { diagnosticOnly = false } = {}) {
   const env = {};
   for (const [key, value] of Object.entries(baseEnv)) {
@@ -963,6 +969,7 @@ module.exports = {
   normalizeSuiteSelection,
   prepareSuiteExtensionsDirectory,
   runBatchSuites,
+  stripRegenerationProbeEnvironment,
   buildDirectoryIntegrityManifest,
   getSuiteScopedAzureEnv,
   getSuiteScopedCredentialEnv,

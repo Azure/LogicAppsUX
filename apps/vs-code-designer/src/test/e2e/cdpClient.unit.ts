@@ -24,6 +24,7 @@ async function main(): Promise<void> {
   testAmbiguousWorkbenchTargets();
   testNonWorkbenchTargetsRejected();
   testSocketCloseInvalidatesGeneration();
+  testMainDocumentTracking();
   await testCreateWorkspaceContextRequiresOwnDocumentControls();
   await testWorkbenchDiscoveryFetchTimesOut();
   await testWorkbenchDiscoveryJsonBodyTimesOut();
@@ -36,7 +37,122 @@ async function main(): Promise<void> {
   await testDiagnosticFailurePreservesPrimaryOutcomes();
   await testDiagnosticBoundsAndLateHistory();
   testPrivateRendererConsoleAndExceptions();
+  testDebuggerEventsAreScopedAndDetached();
   console.log('[cdpClient.unit] all tests passed');
+}
+
+function testMainDocumentTracking(): void {
+  const tree = { frame: { id: 'main' }, childFrames: [{ frame: { id: 'child', parentId: 'main' } }] };
+  const prepare = () => {
+    const h = diagnosticHarness();
+    respond(h.socket, { method: 'Runtime.executionContextCreated', params: { context: { id: 1, auxData: { frameId: 'main' } } } });
+    respond(h.socket, { method: 'Runtime.executionContextCreated', params: { context: { id: 2, auxData: { frameId: 'child' } } } });
+    return h;
+  };
+  const child = prepare();
+  try {
+    const admitted = child.connection.contextGeneration;
+    const document = child.connection.trackMainDocument(tree, admitted);
+    assert.ok(document);
+    respond(child.socket, { method: 'Page.frameNavigated', params: { frame: { id: 'child', parentId: 'main' } } });
+    respond(child.socket, { method: 'Runtime.executionContextDestroyed', params: { executionContextId: 2 } });
+    respond(child.socket, { method: 'Runtime.executionContextCreated', params: { context: { id: 3, auxData: { frameId: 'child' } } } });
+    respond(child.socket, { method: 'Page.frameAttached', params: { frameId: 'grandchild', parentFrameId: 'child' } });
+    respond(child.socket, {
+      method: 'Runtime.executionContextCreated',
+      params: { context: { id: 4, auxData: { frameId: 'grandchild' } } },
+    });
+    respond(child.socket, { method: 'Page.frameDetached', params: { frameId: 'child' } });
+    respond(child.socket, { method: 'Runtime.executionContextDestroyed', params: { executionContextId: 3 } });
+    respond(child.socket, { method: 'Runtime.executionContextDestroyed', params: { executionContextId: 4 } });
+    assert.ok(child.connection.contextGeneration > admitted);
+    assert.strictEqual(document.invalidated, false, 'Proven child-frame churn does not replace the admitted main document');
+    respond(child.socket, { method: 'Page.frameNavigated', params: { frame: { id: 'main' } } });
+    assert.strictEqual(document.invalidated, true);
+    document.dispose();
+  } finally {
+    child.restore();
+    child.connection.dispose();
+  }
+
+  const invalidations = [
+    { method: 'Runtime.executionContextDestroyed', params: { executionContextId: 1 } },
+    { method: 'Runtime.executionContextDestroyed', params: { executionContextId: 999 } },
+    { method: 'Runtime.executionContextCreated', params: { context: { id: 3, auxData: { frameId: 'main' } } } },
+    { method: 'Runtime.executionContextCreated', params: { context: { id: 3, auxData: {} } } },
+    { method: 'Runtime.executionContextsCleared' },
+    { method: 'Page.frameDetached', params: { frameId: 'main' } },
+    { method: 'Page.frameDetached', params: { frameId: 'unknown' } },
+    { method: 'Page.frameNavigated', params: { frame: { id: 'child' } } },
+    { method: 'Page.frameAttached', params: { frameId: 'foreign', parentFrameId: 'unknown' } },
+    { method: 'Target.detachedFromTarget' },
+  ];
+  for (const event of invalidations) {
+    const h = prepare();
+    try {
+      const document = h.connection.trackMainDocument(tree, h.connection.contextGeneration);
+      assert.ok(document);
+      respond(h.socket, event);
+      assert.strictEqual(document.invalidated, true, `Must reject ambiguous or main-document event ${event.method}`);
+    } finally {
+      h.restore();
+      h.connection.dispose();
+    }
+  }
+
+  const admission = prepare();
+  try {
+    const generation = admission.connection.contextGeneration;
+    assert.strictEqual(admission.connection.trackMainDocument(tree, generation - 1), undefined);
+    assert.strictEqual(
+      admission.connection.trackMainDocument({ frame: { id: 'main' }, childFrames: [{ frame: { id: 'child' } }] }, generation),
+      undefined
+    );
+    const document = admission.connection.trackMainDocument(tree, generation);
+    assert.ok(document);
+    admission.socket.emit('close');
+    assert.strictEqual(document.invalidated, true);
+  } finally {
+    admission.restore();
+    admission.connection.dispose();
+  }
+}
+
+function testDebuggerEventsAreScopedAndDetached(): void {
+  const h = diagnosticHarness();
+  const events: unknown[] = [];
+  let failures = 0;
+  try {
+    const detach = h.connection.onDebuggerEvent((event) => events.push(event));
+    h.connection.onDebuggerEvent(
+      () => {
+        throw new Error('private-listener-error');
+      },
+      () => {
+        failures++;
+      }
+    );
+    respond(h.socket, {
+      method: 'Debugger.paused',
+      params: {
+        reason: 'other',
+        callFrames: [{ callFrameId: 'frame-1', url: 'private-url', scopeChain: ['private-scope'] }],
+      },
+    });
+    respond(h.socket, { method: 'Debugger.resumed', params: { secret: 'private-value' } });
+    assert.deepStrictEqual(events, [
+      { method: 'Debugger.paused', callFrameId: 'frame-1', reason: 'other' },
+      { method: 'Debugger.resumed' },
+    ]);
+    assert.strictEqual(failures, 2);
+    assert.ok(!JSON.stringify(events).includes('private-'));
+    detach();
+    respond(h.socket, { method: 'Debugger.resumed' });
+    assert.strictEqual(events.length, 2);
+  } finally {
+    h.restore();
+    h.connection.dispose();
+  }
 }
 
 function diagnosticHarness(maxEvents = 256) {
@@ -114,7 +230,7 @@ function testPrivateRendererConsoleAndExceptions(): void {
 
 async function testWebviewDiscoveryEnableHonorsOriginalDeadline(): Promise<void> {
   const h = diagnosticHarness();
-  mock.timers.enable({ apis: ['setTimeout'] });
+  mock.timers.enable({ apis: ['Date', 'setTimeout'] });
   try {
     const result = assert.rejects(
       waitForWebviewFrameContext(h.connection, { allTextIncludes: ['Source schema'], description: 'Mapper', timeoutMs: 1000 }),

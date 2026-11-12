@@ -87,6 +87,7 @@ const {
   _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, parseMochaLog, writeSingleResult },
 } = require('./summarize-e2e-cli-results.js');
 const { assertSuccessfulMsnTerminal } = require('./e2e-cli-terminal');
+const { regenerationDiagnosticIdentity } = require('./regeneration-diagnostic-publication');
 const {
   CONTENT_MANIFEST_NAME,
   CS_DEV_KIT_E2E_VERSION,
@@ -404,12 +405,17 @@ function testDiagnosticRegenerationFailurePublication() {
   const terminalResultPath = path.join(root, 'terminal.json');
   const cleanupLedgerPath = path.join(root, 'cleanup.json');
   const phaseResultsPath = path.join(root, 'phases.jsonl');
+  const evidenceInvocation = 'workspaceArtifactRegeneration-33333333-3333-4333-8333-333333333333';
+  const identity = regenerationDiagnosticIdentity(process.env, evidenceInvocation);
   fs.mkdirSync(source, { recursive: true });
-  fs.writeFileSync(path.join(source, 'invocation.json'), '{"invocation":"11111111-1111-4111-8111-111111111111"}\n');
+  fs.writeFileSync(
+    path.join(source, 'invocation.json'),
+    JSON.stringify({ schemaVersion: 1, invocation: '11111111-1111-4111-8111-111111111111', identity })
+  );
   fs.writeFileSync(terminalResultPath, '{"complete":false}\n');
   fs.writeFileSync(cleanupLedgerPath, '{"verified":false}\n');
   fs.writeFileSync(phaseResultsPath, '{"complete":false}\n');
-  const context = { reportsRoot, terminalResultPath, cleanupLedgerPath, phaseResultsPath };
+  const context = { reportsRoot, terminalResultPath, cleanupLedgerPath, phaseResultsPath, evidenceInvocation };
   const previous = process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY;
   process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY = 'true';
   try {
@@ -435,8 +441,10 @@ async function testRegenerationDiagnosticsPublication() {
   const workspaceRoot = path.join(tempRoot, 'regeneration-publication-workspaces');
   const workspaceParent = path.join(workspaceRoot, 'regeneration-workspace');
   const phaseResultsPath = path.join(reportsRoot, 'suite-phase-results.jsonl');
-  const identity = { source: 'unit', run: 'unit', job: 'unit', platform: process.platform };
+  const evidenceInvocation = 'workspaceArtifactRegeneration-33333333-3333-4333-8333-333333333333';
+  const identity = regenerationDiagnosticIdentity(process.env, evidenceInvocation);
   const regenerationContext = {
+    schemaVersion: 1,
     root: source,
     identity,
     invocation: '11111111-1111-4111-8111-111111111111',
@@ -495,8 +503,8 @@ async function testRegenerationDiagnosticsPublication() {
   assert.strictEqual(fs.existsSync(path.join(destination, 'regeneration-diagnostics.jsonl')), false);
   const diagnosticDestination = path.join(tempRoot, 'regeneration-publication-diagnostic');
   publishRegenerationDiagnostics(
-    { reportsRoot },
-    { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: diagnosticDestination, LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' }
+    { reportsRoot, evidenceInvocation },
+    { ...process.env, LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: diagnosticDestination, LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true' }
   );
   const records = fs
     .readFileSync(path.join(diagnosticDestination, 'regeneration-diagnostics.jsonl'), 'utf8')
