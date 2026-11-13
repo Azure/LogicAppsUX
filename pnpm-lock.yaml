@@ -141,13 +141,13 @@ importers:
         version: 4.6.0(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       '@vitest/coverage-istanbul':
         specifier: ^3.2.4
-        version: 3.2.4(vitest@3.2.6)
+        version: 3.2.4(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       '@vitest/ui':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.6)
       '@xyflow/system':
-        specifier: ^0.0.37
-        version: 0.0.37
+        specifier: ^0.0.69
+        version: 0.0.69
       D:
         specifier: ^1.0.0
         version: 1.0.0
@@ -516,7 +516,7 @@ importers:
         version: 4.6.0(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       '@vitest/coverage-v8':
         specifier: ^2.1.8
-        version: 2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
+        version: 2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       jsdom:
         specifier: ^26.0.0
         version: 26.1.0
@@ -872,7 +872,7 @@ importers:
         version: 18.3.0
       '@vitest/coverage-istanbul':
         specifier: ^3.2.4
-        version: 3.2.4(vitest@3.2.6)
+        version: 3.2.4(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       '@vitest/ui':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.6)
@@ -1095,8 +1095,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       elkjs:
         specifier: 0.9.1
         version: 0.9.1
@@ -1183,8 +1183,8 @@ importers:
         specifier: 1.9.7
         version: 1.9.7(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@4.2.1))(react@18.3.1)
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       fast-xml-parser:
         specifier: ^4.5.6
         version: 4.5.7
@@ -1236,7 +1236,7 @@ importers:
         version: 7.0.3
       css-loader:
         specifier: ^6.8.1
-        version: 6.10.0(webpack@5.96.1)
+        version: 6.10.0(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       jsdom:
         specifier: ^24.1.3
         version: 24.1.3
@@ -1245,19 +1245,19 @@ importers:
         version: 4.2.0
       less-loader:
         specifier: 12.2.0
-        version: 12.2.0(less@4.2.0)(webpack@5.96.1)
+        version: 12.2.0(less@4.2.0)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       mini-css-extract-plugin:
         specifier: 2.9.2
-        version: 2.9.2(webpack@5.96.1)
+        version: 2.9.2(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       monocart-coverage-reports:
         specifier: ^2.13.2
         version: 2.13.2
       style-loader:
         specifier: ^3.3.3
-        version: 3.3.4(webpack@5.96.1)
+        version: 3.3.4(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       ts-loader:
         specifier: ^9.5.1
-        version: 9.6.2(loader-utils@3.2.1)(typescript@5.9.3)(webpack@5.96.1)
+        version: 9.6.2(loader-utils@3.2.1)(typescript@5.9.3)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       webpack:
         specifier: ^5.89.0
         version: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
@@ -1322,8 +1322,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       elkjs:
         specifier: 0.8.2
         version: 0.8.2
@@ -1539,8 +1539,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       dompurify:
         specifier: 3.4.12
         version: 3.4.12
@@ -1685,8 +1685,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       file-saver:
         specifier: 2.0.5
         version: 2.0.5
@@ -1815,11 +1815,11 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@xyflow/system':
-        specifier: ^0.0.37
-        version: 0.0.37
+        specifier: ^0.0.69
+        version: 0.0.69
       axios:
         specifier: 1.18.0
         version: 1.18.0(debug@4.4.3)
@@ -1874,8 +1874,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^12.8.5
+        version: 12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 1.18.0
         version: 1.18.0(debug@4.4.3)
@@ -8185,17 +8185,14 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha1-0pHGpOl5ibXGHZrPOWrk/hM6cY0=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xtuc/long/-/long-4.2.2.tgz}
 
-  '@xyflow/react@12.3.5':
-    resolution: {integrity: sha1-iMou/i3fEwC8Fxou95f3y0E4bKQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xyflow/react/-/react-12.3.5.tgz}
+  '@xyflow/react@12.8.5':
+    resolution: {integrity: sha1-wB686zIcIkwkWOdAqVxut5MNlA8=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xyflow/react/-/react-12.8.5.tgz}
     peerDependencies:
       react: 18.3.1
       react-dom: 18.3.1
 
-  '@xyflow/system@0.0.37':
-    resolution: {integrity: sha1-62Vr6KW2qinftFbOSFlFRDe0ejQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xyflow/system/-/system-0.0.37.tgz}
-
-  '@xyflow/system@0.0.46':
-    resolution: {integrity: sha1-sKWRXVnA6lym0k4euQxaDX7aeGQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xyflow/system/-/system-0.0.46.tgz}
+  '@xyflow/system@0.0.69':
+    resolution: {integrity: sha1-8ermF0DkaZ+uX7tYXVK1Hr3zRgU=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@xyflow/system/-/system-0.0.69.tgz}
 
   D@1.0.0:
     resolution: {integrity: sha1-w0ik4DT3KEe+USBvxTD8CJ6cwqk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/D/-/D-1.0.0.tgz}
@@ -25463,7 +25460,23 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-istanbul@3.2.4(vitest@3.2.6)':
+  '@vitest/coverage-istanbul@3.2.4(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
+    dependencies:
+      '@istanbuljs/schema': 0.1.3
+      debug: 4.4.3(supports-color@8.1.1)
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-instrument: 6.0.3
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.1.7
+      magicast: 0.3.5
+      test-exclude: 7.0.1
+      tinyrainbow: 2.0.0
+      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-istanbul@3.2.4(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.4.3(supports-color@8.1.1)
@@ -25479,7 +25492,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
+  '@vitest/coverage-v8@2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -25569,7 +25582,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
 
   '@vitest/utils@2.0.5':
     dependencies:
@@ -25810,17 +25823,17 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
 
-  '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.96.1)':
+  '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))':
     dependencies:
       webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
-  '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.96.1)':
+  '@webpack-cli/info@2.0.2(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))':
     dependencies:
       webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
 
-  '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.96.1)':
+  '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))':
     dependencies:
       webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.96.1)
@@ -25831,9 +25844,9 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@xyflow/react@12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@xyflow/react@12.8.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@xyflow/system': 0.0.46
+      '@xyflow/system': 0.0.69
       classcat: 5.0.4
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -25842,23 +25855,15 @@ snapshots:
       - '@types/react'
       - immer
 
-  '@xyflow/system@0.0.37':
+  '@xyflow/system@0.0.69':
     dependencies:
       '@types/d3-drag': 3.0.7
+      '@types/d3-interpolate': 3.0.4
       '@types/d3-selection': 3.0.10
       '@types/d3-transition': 3.0.8
       '@types/d3-zoom': 3.0.8
       d3-drag: 3.0.0
-      d3-selection: 3.0.0
-      d3-zoom: 3.0.0
-
-  '@xyflow/system@0.0.46':
-    dependencies:
-      '@types/d3-drag': 3.0.7
-      '@types/d3-selection': 3.0.10
-      '@types/d3-transition': 3.0.8
-      '@types/d3-zoom': 3.0.8
-      d3-drag: 3.0.0
+      d3-interpolate: 3.0.1
       d3-selection: 3.0.0
       d3-zoom: 3.0.0
 
@@ -27150,6 +27155,19 @@ snapshots:
     dependencies:
       hyphenate-style-name: 1.0.4
 
+  css-loader@6.10.0(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.5.16)
+      postcss: 8.5.16
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.16)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.16)
+      postcss-modules-scope: 3.2.1(postcss@8.5.16)
+      postcss-modules-values: 4.0.0(postcss@8.5.16)
+      postcss-value-parser: 4.2.0
+      semver: 7.7.2
+    optionalDependencies:
+      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
+
   css-loader@6.10.0(webpack@5.96.1(esbuild@0.25.5)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.16)
@@ -27162,19 +27180,6 @@ snapshots:
       semver: 7.7.2
     optionalDependencies:
       webpack: 5.96.1(esbuild@0.25.5)
-
-  css-loader@6.10.0(webpack@5.96.1):
-    dependencies:
-      icss-utils: 5.1.0(postcss@8.5.16)
-      postcss: 8.5.16
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.16)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.16)
-      postcss-modules-scope: 3.2.1(postcss@8.5.16)
-      postcss-modules-values: 4.0.0(postcss@8.5.16)
-      postcss-value-parser: 4.2.0
-      semver: 7.7.2
-    optionalDependencies:
-      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
 
   css-minimizer-webpack-plugin@5.0.1(clean-css@5.3.3)(esbuild@0.25.5)(lightningcss@1.32.0)(webpack@5.96.1(esbuild@0.25.5)):
     dependencies:
@@ -30409,7 +30414,7 @@ snapshots:
       fast-glob: 3.3.2
       yargs: 16.2.0
 
-  less-loader@12.2.0(less@4.2.0)(webpack@5.96.1):
+  less-loader@12.2.0(less@4.2.0)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
     dependencies:
       less: 4.2.0
     optionalDependencies:
@@ -31494,17 +31499,17 @@ snapshots:
 
   min-indent@1.0.1: {}
 
+  mini-css-extract-plugin@2.9.2(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
+    dependencies:
+      schema-utils: 4.2.0
+      tapable: 2.2.1
+      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
+
   mini-css-extract-plugin@2.9.2(webpack@5.96.1(esbuild@0.25.5)):
     dependencies:
       schema-utils: 4.2.0
       tapable: 2.2.1
       webpack: 5.96.1(esbuild@0.25.5)
-
-  mini-css-extract-plugin@2.9.2(webpack@5.96.1):
-    dependencies:
-      schema-utils: 4.2.0
-      tapable: 2.2.1
-      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
 
   minimalistic-assert@1.0.1: {}
 
@@ -34350,7 +34355,7 @@ snapshots:
     dependencies:
       boundary: 2.0.0
 
-  style-loader@3.3.4(webpack@5.96.1):
+  style-loader@3.3.4(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
     dependencies:
       webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
 
@@ -34512,6 +34517,17 @@ snapshots:
       ansi-escapes: 7.0.0
       supports-hyperlinks: 3.2.0
 
+  terser-webpack-plugin@5.3.10(esbuild@0.25.5)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.30.2
+      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
+    optionalDependencies:
+      esbuild: 0.25.5
+
   terser-webpack-plugin@5.3.10(esbuild@0.25.5)(webpack@5.96.1(esbuild@0.25.5)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -34520,17 +34536,6 @@ snapshots:
       serialize-javascript: 6.0.2
       terser: 5.30.2
       webpack: 5.96.1(esbuild@0.25.5)
-    optionalDependencies:
-      esbuild: 0.25.5
-
-  terser-webpack-plugin@5.3.10(esbuild@0.25.5)(webpack@5.96.1):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.30.2
-      webpack: 5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)
     optionalDependencies:
       esbuild: 0.25.5
 
@@ -34739,7 +34744,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-loader@9.6.2(loader-utils@3.2.1)(typescript@5.9.3)(webpack@5.96.1):
+  ts-loader@9.6.2(loader-utils@3.2.1)(typescript@5.9.3)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4)):
     dependencies:
       chalk: 4.1.2
       picomatch: 4.0.5
@@ -35540,9 +35545,9 @@ snapshots:
   webpack-cli@5.1.4(webpack@5.96.1):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@webpack-cli/configtest': 2.1.1(webpack-cli@5.1.4)(webpack@5.96.1)
-      '@webpack-cli/info': 2.0.2(webpack-cli@5.1.4)(webpack@5.96.1)
-      '@webpack-cli/serve': 2.0.5(webpack-cli@5.1.4)(webpack@5.96.1)
+      '@webpack-cli/configtest': 2.1.1(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
+      '@webpack-cli/info': 2.0.2(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
+      '@webpack-cli/serve': 2.0.5(webpack-cli@5.1.4(webpack@5.96.1))(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       colorette: 2.0.20
       commander: 10.0.1
       cross-spawn: 7.0.6
@@ -35671,7 +35676,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(esbuild@0.25.5)(webpack@5.96.1)
+      terser-webpack-plugin: 5.3.10(esbuild@0.25.5)(webpack@5.96.1(esbuild@0.25.5)(webpack-cli@5.1.4))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:

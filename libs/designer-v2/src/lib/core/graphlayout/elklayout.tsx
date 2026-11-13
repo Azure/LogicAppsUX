@@ -26,6 +26,7 @@ import isEqual from 'lodash.isequal';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { getPrecomputedHandles } from './precomputedHandles';
 
 export const spacing = {
   default: '80',
@@ -119,7 +120,12 @@ const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   return flattenToolGroups(layout);
 };
 
-const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reuseObservedDimensions = false): LayoutContextType => {
+const convertElkGraphToReactFlow = (
+  graph: ElkNode,
+  useSharedNodeUi = false,
+  reuseObservedDimensions = false,
+  readOnly = false
+): LayoutContextType => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
@@ -198,8 +204,17 @@ const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reu
           parentId: node.id !== 'root' ? node.id : undefined,
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
           ...(presentation.shared && renderedSize),
+          // Estimates must not fix native card sizes: long titles and monitoring content still grow.
+          ...(!presentation.shared && { initialWidth: n.width, initialHeight: n.height }),
           ...(hasObservedDimensions && { measured: { width: n.width, height: n.height } }),
         };
+        nodeObject.handles = getPrecomputedHandles(
+          nodeObject,
+          renderedSize.width,
+          renderedSize.height,
+          readOnly,
+          n.layoutOptions?.subgraphType
+        );
 
         if (n?.children && n.width && n.height) {
           nodeObject.data.size = {
@@ -531,7 +546,7 @@ export const LayoutProvider = ({ children }: any) => {
         return;
       }
 
-      const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph, useSharedNodeUiOption, context);
+      const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph, useSharedNodeUiOption, { operations, nodesMetadata });
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           if (request !== activeRequest.current) {
@@ -541,7 +556,8 @@ export const LayoutProvider = ({ children }: any) => {
           const [n, e, s] = convertElkGraphToReactFlow(
             g,
             useSharedNodeUiOption,
-            lastAcceptedShared.current === false && !useSharedNodeUiOption
+            lastAcceptedShared.current === false && !useSharedNodeUiOption,
+            readOnly
           );
           setNodes(n);
           setEdges(e);

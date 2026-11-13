@@ -6,7 +6,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-azext-azureappservice": "^3.6.6",
     "@microsoft/vscode-azext-utils": "^3.5.0",
-    "@xyflow/react": "^12.3.5",
+    "@xyflow/react": "^12.8.5",
     "axios": "1.18.0",
     "react-intl": "6.3.0",
     "tslib": "2.4.0"

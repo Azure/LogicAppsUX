@@ -1,6 +1,8 @@
 import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { ReactFlow } from '@xyflow/react';
+import { ReactFlow, type Node } from '@xyflow/react';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { getPrecomputedHandles } from '../../../../../core/graphlayout/precomputedHandles';
 import { EdgeDrawSourceHandle } from '../EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from '../EdgeDrawTargetHandle';
 import { DefaultHandle } from '../DefaultHandle';
@@ -22,7 +24,7 @@ const ActualBranch = () => (
     <DefaultHandle type="source" id="real-branch" contained />
   </NodeHandle>
 );
-const types = { actual: ActualCard, branch: ActualBranch };
+const types = { actual: ActualCard, branch: ActualBranch, [WORKFLOW_NODE_TYPES.OPERATION_NODE]: ActualCard };
 
 describe('shared visuals contain actual XYFlow ports', () => {
   beforeAll(() => {
@@ -36,6 +38,28 @@ describe('shared visuals contain actual XYFlow ports', () => {
     );
   });
   afterAll(() => vi.unstubAllGlobals());
+
+  it('culls offscreen cards before any ResizeObserver measurement and mounts them when keyboard culling is disabled', () => {
+    const nodes: Node[] = [0, 2000].map((x, index) => {
+      const node: Node = {
+        id: `action-${index}`,
+        type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
+        position: { x, y: 0 },
+        initialWidth: 200,
+        initialHeight: 44,
+        data: { presentation: { shared: false } },
+      };
+      return { ...node, handles: getPrecomputedHandles(node, 200, 44) };
+    });
+    const { container, rerender } = render(
+      <ReactFlow width={600} height={400} nodeTypes={types} nodes={nodes} onlyRenderVisibleElements />
+    );
+    expect(container.querySelectorAll('.react-flow__node')).toHaveLength(1);
+    expect(container.querySelector('[data-id="action-1"]')).toBeNull();
+    expect(container.querySelector<HTMLElement>('[data-id="action-0"]')?.style.height).toBe('');
+    rerender(<ReactFlow width={600} height={400} nodeTypes={types} nodes={nodes} onlyRenderVisibleElements={false} />);
+    expect(container.querySelectorAll('.react-flow__node')).toHaveLength(2);
+  });
 
   it('retains the actual source/target hit elements and connection permissions under accepted shared geometry', () => {
     const { container } = render(

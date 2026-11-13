@@ -64,42 +64,41 @@ import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle'
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
 import { OperationNodeCard } from './components/card/OperationNodeCard';
 import type { NodePresentation } from '../../core/utils/graph';
+import { useInitialMountSettled } from '../../core/hooks/useInitialMountSettled';
 
 type OperationGraphNode = Node<{ presentation?: NodePresentation }>;
 
-const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
-  const readOnly = useReadOnly();
-  const isMonitoringView = useMonitoringView();
+interface NodeRunDataSyncProps {
+  id: string;
+  graphId: string;
+  parentNodeId?: string;
+  isMcpClientSubgraph: boolean;
+  selfActionTrackingId?: string;
+  onFetchingChange: (isFetching: boolean) => void;
+}
 
-  const intl = useIntl();
-
+/** Loads repetition and agent tool run data; mounted only in monitoring view so editing cards skip these subscriptions. */
+const NodeRunDataSync = ({
+  id,
+  graphId,
+  parentNodeId,
+  isMcpClientSubgraph,
+  selfActionTrackingId,
+  onFetchingChange,
+}: NodeRunDataSyncProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const operationsInfo = useAllOperations();
-  const errorInfo = useOperationErrorInfo(id);
-  const metadata = useNodeMetadata(id);
-  const operationInfo = useOperationInfo(id);
-  const connectorName = useConnectorName(operationInfo);
-  const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
-  const parentNodeId = useParentNodeId(id);
   const parentRunData = useRunData(parentNodeId ?? '');
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
-  const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
-  const copilotModified = useIsCopilotModifiedNode(id);
-
-  const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
-  const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
-  const graphId = metadata?.graphId ?? '';
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
-  const selfRunData = useRunData(id);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const toolRunIndex = useRunIndex(graphId);
   const mcpToolRunIndex = useToolRunIndex(id);
-  const isA2AWorkflow = useIsA2AWorkflow();
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!isMonitoringView && !!runInstance,
+    !!runInstance,
     id,
     runInstance?.id,
     repetitionName,
@@ -109,22 +108,22 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   );
 
   useEffect(() => {
+    onFetchingChange(isRepetitionFetching);
+  }, [isRepetitionFetching, onFetchingChange]);
+
+  useEffect(() => () => onFetchingChange(false), [onFetchingChange]);
+
+  useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
-      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+      if (selfActionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
-  }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
+  }, [dispatch, repetitionRunData, id, selfActionTrackingId]);
 
-  const parentActionMetadata = useActionMetadata(parentNodeId);
-  const isAgentTool = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
-
-  const actualToolRunIndex = useMemo(
-    () => (metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? mcpToolRunIndex : toolRunIndex),
-    [metadata, toolRunIndex, mcpToolRunIndex]
-  );
+  const actualToolRunIndex = isMcpClientSubgraph ? mcpToolRunIndex : toolRunIndex;
 
   useEffect(() => {
     if (isWithinAgenticLoop && !isNullOrUndefined(actualToolRunIndex)) {
@@ -139,6 +138,36 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
       }
     }
   }, [isWithinAgenticLoop, id, dispatch, actualToolRunIndex, parentSubgraphRunData]);
+
+  return null;
+};
+
+const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
+
+  const intl = useIntl();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const errorInfo = useOperationErrorInfo(id);
+  const metadata = useNodeMetadata(id);
+  const operationInfo = useOperationInfo(id);
+  const connectorName = useConnectorName(operationInfo);
+  const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
+  const parentNodeId = useParentNodeId(id);
+  const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
+  const copilotModified = useIsCopilotModifiedNode(id);
+  const initialMountSettled = useInitialMountSettled();
+
+  const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
+  const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
+  const graphId = metadata?.graphId ?? '';
+  const selfRunData = useRunData(id);
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const [isRepetitionFetching, setIsRepetitionFetching] = useState(false);
+
+  const parentActionMetadata = useActionMetadata(parentNodeId);
+  const isAgentTool = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
 
   const shouldShowPager = useMemo(() => {
     const isParentAgent = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
@@ -393,10 +422,20 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected || isMultiSelected} />}
       </div>
-      {showLeafComponents ? (
+      {showLeafComponents && initialMountSettled ? (
         <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
         </div>
+      ) : null}
+      {isMonitoringView ? (
+        <NodeRunDataSync
+          id={id}
+          graphId={graphId}
+          parentNodeId={parentNodeId}
+          isMcpClientSubgraph={metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT}
+          selfActionTrackingId={selfRunData?.correlation?.actionTrackingId}
+          onFetchingChange={setIsRepetitionFetching}
+        />
       ) : null}
       {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} /> : null}
     </>
