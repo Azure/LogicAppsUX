@@ -3,6 +3,7 @@ import { CustomConnectionParameterEditorService } from './customConnection/custo
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
+import { localRunDevData, localSearchDevData } from './localServiceDevData';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -85,6 +86,7 @@ const searchServiceStandard = new StandardSearchService({
     location: '',
   },
   isDev: true,
+  devData: localSearchDevData,
   showStatefulOperations: true,
 });
 
@@ -96,6 +98,7 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
+  devData: localSearchDevData,
 });
 
 const oAuthService = new BaseOAuthService({
@@ -147,6 +150,7 @@ const runService = new StandardRunService({
   workflowName: 'app',
   httpClient,
   isDev: true,
+  devData: localRunDevData,
 });
 
 const roleService = new BaseRoleService({

@@ -4,7 +4,7 @@ export {
   getClientBuiltInOperations,
   getClientBuiltInConnectors,
 } from './search';
-export type { BaseSearchServiceOptions } from './search';
+export type { BaseSearchServiceOptions, SearchServiceDevData } from './search';
 // Manifests
 export {
   BaseOperationManifestService,
