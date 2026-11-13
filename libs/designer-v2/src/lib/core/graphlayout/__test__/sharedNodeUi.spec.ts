@@ -39,9 +39,9 @@ describe('shared node renderer geometry option', () => {
   it('preserves all legacy geometry when disabled', () => {
     const result = exportForTesting.convertWorkflowGraphToElkGraph(graph);
     expect(result.children?.slice(0, 3).map(({ width, height }) => ({ width, height }))).toEqual([
-      { width: 200, height: 40 },
-      { width: 200, height: 40 },
-      { width: 200, height: 40 },
+      { width: 200, height: 44 },
+      { width: 200, height: 44 },
+      { width: 64, height: 96 },
     ]);
   });
 
@@ -57,10 +57,10 @@ describe('shared node renderer geometry option', () => {
   it('sizes adopted operations and placeholders without guessing a scope family absent its definition', () => {
     const result = exportForTesting.convertWorkflowGraphToElkGraph(graph, true);
     expect(result.children?.[0]).toMatchObject({ width: 232, height: 74 });
-    expect(result.children?.[1]).toMatchObject({ width: 200, height: 40 });
+    expect(result.children?.[1]).toMatchObject({ width: 200, height: 44 });
     expect(result.children?.[2]).toMatchObject({ width: 232, height: 74 });
     expect(result.children?.[3].children?.[0]).toMatchObject({ width: 232, height: 74 });
-    expect(graph.children?.[0]).toMatchObject({ width: 200, height: 40 });
+    expect(graph.children?.[0]).toMatchObject({ width: 200, height: 44 });
   });
 
   it('passes adopted dimensions to XYFlow for viewport centering without changing legacy node objects', async () => {
@@ -99,9 +99,9 @@ describe('shared node renderer geometry option', () => {
   it('records an actual default-sized observation without changing the layout cache projection', () => {
     const observed = workflowReducer(
       { ...initialWorkflowState, graph },
-      updateNodeSizes([{ id: 'action', type: 'dimensions', dimensions: { width: 200, height: 40 } }])
+      updateNodeSizes([{ id: 'action', type: 'dimensions', dimensions: { width: 200, height: 44 } }])
     );
-    expect(observed.graph?.children?.[0]).toMatchObject({ width: 200, height: 40, dimensionsObserved: true });
+    expect(observed.graph?.children?.[0]).toMatchObject({ width: 200, height: 44, dimensionsObserved: true });
     expect(getLayoutRelevantData(observed.graph)).toEqual(getLayoutRelevantData(graph));
     expect(graph.children?.[0]).not.toHaveProperty('dimensionsObserved');
   });
@@ -161,7 +161,7 @@ describe('shared node renderer geometry option', () => {
     const nestedAction = () => store.getState().workflow.graph!.children![3].children![0];
     expect(nestedAction()).toMatchObject({ width: 200, height: 64, dimensionsObserved: true });
     await store.dispatch(onUndoClick()).unwrap();
-    expect(nestedAction()).toMatchObject({ width: 200, height: 40 });
+    expect(nestedAction()).toMatchObject({ width: 200, height: 44 });
     expect(nestedAction()).not.toHaveProperty('dimensionsObserved');
     await store.dispatch(onRedoClick()).unwrap();
     expect(nestedAction()).toMatchObject({ width: 200, height: 64, dimensionsObserved: true });

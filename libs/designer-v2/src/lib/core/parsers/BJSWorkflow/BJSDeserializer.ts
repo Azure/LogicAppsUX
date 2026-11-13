@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import { type Operations, type NodesMetadata, WorkflowKind } from '../../state/workflow/workflowInterfaces';
-import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
+import { createWorkflowNode, createWorkflowEdge, getDefaultNodeSize } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import {
   LoggerService,
@@ -375,7 +375,7 @@ export const processScopeActions = (
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
     const rootId = `${subgraphId}-#subgraph`;
-    const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType);
 
     const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
     if (isAddCase) {
@@ -409,6 +409,7 @@ export const processScopeActions = (
   const applyUntilActions = (graphId: string, actions: LogicAppsV2.Actions | undefined) => {
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
+    Object.assign(scopeCardNode, getDefaultNodeSize(scopeCardNode.type, SUBGRAPH_TYPES.UNTIL_DO));
 
     const [graph, operations, metadata] = processNestedActions(
       graphId,

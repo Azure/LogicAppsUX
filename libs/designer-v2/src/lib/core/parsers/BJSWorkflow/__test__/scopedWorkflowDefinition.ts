@@ -117,7 +117,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             subGraphLocation: 'actions',
             children: [
-              createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+              createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, SUBGRAPH_TYPES.CONDITIONAL_TRUE),
               createWorkflowNode('Increment_variable2'),
               createWorkflowNode('Increment_variable4'),
             ],
@@ -131,7 +131,11 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             subGraphLocation: 'else',
             children: [
-              createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+              createWorkflowNode(
+                'ActionIf-elseActions-#subgraph',
+                WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+                SUBGRAPH_TYPES.CONDITIONAL_FALSE
+              ),
               createWorkflowNode('Increment_variable3'),
             ],
             edges: [createWorkflowEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3', WORKFLOW_EDGE_TYPES.HEADING_EDGE)],

@@ -47,6 +47,7 @@ describe('collapseFlowTree', () => {
     const nodeA = (graph?.children ?? []).find((child) => child.id === 'A');
     expect(nodeA).toBeDefined();
     expect(nodeA?.type).toBe('COLLAPSED_NODE');
+    expect(nodeA).toMatchObject({ width: 200, height: 50 });
     expect(nodeA?.children).toBeUndefined();
     expect(nodeA?.edges).toBeUndefined();
 

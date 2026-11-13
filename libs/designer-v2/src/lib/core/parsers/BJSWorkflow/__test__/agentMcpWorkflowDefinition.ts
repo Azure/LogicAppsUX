@@ -76,13 +76,13 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
       {
         children: [
           {
-            height: 40,
+            height: 44,
             id: 'WorkflowAgent-#scope',
             type: 'SCOPE_CARD_NODE',
             width: 200,
           },
           {
-            height: 40,
+            height: 44,
             id: 'McpFileServer',
             type: 'OPERATION_NODE',
             width: 200,
@@ -91,10 +91,10 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
           {
             children: [
               {
-                height: 40,
+                height: 44,
                 id: 'WorkflowAgent-addCase-#subgraph',
                 type: 'SUBGRAPH_CARD_NODE',
-                width: 200,
+                width: 20,
               },
             ],
             edges: [],

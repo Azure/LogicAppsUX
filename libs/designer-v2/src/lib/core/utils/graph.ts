@@ -155,17 +155,60 @@ export const getNodePresentation = (
   return { shared: false };
 };
 
+// Initial sizes of the rendered legacy cards, used until the DOM measurement is observed.
+// Action, scope header and large branch cards: 2px border + 8px padding + 24px icon/20px title row (workflowCardStyles.ts).
+const CARD_NODE_SIZE = { width: 200, height: 44 };
+// Small branch cards: 120px wide, 6px padding + 16px line height + border (card.styles.ts).
+const SMALL_SUBGRAPH_CARD_SIZE = { width: 120, height: 32 };
+// Add-case cards: a 44px tall grid that shrink-wraps its 20px add button (subgraphCard.tsx).
+const ADD_SUBGRAPH_CARD_SIZE = { width: 20, height: 44 };
+// AddActionCardV2: 64px card plus its label (addActionCardV2.styles.ts).
+const PLACEHOLDER_NODE_SIZE = { width: 64, height: 96 };
+// CollapsedCardNode renders a fixed 50px tall wrapper.
+export const COLLAPSED_NODE_SIZE = { width: 200, height: 50 };
+
+const smallSubgraphTypes = new Set<SubgraphType>([
+  SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+  SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+  SUBGRAPH_TYPES.SWITCH_DEFAULT,
+  SUBGRAPH_TYPES.UNTIL_DO,
+]);
+
+export const getDefaultNodeSize = (type?: WorkflowNodeType, subgraphType?: SubgraphType): { width: number; height: number } => {
+  switch (type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+    case WORKFLOW_NODE_TYPES.OPERATION_NODE:
+    case WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE:
+      return { ...CARD_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE: {
+      if (subgraphType && smallSubgraphTypes.has(subgraphType)) {
+        return { ...SMALL_SUBGRAPH_CARD_SIZE };
+      }
+      if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
+        return { ...ADD_SUBGRAPH_CARD_SIZE };
+      }
+      return { ...CARD_NODE_SIZE };
+    }
+    case WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE:
+      return { ...PLACEHOLDER_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.COLLAPSED_NODE:
+      return { ...COLLAPSED_NODE_SIZE };
+    default:
+      // Hidden nodes and graph containers are layout-only; containers are sized by the layout.
+      return { ...DEFAULT_NODE_SIZE };
+  }
+};
+
 // Creating generic layout nodes and edges below
 
-export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
+export const createWorkflowNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): WorkflowNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   type: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
 });
 
-export const createElkNode = (id: string, type?: WorkflowNodeType): ElkNode => ({
+export const createElkNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): ElkNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   layoutOptions: {
     nodeType: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
   },

@@ -92,7 +92,7 @@ describe('layout request lifecycle', () => {
   it('rejects pre-toggle results before the throttled replacement can start', async () => {
     const view = render(tree());
     tick();
-    expect(requests[0].graph.children?.[0]).toMatchObject({ width: 200, height: 40 });
+    expect(requests[0].graph.children?.[0]).toMatchObject({ width: 200, height: 44 });
     controls.shared = true;
     view.rerender(tree());
     await resolve(0);
@@ -187,7 +187,7 @@ describe('layout request lifecycle', () => {
     view.rerender(tree());
     tick();
     await resolve(1);
-    expect(current().nodes[0]).toMatchObject({ measured: { width: 200, height: 40 } });
+    expect(current().nodes[0]).toMatchObject({ measured: { width: 200, height: 44 } });
     expect(current().nodes[0]).not.toHaveProperty('width');
     controls.shared = true;
     view.rerender(tree());

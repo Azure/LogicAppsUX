@@ -484,12 +484,7 @@ export const workflowSlice = createSlice({
       }
 
       if (isTrigger) {
-        const placeholderNode = {
-          id: constants.NODE.TYPE.PLACEHOLDER_TRIGGER,
-          width: 80,
-          height: 80,
-          type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-        };
+        const placeholderNode = createWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE);
         const existingChildren = graph.edges?.filter((edge) => equals(edge.source, nodeId)).map((edge) => edge.target) ?? [];
 
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
