@@ -79,7 +79,7 @@ workflows and graphs larger than StressTest200 are not represented in the retain
 | `pnpm bench:report [fixture-name]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
 | `node bench/report.ts [fixture-name] --quality` | After building, compares SIMPLE/model-order placement control (current routing), candidate and elkjs using polyline crossings, node hits and horizontal skew |
 
-Regenerate fixtures after changing designer-v2 graph conversion (`elklayout.tsx`):
+Regenerate fixtures after changing designer-v2 graph construction, presentation, or conversion (for example, `graph.ts` or `elklayout.tsx`):
 
 ```sh
 cd libs/designer-v2
