@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { languageServerSdkDirectoryName } from '../../../constants';
+import { extensionCommand, languageServerSdkDirectoryName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import LogicAppsLanguageClientManager, { getCodefulWorkflowMetadata } from '../languageClient';
 import path from 'path';
@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   getAzureConnectorDetailsForLocalProject: vi.fn(),
   getGlobalSetting: vi.fn(),
   getWorkspaceFolderPath: vi.fn(),
+  isTelemetryEnabled: vi.fn(),
   languageClient: vi.fn(),
   pathExists: vi.fn(),
   readFile: vi.fn(),
@@ -23,6 +24,9 @@ const mocks = vi.hoisted(() => ({
 vi.mock('vscode', () => ({
   env: {
     sessionId: 'test-session-id',
+    get isTelemetryEnabled() {
+      return mocks.isTelemetryEnabled();
+    },
   },
   MarkdownString: class MarkdownString {
     public supportHtml = false;
@@ -104,6 +108,7 @@ describe('LogicAppsLanguageClientManager', () => {
     mocks.createFileSystemWatcher.mockReturnValue({ onDidChange: vi.fn() });
     mocks.getGlobalSetting.mockReturnValue(dependenciesPath);
     mocks.getWorkspaceFolderPath.mockResolvedValue('D:\\workspace');
+    mocks.isTelemetryEnabled.mockReturnValue(true);
     mocks.languageClient.mockImplementation(() => ({ start: vi.fn().mockResolvedValue(undefined) }));
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
@@ -116,6 +121,7 @@ describe('LogicAppsLanguageClientManager', () => {
     mocks.readdir.mockResolvedValue([]);
     mocks.tryGetLogicAppProjectRoot.mockResolvedValue(projectPath);
     mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
+    (ext as any).telemetryString = 'setInGitHubBuild';
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({
       accessToken: 'Bearer token',
       resourceGroupName: 'resource-group',
@@ -245,6 +251,54 @@ describe('LogicAppsLanguageClientManager', () => {
       expect.any(Object)
     );
     expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('attach a debugger to continue'));
+  });
+
+  it('disables managed server telemetry when VS Code telemetry is disabled', async () => {
+    const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.isTelemetryEnabled.mockReturnValue(false);
+    (ext as any).telemetryString = 'InstrumentationKey=test';
+    mocks.pathExists.mockImplementation(
+      async (filePath: string) => filePath === lspServerPath || filePath === sdkDirectoryPath || filePath === sdkPackagePath
+    );
+
+    await new LogicAppsLanguageClientManager({} as any).start();
+
+    expect(mocks.languageClient).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.any(Object),
+      expect.objectContaining({
+        initializationOptions: expect.objectContaining({
+          telemetry: expect.objectContaining({
+            connectionString: 'InstrumentationKey=test',
+            enabled: false,
+          }),
+        }),
+      })
+    );
+  });
+
+  it('trusts only registered Logic Apps commands in hover Markdown', async () => {
+    const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.pathExists.mockImplementation(
+      async (filePath: string) => filePath === lspServerPath || filePath === sdkDirectoryPath || filePath === sdkPackagePath
+    );
+
+    await new LogicAppsLanguageClientManager({} as any).start();
+
+    const clientOptions = mocks.languageClient.mock.calls[0][3];
+    const result = await clientOptions.middleware.provideHover(
+      {} as any,
+      {} as any,
+      {} as any,
+      vi.fn().mockResolvedValue({ contents: ['hover content'] })
+    );
+
+    expect(result.contents[0].isTrusted).toEqual({
+      enabledCommands: [extensionCommand.sdkLspApplyEdits],
+    });
   });
 
   it('requests metadata for the selected workflow', async () => {

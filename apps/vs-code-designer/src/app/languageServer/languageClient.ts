@@ -4,6 +4,7 @@ import {
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
+  extensionCommand,
   languageServerSdkDirectoryName,
   onStartLanguageClient,
   workflowAppApiVersion,
@@ -24,6 +25,8 @@ import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
 import { readLspAssetsManifest } from '../utils/languageServerAssets';
+
+const trustedHoverCommands = [extensionCommand.sdkLspApplyEdits];
 
 export default class LogicAppsLanguageClientManager {
   protected lspServerPath: string | undefined;
@@ -110,14 +113,14 @@ export default class LogicAppsLanguageClientManager {
         response.contents = response.contents.map((content) => {
           if (content instanceof MarkdownString) {
             content.supportHtml = true;
-            content.isTrusted = true;
+            content.isTrusted = { enabledCommands: trustedHoverCommands };
             content.supportThemeIcons = true;
             return content;
           }
           const alteredContent = new MarkdownString(typeof content === 'string' ? content : content.value, true);
 
           alteredContent.supportHtml = true;
-          alteredContent.isTrusted = true;
+          alteredContent.isTrusted = { enabledCommands: trustedHoverCommands };
           return alteredContent;
         });
 
@@ -141,6 +144,7 @@ export default class LogicAppsLanguageClientManager {
 
     const serverOptions: ServerOptions = { run, debug: run };
 
+    const telemetryConnectionString = this.getTelemetryConnectionString();
     const clientOptions: LanguageClientOptions = {
       documentSelector: [{ scheme: 'file', language: 'csharp' }],
       synchronize: {
@@ -150,8 +154,8 @@ export default class LogicAppsLanguageClientManager {
         apiConfig: dynamicInvokeOptions,
         connections: connections,
         telemetry: {
-          connectionString: this.getTelemetryConnectionString(),
-          enabled: this.getTelemetryConnectionString() ? true : false,
+          connectionString: telemetryConnectionString,
+          enabled: Boolean(telemetryConnectionString) && vscode.env.isTelemetryEnabled,
           samplingRate: 100,
           sessionId: vscode.env.sessionId,
         },

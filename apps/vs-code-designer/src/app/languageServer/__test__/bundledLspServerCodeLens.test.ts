@@ -288,6 +288,33 @@ describe('bundled LSP server CodeLens', () => {
     expect(JSON.stringify(agentCodeLens.command?.arguments)).toContain('agent');
   }, 60_000);
 
+  it('returns symbol metadata for repeated hover requests', async () => {
+    lspProcess = await startBundledLspServer();
+    const documentUri = pathToFileURL(path.join(await createTempDirectory(), 'AgentWorkflow.cs')).toString();
+    lspProcess.notify('textDocument/didOpen', {
+      textDocument: {
+        uri: documentUri,
+        languageId: 'csharp',
+        version: 1,
+        text: agentWorkflowSource,
+      },
+    });
+
+    const lines = agentWorkflowSource.split('\n');
+    const line = lines.findIndex((value) => value.includes('CreateConversationalAgentTrigger'));
+    const character = lines[line].indexOf('CreateConversationalAgentTrigger') + 5;
+    const hoverParams = {
+      textDocument: { uri: documentUri },
+      position: { line, character },
+    };
+
+    const firstHover = await lspProcess.request('textDocument/hover', hoverParams);
+    const secondHover = await lspProcess.request('textDocument/hover', hoverParams);
+
+    expect(JSON.stringify(firstHover)).toContain('CreateConversationalAgentTrigger');
+    expect(JSON.stringify(secondHover)).toContain('CreateConversationalAgentTrigger');
+  }, 60_000);
+
   async function getAgentCodeLens(initializationOptions?: Record<string, unknown>): Promise<CodeLensResult> {
     lspProcess = await startBundledLspServer(initializationOptions);
 
@@ -339,6 +366,9 @@ describe('bundled LSP server CodeLens', () => {
         textDocument: {
           codeLens: {
             dynamicRegistration: false,
+          },
+          hover: {
+            contentFormat: ['markdown'],
           },
         },
       },

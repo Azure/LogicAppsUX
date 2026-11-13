@@ -21,6 +21,8 @@ namespace LogicAppsLanguageServer.Handlers.HoverHandler;
 
 public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBufferStore documentBufferStore, ConnectionsService connectionsService, DynamicInvokeClient dynamicInvokeClient, DynamicDataStore dynamicDataStore, ITelemetryService telemetryService) : HoverHandlerBase
 {
+    internal const string ApplyEditsCommand = "azureLogicAppsStandard.sdklsp.applyEdits";
+
     private static readonly SymbolDisplayFormat ShortTypeFormat = new(
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
@@ -42,7 +44,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
     private int hoverRequestCount = 0;
 
     // Performance optimization: Cache Roslyn compilations per document
-    private readonly Dictionary<string, (CSharpCompilation Compilation, DateTime LastAccess)> compilationCache = new();
+    private readonly Dictionary<string, (CSharpCompilation Compilation, SyntaxTree SyntaxTree, string DocumentText, DateTime LastAccess)> compilationCache = new();
     private readonly object compilationCacheLock = new();
 
     // Performance optimization: Cache parameter context resolution per position
@@ -116,7 +118,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
             }
 
             // Analyze the symbol at the hover position
-            string? symbolInfo = await AnalyzeSymbolAtPositionAsync(documentText, request.Position, cancellationToken);
+            string? symbolInfo = await AnalyzeSymbolAtPositionAsync(documentPath, documentText, request.Position, cancellationToken);
 
             if (string.IsNullOrEmpty(symbolInfo))
             {
@@ -345,7 +347,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
         }
     }
 
-    private static string CreateInsertValueCommandUri(ArgumentSyntax argumentSyntax, string valueToInsert, bool isConnection, string? description = null)
+    internal static string CreateInsertValueCommandUri(ArgumentSyntax argumentSyntax, string valueToInsert, bool isConnection, string? description = null)
     {
         try
         {
@@ -446,7 +448,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
                 string argsJson = System.Text.Json.JsonSerializer.Serialize(commandArgs);
                 string encodedArgs = Uri.EscapeDataString(argsJson);
 
-                return $"command:sdklsp.applyEdits?{encodedArgs}";
+                return $"command:{ApplyEditsCommand}?{encodedArgs}";
             }
             else
             {
@@ -474,7 +476,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
                 string argsJson = System.Text.Json.JsonSerializer.Serialize(commandArgs);
                 string encodedArgs = Uri.EscapeDataString(argsJson);
 
-                return $"command:sdklsp.applyEdits?{encodedArgs}";
+                return $"command:{ApplyEditsCommand}?{encodedArgs}";
             }
         }
         catch (Exception ex)
@@ -516,9 +518,18 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
                 if (age.TotalMinutes < CompilationCacheMaxAgeMinutes)
                 {
                     // Update last access time
-                    compilationCache[documentPath] = (cached.Compilation, DateTime.UtcNow);
-                    telemetry.TrackEvent("Hover_Compilation_Cache_Hit");
-                    return cached.Compilation;
+                    if (string.Equals(cached.DocumentText, documentText, StringComparison.Ordinal))
+                    {
+                        CSharpCompilation cachedCompilation = ReferenceEquals(cached.SyntaxTree, tree)
+                            ? cached.Compilation
+                            : cached.Compilation.ReplaceSyntaxTree(cached.SyntaxTree, tree);
+                        compilationCache[documentPath] = (cachedCompilation, tree, documentText, DateTime.UtcNow);
+                        telemetry.TrackEvent("Hover_Compilation_Cache_Hit");
+                        return cachedCompilation;
+                    }
+
+                    compilationCache.Remove(documentPath);
+                    ClearParameterContextCache(documentPath);
                 }
                 else
                 {
@@ -536,7 +547,7 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
                 references);
 
             // Add to cache
-            compilationCache[documentPath] = (compilation, DateTime.UtcNow);
+            compilationCache[documentPath] = (compilation, tree, documentText, DateTime.UtcNow);
 
             // Evict old entries if cache is too large
             if (compilationCache.Count > CompilationCacheMaxSize)
@@ -635,17 +646,20 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
     }
 
     [RequiresAssemblyFiles("Calls System.Reflection.Assembly.Location")]
-    private async Task<string?> AnalyzeSymbolAtPositionAsync(string documentText, Position position, CancellationToken cancellationToken)
+    private async Task<string?> AnalyzeSymbolAtPositionAsync(
+        string documentPath,
+        string documentText,
+        Position position,
+        CancellationToken cancellationToken)
     {
         var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
         var phaseStopwatch = System.Diagnostics.Stopwatch.StartNew();
-        string documentPath = string.Empty;
 
         try
         {
             // Phase 1: Parse the document
             phaseStopwatch.Restart();
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(documentText, cancellationToken: cancellationToken);
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(documentText, path: documentPath, cancellationToken: cancellationToken);
             CompilationUnitSyntax root = tree.GetCompilationUnitRoot(cancellationToken: cancellationToken);
             Microsoft.CodeAnalysis.Text.SourceText text = await tree.GetTextAsync(cancellationToken);
             telemetry.TrackMetric("Hover_Phase1_Parse_Ms", phaseStopwatch.ElapsedMilliseconds);
@@ -722,7 +736,6 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
 
             // Phase 4: Get or create cached compilation
             phaseStopwatch.Restart();
-            documentPath = tree.FilePath ?? "unknown";
             var compilation = GetOrCreateCachedCompilation(documentPath, documentText, tree, references);
             SemanticModel semanticModel = compilation.GetSemanticModel(tree);
             telemetry.TrackMetric("Hover_Phase4_GetCompilation_Ms", phaseStopwatch.ElapsedMilliseconds);
@@ -1835,9 +1848,29 @@ public class HoverHandler(WorkflowSdkMetadataIndex? sdkMetadataIndex, DocumentBu
             foreach (HoverHandlerTypes.ParameterValue value in values)
             {
                 string commandUri = CreateInsertValueCommandUri(targetArgument, value.Value, isConnection, value.Description);
-                result.AppendLine($"- [{value.Description}]({commandUri})");
+                result.AppendLine($"- [{EscapeMarkdownLinkText(value.Description)}]({commandUri})");
             }
         }
+    }
+
+    internal static string EscapeMarkdownLinkText(string value)
+    {
+        string encodedValue = WebUtility.HtmlEncode(value)
+            .Replace("\r", " ", StringComparison.Ordinal)
+            .Replace("\n", " ", StringComparison.Ordinal);
+        var result = new StringBuilder(encodedValue.Length);
+
+        foreach (char character in encodedValue)
+        {
+            if (character is '\\' or '`' or '*' or '_' or '[' or ']' or '(' or ')' or '{' or '}')
+            {
+                result.Append('\\');
+            }
+
+            result.Append(character);
+        }
+
+        return result.ToString();
     }
 
     /// <summary>
