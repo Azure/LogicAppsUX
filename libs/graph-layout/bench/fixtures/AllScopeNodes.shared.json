@@ -179,7 +179,7 @@
                         "layoutOptions": { "edgeType": "BUTTON_EDGE" }
                       },
                       {
-                        "id": "Condition-actions-#subgraph-Terminate",
+                        "id": "Condition%2Dactions%2D#subgraph-Terminate",
                         "sources": ["Condition-actions-#subgraph"],
                         "targets": ["Terminate"],
                         "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -220,7 +220,7 @@
                     ],
                     "edges": [
                       {
-                        "id": "Condition-elseActions-#subgraph-Terminate_2",
+                        "id": "Condition%2DelseActions%2D#subgraph-Terminate_2",
                         "sources": ["Condition-elseActions-#subgraph"],
                         "targets": ["Terminate_2"],
                         "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -239,13 +239,13 @@
                 ],
                 "edges": [
                   {
-                    "id": "Condition-#scope-Condition-actions",
+                    "id": "Condition%2D#scope-Condition%2Dactions",
                     "sources": ["Condition-#scope::Condition-actions"],
                     "targets": ["Condition-actions"],
                     "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Condition-#scope", "sourceHandle": "Condition-actions" }
                   },
                   {
-                    "id": "Condition-#scope-Condition-elseActions",
+                    "id": "Condition%2D#scope-Condition%2DelseActions",
                     "sources": ["Condition-#scope::Condition-elseActions"],
                     "targets": ["Condition-elseActions"],
                     "layoutOptions": {
@@ -272,7 +272,7 @@
             ],
             "edges": [
               {
-                "id": "Conditional_Case-#subgraph-Condition",
+                "id": "Conditional_Case%2D#subgraph-Condition",
                 "sources": ["Conditional_Case-#subgraph"],
                 "targets": ["Condition"],
                 "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -365,7 +365,7 @@
                         "layoutOptions": { "edgeType": "BUTTON_EDGE" }
                       },
                       {
-                        "id": "ForEach_nested-#scope-ForEach_Action_2",
+                        "id": "ForEach_nested%2D#scope-ForEach_Action_2",
                         "sources": ["ForEach_nested-#scope"],
                         "targets": ["ForEach_Action_2"],
                         "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -422,7 +422,7 @@
                     "layoutOptions": { "edgeType": "BUTTON_EDGE" }
                   },
                   {
-                    "id": "ForEach-#scope-ForEach_Action_1",
+                    "id": "ForEach%2D#scope-ForEach_Action_1",
                     "sources": ["ForEach-#scope"],
                     "targets": ["ForEach_Action_1"],
                     "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -441,7 +441,7 @@
             ],
             "edges": [
               {
-                "id": "ForEach_Case-#subgraph-ForEach",
+                "id": "ForEach_Case%2D#subgraph-ForEach",
                 "sources": ["ForEach_Case-#subgraph"],
                 "targets": ["ForEach"],
                 "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -528,7 +528,7 @@
                     ],
                     "edges": [
                       {
-                        "id": "Scope_nested-#scope-Scope_Action_3",
+                        "id": "Scope_nested%2D#scope-Scope_Action_3",
                         "sources": ["Scope_nested-#scope"],
                         "targets": ["Scope_Action_3"],
                         "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -591,7 +591,7 @@
                     "layoutOptions": { "edgeType": "BUTTON_EDGE" }
                   },
                   {
-                    "id": "Scope-#scope-Scope_Action_1",
+                    "id": "Scope%2D#scope-Scope_Action_1",
                     "sources": ["Scope-#scope"],
                     "targets": ["Scope_Action_1"],
                     "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -610,7 +610,7 @@
             ],
             "edges": [
               {
-                "id": "Scope_Case-#subgraph-Scope",
+                "id": "Scope_Case%2D#subgraph-Scope",
                 "sources": ["Scope_Case-#subgraph"],
                 "targets": ["Scope"],
                 "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -709,13 +709,13 @@
                     ],
                     "edges": [
                       {
-                        "id": "Until_Nested-#subgraph-Until_Action_3",
+                        "id": "Until_Nested%2D#subgraph-Until_Action_3",
                         "sources": ["Until_Nested-#subgraph"],
                         "targets": ["Until_Action_3"],
                         "layoutOptions": { "edgeType": "HEADING_EDGE" }
                       },
                       {
-                        "id": "Until_Action_3-Until_Nested-#footer",
+                        "id": "Until_Action_3-Until_Nested%2D#footer",
                         "sources": ["Until_Action_3"],
                         "targets": ["Until_Nested-#footer"],
                         "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
@@ -757,13 +757,13 @@
                     "layoutOptions": { "edgeType": "BUTTON_EDGE" }
                   },
                   {
-                    "id": "Until-#subgraph-Until_Action_1",
+                    "id": "Until%2D#subgraph-Until_Action_1",
                     "sources": ["Until-#subgraph"],
                     "targets": ["Until_Action_1"],
                     "layoutOptions": { "edgeType": "HEADING_EDGE" }
                   },
                   {
-                    "id": "Until_Nested-Until-#footer",
+                    "id": "Until_Nested-Until%2D#footer",
                     "sources": ["Until_Nested"],
                     "targets": ["Until-#footer"],
                     "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
@@ -783,7 +783,7 @@
             ],
             "edges": [
               {
-                "id": "DoUntil_Case-#subgraph-Until",
+                "id": "DoUntil_Case%2D#subgraph-Until",
                 "sources": ["DoUntil_Case-#subgraph"],
                 "targets": ["Until"],
                 "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -840,7 +840,7 @@
             ],
             "edges": [
               {
-                "id": "Switch-defaultCase-#subgraph-Default-Compose",
+                "id": "Switch%2DdefaultCase%2D#subgraph-Default%2DCompose",
                 "sources": ["Switch-defaultCase-#subgraph"],
                 "targets": ["Default-Compose"],
                 "layoutOptions": { "edgeType": "HEADING_EDGE" }
@@ -859,37 +859,37 @@
         ],
         "edges": [
           {
-            "id": "Switch-#scope-Conditional_Case",
+            "id": "Switch%2D#scope-Conditional_Case",
             "sources": ["Switch-#scope::Conditional_Case"],
             "targets": ["Conditional_Case"],
             "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "Conditional_Case" }
           },
           {
-            "id": "Switch-#scope-ForEach_Case",
+            "id": "Switch%2D#scope-ForEach_Case",
             "sources": ["Switch-#scope::ForEach_Case"],
             "targets": ["ForEach_Case"],
             "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "ForEach_Case" }
           },
           {
-            "id": "Switch-#scope-Scope_Case",
+            "id": "Switch%2D#scope-Scope_Case",
             "sources": ["Switch-#scope::Scope_Case"],
             "targets": ["Scope_Case"],
             "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "Scope_Case" }
           },
           {
-            "id": "Switch-#scope-DoUntil_Case",
+            "id": "Switch%2D#scope-DoUntil_Case",
             "sources": ["Switch-#scope::DoUntil_Case"],
             "targets": ["DoUntil_Case"],
             "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "DoUntil_Case" }
           },
           {
-            "id": "Switch-#scope-Switch-addCase",
+            "id": "Switch%2D#scope-Switch%2DaddCase",
             "sources": ["Switch-#scope"],
             "targets": ["Switch-addCase"],
             "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
           },
           {
-            "id": "Switch-#scope-Switch-defaultCase",
+            "id": "Switch%2D#scope-Switch%2DdefaultCase",
             "sources": ["Switch-#scope::Switch-defaultCase"],
             "targets": ["Switch-defaultCase"],
             "layoutOptions": { "edgeType": "ONLY_EDGE", "originalSource": "Switch-#scope", "sourceHandle": "Switch-defaultCase" }
