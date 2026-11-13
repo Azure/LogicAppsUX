@@ -1,0 +1,155 @@
+name: VS Code Extension Synthetics
+
+# Scheduled synthetic E2E tests for the Logic Apps Standard VS Code extension.
+# Validates the published marketplace extension (or latest source build) on a
+# recurring schedule using the same ExTester harness as vscode-e2e.yml, but
+# against the production-published binary users actually install.
+
+on:
+  schedule:
+    # Weekday mornings at 8 AM UTC
+    - cron: '0 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      vsix_source:
+        description: 'Extension source to test'
+        type: choice
+        options:
+          - marketplace
+          - source
+        default: marketplace
+
+concurrency:
+  group: vscode-synthetics
+  cancel-in-progress: true
+
+jobs:
+  synthetics:
+    name: synthetics (${{ inputs.vsix_source || 'marketplace' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install system dependencies (xvfb + VS Code prereqs)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Cache pnpm store
+        uses: actions/cache@v5
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Cache turbo build
+        uses: actions/cache@v5
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-synthetics-${{ hashFiles('apps/**/*.ts', 'apps/**/*.tsx', 'libs/**/*.ts', 'libs/**/*.tsx', 'pnpm-lock.yaml', 'turbo.json') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-synthetics-
+
+      # Build the extension from source when vsix_source=source.
+      # In marketplace mode, we skip the full extension build — the test harness
+      # only needs tsup compilation (above), and the extension comes from marketplace.
+      - name: Build extension (source mode only)
+        if: inputs.vsix_source == 'source'
+        run: pnpm turbo run build:extension --cache-dir=.turbo
+
+      - name: Compile E2E tests
+        working-directory: apps/vs-code-designer
+        run: npx tsup --config tsup.e2e.test.config.ts
+
+      - name: Cache Logic Apps runtime dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-synthetics-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      # Phase 1: Run activation smoke test (no workspace fixtures needed)
+      - name: Run activation smoke (p40)
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: p40-nonlogicapp
+          LA_E2E_SCENARIO_RETRIES: '1'
+          LA_E2E_VSIX_SOURCE: ${{ inputs.vsix_source || 'marketplace' }}
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # Phase 2: Run workspace creation + designer lifecycle
+      - name: Run workspace creation + designer smoke (p41a + p42)
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: p41a-fixtures,p42-standard
+          LA_E2E_SCENARIO_RETRIES: '1'
+          LA_E2E_VSIX_SOURCE: ${{ inputs.vsix_source || 'marketplace' }}
+          LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: vscode-synthetics-screenshots
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Report extension version tested
+        if: always()
+        run: |
+          echo "## Synthetics Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **VSIX Source**: ${{ inputs.vsix_source || 'marketplace' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Time**: $(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runner OS**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node Version**: $(node --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- **VS Code Version**: $(cat apps/vs-code-designer/out/test/run-e2e.js 2>/dev/null | grep -oP 'DEFAULT_VSCODE_VERSION.*?= .\K[0-9.]+' || echo 'unknown')" >> $GITHUB_STEP_SUMMARY
