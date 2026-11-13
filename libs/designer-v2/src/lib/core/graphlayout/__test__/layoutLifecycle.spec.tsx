@@ -1,5 +1,5 @@
 import { act, cleanup, render, renderHook, screen } from '@testing-library/react';
-import type { ElkNode } from 'elkjs/lib/elk.bundled';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { createWorkflowNode } from '../../utils/graph';
@@ -23,7 +23,7 @@ vi.mock('../../state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => controls.readOnly,
   useSharedNodeUi: () => controls.shared,
 }));
-vi.mock('elkjs/lib/elk.bundled', () => ({
+vi.mock('@microsoft/logic-apps-graph-layout', () => ({
   default: class {
     layout = controls.layout;
   },

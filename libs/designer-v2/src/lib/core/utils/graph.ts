@@ -13,7 +13,7 @@ import {
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {

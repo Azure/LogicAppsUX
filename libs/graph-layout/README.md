@@ -6,7 +6,8 @@ call sites can switch with an import change, but implements only the supported o
 tree-shakable TypeScript.
 
 > **Experimental:** flat overlap removal, SIMPLE and balanced Brandes-Köpf layered placement are implemented.
-> Exact elkjs parity and production integration are not ready. Normal designer and data-mapper paths retain elkjs.
+> Exact elkjs parity is not a goal. designer-v2 uses this package (bundled into its build); designer v1 and
+> data-mapper-v2 still use elkjs.
 
 ## Usage
 

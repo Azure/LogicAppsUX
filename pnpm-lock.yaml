@@ -1687,9 +1687,6 @@ importers:
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      elkjs:
-        specifier: 0.8.2
-        version: 0.8.2
       file-saver:
         specifier: 2.0.5
         version: 2.0.5
@@ -1772,6 +1769,9 @@ importers:
       '@formatjs/intl':
         specifier: ^2.10.1
         version: 2.10.1(typescript@4.9.5)
+      '@microsoft/logic-apps-graph-layout':
+        specifier: workspace:*
+        version: link:../graph-layout
       '@types/file-saver':
         specifier: ^2.0.5
         version: 2.0.7

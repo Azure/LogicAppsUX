@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { exportForTesting } from '../elklayout';
 import { createWorkflowEdge, createWorkflowNode } from '../../utils/graph';
-import type { ElkNode } from 'elkjs';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 import reducer, { initDesignerOptions, initialDesignerOptionsState } from '../../state/designerOptions/designerOptionsSlice';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import workflowReducer, { initialWorkflowState, updateNodeSizes } from '../../state/workflow/workflowSlice';

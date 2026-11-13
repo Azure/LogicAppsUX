@@ -15,7 +15,14 @@ const layoutPreview = (): Plugin => ({
     if (
       /^elkjs\/lib\/elk\.bundled(?:\.js)?$/.test(source) &&
       importer &&
-      /\/libs\/designer(?:-v2)?\/src\/lib\/core\/graphlayout\/elklayout\.tsx$/.test(normalizePath(importer))
+      /\/libs\/designer\/src\/lib\/core\/graphlayout\/elklayout\.tsx$/.test(normalizePath(importer))
+    ) {
+      return resolve(root, 'src/dev/layoutPreviewEngine.ts');
+    }
+    if (
+      (source === '@microsoft/logic-apps-graph-layout' || normalizePath(source).endsWith('/libs/graph-layout/src/index.ts')) &&
+      importer &&
+      /\/libs\/designer-v2\/src\/lib\/core\/graphlayout\/elklayout\.tsx$/.test(normalizePath(importer))
     ) {
       return resolve(root, 'src/dev/layoutPreviewEngine.ts');
     }

@@ -1,3 +1,4 @@
+import '../../../../libs/designer-v2/src/lib/ui/styles.less';
 import './layoutPreviewBootstrap';
 import { Provider } from 'react-redux';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';
