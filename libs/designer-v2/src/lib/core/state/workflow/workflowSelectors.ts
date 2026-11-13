@@ -898,12 +898,7 @@ const selectHandoffEdges = createSelector([(state: RootState) => state.workflow.
   const handoffEdges: WorkflowEdge[] = [];
   for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
     for (const agent of Object.values(metadata.handoffs ?? {})) {
-      handoffEdges.push({
-        id: `${nodeId}-${agent}`,
-        source: nodeId,
-        target: agent,
-        type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-      });
+      handoffEdges.push(createWorkflowEdge(nodeId, agent, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
     }
   }
   return handoffEdges;

@@ -124,6 +124,35 @@ describe('family admission and matching geometry', () => {
     });
   });
 
+  it.each([false, true])('preserves dependencies with ambiguous hyphenated names through layout (shared UI: %s)', async (shared) => {
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          A: { type: 'Compose', inputs: 'first', runAfter: {} },
+          'A-B': { type: 'Compose', inputs: 'second', runAfter: {} },
+          'B-C': { type: 'Compose', inputs: 'third', runAfter: { A: ['Succeeded'] } },
+          C: { type: 'Compose', inputs: 'fourth', runAfter: { 'A-B': ['Succeeded'] } },
+        },
+      },
+      null
+    );
+    const dependencies = parsed.graph.edges!.filter(
+      (edge) => (edge.source === 'A' && edge.target === 'B-C') || (edge.source === 'A-B' && edge.target === 'C')
+    );
+    expect(dependencies).toHaveLength(2);
+
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const layout = await exportForTesting.elkLayout(exportForTesting.convertWorkflowGraphToElkGraph(parsed.graph, shared, context));
+    const [, edges] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
+    for (const dependency of dependencies) {
+      expect(edges).toContainEqual(
+        expect.objectContaining({ id: dependency.id, source: dependency.source, target: dependency.target, type: dependency.type })
+      );
+    }
+    expect(new Set(dependencies.map(({ id }) => id)).size).toBe(2);
+  });
+
   it('uses actual definitions for nested family layout and retains accepted presentation on XYFlow nodes', async () => {
     const graph: WorkflowNode = {
       id: 'root',

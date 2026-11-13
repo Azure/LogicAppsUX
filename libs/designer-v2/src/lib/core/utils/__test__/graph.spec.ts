@@ -158,6 +158,20 @@ describe('Graph Utilities', () => {
     expect(graphUtils.isLeafNodeFromEdges([createWorkflowEdge('one', 'two')])).toBe(false);
   });
 
+  it('distinguishes edge endpoints containing hyphens and escape-like characters', () => {
+    const pairs = [
+      ['A', 'B-C'],
+      ['A-B', 'C'],
+      ['A%2DB', 'C'],
+      ['A%', 'B-C'],
+    ] as const;
+    const edges = pairs.map(([source, target]) => createWorkflowEdge(source, target));
+    expect(new Set(edges.map(({ id }) => id)).size).toBe(pairs.length);
+    for (const [source, target] of pairs) {
+      expect(graphUtils.createElkEdge(source, target).id).toBe(createWorkflowEdge(source, target).id);
+    }
+  });
+
   it('finds the actual root trigger and tolerates a graph with no trigger', () => {
     const state = { graph, nodesMetadata } as Parameters<typeof graphUtils.getTriggerNode>[0];
     expect(graphUtils.getTriggerNode(state)?.id).toBe('manual');

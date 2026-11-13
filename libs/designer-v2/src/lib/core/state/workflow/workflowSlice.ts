@@ -16,7 +16,13 @@ import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge, removeEdge, reassignEdgeSources, reassignEdgeTargets, applyIsRootNode } from '../../parsers/restructuringHelpers';
-import { createWorkflowEdge, createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
+import {
+  createWorkflowEdge,
+  createWorkflowNode,
+  getImmediateSourceNodeIds,
+  getWorkflowEdgeId,
+  transformOperationTitle,
+} from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
 import {
@@ -120,8 +126,7 @@ const reconcileRunAfterEdges = (
   );
 
   const pushEdge = (source: string, type?: (typeof WORKFLOW_EDGE_TYPES)[keyof typeof WORKFLOW_EDGE_TYPES]) => {
-    const edgeId = `${source}-${nodeId}`;
-    if (!graph?.edges?.some((edge) => edge.id === edgeId)) {
+    if (!graph?.edges?.some((edge) => edge.source === source && edge.target === nodeId)) {
       graph?.edges?.push(createWorkflowEdge(source, nodeId, type));
     }
   };
@@ -235,7 +240,7 @@ export const workflowSlice = createSlice({
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
-              edge.id = `${action.payload.nodeId}-${edge.target}`;
+              edge.id = getWorkflowEdgeId(action.payload.nodeId, edge.target);
               edge.source = action.payload.nodeId;
             }
             return edge;
@@ -993,18 +998,12 @@ export const workflowSlice = createSlice({
         graph = graph?.children?.find((x) => x.id === id) ?? null;
       }
 
-      const edgeId = `${parentOperationId}-${childOperationId}`;
-      if (graph?.edges?.some((edge) => edge.id === edgeId)) {
+      if (graph?.edges?.some((edge) => edge.source === parentOperationId && edge.target === childOperationId)) {
         // Edge already exists, no need to add it again
         return;
       }
 
-      graph?.edges?.push({
-        id: edgeId,
-        source: parentOperationId,
-        target: childOperationId,
-        type: 'BUTTON_EDGE',
-      });
+      graph?.edges?.push(createWorkflowEdge(parentOperationId, childOperationId));
     },
     updateRunAfter: (
       state: WorkflowState,
