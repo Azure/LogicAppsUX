@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { extractGeometry, findOverlaps } from '../../bench/geometry';
 import { loadWorkflowFixtures } from '../../bench/fixtures';
 import { layoutQuality } from '../../bench/quality';
-import ELK, { GraphLayoutError, type ElkNode } from '../index';
+import ELK, { GraphLayoutError, type ElkNode, type ElkPoint } from '../index';
 import { balancedCenters } from '../layered/horizontal';
 import { layeredOptions } from '../layered/options';
 
@@ -23,6 +23,27 @@ const chain = (): ElkNode => ({
   ],
   edges: [{ id: 'ab', sources: ['a'], targets: ['b'] }],
 });
+
+const crossesNodeInterior = (from: ElkPoint, to: ElkPoint, node: ElkNode): boolean => {
+  let enter = 0;
+  let exit = 1;
+  for (const axis of ['x', 'y'] as const) {
+    const min = node[axis]!;
+    const max = min + node[axis === 'x' ? 'width' : 'height']!;
+    const delta = to[axis] - from[axis];
+    if (delta === 0) {
+      if (from[axis] <= min || from[axis] >= max) {
+        return false;
+      }
+    } else {
+      const first = (min - from[axis]) / delta;
+      const second = (max - from[axis]) / delta;
+      enter = Math.max(enter, Math.min(first, second));
+      exit = Math.min(exit, Math.max(first, second));
+    }
+  }
+  return enter < exit && exit > 0 && enter < 1;
+};
 
 describe('layered SIMPLE milestone', () => {
   it('lays out a chain in place with padding, spacing and container-relative edge sections', async () => {
@@ -47,8 +68,12 @@ describe('layered SIMPLE milestone', () => {
     expect(graph.edges![1]).toMatchObject({
       sources: ['b'],
       targets: ['a'],
-      sections: [{ incomingShape: 'b', outgoingShape: 'a', startPoint: { y: 160 }, endPoint: { y: 0 } }],
+      sections: [{ incomingShape: 'b', outgoingShape: 'a', startPoint: { y: 120 }, endPoint: { y: 40 } }],
     });
+    const forward = graph.edges![0].sections![0];
+    const backward = graph.edges![1].sections![0];
+    expect(backward.startPoint.x).not.toBe(forward.endPoint.x);
+    expect(backward.endPoint.x).not.toBe(forward.startPoint.x);
     expect(findOverlaps(extractGeometry(graph), 0)).toEqual([]);
   });
 
@@ -75,6 +100,55 @@ describe('layered SIMPLE milestone', () => {
     expect(graph.children![0].ports![0]).toMatchObject({ x: 25, y: 40 });
     expect(graph.edges![0].sections![0].startPoint).toEqual({ x: 45, y: 40 });
   });
+
+  it.each([
+    ['SIMPLE', 'direct', false],
+    ['SIMPLE', 'long', false],
+    ['BRANDES_KOEPF', 'direct', false],
+    ['BRANDES_KOEPF', 'long', false],
+    ['SIMPLE', 'direct', true],
+  ] as const)(
+    'routes a reversed %s/%s edge outside its fixed SOUTH source and neighboring nodes (zero spacing=%s)',
+    async (placement, kind, zeroSpacing) => {
+      const graph = chain();
+      graph.children!.push(
+        { id: 'c', width: 100, height: 40 },
+        { id: 'd', width: 100, height: 40 },
+        { id: 'sibling', width: 100, height: 100 }
+      );
+      graph.edges!.push({ id: 'bc', sources: ['b'], targets: ['c'] }, { id: 'cd', sources: ['c'], targets: ['d'] });
+      const sourceIndex = kind === 'direct' ? 1 : 2;
+      const source = graph.children![sourceIndex];
+      source.layoutOptions = { 'elk.portConstraints': 'FIXED_POS' };
+      source.ports = [{ id: 'source::port', x: 25, y: 40, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'SOUTH' } }];
+      graph.edges!.push(
+        { id: 'toSibling', sources: [graph.children![sourceIndex - 1].id], targets: ['sibling'] },
+        { id: 'fromSibling', sources: ['sibling'], targets: [graph.children![sourceIndex + 1].id] },
+        { id: 'back', sources: ['source::port'], targets: ['a'] }
+      );
+      const spacing: Record<string, string> = zeroSpacing
+        ? {
+            'elk.padding': '[top=0,left=0,bottom=0,right=0]',
+            'elk.spacing.edgeNode': '0',
+            'elk.spacing.edgeEdge': '0',
+            'elk.layered.spacing.nodeNodeBetweenLayers': '0',
+            'elk.layered.spacing.edgeNodeBetweenLayers': '0',
+            'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
+          }
+        : {};
+      await elk.layout(graph, { layoutOptions: { ...options, ...spacing, 'elk.layered.nodePlacement.strategy': placement } });
+      const section = graph.edges![graph.edges!.length - 1].sections![0];
+      expect(section.startPoint).toEqual({ x: source.x! + 25, y: source.y! + 40 });
+      expect(section.endPoint.y).toBe(graph.children![0].y! + graph.children![0].height!);
+      const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+      for (let index = 1; index < points.length; index++) {
+        for (const node of graph.children!) {
+          expect(crossesNodeInterior(points[index - 1], points[index], node), `${node.id} on segment ${index}`).toBe(false);
+        }
+      }
+      expect(Math.max(...points.map((point) => point.x)) + (zeroSpacing ? 0 : 20)).toBeLessThanOrEqual(graph.width!);
+    }
+  );
 
   it('keeps model order within a layer and handles long edges with virtual nodes', async () => {
     const graph = chain();
@@ -213,11 +287,14 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       expect(layoutQuality(graph).edgeNodeHits).toBe(0);
       if (mode === 'reversed') {
         expect(section.endPoint).toEqual(port);
-        expect(section.bendPoints![section.bendPoints!.length - 1]).toEqual(lead);
-        expect(section.startPoint).toEqual({ x: center(far), y: far.y! + far.height! });
+        expect(section.bendPoints).toContainEqual(lead);
+        expect(section.startPoint.y).toBe(far.y);
+        expect(section.startPoint.x).toBeGreaterThanOrEqual(far.x!);
+        expect(section.startPoint.x).toBeLessThanOrEqual(far.x! + far.width!);
+        expect(section.startPoint.x).not.toBe(graph.edges![1].sections![0].endPoint.x);
       } else {
         expect(section.startPoint).toEqual(port);
-        expect(section.bendPoints![1]).toEqual(lead);
+        expect(section.bendPoints).toContainEqual(lead);
         expect(section.endPoint).toEqual({ x: center(far) - (mode === 'long' ? 10 : 0), y: far.y! });
       }
       expect(short.ports![0]).toMatchObject({ x: 20, y: 20 });
@@ -342,7 +419,7 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       ],
     };
     await elk.layout(graph, { layoutOptions: bkOptions });
-    const inner = graph.edges![4].sections![0].bendPoints!.slice(1);
+    const inner = graph.edges![4].sections![0].bendPoints!.filter((_, index) => index % 3 === 2);
     expect(inner).toHaveLength(6);
     expect(inner.every((point) => point.x === inner[0].x)).toBe(true);
     for (let i = 0; i < inner.length / 2; i++) {
@@ -368,7 +445,7 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
     await elk.layout(graph, { layoutOptions: bkOptions });
     const sibling = graph.children![1];
     const section = graph.edges![2].sections![0];
-    const lane = section.bendPoints!.slice(1, 3);
+    const lane = section.bendPoints!.filter((_, index) => index % 3 === 2).slice(0, 2);
     expect(lane).toHaveLength(2);
     expect(lane.map((point) => point.y)).toEqual(
       reversed ? [sibling.y! + sibling.height!, sibling.y!] : [sibling.y!, sibling.y! + sibling.height!]
@@ -386,8 +463,8 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
     }
     const source = graph.children![reversed ? 2 : 0];
     const target = graph.children![reversed ? 0 : 2];
-    expect(section.startPoint.y).toBe(source.y! + source.height!);
-    expect(section.endPoint.y).toBe(target.y!);
+    expect(section.startPoint.y).toBe(source.y! + (reversed ? 0 : source.height!));
+    expect(section.endPoint.y).toBe(target.y! + (reversed ? target.height! : 0));
     expect(section.incomingShape).toBe(source.id);
     expect(section.outgoingShape).toBe(target.id);
   });

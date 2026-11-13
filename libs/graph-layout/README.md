@@ -9,6 +9,10 @@ tree-shakable TypeScript.
 > Exact elkjs parity is not a goal. designer-v2 uses this package (bundled into its build); designer v1 and
 > data-mapper-v2 still use elkjs.
 
+The designer-v2 build includes graph-layout's declarations in its published output. After packing designer-v2,
+`pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory>` checks the
+package without resolving this private dependency. The new directory must be outside the repository.
+
 ## Usage
 
 ```ts
@@ -35,15 +39,16 @@ long-edge dummy nodes, SIMPLE and BALANCED Brandes-Köpf placement, local nested
 Balanced placement aligns median neighbors in four directions, protects inner dummy segments from conflicting
 alignments, compacts vertical blocks, and combines the four layouts without violating horizontal spacing.
 Fixed port coordinates are preserved, but placement currently optimizes node centers rather than port anchors.
-Edges receive container-relative sections, but spline visual parity is not established. Nonzero `elk.position`
-hints, cross-hierarchy edges, self-loops, hyperedges, labels,
-and unsupported option values reject.
+Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Edges receive
+container-relative sections, but general obstacle avoidance and spline visual parity are not established.
+Nonzero `elk.position` hints, cross-hierarchy edges, self-loops, hyperedges, labels, and unsupported
+option values reject.
 Successful calls mutate and return the input, matching bundled elkjs; failed validation leaves it unchanged.
 
-**Data-mapper blocker:** the actual `autoLayout` sends all nodes without positions, but applies results only
-to function nodes and conditionally adds `panelWidth` to x. Tests exercising that real dispatch path show
-final UI rectangle collisions for both engines even when the complete returned graph is disjoint.
-Do not integrate overlap removal based on raw-output non-overlap alone.
+**Data-mapper blocker:** `autoLayout` sends all nodes without positions, but applies results only to function
+nodes and conditionally adds `panelWidth` to x. Prior investigation observed final UI collisions with both
+engines even when the complete returned graph was disjoint. Do not integrate overlap removal based on
+raw-output non-overlap alone.
 
 ## Isolated designer preview
 
@@ -61,17 +66,18 @@ Both previews use the same production placement options; their algorithms and ou
 
 ## Parity and benchmark harness
 
-`bench/` compares this package against `elkjs@0.8.2` (the version the designers ship) on the ELK input
-graphs designer-v2 produces for every workflow in `__mocks__/workflows` (legacy and shared-node UI), plus
-synthetic data mapper overlap inputs.
+`bench/` compares this package against the former designer-v2 dependency, `elkjs@0.8.2`, using captured
+designer inputs for Recurrence, AllScopeNodes, and StressTest200 in both legacy and shared-node UIs, plus
+synthetic data-mapper overlap inputs. Focused synthetic tests cover additional graph shapes. Agent and handoff
+workflows and graphs larger than StressTest200 are not represented in the retained captured fixtures.
 
 | Command | What it does |
 | --- | --- |
-| `pnpm test:lib` | Unit tests, fixture geometry invariants, elkjs determinism and established StraightLine parity |
+| `pnpm test:lib` | Unit tests, fixture geometry invariants, elkjs determinism and simple-chain parity |
 | `ELKJS_EXACT_PARITY=1 pnpm test:lib` | Full coordinate/endpoint parity audit (currently fails; set the environment variable using your shell's syntax) |
-| `pnpm bench` | `vitest bench` timings for representative and stress fixtures |
-| `pnpm bench:report [regex]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
-| `node bench/report.ts [regex] --quality` | After building, compares SIMPLE/model-order placement control (current routing), candidate and elkjs using polyline crossings, node hits and horizontal skew |
+| `pnpm bench` | `vitest bench` timings for the retained fixtures |
+| `pnpm bench:report [fixture-name]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
+| `node bench/report.ts [fixture-name] --quality` | After building, compares SIMPLE/model-order placement control (current routing), candidate and elkjs using polyline crossings, node hits and horizontal skew |
 
 Regenerate fixtures after changing designer-v2 graph conversion (`elklayout.tsx`):
 
@@ -91,51 +97,11 @@ Notes:
 - Quality diagnostics treat edge sections as polylines, not rendered splines. Normal designer edges are
   independently drawn with React Flow smooth-step/Bezier paths; handoff edges use the returned sections.
   These metrics detect layout regressions but do not prove absence of rendered-edge overlap.
-- Run `node bench/report.ts '^(Scoped|Switch.shared|StraightLine)$' --simple` from this package on Node >= 22.18
-  to compare both engines with SIMPLE placement and forced model order. Cloning is retained and timed separately.
-- Preliminary SIMPLE measurements on a shared Windows machine: Scoped 75.6/2.4 ms (elkjs/candidate),
-  StraightLine 123.0/6.9 ms, Switch.shared 47.1/1.1 ms; clone medians 0.1-0.4 ms.
-  StraightLine had zero geometry differences; Scoped and Switch.shared did not (maximum node deltas 40/126 px).
-  Partial candidate bundle: 12.4 KB minified, 4.9 KB gzip, 4.3 KB brotli. These are not completed-engine or
-  browser responsiveness measurements, and do not establish production Brandes-Köpf parity.
-- Isolated headless Edge SIMPLE medians (seven samples, shared Windows machine): Scoped 1.5 ms,
-  StraightLine 3.6 ms, StressTest200 7.7 ms, StressTest1000 28.5 ms, StressTest500Gross 14.0 ms.
-  JSON-clone medians were 0.1-1.4 ms; structured-clone medians 0.1-2.6 ms. The 1,000-node call delayed a
-  queued timer by 28.6 ms (idle timer median 5 ms), so the async API does not guarantee responsiveness.
-  Actual gesture latency, frame rendering, worker round trips, and production BK timing remain unmeasured.
-- A subsequent large-fixture Node SIMPLE run measured StressTest200 233.7/10.9 ms, StressTest1000
-  4325.0/66.8 ms, and StressTest500Gross 9289.9/27.1 ms (elkjs/candidate, including cloning).
-  These fixtures have substantial geometry divergence: maximum node deltas 2080/8980/10180 px respectively.
-  Non-overlap is not layout parity; spacing/layering fidelity is an integration blocker alongside BK/routing.
-  Final measured bundle after the unsupported-position guard: 12.5 KB raw, 4.9 KB gzip, 4.4 KB brotli.
-
-### Balanced-placement refinement (2026-11-12)
-
-The preview no longer globally forces SIMPLE/model order. Crossing minimization retains the best of eight
-sweeps using Fenwick inversion scoring and a non-worsening downward reconciliation. Virtual edge lanes
-traverse the full layer height before changing slope, avoiding sibling node interiors. Short source nodes
-also receive a vertical lead to their rank bottom, including reversed routes and fixed SOUTH ports. Alignment/compaction
-uses four bounded passes; ordering is log-linear in expanded graph size. Long-edge expansion still depends
-on total edge span, not just the original node/edge count.
-
-Measured original-preview versus refined candidate section-polyline crossings:
-
-| Fixture | Original preview | Refined candidate | elkjs |
-| --- | --- | --- | --- |
-| StressTest200 | 813 | 0 | 0 |
-| StressTest1000 | 16,382 | 0 | 1 |
-| StressTest500Gross | 27,037 | 9,730 | 10,060 |
-
-The original Gross result also had 1,662 edge/node-interior hits; the refined result has zero.
-These are section-polyline diagnostics, not rendered-curve collision counts.
-The `--quality` SIMPLE control uses the **new** routing, so it is not a snapshot of the original preview.
-
-Without concurrent test execution, final Node medians (including cloning) were 14.3/52.5/38.0 ms for
-StressTest200/1000/500Gross versus elkjs 184.5/2,427.6/2,459.0 ms on the shared Windows machine.
-Candidate size is 16.1 KB minified / 6.2 KB gzip / 5.5 KB brotli.
-Headless Edge measured 28.3 ms layout and queued-timer delay on StressTest1000, plus 2.5 ms cloning.
-The async API still blocks the main thread; these results do not justify removing workers or cloning.
-
-StraightLine remains exact. StressTest200/1000 have maximum node deltas of 770/3,030 px; Gross still
-differs in ordering and route shape (maximum delta 38,565.5 px). AllScopeNodes retains a 40 px maximum delta.
-The coordinate-parity audit remains an integration blocker; production migration is not enabled.
+- Add `--simple`, optionally with a literal fixture-name substring, to compare both engines with SIMPLE placement
+  and forced model order. Cloning is retained and timed separately.
+- The async API still blocks the main thread. Exact coordinates and spline parity are not established;
+  designer-v2 currently uses the new engine directly without a fallback.
+- To check packed designer-v2 declarations manually, build and pack that package, then run
+  `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory-outside-repo>`.
+  The consumer links workspace dependencies and is not run in CI. Its stricter side-effect-import check currently
+  reports pre-existing unresolved `.less` and `.css` declarations; default TypeScript side-effect checking passes.

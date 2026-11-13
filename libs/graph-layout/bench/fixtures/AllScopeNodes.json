@@ -30,7 +30,7 @@
     "children": [
       {
         "id": "Recurrence",
-        "height": 40,
+        "height": 44,
         "width": 200,
         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
       },
@@ -41,7 +41,7 @@
         "children": [
           {
             "id": "Switch-#scope",
-            "height": 40,
+            "height": 44,
             "width": 200,
             "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
           },
@@ -50,7 +50,7 @@
             "children": [
               {
                 "id": "Conditional_Case-#subgraph",
-                "height": 40,
+                "height": 44,
                 "width": 200,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               },
@@ -61,7 +61,7 @@
                 "children": [
                   {
                     "id": "Condition-#scope",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                   },
@@ -70,19 +70,19 @@
                     "children": [
                       {
                         "id": "Condition-actions-#subgraph",
-                        "height": 40,
-                        "width": 200,
+                        "height": 32,
+                        "width": 120,
                         "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Terminate",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Increment_variable_4",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -113,13 +113,13 @@
                     "children": [
                       {
                         "id": "Condition-elseActions-#subgraph",
-                        "height": 40,
-                        "width": 200,
+                        "height": 32,
+                        "width": 120,
                         "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Terminate_2",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -186,7 +186,7 @@
             "children": [
               {
                 "id": "ForEach_Case-#subgraph",
-                "height": 40,
+                "height": 44,
                 "width": 200,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               },
@@ -197,13 +197,13 @@
                 "children": [
                   {
                     "id": "ForEach-#scope",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                   },
                   {
                     "id": "ForEach_Action_1",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                   },
@@ -214,19 +214,19 @@
                     "children": [
                       {
                         "id": "ForEach_nested-#scope",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "ForEach_Action_2",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "ForEach_Action_3",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -259,7 +259,7 @@
                     "children": [
                       {
                         "id": "ForEach_empty-#scope",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -321,7 +321,7 @@
             "children": [
               {
                 "id": "Scope_Case-#subgraph",
-                "height": 40,
+                "height": 44,
                 "width": 200,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               },
@@ -332,19 +332,19 @@
                 "children": [
                   {
                     "id": "Scope-#scope",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                   },
                   {
                     "id": "Scope_Action_1",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                   },
                   {
                     "id": "Scope_Action_2",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                   },
@@ -355,13 +355,13 @@
                     "children": [
                       {
                         "id": "Scope_nested-#scope",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Scope_Action_3",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -388,7 +388,7 @@
                     "children": [
                       {
                         "id": "Scope_empty-#scope",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -456,7 +456,7 @@
             "children": [
               {
                 "id": "DoUntil_Case-#subgraph",
-                "height": 40,
+                "height": 44,
                 "width": 200,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               },
@@ -467,19 +467,19 @@
                 "children": [
                   {
                     "id": "Until-#subgraph",
-                    "height": 40,
-                    "width": 200,
+                    "height": 32,
+                    "width": 120,
                     "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
                   },
                   {
                     "id": "Until_Action_1",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                   },
                   {
                     "id": "Until_Action_2",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                   },
@@ -490,19 +490,19 @@
                     "children": [
                       {
                         "id": "Until_Nested-#subgraph",
-                        "height": 40,
-                        "width": 200,
+                        "height": 32,
+                        "width": 120,
                         "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Until_Action_3",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
                       },
                       {
                         "id": "Until_Nested-#footer",
-                        "height": 40,
+                        "height": 44,
                         "width": 200,
                         "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                       }
@@ -530,7 +530,7 @@
                   },
                   {
                     "id": "Until-#footer",
-                    "height": 40,
+                    "height": 44,
                     "width": 200,
                     "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
                   }
@@ -589,8 +589,8 @@
             "children": [
               {
                 "id": "Switch-addCase-#subgraph",
-                "height": 40,
-                "width": 200,
+                "height": 44,
+                "width": 20,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               }
             ],
@@ -601,13 +601,13 @@
             "children": [
               {
                 "id": "Switch-defaultCase-#subgraph",
-                "height": 40,
-                "width": 200,
+                "height": 32,
+                "width": 120,
                 "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
               },
               {
                 "id": "Default-Compose",
-                "height": 40,
+                "height": 44,
                 "width": 200,
                 "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
               }
@@ -679,7 +679,7 @@
       },
       {
         "id": "Initialize_owner",
-        "height": 40,
+        "height": 44,
         "width": 200,
         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
       }

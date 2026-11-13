@@ -157,7 +157,7 @@ export const getNodePresentation = (
 
 // Initial sizes of the rendered legacy cards, used until the DOM measurement is observed.
 // Action, scope header and large branch cards: 2px border + 8px padding + 24px icon/20px title row (workflowCardStyles.ts).
-const CARD_NODE_SIZE = { width: 200, height: 44 };
+const LEGACY_LARGE_NODE_SIZE = { width: 200, height: 44 };
 // Small branch cards: 120px wide, 6px padding + 16px line height + border (card.styles.ts).
 const SMALL_SUBGRAPH_CARD_SIZE = { width: 120, height: 32 };
 // Add-case cards: a 44px tall grid that shrink-wraps its 20px add button (subgraphCard.tsx).
@@ -178,7 +178,7 @@ export const getDefaultNodeSize = (type?: WorkflowNodeType, subgraphType?: Subgr
   switch (type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE) {
     case WORKFLOW_NODE_TYPES.OPERATION_NODE:
     case WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE:
-      return { ...CARD_NODE_SIZE };
+      return { ...LEGACY_LARGE_NODE_SIZE };
     case WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE: {
       if (subgraphType && smallSubgraphTypes.has(subgraphType)) {
         return { ...SMALL_SUBGRAPH_CARD_SIZE };
@@ -186,7 +186,7 @@ export const getDefaultNodeSize = (type?: WorkflowNodeType, subgraphType?: Subgr
       if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
         return { ...ADD_SUBGRAPH_CARD_SIZE };
       }
-      return { ...CARD_NODE_SIZE };
+      return { ...LEGACY_LARGE_NODE_SIZE };
     }
     case WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE:
       return { ...PLACEHOLDER_NODE_SIZE };

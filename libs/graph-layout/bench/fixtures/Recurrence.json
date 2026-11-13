@@ -30,7 +30,7 @@
     "children": [
       {
         "id": "Recurrence",
-        "height": 40,
+        "height": 44,
         "width": 200,
         "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
       }

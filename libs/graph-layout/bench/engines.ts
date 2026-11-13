@@ -23,16 +23,3 @@ export const createCandidateEngine = (Candidate: ElkLike): LayoutEngine => {
 /** Runs a fixture the way the designers do (deep-cloned input, global options as layout arguments). */
 export const runFixture = (engine: LayoutEngine, fixture: LayoutFixture): Promise<ElkNode> =>
   engine.layout(structuredClone(fixture.graph), { layoutOptions: fixture.layoutOptions });
-
-/** True while the candidate still throws "not implemented" for this fixture. */
-export const isImplemented = async (engine: LayoutEngine, fixture: LayoutFixture): Promise<boolean> => {
-  try {
-    await runFixture(engine, fixture);
-    return true;
-  } catch (error) {
-    if (error instanceof Error && /not implemented/i.test(error.message)) {
-      return false;
-    }
-    throw error;
-  }
-};
