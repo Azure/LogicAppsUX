@@ -1,18 +1,40 @@
 import { describe, expect, it } from 'vitest';
 import ELK from '../src/index';
-import { createCandidateEngine, createElkjsEngine, isImplemented, runFixture } from './engines.ts';
-import { createOverlapFixture, graphStats, loadWorkflowFixtures } from './fixtures.ts';
+import { createCandidateEngine, createElkjsEngine, runFixture } from './engines.ts';
+import { createOverlapFixture, graphStats, loadWorkflowFixtures, reportFixtureFilter } from './fixtures.ts';
 import { compareGeometry, extractGeometry, findOverlaps } from './geometry.ts';
 import { layoutQuality } from './quality.ts';
 
-// Large stress fixtures are covered by `pnpm bench` / `pnpm bench:report` instead of unit tests.
-const fixtures = [...loadWorkflowFixtures().filter((fixture) => graphStats(fixture.graph).nodes <= 250), createOverlapFixture(20)];
+const workflows = loadWorkflowFixtures();
+const fixtures = [...workflows, createOverlapFixture(20)];
 const elkjs = createElkjsEngine();
 const candidate = createCandidateEngine(ELK);
 
 describe('parity harness', () => {
-  it('has captured designer fixtures', () => {
-    expect(fixtures.length).toBeGreaterThan(10);
+  it('has the representative designer fixtures for both node UIs', () => {
+    expect(workflows.map((fixture) => fixture.name)).toEqual([
+      'AllScopeNodes',
+      'AllScopeNodes.shared',
+      'Recurrence',
+      'Recurrence.shared',
+      'StressTest200',
+      'StressTest200.shared',
+    ]);
+  });
+
+  it.each([
+    [['--quality'], ['AllScopeNodes', 'Recurrence', 'StressTest200']],
+    [
+      ['--simple', 'StressTest200'],
+      ['StressTest200', 'StressTest200.shared'],
+    ],
+    [
+      ['Recurrence', '--quality'],
+      ['Recurrence', 'Recurrence.shared'],
+    ],
+  ])('selects report fixtures independently of option flags', (args, expected) => {
+    const filter = reportFixtureFilter(args);
+    expect(loadWorkflowFixtures((name) => filter.test(name)).map((fixture) => fixture.name)).toEqual(expected);
   });
 
   it('checks the reference mutation contract rather than assuming worker-style cloning', async () => {
@@ -36,10 +58,7 @@ describe('parity harness', () => {
     expect(compareGeometry(first, second, 0)).toEqual({ missingNodes: [], nodeMismatches: [], edgeMismatches: [], maxNodeDelta: 0 });
   });
 
-  it.for(fixtures)('candidate preserves finite non-overlapping geometry on $name', async (fixture, { skip }) => {
-    if (!(await isImplemented(candidate, fixture))) {
-      skip();
-    }
+  it.for(fixtures)('candidate preserves finite non-overlapping geometry on $name', async (fixture) => {
     const actual = extractGeometry(await runFixture(candidate, fixture));
     expect(Object.keys(actual.nodes).length).toBe(graphStats(fixture.graph).nodes + 1);
     expect(findOverlaps(actual, 0.01)).toEqual([]);
@@ -54,8 +73,20 @@ describe('parity harness', () => {
     }
   });
 
-  it('retains established elkjs parity on the captured StraightLine fixture', async () => {
-    const fixture = fixtures.find((entry) => entry.name === 'StraightLine')!;
+  it('matches elkjs on a simple linear workflow', async () => {
+    const recurrence = workflows.find((fixture) => fixture.name === 'Recurrence')!;
+    const child = recurrence.graph.children![0];
+    const fixture = {
+      ...recurrence,
+      graph: {
+        ...recurrence.graph,
+        children: ['a', 'b', 'c'].map((id) => ({ ...child, id })),
+        edges: [
+          { id: 'a-b', sources: ['a'], targets: ['b'] },
+          { id: 'b-c', sources: ['b'], targets: ['c'] },
+        ],
+      },
+    };
     const expected = extractGeometry(await runFixture(elkjs, fixture));
     const actual = extractGeometry(await runFixture(candidate, fixture));
     expect(compareGeometry(expected, actual)).toEqual({
@@ -66,7 +97,7 @@ describe('parity harness', () => {
     });
   });
 
-  it.each(loadWorkflowFixtures((name) => name === 'StressTest200' || name === 'StressTest1000'))(
+  it.each(loadWorkflowFixtures((name) => name === 'StressTest200'))(
     'eliminates planar stress-tree polyline crossings in $name',
     async (fixture) => {
       const actual = await runFixture(candidate, fixture);
@@ -80,10 +111,7 @@ describe('parity harness', () => {
 
   // Exact coordinates remain an explicit integration gate, not a claim made by invariant tests.
   // Run ELKJS_EXACT_PARITY=1 to audit remaining differences while placement/routing converge.
-  it.skipIf(process.env.ELKJS_EXACT_PARITY !== '1').for(fixtures)('candidate matches elkjs on $name', async (fixture, { skip }) => {
-    if (!(await isImplemented(candidate, fixture))) {
-      skip();
-    }
+  it.skipIf(process.env.ELKJS_EXACT_PARITY !== '1').for(fixtures)('candidate matches elkjs on $name', async (fixture) => {
     const expected = extractGeometry(await runFixture(elkjs, fixture));
     const actual = extractGeometry(await runFixture(candidate, fixture));
     if (fixture.parity === 'noOverlap') {

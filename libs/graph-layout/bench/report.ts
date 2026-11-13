@@ -5,13 +5,13 @@ import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { build } from 'esbuild';
 import ELK from '../dist/index.js';
-import { createCandidateEngine, createElkjsEngine, isImplemented, type LayoutEngine, runFixture } from './engines.ts';
-import { createOverlapFixture, graphStats, type LayoutFixture, loadWorkflowFixtures } from './fixtures.ts';
+import { createCandidateEngine, createElkjsEngine, type LayoutEngine, runFixture } from './engines.ts';
+import { createOverlapFixture, graphStats, type LayoutFixture, loadWorkflowFixtures, reportFixtureFilter } from './fixtures.ts';
 import { compareGeometry, extractGeometry, findOverlaps } from './geometry.ts';
 import { layoutQuality } from './quality.ts';
 
 const packageDir = dirname(dirname(fileURLToPath(import.meta.url)));
-const filter = process.argv[2] ? new RegExp(process.argv[2]) : /^(?!.*\.shared$)/;
+const filter = reportFixtureFilter(process.argv.slice(2));
 const simplePreview = process.argv.includes('--simple');
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`;
@@ -89,24 +89,21 @@ for (const original of [...loadWorkflowFixtures((name) => filter.test(name)), cr
     cloneSamples.push(performance.now() - start);
   }
   const reference = await time(elkjs, fixture);
-  let candidateCell = 'n/a';
-  let parityCell = 'not implemented';
-  if (await isImplemented(candidate, fixture)) {
-    candidateCell = (await time(candidate, fixture)).toFixed(1);
-    const expected = extractGeometry(await runFixture(elkjs, fixture));
-    const actual = extractGeometry(await runFixture(candidate, fixture));
-    if (fixture.parity === 'noOverlap') {
-      const missing = Object.keys(expected.nodes).filter((id) => !(id in actual.nodes)).length;
-      parityCell = `${missing} missing, ${findOverlaps(actual).length} overlaps`;
-    } else {
-      const diff = compareGeometry(expected, actual);
-      parityCell = `${diff.nodeMismatches.length + diff.missingNodes.length} node / ${diff.edgeMismatches.length} edge diffs, max Δ ${diff.maxNodeDelta}`;
-    }
+  const candidateTime = await time(candidate, fixture);
+  const expected = extractGeometry(await runFixture(elkjs, fixture));
+  const actual = extractGeometry(await runFixture(candidate, fixture));
+  let parityCell: string;
+  if (fixture.parity === 'noOverlap') {
+    const missing = Object.keys(expected.nodes).filter((id) => !(id in actual.nodes)).length;
+    parityCell = `${missing} missing, ${findOverlaps(actual).length} overlaps`;
+  } else {
+    const diff = compareGeometry(expected, actual);
+    parityCell = `${diff.nodeMismatches.length + diff.missingNodes.length} node / ${diff.edgeMismatches.length} edge diffs, max Δ ${diff.maxNodeDelta}`;
   }
   console.log(
-    `| ${fixture.name} | ${nodes} | ${edges} | ${reference.toFixed(1)} | ${candidateCell} | ${median(cloneSamples).toFixed(1)} | ${parityCell} |`
+    `| ${fixture.name} | ${nodes} | ${edges} | ${reference.toFixed(1)} | ${candidateTime.toFixed(1)} | ${median(cloneSamples).toFixed(1)} | ${parityCell} |`
   );
-  if (process.argv.includes('--quality') && candidateCell !== 'n/a' && fixture.parity !== 'noOverlap') {
+  if (process.argv.includes('--quality') && fixture.parity !== 'noOverlap') {
     const previous = {
       ...original,
       layoutOptions: {

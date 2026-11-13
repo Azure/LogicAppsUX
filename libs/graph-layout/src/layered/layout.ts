@@ -404,6 +404,28 @@ const portPoint = (vertex: Vertex, port: ElkPort | undefined, atSource: boolean,
     ? { x: vertex.x + (port.x ?? 0) + (port.width ?? 0) / 2, y: vertex.y + (port.y ?? 0) + (port.height ?? 0) / 2 }
     : { x: vertex.x + offset, y: vertex.y + (atSource ? vertex.height : 0) };
 
+const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint[] => {
+  const points = [start];
+  for (const point of [...bends, end]) {
+    const previous = points[points.length - 1];
+    if (point.x !== previous.x || point.y !== previous.y) {
+      points.push(point);
+    }
+  }
+  if (points.length === 1) {
+    points.push(end);
+  }
+  const result: ElkPoint[] = [];
+  // Duplicate endpoints as cubic controls so each waypoint remains on the rendered path.
+  for (let index = 1; index < points.length; index++) {
+    result.push({ ...points[index - 1] }, { ...points[index] });
+    if (index < points.length - 1) {
+      result.push({ ...points[index] });
+    }
+  }
+  return result;
+};
+
 const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], anchors: Anchors): ElkEdgeSection[] => {
   const rankHeights: number[] = [];
   for (const vertex of vertices) {
@@ -451,7 +473,7 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       id: `${link.edge.id}_s0`,
       startPoint: start,
       endPoint: end,
-      bendPoints: bends,
+      bendPoints: chain.length === 2 && bends.length === 2 ? bends : cubicBends(start, bends, end),
       incomingShape: link.edge.sources[0],
       outgoingShape: link.edge.targets[0],
     };

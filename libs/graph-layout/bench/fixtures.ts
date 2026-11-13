@@ -29,6 +29,11 @@ export const loadWorkflowFixtures = (filter: (name: string) => boolean = () => t
     .sort()
     .map((file) => JSON.parse(readFileSync(join(fixturesDir, file), 'utf8')) as LayoutFixture);
 
+export const reportFixtureFilter = (args: string[]): RegExp => {
+  const pattern = args.find((arg) => !arg.startsWith('--'));
+  return pattern ? new RegExp(pattern) : /^(?!.*\.shared$)/;
+};
+
 /** Deterministic PRNG so synthetic fixtures are stable across runs. */
 const mulberry32 = (seed: number) => () => {
   seed = (seed + 0x6d2b79f5) | 0;
