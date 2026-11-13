@@ -10,7 +10,7 @@ import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../uti
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../utils/languageServerProtocol';
+import { installLogicAppsLanguageServerAssets } from '../../utils/languageServerInstaller';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../utils/timeout';
@@ -113,8 +113,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             async (_actionContext: IActionContext) => {
               _actionContext.errorHandling.rethrow = true;
               _actionContext.errorHandling.suppressDisplay = true;
-              progress.report({ increment: 10, message: 'SDK LSP Server' });
-              await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
+              progress.report({ increment: 10, message: 'Logic Apps language server' });
+              await runWithTimeout(() => installLogicAppsLanguageServerAssets(), 'Logic Apps language server', dependencyTimeoutMs);
               // TODO(aeldridge): Why is setDotNetCommand called here?
               await setDotNetCommand();
             }

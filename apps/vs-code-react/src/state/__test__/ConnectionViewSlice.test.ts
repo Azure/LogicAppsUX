@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createFileSystemConnection,
-  initializeLanguageServer,
-  languageServerSlice,
+  initializeConnectionView,
+  connectionViewSlice,
   updateFileSystemConnection,
-} from '../LanguageServerSlice';
+} from '../ConnectionViewSlice';
 
-describe('LanguageServerSlice', () => {
-  it('returns the initial language server state', () => {
-    expect(languageServerSlice.reducer(undefined, { type: 'unknown' })).toMatchObject({
+describe('ConnectionViewSlice', () => {
+  it('returns the initial connection view state', () => {
+    expect(connectionViewSlice.reducer(undefined, { type: 'unknown' })).toMatchObject({
       apiVersion: '2018-11-01',
       baseUrl: '/url',
       connectionData: {},
@@ -21,7 +21,7 @@ describe('LanguageServerSlice', () => {
     });
   });
 
-  it('initializes from the language server payload', () => {
+  it('initializes from the connection view payload', () => {
     const panelMetadata = { panelId: 'panel-1', workflowName: 'workflow' };
     const connectionData = { managedApiConnections: {} };
     const apiHubServiceDetails = {
@@ -39,9 +39,9 @@ describe('LanguageServerSlice', () => {
       type: 'serviceProvider',
     };
 
-    const state = languageServerSlice.reducer(
+    const state = connectionViewSlice.reducer(
       undefined,
-      initializeLanguageServer({
+      initializeConnectionView({
         apiHubServiceDetails,
         apiVersion: '2024-01-01',
         baseUrl: 'https://logic.azure.com',
@@ -67,9 +67,9 @@ describe('LanguageServerSlice', () => {
   });
 
   it('defaults workflowRuntimeBaseUrl when initialization omits it', () => {
-    const state = languageServerSlice.reducer(
+    const state = connectionViewSlice.reducer(
       undefined,
-      initializeLanguageServer({
+      initializeConnectionView({
         apiHubServiceDetails: {},
         apiVersion: '2024-01-01',
         baseUrl: 'https://logic.azure.com',
@@ -88,7 +88,7 @@ describe('LanguageServerSlice', () => {
     const resolve = vi.fn();
     const reject = vi.fn();
 
-    const state = languageServerSlice.reducer(undefined, createFileSystemConnection({ connectionName: 'share', reject, resolve }));
+    const state = connectionViewSlice.reducer(undefined, createFileSystemConnection({ connectionName: 'share', reject, resolve }));
 
     expect(state.fileSystemConnections.share.resolveConnection).toBe(resolve);
     expect(state.fileSystemConnections.share.rejectConnection).toBe(reject);
@@ -98,12 +98,12 @@ describe('LanguageServerSlice', () => {
     const resolve = vi.fn();
     const reject = vi.fn();
     const connection = { id: 'connection-1' };
-    const stateWithConnection = languageServerSlice.reducer(
+    const stateWithConnection = connectionViewSlice.reducer(
       undefined,
       createFileSystemConnection({ connectionName: 'share', reject, resolve })
     );
 
-    const state = languageServerSlice.reducer(
+    const state = connectionViewSlice.reducer(
       stateWithConnection,
       updateFileSystemConnection({ connectionName: 'share', connection, error: '' })
     );
@@ -116,12 +116,12 @@ describe('LanguageServerSlice', () => {
   it('rejects and cleans up a pending file system connection', () => {
     const resolve = vi.fn();
     const reject = vi.fn();
-    const stateWithConnection = languageServerSlice.reducer(
+    const stateWithConnection = connectionViewSlice.reducer(
       undefined,
       createFileSystemConnection({ connectionName: 'share', reject, resolve })
     );
 
-    const state = languageServerSlice.reducer(
+    const state = connectionViewSlice.reducer(
       stateWithConnection,
       updateFileSystemConnection({ connectionName: 'share', connection: undefined, error: 'Unable to connect' })
     );

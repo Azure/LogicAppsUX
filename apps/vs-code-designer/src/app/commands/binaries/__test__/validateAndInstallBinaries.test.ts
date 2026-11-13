@@ -7,7 +7,7 @@ import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../../
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { setDotNetCommand } from '../../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../../utils/languageServerProtocol';
+import { installLogicAppsLanguageServerAssets } from '../../../utils/languageServerInstaller';
 import { setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { shouldRequireStrictDependencyValidation } from '../../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../../utils/timeout';
@@ -45,8 +45,8 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   setFunctionsCommand: vi.fn(),
 }));
 
-vi.mock('../../../utils/languageServerProtocol', () => ({
-  installLSPSDK: vi.fn(),
+vi.mock('../../../utils/languageServerInstaller', () => ({
+  installLogicAppsLanguageServerAssets: vi.fn(),
 }));
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
@@ -117,7 +117,7 @@ describe('validateAndInstallBinaries', () => {
     (validateNodeJsIsLatest as Mock).mockResolvedValue(undefined);
     (validateFuncCoreToolsIsLatest as Mock).mockResolvedValue(undefined);
     (validateDotNetIsLatest as Mock).mockResolvedValue(undefined);
-    (installLSPSDK as Mock).mockResolvedValue(undefined);
+    (installLogicAppsLanguageServerAssets as Mock).mockResolvedValue(undefined);
     (setNodeJsCommand as Mock).mockResolvedValue(undefined);
     (setFunctionsCommand as Mock).mockResolvedValue(undefined);
     (setDotNetCommand as Mock).mockResolvedValue(undefined);
@@ -162,7 +162,7 @@ describe('validateAndInstallBinaries', () => {
       3000,
       'https://dotnet.microsoft.com/en-us/download/dotnet'
     );
-    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3000);
+    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'Logic Apps language server', 3000);
     expect(validateNodeJsIsLatest).toHaveBeenCalledWith(
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
@@ -181,7 +181,7 @@ describe('validateAndInstallBinaries', () => {
       }),
       '8.0.100,10'
     );
-    expect(installLSPSDK).toHaveBeenCalledWith();
+    expect(installLogicAppsLanguageServerAssets).toHaveBeenCalledWith();
     expect(setNodeJsCommand).toHaveBeenCalled();
     expect(setFunctionsCommand).toHaveBeenCalled();
     expect(setDotNetCommand).toHaveBeenCalledTimes(2);

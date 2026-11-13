@@ -88,7 +88,7 @@ export namespace ext {
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
-    languageServer: 'languageServer',
+    connectionView: 'connectionView',
     createWorkspace: 'createWorkspace',
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',
     createLogicApp: 'createLogicApp',
@@ -110,7 +110,7 @@ export namespace ext {
     [webViewKey.createLogicApp]: {},
     [webViewKey.createWorkflow]: {},
     [webViewKey.overview]: {},
-    [webViewKey.languageServer]: {},
+    [webViewKey.connectionView]: {},
   };
 
   export const showError = (errMsg: string, options?: MessageOptions) => {
