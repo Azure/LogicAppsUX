@@ -18,7 +18,7 @@ import { hasMultipleTriggers } from '@microsoft/logic-apps-shared';
 import { useCustomCompareEffect } from '@react-hookz/web';
 import isEqual from 'lodash.isequal';
 import type React from 'react';
-import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
@@ -139,7 +139,8 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
   }
 
-  useEffect(() => {
+  // Register services in a layout effect so replacement happens before child passive graph initialization effects run.
+  useLayoutEffect(() => {
     dispatch(initializeServices(wrapped));
   }, [dispatch, wrapped]);
 

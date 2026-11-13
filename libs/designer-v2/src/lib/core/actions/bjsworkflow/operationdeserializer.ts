@@ -82,6 +82,9 @@ import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
   isNullOrUndefined,
+  ConnectionService,
+  AssertionException,
+  AssertionErrorCode,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -828,7 +831,18 @@ const updateDynamicDataForValidConnection = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isFreshCreatedAgent: boolean
 ): Promise<void> => {
+  const getRegisteredConnectionService = () => {
+    try {
+      return ConnectionService();
+    } catch (error) {
+      if (error instanceof AssertionException && error.code === AssertionErrorCode.SERVICE_NOT_INITIALIZED) {
+        return undefined;
+      }
+      throw error;
+    }
+  };
   const mapping = getState().connections.connectionsMapping[nodeId];
+  const connectionServiceAtValidationStart = getRegisteredConnectionService();
   if (mapping && typeof mapping !== 'string') {
     // Runtime selection does not require a design-time connection. Keep raw inputs intact.
     if (!reference) {
@@ -836,8 +850,16 @@ const updateDynamicDataForValidConnection = async (
     }
   }
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
+  // Only the current reference/service pair can update connection validation outcomes.
+  if (
+    getConnectionReference(getState().connections, nodeId) !== reference ||
+    getRegisteredConnectionService() !== connectionServiceAtValidationStart
+  ) {
+    return;
+  }
 
   if (isValidConnection) {
+    dispatch(updateErrorDetails({ id: nodeId, clearLevels: [ErrorLevel.Connection] }));
     const {
       tokens: { variables },
       workflowParameters: { definitions },

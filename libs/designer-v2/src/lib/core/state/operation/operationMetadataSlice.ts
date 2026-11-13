@@ -744,14 +744,29 @@ export const operationMetadataSlice = createSlice({
         id: string;
         errorInfo?: ErrorInfo;
         clear?: boolean;
+        clearLevels?: ErrorLevel[];
       }>
     ) => {
-      const { id, errorInfo, clear } = action.payload;
+      const { id, errorInfo, clear, clearLevels } = action.payload;
       if (errorInfo) {
         state.errors[id] = {
           ...(getRecordEntry(state.errors, id) as any),
           [errorInfo.level]: errorInfo,
         };
+      } else if (clearLevels?.length) {
+        const nodeErrors = getRecordEntry(state.errors, id);
+        if (!nodeErrors) {
+          return;
+        }
+        const remainingErrors = { ...nodeErrors };
+        for (const level of clearLevels) {
+          delete remainingErrors[level];
+        }
+        if (Object.keys(remainingErrors).length) {
+          state.errors[id] = remainingErrors;
+        } else {
+          delete state.errors[id];
+        }
       } else if (clear) {
         delete state.errors[id];
       }

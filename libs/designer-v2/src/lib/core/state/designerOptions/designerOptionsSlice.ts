@@ -31,6 +31,7 @@ import {
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import CONSTANTS from '../../../common/constants';
+import { clearConnectionCaches } from '../../queries/connections';
 
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
@@ -54,6 +55,8 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     collapseGraphsByDefault: false,
   },
 };
+
+let lastRegisteredConnectionService: ServiceOptions['connectionService'] | undefined;
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',
@@ -84,6 +87,13 @@ export const initializeServices = createAsyncThunk(
     copilotWorkflowEditorService,
     resourceService,
   }: ServiceOptions) => {
+    const shouldRefreshConnectionCaches = !!lastRegisteredConnectionService && lastRegisteredConnectionService !== connectionService;
+    if (shouldRefreshConnectionCaches) {
+      // Cached connections belong to the service snapshot that produced them.
+      clearConnectionCaches();
+    }
+    lastRegisteredConnectionService = connectionService;
+
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
       loggerServices.push(loggerService);
