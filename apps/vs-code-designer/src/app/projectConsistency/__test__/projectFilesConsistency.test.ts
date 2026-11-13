@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { workspace } from 'vscode';
 import * as fse from 'fs-extra';
 import {
@@ -993,6 +993,17 @@ describe('projectFilesConsistency', () => {
         version: defaultVersionRange,
       },
     };
+    const expectedNugetHostJson = {
+      version: '2.0',
+      logging: {
+        applicationInsights: {
+          samplingSettings: {
+            isEnabled: true,
+            excludedTypes: 'Request',
+          },
+        },
+      },
+    };
 
     it('regenerates host.json when it is missing', async () => {
       mockFiles({});
@@ -1025,6 +1036,33 @@ describe('projectFilesConsistency', () => {
 
       expect(created.changed).toBe(false);
       expect(created.changedArtifacts).toEqual([]);
+      expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
+    });
+
+    it('creates a NuGet host.json without an extension bundle when missing', async () => {
+      mockFiles({});
+
+      const created = await ensureHostFile(projectPath, ProjectPackageType.Nuget);
+
+      expect(created.changed).toBe(true);
+      expect(writtenContentFor('host.json')).toEqual(expectedNugetHostJson);
+    });
+
+    it('removes a Workflows extension bundle reference from a NuGet host.json', async () => {
+      mockFiles({ [rootHostPath]: JSON.stringify(expectedRootHostJson) });
+
+      const created = await ensureHostFile(projectPath, ProjectPackageType.Nuget);
+
+      expect(created.changed).toBe(true);
+      expect(writtenContentFor('host.json')).toEqual(expectedNugetHostJson);
+    });
+
+    it('preserves a valid NuGet host.json without an extension bundle', async () => {
+      mockFiles({ [rootHostPath]: JSON.stringify(expectedNugetHostJson) });
+
+      const created = await ensureHostFile(projectPath, ProjectPackageType.Nuget);
+
+      expect(created.changed).toBe(false);
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
     });
   });
@@ -1074,6 +1112,24 @@ describe('projectFilesConsistency', () => {
       expect(writtenPaths).toContain(`${designTimeDir}/local.settings.json`);
       // Root local.settings.json baseline + design-time runtime settings are upserted.
       expect(mockedAddOrUpdate).toHaveBeenCalled();
+    });
+
+    it('generates a NuGet root host without changing the bundle-based design-time host', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue(['LogicApp.csproj']);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      await ensureProjectFiles(context, projectPath);
+
+      const rootHost = mockedWriteFormattedJson.mock.calls.find((call) => norm(call[0] as string) === rootHostPath)?.[1] as {
+        extensionBundle?: unknown;
+      };
+      const designTimeHost = mockedWriteFormattedJson.mock.calls.find(
+        (call) => norm(call[0] as string) === `${designTimeDir}/host.json`
+      )?.[1] as { extensionBundle?: { id?: string } };
+
+      expect(rootHost.extensionBundle).toBeUndefined();
+      expect(designTimeHost.extensionBundle?.id).toBe(extensionBundleId);
     });
 
     it('preserves everything and writes nothing when all artifacts are already valid', async () => {

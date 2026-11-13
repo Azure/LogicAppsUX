@@ -51,7 +51,13 @@ import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
-import { getWorkspaceSetting, isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import {
+  getWorkspaceSetting,
+  isManagedIdentityAuthEnabled,
+  isProjectConsistencyCheckEnabled,
+  shouldParameterizeConnections,
+  updateGlobalSetting,
+} from './app/utils/vsCodeConfig/settings';
 import {
   isAutoStartDesignTimeNotificationSuppressed,
   isManagedIdentityAuthNotificationSuppressed,
@@ -117,22 +123,24 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       });
 
-      const projectPaths = await getWorkspaceLogicAppRoots();
+      if (isProjectConsistencyCheckEnabled()) {
+        const projectPaths = await getWorkspaceLogicAppRoots();
 
-      activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
-      const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
-        await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
-          actionContext.telemetry.properties.isActivationEvent = 'true';
-          await ensureProjectFiles(actionContext, projectPath);
+        activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+        const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
+          await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
+            actionContext.telemetry.properties.isActivationEvent = 'true';
+            await ensureProjectFiles(actionContext, projectPath);
+          });
         });
-      });
-      await Promise.all(ensureProjectFilesTasks);
+        await Promise.all(ensureProjectFilesTasks);
 
-      activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-      callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
-        actionContext.telemetry.properties.isActivationEvent = 'true';
-        await ensureVSCodeFiles(actionContext, projectPaths);
-      });
+        activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+        callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
+          actionContext.telemetry.properties.isActivationEvent = 'true';
+          await ensureVSCodeFiles(actionContext, projectPaths);
+        });
+      }
     }
 
     activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';

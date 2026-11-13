@@ -3,12 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
-import { generateHostJson, generateDesignTimeHostJson } from '../host';
-import {
-	extensionBundleId,
-	defaultVersionRange,
-	workflowOperationDiscoveryHostModeKey,
-} from '../../../../constants';
+import { generateHostJson, generateNugetHostJson, generateDesignTimeHostJson } from '../host';
+import { extensionBundleId, defaultVersionRange, workflowOperationDiscoveryHostModeKey } from '../../../../constants';
 
 describe('hostGenerator', () => {
   describe('generateHostJson', () => {
@@ -36,6 +32,19 @@ describe('hostGenerator', () => {
       expect(result.logging.applicationInsights.samplingSettings).toBeDefined();
       expect(result.logging.applicationInsights.samplingSettings.isEnabled).toBe(true);
       expect(result.logging.applicationInsights.samplingSettings.excludedTypes).toBe('Request');
+    });
+  });
+
+  describe('generateNugetHostJson', () => {
+    it('should omit the extension bundle reference', () => {
+      const result = generateNugetHostJson();
+
+      expect(result.version).toBe('2.0');
+      expect(result.extensionBundle).toBeUndefined();
+      expect(result.logging?.applicationInsights?.samplingSettings).toEqual({
+        isEnabled: true,
+        excludedTypes: 'Request',
+      });
     });
   });
 
