@@ -1437,12 +1437,14 @@ const getSerializedRuntimeConfiguration = (
 
   const isSecureInputsSet = settings.secureInputs?.value;
   const isSecureOutputsSet = settings.secureOutputs?.value;
+  const isSecureErrorResponseSet = settings.secureErrorResponse?.isSupported && settings.secureErrorResponse.value;
 
-  if (isSecureInputsSet || isSecureOutputsSet) {
+  if (isSecureInputsSet || isSecureOutputsSet || isSecureErrorResponseSet) {
     const secureData: LogicAppsV2.SecureData = {
       properties: [
         ...(isSecureInputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS] : []),
         ...(isSecureOutputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS] : []),
+        ...(isSecureErrorResponseSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE] : []),
       ],
     };
 

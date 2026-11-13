@@ -299,7 +299,6 @@ const getArrayDetailsForNestedForeach = (
         : undefined
     );
 
-    // eslint-disable-next-line no-loop-func
     const alreadyInLoop = repetitionContext.repetitionReferences.some((repetitionReference) => {
       const { repetitionValue } = repetitionReference;
       if (typeof repetitionValue !== 'string') {
