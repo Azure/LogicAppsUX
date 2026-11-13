@@ -319,6 +319,35 @@ describe('PayloadPopover', () => {
     });
   });
 
+  describe('Relative path parameters', () => {
+    it('should not render a relative path field when the trigger has none', () => {
+      renderWithIntl();
+
+      expect(screen.queryByText('Relative path')).not.toBeInTheDocument();
+    });
+
+    it('should render the path parameter key and submit the entered value', () => {
+      renderWithIntl({ ...defaultProps, relativePathParameterNames: ['subscriptionId'] });
+
+      expect(screen.getByText('Relative path')).toBeInTheDocument();
+      expect(screen.getByText('Run with payload')).toBeDisabled();
+      const key = screen.getByRole('textbox', { name: 'Relative path subscriptionId key' });
+      expect(key).toHaveValue('subscriptionId');
+      expect(key).toHaveAttribute('readonly');
+
+      fireEvent.change(screen.getByRole('textbox', { name: 'Relative path subscriptionId' }), {
+        target: { value: 'abc-123' },
+      });
+      fireEvent.click(screen.getByText('Run with payload'));
+
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          relativePathParameters: { subscriptionId: 'abc-123' },
+        })
+      );
+    });
+  });
+
   describe('Reset on Open', () => {
     it('should reset headers to default when popover is reopened', () => {
       const { rerender } = renderWithIntl({ ...defaultProps, open: false });

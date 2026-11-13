@@ -1,8 +1,9 @@
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
-import { Button, Dropdown, Field, Option, Popover, PopoverSurface } from '@fluentui/react-components';
+import { Button, Dropdown, Field, Input, Option, Popover, PopoverSurface } from '@fluentui/react-components';
 import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { getPayloadPopoverMaxHeight } from './payloadPopoverLayout';
 import { usePayloadPopoverStyles } from './styles';
 import type { PayloadData } from './index';
 
@@ -12,12 +13,21 @@ type PayloadPopoverProps = {
   buttonRef: React.RefObject<HTMLButtonElement>;
   onSubmit: (data: PayloadData) => void;
   isDraftMode?: boolean;
+  relativePathParameterNames?: string[];
 };
 
-export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode }: PayloadPopoverProps) => {
+export const PayloadPopover = ({
+  open,
+  setOpen,
+  buttonRef,
+  onSubmit,
+  isDraftMode,
+  relativePathParameterNames = [],
+}: PayloadPopoverProps) => {
   const styles = usePayloadPopoverStyles();
 
   const intl = useIntl();
+  const [maxHeight, setMaxHeight] = useState<number | undefined>();
 
   const [method, setMethod] = useState('POST');
   const methodOptions = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'];
@@ -44,6 +54,18 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     defaultMessage: 'Queries',
     id: 'mB14zV',
     description: 'HTTP queries label',
+  });
+
+  const [relativePathValues, setRelativePathValues] = useState<Record<string, string>>({});
+  const relativePathLabel = intl.formatMessage({
+    defaultMessage: 'Relative path',
+    id: '4CSg8f',
+    description: 'Label for request trigger relative path parameters in the run payload popover',
+  });
+  const relativePathValuePlaceholder = intl.formatMessage({
+    defaultMessage: 'Value',
+    id: 'mPAMOR',
+    description: 'Placeholder for a relative path parameter value in the run payload popover',
   });
 
   const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
@@ -85,6 +107,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
       'Content-Type': 'application/json',
     });
     setQueriesValue(undefined);
+    setRelativePathValues({});
     setBodyValue(undefined);
     setBodyError(undefined);
   }, []);
@@ -94,6 +117,23 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
       resetPayload();
     }
   }, [open, resetPayload]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const measure = () => {
+      setMaxHeight(getPayloadPopoverMaxHeight(buttonRef.current));
+    };
+    measure();
+    const frame = window.requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', measure);
+    };
+  }, [open, buttonRef]);
 
   const runButtonText = intl.formatMessage({
     defaultMessage: 'Run with payload',
@@ -113,11 +153,17 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
       headers: headersValue,
       queries: queriesValue,
       body: bodyValue,
+      ...(relativePathParameterNames.length > 0
+        ? {
+            relativePathParameters: Object.fromEntries(relativePathParameterNames.map((name) => [name, relativePathValues[name] ?? ''])),
+          }
+        : {}),
     });
     setOpen(false);
-  }, [onSubmit, method, headersValue, queriesValue, bodyValue, setOpen]);
+  }, [onSubmit, method, headersValue, queriesValue, bodyValue, relativePathParameterNames, relativePathValues, setOpen]);
 
-  const runDisabled = useMemo(() => !!bodyError || !method, [bodyError, method]);
+  const relativePathIncomplete = relativePathParameterNames.some((name) => !(relativePathValues[name] ?? '').trim());
+  const runDisabled = useMemo(() => !!bodyError || !method || relativePathIncomplete, [bodyError, method, relativePathIncomplete]);
 
   return (
     <Popover
@@ -126,9 +172,9 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
       withArrow
       open={open}
       inline
-      positioning={{ target: buttonRef.current }}
+      positioning={{ target: buttonRef.current, position: 'above', align: 'center' }}
     >
-      <PopoverSurface>
+      <PopoverSurface className={styles.surface} style={{ maxHeight: maxHeight ?? 'calc(100vh - 220px)', overflowY: 'auto' }}>
         <div className={styles.root}>
           {/* Method */}
           <Field label={methodLabel}>
@@ -154,6 +200,26 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
           <Field label={queriesLabel}>
             <SimpleDictionary value={queriesValue} onChange={setQueriesValue} />
           </Field>
+          {relativePathParameterNames.length > 0 ? (
+            <Field label={relativePathLabel}>
+              <div className={styles.relativePathList}>
+                {relativePathParameterNames.map((name) => (
+                  <div key={name} className={styles.relativePathRow}>
+                    <Input aria-label={`${relativePathLabel} ${name} key`} value={name} readOnly />
+                    <Input
+                      aria-label={`${relativePathLabel} ${name}`}
+                      value={relativePathValues[name] ?? ''}
+                      placeholder={relativePathValuePlaceholder}
+                      onChange={(_event, data) => {
+                        setRelativePathValues((current) => ({ ...current, [name]: data.value }));
+                      }}
+                    />
+                    <span />
+                  </div>
+                ))}
+              </div>
+            </Field>
+          ) : null}
           {/* Body */}
           <Field
             label={bodyLabel}
