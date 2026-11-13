@@ -16,12 +16,14 @@
 import { XMLValidator } from 'fast-xml-parser';
 import { create } from 'xmlbuilder2';
 import type { MapDocument, MapPage, MapLink, MapFunctoid } from '../model';
-import { LinkEndpointType, SourceLinkOption, TargetLinkOption } from '../model';
+import { FunctoidCategory, LinkEndpointType, SourceLinkOption, TargetLinkOption } from '../model';
 import type { FunctoidDefinition } from '../functoids';
 import { FunctoidRegistry } from '../functoids';
 import type { SchemaTree, SchemaNode } from '../model/schemaModel';
 import { SchemaNodeType } from '../model/schemaModel';
-import { SchemaPathResolver, instancePathParts, linkSchemaPath } from '../schema/schemaPathResolver';
+import { SchemaPathResolver, instancePathParts, linkSchemaPath, normalizeSingleSourcePath } from '../schema/schemaPathResolver';
+import { parseExtensionObjectXml } from '../schema/extensionObjectResolver';
+import { orchestrationVariableScript } from './orchestrationVariableScript';
 
 export interface CompileResult {
   success: boolean;
@@ -57,11 +59,14 @@ interface FunctoidCompilation {
   isNodeContent?: boolean; // true when variable produces XML nodes (inline XSLT)
   conditionalTest?: string; // xsl:if test condition (for Value Mapping)
   guardConditions?: string[];
+  valueCollection?: { variableName: string; contentExpr: string };
 }
 
 interface CallTemplateDefinition {
   name: string;
+  namespace?: string;
   parameters: string[];
+  parameterNamespaces: (string | undefined)[];
   definitions: string;
 }
 
@@ -83,6 +88,7 @@ export class XsltCompiler {
   private vbAssemblyReferences: Set<string> = new Set();
   private jscriptAssemblyReferences: Set<string> = new Set();
   private namedTemplates: Map<string, string> = new Map();
+  private xsltDeclarations: Set<string> = new Set();
   private assemblyReferences: Set<string> = new Set();
   private externalAssemblyScripts: Array<{
     assemblyName: string;
@@ -139,6 +145,7 @@ export class XsltCompiler {
     this.vbAssemblyReferences = new Set();
     this.jscriptAssemblyReferences = new Set();
     this.namedTemplates = new Map();
+    this.xsltDeclarations = new Set();
     this.assemblyReferences = new Set();
     this.externalAssemblyScripts = [];
     this.tableRowContext = new Map();
@@ -160,11 +167,12 @@ export class XsltCompiler {
     // When the source schema qualifies local elements, instance children live in the
     // source namespace and must be addressed with the s0: prefix in XPath expressions.
     this.sourceQualified = !!this.sourceNamespace && sourceSchema?.elementFormDefault === 'qualified';
-    if (map.customExtensionXml !== undefined && map.customXslt === undefined) {
-      this.errors.push({ message: 'Custom extension-object XML requires custom XSLT' });
-    }
-    if (map.customExtensionXml && XMLValidator.validate(map.customExtensionXml) !== true) {
-      this.errors.push({ message: 'Custom extension-object XML contains malformed XML' });
+    if (map.customExtensionXml !== undefined) {
+      try {
+        parseExtensionObjectXml(map.customExtensionXml);
+      } catch (error) {
+        this.errors.push({ message: error instanceof Error ? error.message : String(error) });
+      }
     }
     if (map.customXslt !== undefined) {
       if (XMLValidator.validate(map.customXslt) !== true) {
@@ -221,7 +229,11 @@ export class XsltCompiler {
               continue;
             }
             const path = link[`${side}Path`] || link[`${side}Id`];
-            const lookupPath = linkSchemaPath(link, side);
+            const originalPath = linkSchemaPath(link, side);
+            const lookupPath =
+              side === 'source' && source?.rootElement && map.sourceSchema.location && !map.sourceSchema.inlineSchemaXml
+                ? normalizeSingleSourcePath(originalPath, source.rootElement.name)
+                : originalPath;
             const match = (side === 'source' ? this.sourcePaths : this.targetPaths).resolve(lookupPath);
             if (match) {
               resolved[`${side}Path`] = match.path;
@@ -250,7 +262,8 @@ export class XsltCompiler {
     }
     const linkGraph = this.buildLinkGraph(page);
     this.currentPage = page;
-    this.validateP0Map(page, targetSchema);
+    const scriptHelpers = this.registerInlineXsltScriptHelpers(page);
+    this.validateP0Map(page, targetSchema, scriptHelpers);
 
     // Determine source root element
     const sourceRoot = sourceSchema?.rootElement?.name || this.inferSourceRootName(page) || 'Root';
@@ -349,6 +362,9 @@ export class XsltCompiler {
 
     xslt += '  </xsl:template>\n';
 
+    for (const declarations of this.xsltDeclarations) {
+      xslt += `\n${this.indentLines(declarations, 2)}\n`;
+    }
     for (const [, template] of this.namedTemplates) {
       xslt += `\n${template}`;
     }
@@ -437,12 +453,55 @@ export class XsltCompiler {
     }
   }
 
-  private validateP0Map(page: MapPage, targetSchema?: SchemaTree): void {
+  private registerInlineXsltScriptHelpers(page: MapPage): Set<string> {
+    const helpers = new Set<string>();
+    const hasOutput = (functoid: MapFunctoid): boolean =>
+      page.links.some((link) => link.sourceType === LinkEndpointType.Functoid && link.sourceId === functoid.id);
+    const scriptType = (functoid: MapFunctoid): string | undefined =>
+      functoid.parameters.find((parameter) => parameter.type === 'scriptType')?.value || functoid.scriptType;
+    const scriptBody = (functoid: MapFunctoid): string =>
+      functoid.parameters.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
+    const inlineXslt = page.functoids
+      .filter(
+        (functoid) =>
+          functoid.functoidId === 260 &&
+          ((hasOutput(functoid) && scriptType(functoid) === 'inlineXslt') || scriptType(functoid) === 'inlineXsltCallTemplate')
+      )
+      .map(scriptBody)
+      .join('\n');
+
+    for (const functoid of page.functoids) {
+      if (functoid.functoidId !== 260 || hasOutput(functoid)) {
+        continue;
+      }
+      // BizTalk includes unlinked call-template scripts as stylesheet declarations.
+      if (scriptType(functoid) === 'inlineXsltCallTemplate') {
+        const definitions = scriptBody(functoid);
+        if (this.parseXsltFragment(definitions, functoid.id)) {
+          this.xsltDeclarations.add(definitions.trim());
+        }
+        helpers.add(functoid.id);
+        continue;
+      }
+      // Register referenced C# helpers without generating variables or eager calls.
+      if (scriptType(functoid) !== 'inlineCSharp') {
+        continue;
+      }
+      const functionName = this.extractScriptFunctionName(scriptBody(functoid), 'inlineCSharp');
+      if (functionName && new RegExp(`\\buserCSharp:${functionName}\\s*\\(`).test(inlineXslt)) {
+        this.generateFunctoidXsltExpr(this.registry.getFunctoid(260)!, [], functoid);
+        helpers.add(functoid.id);
+      }
+    }
+    return helpers;
+  }
+
+  private validateP0Map(page: MapPage, targetSchema?: SchemaTree, scriptHelpers = new Set<string>()): void {
     const functoidsWithOutputs = new Set(
       page.links.filter((link) => link.sourceType === LinkEndpointType.Functoid).map((link) => link.sourceId)
     );
     for (const functoid of page.functoids) {
-      if (!functoidsWithOutputs.has(functoid.id)) {
+      if (!functoidsWithOutputs.has(functoid.id) && !scriptHelpers.has(functoid.id)) {
         this.warnings.push({
           message: `${functoid.name} has no output links and is not compiled`,
           elementId: functoid.id,
@@ -617,16 +676,11 @@ export class XsltCompiler {
       });
       return;
     }
-    const loopInput = functoid.parameters.find((parameter) => parameter.index === 0 && parameter.type === 'link');
+    const loopInput = functoid.parameters.find((parameter) => parameter.index === 0);
     const columnInput = functoid.parameters.find((parameter) => parameter.index === 1 && parameter.type === 'constant');
-    if (
-      !loopInput ||
-      !page.links.some(
-        (link) => link.id === loopInput.value && link.targetId === functoid.id && link.sourceType === LinkEndpointType.SchemaNode
-      )
-    ) {
+    if (loopInput?.type !== 'constant' && !this.findTableLoopingScopeLink(functoid, page)) {
       this.errors.push({
-        message: 'Table Looping first input must link to a source schema node',
+        message: 'Table Looping first input must be a constant scope or link to a source schema node',
         elementId: functoid.id,
       });
     }
@@ -952,6 +1006,15 @@ export class XsltCompiler {
       return result;
     }
 
+    if (def.name.startsWith('Cumulative ')) {
+      const compilation = this.compileCumulativeFunctoid(functoid, def, page, linkGraph, contextPath);
+      if (compilation) {
+        this.functoidVarMap.set(cacheKey, compilation.variableName);
+        this.compiledFunctoids.set(cacheKey, compilation);
+        return compilation;
+      }
+    }
+
     // Resolve inputs
     const inputExprs: string[] = [];
     const incomingLinks = linkGraph.get(functoid.id) || [];
@@ -1053,6 +1116,203 @@ export class XsltCompiler {
     }
     this.compiledFunctoids.set(cacheKey, result);
     return result;
+  }
+
+  private compileCumulativeFunctoid(
+    functoid: MapFunctoid,
+    def: FunctoidDefinition,
+    page: MapPage,
+    linkGraph: Map<string, MapLink[]>,
+    contextPath?: string
+  ): FunctoidCompilation | undefined {
+    const incomingLinks = linkGraph.get(functoid.id) || [];
+    const valueParameter = functoid.parameters.find((parameter) => parameter.index === 0);
+    const valueLink =
+      valueParameter?.type === 'link'
+        ? incomingLinks.find((link) => link.id === valueParameter.value)
+        : valueParameter?.type === 'constant'
+          ? undefined
+          : [...incomingLinks].sort(
+              (left, right) => (functoid.inputLinks || []).indexOf(left.id) - (functoid.inputLinks || []).indexOf(right.id)
+            )[0];
+    const groupingParameter = functoid.parameters.find((parameter) => parameter.index === 1);
+    // A direct schema node-set already contains all its values. Scalar graphs,
+    // however, must be evaluated anew for each source record.
+    if (valueLink?.sourceType === LinkEndpointType.SchemaNode && !groupingParameter) {
+      return undefined;
+    }
+    const sourceFunctoid =
+      valueLink?.sourceType === LinkEndpointType.Functoid
+        ? page.functoids.find((candidate) => candidate.id === valueLink.sourceId)
+        : undefined;
+    const sourceReturnsNodes =
+      sourceFunctoid &&
+      [323, 424, 801, 802].includes(sourceFunctoid.functoidId) &&
+      (linkGraph.get(sourceFunctoid.id) || []).every((link) => link.sourceType === LinkEndpointType.SchemaNode);
+    if (sourceFunctoid && (sourceFunctoid.functoidId === 702 || (sourceReturnsNodes && !groupingParameter))) {
+      return undefined;
+    }
+    if (!valueLink && valueParameter?.type !== 'constant') {
+      return undefined;
+    }
+    const inputCount = functoid.parameters.filter((parameter) => parameter.type === 'constant').length + incomingLinks.length;
+    if (inputCount < def.minInputs || inputCount > def.maxInputs) {
+      return undefined;
+    }
+
+    const sources = valueLink ? [...new Set(this.getSourceDependencyPaths(valueLink, page))] : [];
+    this.recordCompilerSources(sources);
+    const repeatingPaths = sources.map((path) =>
+      (this.sourcePaths.resolve(path)?.ancestors || [])
+        .filter((node) => node.maxOccurs === 'unbounded' || (typeof node.maxOccurs === 'number' && node.maxOccurs > 1))
+        .map((node) => node.path)
+    );
+    const commonRepeatingPaths = repeatingPaths[0]?.filter((path) => repeatingPaths.every((paths) => paths.includes(path))) || [];
+    const recordPath =
+      commonRepeatingPaths[commonRepeatingPaths.length - 1] ||
+      repeatingPaths.find((paths) => paths.length > 0)?.slice(-1)[0] ||
+      (sources.length > 0 ? this.findCommonPrefix(sources) : undefined);
+    const sourceRoot = this.sourceTree?.rootElement;
+    const rootPath = sourceRoot ? `/${sourceRoot.name}` : sources[0] ? `/${this.schemaPathParts(sources[0])[0]}` : undefined;
+    let iterationSelect: string | undefined;
+    let iterationContext = recordPath;
+    if (recordPath && rootPath) {
+      const groupingSources = valueLink ? this.getCumulativeGroupingSources(valueLink, page, linkGraph) : sources;
+      const dependencyParts =
+        groupingSources
+          .map((path) => {
+            const parts = this.schemaPathParts(path);
+            const resolved = this.sourcePaths.resolve(path);
+            const node = resolved?.node;
+            const singletonField =
+              node &&
+              !node.children.length &&
+              !node.attributes.length &&
+              node.maxOccurs !== 'unbounded' &&
+              !(typeof node.maxOccurs === 'number' && node.maxOccurs > 1) &&
+              !this.currentMap?.options.treatElementsAsRecords;
+            return resolved?.attribute || parts[parts.length - 1]?.startsWith('@') || singletonField ? parts.slice(0, -1) : parts;
+          })
+          .sort((left, right) => right.length - left.length)[0] || this.schemaPathParts(recordPath);
+      const level = groupingParameter?.type === 'constant' ? Number(groupingParameter.value) : Number.NaN;
+      const groupPath =
+        Number.isInteger(level) && level > 0 && level < dependencyParts.length
+          ? `/${dependencyParts.slice(0, dependencyParts.length - level).join('/')}`
+          : undefined;
+      const groupIsInContext =
+        groupPath &&
+        contextPath &&
+        (contextPath === groupPath || contextPath.startsWith(`${groupPath}/`) || groupPath.startsWith(`${contextPath}/`));
+      const rootStep = this.elementXPath(
+        sourceRoot?.name || this.schemaPathParts(rootPath)[0],
+        sourceRoot?.namespace || this.sourceNamespace || undefined
+      );
+      if (sourceReturnsNodes) {
+        // Evaluate a genuine node-set graph once per group, preserving Index
+        // and sibling selection before collecting each returned node's value.
+        iterationContext = groupIsInContext ? groupPath : rootPath;
+        iterationSelect = groupIsInContext ? this.pathToNodeXPath(groupPath, contextPath) : `/${rootStep}`;
+      } else if (groupIsInContext && (recordPath === groupPath || recordPath.startsWith(`${groupPath}/`))) {
+        iterationSelect = `${this.pathToNodeXPath(groupPath, contextPath)}/${this.pathToNodeXPath(recordPath, groupPath)}`;
+      } else {
+        iterationSelect = `/${rootStep}/${this.pathToNodeXPath(recordPath, rootPath)}`;
+      }
+    }
+
+    if (valueLink?.sourceType === LinkEndpointType.SchemaNode && valueLink.sourcePath && iterationSelect && recordPath) {
+      const values = `${iterationSelect}/${this.pathToNodeXPath(valueLink.sourcePath, recordPath)}`;
+      const expression = this.generateFunctoidXsltExpr(def, [values], functoid);
+      if (expression.kind === 'select') {
+        return {
+          variableName: `v${++this.variableCounter}`,
+          functoidId: functoid.id,
+          contextPath,
+          selectExpr: expression.value,
+        };
+      }
+    }
+
+    const valueContext = iterationSelect ? iterationContext : contextPath;
+    const outerCompilations = this.compiledFunctoids;
+    const outerVariables = this.functoidVarMap;
+    const outerScopes = this.variableScopeStack;
+    let body = '';
+    // Collection variables have their own lexical scope, even when the source
+    // record path is identical to an enclosing target loop's context.
+    this.compiledFunctoids = new Map();
+    this.functoidVarMap = new Map();
+    this.variableScopeStack = [new Set()];
+    try {
+      if (valueLink) {
+        body += this.compileVariablesForLinks([valueLink], page, linkGraph, valueContext, 0);
+      }
+      const value = valueLink
+        ? this.resolveSourceXPath(valueLink, page, linkGraph, valueLink.sourceType === LinkEndpointType.SchemaNode, valueContext) || "''"
+        : this.toXPathLiteral(valueParameter!.value);
+      const conditions = valueLink ? this.getTargetConditions([valueLink], page, valueContext, false) : [];
+      if (conditions.length > 0) {
+        body += `<xsl:if test="${conditions.join(' and ')}">\n`;
+      }
+      // Wrapper elements keep adjacent accepted values from merging into one
+      // text node when the result tree fragment is converted to a node-set.
+      body +=
+        valueLink?.sourceType === LinkEndpointType.SchemaNode || sourceReturnsNodes
+          ? `<xsl:for-each select="${value}"><value><xsl:value-of select="." /></value></xsl:for-each>\n`
+          : `<value><xsl:value-of select="${value}" /></value>\n`;
+      if (conditions.length > 0) {
+        body += '</xsl:if>\n';
+      }
+    } finally {
+      this.compiledFunctoids = outerCompilations;
+      this.functoidVarMap = outerVariables;
+      this.variableScopeStack = outerScopes;
+    }
+    if (iterationSelect) {
+      body = `<xsl:for-each select="${iterationSelect}">\n${this.indentLines(body.trimEnd(), 2)}\n</xsl:for-each>\n`;
+    }
+    const collectionName = `v${++this.variableCounter}`;
+    const numericFilter = def.name === 'Cumulative Concatenate' ? '' : '[number(.) = number(.)]';
+    const expression = this.generateFunctoidXsltExpr(def, [`msxsl:node-set($var:${collectionName})/value${numericFilter}`], functoid);
+    if (expression.kind !== 'select') {
+      return undefined;
+    }
+    return {
+      variableName: `v${++this.variableCounter}`,
+      functoidId: functoid.id,
+      contextPath,
+      selectExpr: expression.value,
+      valueCollection: { variableName: collectionName, contentExpr: body.trimEnd() },
+    };
+  }
+
+  private getCumulativeGroupingSources(
+    link: MapLink,
+    page: MapPage,
+    linkGraph: Map<string, MapLink[]>,
+    visited = new Set<string>()
+  ): string[] {
+    if (link.sourceType === LinkEndpointType.SchemaNode || visited.has(link.sourceId)) {
+      return link.sourcePath ? [link.sourcePath] : [];
+    }
+    visited.add(link.sourceId);
+    const source = page.functoids.find((candidate) => candidate.id === link.sourceId);
+    const inputs = linkGraph.get(link.sourceId) || [];
+    // A Value Mapping condition controls acceptance, not the grouping base.
+    // When its value is constant (e.g. counting children), use the condition's
+    // dependencies to identify the source record instead.
+    if (source && (source.functoidId === 374 || source.functoidId === 375)) {
+      const valueParameter = source.parameters.find((parameter) => parameter.index === 1);
+      const valueInput =
+        valueParameter?.type === 'link'
+          ? inputs.find((input) => input.id === valueParameter.value)
+          : valueParameter?.type === 'constant'
+            ? undefined
+            : inputs.find((input) => (source.inputLinks || []).indexOf(input.id) === 1) || inputs[1];
+      if (valueInput) {
+        return this.getCumulativeGroupingSources(valueInput, page, linkGraph, visited);
+      }
+    }
+    return inputs.flatMap((input) => this.getCumulativeGroupingSources(input, page, linkGraph, new Set(visited)));
   }
 
   private compileTableExtractor(extractor: MapFunctoid, page: MapPage, linkGraph: Map<string, MapLink[]>, contextPath?: string): string {
@@ -1474,6 +1734,17 @@ export class XsltCompiler {
             // No body — generate a stub that returns empty
             csharpCode = `public string ${fnName}(${parameters})\n{\n    return "";\n}`;
           } else if (declaredFunction) {
+            if (this.isCSharpSignatureReference(scriptBody)) {
+              const signature = this.csharpMethodSignatures(scriptBody)[0];
+              this.registerSharedCSharpFunctions(signature);
+              if (![...this.scriptFunctions.values()].some((code) => this.csharpMethodSignatures(code).includes(signature))) {
+                this.errors.push({
+                  message: `C# method '${signature}' references a shared declaration, but no complete implementation was found`,
+                  elementId: functoid.id,
+                });
+              }
+              return { kind: 'select', value: `userCSharp:${fnName}(${inputs.map((i) => `string(${i})`).join(', ')})` };
+            }
             csharpCode = scriptBody;
           } else {
             csharpCode = `public string ${fnName}(${parameters})
@@ -1528,6 +1799,30 @@ ${this.indentLines(scriptBody, 4)}
           return { kind: 'select', value: inputs[0] || "''" };
         }
         if (scriptType === 'inlineXsltCallTemplate') {
+          if (scriptBody.trim()) {
+            const fragment = this.parseXsltFragment(scriptBody, functoid.id);
+            if (!fragment) {
+              return { kind: 'select', value: "''" };
+            }
+            const document: any = fragment.node;
+            const declarations = [
+              'template',
+              'key',
+              'output',
+              'include',
+              'import',
+              'attribute-set',
+              'decimal-format',
+              'namespace-alias',
+              'strip-space',
+              'preserve-space',
+            ];
+            if (declarations.some((name) => document.getElementsByTagNameNS('http://www.w3.org/1999/XSL/Transform', name).length > 0)) {
+              const template = this.parseCallTemplate(scriptBody, functoid.id, fragment);
+              const call = template && this.renderCallTemplate(template, inputs, functoid.id);
+              return call ? { kind: 'content', value: call, isNodeContent: true } : { kind: 'select', value: "''" };
+            }
+          }
           const templateName = `ScriptTemplate${++this.scriptFnCounter}`;
           const parameters = inputs.map((_, i) => `    <xsl:param name="param${i}" />`).join('\n');
           const templateBody = scriptBody || '<xsl:value-of select="$param0" />';
@@ -1573,6 +1868,11 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         }
 
         return { kind: 'select', value: inputs[0] || "''" };
+      }
+
+      case 'Orchestration Variable Retriever': {
+        this.addScriptFunction('RetrieveOrchestrationVariable', orchestrationVariableScript);
+        return { kind: 'select', value: `userCSharp:RetrieveOrchestrationVariable(string(${inputs[0]}))` };
       }
 
       default: {
@@ -1784,14 +2084,16 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     // Check if any descendant has a mapping
     const hasMappedDescendants = this.hasAnyMapping(node, page);
     const nodeValue = this.getTargetNodeValue(node);
+    const isRoot = node === this.targetTree?.rootElement;
 
-    if (directLinks.length === 0 && !hasMappedDescendants && nodeValue === undefined && !this.isEffectiveLeaf(node)) {
+    if (!isRoot && directLinks.length === 0 && !hasMappedDescendants && nodeValue === undefined && !this.isEffectiveLeaf(node)) {
       return ''; // Skip unmapped container nodes
     }
 
     // Check if this is a repeating element that needs for-each
     const isRepeating = node.maxOccurs === 'unbounded' || (node.maxOccurs !== undefined && node.maxOccurs > 1);
-    const sourceForEachPaths = isRepeating && !suppressLoop ? this.findForEachSourcePaths(node, page) : [];
+    const hasExplicitLoop = directLinks.some((link) => this.isFunctoidSource(link, page, 424) || this.isFunctoidSource(link, page, 801));
+    const sourceForEachPaths = (isRepeating || hasExplicitLoop) && !suppressLoop ? this.findForEachSourcePaths(node, page) : [];
     this.recordCompilerSources(sourceForEachPaths, node.path);
     if (sourceForEachPaths.length > 1) {
       const loopFunctoidId = directLinks.find(
@@ -1802,6 +2104,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       for (const loopPath of sourceForEachPaths) {
         const loopSelect = this.pathToForEachXPath(loopPath, contextPath);
         result += `${pad}<xsl:for-each select="${loopSelect}">\n`;
+        this.variableScopeStack.push(new Set());
         if (loopFunctoidId) {
           this.activeLoopContexts.push({
             functoidId: loopFunctoidId,
@@ -1812,6 +2115,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         if (loopFunctoidId) {
           this.activeLoopContexts.pop();
         }
+        this.variableScopeStack.pop();
         result += `${pad}</xsl:for-each>\n`;
       }
       return result;
@@ -1822,6 +2126,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
 
     if (sourceForEach) {
       result += `${pad}<xsl:for-each select="${sourceForEach}">\n`;
+      this.variableScopeStack.push(new Set());
       indent += 2;
     }
 
@@ -1831,7 +2136,9 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         page.functoids.some((candidate) => candidate.id === link.sourceId && candidate.functoidId === 703)
     );
     const tableLoop = tableLoopLink ? page.functoids.find((candidate) => candidate.id === tableLoopLink.sourceId) : undefined;
-    if (sourceForEach && tableLoop?.tableLooping && !suppressLoop) {
+    if (tableLoop?.tableLooping && !suppressLoop) {
+      // Each selected source context expands the grid once; a literal scope's
+      // value does not multiply or gate the rows.
       for (let row = 0; row < tableLoop.tableLooping.rows.length; row++) {
         this.tableRowContext.set(tableLoop.id, row);
         const gateSources = new Set<string>();
@@ -1845,14 +2152,36 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         if (gate) {
           this.recordCompilerSources(gateSources, node.path);
           result += `${' '.repeat(indent)}<xsl:if test="string(${gate}) = 'true'">\n`;
+          this.variableScopeStack.push(new Set());
         }
         result += this.generateTargetElement(node, page, linkGraph, gate ? indent + 2 : indent, activeContextPath, true);
         if (gate) {
+          this.variableScopeStack.pop();
           result += `${' '.repeat(indent)}</xsl:if>\n`;
         }
       }
       this.tableRowContext.delete(tableLoop.id);
-      result += `${pad}</xsl:for-each>\n`;
+      if (sourceForEach) {
+        this.variableScopeStack.pop();
+        result += `${pad}</xsl:for-each>\n`;
+      }
+      return result;
+    }
+
+    const replacementLinks = directLinks.filter((link) => this.callTemplateEmitsTarget(link, node, page));
+    if (
+      replacementLinks.length > 0 &&
+      directLinks.every(
+        (link) => replacementLinks.includes(link) || this.isFunctoidSource(link, page, 424) || this.isFunctoidSource(link, page, 801)
+      ) &&
+      !node.children.some((child) => this.hasAnyMapping(child, page)) &&
+      !page.links.some((link) => link.targetType === LinkEndpointType.SchemaNode && link.targetPath?.startsWith(`${node.path}/@`))
+    ) {
+      result += this.renderRawXsltLinks(replacementLinks, page, linkGraph, activeContextPath, indent);
+      if (sourceForEach) {
+        this.variableScopeStack.pop();
+        result += `${pad}</xsl:for-each>\n`;
+      }
       return result;
     }
 
@@ -1864,8 +2193,26 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
           this.linkAllowedInActiveLoop(link, page)
       )
     );
+    const attributeContexts = new Map(
+      attributeLinks.map((link) => [link.id, this.findFlattenedAttributeSourcePath(link, page, activeContextPath)])
+    );
+    const logicalRecordLinks = this.isEffectiveLeaf(node)
+      ? []
+      : directLinks.filter((link) => {
+          if (link.sourceType !== LinkEndpointType.Functoid) {
+            return false;
+          }
+          const functoid = page.functoids.find((candidate) => candidate.id === link.sourceId);
+          return (
+            functoid &&
+            functoid.functoidId !== 374 &&
+            functoid.functoidId !== 375 &&
+            this.registry.getFunctoid(functoid.functoidId)?.category === FunctoidCategory.Logical
+          );
+        });
     const valueLinks = directLinks.filter(
       (link) =>
+        !logicalRecordLinks.includes(link) &&
         !this.isFunctoidSource(link, page, 424) &&
         !this.isFunctoidSource(link, page, 801) &&
         !this.isFunctoidSource(link, page, 703) &&
@@ -1882,21 +2229,32 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         !this.isFunctoidSource(link, page, 703) &&
         !this.isRawXsltSource(link, page) &&
         this.linkHasConditionalSource(link, page) &&
+        !isRoot &&
+        !attributeContexts.get(link.id) &&
         this.linkAllowedInActiveLoop(link, page)
     );
     result += this.compileVariablesForLinks(
-      [...attributeLinks, ...valueLinks, ...descendantConditionLinks],
+      [
+        ...logicalRecordLinks,
+        ...attributeLinks.filter((link) => !attributeContexts.get(link.id)),
+        ...valueLinks,
+        ...descendantConditionLinks,
+      ],
       page,
       linkGraph,
       activeContextPath,
       indent
     );
 
-    const conditions = this.isEffectiveLeaf(node)
-      ? this.getTargetConditions(valueLinks, page, activeContextPath)
-      : this.getNodeConditions(node, page, activeContextPath);
+    const conditions =
+      logicalRecordLinks.length > 0
+        ? logicalRecordLinks.map((link) => `string(${this.getSourceExpression(link, page, linkGraph, activeContextPath)}) = 'true'`)
+        : isRoot || this.isEffectiveLeaf(node)
+          ? this.getTargetConditions(valueLinks, page, activeContextPath)
+          : this.getNodeConditions(node, page, activeContextPath);
     if (conditions.length > 0) {
       result += `${' '.repeat(indent)}<xsl:if test="${conditions.join(' or ')}">\n`;
+      this.variableScopeStack.push(new Set());
       indent += 2;
     }
 
@@ -1916,11 +2274,34 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         const attrPath = `${node.path}/@${attr.name}`;
         const attrLink = page.links.find((l) => l.targetPath === attrPath && l.targetType === LinkEndpointType.SchemaNode);
         if (attrLink) {
-          const expr = this.getSourceExpression(attrLink, page, linkGraph, activeContextPath);
+          const attributeContext = attributeContexts.get(attrLink.id);
+          let attributeIndent = indent + 2;
+          if (attributeContext) {
+            const select = this.pathToForEachXPath(attributeContext, activeContextPath);
+            result += `${' '.repeat(attributeIndent)}<xsl:for-each select="${select}">\n`;
+            attributeIndent += 2;
+            this.variableScopeStack.push(new Set());
+            result += this.compileVariablesForLinks([attrLink], page, linkGraph, attributeContext, attributeIndent);
+          }
+          const attributeContextPath = attributeContext || activeContextPath;
+          const attributeConditions = this.getTargetConditions([attrLink], page, attributeContextPath);
+          if (attributeConditions.length > 0) {
+            result += `${' '.repeat(attributeIndent)}<xsl:if test="${attributeConditions.join(' or ')}">\n`;
+            attributeIndent += 2;
+          }
+          const expr = this.getSourceExpression(attrLink, page, linkGraph, attributeContextPath);
           const attrName = this.targetQualifiedName(attr.name, attr.namespace);
-          result += `${' '.repeat(indent + 2)}<xsl:attribute name="${attrName}">\n`;
-          result += `${' '.repeat(indent + 4)}<xsl:value-of select="${expr}" />\n`;
-          result += `${' '.repeat(indent + 2)}</xsl:attribute>\n`;
+          result += `${' '.repeat(attributeIndent)}<xsl:attribute name="${attrName}">\n`;
+          result += `${' '.repeat(attributeIndent + 2)}<xsl:value-of select="${expr}" />\n`;
+          result += `${' '.repeat(attributeIndent)}</xsl:attribute>\n`;
+          if (attributeConditions.length > 0) {
+            attributeIndent -= 2;
+            result += `${' '.repeat(attributeIndent)}</xsl:if>\n`;
+          }
+          if (attributeContext) {
+            this.variableScopeStack.pop();
+            result += `${' '.repeat(attributeIndent - 2)}</xsl:for-each>\n`;
+          }
         } else {
           const attrValue = this.getTargetAttributeValue(node, attr);
           if (attrValue !== undefined) {
@@ -1973,11 +2354,13 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
 
     result += `${' '.repeat(indent)}</${elemName}>\n`;
     if (conditions.length > 0) {
+      this.variableScopeStack.pop();
       indent -= 2;
       result += `${' '.repeat(indent)}</xsl:if>\n`;
     }
 
     if (sourceForEach) {
+      this.variableScopeStack.pop();
       result += `${pad}</xsl:for-each>\n`;
     }
 
@@ -2004,7 +2387,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     // For leaf nodes with a direct link, emit value-of directly (BizTalk style)
-    if (directLinks.length > 0 && this.isEffectiveLeaf(node)) {
+    if (directLinks.length > 0 && this.isEffectiveLeaf(node) && node.attributes.length === 0) {
       const elemName = this.targetQualifiedName(node.name, node.namespace || this.targetNamespace);
       let result = '';
       const valueLinks = directLinks.filter((link) => !this.isFunctoidSource(link, page, 376));
@@ -2108,6 +2491,45 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return functoid?.functoidId === 260 && (functoid.scriptType === 'inlineXslt' || functoid.scriptType === 'inlineXsltCallTemplate');
   }
 
+  private callTemplateEmitsTarget(link: MapLink, node: SchemaNode, page: MapPage): boolean {
+    if (!this.isRawXsltSource(link, page)) {
+      return false;
+    }
+    const functoid = page.functoids.find((candidate) => candidate.id === link.sourceId)!;
+    if (functoid.scriptType !== 'inlineXsltCallTemplate') {
+      return false;
+    }
+    const body = functoid.parameters.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
+    try {
+      const document = create(`<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform">${body}</root>`).root().node.ownerDocument!;
+      const xsltNamespace = 'http://www.w3.org/1999/XSL/Transform';
+      const template = Array.from(document.getElementsByTagNameNS(xsltNamespace, 'template')).find(
+        (element) => element?.parentNode === document.documentElement && element?.hasAttribute('name')
+      );
+      const outputs = Array.from(template?.childNodes || [])
+        .filter((element): element is NonNullable<typeof template> => element?.nodeType === 1)
+        .filter((element) => element.namespaceURI !== xsltNamespace || !['param', 'variable'].includes(element.localName));
+      return (
+        outputs.length > 0 &&
+        outputs.every((element) => {
+          if (element.namespaceURI !== xsltNamespace) {
+            return element.localName === node.name && (element.namespaceURI || '') === (node.namespace || '');
+          }
+          if (element.localName !== 'element') {
+            return false;
+          }
+          const name = element.getAttribute('name') || '';
+          const namespace = element.hasAttribute('namespace')
+            ? element.getAttribute('namespace')
+            : element.lookupNamespaceURI(name.includes(':') ? name.split(':')[0] : null);
+          return !/[{}]/.test(name) && name.split(':').pop() === node.name && (namespace || '') === (node.namespace || '');
+        })
+      );
+    } catch {
+      return false;
+    }
+  }
+
   private renderRawXsltLinks(
     links: MapLink[],
     page: MapPage,
@@ -2155,20 +2577,12 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       if (!template) {
         continue;
       }
-      if (template.parameters.length !== inputs.length) {
-        this.errors.push({
-          message: `XSLT call-template '${template.name}' expects ${template.parameters.length} input(s), but received ${inputs.length}`,
-          elementId: functoid.id,
-        });
+      const call = this.renderCallTemplate(template, inputs, functoid.id);
+      if (!call) {
         continue;
       }
-      this.addNamedTemplate(template.name, this.indentLines(template.definitions, 2));
       this.recordCompilerSources(sources, link.targetPath);
-      result += `${' '.repeat(indent)}<xsl:call-template name="${template.name}">\n`;
-      for (let index = 0; index < inputs.length; index++) {
-        result += `${' '.repeat(indent + 2)}<xsl:with-param name="${template.parameters[index]}" select="${inputs[index]}" />\n`;
-      }
-      result += `${' '.repeat(indent)}</xsl:call-template>\n`;
+      result += `${this.indentLines(call, indent)}\n`;
     }
     return result;
   }
@@ -2228,29 +2642,41 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return XMLValidator.validate(`<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform">${fragment}</root>`) === true;
   }
 
-  private parseCallTemplate(scriptBody: string, functoidId: string): CallTemplateDefinition | null {
-    if (!this.isValidXsltFragment(scriptBody)) {
-      this.errors.push({
-        message: 'XSLT call-template definition contains malformed XML',
-        elementId: functoidId,
-      });
+  private parseXsltFragment(scriptBody: string, functoidId: string): ReturnType<typeof create> | null {
+    if (this.isValidXsltFragment(scriptBody)) {
+      try {
+        return create(`<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform">${scriptBody}</root>`);
+      } catch {
+        // Report parser failures through the same diagnostic as malformed fragments.
+      }
+    }
+    this.errors.push({
+      message: 'XSLT call-template definition contains malformed XML',
+      elementId: functoidId,
+    });
+    return null;
+  }
+
+  private parseCallTemplate(
+    scriptBody: string,
+    functoidId: string,
+    parsedFragment?: ReturnType<typeof create>
+  ): CallTemplateDefinition | null {
+    const fragment = parsedFragment || this.parseXsltFragment(scriptBody, functoidId);
+    if (!fragment) {
       return null;
     }
     const xsltNamespace = 'http://www.w3.org/1999/XSL/Transform';
-    let document: any;
-    try {
-      document = create(`<root xmlns:xsl="${xsltNamespace}">${scriptBody}</root>`).node;
-    } catch {
+    const document: any = fragment.node;
+    const templates = Array.from(document.getElementsByTagNameNS(xsltNamespace, 'template') as ArrayLike<any>);
+    if (templates.some((template) => template.parentNode !== document.documentElement)) {
       this.errors.push({
-        message: 'XSLT call-template definition contains malformed XML',
+        message: 'XSLT call-template definitions must be at stylesheet level',
         elementId: functoidId,
       });
       return null;
     }
-    const templates = Array.from(document.getElementsByTagNameNS(xsltNamespace, 'template') as ArrayLike<any>).filter(
-      (template) => !!template.getAttribute('name')
-    );
-    const template = templates[0];
+    const template = templates.find((candidate) => !!candidate.getAttribute('name'));
     if (!template) {
       this.errors.push({
         message: 'XSLT call-template script must contain a named xsl:template',
@@ -2258,15 +2684,43 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       });
       return null;
     }
-    const parameters = Array.from(template.childNodes as ArrayLike<any>)
-      .filter((child) => child.nodeType === 1 && child.namespaceURI === xsltNamespace && child.localName === 'param')
-      .map((parameter) => parameter.getAttribute('name'))
-      .filter((name): name is string => !!name);
+    const parameters = Array.from(template.childNodes as ArrayLike<any>).filter(
+      (child) => child.nodeType === 1 && child.namespaceURI === xsltNamespace && child.localName === 'param' && !!child.getAttribute('name')
+    );
+    const namespaceForName = (node: any): string | undefined => {
+      const name = node.getAttribute('name');
+      return name.includes(':') ? node.lookupNamespaceURI(name.split(':')[0]) || undefined : undefined;
+    };
     return {
       name: template.getAttribute('name'),
-      parameters,
+      namespace: namespaceForName(template),
+      parameters: parameters.map((parameter) => parameter.getAttribute('name')),
+      parameterNamespaces: parameters.map(namespaceForName),
       definitions: scriptBody,
     };
+  }
+
+  private renderCallTemplate(template: CallTemplateDefinition, inputs: string[], functoidId: string): string | null {
+    if (template.parameters.length !== inputs.length) {
+      this.errors.push({
+        message: `XSLT call-template '${template.name}' expects ${template.parameters.length} input(s), but received ${inputs.length}`,
+        elementId: functoidId,
+      });
+      return null;
+    }
+    this.xsltDeclarations.add(template.definitions.trim());
+    // Keep declaration QName bindings from shadowing generated XPath prefixes.
+    const nameAttributes = (name: string, namespace?: string): string =>
+      namespace
+        ? `name="callTemplate:${this.escapeXmlAttribute(name.slice(name.indexOf(':') + 1))}" xmlns:callTemplate="${this.escapeXmlAttribute(namespace)}"`
+        : `name="${this.escapeXmlAttribute(name)}"`;
+    const callLines = [`<xsl:call-template ${nameAttributes(template.name, template.namespace)}>`];
+    for (let index = 0; index < inputs.length; index++) {
+      const name = template.parameters[index];
+      callLines.push(`  <xsl:with-param ${nameAttributes(name, template.parameterNamespaces[index])} select="${inputs[index]}" />`);
+    }
+    callLines.push('</xsl:call-template>');
+    return callLines.join('\n');
   }
 
   private compileVariablesForLinks(
@@ -2332,6 +2786,14 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
 
   private renderVariable(compilation: FunctoidCompilation, indent: number): string {
     const pad = ' '.repeat(indent);
+    if (compilation.valueCollection) {
+      return (
+        `${pad}<xsl:variable name="var:${compilation.valueCollection.variableName}">\n` +
+        `${this.indentLines(compilation.valueCollection.contentExpr, indent + 2)}\n` +
+        `${pad}</xsl:variable>\n` +
+        `${pad}<xsl:variable name="var:${compilation.variableName}" select="${compilation.selectExpr}" />\n`
+      );
+    }
     if (compilation.conditionalTest) {
       let result = `${pad}<xsl:variable name="var:${compilation.variableName}">\n`;
       result += `${pad}  <xsl:if test="${compilation.conditionalTest}">\n`;
@@ -2536,9 +2998,14 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
             (link.targetPath === child.path || link.targetPath?.startsWith(`${child.path}/`)) &&
             this.linkAllowedInActiveLoop(link, page)
         );
-        const dependency = links
-          .flatMap((link) => this.getSourceDependencyPaths(link, page))
-          .find((path) => path.startsWith(`${parentContext}/`));
+        const tableLink = links.find((link) => link.targetPath === child.path && this.isFunctoidSource(link, page, 703));
+        const table = tableLink ? page.functoids.find((functoid) => functoid.id === tableLink.sourceId) : undefined;
+        const dependency = table
+          ? this.findTableLoopingContextPath(table, page)
+          : links.flatMap((link) => this.getSourceDependencyPaths(link, page)).find((path) => path.startsWith(`${parentContext}/`));
+        if (table && !dependency?.startsWith(`${parentContext}/`)) {
+          return undefined;
+        }
         if (!dependency) {
           return undefined;
         }
@@ -2572,6 +3039,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
 
     const pad = ' '.repeat(indent);
     let result = `${pad}<xsl:for-each select="*">\n`;
+    this.variableScopeStack.push(new Set());
     for (const mapping of mappings) {
       this.recordCompilerSources([mapping.sourcePath], mapping.child.path);
       const test = mapping.sourceNode?.namespace
@@ -2583,6 +3051,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       this.variableScopeStack.pop();
       result += `${pad}  </xsl:if>\n`;
     }
+    this.variableScopeStack.pop();
     result += `${pad}</xsl:for-each>\n`;
     return result;
   }
@@ -2653,8 +3122,8 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     if (loopLink) {
       const loopFunctoid = page.functoids.find((functoid) => functoid.id === loopLink.sourceId);
       if (loopFunctoid?.functoidId === 703) {
-        const loopInput = this.findLoopingInputLink(loopFunctoid, page);
-        return loopInput?.sourcePath ? [loopInput.sourcePath] : [];
+        const contextPath = this.findTableLoopingContextPath(loopFunctoid, page);
+        return contextPath ? [contextPath] : [];
       }
       return this.findLoopingInputLinks(loopFunctoid, page)
         .map((link) => link.sourcePath)
@@ -2690,6 +3159,22 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return commonPrefix ? [commonPrefix] : [];
   }
 
+  private findFlattenedAttributeSourcePath(link: MapLink, page: MapPage, contextPath?: string): string | undefined {
+    if (!this.isFunctoidSource(link, page, 374)) {
+      return undefined;
+    }
+    const paths = [
+      ...new Set(
+        this.getSourceDependencyPaths(link, page)
+          .map((sourcePath) => this.findDeepestRepeatingSourcePath(sourcePath))
+          .filter((sourcePath): sourcePath is string => !!sourcePath)
+      ),
+    ];
+    const parentPath = contextPath || this.sourceTree?.rootElement.path;
+    const sourcePath = paths[0];
+    return paths.length === 1 && parentPath && sourcePath?.startsWith(`${parentPath}/`) ? sourcePath : undefined;
+  }
+
   private findRepeatingSourcePaths(sourcePath: string): string[] {
     return (
       this.sourcePaths
@@ -2705,8 +3190,35 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return repeats || (!this.currentMap?.options.treatElementsAsRecords && node.isOptional);
   }
 
-  private findLoopingInputLink(functoid: MapFunctoid | undefined, page: MapPage): MapLink | undefined {
-    return this.findLoopingInputLinks(functoid, page)[0];
+  private findTableLoopingScopeLink(functoid: MapFunctoid, page: MapPage): MapLink | undefined {
+    const scope = functoid.parameters.find((parameter) => parameter.index === 0 && parameter.type === 'link');
+    return scope
+      ? page.links.find(
+          (link) =>
+            link.id === scope.value &&
+            link.targetId === functoid.id &&
+            link.targetType === LinkEndpointType.Functoid &&
+            link.sourceType === LinkEndpointType.SchemaNode &&
+            !!link.sourcePath
+        )
+      : undefined;
+  }
+
+  private findTableLoopingContextPath(functoid: MapFunctoid, page: MapPage): string | undefined {
+    if (functoid.parameters.find((parameter) => parameter.index === 0)?.type !== 'constant') {
+      return this.findTableLoopingScopeLink(functoid, page)?.sourcePath;
+    }
+    const firstSource = functoid.parameters
+      .filter((parameter) => parameter.index >= 2 && parameter.type === 'link')
+      .sort((left, right) => left.index - right.index)
+      .flatMap((parameter) => {
+        const link = page.links.find(
+          (candidate) =>
+            candidate.id === parameter.value && candidate.targetId === functoid.id && candidate.targetType === LinkEndpointType.Functoid
+        );
+        return link ? this.getSourceDependencyPaths(link, page) : [];
+      })[0];
+    return firstSource ? this.findDeepestRepeatingSourcePath(firstSource) : undefined;
   }
 
   private findLoopingInputLinks(functoid: MapFunctoid | undefined, page: MapPage): MapLink[] {
@@ -2921,8 +3433,56 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
   }
 
   private addScriptFunction(name: string, code: string): void {
-    if (!this.scriptFunctions.has(name)) {
+    const existing = this.scriptFunctions.get(name);
+    if (existing) {
+      const signature = this.csharpMethodSignatures(code).join(';');
+      if (signature !== this.csharpMethodSignatures(existing).join(';')) {
+        this.scriptFunctions.set(`${name}:${signature}`, code);
+      }
+    } else {
       this.scriptFunctions.set(name, code);
+    }
+  }
+
+  private csharpMethodSignatures(code: string): string[] {
+    return [
+      ...code.matchAll(
+        /\b(?:public|private|protected|internal)\s+(?:(?:static|virtual|override|sealed|new|async)\s+)*[\w.<>,[\]?]+\s+([A-Za-z_]\w*)\s*\(([^()]*)\)/g
+      ),
+    ].map((match) => {
+      const parameters = match[2].trim();
+      const types = parameters
+        ? parameters.split(',').map((parameter) =>
+            parameter
+              .trim()
+              .replace(/\s*=\s*[\s\S]*$/, '')
+              .replace(/\s+[A-Za-z_]\w*$/, '')
+              .replace(/\s+/g, '')
+              .replace(/^(?:System\.)?String$/, 'string')
+          )
+        : [];
+      return `${match[1]}(${types.join(',')})`;
+    });
+  }
+
+  private isCSharpSignatureReference(code: string): boolean {
+    return this.csharpMethodSignatures(code).length === 1 && /^[^{;]*\)\s*;?\s*$/.test(code.trim());
+  }
+
+  private registerSharedCSharpFunctions(signature: string): void {
+    for (const functoid of this.currentPage?.functoids ?? []) {
+      const scriptType = functoid.parameters.find((parameter) => parameter.type === 'scriptType')?.value || functoid.scriptType;
+      if (functoid.functoidId !== 260 || scriptType !== 'inlineCSharp') {
+        continue;
+      }
+      const body = functoid.parameters.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
+      const name = this.extractScriptFunctionName(body, 'inlineCSharp');
+      if (name && !this.isCSharpSignatureReference(body) && this.csharpMethodSignatures(body).includes(signature)) {
+        this.addScriptFunction(name, body);
+        const implementation = functoid.scriptImplementations?.find((candidate) => candidate.type === 'inlineCSharp');
+        implementation?.assemblyReferences?.forEach((reference) => this.csharpAssemblyReferences.add(reference));
+        return;
+      }
     }
   }
 

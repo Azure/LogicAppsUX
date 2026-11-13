@@ -4,7 +4,8 @@ src/**
 webview/**
 node_modules/**
 test/**
-e2e/**
+test-results/**
+playwright-report/**
 .gitignore
 tsconfig.json
 webpack.*.js

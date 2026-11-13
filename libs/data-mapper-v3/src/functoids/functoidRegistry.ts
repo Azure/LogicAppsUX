@@ -60,6 +60,17 @@ export class FunctoidRegistry {
     this.registerAdvancedFunctoids();
     this.registerDatabaseFunctoids();
     this.registerCumulativeFunctoids();
+    this.functoids.set(70002, {
+      id: 70002,
+      name: 'Orchestration Variable Retriever',
+      category: FunctoidCategory.Advanced,
+      description: 'Retrieves a case-sensitive variable from the current BizTalk orchestration; absent context produces an empty value.',
+      minInputs: 1,
+      maxInputs: 1,
+      hasOutput: true,
+      tooltip: 'Retrieve a BizTalk orchestration variable',
+      generateXslt: (inputs) => `userCSharp:RetrieveOrchestrationVariable(string(${inputs[0]}))`,
+    });
   }
 
   // --- String Functoids (BizTalk FIDs 101-110) ---

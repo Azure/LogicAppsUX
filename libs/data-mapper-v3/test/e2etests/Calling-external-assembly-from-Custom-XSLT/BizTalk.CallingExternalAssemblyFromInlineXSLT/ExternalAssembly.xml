@@ -1,0 +1,3 @@
+<ExtensionObjects>
+  <ExtensionObject Namespace="http://schemas.microsoft.com/BizTalk/2003/ScriptNS0" AssemblyName=".\MapperExtensionsFunctions.dll" ClassName="MapperExtensionsFunctions.MappingFunctions" />
+</ExtensionObjects>

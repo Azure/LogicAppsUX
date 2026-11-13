@@ -160,7 +160,7 @@ For the full v2 test inventory, inherited skipped tests and integration limitati
 ## Building from Source
 
 For browser UI scenarios, known regressions, coverage measurement, and native-host
-testing limitations, see the [Playwright coverage guide](e2e/README.md).
+testing limitations, see the [Playwright coverage guide](test/e2etests/README.md).
 
 ```bash
 cd src/BizTalk.DataMapper.VsCode

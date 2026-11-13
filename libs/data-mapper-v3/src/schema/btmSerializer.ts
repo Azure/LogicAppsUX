@@ -5,7 +5,7 @@
 
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { create, fragment } from 'xmlbuilder2';
-import { simplifySchemaPath } from './schemaPathResolver';
+import { normalizeSingleSourcePath, simplifySchemaPath } from './schemaPathResolver';
 import type { MapDocument, MapPage, MapLink, MapFunctoid, MapOptions, SchemaReference } from '../model';
 import {
   LinkEndpointType,
@@ -165,6 +165,18 @@ export class BtmSerializer {
     const sourceSchema = this.parseSchemaRef(root['SrcTree'] || root['srcTree'], content, 'SrcTree');
     const targetSchema = this.parseSchemaRef(root['TrgTree'] || root['trgTree'], content, 'TrgTree');
     const pages = this.parsePages(root['Pages'] || root['pages'], scriptTypePrecedence);
+    if (sourceSchema.location && sourceSchema.rootName && !sourceSchema.inlineSchemaXml) {
+      for (const page of pages) {
+        for (const link of page.links) {
+          if (link.sourceType === LinkEndpointType.SchemaNode) {
+            link.sourceId = normalizeSingleSourcePath(link.sourceId, sourceSchema.rootName);
+            if (link.sourcePath) {
+              link.sourcePath = normalizeSingleSourcePath(link.sourcePath, sourceSchema.rootName);
+            }
+          }
+        }
+      }
+    }
     const targetValues = this.parseTreeValues(root['TreeValues']?.['ConstantValues']);
     const testValues = this.parseTreeValues(root['TreeValues']?.['TestValues']);
     const customXslt = root['CustomXSLT'];
@@ -263,12 +275,12 @@ export class BtmSerializer {
         const linkElem = pageElem
           .ele('Link')
           .att('LinkID', link.id)
-          .att('SourceID', this.persistedPath(link.sourceId, link.sourceBtmPath))
+          .att('SourceID', this.persistedPath(link.sourceId, link.sourceBtmPath, map.sourceSchema.rootName))
           .att('TargetID', this.persistedPath(link.targetId, link.targetBtmPath))
           .att('SourceType', link.sourceType)
           .att('TargetType', link.targetType);
         if (link.sourcePath) {
-          linkElem.att('SourcePath', this.persistedPath(link.sourcePath, link.sourceBtmPath));
+          linkElem.att('SourcePath', this.persistedPath(link.sourcePath, link.sourceBtmPath, map.sourceSchema.rootName));
         }
         if (link.targetPath) {
           linkElem.att('TargetPath', this.persistedPath(link.targetPath, link.targetBtmPath));
@@ -634,8 +646,12 @@ export class BtmSerializer {
     return simplifySchemaPath(xpath || '');
   }
 
-  private persistedPath(path: string, original?: string): string {
-    return original && path === simplifySchemaPath(original) ? original : path;
+  private persistedPath(path: string, original?: string, sourceRootName?: string): string {
+    return original &&
+      (path === simplifySchemaPath(original) ||
+        (sourceRootName && path === simplifySchemaPath(normalizeSingleSourcePath(original, sourceRootName))))
+      ? original
+      : path;
   }
 
   private parseFunctoids(page: any, scriptTypePrecedence: Array<{ type: ScriptType; enabled: boolean }>): MapFunctoid[] {
@@ -686,6 +702,17 @@ export class BtmSerializer {
           ? script.find((candidate: any) => candidate['@_Language']?.toLowerCase() === 'externalassembly')
           : script;
         if (externalScript) {
+          const metadataTypes: string[] = [
+            ParameterType.ScriptType,
+            ParameterType.AssemblyPath,
+            ParameterType.ClassName,
+            ParameterType.MethodName,
+          ];
+          for (let index = parameters.length - 1; index >= 0; index--) {
+            if (metadataTypes.includes(parameters[index].type)) {
+              parameters.splice(index, 1);
+            }
+          }
           parameters.push(
             { index: parameters.length, value: ScriptType.ExternalAssembly, type: ParameterType.ScriptType },
             {

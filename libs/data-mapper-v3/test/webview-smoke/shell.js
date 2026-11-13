@@ -16,9 +16,15 @@ runScenario('React shell mounts with stable layout', async () => {
     );
     assert.deepEqual(
       Array.from(document.querySelector('.mapping-area').children)
-        .slice(0, 3)
+        .slice(0, 5)
         .map((pane) => pane.className),
-      ['schema-tree-container source-tree', 'canvas-workspace', 'schema-tree-container target-tree']
+      [
+        'schema-tree-container source-tree',
+        'schema-pane-divider',
+        'canvas-workspace',
+        'schema-pane-divider',
+        'schema-tree-container target-tree',
+      ]
     );
     assert.deepEqual(
       Array.from(document.querySelector('.canvas-workspace').children).map((pane) => pane.className),
