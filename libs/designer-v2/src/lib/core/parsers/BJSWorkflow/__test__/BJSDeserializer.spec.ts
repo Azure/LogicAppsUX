@@ -34,6 +34,26 @@ describe('core/parsers/BJSWorkflow/BJSDeserializer', () => {
     expect(test).toEqual(expectedAgentMcpWorkflowDefinitionOutput);
   });
 
+  it('sizes an Until header as a small subgraph card', () => {
+    const result = Deserialize(
+      {
+        ...simpleWorkflowDefinitionInput,
+        actions: {
+          WaitUntil: {
+            type: 'Until',
+            expression: '@equals(1,1)',
+            limit: { count: 5, timeout: 'PT1H' },
+            actions: {},
+            runAfter: {},
+          },
+        },
+      },
+      null
+    );
+    const until = result.graph.children?.find((child) => child.id === 'WaitUntil');
+    expect(until?.children?.find((child) => child.id === 'WaitUntil-#subgraph')).toMatchObject({ width: 120, height: 32 });
+  });
+
   it('should not throw when a run instance is provided and an action is missing its type', () => {
     // Regression: an action whose deserialized shape lacks `type` previously caused
     // `allActions[key]?.type.toLowerCase()` to throw "Cannot read properties of undefined",

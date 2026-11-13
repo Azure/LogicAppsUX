@@ -1,5 +1,5 @@
 import type { Operations, NodesMetadata } from '../../../state/workflow/workflowInterfaces';
-import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
+import { createWorkflowNode, createWorkflowEdge, getWorkflowEdgeId } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import type { DeserializedWorkflow } from '../BJSDeserializer';
@@ -76,13 +76,13 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
       {
         children: [
           {
-            height: 40,
+            height: 44,
             id: 'WorkflowAgent-#scope',
             type: 'SCOPE_CARD_NODE',
             width: 200,
           },
           {
-            height: 40,
+            height: 44,
             id: 'McpFileServer',
             type: 'OPERATION_NODE',
             width: 200,
@@ -91,10 +91,10 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
           {
             children: [
               {
-                height: 40,
+                height: 44,
                 id: 'WorkflowAgent-addCase-#subgraph',
                 type: 'SUBGRAPH_CARD_NODE',
-                width: 200,
+                width: 20,
               },
             ],
             edges: [],
@@ -105,13 +105,13 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
         ],
         edges: [
           {
-            id: 'WorkflowAgent-#scope-McpFileServer',
+            id: getWorkflowEdgeId('WorkflowAgent-#scope', 'McpFileServer'),
             source: 'WorkflowAgent-#scope',
             target: 'McpFileServer',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'WorkflowAgent-#scope-WorkflowAgent-addCase',
+            id: getWorkflowEdgeId('WorkflowAgent-#scope', 'WorkflowAgent-addCase'),
             source: 'WorkflowAgent-#scope',
             target: 'WorkflowAgent-addCase',
             type: 'HIDDEN_EDGE',

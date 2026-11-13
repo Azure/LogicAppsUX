@@ -13,7 +13,7 @@ import {
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
@@ -155,31 +155,79 @@ export const getNodePresentation = (
   return { shared: false };
 };
 
+// Initial sizes of the rendered legacy cards, used until the DOM measurement is observed.
+// Action, scope header and large branch cards: 2px border + 8px padding + 24px icon/20px title row (workflowCardStyles.ts).
+const LEGACY_LARGE_NODE_SIZE = { width: 200, height: 44 };
+// Small branch cards: 120px wide, 6px padding + 16px line height + border (card.styles.ts).
+const SMALL_SUBGRAPH_CARD_SIZE = { width: 120, height: 32 };
+// Add-case cards: a 44px tall grid that shrink-wraps its 20px add button (subgraphCard.tsx).
+const ADD_SUBGRAPH_CARD_SIZE = { width: 20, height: 44 };
+// AddActionCardV2: 64px card plus its label (addActionCardV2.styles.ts).
+const PLACEHOLDER_NODE_SIZE = { width: 64, height: 96 };
+// CollapsedCardNode renders a fixed 50px tall wrapper.
+export const COLLAPSED_NODE_SIZE = { width: 200, height: 50 };
+
+const smallSubgraphTypes = new Set<SubgraphType>([
+  SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+  SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+  SUBGRAPH_TYPES.SWITCH_DEFAULT,
+  SUBGRAPH_TYPES.UNTIL_DO,
+]);
+
+export const getDefaultNodeSize = (type?: WorkflowNodeType, subgraphType?: SubgraphType): { width: number; height: number } => {
+  switch (type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+    case WORKFLOW_NODE_TYPES.OPERATION_NODE:
+    case WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE:
+      return { ...LEGACY_LARGE_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE: {
+      if (subgraphType && smallSubgraphTypes.has(subgraphType)) {
+        return { ...SMALL_SUBGRAPH_CARD_SIZE };
+      }
+      if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
+        return { ...ADD_SUBGRAPH_CARD_SIZE };
+      }
+      return { ...LEGACY_LARGE_NODE_SIZE };
+    }
+    case WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE:
+      return { ...PLACEHOLDER_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.COLLAPSED_NODE:
+      return { ...COLLAPSED_NODE_SIZE };
+    default:
+      // Hidden nodes and graph containers are layout-only; containers are sized by the layout.
+      return { ...DEFAULT_NODE_SIZE };
+  }
+};
+
 // Creating generic layout nodes and edges below
 
-export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
+export const createWorkflowNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): WorkflowNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   type: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
 });
 
-export const createElkNode = (id: string, type?: WorkflowNodeType): ElkNode => ({
+export const createElkNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): ElkNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   layoutOptions: {
     nodeType: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
   },
 });
 
+// Escape the separator and escape marker so different endpoint pairs cannot share an ID.
+const escapeEdgeIdPart = (id: string): string => id.replace(/%/g, '%25').replace(/-/g, '%2D');
+
+export const getWorkflowEdgeId = (source: string, target: string): string => `${escapeEdgeIdPart(source)}-${escapeEdgeIdPart(target)}`;
+
 export const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   source,
   target,
   type: type ?? WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
 });
 
 export const createElkEdge = (source: string, target: string, type?: WorkflowEdgeType): ElkExtendedEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   sources: [source],
   targets: [target],
   layoutOptions: {

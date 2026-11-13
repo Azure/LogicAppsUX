@@ -1,4 +1,4 @@
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
 import type React from 'react';
 import { BezierEdge, getBezierPath, type EdgeProps } from '@xyflow/react';
 import { nodeLineStrokes, useNodeLineStyles } from '@microsoft/designer-ui-v2';

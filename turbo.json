@@ -24,11 +24,11 @@
       "outputs": ["build/**", "dist/**"]
     },
     "@microsoft/logic-apps-designer-v2#build:lib": {
-      "dependsOn": ["@microsoft/designer-ui-v2#build:lib"],
+      "dependsOn": ["@microsoft/designer-ui-v2#build:lib", "@microsoft/logic-apps-graph-layout#build:lib"],
       "outputs": ["build/**", "dist/**"]
     },
     "@microsoft/logic-apps-designer-v2#test:lib": {
-      "dependsOn": ["@microsoft/designer-ui-v2#build:lib"],
+      "dependsOn": ["@microsoft/designer-ui-v2#build:lib", "@microsoft/logic-apps-graph-layout#build:lib"],
       "outputs": ["coverage/**"]
     },
     "@microsoft/designer-ui-v2#test:lib": {

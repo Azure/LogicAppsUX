@@ -13,8 +13,7 @@ import {
   SUBGRAPH_TYPES,
   removeIdTag,
 } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
-import ELK from 'elkjs/lib/elk.bundled';
+import ELK, { type ElkExtendedEdge, type ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { createContext, useState, useContext, useLayoutEffect, useRef } from 'react';
 import type { Edge, Node } from '@xyflow/react';
 import {
@@ -576,6 +575,8 @@ export const exportForTesting = {
   convertElkGraphToReactFlow,
   convertWorkflowGraphToElkGraph,
   elkLayout,
+  defaultLayoutOptions,
+  readOnlyOptions,
 };
 
 export const useLayout = (): LayoutContextType => {

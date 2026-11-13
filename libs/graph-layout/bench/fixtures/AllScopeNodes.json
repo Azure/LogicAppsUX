@@ -1,0 +1,703 @@
+{
+  "name": "AllScopeNodes",
+  "source": "__mocks__/workflows/AllScopeNodes.json",
+  "useSharedNodeUi": false,
+  "layoutOptions": {
+    "elk.algorithm": "org.eclipse.elk.layered",
+    "elk.direction": "DOWN",
+    "elk.alignment": "TOP",
+    "elk.layered.layering.strategy": "INTERACTIVE",
+    "elk.edge.type": "DIRECTED",
+    "elk.layered.unnecessaryBendpoints": "false",
+    "elk.hierarchyHandling": "INCLUDE_CHILDREN",
+    "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+    "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
+    "elk.spacing.edgeNode": "40",
+    "elk.spacing.edgeEdge": "40",
+    "elk.layered.spacing.edgeNodeBetweenLayers": "80",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "80",
+    "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+    "elk.layered.crossingMinimization.forceNodeModelOrder": "false",
+    "elk.layered.considerModelOrder.strategy": "NODES_AND_EDGES",
+    "elk.layered.cycleBreaking.strategy": "DEPTH_FIRST",
+    "elk.edgeRouting": "SPLINES",
+    "elk.layered.edgeRouting.splines.mode": "CONSERVATIVE_SOFT",
+    "elk.portAlignment.default": "CENTER",
+    "elk.spacing.portPort": "40"
+  },
+  "graph": {
+    "id": "root",
+    "children": [
+      {
+        "id": "Recurrence",
+        "height": 44,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      },
+      {
+        "id": "Switch",
+        "height": 40,
+        "width": 200,
+        "children": [
+          {
+            "id": "Switch-#scope",
+            "height": 44,
+            "width": 200,
+            "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Conditional_Case",
+            "children": [
+              {
+                "id": "Conditional_Case-#subgraph",
+                "height": 44,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Condition",
+                "height": 40,
+                "width": 200,
+                "children": [
+                  {
+                    "id": "Condition-#scope",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Condition-actions",
+                    "children": [
+                      {
+                        "id": "Condition-actions-#subgraph",
+                        "height": 32,
+                        "width": 120,
+                        "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Terminate",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Increment_variable_4",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Terminate-Increment_variable_4",
+                        "sources": ["Terminate"],
+                        "targets": ["Increment_variable_4"],
+                        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                      },
+                      {
+                        "id": "Condition%2Dactions%2D#subgraph-Terminate",
+                        "sources": ["Condition-actions-#subgraph"],
+                        "targets": ["Terminate"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "SUBGRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  },
+                  {
+                    "id": "Condition-elseActions",
+                    "children": [
+                      {
+                        "id": "Condition-elseActions-#subgraph",
+                        "height": 32,
+                        "width": 120,
+                        "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Terminate_2",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Condition%2DelseActions%2D#subgraph-Terminate_2",
+                        "sources": ["Condition-elseActions-#subgraph"],
+                        "targets": ["Terminate_2"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "SUBGRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "Condition%2D#scope-Condition%2Dactions",
+                    "sources": ["Condition-#scope"],
+                    "targets": ["Condition-actions"],
+                    "layoutOptions": { "edgeType": "ONLY_EDGE" }
+                  },
+                  {
+                    "id": "Condition%2D#scope-Condition%2DelseActions",
+                    "sources": ["Condition-#scope"],
+                    "targets": ["Condition-elseActions"],
+                    "layoutOptions": { "edgeType": "ONLY_EDGE" }
+                  }
+                ],
+                "layoutOptions": {
+                  "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+                  "elk.position": "(0, 0)",
+                  "nodeType": "GRAPH_NODE",
+                  "presentation": "{\"shared\":false}",
+                  "elk.layered.nodePlacement.strategy": "SIMPLE",
+                  "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+                  "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+                  "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Conditional_Case%2D#subgraph-Condition",
+                "sources": ["Conditional_Case-#subgraph"],
+                "targets": ["Condition"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "ForEach_Case",
+            "children": [
+              {
+                "id": "ForEach_Case-#subgraph",
+                "height": 44,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "ForEach",
+                "height": 40,
+                "width": 200,
+                "children": [
+                  {
+                    "id": "ForEach-#scope",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "ForEach_Action_1",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "ForEach_nested",
+                    "height": 40,
+                    "width": 200,
+                    "children": [
+                      {
+                        "id": "ForEach_nested-#scope",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "ForEach_Action_2",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "ForEach_Action_3",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "ForEach_Action_2-ForEach_Action_3",
+                        "sources": ["ForEach_Action_2"],
+                        "targets": ["ForEach_Action_3"],
+                        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                      },
+                      {
+                        "id": "ForEach_nested%2D#scope-ForEach_Action_2",
+                        "sources": ["ForEach_nested-#scope"],
+                        "targets": ["ForEach_Action_2"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "GRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  },
+                  {
+                    "id": "ForEach_empty",
+                    "height": 40,
+                    "width": 200,
+                    "children": [
+                      {
+                        "id": "ForEach_empty-#scope",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=60,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "GRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "ForEach_Action_1-ForEach_nested",
+                    "sources": ["ForEach_Action_1"],
+                    "targets": ["ForEach_nested"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "ForEach_nested-ForEach_empty",
+                    "sources": ["ForEach_nested"],
+                    "targets": ["ForEach_empty"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "ForEach%2D#scope-ForEach_Action_1",
+                    "sources": ["ForEach-#scope"],
+                    "targets": ["ForEach_Action_1"],
+                    "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                  }
+                ],
+                "layoutOptions": {
+                  "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                  "elk.position": "(0, 0)",
+                  "nodeType": "GRAPH_NODE",
+                  "presentation": "{\"shared\":false}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "ForEach_Case%2D#subgraph-ForEach",
+                "sources": ["ForEach_Case-#subgraph"],
+                "targets": ["ForEach"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "Scope_Case",
+            "children": [
+              {
+                "id": "Scope_Case-#subgraph",
+                "height": 44,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Scope",
+                "height": 40,
+                "width": 200,
+                "children": [
+                  {
+                    "id": "Scope-#scope",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Scope_Action_1",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Scope_Action_2",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Scope_nested",
+                    "height": 40,
+                    "width": 200,
+                    "children": [
+                      {
+                        "id": "Scope_nested-#scope",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Scope_Action_3",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Scope_nested%2D#scope-Scope_Action_3",
+                        "sources": ["Scope_nested-#scope"],
+                        "targets": ["Scope_Action_3"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "GRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  },
+                  {
+                    "id": "Scope_empty",
+                    "height": 40,
+                    "width": 200,
+                    "children": [
+                      {
+                        "id": "Scope_empty-#scope",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=60,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "GRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "Scope_Action_1-Scope_Action_2",
+                    "sources": ["Scope_Action_1"],
+                    "targets": ["Scope_Action_2"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "Scope_Action_2-Scope_nested",
+                    "sources": ["Scope_Action_2"],
+                    "targets": ["Scope_nested"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "Scope_nested-Scope_empty",
+                    "sources": ["Scope_nested"],
+                    "targets": ["Scope_empty"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "Scope%2D#scope-Scope_Action_1",
+                    "sources": ["Scope-#scope"],
+                    "targets": ["Scope_Action_1"],
+                    "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                  }
+                ],
+                "layoutOptions": {
+                  "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+                  "elk.position": "(0, 0)",
+                  "nodeType": "GRAPH_NODE",
+                  "presentation": "{\"shared\":false}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Scope_Case%2D#subgraph-Scope",
+                "sources": ["Scope_Case-#subgraph"],
+                "targets": ["Scope"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "DoUntil_Case",
+            "children": [
+              {
+                "id": "DoUntil_Case-#subgraph",
+                "height": 44,
+                "width": 200,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Until",
+                "height": 40,
+                "width": 200,
+                "children": [
+                  {
+                    "id": "Until-#subgraph",
+                    "height": 32,
+                    "width": 120,
+                    "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Until_Action_1",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Until_Action_2",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                  },
+                  {
+                    "id": "Until_Nested",
+                    "height": 40,
+                    "width": 200,
+                    "children": [
+                      {
+                        "id": "Until_Nested-#subgraph",
+                        "height": 32,
+                        "width": 120,
+                        "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Until_Action_3",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+                      },
+                      {
+                        "id": "Until_Nested-#footer",
+                        "height": 44,
+                        "width": 200,
+                        "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                      }
+                    ],
+                    "edges": [
+                      {
+                        "id": "Until_Nested%2D#subgraph-Until_Action_3",
+                        "sources": ["Until_Nested-#subgraph"],
+                        "targets": ["Until_Action_3"],
+                        "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                      },
+                      {
+                        "id": "Until_Action_3-Until_Nested%2D#footer",
+                        "sources": ["Until_Action_3"],
+                        "targets": ["Until_Nested-#footer"],
+                        "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+                      }
+                    ],
+                    "layoutOptions": {
+                      "elk.padding": "[top=0,left=20,bottom=0,right=20]",
+                      "elk.position": "(0, 0)",
+                      "nodeType": "GRAPH_NODE",
+                      "presentation": "{\"shared\":false}"
+                    }
+                  },
+                  {
+                    "id": "Until-#footer",
+                    "height": 44,
+                    "width": 200,
+                    "layoutOptions": { "nodeType": "SCOPE_CARD_NODE", "presentation": "{\"shared\":false}" }
+                  }
+                ],
+                "edges": [
+                  {
+                    "id": "Until_Action_1-Until_Action_2",
+                    "sources": ["Until_Action_1"],
+                    "targets": ["Until_Action_2"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "Until_Action_2-Until_Nested",
+                    "sources": ["Until_Action_2"],
+                    "targets": ["Until_Nested"],
+                    "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+                  },
+                  {
+                    "id": "Until%2D#subgraph-Until_Action_1",
+                    "sources": ["Until-#subgraph"],
+                    "targets": ["Until_Action_1"],
+                    "layoutOptions": { "edgeType": "HEADING_EDGE" }
+                  },
+                  {
+                    "id": "Until_Nested-Until%2D#footer",
+                    "sources": ["Until_Nested"],
+                    "targets": ["Until-#footer"],
+                    "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+                  }
+                ],
+                "layoutOptions": {
+                  "elk.padding": "[top=0,left=20,bottom=0,right=20]",
+                  "elk.position": "(0, 0)",
+                  "nodeType": "GRAPH_NODE",
+                  "presentation": "{\"shared\":false}"
+                }
+              }
+            ],
+            "edges": [
+              {
+                "id": "DoUntil_Case%2D#subgraph-Until",
+                "sources": ["DoUntil_Case-#subgraph"],
+                "targets": ["Until"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          },
+          {
+            "id": "Switch-addCase",
+            "children": [
+              {
+                "id": "Switch-addCase-#subgraph",
+                "height": 44,
+                "width": 20,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "layoutOptions": { "nodeType": "HIDDEN_NODE", "presentation": "{\"shared\":false}" }
+          },
+          {
+            "id": "Switch-defaultCase",
+            "children": [
+              {
+                "id": "Switch-defaultCase-#subgraph",
+                "height": 32,
+                "width": 120,
+                "layoutOptions": { "nodeType": "SUBGRAPH_CARD_NODE", "presentation": "{\"shared\":false}" }
+              },
+              {
+                "id": "Default-Compose",
+                "height": 44,
+                "width": 200,
+                "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+              }
+            ],
+            "edges": [
+              {
+                "id": "Switch%2DdefaultCase%2D#subgraph-Default%2DCompose",
+                "sources": ["Switch-defaultCase-#subgraph"],
+                "targets": ["Default-Compose"],
+                "layoutOptions": { "edgeType": "HEADING_EDGE" }
+              }
+            ],
+            "layoutOptions": {
+              "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+              "elk.position": "(0, 0)",
+              "nodeType": "SUBGRAPH_NODE",
+              "presentation": "{\"shared\":false}"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "Switch%2D#scope-Conditional_Case",
+            "sources": ["Switch-#scope"],
+            "targets": ["Conditional_Case"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Switch%2D#scope-ForEach_Case",
+            "sources": ["Switch-#scope"],
+            "targets": ["ForEach_Case"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Switch%2D#scope-Scope_Case",
+            "sources": ["Switch-#scope"],
+            "targets": ["Scope_Case"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Switch%2D#scope-DoUntil_Case",
+            "sources": ["Switch-#scope"],
+            "targets": ["DoUntil_Case"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          },
+          {
+            "id": "Switch%2D#scope-Switch%2DaddCase",
+            "sources": ["Switch-#scope"],
+            "targets": ["Switch-addCase"],
+            "layoutOptions": { "edgeType": "HIDDEN_EDGE" }
+          },
+          {
+            "id": "Switch%2D#scope-Switch%2DdefaultCase",
+            "sources": ["Switch-#scope"],
+            "targets": ["Switch-defaultCase"],
+            "layoutOptions": { "edgeType": "ONLY_EDGE" }
+          }
+        ],
+        "layoutOptions": {
+          "elk.padding": "[top=0,left=20,bottom=20,right=20]",
+          "elk.position": "(0, 0)",
+          "nodeType": "GRAPH_NODE",
+          "presentation": "{\"shared\":false}",
+          "elk.layered.nodePlacement.strategy": "SIMPLE",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "20",
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+        }
+      },
+      {
+        "id": "Initialize_owner",
+        "height": 44,
+        "width": 200,
+        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":false}" }
+      }
+    ],
+    "edges": [
+      { "id": "Recurrence-Switch", "sources": ["Recurrence"], "targets": ["Switch"], "layoutOptions": { "edgeType": "BUTTON_EDGE" } },
+      {
+        "id": "Switch-Initialize_owner",
+        "sources": ["Switch"],
+        "targets": ["Initialize_owner"],
+        "layoutOptions": { "edgeType": "BUTTON_EDGE" }
+      }
+    ],
+    "layoutOptions": {
+      "elk.padding": "[top=0,left=20,bottom=40,right=20]",
+      "elk.position": "(0, 0)",
+      "nodeType": "GRAPH_NODE",
+      "presentation": "{\"shared\":false}"
+    }
+  }
+}

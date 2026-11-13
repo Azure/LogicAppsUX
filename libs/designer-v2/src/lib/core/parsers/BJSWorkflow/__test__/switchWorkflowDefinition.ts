@@ -1,5 +1,5 @@
 import type { NodesMetadata, Operations } from '../../../state/workflow/workflowInterfaces';
-import { createWorkflowEdge } from '../../../utils/graph';
+import { createWorkflowEdge, getWorkflowEdgeId } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 
@@ -71,7 +71,7 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
       {
         id: 'HTTP_TRIGGER',
         width: 200,
-        height: 40,
+        height: 44,
         type: 'OPERATION_NODE',
       },
       {
@@ -83,7 +83,7 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           {
             id: 'Switch_1-#scope',
             width: 200,
-            height: 40,
+            height: 44,
             type: 'SCOPE_CARD_NODE',
           },
           {
@@ -92,19 +92,19 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
               {
                 id: 'Case 2-#subgraph',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'SUBGRAPH_CARD_NODE',
               },
               {
                 id: 'Compose_5',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'OPERATION_NODE',
               },
             ],
             edges: [
               {
-                id: 'Case 2-#subgraph-Compose_5',
+                id: getWorkflowEdgeId('Case 2-#subgraph', 'Compose_5'),
                 source: 'Case 2-#subgraph',
                 target: 'Compose_5',
                 type: 'HEADING_EDGE',
@@ -119,19 +119,19 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
               {
                 id: 'Case 3-#subgraph',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'SUBGRAPH_CARD_NODE',
               },
               {
                 id: 'Compose_4',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'OPERATION_NODE',
               },
             ],
             edges: [
               {
-                id: 'Case 3-#subgraph-Compose_4',
+                id: getWorkflowEdgeId('Case 3-#subgraph', 'Compose_4'),
                 source: 'Case 3-#subgraph',
                 target: 'Compose_4',
                 type: 'HEADING_EDGE',
@@ -145,8 +145,8 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
             children: [
               {
                 id: 'Switch_1-addCase-#subgraph',
-                width: 200,
-                height: 40,
+                width: 20,
+                height: 44,
                 type: 'SUBGRAPH_CARD_NODE',
               },
             ],
@@ -159,8 +159,8 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
             children: [
               {
                 id: 'Switch_1-defaultCase-#subgraph',
-                width: 200,
-                height: 40,
+                width: 120,
+                height: 32,
                 type: 'SUBGRAPH_CARD_NODE',
               },
             ],
@@ -171,25 +171,25 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         ],
         edges: [
           {
-            id: 'Switch_1-#scope-Case 2',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Case 2'),
             source: 'Switch_1-#scope',
             target: 'Case 2',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Switch_1-#scope-Case 3',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Case 3'),
             source: 'Switch_1-#scope',
             target: 'Case 3',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Switch_1-#scope-Switch_1-addCase',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Switch_1-addCase'),
             source: 'Switch_1-#scope',
             target: 'Switch_1-addCase',
             type: 'HIDDEN_EDGE',
           },
           {
-            id: 'Switch_1-#scope-Switch_1-defaultCase',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Switch_1-defaultCase'),
             source: 'Switch_1-#scope',
             target: 'Switch_1-defaultCase',
             type: 'ONLY_EDGE',
@@ -199,7 +199,7 @@ export const expectedSwitchWorkflowDefinitionOutput: { graph: WorkflowNode; acti
       {
         id: 'Initialize_variable_2',
         width: 200,
-        height: 40,
+        height: 44,
         type: 'OPERATION_NODE',
       },
     ],
@@ -276,7 +276,7 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
       {
         id: 'HTTP_TRIGGER',
         width: 200,
-        height: 40,
+        height: 44,
         type: 'OPERATION_NODE',
       },
       {
@@ -288,7 +288,7 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
           {
             id: 'Switch_1-#scope',
             width: 200,
-            height: 40,
+            height: 44,
             type: 'SCOPE_CARD_NODE',
           },
           {
@@ -297,19 +297,19 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
               {
                 id: 'Case 2-#subgraph',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'SUBGRAPH_CARD_NODE',
               },
               {
                 id: 'Compose_5',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'OPERATION_NODE',
               },
             ],
             edges: [
               {
-                id: 'Case 2-#subgraph-Compose_5',
+                id: getWorkflowEdgeId('Case 2-#subgraph', 'Compose_5'),
                 source: 'Case 2-#subgraph',
                 target: 'Compose_5',
                 type: 'HEADING_EDGE',
@@ -324,19 +324,19 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
               {
                 id: 'Case 3-#subgraph',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'SUBGRAPH_CARD_NODE',
               },
               {
                 id: 'Compose_4',
                 width: 200,
-                height: 40,
+                height: 44,
                 type: 'OPERATION_NODE',
               },
             ],
             edges: [
               {
-                id: 'Case 3-#subgraph-Compose_4',
+                id: getWorkflowEdgeId('Case 3-#subgraph', 'Compose_4'),
                 source: 'Case 3-#subgraph',
                 target: 'Compose_4',
                 type: 'HEADING_EDGE',
@@ -350,8 +350,8 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
             children: [
               {
                 id: 'Switch_1-defaultCase-#subgraph',
-                width: 200,
-                height: 40,
+                width: 120,
+                height: 32,
                 type: 'SUBGRAPH_CARD_NODE',
               },
             ],
@@ -362,19 +362,19 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
         ],
         edges: [
           {
-            id: 'Switch_1-#scope-Case 2',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Case 2'),
             source: 'Switch_1-#scope',
             target: 'Case 2',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Switch_1-#scope-Case 3',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Case 3'),
             source: 'Switch_1-#scope',
             target: 'Case 3',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Switch_1-#scope-Switch_1-defaultCase',
+            id: getWorkflowEdgeId('Switch_1-#scope', 'Switch_1-defaultCase'),
             source: 'Switch_1-#scope',
             target: 'Switch_1-defaultCase',
             type: 'ONLY_EDGE',
@@ -384,7 +384,7 @@ export const expectedSwitchWorkflowDefinitionOutputWithoutAddCase: {
       {
         id: 'Initialize_variable_2',
         width: 200,
-        height: 40,
+        height: 44,
         type: 'OPERATION_NODE',
       },
     ],

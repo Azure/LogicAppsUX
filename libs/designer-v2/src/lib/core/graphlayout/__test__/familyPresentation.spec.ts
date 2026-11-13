@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { getNodePresentation } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -122,6 +122,35 @@ describe('family admission and matching geometry', () => {
       width: 424,
       height: 74,
     });
+  });
+
+  it.each([false, true])('preserves dependencies with ambiguous hyphenated names through layout (shared UI: %s)', async (shared) => {
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          A: { type: 'Compose', inputs: 'first', runAfter: {} },
+          'A-B': { type: 'Compose', inputs: 'second', runAfter: {} },
+          'B-C': { type: 'Compose', inputs: 'third', runAfter: { A: ['Succeeded'] } },
+          C: { type: 'Compose', inputs: 'fourth', runAfter: { 'A-B': ['Succeeded'] } },
+        },
+      },
+      null
+    );
+    const dependencies = parsed.graph.edges!.filter(
+      (edge) => (edge.source === 'A' && edge.target === 'B-C') || (edge.source === 'A-B' && edge.target === 'C')
+    );
+    expect(dependencies).toHaveLength(2);
+
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const layout = await exportForTesting.elkLayout(exportForTesting.convertWorkflowGraphToElkGraph(parsed.graph, shared, context));
+    const [, edges] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
+    for (const dependency of dependencies) {
+      expect(edges).toContainEqual(
+        expect.objectContaining({ id: dependency.id, source: dependency.source, target: dependency.target, type: dependency.type })
+      );
+    }
+    expect(new Set(dependencies.map(({ id }) => id)).size).toBe(2);
   });
 
   it('uses actual definitions for nested family layout and retains accepted presentation on XYFlow nodes', async () => {
@@ -365,6 +394,67 @@ describe('family admission and matching geometry', () => {
     expect(panel.items.map(({ id }) => id)).toEqual(['McpFileServer', 'MixedTool']);
     expect(nodes.some(({ id }) => id === 'HandoffOnly' || id === 'Transfer')).toBe(false);
     expect(nodes.some(({ id }) => id === 'MixedTool')).toBe(!collapsed);
+  });
+
+  it.each([false, true])('lays out repeated handoffs alongside a normal dependency with shared=%s', async (shared) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          WorkflowAgent: {
+            ...sourceAgent,
+            tools: {
+              HandoffOne: {
+                type: 'AgentCondition',
+                actions: { TransferOne: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'OtherAgent' }, runAfter: {} } },
+              },
+              HandoffTwo: {
+                type: 'AgentCondition',
+                actions: { TransferTwo: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'OtherAgent' }, runAfter: {} } },
+              },
+            },
+          },
+          OtherAgent: { ...sourceAgent, tools: {}, runAfter: { WorkflowAgent: ['Succeeded'] } },
+        },
+      },
+      null
+    );
+    const sourceGraph = parsed.graph.children!.find((child) => child.id === 'WorkflowAgent')!;
+    const nestedEdge = sourceGraph.edges!.find((edge) => edge.target === 'WorkflowAgent-addCase')!;
+    nestedEdge.id = 'WorkflowAgent-OtherAgent::handoff:1';
+    const inputParameters = Object.fromEntries(
+      ['TransferOne', 'TransferTwo'].map((id) => [
+        id,
+        { parameterGroups: { default: { parameters: [{ parameterName: 'name', value: [{ value: 'OtherAgent' }] }] } } },
+      ])
+    );
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+        },
+        operations: { inputParameters },
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const relation = result.current!.edges!.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'OtherAgent');
+    expect(relation.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    expect(relation.map((edge) => edge.id)).toEqual(['WorkflowAgent-OtherAgent', 'WorkflowAgent-OtherAgent::handoff:2']);
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, shared, {
+      operations: parsed.actionData,
+      nodesMetadata: parsed.nodesMetadata,
+    });
+    const [, edges] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), shared);
+    expect(edges.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'OtherAgent').map((edge) => edge.type)).toEqual([
+      WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
+      WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+    ]);
   });
 
   it.each([

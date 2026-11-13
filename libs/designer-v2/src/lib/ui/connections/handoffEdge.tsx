@@ -1,7 +1,7 @@
 import type React from 'react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
 import { EdgeLabelRenderer, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import { Button } from '@fluentui/react-components';
