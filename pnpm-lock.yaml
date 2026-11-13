@@ -389,6 +389,9 @@ importers:
       '@esbuild-plugins/node-globals-polyfill':
         specifier: ^0.2.3
         version: 0.2.3(esbuild@0.27.0)
+      '@microsoft/logic-apps-graph-layout':
+        specifier: workspace:*
+        version: link:../../libs/graph-layout
       '@types/lodash.isequal':
         specifier: ^4.5.8
         version: 4.5.8
@@ -398,6 +401,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      elkjs:
+        specifier: 0.8.2
+        version: 0.8.2
       rollup-plugin-polyfill-node:
         specifier: ^0.13.0
         version: 0.13.0(rollup@4.62.2)

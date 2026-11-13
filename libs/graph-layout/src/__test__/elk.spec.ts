@@ -21,8 +21,17 @@ describe('resolveAlgorithm', () => {
 describe('ELK', () => {
   it('lets graph options override call and constructor defaults when resolving the algorithm', async () => {
     const elk = new ELK({ defaultLayoutOptions: { 'elk.algorithm': 'force' } });
-    await expect(elk.layout({ id: 'root', layoutOptions: { 'elk.algorithm': 'sporeOverlap' } })).rejects.toThrow(/sporeOverlap/);
-    await expect(elk.layout({ id: 'root' }, { layoutOptions: { 'elk.algorithm': 'layered' } })).rejects.toThrow(/layered/);
+    await expect(elk.layout({ id: 'root', layoutOptions: { 'elk.algorithm': 'sporeOverlap' } })).resolves.toMatchObject({ id: 'root' });
+    await expect(
+      elk.layout({ id: 'root' }, { layoutOptions: { 'elk.algorithm': 'layered', 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF' } })
+    ).resolves.toMatchObject({ id: 'root' });
     await expect(elk.layout({ id: 'root' })).rejects.toThrow(/Unsupported/);
+  });
+
+  it('resolves equivalent algorithm keys in source precedence order', async () => {
+    const elk = new ELK({ defaultLayoutOptions: { 'elk.algorithm': 'layered' } });
+    await expect(
+      elk.layout({ id: 'root', layoutOptions: { algorithm: 'sporeOverlap' } }, { layoutOptions: { 'elk.algorithm': 'force' } })
+    ).resolves.toMatchObject({ id: 'root' });
   });
 });

@@ -1,20 +1,18 @@
 import type { ElkConstructorArguments, ElkLayoutArguments, ElkNode, LayoutOptions } from './types';
+import { getOption, GraphLayoutError } from './options';
+import { removeOverlaps } from './spore/overlap';
+import { layoutLayered } from './layered/layout';
 
 export const SUPPORTED_ALGORITHMS = ['layered', 'sporeOverlap'] as const;
 export type SupportedAlgorithm = (typeof SUPPORTED_ALGORITHMS)[number];
 
-export class GraphLayoutError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'GraphLayoutError';
-  }
-}
+export { GraphLayoutError } from './options';
 
 const ALGORITHM_KEYS = ['elk.algorithm', 'org.eclipse.elk.algorithm', 'algorithm'];
 
 /** Normalizes elkjs algorithm ids (e.g. `org.eclipse.elk.layered`, `elk.layered`, `layered`). */
 export const resolveAlgorithm = (options: LayoutOptions | undefined): SupportedAlgorithm => {
-  const raw = ALGORITHM_KEYS.map((key) => options?.[key]).find((value) => value !== undefined) ?? 'layered';
+  const raw = getOption(options, ALGORITHM_KEYS) ?? 'layered';
   const id = raw.replace(/^org\.eclipse\.elk\./, '').replace(/^elk\./, '');
   const algorithm = SUPPORTED_ALGORITHMS.find((supported) => supported.toLowerCase() === id.toLowerCase());
   if (!algorithm) {
@@ -32,9 +30,14 @@ export class ELK {
   }
 
   async layout(graph: ElkNode, args: ElkLayoutArguments = {}): Promise<ElkNode> {
-    const options = { ...this.defaultLayoutOptions, ...args.layoutOptions, ...graph.layoutOptions };
-    const algorithm = resolveAlgorithm(options);
-    throw new GraphLayoutError(`The '${algorithm}' algorithm is not implemented yet.`);
+    const algorithmOptions = [graph.layoutOptions, args.layoutOptions, this.defaultLayoutOptions]
+      .map((source) => getOption(source, ALGORITHM_KEYS))
+      .find((value) => value !== undefined);
+    const algorithm = resolveAlgorithm(algorithmOptions === undefined ? undefined : { algorithm: algorithmOptions });
+    if (algorithm === 'sporeOverlap') {
+      return removeOverlaps(graph, [graph.layoutOptions, args.layoutOptions, this.defaultLayoutOptions]);
+    }
+    return layoutLayered(graph, [args.layoutOptions, this.defaultLayoutOptions]);
   }
 }
 

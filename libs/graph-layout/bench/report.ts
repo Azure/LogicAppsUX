@@ -8,9 +8,11 @@ import ELK from '../dist/index.js';
 import { createCandidateEngine, createElkjsEngine, isImplemented, type LayoutEngine, runFixture } from './engines.ts';
 import { createOverlapFixture, graphStats, type LayoutFixture, loadWorkflowFixtures } from './fixtures.ts';
 import { compareGeometry, extractGeometry, findOverlaps } from './geometry.ts';
+import { layoutQuality } from './quality.ts';
 
 const packageDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const filter = process.argv[2] ? new RegExp(process.argv[2]) : /^(?!.*\.shared$)/;
+const simplePreview = process.argv.includes('--simple');
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(1)} KB`;
 
@@ -57,15 +59,35 @@ for (const [name, specifier] of [
 }
 
 console.log(`\n## Layout time (Node ${process.version}, median ms)\n`);
+if (simplePreview) {
+  console.log('Experimental SIMPLE preview: both engines override placement to SIMPLE and force model order. This is not BK parity.\n');
+}
 // elkjs.bundled dispatches through an in-process FakeWorker using setTimeout, so every call pays ~2 timer ticks.
 const tickStart = performance.now();
 for (let i = 0; i < 10; i++) {
   await new Promise((resolve) => setTimeout(resolve, 0));
 }
 console.log(`setTimeout(0) latency on this machine: ${((performance.now() - tickStart) / 10).toFixed(1)} ms (elkjs pays ~2 per call)\n`);
-console.log('| Fixture | Nodes | Edges | elkjs | candidate | parity |\n|---|---|---|---|---|---|');
-for (const fixture of [...loadWorkflowFixtures((name) => filter.test(name)), createOverlapFixture(50)]) {
+console.log('| Fixture | Nodes | Edges | elkjs | candidate | clone | parity |\n|---|---|---|---|---|---|---|');
+for (const original of [...loadWorkflowFixtures((name) => filter.test(name)), createOverlapFixture(50)]) {
+  const fixture =
+    simplePreview && original.parity !== 'noOverlap'
+      ? {
+          ...original,
+          layoutOptions: {
+            ...original.layoutOptions,
+            'elk.layered.nodePlacement.strategy': 'SIMPLE',
+            'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
+          },
+        }
+      : original;
   const { nodes, edges } = graphStats(fixture.graph);
+  const cloneSamples: number[] = [];
+  for (let i = 0; i < 7; i++) {
+    const start = performance.now();
+    structuredClone(fixture.graph);
+    cloneSamples.push(performance.now() - start);
+  }
   const reference = await time(elkjs, fixture);
   let candidateCell = 'n/a';
   let parityCell = 'not implemented';
@@ -81,5 +103,25 @@ for (const fixture of [...loadWorkflowFixtures((name) => filter.test(name)), cre
       parityCell = `${diff.nodeMismatches.length + diff.missingNodes.length} node / ${diff.edgeMismatches.length} edge diffs, max Δ ${diff.maxNodeDelta}`;
     }
   }
-  console.log(`| ${fixture.name} | ${nodes} | ${edges} | ${reference.toFixed(1)} | ${candidateCell} | ${parityCell} |`);
+  console.log(
+    `| ${fixture.name} | ${nodes} | ${edges} | ${reference.toFixed(1)} | ${candidateCell} | ${median(cloneSamples).toFixed(1)} | ${parityCell} |`
+  );
+  if (process.argv.includes('--quality') && candidateCell !== 'n/a' && fixture.parity !== 'noOverlap') {
+    const previous = {
+      ...original,
+      layoutOptions: {
+        ...original.layoutOptions,
+        'elk.layered.nodePlacement.strategy': 'SIMPLE',
+        'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
+      },
+    };
+    for (const [label, engine, input] of [
+      ['SIMPLE/model-order control (current routing)', candidate, previous],
+      ['candidate production options', candidate, original],
+      ['elkjs production options', elkjs, original],
+    ] as const) {
+      const graph = await runFixture(engine, input);
+      console.log(JSON.stringify({ fixture: fixture.name, engine: label, width: graph.width, ...layoutQuality(graph) }));
+    }
+  }
 }
