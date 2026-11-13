@@ -1,8 +1,11 @@
+import console from 'node:console';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { consumerCompilerOptions, declarationFiles, findPrivateModuleReference, privatePackage } from './package-declaration-guards.mjs';
 
 const [archiveArgument, scratchArgument, existingSiblingTypes] = process.argv.slice(2);
 if (!archiveArgument || !scratchArgument) {
@@ -23,7 +26,6 @@ if (existsSync(scratch)) {
   throw new Error(`The isolated consumer directory already exists: ${scratch}`);
 }
 
-const privatePackage = '@microsoft/logic-apps-graph-layout';
 const designerPackage = '@microsoft/logic-apps-designer-v2';
 const siblings = [
   ['logic-apps-shared', '@microsoft/logic-apps-shared'],
@@ -36,14 +38,15 @@ const nodeModules = join(consumer, 'node_modules');
 const packagePath = (name) => join(nodeModules, ...name.split('/'));
 const typescriptCompiler = join(repositoryDirectory, 'node_modules', 'typescript', 'bin', 'tsc');
 
-function run(command, args, cwd) {
+function run(command, args, cwd, exitOnFailure = true) {
   const result = spawnSync(command, args, { cwd, stdio: 'inherit' });
   if (result.error) {
     throw result.error;
   }
-  if (result.status !== 0) {
+  if (exitOnFailure && result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+  return result.status ?? 1;
 }
 
 mkdirSync(packagePath(designerPackage), { recursive: true });
@@ -63,11 +66,18 @@ const bundleDirectory = join(packagePath(designerPackage), 'build', 'lib');
 const bundle = readFileSync(join(bundleDirectory, 'index.js'), 'utf8');
 const sourceMap = JSON.parse(readFileSync(join(bundleDirectory, 'index.js.map'), 'utf8'));
 if (
-  bundle.includes(`'${privatePackage}'`) ||
-  bundle.includes(`"${privatePackage}"`) ||
+  findPrivateModuleReference(ts.createSourceFile('index.js', bundle, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)) ||
   !sourceMap.sources.some((source) => source.replaceAll('\\', '/').includes('/graph-layout/src/elk.ts'))
 ) {
   throw new Error('The JavaScript bundle must contain the layout engine without importing the private package');
+}
+
+for (const file of declarationFiles(bundleDirectory)) {
+  const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+  const reference = findPrivateModuleReference(source);
+  if (reference) {
+    throw new Error(`Packed declaration references the private graph-layout package in ${file}: ${reference}`);
+  }
 }
 
 for (const [directory, name] of siblings) {
@@ -122,25 +132,6 @@ for (const directory of dependencyDirectories) {
   }
 }
 
-const compilerOptions = {
-  noEmit: true,
-  skipLibCheck: false,
-  // Fluent UI v8 has an unrelated declaration error with strict checking enabled.
-  strict: false,
-  target: 'ES2020',
-  module: 'ESNext',
-  moduleResolution: 'bundler',
-  lib: ['ESNext', 'DOM'],
-  esModuleInterop: true,
-  jsx: 'react-jsx',
-  types: ['node', 'react', 'react-dom'],
-  // These unrelated imports already appear in the existing published declarations.
-  paths: {
-    '@microsoft/logic-apps-shared/src/*': ['./node_modules/@microsoft/logic-apps-shared/build/lib/*'],
-    'immer/dist/internal': ['./node_modules/immer/dist/internal.d.ts'],
-  },
-};
-
 const privateResolution = ts.resolveModuleName(
   privatePackage,
   join(bundleDirectory, 'lib', 'core', 'utils', 'graph.d.ts'),
@@ -163,9 +154,10 @@ writeFileSync(
     'void [id, node, edge];\n'
 );
 
+let checkStatus = 0;
 for (const moduleResolution of ['bundler', 'node']) {
   const config = {
-    compilerOptions: { ...compilerOptions, moduleResolution },
+    compilerOptions: { ...consumerCompilerOptions, moduleResolution },
     include: [
       'consumer.ts',
       'node_modules/@microsoft/logic-apps-designer-v2/build/lib/**/*.d.ts',
@@ -175,6 +167,15 @@ for (const moduleResolution of ['bundler', 'node']) {
   };
   writeFileSync(join(consumer, 'tsconfig.json'), JSON.stringify(config, null, 2));
   console.log(`Checking all declarations with ${moduleResolution} module resolution.`);
-  run(process.execPath, [typescriptCompiler, '--project', join(consumer, 'tsconfig.json'), '--pretty', 'false'], consumer);
+  const status = run(
+    process.execPath,
+    [typescriptCompiler, '--project', join(consumer, 'tsconfig.json'), '--pretty', 'false'],
+    consumer,
+    false
+  );
+  checkStatus ||= status;
+}
+if (checkStatus !== 0) {
+  process.exit(checkStatus);
 }
 console.log('Public package and all emitted declarations typechecked without the private graph-layout package.');

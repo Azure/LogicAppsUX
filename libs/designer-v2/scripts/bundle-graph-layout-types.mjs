@@ -1,31 +1,28 @@
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import console from 'node:console';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import {
+  assertNoPrivatePathReferences,
+  declarationFiles,
+  findPrivateModuleReference,
+  privatePackage,
+} from './package-declaration-guards.mjs';
 
 const outputDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'build', 'lib');
 const bundledTypes = join(outputDirectory, '_graph-layout', 'index.d.ts');
-const privatePackage = '@microsoft/logic-apps-graph-layout';
+const layoutWorkspace = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', 'graph-layout');
 
 if (!existsSync(bundledTypes)) {
   throw new Error(`Missing bundled graph-layout declarations: ${bundledTypes}`);
-}
-
-function* declarationFiles(directory) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const file = join(directory, entry.name);
-    if (entry.isDirectory()) {
-      yield* declarationFiles(file);
-    } else if (/\.d\.(?:ts|mts|cts)$/.test(entry.name)) {
-      yield file;
-    }
-  }
 }
 
 let rewrittenImports = 0;
 for (const file of declarationFiles(outputDirectory)) {
   const contents = readFileSync(file, 'utf8');
   const source = ts.createSourceFile(file, contents, ts.ScriptTarget.Latest, true);
+  assertNoPrivatePathReferences(source, file, layoutWorkspace);
   const replacements = [];
   const relativeTypes = relative(dirname(file), bundledTypes)
     .split(sep)
@@ -73,11 +70,17 @@ for (const file of declarationFiles(outputDirectory)) {
   };
   visit(source);
 
+  let updated = contents;
+  for (const replacement of replacements.reverse()) {
+    updated = `${updated.slice(0, replacement.start)}${localSpecifier}${updated.slice(replacement.end)}`;
+  }
+  const updatedSource = replacements.length ? ts.createSourceFile(file, updated, ts.ScriptTarget.Latest, true) : source;
+  const remaining = findPrivateModuleReference(updatedSource);
+  if (remaining) {
+    throw new Error(`Unbundled graph-layout reference in ${file}: ${remaining}`);
+  }
+
   if (replacements.length) {
-    let updated = contents;
-    for (const replacement of replacements.reverse()) {
-      updated = `${updated.slice(0, replacement.start)}${localSpecifier}${updated.slice(replacement.end)}`;
-    }
     writeFileSync(file, updated);
     rewrittenImports += replacements.length;
   }

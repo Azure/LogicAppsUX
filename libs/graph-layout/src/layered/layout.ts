@@ -358,38 +358,37 @@ interface Anchors {
 
 /** Horizontal attachment offsets, spread symmetrically per endpoint and sorted by the opposite end's x. */
 const anchorOffsets = (vertices: Vertex[], links: Link[], portSpacing: number): Anchors => {
-  const sourceGroups = new Map<number, Link[]>();
-  const targetGroups = new Map<number, Link[]>();
+  interface Endpoint {
+    link: Link;
+    atSource: boolean;
+    opposite: number;
+  }
+  const topGroups = new Map<number, Endpoint[]>();
+  const bottomGroups = new Map<number, Endpoint[]>();
+  const add = (groups: Map<number, Endpoint[]>, index: number, endpoint: Endpoint) => {
+    if (!groups.has(index)) {
+      groups.set(index, []);
+    }
+    groups.get(index)!.push(endpoint);
+  };
   for (const link of links) {
     const source = link.reversed ? link.target : link.source;
     const target = link.reversed ? link.source : link.target;
-    if (!sourceGroups.has(source)) {
-      sourceGroups.set(source, []);
-    }
-    if (!targetGroups.has(target)) {
-      targetGroups.set(target, []);
-    }
-    sourceGroups.get(source)!.push(link);
-    targetGroups.get(target)!.push(link);
+    add(link.sourcePort || !link.reversed ? bottomGroups : topGroups, source, { link, atSource: true, opposite: target });
+    add(link.targetPort || link.reversed ? bottomGroups : topGroups, target, { link, atSource: false, opposite: source });
   }
-  for (const group of sourceGroups.values()) {
-    group.sort((a, b) => vertices[a.reversed ? a.source : a.target].x - vertices[b.reversed ? b.source : b.target].x);
-  }
-  for (const group of targetGroups.values()) {
-    group.sort((a, b) => vertices[a.reversed ? a.target : a.source].x - vertices[b.reversed ? b.target : b.source].x);
-  }
-  const offsets = (groups: Map<number, Link[]>) => {
-    const result = new Map<Link, number>();
+  const anchors: Anchors = { source: new Map(), target: new Map() };
+  for (const groups of [topGroups, bottomGroups]) {
     for (const [index, group] of groups) {
+      group.sort((a, b) => vertices[a.opposite].x - vertices[b.opposite].x);
       const width = vertices[index].width;
       const spacing = Math.min(portSpacing, width / Math.max(1, group.length));
-      group.forEach((link, position) => {
-        result.set(link, width / 2 + (position - (group.length - 1) / 2) * spacing);
+      group.forEach(({ link, atSource }, position) => {
+        (atSource ? anchors.source : anchors.target).set(link, width / 2 + (position - (group.length - 1) / 2) * spacing);
       });
     }
-    return result;
-  };
-  return { source: offsets(sourceGroups), target: offsets(targetGroups) };
+  }
+  return anchors;
 };
 
 /** Drawn-source (`atSource`) or drawn-target anchor x of a link. */
@@ -399,10 +398,10 @@ const anchorX = (vertices: Vertex[], link: Link, atSource: boolean, anchors: Anc
   return port ? vertex.x + (port.x ?? 0) + (port.width ?? 0) / 2 : vertex.x + (atSource ? anchors.source : anchors.target).get(link)!;
 };
 
-const portPoint = (vertex: Vertex, port: ElkPort | undefined, atSource: boolean, offset: number): ElkPoint =>
+const portPoint = (vertex: Vertex, port: ElkPort | undefined, atBottom: boolean, offset: number): ElkPoint =>
   port
     ? { x: vertex.x + (port.x ?? 0) + (port.width ?? 0) / 2, y: vertex.y + (port.y ?? 0) + (port.height ?? 0) / 2 }
-    : { x: vertex.x + offset, y: vertex.y + (atSource ? vertex.height : 0) };
+    : { x: vertex.x + offset, y: vertex.y + (atBottom ? vertex.height : 0) };
 
 const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint[] => {
   const points = [start];
@@ -426,18 +425,23 @@ const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint
   return result;
 };
 
-const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], anchors: Anchors): ElkEdgeSection[] => {
+const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], anchors: Anchors, options: LayeredOptions): ElkEdgeSection[] => {
   const rankHeights: number[] = [];
+  const rankStarts: number[] = [];
+  const rankRights: number[] = [];
   for (const vertex of vertices) {
     rankHeights[vertex.rank] = Math.max(rankHeights[vertex.rank] ?? 0, vertex.height);
+    rankStarts[vertex.rank] = vertex.y;
+    rankRights[vertex.rank] = Math.max(rankRights[vertex.rank] ?? 0, vertex.x + vertex.width);
   }
+  const returnLanes = new Map<number, number>();
   const sourceOffsets = anchors.source;
   const targetOffsets = anchors.target;
   return links.map((link) => {
     const source = link.reversed ? link.target : link.source;
     const target = link.reversed ? link.source : link.target;
-    const start = portPoint(vertices[source], link.sourcePort, true, sourceOffsets.get(link)!);
-    const end = portPoint(vertices[target], link.targetPort, false, targetOffsets.get(link)!);
+    const start = portPoint(vertices[source], link.sourcePort, !link.reversed, sourceOffsets.get(link)!);
+    const end = portPoint(vertices[target], link.targetPort, link.reversed, targetOffsets.get(link)!);
     const chain = link.reversed ? [...link.chain].reverse() : link.chain;
     const bends: ElkPoint[] = [{ ...start }];
     const layoutSource = vertices[link.source];
@@ -450,6 +454,20 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
     if (!link.reversed && lead.y !== start.y) {
       bends.push(lead);
     }
+    if (link.reversed && link.sourcePort) {
+      // Exit the fixed bottom port before returning around the source rank.
+      const sourceVertex = vertices[source];
+      const rank = sourceVertex.rank;
+      const rankBottom = rankStarts[rank] + rankHeights[rank];
+      const nextRankTop = rankStarts[rank + 1] ?? rankBottom + options.padding.bottom;
+      const previousRankBottom = rankStarts[rank - 1] + rankHeights[rank - 1];
+      const below = rankBottom + Math.min(options.edgeNodeLayerSpacing, (nextRankTop - rankBottom) / 2);
+      const above = sourceVertex.y - Math.min(options.edgeNodeLayerSpacing, (sourceVertex.y - previousRankBottom) / 2);
+      const laneIndex = returnLanes.get(rank) ?? 0;
+      returnLanes.set(rank, laneIndex + 1);
+      const lane = rankRights[rank] + options.edgeNodeSpacing + laneIndex * options.edgeSpacing;
+      bends.push({ x: start.x, y: below }, { x: lane, y: below }, { x: lane, y: above });
+    }
     for (const index of chain.slice(1, -1)) {
       const dummy = vertices[index];
       const top = { x: dummy.x, y: dummy.y };
@@ -459,7 +477,7 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       bends.push(...(link.reversed ? [bottom, top] : [top, bottom]));
     }
     if (chain.length === 2) {
-      const gapStart = link.reversed ? start : lead;
+      const gapStart = link.reversed ? bends[bends.length - 1] : lead;
       const gapEnd = link.reversed ? lead : end;
       bends.push({ x: (gapStart.x + gapEnd.x) / 2, y: (gapStart.y + gapEnd.y) / 2 });
     }
@@ -569,8 +587,16 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
           geometries.get(vertex.node)!.y = vertex.y;
         }
       }
-      const sections = routeEdges(container, vertices, links, anchors);
-      links.forEach((link, index) => routes.set(link.edge, { container: container.id, sections: [sections[index]] }));
+      const sections = routeEdges(container, vertices, links, anchors, options);
+      links.forEach((link, index) => {
+        const section = sections[index];
+        if (link.reversed && link.sourcePort) {
+          for (const point of section.bendPoints ?? []) {
+            geometry.width = Math.max(geometry.width, point.x + options.padding.right);
+          }
+        }
+        routes.set(link.edge, { container: container.id, sections: [section] });
+      });
     } else {
       geometry = {
         x: 0,

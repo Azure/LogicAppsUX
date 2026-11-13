@@ -39,9 +39,10 @@ long-edge dummy nodes, SIMPLE and BALANCED Brandes-Köpf placement, local nested
 Balanced placement aligns median neighbors in four directions, protects inner dummy segments from conflicting
 alignments, compacts vertical blocks, and combines the four layouts without violating horizontal spacing.
 Fixed port coordinates are preserved, but placement currently optimizes node centers rather than port anchors.
-Edges receive container-relative sections, but spline visual parity is not established. Nonzero `elk.position`
-hints, cross-hierarchy edges, self-loops, hyperedges, labels,
-and unsupported option values reject.
+Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Edges receive
+container-relative sections, but general obstacle avoidance and spline visual parity are not established.
+Nonzero `elk.position` hints, cross-hierarchy edges, self-loops, hyperedges, labels, and unsupported
+option values reject.
 Successful calls mutate and return the input, matching bundled elkjs; failed validation leaves it unchanged.
 
 **Data-mapper blocker:** `autoLayout` sends all nodes without positions, but applies results only to function
@@ -75,8 +76,8 @@ workflows and graphs larger than StressTest200 are not represented in the retain
 | `pnpm test:lib` | Unit tests, fixture geometry invariants, elkjs determinism and simple-chain parity |
 | `ELKJS_EXACT_PARITY=1 pnpm test:lib` | Full coordinate/endpoint parity audit (currently fails; set the environment variable using your shell's syntax) |
 | `pnpm bench` | `vitest bench` timings for the retained fixtures |
-| `pnpm bench:report [regex]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
-| `node bench/report.ts [regex] --quality` | After building, compares SIMPLE/model-order placement control (current routing), candidate and elkjs using polyline crossings, node hits and horizontal skew |
+| `pnpm bench:report [fixture-name]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
+| `node bench/report.ts [fixture-name] --quality` | After building, compares SIMPLE/model-order placement control (current routing), candidate and elkjs using polyline crossings, node hits and horizontal skew |
 
 Regenerate fixtures after changing designer-v2 graph conversion (`elklayout.tsx`):
 
@@ -96,7 +97,11 @@ Notes:
 - Quality diagnostics treat edge sections as polylines, not rendered splines. Normal designer edges are
   independently drawn with React Flow smooth-step/Bezier paths; handoff edges use the returned sections.
   These metrics detect layout regressions but do not prove absence of rendered-edge overlap.
-- Add `--simple`, optionally with a fixture regex, to compare both engines with SIMPLE placement and forced model order.
-  Cloning is retained and timed separately.
+- Add `--simple`, optionally with a literal fixture-name substring, to compare both engines with SIMPLE placement
+  and forced model order. Cloning is retained and timed separately.
 - The async API still blocks the main thread. Exact coordinates and spline parity are not established;
   designer-v2 currently uses the new engine directly without a fallback.
+- To check packed designer-v2 declarations manually, build and pack that package, then run
+  `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory-outside-repo>`.
+  The consumer links workspace dependencies and is not run in CI. Its stricter side-effect-import check currently
+  reports pre-existing unresolved `.less` and `.css` declarations; default TypeScript side-effect checking passes.

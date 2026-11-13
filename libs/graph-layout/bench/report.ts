@@ -4,7 +4,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { build } from 'esbuild';
-import ELK from '../dist/index.js';
+import GraphLayout from '../dist/index.js';
 import { createCandidateEngine, createElkjsEngine, type LayoutEngine, runFixture } from './engines.ts';
 import { createOverlapFixture, graphStats, type LayoutFixture, loadWorkflowFixtures, reportFixtureFilter } from './fixtures.ts';
 import { compareGeometry, extractGeometry, findOverlaps } from './geometry.ts';
@@ -46,7 +46,7 @@ const time = async (engine: LayoutEngine, fixture: LayoutFixture) => {
 };
 
 const elkjs = createElkjsEngine();
-const candidate = createCandidateEngine(ELK);
+const candidate = createCandidateEngine(GraphLayout);
 
 console.log('## Bundle size (esbuild, minified, browser ESM)\n');
 console.log('| Engine | Raw | Gzip | Brotli |\n|---|---|---|---|');
@@ -69,7 +69,7 @@ for (let i = 0; i < 10; i++) {
 }
 console.log(`setTimeout(0) latency on this machine: ${((performance.now() - tickStart) / 10).toFixed(1)} ms (elkjs pays ~2 per call)\n`);
 console.log('| Fixture | Nodes | Edges | elkjs | candidate | clone | parity |\n|---|---|---|---|---|---|---|');
-for (const original of [...loadWorkflowFixtures((name) => filter.test(name)), createOverlapFixture(50)]) {
+for (const original of [...loadWorkflowFixtures(filter), createOverlapFixture(50)]) {
   const fixture =
     simplePreview && original.parity !== 'noOverlap'
       ? {

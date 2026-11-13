@@ -29,9 +29,9 @@ export const loadWorkflowFixtures = (filter: (name: string) => boolean = () => t
     .sort()
     .map((file) => JSON.parse(readFileSync(join(fixturesDir, file), 'utf8')) as LayoutFixture);
 
-export const reportFixtureFilter = (args: string[]): RegExp => {
-  const pattern = args.find((arg) => !arg.startsWith('--'));
-  return pattern ? new RegExp(pattern) : /^(?!.*\.shared$)/;
+export const reportFixtureFilter = (args: string[]): ((name: string) => boolean) => {
+  const fixtureName = args.find((arg) => !arg.startsWith('--'));
+  return fixtureName ? (name) => name.includes(fixtureName) : (name) => !name.endsWith('.shared');
 };
 
 /** Deterministic PRNG so synthetic fixtures are stable across runs. */

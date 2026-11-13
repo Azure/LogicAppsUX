@@ -32,9 +32,10 @@ describe('parity harness', () => {
       ['Recurrence', '--quality'],
       ['Recurrence', 'Recurrence.shared'],
     ],
+    [['--quality', 'StressTest200.*'], []],
   ])('selects report fixtures independently of option flags', (args, expected) => {
     const filter = reportFixtureFilter(args);
-    expect(loadWorkflowFixtures((name) => filter.test(name)).map((fixture) => fixture.name)).toEqual(expected);
+    expect(loadWorkflowFixtures(filter).map((fixture) => fixture.name)).toEqual(expected);
   });
 
   it('checks the reference mutation contract rather than assuming worker-style cloning', async () => {
