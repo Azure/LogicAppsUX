@@ -366,6 +366,54 @@ describe('FloatingRunButton', () => {
       expect(buttons.length).toBeGreaterThan(1);
     });
 
+    it('appends filled relative path parameters onto the published run URL', async () => {
+      (LogicAppsShared.canRunBeInvokedWithPayload as Mock).mockReturnValue(true);
+      mockStore = configureStore({
+        reducer: {
+          operations: (state = { operationInfo: {}, inputParameters: {} }) => state,
+          workflow: (state = {}) => state,
+          designerView: (state = {}) => state,
+        },
+        preloadedState: {
+          operations: {
+            operationInfo: { manual: { type: 'Request', kind: 'Http' } },
+            inputParameters: {
+              manual: {
+                parameterGroups: {
+                  default: {
+                    id: 'default',
+                    parameters: [
+                      {
+                        parameterName: 'relativePath',
+                        value: [{ id: 'path', type: 'literal', value: '/subscription/{subscriptionId}' }],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          workflow: { nodesMetadata: {}, workflowKind: 'stateful' },
+          designerView: {},
+        },
+      });
+
+      renderWithProviders(defaultProps);
+
+      const payloadButton = screen.getAllByRole('button').find((button) => button.textContent?.trim() === '');
+      expect(payloadButton).toBeDefined();
+      fireEvent.click(payloadButton as HTMLButtonElement);
+      fireEvent.change(screen.getByRole('textbox', { name: 'Relative path subscriptionId' }), {
+        target: { value: 'abc' },
+      });
+      fireEvent.click(screen.getByText('Run with payload'));
+
+      await waitFor(() => expect(mockRunTrigger).toHaveBeenCalledOnce());
+      expect(mockRunTrigger.mock.calls[0][0].value).toBe(
+        `${defaultProps.siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${defaultProps.workflowName}/triggers/manual/run/subscription/abc`
+      );
+    });
+
     it('should render split button in draft mode even when canRunBeInvokedWithPayload returns false', () => {
       (LogicAppsShared.canRunBeInvokedWithPayload as Mock).mockReturnValue(false);
 
