@@ -214,15 +214,20 @@ export const createElkNode = (id: string, type?: WorkflowNodeType, subgraphType?
   },
 });
 
+// Escape the separator and escape marker so different endpoint pairs cannot share an ID.
+const escapeEdgeIdPart = (id: string): string => id.replace(/%/g, '%25').replace(/-/g, '%2D');
+
+export const getWorkflowEdgeId = (source: string, target: string): string => `${escapeEdgeIdPart(source)}-${escapeEdgeIdPart(target)}`;
+
 export const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   source,
   target,
   type: type ?? WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
 });
 
 export const createElkEdge = (source: string, target: string, type?: WorkflowEdgeType): ElkExtendedEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   sources: [source],
   targets: [target],
   layoutOptions: {
