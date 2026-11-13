@@ -77,7 +77,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     probe.spawnObservedAt = armedAt + 1;
     const decisionAt = armedAt + 100;
     const variants: [string, Record<string, unknown> | undefined][] = [
-      ['activation-returned', undefined],
+      ['activation-returned', { initialInvocationState: 'pending' }],
       ['activation-workspace-setup-start', undefined],
       ['activation-workspace-setup-returned', undefined],
       ['activation-project-discovery-start', undefined],
@@ -99,11 +99,15 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
       ['consistency-check-skipped', { reason: 'no-projects' }],
       ['consistency-setting', { enabled: true }],
       ['initialization-check', { firstMissing: 'tasks', hasLanguage: true, hasFuncVersion: false }],
-      ['warning-call-entered', { kind: 'initialization', warningId: 1 }],
-      ['warning-call-returned', { kind: 'initialization', warningId: 1 }],
-      ['warning-result', { kind: 'initialization', warningId: 1, result: 'dont-warn-again' }],
-      ['warning-result', { kind: 'outdated', warningId: 2, result: 'undefined' }],
-      ['warning-error', { kind: 'overwrite', warningId: 3, errorKind: 'non-error' }],
+      ['ensure-vscode-files-entered', { origin: 'activation-initial', invocationSequence: 1, overlapCount: 0 }],
+      ['ensure-vscode-files-entered', { origin: 'workspace-change', invocationSequence: 2, overlapCount: 1 }],
+      ['ensure-vscode-files-returned', { origin: 'workspace-change', invocationSequence: 2, overlapCount: 1 }],
+      ['ensure-vscode-files-error', { origin: 'catch-up', invocationSequence: 3, overlapCount: 1, errorKind: 'user-cancelled' }],
+      ['warning-call-entered', { kind: 'initialization', warningId: 1, checkId: 1 }],
+      ['warning-call-returned', { kind: 'initialization', warningId: 1, checkId: 1, awaitable: true }],
+      ['warning-result', { kind: 'initialization', warningId: 1, checkId: 1, result: 'dont-warn-again', durationMs: 42 }],
+      ['warning-result', { kind: 'outdated', warningId: 2, checkId: 2, result: 'undefined', durationMs: 43 }],
+      ['warning-error', { kind: 'overwrite', warningId: 3, checkId: 1, errorKind: 'non-error', durationMs: 44 }],
     ];
     for (const [event, payload] of variants) {
       assert.strictEqual(validRegenerationProductPayload(event, payload), true, `Producer event ${event} must be recognized`);
@@ -112,9 +116,18 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     assert.strictEqual(validRegenerationProductPayload('unrecognized-secret-text', undefined), false);
     assert.strictEqual(validRegenerationProductPayload('heartbeat', { message: 'private-secret' }), false);
     assert.strictEqual(validRegenerationProductPayload('consistency-check-skipped', { reason: { toString: 'private' } }), false);
-    assert.strictEqual(validRegenerationProductPayload('warning-call-entered', { kind: { toString: 'private' }, warningId: 1 }), false);
     assert.strictEqual(
-      validRegenerationProductPayload('warning-result', { kind: 'initialization', warningId: 1, result: 'private-secret' }),
+      validRegenerationProductPayload('warning-call-entered', { kind: { toString: 'private' }, warningId: 1, checkId: 1 }),
+      false
+    );
+    assert.strictEqual(
+      validRegenerationProductPayload('warning-result', {
+        kind: 'initialization',
+        warningId: 1,
+        checkId: 1,
+        result: 'private-secret',
+        durationMs: 1,
+      }),
       false
     );
     const records = [
@@ -153,7 +166,14 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     assert.strictEqual(coverage.partial, true);
     assert.strictEqual(coverage.coverageThroughDecision, false);
     assert.ok(coverage.reasonCodes.includes('coverage-through-decision-unproved'));
-    const eventCoversDecision = [...records.slice(0, -1), { ...records.at(-1)!, event: 'activation-returned' }];
+    const eventCoversDecision = [
+      ...records.slice(0, -1),
+      {
+        ...records.at(-1)!,
+        event: 'activation-returned',
+        payload: { initialInvocationState: 'pending' },
+      },
+    ];
     write(eventCoversDecision);
     assert.strictEqual(
       assessRegenerationProductCoverage(probe, decisionAt).availability,
@@ -247,10 +267,14 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
     eventOnly.spawnObservedAt = eventOnlyArmed + 1;
     const eventOnlyDecision = eventOnlyArmed + 100;
     const eventOnlyRecords = [
-      { event: 'recorder-armed', timestamp: eventOnlyArmed + 1 },
-      { event: 'activation-start', timestamp: eventOnlyArmed + 2 },
-      { event: 'activation-returned', timestamp: eventOnlyDecision + 1 },
-    ].map(({ event, timestamp }, index) => ({
+      { event: 'recorder-armed', timestamp: eventOnlyArmed + 1, payload: undefined },
+      { event: 'activation-start', timestamp: eventOnlyArmed + 2, payload: undefined },
+      {
+        event: 'activation-returned',
+        timestamp: eventOnlyDecision + 1,
+        payload: { initialInvocationState: 'not-scheduled' },
+      },
+    ].map(({ event, timestamp, payload }, index) => ({
       schemaVersion: 1,
       invocation,
       phase: 'vscode-multiple',
@@ -258,6 +282,7 @@ export async function runRegenerationDiagnosticsControls(): Promise<void> {
       sequence: index + 1,
       timestampUtc: new Date(timestamp).toISOString(),
       event,
+      ...(payload ? { payload } : {}),
     }));
     fs.writeFileSync(eventOnly.tracePath, `${eventOnlyRecords.map((record) => JSON.stringify(record)).join('\n')}\n`);
     const eventOnlyCoverage = await finishRegenerationProductCoverage(eventOnly, eventOnlyDecision);

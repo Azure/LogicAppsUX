@@ -626,10 +626,17 @@ partial observations are never proof that a warning was not issued or displayed.
 The collection receipt also seals the byte length and SHA-256 of the trace read
 for coverage. Publication validates only that exact prefix, so later producer
 appends cannot change it; a missing, shortened or changed prefix is unavailable.
-`warning-call-entered` identifies entry into the UI wrapper; `warning-call-returned`
-means the call returned a promise, not that VS Code rendered the warning. A
-`warning-result` records the eventual response. The aggregate records the original
-phase start, 120-second deadline, decision time and earlier cutoff. Product events
+`ensure-vscode-files-*` records identify the fixed invocation origin, sequence,
+entry-time overlap count and terminal return/error without workspace data.
+`activation-returned` records whether the initial invocation was not scheduled,
+pending or settled. `warning-call-entered` identifies entry into the UI wrapper;
+`warning-call-returned` records whether the returned value was awaitable, not
+whether VS Code rendered the warning. Every warning record carries the originating
+invocation sequence as `checkId`, including the overwrite step reached through the
+initialization wizard. Warning result/error records include only a bounded duration
+and fixed response/error classification; user cancellation is distinct from other
+errors. The aggregate records the original phase start,
+120-second deadline, decision time and earlier cutoff. Product events
 and detector samples are classified against that cutoff using their event and
 sample timestamps respectively; console classifications use receipt time.
 Observations at or after the cutoff cannot establish an in-budget interaction.

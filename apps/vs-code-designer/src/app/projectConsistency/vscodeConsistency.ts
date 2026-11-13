@@ -29,38 +29,74 @@ import {
   type VSCodeProjectConfig,
 } from './fileGenerators';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
-import { callWithTelemetryAndErrorHandling, DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import {
+  callWithTelemetryAndErrorHandling,
+  DialogResponses,
+  type IActionContext,
+  isUserCancelledError,
+} from '@microsoft/vscode-azext-utils';
 import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
-import { beginRegenerationWarning, recordRegenerationEvent } from '../utils/regenerationProbe';
+import { beginRegenerationWarning, type EnsureVSCodeFilesOrigin, recordRegenerationEvent } from '../utils/regenerationProbe';
+
+const maxDiagnosticDurationMs = 86_400_000;
+let ensureVSCodeFilesInvocationSequence = 0;
+let activeEnsureVSCodeFilesInvocations = 0;
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
  * @param {IActionContext} context - The action context.
  * @param {string[]} [projectPaths] - The paths to the Logic App projects in the workspace. If not provided, will search for logic app projects.
+ * @param {EnsureVSCodeFilesOrigin} [origin] - The fixed diagnostic origin for this invocation.
  * @returns {Promise<void>} A promise that resolves when the check is complete.
  */
-export async function ensureVSCodeFiles(context: IActionContext, projectPaths?: string[]): Promise<void> {
-  projectPaths ??= await getWorkspaceLogicAppRoots();
+export async function ensureVSCodeFiles(
+  context: IActionContext,
+  projectPaths?: string[],
+  origin: EnsureVSCodeFilesOrigin = 'explicit-consistency-command'
+): Promise<void> {
+  const invocationSequence = ++ensureVSCodeFilesInvocationSequence;
+  const overlapCount = activeEnsureVSCodeFilesInvocations++;
+  let failed = false;
+  recordRegenerationEvent({ event: 'ensure-vscode-files-entered', origin, invocationSequence, overlapCount });
 
-  if (!projectPaths || projectPaths.length === 0) {
-    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-projects' });
-    return;
-  }
-  const consistencyEnabled = isProjectConsistencyCheckEnabled();
-  recordRegenerationEvent({ event: 'consistency-setting', enabled: consistencyEnabled });
-  if (!consistencyEnabled) {
-    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
-    return;
-  }
+  try {
+    projectPaths ??= await getWorkspaceLogicAppRoots();
 
-  for (const projectPath of projectPaths) {
-    const shouldContinue = await ensureProjectVSCodeFiles(context, projectPath);
-    if (!shouldContinue) {
-      break;
+    if (!projectPaths || projectPaths.length === 0) {
+      recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-projects' });
+      return;
+    }
+    const consistencyEnabled = isProjectConsistencyCheckEnabled();
+    recordRegenerationEvent({ event: 'consistency-setting', enabled: consistencyEnabled });
+    if (!consistencyEnabled) {
+      recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
+      return;
+    }
+
+    for (const projectPath of projectPaths) {
+      const shouldContinue = await ensureProjectVSCodeFiles(context, projectPath, invocationSequence);
+      if (!shouldContinue) {
+        break;
+      }
+    }
+  } catch (error) {
+    failed = true;
+    recordRegenerationEvent({
+      event: 'ensure-vscode-files-error',
+      origin,
+      invocationSequence,
+      overlapCount,
+      errorKind: getDiagnosticErrorKind(error),
+    });
+    throw error;
+  } finally {
+    activeEnsureVSCodeFilesInvocations -= 1;
+    if (!failed) {
+      recordRegenerationEvent({ event: 'ensure-vscode-files-returned', origin, invocationSequence, overlapCount });
     }
   }
 }
@@ -70,9 +106,10 @@ export async function ensureVSCodeFiles(context: IActionContext, projectPaths?: 
  * If the project is not initialized for VS Code, it will prompt the user to initialize it.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path to the Logic App project.
+ * @param {number} checkId - The bounded diagnostic correlation id for the owning consistency invocation.
  * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise (user disabled warning).
  */
-export async function ensureProjectVSCodeFiles(context: IActionContext, projectPath: string): Promise<boolean> {
+export async function ensureProjectVSCodeFiles(context: IActionContext, projectPath: string, checkId: number): Promise<boolean> {
   if (isProjectInitializedForVSCode(projectPath)) {
     const expectedConfig = await getExpectedVSCodeConfigJson(projectPath);
     const isValidConfig = await isValidVSCodeConfig(projectPath, expectedConfig);
@@ -80,10 +117,10 @@ export async function ensureProjectVSCodeFiles(context: IActionContext, projectP
       return true;
     }
 
-    return await promptToRegenerateVSCodeFiles(context, projectPath, expectedConfig);
+    return await promptToRegenerateVSCodeFiles(context, projectPath, checkId, expectedConfig);
   }
 
-  return await promptToInitializeProject(context, projectPath);
+  return await promptToInitializeProject(context, projectPath, checkId);
 }
 
 /**
@@ -119,24 +156,33 @@ export function isProjectInitializedForVSCode(projectPath: string): boolean {
  * @param {string} projectPath - The project path to initialize.
  * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise (user disabled warning).
  */
-async function promptToInitializeProject(context: IActionContext, projectPath: string): Promise<boolean> {
+async function promptToInitializeProject(context: IActionContext, projectPath: string, checkId: number): Promise<boolean> {
   const message = localize(
     'missingVSCodeArtifactsWarning',
     'Detected an Azure Logic App project "{0}" that may have been created outside of VS Code or is missing configuration files. Initialize for optimal use with VS Code?',
     projectPath
   );
-  const warningId = beginRegenerationWarning('initialization');
+  const warningId = beginRegenerationWarning('initialization', checkId);
+  const warningStartedAt = Date.now();
   let result: MessageItem | undefined;
   try {
     const warning = context.ui.showWarningMessage(message, {}, DialogResponses.yes, DialogResponses.dontWarnAgain);
-    recordRegenerationEvent({ event: 'warning-call-returned', kind: 'initialization', warningId });
+    recordRegenerationEvent({
+      event: 'warning-call-returned',
+      kind: 'initialization',
+      warningId,
+      checkId,
+      awaitable: isAwaitable(warning),
+    });
     result = await warning;
   } catch (error) {
     recordRegenerationEvent({
       event: 'warning-error',
       kind: 'initialization',
       warningId,
-      errorKind: error instanceof Error ? 'error' : 'non-error',
+      checkId,
+      errorKind: getDiagnosticErrorKind(error),
+      durationMs: getBoundedDurationMs(warningStartedAt),
     });
     throw error;
   }
@@ -144,6 +190,7 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
     event: 'warning-result',
     kind: 'initialization',
     warningId,
+    checkId,
     result:
       result === DialogResponses.yes
         ? 'yes'
@@ -152,13 +199,14 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
           : result === undefined
             ? 'undefined'
             : 'other',
+    durationMs: getBoundedDurationMs(warningStartedAt),
   });
 
   if (result === DialogResponses.yes) {
     await callWithTelemetryAndErrorHandling('ensureVSCodeFiles.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await initProjectForVSCode(actionContext, projectPath);
+      await initProjectForVSCode(actionContext, projectPath, undefined, checkId);
     });
   } else if (result === DialogResponses.dontWarnAgain) {
     await updateGlobalSetting(enableProjectConsistencyChecksSetting, false);
@@ -206,24 +254,38 @@ async function isValidVSCodeConfig(projectPath: string, expectedConfig?: VSCodeC
  * @param {VSCodeConfigJson} [config] - Optional configuration to use for regeneration.
  * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise.
  */
-async function promptToRegenerateVSCodeFiles(context: IActionContext, projectPath: string, config?: VSCodeConfigJson): Promise<boolean> {
+async function promptToRegenerateVSCodeFiles(
+  context: IActionContext,
+  projectPath: string,
+  checkId: number,
+  config?: VSCodeConfigJson
+): Promise<boolean> {
   const message = localize(
     'outdatedVSCodeArtifactsInfo',
     'Detected out of date .vscode configuration files for Logic App project "{0}". Regenerate to match current project settings?',
     projectPath
   );
-  const warningId = beginRegenerationWarning('outdated');
+  const warningId = beginRegenerationWarning('outdated', checkId);
+  const warningStartedAt = Date.now();
   let result: MessageItem | undefined;
   try {
     const warning = context.ui.showWarningMessage(message, {}, DialogResponses.yes, DialogResponses.dontWarnAgain);
-    recordRegenerationEvent({ event: 'warning-call-returned', kind: 'outdated', warningId });
+    recordRegenerationEvent({
+      event: 'warning-call-returned',
+      kind: 'outdated',
+      warningId,
+      checkId,
+      awaitable: isAwaitable(warning),
+    });
     result = await warning;
   } catch (error) {
     recordRegenerationEvent({
       event: 'warning-error',
       kind: 'outdated',
       warningId,
-      errorKind: error instanceof Error ? 'error' : 'non-error',
+      checkId,
+      errorKind: getDiagnosticErrorKind(error),
+      durationMs: getBoundedDurationMs(warningStartedAt),
     });
     throw error;
   }
@@ -231,6 +293,7 @@ async function promptToRegenerateVSCodeFiles(context: IActionContext, projectPat
     event: 'warning-result',
     kind: 'outdated',
     warningId,
+    checkId,
     result:
       result === DialogResponses.yes
         ? 'yes'
@@ -239,6 +302,7 @@ async function promptToRegenerateVSCodeFiles(context: IActionContext, projectPat
           : result === undefined
             ? 'undefined'
             : 'other',
+    durationMs: getBoundedDurationMs(warningStartedAt),
   });
 
   if (result === DialogResponses.yes) {
@@ -353,4 +417,22 @@ function isDeepEqual(left: unknown, right: unknown): boolean {
 
 function isJsonObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isAwaitable(value: unknown): boolean {
+  return (
+    (typeof value === 'object' && value !== null && 'then' in value && typeof value.then === 'function') ||
+    (typeof value === 'function' && 'then' in value && typeof value.then === 'function')
+  );
+}
+
+function getBoundedDurationMs(startedAt: number): number {
+  return Math.min(maxDiagnosticDurationMs, Math.max(0, Math.round(Date.now() - startedAt)));
+}
+
+function getDiagnosticErrorKind(error: unknown): 'user-cancelled' | 'error' | 'non-error' {
+  if (isUserCancelledError(error)) {
+    return 'user-cancelled';
+  }
+  return error instanceof Error ? 'error' : 'non-error';
 }

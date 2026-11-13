@@ -29,8 +29,8 @@ const probeEvents = vi.hoisted(() => ({ record: vi.fn() }));
 
 vi.mock('../../utils/regenerationProbe', () => ({
   recordRegenerationEvent: probeEvents.record,
-  beginRegenerationWarning: (kind: string) => {
-    probeEvents.record({ event: 'warning-call-entered', kind, warningId: 1 });
+  beginRegenerationWarning: (kind: string, checkId: number) => {
+    probeEvents.record({ event: 'warning-call-entered', kind, warningId: 1, checkId });
     return 1;
   },
 }));
@@ -100,7 +100,8 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
   AzureWizard: vi.fn(),
   AzureWizardExecuteStep: class {},
   AzureWizardPromptStep: class {},
-  UserCancelledError: class extends Error {},
+  isUserCancelledError: (error: unknown) =>
+    typeof error === 'object' && error !== null && '_isUserCancelledError' in error && error._isUserCancelledError === true,
   nonNullProp: vi.fn((_obj: unknown, key: string) => key),
   nonNullOrEmptyValue: vi.fn((val: unknown) => val),
   openUrl: vi.fn(),
@@ -172,7 +173,7 @@ describe('vscodeConsistency', () => {
       DialogResponses.yes,
       DialogResponses.dontWarnAgain
     );
-    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
+    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath, undefined, expect.any(Number));
   });
 
   it('does not read the consistency setting when no project is discovered', async () => {
@@ -196,7 +197,13 @@ describe('vscodeConsistency', () => {
 
     const pending = ensureVSCodeFiles(context, [projectPath]);
     await vi.waitFor(() =>
-      expect(probeEvents.record).toHaveBeenCalledWith({ event: 'warning-call-returned', kind: 'initialization', warningId: 1 })
+      expect(probeEvents.record).toHaveBeenCalledWith({
+        event: 'warning-call-returned',
+        kind: 'initialization',
+        warningId: 1,
+        checkId: expect.any(Number),
+        awaitable: true,
+      })
     );
     expect(probeEvents.record).toHaveBeenCalledWith({
       event: 'initialization-check',
@@ -214,9 +221,58 @@ describe('vscodeConsistency', () => {
       event: 'warning-result',
       kind: 'initialization',
       warningId: 1,
+      checkId: expect.any(Number),
       result: 'yes',
+      durationMs: expect.any(Number),
     });
-    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
+    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath, undefined, expect.any(Number));
+  });
+
+  it('records invocation origin, sequence, and overlap without serializing concurrent checks', async () => {
+    vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
+    const warningResolvers: Array<(value: typeof DialogResponses.yes) => void> = [];
+    showWarningMessage.mockImplementation(
+      () =>
+        new Promise<typeof DialogResponses.yes>((resolve) => {
+          warningResolvers.push(resolve);
+        })
+    );
+
+    const first = ensureVSCodeFiles(context, [projectPath], 'activation-initial');
+    await vi.waitFor(() => expect(warningResolvers).toHaveLength(1));
+    const second = ensureVSCodeFiles(context, [projectPath], 'workspace-change');
+    await vi.waitFor(() => expect(warningResolvers).toHaveLength(2));
+
+    const entered = probeEvents.record.mock.calls.map(([event]) => event).filter((event) => event.event === 'ensure-vscode-files-entered');
+    expect(entered).toHaveLength(2);
+    expect(entered[0]).toMatchObject({ origin: 'activation-initial', overlapCount: 0 });
+    expect(entered[1]).toMatchObject({
+      origin: 'workspace-change',
+      invocationSequence: entered[0].invocationSequence + 1,
+      overlapCount: 1,
+    });
+    const warningCalls = probeEvents.record.mock.calls.map(([event]) => event).filter((event) => event.event === 'warning-call-returned');
+    expect(warningCalls).toEqual([
+      expect.objectContaining({ checkId: entered[0].invocationSequence, awaitable: true }),
+      expect.objectContaining({ checkId: entered[1].invocationSequence, awaitable: true }),
+    ]);
+
+    warningResolvers[0](DialogResponses.yes);
+    warningResolvers[1](DialogResponses.yes);
+    await Promise.all([first, second]);
+
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'ensure-vscode-files-returned',
+      origin: 'activation-initial',
+      invocationSequence: entered[0].invocationSequence,
+      overlapCount: 0,
+    });
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'ensure-vscode-files-returned',
+      origin: 'workspace-change',
+      invocationSequence: entered[1].invocationSequence,
+      overlapCount: 1,
+    });
   });
 
   it('classifies a rejected warning without exposing its contents or replacing the error', async () => {
@@ -230,9 +286,35 @@ describe('vscodeConsistency', () => {
       event: 'warning-error',
       kind: 'initialization',
       warningId: 1,
+      checkId: expect.any(Number),
       errorKind: 'error',
+      durationMs: expect.any(Number),
     });
     expect(JSON.stringify(probeEvents.record.mock.calls)).not.toContain('synthetic-private-warning-error');
+  });
+
+  it('classifies warning cancellation explicitly without changing rejection behavior', async () => {
+    vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
+    const error = { _isUserCancelledError: true };
+    showWarningMessage.mockRejectedValue(error);
+
+    await expect(ensureVSCodeFiles(context, [projectPath], 'catch-up')).rejects.toBe(error);
+
+    expect(probeEvents.record).toHaveBeenCalledWith({
+      event: 'warning-error',
+      kind: 'initialization',
+      warningId: 1,
+      checkId: expect.any(Number),
+      errorKind: 'user-cancelled',
+      durationMs: expect.any(Number),
+    });
+    expect(probeEvents.record).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'ensure-vscode-files-error',
+        origin: 'catch-up',
+        errorKind: 'user-cancelled',
+      })
+    );
   });
 
   it('suppresses the initialization prompt when the warning setting is disabled', async () => {

@@ -23,7 +23,7 @@ import {
   generateExtensionsJson,
 } from '../../projectConsistency/fileGenerators';
 import type { VSCodeProjectConfig } from '../../projectConsistency/fileGenerators';
-import { AzureWizardExecuteStep, DialogResponses, nonNullProp } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, DialogResponses, isUserCancelledError, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -32,8 +32,14 @@ import { getOrCreateDesignTimeDirectory } from '../../utils/codeless/startDesign
 import { beginRegenerationWarning, recordRegenerationEvent } from '../../utils/regenerationProbe';
 import type { MessageItem } from 'vscode';
 
+const maxDiagnosticDurationMs = 86_400_000;
+
 export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
+
+  public constructor(private readonly regenerationCheckId?: number) {
+    super();
+  }
 
   protected async executeCore(_context: IProjectWizardContext): Promise<void> {
     // Default implementation does nothing
@@ -95,27 +101,45 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
         'overwriteVSCodeFiles',
         'The .vscode configuration files will be regenerated to match the current project settings. This will overwrite any custom modifications. Continue?'
       );
-      const warningId = beginRegenerationWarning('overwrite');
+      const checkId = this.regenerationCheckId;
+      const warningId = checkId === undefined ? undefined : beginRegenerationWarning('overwrite', checkId);
+      const warningStartedAt = warningId === undefined ? undefined : Date.now();
       let result: MessageItem | undefined;
       try {
         const warning = context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-        recordRegenerationEvent({ event: 'warning-call-returned', kind: 'overwrite', warningId });
+        if (warningId !== undefined && checkId !== undefined) {
+          recordRegenerationEvent({
+            event: 'warning-call-returned',
+            kind: 'overwrite',
+            warningId,
+            checkId,
+            awaitable: isAwaitable(warning),
+          });
+        }
         result = await warning;
       } catch (error) {
-        recordRegenerationEvent({
-          event: 'warning-error',
-          kind: 'overwrite',
-          warningId,
-          errorKind: error instanceof Error ? 'error' : 'non-error',
-        });
+        if (warningId !== undefined && checkId !== undefined && warningStartedAt !== undefined) {
+          recordRegenerationEvent({
+            event: 'warning-error',
+            kind: 'overwrite',
+            warningId,
+            checkId,
+            errorKind: getDiagnosticErrorKind(error),
+            durationMs: getBoundedDurationMs(warningStartedAt),
+          });
+        }
         throw error;
       }
-      recordRegenerationEvent({
-        event: 'warning-result',
-        kind: 'overwrite',
-        warningId,
-        result: result === DialogResponses.yes ? 'yes' : result === undefined ? 'undefined' : 'other',
-      });
+      if (warningId !== undefined && checkId !== undefined && warningStartedAt !== undefined) {
+        recordRegenerationEvent({
+          event: 'warning-result',
+          kind: 'overwrite',
+          warningId,
+          checkId,
+          result: result === DialogResponses.yes ? 'yes' : result === undefined ? 'undefined' : 'other',
+          durationMs: getBoundedDurationMs(warningStartedAt),
+        });
+      }
       if (result !== DialogResponses.yes) {
         return;
       }
@@ -131,4 +155,22 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
     await writeFormattedJson(settingsJsonPath, settingsContent);
     await writeFormattedJson(extensionsJsonPath, extensionsContent);
   }
+}
+
+function isAwaitable(value: unknown): boolean {
+  return (
+    (typeof value === 'object' && value !== null && 'then' in value && typeof value.then === 'function') ||
+    (typeof value === 'function' && 'then' in value && typeof value.then === 'function')
+  );
+}
+
+function getBoundedDurationMs(startedAt: number): number {
+  return Math.min(maxDiagnosticDurationMs, Math.max(0, Math.round(Date.now() - startedAt)));
+}
+
+function getDiagnosticErrorKind(error: unknown): 'user-cancelled' | 'error' | 'non-error' {
+  if (isUserCancelledError(error)) {
+    return 'user-cancelled';
+  }
+  return error instanceof Error ? 'error' : 'non-error';
 }

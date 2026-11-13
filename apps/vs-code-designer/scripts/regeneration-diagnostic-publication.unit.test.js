@@ -212,6 +212,7 @@ test('publishes only bound, allowlisted product events with independently checke
     f.event(3, '2026-01-01T00:00:02.000Z', 'warning-call-entered', {
       kind: 'initialization',
       warningId: 1,
+      checkId: 1,
       message: 'synthetic-private-notification',
     })
   );
@@ -225,7 +226,7 @@ test('publishes only bound, allowlisted product events with independently checke
 
   assert.equal(records[0].availability, 'available');
   assert.equal(records[0].reason, 'coverage-confirmed');
-  assert.deepEqual(records[3].payload, { kind: 'initialization', warningId: 1 });
+  assert.deepEqual(records[3].payload, { kind: 'initialization', warningId: 1, checkId: 1 });
   assert.doesNotMatch(JSON.stringify(records), /synthetic-private|notification|regeneration-publication-/);
   assert.deepEqual(
     records.slice(1).map((value) => value.sequence),
@@ -349,6 +350,7 @@ test('accepts a contiguous producer event crossing the decision even without a h
   const f = fixture(t);
   f.events[2].event = 'consistency-check-entered';
   f.events[3].event = 'activation-returned';
+  f.events[3].payload = { initialInvocationState: 'pending' };
   f.collection.heartbeatCount = 0;
   f.collection.lastHeartbeatAtUtc = null;
   f.writeAll();
@@ -415,10 +417,36 @@ test('rejects unsafe values in the fixed event schema', () => {
   };
   assert.equal(
     projectProductEvent(
-      { ...base, event: 'warning-result', payload: { kind: 'initialization', warningId: 1, result: 'raw text' } },
+      {
+        ...base,
+        event: 'warning-result',
+        payload: { kind: 'initialization', warningId: 1, checkId: 1, result: 'raw text', durationMs: 1 },
+      },
       binding
     ),
     undefined
+  );
+  assert.deepEqual(
+    projectProductEvent(
+      {
+        ...base,
+        event: 'ensure-vscode-files-entered',
+        payload: { origin: 'activation-initial', invocationSequence: 1, overlapCount: 0 },
+      },
+      binding
+    ).payload,
+    { origin: 'activation-initial', invocationSequence: 1, overlapCount: 0 }
+  );
+  assert.deepEqual(
+    projectProductEvent(
+      {
+        ...base,
+        event: 'warning-error',
+        payload: { kind: 'initialization', warningId: 1, checkId: 1, errorKind: 'user-cancelled', durationMs: 10 },
+      },
+      binding
+    ).payload,
+    { kind: 'initialization', warningId: 1, checkId: 1, errorKind: 'user-cancelled', durationMs: 10 }
   );
   assert.equal(projectProductEvent({ ...base, event: 'activation-workspace', payload: { folderCount: -1 } }, binding), undefined);
   assert.equal(projectProductEvent({ ...base, event: 'unknown', payload: {} }, binding), undefined);
@@ -659,7 +687,11 @@ test('stages the receipt-bound trace prefix despite a late producer append, but 
 
 test('classifies observations against the original deadline using the actual sample time', (t) => {
   const f = detectorFixture(t);
-  f.productEvents.splice(3, 0, f.event(4, '2026-01-01T00:02:00.010Z', 'warning-call-entered', { kind: 'initialization', warningId: 1 }));
+  f.productEvents.splice(
+    3,
+    0,
+    f.event(4, '2026-01-01T00:02:00.010Z', 'warning-call-entered', { kind: 'initialization', warningId: 1, checkId: 1 })
+  );
   f.productEvents[4].sequence = 5;
   f.productEvents[4].timestampUtc = '2026-01-01T00:02:00.100Z';
   f.collection.recordCount = 5;
@@ -712,7 +744,13 @@ test('withholds timing and coverage when phase or decision receipts disagree', (
     for (let seconds = 3; seconds <= 119; seconds += 4) {
       productEvents.push(f.event(productEvents.length + 1, timestamp(seconds), 'heartbeat'));
     }
-    productEvents.push(f.event(productEvents.length + 1, timestamp(121), 'warning-call-entered', { kind: 'initialization', warningId: 1 }));
+    productEvents.push(
+      f.event(productEvents.length + 1, timestamp(121), 'warning-call-entered', {
+        kind: 'initialization',
+        warningId: 1,
+        checkId: 1,
+      })
+    );
     productEvents.push(f.event(productEvents.length + 1, timestamp(122), 'heartbeat'));
     f.productEvents.splice(0, f.productEvents.length, ...productEvents);
     f.collection.recordCount = productEvents.length;

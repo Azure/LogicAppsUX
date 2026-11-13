@@ -8,11 +8,13 @@ import * as path from 'node:path';
 
 type WarningKind = 'initialization' | 'outdated' | 'overwrite';
 type WarningResult = 'yes' | 'dont-warn-again' | 'undefined' | 'other';
+export type EnsureVSCodeFilesOrigin = 'activation-initial' | 'workspace-change' | 'catch-up' | 'explicit-consistency-command';
+type ActivationInitialInvocationState = 'not-scheduled' | 'pending' | 'settled';
+type DiagnosticErrorKind = 'user-cancelled' | 'error' | 'non-error';
 type EmptyEvent =
   | 'recorder-armed'
   | 'heartbeat'
   | 'activation-start'
-  | 'activation-returned'
   | 'activation-workspace-setup-start'
   | 'activation-workspace-setup-returned'
   | 'activation-project-discovery-start'
@@ -31,6 +33,7 @@ type EmptyEvent =
 export type RegenerationProbeEvent =
   | { event: EmptyEvent }
   | { event: 'recorder-overflow'; reason: 'event-limit' | 'queue-limit' }
+  | { event: 'activation-returned'; initialInvocationState: ActivationInitialInvocationState }
   | { event: 'activation-workspace'; folderCount: number }
   | { event: 'activation-project-discovery-returned' | 'consistency-project-discovery-returned'; projectCount: number }
   | { event: 'workspace-catchup-decision'; needed: boolean }
@@ -42,9 +45,30 @@ export type RegenerationProbeEvent =
       hasLanguage: boolean;
       hasFuncVersion: boolean;
     }
-  | { event: 'warning-call-entered' | 'warning-call-returned'; kind: WarningKind; warningId: number }
-  | { event: 'warning-result'; kind: WarningKind; warningId: number; result: WarningResult }
-  | { event: 'warning-error'; kind: WarningKind; warningId: number; errorKind: 'error' | 'non-error' };
+  | { event: 'warning-call-entered'; kind: WarningKind; warningId: number; checkId: number }
+  | { event: 'warning-call-returned'; kind: WarningKind; warningId: number; checkId: number; awaitable: boolean }
+  | { event: 'warning-result'; kind: WarningKind; warningId: number; checkId: number; result: WarningResult; durationMs: number }
+  | {
+      event: 'warning-error';
+      kind: WarningKind;
+      warningId: number;
+      checkId: number;
+      errorKind: DiagnosticErrorKind;
+      durationMs: number;
+    }
+  | {
+      event: 'ensure-vscode-files-entered' | 'ensure-vscode-files-returned';
+      origin: EnsureVSCodeFilesOrigin;
+      invocationSequence: number;
+      overlapCount: number;
+    }
+  | {
+      event: 'ensure-vscode-files-error';
+      origin: EnsureVSCodeFilesOrigin;
+      invocationSequence: number;
+      overlapCount: number;
+      errorKind: DiagnosticErrorKind;
+    };
 
 interface QueuedEvent {
   sequence: number;
@@ -151,6 +175,8 @@ function projectPayload(value: RegenerationProbeEvent): Record<string, string | 
       return { reason: value.reason };
     case 'activation-workspace':
       return { folderCount: value.folderCount };
+    case 'activation-returned':
+      return { initialInvocationState: value.initialInvocationState };
     case 'activation-project-discovery-returned':
     case 'consistency-project-discovery-returned':
       return { projectCount: value.projectCount };
@@ -161,12 +187,39 @@ function projectPayload(value: RegenerationProbeEvent): Record<string, string | 
     case 'initialization-check':
       return { firstMissing: value.firstMissing, hasLanguage: value.hasLanguage, hasFuncVersion: value.hasFuncVersion };
     case 'warning-call-entered':
+      return { kind: value.kind, warningId: value.warningId, checkId: value.checkId };
     case 'warning-call-returned':
-      return { kind: value.kind, warningId: value.warningId };
+      return { kind: value.kind, warningId: value.warningId, checkId: value.checkId, awaitable: value.awaitable };
     case 'warning-result':
-      return { kind: value.kind, warningId: value.warningId, result: value.result };
+      return {
+        kind: value.kind,
+        warningId: value.warningId,
+        checkId: value.checkId,
+        result: value.result,
+        durationMs: value.durationMs,
+      };
     case 'warning-error':
-      return { kind: value.kind, warningId: value.warningId, errorKind: value.errorKind };
+      return {
+        kind: value.kind,
+        warningId: value.warningId,
+        checkId: value.checkId,
+        errorKind: value.errorKind,
+        durationMs: value.durationMs,
+      };
+    case 'ensure-vscode-files-entered':
+    case 'ensure-vscode-files-returned':
+      return {
+        origin: value.origin,
+        invocationSequence: value.invocationSequence,
+        overlapCount: value.overlapCount,
+      };
+    case 'ensure-vscode-files-error':
+      return {
+        origin: value.origin,
+        invocationSequence: value.invocationSequence,
+        overlapCount: value.overlapCount,
+        errorKind: value.errorKind,
+      };
     default:
       return {};
   }
@@ -336,8 +389,8 @@ export function recordRegenerationEvent(event: RegenerationProbeEvent): void {
   }
 }
 
-export function beginRegenerationWarning(kind: WarningKind): number {
+export function beginRegenerationWarning(kind: WarningKind, checkId: number): number {
   const warningId = ++warningSequence;
-  recordRegenerationEvent({ event: 'warning-call-entered', kind, warningId });
+  recordRegenerationEvent({ event: 'warning-call-entered', kind, warningId, checkId });
   return warningId;
 }

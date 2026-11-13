@@ -39,6 +39,7 @@ const mocks = vi.hoisted(() => ({
   getWorkspaceLogicAppRoots: vi.fn(),
   isAutoStartDesignTimeNotificationSuppressed: vi.fn(),
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
+  recordRegenerationEvent: vi.fn(),
   registerEvent: vi.fn(),
   runProjectConsistencyCheck: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),
@@ -157,6 +158,10 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
   scheduleStartAllDesignTimeApis: mocks.scheduleStartAllDesignTimeApis,
   startDesignTimeApi: mocks.startDesignTimeApi,
   stopAllDesignTimeApis: vi.fn(),
+}));
+
+vi.mock('../app/utils/regenerationProbe', () => ({
+  recordRegenerationEvent: mocks.recordRegenerationEvent,
 }));
 
 vi.mock('../app/utils/codeless/urihandler', () => ({
@@ -347,7 +352,7 @@ describe('activate design-time startup', () => {
       for (const projectPath of projectPaths) {
         expect(ensureProjectFiles).toHaveBeenCalledWith(expect.any(Object), projectPath);
       }
-      expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(expect.any(Object), projectPaths);
+      expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(expect.any(Object), projectPaths, 'activation-initial');
       expect(vi.mocked(ensureWorkspace).mock.invocationCallOrder[0]).toBeLessThan(
         vi.mocked(parameterizeAllConnections).mock.invocationCallOrder[0]
       );
@@ -360,6 +365,32 @@ describe('activate design-time startup', () => {
     } finally {
       vi.unstubAllEnvs();
     }
+  });
+
+  it('records activation returning while the initial consistency invocation remains pending', async () => {
+    const projectPaths = ['D:\\workspace\\app-one'];
+    let resolveConsistency!: () => void;
+    vi.mocked(ensureVSCodeFiles).mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveConsistency = resolve;
+        })
+    );
+    Object.assign(vscode.workspace, {
+      workspaceFolders: [{ uri: vscode.Uri.file(projectPaths[0]), name: 'app-one', index: 0 }],
+    });
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(projectPaths);
+
+    await activate(createExtensionContext());
+
+    expect(ensureVSCodeFiles).toHaveBeenCalledWith(expect.any(Object), projectPaths, 'activation-initial');
+    expect(mocks.recordRegenerationEvent).toHaveBeenCalledWith({
+      event: 'activation-returned',
+      initialInvocationState: 'pending',
+    });
+
+    resolveConsistency();
+    await Promise.all(backgroundOperations);
   });
 
   it.each([undefined, '0', '1'])('does not initialize absent workspace folders with the legacy workspace flag (%s)', async (skip) => {
@@ -471,7 +502,7 @@ describe('activate design-time startup', () => {
     await Promise.all(backgroundOperations);
 
     expect(ensureWorkspace).toHaveBeenCalledTimes(1);
-    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'catch-up');
   });
 
   it('catches up workspace consistency when startup switches between nonempty workspaces before listener registration', async () => {
@@ -485,7 +516,7 @@ describe('activate design-time startup', () => {
     await Promise.all(backgroundOperations);
 
     expect(ensureWorkspace).toHaveBeenCalledTimes(2);
-    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'catch-up');
   });
 
   it('does not duplicate catch-up when the workspace listener observes the startup folder change', async () => {
@@ -500,7 +531,7 @@ describe('activate design-time startup', () => {
     await Promise.all(backgroundOperations);
 
     expect(ensureWorkspace).toHaveBeenCalledTimes(1);
-    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'workspace-change');
   });
 
   it('multi-root launch binds the attested Func through PATH after the REAL non-managed ensureBinaries branch overwrites a profile pin', async () => {

@@ -76,8 +76,15 @@ describe('regeneration probe', () => {
 
     probe.record({ event: 'activation-start' });
     probe.record(input);
-    probe.record({ event: 'warning-call-entered', kind: 'initialization', warningId: 1 });
-    probe.record({ event: 'warning-call-returned', kind: 'initialization', warningId: 1 });
+    probe.record({ event: 'activation-returned', initialInvocationState: 'pending' });
+    probe.record({
+      event: 'ensure-vscode-files-entered',
+      origin: 'activation-initial',
+      invocationSequence: 1,
+      overlapCount: 0,
+    });
+    probe.record({ event: 'warning-call-entered', kind: 'initialization', warningId: 1, checkId: 1 });
+    probe.record({ event: 'warning-call-returned', kind: 'initialization', warningId: 1, checkId: 1, awaitable: true });
     await probe.dispose();
 
     const contents = fs.readFileSync(traceFile, 'utf8');
@@ -85,18 +92,23 @@ describe('regeneration probe', () => {
       .trim()
       .split('\n')
       .map((line) => JSON.parse(line));
-    expect(records.slice(0, 5).map((record) => record.event)).toEqual([
+    expect(records.slice(0, 7).map((record) => record.event)).toEqual([
       'recorder-armed',
       'activation-start',
       'activation-workspace',
+      'activation-returned',
+      'ensure-vscode-files-entered',
       'warning-call-entered',
       'warning-call-returned',
     ]);
-    expect(records.slice(5).every((record) => record.event === 'heartbeat')).toBe(true);
+    expect(records.slice(7).every((record) => record.event === 'heartbeat')).toBe(true);
     expect(records.map((record) => record.sequence)).toEqual(records.map((_record, index) => index + 1));
     expect(records.every((record) => record.schemaVersion === 1 && record.invocation === invocation && record.phase === phase)).toBe(true);
     expect(records.every((record) => record.armId === armId && Number.isFinite(Date.parse(record.timestampUtc)))).toBe(true);
     expect(records[2].payload).toEqual({ folderCount: 1 });
+    expect(records[3].payload).toEqual({ initialInvocationState: 'pending' });
+    expect(records[4].payload).toEqual({ origin: 'activation-initial', invocationSequence: 1, overlapCount: 0 });
+    expect(records[6].payload).toEqual({ kind: 'initialization', warningId: 1, checkId: 1, awaitable: true });
     expect(contents).not.toContain('synthetic-private-value');
     expect(contents).not.toContain(root);
     expect(failures).toEqual([]);

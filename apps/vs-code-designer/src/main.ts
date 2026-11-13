@@ -70,6 +70,7 @@ import { recordRegenerationEvent } from './app/utils/regenerationProbe';
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
+  let activationInitialInvocationState: 'not-scheduled' | 'pending' | 'settled' = 'not-scheduled';
   recordRegenerationEvent({ event: 'activation-start' });
   initializeCustomExtensionContext();
   await updateLogicAppsContext();
@@ -141,10 +142,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
       activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
       recordRegenerationEvent({ event: 'activation-vscode-check-scheduled' });
+      activationInitialInvocationState = 'pending';
       callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
         recordRegenerationEvent({ event: 'activation-vscode-check-entered' });
-        await ensureVSCodeFiles(actionContext, projectPaths);
+        try {
+          await ensureVSCodeFiles(actionContext, projectPaths, 'activation-initial');
+        } finally {
+          activationInitialInvocationState = 'settled';
+        }
       });
     }
 
@@ -158,7 +164,7 @@ export async function activate(context: vscode.ExtensionContext) {
         workspaceConsistencyIdentity = workspaceIdentity();
         await ensureWorkspace(actionContext);
         await updateLogicAppsContext();
-        await runProjectConsistencyCheck(actionContext);
+        await runProjectConsistencyCheck(actionContext, 'workspace-change');
         recordRegenerationEvent({ event: 'workspace-change-returned' });
       }
     );
@@ -177,7 +183,7 @@ export async function activate(context: vscode.ExtensionContext) {
         actionContext.errorHandling.suppressDisplay = true;
         await ensureWorkspace(actionContext);
         await updateLogicAppsContext();
-        await runProjectConsistencyCheck(actionContext);
+        await runProjectConsistencyCheck(actionContext, 'catch-up');
       });
       recordRegenerationEvent({ event: 'workspace-catchup-returned' });
     }
@@ -248,7 +254,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     logExtensionSettings(activateContext);
   });
-  recordRegenerationEvent({ event: 'activation-returned' });
+  recordRegenerationEvent({ event: 'activation-returned', initialInvocationState: activationInitialInvocationState });
 }
 
 async function promptShouldParameterizeConnections(context: IActionContext): Promise<boolean> {

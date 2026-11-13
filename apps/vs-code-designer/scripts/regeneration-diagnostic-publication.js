@@ -16,7 +16,6 @@ const emptyEvents = new Set([
   'recorder-armed',
   'heartbeat',
   'activation-start',
-  'activation-returned',
   'activation-workspace-setup-start',
   'activation-workspace-setup-returned',
   'activation-project-discovery-start',
@@ -34,6 +33,8 @@ const emptyEvents = new Set([
 ]);
 const warningKinds = new Set(['initialization', 'outdated', 'overwrite']);
 const warningResults = new Set(['yes', 'dont-warn-again', 'undefined', 'other']);
+const ensureVSCodeFilesOrigins = new Set(['activation-initial', 'workspace-change', 'catch-up', 'explicit-consistency-command']);
+const diagnosticErrorKinds = new Set(['user-cancelled', 'error', 'non-error']);
 const productCollectionReasons = new Set([
   'invalid-host-binding',
   'unsafe-owned-root',
@@ -71,6 +72,10 @@ function isTimestamp(value) {
 
 function isCount(value) {
   return Number.isSafeInteger(value) && value >= 0 && value <= 1000000;
+}
+
+function isDuration(value) {
+  return isCount(value) && value <= 86400000;
 }
 
 function canonicalIdentity(identity) {
@@ -240,6 +245,10 @@ function projectPayload(event, value) {
       return ['event-limit', 'queue-limit'].includes(payload.reason) ? { reason: payload.reason } : undefined;
     case 'activation-workspace':
       return isCount(payload.folderCount) ? { folderCount: payload.folderCount } : undefined;
+    case 'activation-returned':
+      return ['not-scheduled', 'pending', 'settled'].includes(payload.initialInvocationState)
+        ? { initialInvocationState: payload.initialInvocationState }
+        : undefined;
     case 'activation-project-discovery-returned':
     case 'consistency-project-discovery-returned':
       return isCount(payload.projectCount) ? { projectCount: payload.projectCount } : undefined;
@@ -256,20 +265,78 @@ function projectPayload(event, value) {
         ? { firstMissing: payload.firstMissing, hasLanguage: payload.hasLanguage, hasFuncVersion: payload.hasFuncVersion }
         : undefined;
     case 'warning-call-entered':
+      return warningKinds.has(payload.kind) &&
+        isCount(payload.warningId) &&
+        payload.warningId > 0 &&
+        isCount(payload.checkId) &&
+        payload.checkId > 0
+        ? { kind: payload.kind, warningId: payload.warningId, checkId: payload.checkId }
+        : undefined;
     case 'warning-call-returned':
-      return warningKinds.has(payload.kind) && isCount(payload.warningId) && payload.warningId > 0
-        ? { kind: payload.kind, warningId: payload.warningId }
+      return warningKinds.has(payload.kind) &&
+        isCount(payload.warningId) &&
+        payload.warningId > 0 &&
+        isCount(payload.checkId) &&
+        payload.checkId > 0 &&
+        typeof payload.awaitable === 'boolean'
+        ? { kind: payload.kind, warningId: payload.warningId, checkId: payload.checkId, awaitable: payload.awaitable }
         : undefined;
     case 'warning-result':
-      return warningKinds.has(payload.kind) && isCount(payload.warningId) && payload.warningId > 0 && warningResults.has(payload.result)
-        ? { kind: payload.kind, warningId: payload.warningId, result: payload.result }
+      return warningKinds.has(payload.kind) &&
+        isCount(payload.warningId) &&
+        payload.warningId > 0 &&
+        isCount(payload.checkId) &&
+        payload.checkId > 0 &&
+        warningResults.has(payload.result) &&
+        isDuration(payload.durationMs)
+        ? {
+            kind: payload.kind,
+            warningId: payload.warningId,
+            checkId: payload.checkId,
+            result: payload.result,
+            durationMs: payload.durationMs,
+          }
         : undefined;
     case 'warning-error':
       return warningKinds.has(payload.kind) &&
         isCount(payload.warningId) &&
         payload.warningId > 0 &&
-        ['error', 'non-error'].includes(payload.errorKind)
-        ? { kind: payload.kind, warningId: payload.warningId, errorKind: payload.errorKind }
+        isCount(payload.checkId) &&
+        payload.checkId > 0 &&
+        diagnosticErrorKinds.has(payload.errorKind) &&
+        isDuration(payload.durationMs)
+        ? {
+            kind: payload.kind,
+            warningId: payload.warningId,
+            checkId: payload.checkId,
+            errorKind: payload.errorKind,
+            durationMs: payload.durationMs,
+          }
+        : undefined;
+    case 'ensure-vscode-files-entered':
+    case 'ensure-vscode-files-returned':
+      return ensureVSCodeFilesOrigins.has(payload.origin) &&
+        isCount(payload.invocationSequence) &&
+        payload.invocationSequence > 0 &&
+        isCount(payload.overlapCount)
+        ? {
+            origin: payload.origin,
+            invocationSequence: payload.invocationSequence,
+            overlapCount: payload.overlapCount,
+          }
+        : undefined;
+    case 'ensure-vscode-files-error':
+      return ensureVSCodeFilesOrigins.has(payload.origin) &&
+        isCount(payload.invocationSequence) &&
+        payload.invocationSequence > 0 &&
+        isCount(payload.overlapCount) &&
+        diagnosticErrorKinds.has(payload.errorKind)
+        ? {
+            origin: payload.origin,
+            invocationSequence: payload.invocationSequence,
+            overlapCount: payload.overlapCount,
+            errorKind: payload.errorKind,
+          }
         : undefined;
     default:
       return undefined;

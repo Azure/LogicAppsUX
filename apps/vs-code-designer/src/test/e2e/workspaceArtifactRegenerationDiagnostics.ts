@@ -25,7 +25,6 @@ const emptyProductEvents = new Set([
   'recorder-armed',
   'heartbeat',
   'activation-start',
-  'activation-returned',
   'activation-workspace-setup-start',
   'activation-workspace-setup-returned',
   'activation-project-discovery-start',
@@ -42,6 +41,8 @@ const emptyProductEvents = new Set([
   'consistency-check-returned',
 ]);
 const warningResults = new Set(['yes', 'dont-warn-again', 'undefined', 'other']);
+const ensureVSCodeFilesOrigins = new Set(['activation-initial', 'workspace-change', 'catch-up', 'explicit-consistency-command']);
+const diagnosticErrorKinds = new Set(['user-cancelled', 'error', 'non-error']);
 
 /** Match the producer's fixed event union; never accept arbitrary strings. */
 export function validRegenerationProductPayload(event: string, value: unknown): boolean {
@@ -52,6 +53,7 @@ export function validRegenerationProductPayload(event: string, value: unknown): 
   const keys = (expected: string[]) =>
     Object.keys(payload).length === expected.length && expected.every((key) => Object.hasOwn(payload, key));
   const count = (item: unknown) => typeof item === 'number' && Number.isSafeInteger(item) && item >= 0 && item <= 1_000_000;
+  const duration = (item: unknown) => count(item) && Number(item) <= 86_400_000;
   if (emptyProductEvents.has(event)) {
     return keys([]);
   }
@@ -60,6 +62,12 @@ export function validRegenerationProductPayload(event: string, value: unknown): 
       return keys(['reason']) && (payload.reason === 'event-limit' || payload.reason === 'queue-limit');
     case 'activation-workspace':
       return keys(['folderCount']) && count(payload.folderCount);
+    case 'activation-returned':
+      return (
+        keys(['initialInvocationState']) &&
+        typeof payload.initialInvocationState === 'string' &&
+        ['not-scheduled', 'pending', 'settled'].includes(payload.initialInvocationState)
+      );
     case 'activation-project-discovery-returned':
     case 'consistency-project-discovery-returned':
       return keys(['projectCount']) && count(payload.projectCount);
@@ -81,12 +89,15 @@ export function validRegenerationProductPayload(event: string, value: unknown): 
     case 'warning-call-returned':
     case 'warning-result':
     case 'warning-error': {
-      const expected = ['kind', 'warningId'];
+      const expected = ['kind', 'warningId', 'checkId'];
+      if (event === 'warning-call-returned') {
+        expected.push('awaitable');
+      }
       if (event === 'warning-result') {
-        expected.push('result');
+        expected.push('result', 'durationMs');
       }
       if (event === 'warning-error') {
-        expected.push('errorKind');
+        expected.push('errorKind', 'durationMs');
       }
       return (
         keys(expected) &&
@@ -94,8 +105,30 @@ export function validRegenerationProductPayload(event: string, value: unknown): 
         ['initialization', 'outdated', 'overwrite'].includes(payload.kind) &&
         count(payload.warningId) &&
         Number(payload.warningId) > 0 &&
+        count(payload.checkId) &&
+        Number(payload.checkId) > 0 &&
+        (event !== 'warning-call-returned' || typeof payload.awaitable === 'boolean') &&
         (event !== 'warning-result' || (typeof payload.result === 'string' && warningResults.has(payload.result))) &&
-        (event !== 'warning-error' || payload.errorKind === 'error' || payload.errorKind === 'non-error')
+        (event !== 'warning-result' || duration(payload.durationMs)) &&
+        (event !== 'warning-error' || (typeof payload.errorKind === 'string' && diagnosticErrorKinds.has(payload.errorKind))) &&
+        (event !== 'warning-error' || duration(payload.durationMs))
+      );
+    }
+    case 'ensure-vscode-files-entered':
+    case 'ensure-vscode-files-returned':
+    case 'ensure-vscode-files-error': {
+      const expected = ['origin', 'invocationSequence', 'overlapCount'];
+      if (event === 'ensure-vscode-files-error') {
+        expected.push('errorKind');
+      }
+      return (
+        keys(expected) &&
+        typeof payload.origin === 'string' &&
+        ensureVSCodeFilesOrigins.has(payload.origin) &&
+        count(payload.invocationSequence) &&
+        Number(payload.invocationSequence) > 0 &&
+        count(payload.overlapCount) &&
+        (event !== 'ensure-vscode-files-error' || (typeof payload.errorKind === 'string' && diagnosticErrorKinds.has(payload.errorKind)))
       );
     }
     default:
