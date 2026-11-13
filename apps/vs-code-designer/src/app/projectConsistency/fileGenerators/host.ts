@@ -27,6 +27,25 @@ export function generateHostJson(): IHostJsonV2 {
 }
 
 /**
+ * Generates the canonical root host.json content for a codeless NuGet-based Logic App project.
+ * Runtime extensions are supplied by NuGet packages, so the file must not reference
+ * the Workflows extension bundle.
+ */
+export function generateCodelessNugetHostJson(): IHostJsonV2 {
+  return {
+    version: '2.0',
+    logging: {
+      applicationInsights: {
+        samplingSettings: {
+          isEnabled: true,
+          excludedTypes: 'Request',
+        },
+      },
+    },
+  };
+}
+
+/**
  * Generates the canonical design-time host.json content.
  * Enables workflow operation discovery host mode for the design-time API.
  */

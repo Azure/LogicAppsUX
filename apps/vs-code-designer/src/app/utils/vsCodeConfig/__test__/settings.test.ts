@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { createSettingsDetails, removeSharedSetting, shouldAlwaysBuildCustomCode } from '../settings';
+import { createSettingsDetails, isProjectConsistencyCheckEnabled, removeSharedSetting, shouldAlwaysBuildCustomCode } from '../settings';
 import { ext } from '../../../../extensionVariables';
+import { enableProjectConsistencyChecksSetting } from '../../../../constants';
 
 describe('utils/vsCodeConfig/settings', () => {
   describe('createSettingsDetails', () => {
@@ -194,6 +195,37 @@ describe('utils/vsCodeConfig/settings', () => {
       inspect.mockReturnValue({ globalValue: false });
 
       expect(shouldAlwaysBuildCustomCode()).toBe(false);
+    });
+  });
+
+  describe('isProjectConsistencyCheckEnabled', () => {
+    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
+    let get: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      get = vi.fn();
+      mockGetConfiguration.mockReturnValue({ get } as any);
+    });
+
+    it('returns true by default when the setting is not configured', () => {
+      get.mockReturnValue(undefined);
+
+      expect(isProjectConsistencyCheckEnabled()).toBe(true);
+    });
+
+    it('returns true when the effective setting is enabled', () => {
+      get.mockReturnValue(true);
+
+      expect(isProjectConsistencyCheckEnabled()).toBe(true);
+    });
+
+    it('returns false when the effective workspace setting is disabled', () => {
+      get.mockReturnValue(false);
+
+      expect(isProjectConsistencyCheckEnabled()).toBe(false);
+      expect(mockGetConfiguration).toHaveBeenCalledWith(ext.prefix, undefined);
+      expect(get).toHaveBeenCalledWith(enableProjectConsistencyChecksSetting);
     });
   });
 });
