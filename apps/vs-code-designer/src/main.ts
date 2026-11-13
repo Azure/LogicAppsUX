@@ -4,17 +4,12 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import {
-  scheduleStartAllDesignTimeApis,
-  stopAllDesignTimeApis,
-  startDesignTimeApi,
-} from './app/utils/codeless/startDesignTimeApi';
+import { scheduleStartAllDesignTimeApis, stopAllDesignTimeApis, startDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -43,7 +38,7 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServer } from './app/languageServer/languageServer';
+import { startLogicAppsLanguageClient } from './app/languageServer/languageClient';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
@@ -51,7 +46,12 @@ import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
-import { getWorkspaceSetting, isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import {
+  getWorkspaceSetting,
+  isManagedIdentityAuthEnabled,
+  shouldParameterizeConnections,
+  updateGlobalSetting,
+} from './app/utils/vsCodeConfig/settings';
 import {
   isAutoStartDesignTimeNotificationSuppressed,
   isManagedIdentityAuthNotificationSuppressed,
@@ -176,7 +176,7 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         const projectPaths = await getWorkspaceLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
-          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+          const startDesignTimePromises = projectPaths.map(async (projectPath) =>
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
               innerActionContext.telemetry.properties.isActivationEvent = 'true';
               await startDesignTimeApi(innerActionContext, projectPath);
@@ -187,10 +187,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    activateContext.telemetry.properties.lastStep = 'startLanguageServer';
+    activateContext.telemetry.properties.lastStep = 'startLogicAppsLanguageClient';
     const hasCodefulProjects = await codefulProjectsExist();
     if (hasCodefulProjects) {
-      startLanguageServer();
+      startLogicAppsLanguageClient();
     }
 
     ext.rgApi = await getResourceGroupsApi();

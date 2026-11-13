@@ -1,0 +1,76 @@
+{
+  "microsoftforms:ListForms": {
+    "path": "/formapi/api/forms",
+    "method": "GET"
+  },
+  "teams:GetAllTeams": {
+    "path": "/beta/me/joinedTeams",
+    "method": "GET"
+  },
+  "teams:GetChannelsForGroup": {
+    "path": "/beta/groups/{groupId}/channels",
+    "method": "GET"
+  },
+  "teams:GetTags": {
+    "path": "/beta/teams/{groupId}/tags",
+    "method": "GET"
+  },
+  "outlook:CalendarGetTables": {
+    "path": "/datasets/calendars/tables",
+    "method": "GET"
+  },
+  "outlook:ContactGetTables": {
+    "path": "/datasets/contacts/tables",
+    "method": "GET"
+  },
+  "office365:CalendarGetTables_V2": {
+    "path": "/v2/datasets/calendars/tables",
+    "method": "GET"
+  },
+  "office365:ContactGetTablesV2": {
+    "path": "/v2/datasets/contacts/tables",
+    "method": "GET"
+  },
+  "office365:GetRoomLists_V2": {
+    "path": "/v2/datasets/roomlists",
+    "method": "GET"
+  },
+  "msnweather:GetMeasureUnits": {
+    "path": "/trigger/current/weather/measureunits",
+    "method": "GET"
+  },
+  "commondataservice:GetOrganizations": {
+    "path": "/api/data/v9.1/organizations",
+    "method": "GET"
+  },
+  "commondataservice:GetEntityListEnum": {
+    "path": "/api/data/v9.1/EntityDefinitions",
+    "method": "GET",
+    "queries": {
+      "$select": "LogicalName,DisplayName"
+    }
+  },
+  "commondataservice:GetEntityRelationships": {
+    "path": "/api/data/v9.1/EntityDefinitions(LogicalName='{entityName}')/ManyToOneRelationships",
+    "method": "GET"
+  },
+  "commondataservice:GetBoundActions": {
+    "path": "/api/data/v9.1/EntityDefinitions(LogicalName='{entityName}')/Actions",
+    "method": "GET"
+  },
+  "commondataservice:GetUnboundActions": {
+    "path": "/api/data/v9.1/GlobalOptionSetDefinitions",
+    "method": "GET"
+  },
+  "commondataservice:GetAttributeFiltersCodeless": {
+    "path": "/api/data/v9.1/EntityDefinitions(LogicalName='{entityName}')/Attributes",
+    "method": "GET",
+    "queries": {
+      "$select": "LogicalName,DisplayName,AttributeType"
+    }
+  },
+  "commondataservice:GetCatalogs": {
+    "path": "/api/data/v9.1/catalogs",
+    "method": "GET"
+  }
+}

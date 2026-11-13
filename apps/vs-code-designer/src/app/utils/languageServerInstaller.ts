@@ -1,38 +1,35 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { assetsFolderName, lspDirectory } from '../../constants';
+import { assetsFolderName, languageServerSdkDirectoryName } from '../../constants';
 import { ext } from '../../extensionVariables';
-import {
-  lspSdkAssetRevision,
-  lspSdkRevisionMarkerName,
-  lspServerAssetRevision,
-  lspServerDirectoryName,
-  lspServerRevisionMarkerName,
-} from './languageServerProtocolConstants';
+import { lspSdkRevisionMarkerName, lspServerDirectoryName, lspServerRevisionMarkerName } from './languageServerAssetConstants';
 import AdmZip from 'adm-zip';
 import { ensureRuntimeDependenciesDir } from './binaries';
+import { readLspAssetsManifest } from './languageServerAssets';
 
-export { lspSdkAssetRevision, lspSdkRevisionMarkerName, lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName };
+export { lspSdkRevisionMarkerName, lspServerDirectoryName, lspServerRevisionMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
 
-export async function installLSPSDK(): Promise<void> {
+export async function installLogicAppsLanguageServerAssets(): Promise<void> {
   const targetDirectory = await ensureRuntimeDependenciesDir();
+  const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
+  const assetManifest = await readLspAssetsManifest(assetDirectory);
 
   // Check if LSPServer needs to be extracted or updated
-  const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
+  const serverZipFile = path.join(assetDirectory, assetManifest.serverArchive);
   const serverRevisionMarkerFile = path.join(targetDirectory, lspServerRevisionMarkerName);
   const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
-  const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
-  const shouldExtract = await shouldUpdateFromRevision(lspServerAssetRevision, serverRevisionMarkerFile, lspServerDllPath);
+  const lspServerDllPath = path.join(lspServerPath, 'LogicAppsLanguageServer.dll');
+  const shouldExtract = await shouldUpdateFromRevision(assetManifest.serverSha256, serverRevisionMarkerFile, lspServerDllPath);
 
   // Check if SDK needs to be copied or updated
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
+  const sdkNupkgFile = path.join(assetDirectory, assetManifest.sdkPackage);
   const sdkRevisionMarkerFile = path.join(targetDirectory, lspSdkRevisionMarkerName);
-  const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-  const shouldCopy = await shouldUpdateFromRevision(lspSdkAssetRevision, sdkRevisionMarkerFile, destinationFile);
+  const destinationFile = path.join(languageServerSdkDirectoryPath, path.basename(sdkNupkgFile));
+  const shouldCopy = await shouldUpdateFromRevision(assetManifest.sdkSha256, sdkRevisionMarkerFile, destinationFile);
 
   if (shouldExtract || shouldCopy) {
     await stopLanguageClientForUpdate();
@@ -51,7 +48,7 @@ export async function installLSPSDK(): Promise<void> {
         throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
       }
 
-      await fse.writeFile(serverRevisionMarkerFile, lspServerAssetRevision);
+      await fse.writeFile(serverRevisionMarkerFile, assetManifest.serverSha256);
       await removeLegacyLspMarkers(targetDirectory);
       await cleanupStaleLspServerFolders(targetDirectory);
     } catch (error) {
@@ -61,11 +58,11 @@ export async function installLSPSDK(): Promise<void> {
 
   if (shouldCopy) {
     try {
-      await fse.ensureDir(lspDirectoryPath);
+      await fse.ensureDir(languageServerSdkDirectoryPath);
 
       await fse.copyFile(sdkNupkgFile, destinationFile);
 
-      await fse.writeFile(sdkRevisionMarkerFile, lspSdkAssetRevision);
+      await fse.writeFile(sdkRevisionMarkerFile, assetManifest.sdkSha256);
       await removeLegacySdkMarkers(targetDirectory);
     } catch (error) {
       throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
@@ -133,7 +130,7 @@ async function stopLanguageClientForUpdate(): Promise<void> {
       ext.languageClient = undefined;
     }
   } catch (error) {
-    throw new Error(`Error stopping LSP server before update: ${error}`);
+    throw new Error(`Error stopping language client before update: ${error}`);
   }
 }
 
@@ -180,5 +177,5 @@ export function formatLockedFileError(error: unknown): string {
     return String(error);
   }
 
-  return `${String(error)}. The Logic Apps language server appears to still be using files in the dependency folder. Close or reload VS Code, stop the dotnet process running SdkLspServer.dll, and retry dependency installation.`;
+  return `${String(error)}. The Logic Apps language server appears to still be using files in the dependency folder. Close or reload VS Code, stop the dotnet process running LogicAppsLanguageServer.dll, and retry dependency installation.`;
 }

@@ -72,7 +72,7 @@ const AzureConnectorsNotConfigured = () => {
   );
 };
 
-const ConnectionView = ({
+const ConnectorConnectionView = ({
   connectorName,
   connectorType,
   currentConnectionId,
@@ -133,7 +133,7 @@ const ConnectionView = ({
   );
 };
 
-const ConfiguredLanguageServerConnectionView = ({ vscodeDesigner }: { vscodeDesigner: RootState['languageServer'] }) => {
+const ConfiguredConnectionView = ({ connectionViewState }: { connectionViewState: RootState['connectionView'] }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -147,7 +147,7 @@ const ConfiguredLanguageServerConnectionView = ({ vscodeDesigner }: { vscodeDesi
     hostVersion,
     workflowRuntimeBaseUrl,
     connector,
-  } = vscodeDesigner;
+  } = connectionViewState;
 
   const { name: connectorName, type: connectorType, currentConnectionId } = connector;
 
@@ -258,7 +258,7 @@ const ConfiguredLanguageServerConnectionView = ({ vscodeDesigner }: { vscodeDesi
         }}
         appSettings={panelMetaData?.localSettings}
       >
-        <ConnectionView
+        <ConnectorConnectionView
           connectorName={connectorName}
           connectorType={connectorType}
           currentConnectionId={currentConnectionId}
@@ -269,18 +269,18 @@ const ConfiguredLanguageServerConnectionView = ({ vscodeDesigner }: { vscodeDesi
   );
 };
 
-export const LanguageServerConnectionView = () => {
-  const vscodeDesigner = useSelector((state: RootState) => state.languageServer);
+export const ConnectionView = () => {
+  const connectionViewState = useSelector((state: RootState) => state.connectionView);
   const styles = useConnectionViewStyles();
   const azureConnectorsNotConfigured =
-    isManagedConnector(vscodeDesigner.connector.type) && vscodeDesigner.panelMetaData?.azureDetails?.enabled === false;
+    isManagedConnector(connectionViewState.connector.type) && connectionViewState.panelMetaData?.azureDetails?.enabled === false;
 
   return (
     <div className={styles.connectionViewContainer}>
       {azureConnectorsNotConfigured ? (
         <AzureConnectorsNotConfigured />
       ) : (
-        <ConfiguredLanguageServerConnectionView vscodeDesigner={vscodeDesigner} />
+        <ConfiguredConnectionView connectionViewState={connectionViewState} />
       )}
     </div>
   );

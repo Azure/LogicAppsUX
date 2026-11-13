@@ -140,7 +140,7 @@ describe('createAzureWizard', () => {
     });
     expect(ext.languageClient.sendNotification).toHaveBeenCalledWith('custom/updateApiConfig', {
       subscriptionId: 'subscription-id',
-      resourceGroup: { name: 'rg', location: 'westus' },
+      resourceGroup: 'rg',
     });
   });
 

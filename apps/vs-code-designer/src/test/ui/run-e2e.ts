@@ -25,12 +25,13 @@ import {
   deriveCustomCodeDotNetLayout,
   parseCustomCodeDotNetTargets,
 } from './customCodeDotNetVersionShared';
-import { lspDirectory } from '../../constants';
+import { languageServerSdkDirectoryName } from '../../constants';
 import {
+  lspAssetsManifestFileName,
   lspSdkRevisionMarkerName,
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
-} from '../../app/utils/languageServerProtocolConstants';
+} from '../../app/utils/languageServerAssetConstants';
 
 type ExtensionBundleState = { version: string; bundleDir: string; markerPath: string };
 type InstallResult = { dep: string; success: boolean };
@@ -161,12 +162,12 @@ const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
  * dependency root for the EPERM repro test. This forces the extension to
  * re-extract the LSP server/SDK during the test.
  *
- * Source of truth: languageServerProtocol.ts and constants.ts
+ * Source of truth: languageServerInstaller.ts and constants.ts
  */
 const LSP_STALE_ARTIFACT_NAMES = [
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
-  lspDirectory,
+  languageServerSdkDirectoryName,
   lspSdkRevisionMarkerName,
   '.lspserver-hash',
   '.lspsdk-hash',
@@ -2114,22 +2115,26 @@ namespace ${namespaceName}
     fs.writeFileSync(programFile, patchedProgram, 'utf8');
 
     const { depsRoot } = getRuntimeDependencyPaths();
-    const lspDirectoryPath = path.join(depsRoot, lspDirectory);
-    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-    const sdkPackageDestination = path.join(lspDirectoryPath, path.basename(sdkPackageSource));
+    const languageServerSdkDirectoryPath = path.join(depsRoot, languageServerSdkDirectoryName);
+    const lspAssetDirectory = path.join(projectDir, 'src', 'assets', 'LSPServer');
+    const lspAssetManifest = JSON.parse(fs.readFileSync(path.join(lspAssetDirectory, lspAssetsManifestFileName), 'utf8')) as {
+      sdkPackage: string;
+    };
+    const sdkPackageSource = path.join(lspAssetDirectory, lspAssetManifest.sdkPackage);
+    const sdkPackageDestination = path.join(languageServerSdkDirectoryPath, path.basename(sdkPackageSource));
     if (!fs.existsSync(sdkPackageSource)) {
       throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);
     }
-    fs.mkdirSync(lspDirectoryPath, { recursive: true });
+    fs.mkdirSync(languageServerSdkDirectoryPath, { recursive: true });
     fs.copyFileSync(sdkPackageSource, sdkPackageDestination);
 
     if (fs.existsSync(nugetConfigFile)) {
       const originalNugetConfig = fs.readFileSync(nugetConfigFile, 'utf8');
       const patchedNugetConfig = originalNugetConfig.replace(
         /(<add\s+key=["']current["']\s+value=)(["']).*?\2(\s*\/>)/,
-        `$1"${lspDirectoryPath}"$3`
+        `$1"${languageServerSdkDirectoryPath}"$3`
       );
-      if (patchedNugetConfig === originalNugetConfig && !originalNugetConfig.includes(lspDirectoryPath)) {
+      if (patchedNugetConfig === originalNugetConfig && !originalNugetConfig.includes(languageServerSdkDirectoryPath)) {
         throw new Error(`Could not update current package source in ${nugetConfigFile}`);
       }
       fs.writeFileSync(nugetConfigFile, patchedNugetConfig, 'utf8');
