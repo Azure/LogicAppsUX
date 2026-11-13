@@ -17,6 +17,10 @@ import {
 import {
   RegenerationInputTracker,
   RegenerationObservation,
+  inspectRegenerationNotificationCenter,
+  isValidNotificationCenterInspection,
+  notificationCenterAffordanceScript,
+  notificationCenterScrollStateScript,
   regenerationPromptObservationForLog,
   regenerationDiagnosticDomScript,
   regenerationDiagnosticSampleExpression,
@@ -574,6 +578,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     `Detected an Azure Logic App project "${project}" that may be missing files. Initialize for optimal use with VS Code? private-message`;
   const candidate = {
     kind: 'notification' as const,
+    retained: false,
     text: prompt(appDir),
     displayed: true,
     inViewport: true,
@@ -680,6 +685,24 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   const bellOnly = domState('<button aria-label="Notifications">Notifications</button>');
   assert.strictEqual(bellOnly.centerMounted, false, 'The notification bell is not the notification center');
   assert.strictEqual(bellOnly.centerVisible, false);
+  const affordanceDom = new JSDOM(
+    '<html><body><div class="statusbar"><div class="statusbar-item" id="status.notifications" aria-label="Notifications"></div></div></body></html>',
+    { runScripts: 'outside-only' }
+  );
+  try {
+    affordanceDom.window.eval(
+      'HTMLElement.prototype.getBoundingClientRect = () => ({left: 1, top: 2, right: 11, bottom: 12, width: 10, height: 10})'
+    );
+    affordanceDom.window.eval('document.elementFromPoint = () => document.getElementById("status.notifications")');
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(affordanceDom.window.eval(notificationCenterAffordanceScript))), {
+      centerVisible: false,
+      candidateCount: 1,
+      truncated: false,
+      point: { x: 6, y: 7 },
+    });
+  } finally {
+    affordanceDom.window.close();
+  }
   const center = domState('<div class="notifications-center"></div>');
   assert.strictEqual(center.centerMounted, true);
   assert.strictEqual(center.centerVisible, true);
@@ -689,6 +712,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       <div class="monaco-list-row" role="dialog"><div class="notification-list-item">Another notification</div></div>
     </div></div></div>`;
   const retainedState = sanitizeRegenerationDiagnosticState(domState(retainedYes), true, undefined, appDir);
+  assert.strictEqual(domState(retainedYes).candidates[0]?.retained, true);
   assert.strictEqual(retainedState.centerVisible, true);
   assert.strictEqual(retainedState.retainedCount, 2);
   assert.strictEqual(retainedState.blockingUiVisible, false, 'The notification list ARIA role is not a blocking modal');
@@ -715,6 +739,33 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     appDir
   );
   assert.strictEqual(nestedModal.blockingUiVisible, true, 'A real dialog nested inside a notification remains blocking');
+  const scrollDom = new JSDOM(
+    '<html><body><div class="notifications-center"><div class="notifications-list-container"><div class="monaco-scrollable-element"></div></div></div></body></html>',
+    { runScripts: 'outside-only' }
+  );
+  try {
+    scrollDom.window.eval(
+      'HTMLElement.prototype.getBoundingClientRect = () => ({left: 10, top: 20, right: 110, bottom: 120, width: 100, height: 100})'
+    );
+    scrollDom.window.eval(`
+      const scroller = document.querySelector('.monaco-scrollable-element');
+      Object.defineProperties(scroller, {
+        scrollHeight: { value: 500 },
+        clientHeight: { value: 100 },
+        scrollTop: { value: 0, writable: true },
+      });
+      document.elementFromPoint = () => scroller;
+    `);
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(scrollDom.window.eval(notificationCenterScrollStateScript))), {
+      centerCount: 1,
+      scrollableCount: 1,
+      atEnd: false,
+      point: { x: 60, y: 70 },
+      deltaY: 100,
+    });
+  } finally {
+    scrollDom.window.close();
+  }
   const summary = summarizeRegenerationPromptObservation(
     { ready: true, timeOrigin: 42, containers: [{ kind: 'notification', text: candidate.text, buttons: [{ text: 'Yes' }], rows: [] }] },
     appDir,
@@ -746,6 +797,321 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     })
   );
   assert.strictEqual(input.uncertain, true, 'An uncertain native input is never safe to replay');
+
+  const inspectionRaw = (centerVisible: boolean, retainedTarget: boolean): RawWorkbenchState => ({
+    timeOrigin: 42,
+    sampledAtMs: Date.now(),
+    documentVisible: true,
+    documentFocused: true,
+    centerMounted: centerVisible,
+    centerVisible,
+    toastCount: 0,
+    retainedCount: retainedTarget ? 1 : 0,
+    dnd: 'unknown',
+    truncated: false,
+    candidates: retainedTarget
+      ? [
+          {
+            ...candidate,
+            retained: true,
+            text: prompt(appDir),
+            disabledYesCount: 0,
+            ariaDisabledYesCount: 0,
+            obstructedYesCount: 0,
+          },
+        ]
+      : [],
+  });
+  const owner = {
+    timeOrigin: 42,
+    title: 'unit (workspace) - Visual Studio Code',
+    ready: true,
+    roots: ['private-app-path'],
+    shellOwned: true,
+    owned: true,
+  };
+  const sent: string[] = [];
+  const inspectionCdp = {
+    targetId: 'owned-target',
+    contextGeneration: 1,
+    evaluate: async (_contextId: number | undefined, expression: string) => {
+      if (expression === notificationCenterAffordanceScript) {
+        return { centerVisible: false, candidateCount: 1, truncated: false, point: { x: 4, y: 5 } };
+      }
+      if (expression === notificationCenterScrollStateScript) {
+        return { centerCount: 1, scrollableCount: 1, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
+      }
+      throw new Error('unexpected diagnostic expression');
+    },
+    send: async (method: string) => {
+      sent.push(method);
+      return {};
+    },
+  } as unknown as CdpConnection;
+  const inspection = await inspectRegenerationNotificationCenter({
+    cdp: inspectionCdp,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({
+      before: owner,
+      owner,
+      raw: inspectionRaw(sent.length >= 3, sent.length >= 4),
+    }),
+    wait: async () => undefined,
+  });
+  assert.deepStrictEqual(inspection, {
+    availability: 'available',
+    target: 'retained',
+    reason: 'inspected',
+    retainedCount: 1,
+    targetInitializationCount: 1,
+    otherProjectCount: 0,
+    sampleCount: 11,
+    scrollCount: 1,
+    truncated: false,
+    bottomVerified: false,
+    openedByDiagnostic: true,
+  });
+  assert.strictEqual(isValidNotificationCenterInspection(inspection), true);
+  assert.strictEqual(
+    isValidNotificationCenterInspection({ ...inspection, sampleCount: 0 }),
+    false,
+    'Available inspection requires at least one fenced sample'
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({ ...inspection, targetInitializationCount: 0 }),
+    false,
+    'Retained requires a positive target count'
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({
+      ...inspection,
+      target: 'absent',
+      retainedCount: 0,
+      targetInitializationCount: 0,
+      otherProjectCount: 0,
+      bottomVerified: false,
+    }),
+    false,
+    'Absent requires verified bottom coverage'
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({
+      ...inspection,
+      target: 'absent',
+      retainedCount: 0,
+      targetInitializationCount: 0,
+      otherProjectCount: 0,
+      truncated: false,
+      bottomVerified: true,
+    }),
+    true
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({
+      ...inspection,
+      target: 'unknown',
+      targetInitializationCount: 0,
+      truncated: true,
+      bottomVerified: false,
+    }),
+    true
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({
+      ...inspection,
+      availability: 'unavailable',
+      target: 'unknown',
+      reason: 'identity-unavailable',
+      targetInitializationCount: 0,
+      bottomVerified: true,
+    }),
+    false
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({ ...inspection, otherProjectCount: inspection.retainedCount + 1 }),
+    false,
+    'Categorized counts cannot exceed retained notifications'
+  );
+  assert.strictEqual(
+    isValidNotificationCenterInspection({
+      ...inspection,
+      retainedCount: 65,
+      targetInitializationCount: 1,
+      otherProjectCount: 64,
+    }),
+    false,
+    'Notification counts remain bounded'
+  );
+  assert.deepStrictEqual(
+    sent,
+    ['Input.dispatchMouseEvent', 'Input.dispatchMouseEvent', 'Input.dispatchMouseEvent', 'Input.dispatchMouseEvent'],
+    'The diagnostic performs one hit-tested click and one wheel event without command dispatch'
+  );
+  const ambiguousSent: string[] = [];
+  const ambiguous = await inspectRegenerationNotificationCenter({
+    cdp: {
+      ...inspectionCdp,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterAffordanceScript) {
+          return { centerVisible: false, candidateCount: 2, truncated: false, point: null };
+        }
+        throw new Error('unexpected diagnostic expression');
+      },
+      send: async (method: string) => {
+        ambiguousSent.push(method);
+        return {};
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({ before: owner, owner, raw: inspectionRaw(false, false) }),
+  });
+  assert.strictEqual(ambiguous.availability, 'unavailable');
+  assert.strictEqual(ambiguous.reason, 'affordance-ambiguous');
+  assert.deepStrictEqual(ambiguousSent, [], 'Ambiguous affordances must not receive input');
+  const changedDocumentSent: string[] = [];
+  const changedDocumentInspection = await inspectRegenerationNotificationCenter({
+    cdp: {
+      ...inspectionCdp,
+      send: async (method: string) => {
+        changedDocumentSent.push(method);
+        return {};
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: true, dispose: () => undefined },
+    sampler: async () => ({ before: owner, owner, raw: inspectionRaw(false, false) }),
+  });
+  assert.strictEqual(changedDocumentInspection.availability, 'unavailable');
+  assert.strictEqual(changedDocumentInspection.reason, 'identity-unavailable');
+  assert.deepStrictEqual(changedDocumentSent, [], 'Changed document identity must fail before input');
+  const invalidatedAfterHitTest = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const afterHitTestSent: string[] = [];
+  const afterHitTest = await inspectRegenerationNotificationCenter({
+    cdp: {
+      ...inspectionCdp,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterAffordanceScript) {
+          invalidatedAfterHitTest.invalidated = true;
+          return { centerVisible: false, candidateCount: 1, truncated: false, point: { x: 4, y: 5 } };
+        }
+        throw new Error('unexpected diagnostic expression');
+      },
+      send: async (method: string) => {
+        afterHitTestSent.push(method);
+        return {};
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: invalidatedAfterHitTest,
+    sampler: async () => ({ before: owner, owner, raw: inspectionRaw(false, false) }),
+  });
+  assert.strictEqual(afterHitTest.reason, 'identity-unavailable');
+  assert.deepStrictEqual(afterHitTestSent, [], 'Identity invalidation after hit-test must prevent the first native input event');
+  const invalidatedBetweenEvents = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const betweenEventsSent: string[] = [];
+  const betweenEventsInput = new RegenerationInputTracker();
+  let clickDispatchCount = 0;
+  const betweenEvents = await inspectRegenerationNotificationCenter({
+    cdp: {
+      ...inspectionCdp,
+      send: async (method: string) => {
+        betweenEventsSent.push(method);
+        clickDispatchCount++;
+        if (clickDispatchCount === 2) {
+          invalidatedBetweenEvents.invalidated = true;
+        }
+        return {};
+      },
+    } as unknown as CdpConnection,
+    input: betweenEventsInput,
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: invalidatedBetweenEvents,
+    sampler: async () => ({ before: owner, owner, raw: inspectionRaw(false, false) }),
+  });
+  assert.strictEqual(betweenEvents.reason, 'uncertain-input');
+  assert.strictEqual(betweenEvents.openedByDiagnostic, false);
+  assert.deepStrictEqual(
+    betweenEventsSent,
+    ['Input.dispatchMouseEvent', 'Input.dispatchMouseEvent'],
+    'Identity invalidation after mousePressed must prevent mouseReleased'
+  );
+  assert.strictEqual(betweenEventsInput.uncertain, true);
+  assert.strictEqual(betweenEventsInput.pendingInvalid, true);
+  await assert.rejects(
+    betweenEventsInput.send('Input.dispatchMouseEvent', async () => {
+      betweenEventsSent.push('unexpected-later-input');
+      return {};
+    })
+  );
+  assert.deepStrictEqual(
+    betweenEventsSent,
+    ['Input.dispatchMouseEvent', 'Input.dispatchMouseEvent'],
+    'Pending-invalid click state must prevent all later diagnostic input'
+  );
+  const invalidatedBeforeWheel = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const wheelSent: string[] = [];
+  let scrollHitTests = 0;
+  const wheelRace = await inspectRegenerationNotificationCenter({
+    cdp: {
+      ...inspectionCdp,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterScrollStateScript) {
+          scrollHitTests++;
+          if (scrollHitTests === 2) {
+            invalidatedBeforeWheel.invalidated = true;
+          }
+          return { centerCount: 1, scrollableCount: 1, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
+        }
+        throw new Error('unexpected diagnostic expression');
+      },
+      send: async (method: string) => {
+        wheelSent.push(method);
+        return {};
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: invalidatedBeforeWheel,
+    sampler: async () => ({ before: owner, owner, raw: inspectionRaw(true, false) }),
+  });
+  assert.strictEqual(wheelRace.reason, 'identity-unavailable');
+  assert.deepStrictEqual(wheelSent, [], 'Identity invalidation after wheel hit-test must prevent wheel input');
 
   let listener: ((event: CdpConsoleDiagnostic) => void) | undefined;
   let ownedRead: (() => void) | undefined;
@@ -815,6 +1181,8 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   raw.centerVisible = false;
   assert.strictEqual(revealedState?.centerVisible, true);
   listener?.({ source: 'runtime', type: 'error', severity: 'error', timestamp: Date.now() });
+  observation.recordNotificationCenterInspection(inspection);
+  observation.boundary('teardown-start');
   await observation.finish(decisionAt);
   await finishBoundUnitProbe(probe, decisionAt);
   const timeline = fs.readFileSync(path.join(root, 'root-single-detector-timeline.jsonl'), 'utf8');
@@ -825,6 +1193,8 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   assert.strictEqual(parsed.detector.preAttachUnobserved, true);
   assert.strictEqual(parsed.detector.samplingIsDiscrete, true);
   assert.strictEqual(parsed.notification.centerVisible, false, 'The summary must retain the first post-decision state');
+  assert.deepStrictEqual(parsed.notificationCenterInspection, inspection);
+  assert.deepStrictEqual(parsed.input, { uncertain: false, pending: false, pendingInvalid: false });
   assert.ok(parsed.console.droppedCount > 0, 'Console telemetry must remain bounded');
   assert.strictEqual(parsed.console.preOwnedDiscardedCount, 5, 'Buffered and unverified console events are count-only');
   const timelineEvents = timeline
@@ -839,6 +1209,22 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   assert.ok(Date.parse(finalSample.sampledAtUtc) >= decisionAt, 'The final poll must independently cover the decision time');
   const revealedSample = timelineEvents.filter((event) => event.event === 'detector-poll' && event.finalSample === true).at(-1);
   assert.strictEqual(revealedSample?.state?.centerVisible, true, 'A later notification-center reveal remains separately observable');
+  assert.deepStrictEqual(
+    {
+      ...timelineEvents.find((event) => event.event === 'notification-center-inspection'),
+      sequence: 0,
+      timestampUtc: '',
+    },
+    {
+      schemaVersion: 1,
+      invocation,
+      phase: 'root-single',
+      sequence: 0,
+      timestampUtc: '',
+      event: 'notification-center-inspection',
+      ...inspection,
+    }
+  );
   assert.ok(
     timelineEvents.filter((event) => event.event === 'detector-poll' && event.outcome === 'observed').length >= 2,
     'An unchanged final state must still produce its own poll record'

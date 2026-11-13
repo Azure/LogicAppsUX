@@ -678,13 +678,33 @@ host remained running or unchanged, nor that composited pixels correspond to an
 earlier moment. Capture is skipped if an in-flight input is uncertain. This
 separately bounded post-decision capture may be labeled post-deadline; it does
 not extend or satisfy the 120-second acceptance budget. A second image is
-attempted only if the Notification Center is already open and the sampled UI is
-safe; the diagnostic does not send input to reveal a closed center because
-workspace ownership cannot be fenced through command dispatch. A closed center
-is therefore uninspected and reported as skipped. The post-decision sample does
-not prove what was visible before the deadline. If renderer cleanup cannot be
-confirmed, the harness sends no further window input and reports the incomplete
-ordinary-close outcome for its process-containment checks.
+attempted only after the untouched pre-input image succeeds and renderer cleanup,
+physical workspace ownership, admitted document identity, and input state remain
+safe. In diagnostic mode only, a closed center may be opened with one hit-tested
+click on the unique visible Notification Center status affordance; command
+dispatch is never used. The center is sampled and scrolled with bounded native
+wheel input without clicking notification actions. Every mouse-move, press,
+release, and wheel event is separately fenced by fresh target, main-document,
+physical workspace, active-workbench, blocking-UI, and input-tracker checks; an
+identity change stops the logical input sequence without retries. The bell click
+is one logical tracked input: a successful press whose validated release cannot
+complete is marked uncertain and pending-invalid, which prevents every later
+diagnostic input. A fixed-schema result records
+whether the target initialization warning is retained, absent, or unknown,
+bounded counts, truncation, verified bottom coverage, scroll count, and whether
+the diagnostic opened the center. `retained` requires a positive target count;
+`absent` requires a zero target count, no truncation, and verified bottom
+coverage. Exactly one attempted inspection event must match the summary.
+Its sequence must be strictly after the decision boundary and strictly before
+`teardown-start`. Millisecond timestamps may equal either adjacent boundary, but
+must remain nondecreasing from decision through inspection to teardown; missing,
+duplicate, contradictory, reversed, or out-of-order evidence is unavailable.
+Ambiguous affordances, changed identity, uncertain or pending input,
+cleanup failure, and timeouts are unavailable. The physically verified second
+image and this inspection remain post-decision diagnostics and cannot satisfy or
+extend the original acceptance deadline. If renderer cleanup cannot be confirmed,
+the harness sends no further window input and reports the incomplete ordinary-close
+outcome for its process-containment checks.
 Images can contain sensitive pixels:
 publish them only with restricted handling. The runner and pipeline recompute and
 validate an allowlisted `regeneration-diagnostics.jsonl` aggregate containing

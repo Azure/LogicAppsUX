@@ -29,6 +29,8 @@ import {
   type RegenerationProbe,
 } from './workspaceArtifactRegenerationDiagnostics';
 import {
+  initialNotificationCenterInspection,
+  inspectRegenerationNotificationCenter,
   type RegenerationInputTracker,
   RegenerationObservation,
   regenerationPromptObservationForLog,
@@ -153,10 +155,21 @@ export async function captureRegenerationFailureDiagnostics(
   admittedTargetId: string | undefined,
   physicalIdentity?: PhysicalWorkspaceIdentityAuthority,
   pinnedPaths?: readonly PhysicalPathIdentity[],
-  admittedDocument?: CdpMainDocumentIdentity
+  admittedDocument?: CdpMainDocumentIdentity,
+  inspectNotificationCenter: typeof inspectRegenerationNotificationCenter = inspectRegenerationNotificationCenter
 ): Promise<void> {
   const first = diagnostics.screenshots.beforeTeardown;
   const center = diagnostics.screenshots.notificationCenter;
+  const recordUnavailableInspection = (
+    reason: Parameters<RegenerationObservation['recordNotificationCenterInspection']>[0]['reason'],
+    openedByDiagnostic = false
+  ) => {
+    diagnostics.recordNotificationCenterInspection({
+      ...initialNotificationCenterInspection(),
+      reason,
+      openedByDiagnostic,
+    });
+  };
   await diagnostics.stopSampling();
   first.postDeadline = Date.now() >= phase.deadline;
   center.postDeadline = first.postDeadline;
@@ -164,6 +177,7 @@ export async function captureRegenerationFailureDiagnostics(
     first.reason = 'no-owned-target';
     center.status = 'unavailable';
     center.reason = 'no-owned-target';
+    recordUnavailableInspection('identity-unavailable');
     return;
   }
   if (diagnostics.input.uncertain || diagnostics.input.pending > 0) {
@@ -171,6 +185,7 @@ export async function captureRegenerationFailureDiagnostics(
     center.reason = 'uncertain-input';
     first.postDeadline = Date.now() >= phase.deadline;
     center.postDeadline = first.postDeadline;
+    recordUnavailableInspection('uncertain-input');
     await diagnostics.stopAndSample();
     return;
   }
@@ -234,6 +249,7 @@ export async function captureRegenerationFailureDiagnostics(
     center.reason = 'renderer-cleanup-failed';
     center.checkpoint = `workspace-regeneration-${phase.phase}-notification-center`;
     center.postDeadline = Date.now() >= phase.deadline;
+    recordUnavailableInspection('renderer-cleanup-failed');
     return;
   }
   if (first.status !== 'captured') {
@@ -243,6 +259,7 @@ export async function captureRegenerationFailureDiagnostics(
     center.reason = first.reason === 'document-changed' ? 'document-changed' : 'capture-unavailable';
     center.checkpoint = `workspace-regeneration-${phase.phase}-notification-center`;
     center.postDeadline = Date.now() >= phase.deadline;
+    recordUnavailableInspection('initial-capture-unavailable');
     await diagnostics.stopAndSample();
     return;
   }
@@ -253,41 +270,97 @@ export async function captureRegenerationFailureDiagnostics(
     center.reason = reason;
   };
   if (Date.now() >= deadline) {
+    recordUnavailableInspection('inspection-timeout');
     return skip('diagnostic-budget-exhausted');
   }
   if (diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    recordUnavailableInspection('uncertain-input');
     return skip('uncertain-input');
   }
   if (!state || !diagnostics.hasSampleSince(decisionAt)) {
     center.status = 'unavailable';
     center.reason = 'capture-unavailable';
+    recordUnavailableInspection('identity-unavailable');
     return;
   }
   if (!state.shellOwned) {
     center.status = 'unavailable';
     center.reason = 'capture-unavailable';
+    recordUnavailableInspection('identity-unavailable');
     return;
   }
   if (!state.documentVisible || !state.documentFocused) {
+    recordUnavailableInspection('workbench-not-active');
     return skip('workbench-not-active');
   }
   if (state.documentChanged) {
     center.status = 'unavailable';
     center.reason = 'document-changed';
+    recordUnavailableInspection('identity-unavailable');
     return;
   }
-  if (state.blockingUiVisible || state.truncated) {
+  if (state.blockingUiVisible) {
+    recordUnavailableInspection('blocking-or-ambiguous-ui');
     return skip('blocking-or-ambiguous-ui');
   }
-  if (!state.centerVisible) {
-    return skip('notification-center-not-open');
+  if (Date.now() >= deadline || diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    recordUnavailableInspection(diagnostics.input.uncertain || diagnostics.input.pending > 0 ? 'uncertain-input' : 'inspection-timeout');
+    return skip('diagnostic-budget-or-input-uncertain');
+  }
+  const inspection = await inspectNotificationCenter({
+    cdp,
+    input: diagnostics.input,
+    expectation: { workspaceFilePath: handoff.workspace.workspaceFilePath, rootPaths: [handoff.workspace.appDir] },
+    appDir: handoff.workspace.appDir,
+    deadline,
+    expectedTargetId: admittedTargetId,
+    expectedTimeOrigin: admittedTimeOrigin,
+    expectedContextGeneration: admittedContextGeneration,
+    admittedDocument,
+    pinnedPaths,
+  });
+  if (inspection.availability !== 'available') {
+    diagnostics.recordNotificationCenterInspection(inspection);
+    center.status = 'unavailable';
+    center.reason =
+      inspection.reason === 'uncertain-input'
+        ? 'uncertain-input'
+        : inspection.reason === 'workbench-not-active'
+          ? 'workbench-not-active'
+          : inspection.reason === 'blocking-or-ambiguous-ui' || inspection.reason === 'affordance-ambiguous'
+            ? 'blocking-or-ambiguous-ui'
+            : inspection.reason === 'inspection-timeout' || inspection.reason === 'open-timeout'
+              ? 'diagnostic-budget-exhausted'
+              : 'notification-center-reveal-failed';
+    return;
   }
   if (Date.now() >= deadline || diagnostics.input.uncertain || diagnostics.input.pending > 0) {
+    diagnostics.recordNotificationCenterInspection({
+      ...inspection,
+      availability: 'unavailable',
+      target: 'unknown',
+      reason: diagnostics.input.uncertain || diagnostics.input.pending > 0 ? 'uncertain-input' : 'inspection-timeout',
+    });
     return skip('diagnostic-budget-or-input-uncertain');
   }
   await capture(center, 'notification-center');
   if (rendererCleanupFailed) {
     center.reason = 'renderer-cleanup-failed';
+    diagnostics.recordNotificationCenterInspection({
+      ...inspection,
+      availability: 'unavailable',
+      target: 'unknown',
+      reason: 'renderer-cleanup-failed',
+    });
+  } else if (center.status !== 'captured') {
+    diagnostics.recordNotificationCenterInspection({
+      ...inspection,
+      availability: 'unavailable',
+      target: 'unknown',
+      reason: 'identity-unavailable',
+    });
+  } else {
+    diagnostics.recordNotificationCenterInspection(inspection);
   }
 }
 
@@ -457,6 +530,12 @@ async function runFreshRegenerationHost(
       }
       if (diagnostics.screenshots.notificationCenter.reason === 'not-attempted') {
         diagnostics.screenshots.notificationCenter.reason = 'diagnostic-collection-failed';
+      }
+      if (diagnostics.notificationCenterInspection.reason === 'not-attempted') {
+        diagnostics.recordNotificationCenterInspection({
+          ...initialNotificationCenterInspection(),
+          reason: 'identity-unavailable',
+        });
       }
     } finally {
       admittedDocument?.dispose();

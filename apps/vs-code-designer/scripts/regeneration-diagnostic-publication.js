@@ -645,6 +645,20 @@ const candidateReasons = new Set([
   'document-changed',
   'candidate-observed',
 ]);
+const notificationCenterInspectionReasons = new Set([
+  'not-attempted',
+  'inspected',
+  'initial-capture-unavailable',
+  'renderer-cleanup-failed',
+  'uncertain-input',
+  'identity-unavailable',
+  'workbench-not-active',
+  'blocking-or-ambiguous-ui',
+  'affordance-unavailable',
+  'affordance-ambiguous',
+  'open-timeout',
+  'inspection-timeout',
+]);
 const screenshotReasons = new Set([
   'not-attempted',
   'no-owned-target',
@@ -716,6 +730,47 @@ function projectDetectorState(value) {
   };
 }
 
+function projectNotificationCenterInspection(value) {
+  const countKeys = ['retainedCount', 'targetInitializationCount', 'otherProjectCount', 'sampleCount', 'scrollCount'];
+  const boundedNotificationCount = (key) => isCount(value[key]) && value[key] <= 64;
+  if (
+    !isObject(value) ||
+    !['available', 'unavailable'].includes(value.availability) ||
+    !['retained', 'absent', 'unknown'].includes(value.target) ||
+    !notificationCenterInspectionReasons.has(value.reason) ||
+    countKeys.some((key) => !isCount(value[key])) ||
+    !boundedNotificationCount('retainedCount') ||
+    !boundedNotificationCount('targetInitializationCount') ||
+    !boundedNotificationCount('otherProjectCount') ||
+    value.targetInitializationCount + value.otherProjectCount > value.retainedCount ||
+    value.scrollCount > 6 ||
+    typeof value.truncated !== 'boolean' ||
+    typeof value.bottomVerified !== 'boolean' ||
+    typeof value.openedByDiagnostic !== 'boolean' ||
+    (value.availability === 'available' &&
+      (value.reason !== 'inspected' ||
+        value.sampleCount === 0 ||
+        (value.target === 'retained' && value.targetInitializationCount === 0) ||
+        (value.target === 'absent' && (value.targetInitializationCount !== 0 || value.truncated || !value.bottomVerified)) ||
+        (value.target === 'unknown' && (value.targetInitializationCount !== 0 || !value.truncated)))) ||
+    (value.availability === 'unavailable' &&
+      (value.target !== 'unknown' || value.targetInitializationCount !== 0 || value.bottomVerified || value.reason === 'inspected')) ||
+    (value.reason === 'not-attempted' &&
+      (value.openedByDiagnostic || value.truncated || value.bottomVerified || countKeys.some((key) => value[key] !== 0)))
+  ) {
+    return undefined;
+  }
+  return {
+    availability: value.availability,
+    target: value.target,
+    reason: value.reason,
+    ...Object.fromEntries(countKeys.map((key) => [key, value[key]])),
+    truncated: value.truncated,
+    bottomVerified: value.bottomVerified,
+    openedByDiagnostic: value.openedByDiagnostic,
+  };
+}
+
 function projectDetectorEvent(value, binding) {
   if (
     !isObject(value) ||
@@ -779,6 +834,10 @@ function projectDetectorEvent(value, binding) {
       return undefined;
     }
     return { ...event, source: value.source, consoleType: value.type, severity: value.severity, receivedAtUtc: value.receivedAtUtc };
+  }
+  if (value.event === 'notification-center-inspection') {
+    const inspection = projectNotificationCenterInspection(value);
+    return inspection ? { ...event, ...inspection } : undefined;
   }
   if (value.event === 'detector-poll' && isCount(value.pollCount) && isCount(value.sampleCount) && typeof value.finalSample === 'boolean') {
     if (value.outcome === 'observed') {
@@ -848,6 +907,7 @@ function projectDetectorSummary(value, binding) {
     Date.parse(value.acceptanceCutoffUtc) !== Math.min(Date.parse(value.acceptanceDeadlineUtc), Date.parse(value.decisionAtUtc)) ||
     !isObject(value.detector) ||
     !isObject(value.console) ||
+    !isObject(value.notificationCenterInspection) ||
     !isObject(value.screenshots) ||
     !isObject(value.input)
   ) {
@@ -868,6 +928,7 @@ function projectDetectorSummary(value, binding) {
   const times = ['attachAtUtc', 'firstSampleAtUtc', 'lastSampleAtUtc'];
   const beforeTeardown = projectCaptureStatus(value.screenshots.beforeTeardown);
   const notificationCenter = projectCaptureStatus(value.screenshots.notificationCenter);
+  const notificationCenterInspection = projectNotificationCenterInspection(value.notificationCenterInspection);
   const notification = value.notification === null ? null : projectDetectorState(value.notification);
   if (
     !['available', 'partial', 'unavailable'].includes(detector.availability) ||
@@ -886,10 +947,13 @@ function projectDetectorSummary(value, binding) {
     consoleCounts.some((key) => !isCount(consoleSummary[key])) ||
     !beforeTeardown ||
     !notificationCenter ||
+    !notificationCenterInspection ||
     notification === undefined ||
     (notification === null ? value.notificationSampledAtUtc !== null : !isTimestamp(value.notificationSampledAtUtc)) ||
     typeof value.input.uncertain !== 'boolean' ||
-    typeof value.input.pending !== 'boolean'
+    typeof value.input.pending !== 'boolean' ||
+    typeof value.input.pendingInvalid !== 'boolean' ||
+    (value.input.pendingInvalid && !value.input.uncertain)
   ) {
     return undefined;
   }
@@ -920,8 +984,9 @@ function projectDetectorSummary(value, binding) {
     notification,
     notificationSampledAtUtc: value.notificationSampledAtUtc,
     notificationTiming: classifyAcceptanceTiming(value.notificationSampledAtUtc, 'sampled', value),
+    notificationCenterInspection,
     screenshots: { beforeTeardown, notificationCenter },
-    input: { uncertain: value.input.uncertain, pending: value.input.pending },
+    input: { uncertain: value.input.uncertain, pending: value.input.pending, pendingInvalid: value.input.pendingInvalid },
   };
 }
 
@@ -1034,10 +1099,30 @@ function collectDetectorPhase(root, phase, invocation, identity) {
   const first = samples[0];
   const phaseStart = events.find((event) => event.event === 'phase-start');
   const attachment = events.find((event) => event.event === 'attach-owned');
-  const decisionBoundary = events.find((event) => event.event === 'decision');
+  const decisionBoundaries = events.filter((event) => event.event === 'decision');
+  const decisionBoundary = decisionBoundaries[0];
+  const teardownStarts = events.filter((event) => event.event === 'teardown-start');
   const decisionSample = events.find(
     (event) => event.event === 'detector-poll' && event.finalSample && decisionBoundary && event.sequence > decisionBoundary.sequence
   );
+  const inspectionEvents = events.filter((event) => event.event === 'notification-center-inspection');
+  const inspectionAttempted = summary?.notificationCenterInspection.reason !== 'not-attempted';
+  const inspectionEvent = inspectionEvents[0];
+  const inspectionMatchesSummary =
+    summary === undefined ||
+    (inspectionAttempted
+      ? inspectionEvents.length === 1 &&
+        JSON.stringify(projectNotificationCenterInspection(inspectionEvents[0])) === JSON.stringify(summary.notificationCenterInspection)
+      : inspectionEvents.length === 0);
+  const inspectionOrderingValid =
+    !inspectionAttempted ||
+    (inspectionEvents.length === 1 &&
+      decisionBoundaries.length === 1 &&
+      teardownStarts.length === 1 &&
+      inspectionEvent.sequence > decisionBoundary.sequence &&
+      Date.parse(inspectionEvent.timestampUtc) >= Date.parse(decisionBoundary.timestampUtc) &&
+      inspectionEvent.sequence < teardownStarts[0].sequence &&
+      Date.parse(inspectionEvent.timestampUtc) <= Date.parse(teardownStarts[0].timestampUtc));
   if (
     events.some((event, index) => index > 0 && Date.parse(event.timestampUtc) < Date.parse(events[index - 1].timestampUtc)) ||
     events.some((event) => event.event === 'renderer-console' && Date.parse(event.receivedAtUtc) > Date.parse(event.timestampUtc)) ||
@@ -1058,6 +1143,8 @@ function collectDetectorPhase(root, phase, invocation, identity) {
     (summary &&
       (events.filter((event) => event.event === 'renderer-console').length !== summary.console.recordedCount ||
         summary.console.eventCount !== summary.console.recordedCount + summary.console.droppedCount ||
+        !inspectionMatchesSummary ||
+        !inspectionOrderingValid ||
         (summary.notification === null
           ? decisionSample?.outcome === 'observed'
           : decisionSample?.outcome !== 'observed' ||

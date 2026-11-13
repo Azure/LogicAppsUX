@@ -192,8 +192,21 @@ function detectorFixture(t) {
     },
     notification: state,
     notificationSampledAtUtc: '2026-01-01T00:00:05.000Z',
+    notificationCenterInspection: {
+      availability: 'unavailable',
+      target: 'unknown',
+      reason: 'not-attempted',
+      retainedCount: 0,
+      targetInitializationCount: 0,
+      otherProjectCount: 0,
+      sampleCount: 0,
+      scrollCount: 0,
+      truncated: false,
+      bottomVerified: false,
+      openedByDiagnostic: false,
+    },
     screenshots: { beforeTeardown: capture, notificationCenter: capture },
-    input: { uncertain: false, pending: false },
+    input: { uncertain: false, pending: false, pendingInvalid: false },
     privatePath: 'synthetic-private-profile-path',
   };
   const writeDetector = () => {
@@ -201,7 +214,7 @@ function detectorFixture(t) {
     f.write('detector-timeline.jsonl', `${events.map((value) => JSON.stringify(value)).join('\n')}\n`);
     f.write('diagnostic-summary.json', JSON.stringify(summary));
   };
-  return { ...f, state, events, summary, writeDetector };
+  return { ...f, state, events, summary, detectorEvent: event, writeDetector };
 }
 
 test('publishes only bound, allowlisted product events with independently checked coverage', (t) => {
@@ -462,9 +475,248 @@ test('projects bounded detector, console, notification and screenshot evidence w
   assert.equal(records[0].summary.detector.preAttachUnobserved, true);
   assert.equal(records[0].summary.detector.sampledOnly, true);
   assert.equal(records[0].summary.console.scope, 'renderer-only');
+  assert.deepEqual(records[0].summary.input, { uncertain: false, pending: false, pendingInvalid: false });
+  assert.deepEqual(records[0].summary.notificationCenterInspection, {
+    availability: 'unavailable',
+    target: 'unknown',
+    reason: 'not-attempted',
+    retainedCount: 0,
+    targetInitializationCount: 0,
+    otherProjectCount: 0,
+    sampleCount: 0,
+    scrollCount: 0,
+    truncated: false,
+    bottomVerified: false,
+    openedByDiagnostic: false,
+  });
   assert.equal(records[4].consoleType, 'error');
   assert.deepEqual(records[0].summary.notification.candidates[0].reasonCodes, ['missing-yes']);
   assert.doesNotMatch(JSON.stringify(records), /synthetic-private/);
+});
+
+test('projects the bounded post-failure notification center inspection without raw notification data', (t) => {
+  const f = detectorFixture(t);
+  const inspection = {
+    availability: 'available',
+    target: 'retained',
+    reason: 'inspected',
+    retainedCount: 3,
+    targetInitializationCount: 1,
+    otherProjectCount: 1,
+    sampleCount: 4,
+    scrollCount: 1,
+    truncated: false,
+    bottomVerified: false,
+    openedByDiagnostic: true,
+    rawText: 'synthetic-private-notification',
+  };
+  f.summary.notificationCenterInspection = inspection;
+  f.events.splice(6, 0, f.detectorEvent(7, '2026-01-01T00:00:05.500Z', 'notification-center-inspection', inspection));
+  f.events[7].sequence = 8;
+  f.summary.detector.timelineRecordCount = 8;
+  f.writeDetector();
+
+  const records = collectDetectorDiagnostics(f.root, [phase], invocation, true, identity);
+  assert.deepEqual(records[0].summary.notificationCenterInspection, {
+    availability: 'available',
+    target: 'retained',
+    reason: 'inspected',
+    retainedCount: 3,
+    targetInitializationCount: 1,
+    otherProjectCount: 1,
+    sampleCount: 4,
+    scrollCount: 1,
+    truncated: false,
+    bottomVerified: false,
+    openedByDiagnostic: true,
+  });
+  assert.deepEqual(
+    records.find((record) => record.event === 'notification-center-inspection'),
+    {
+      schemaVersion: 1,
+      type: 'detector-event',
+      invocation,
+      phase,
+      sequence: 7,
+      timestampUtc: '2026-01-01T00:00:05.500Z',
+      event: 'notification-center-inspection',
+      availability: 'available',
+      target: 'retained',
+      reason: 'inspected',
+      retainedCount: 3,
+      targetInitializationCount: 1,
+      otherProjectCount: 1,
+      sampleCount: 4,
+      scrollCount: 1,
+      truncated: false,
+      bottomVerified: false,
+      openedByDiagnostic: true,
+      acceptanceTiming: 'at-or-after-cutoff',
+      timingBasis: 'event',
+    }
+  );
+  assert.doesNotMatch(JSON.stringify(records), /synthetic-private/);
+});
+
+test('rejects missing, duplicate, contradictory, and internally inconsistent center inspections', (t) => {
+  const retained = {
+    availability: 'available',
+    target: 'retained',
+    reason: 'inspected',
+    retainedCount: 2,
+    targetInitializationCount: 1,
+    otherProjectCount: 1,
+    sampleCount: 3,
+    scrollCount: 1,
+    truncated: false,
+    bottomVerified: false,
+    openedByDiagnostic: true,
+  };
+  for (const variant of [
+    'missing',
+    'duplicate',
+    'contradictory',
+    'retained-count-zero',
+    'absent-without-bottom',
+    'other-count-overflow',
+    'zero-sample',
+  ]) {
+    const f = detectorFixture(t);
+    f.summary.notificationCenterInspection =
+      variant === 'retained-count-zero'
+        ? { ...retained, targetInitializationCount: 0 }
+        : variant === 'zero-sample'
+          ? { ...retained, sampleCount: 0 }
+          : variant === 'other-count-overflow'
+            ? { ...retained, retainedCount: 65, targetInitializationCount: 1, otherProjectCount: 64 }
+            : variant === 'absent-without-bottom'
+              ? {
+                  ...retained,
+                  target: 'absent',
+                  retainedCount: 0,
+                  targetInitializationCount: 0,
+                  otherProjectCount: 0,
+                  truncated: false,
+                  bottomVerified: false,
+                }
+              : retained;
+    if (variant !== 'missing') {
+      const eventInspection =
+        variant === 'contradictory'
+          ? {
+              ...retained,
+              target: 'unknown',
+              retainedCount: 0,
+              targetInitializationCount: 0,
+              otherProjectCount: 0,
+              truncated: true,
+              bottomVerified: false,
+            }
+          : f.summary.notificationCenterInspection;
+      f.events.splice(6, 0, f.detectorEvent(7, '2026-01-01T00:00:05.400Z', 'notification-center-inspection', eventInspection));
+      f.events[7].sequence = 8;
+      if (variant === 'duplicate') {
+        f.events.splice(7, 0, f.detectorEvent(8, '2026-01-01T00:00:05.500Z', 'notification-center-inspection', eventInspection));
+        f.events[8].sequence = 9;
+      }
+    }
+    f.summary.detector.timelineRecordCount = f.events.length;
+    f.writeDetector();
+    const [capture] = collectDetectorDiagnostics(f.root, [phase], invocation, true, identity);
+    assert.notEqual(capture.availability, 'available', variant);
+    if (
+      variant === 'retained-count-zero' ||
+      variant === 'absent-without-bottom' ||
+      variant === 'other-count-overflow' ||
+      variant === 'zero-sample'
+    ) {
+      assert.equal(capture.summaryStatus, 'invalid-schema', variant);
+    } else {
+      assert.equal(capture.reason, 'timeline-incomplete', variant);
+    }
+  }
+});
+
+const orderedInspection = {
+  availability: 'available',
+  target: 'retained',
+  reason: 'inspected',
+  retainedCount: 1,
+  targetInitializationCount: 1,
+  otherProjectCount: 0,
+  sampleCount: 2,
+  scrollCount: 0,
+  truncated: false,
+  bottomVerified: false,
+  openedByDiagnostic: true,
+};
+
+test('accepts equal-millisecond inspection timestamps with strict sequence ordering', (t) => {
+  for (const [variant, timestamp] of [
+    ['equal-decision', '2026-01-01T00:00:04.000Z'],
+    ['equal-teardown', '2026-01-01T00:00:06.000Z'],
+  ]) {
+    const f = detectorFixture(t);
+    f.summary.notificationCenterInspection = orderedInspection;
+    const decisionIndex = f.events.findIndex((event) => event.event === 'decision');
+    const teardownIndex = f.events.findIndex((event) => event.event === 'teardown-start');
+    f.events.splice(
+      variant === 'equal-decision' ? decisionIndex + 1 : teardownIndex,
+      0,
+      f.detectorEvent(0, timestamp, 'notification-center-inspection', orderedInspection)
+    );
+    f.events.forEach((event, index) => {
+      event.sequence = index + 1;
+    });
+    f.summary.detector.timelineRecordCount = f.events.length;
+    f.writeDetector();
+    const [capture] = collectDetectorDiagnostics(f.root, [phase], invocation, true, identity);
+    assert.equal(capture.availability, 'available', variant);
+    assert.equal(capture.reason, 'sampled-coverage-confirmed', variant);
+  }
+});
+
+test('requires attempted center inspection sequence between boundaries and nondecreasing timestamps', (t) => {
+  for (const variant of [
+    'before-decision-sequence',
+    'after-teardown-sequence',
+    'reversed-before-decision-time',
+    'reversed-after-teardown-time',
+    'missing-decision',
+    'missing-teardown',
+  ]) {
+    const f = detectorFixture(t);
+    f.summary.notificationCenterInspection = orderedInspection;
+    const decisionIndex = f.events.findIndex((event) => event.event === 'decision');
+    const teardownIndex = f.events.findIndex((event) => event.event === 'teardown-start');
+    if (variant === 'missing-decision') {
+      f.events.splice(decisionIndex, 1);
+      f.events.splice(
+        f.events.findIndex((event) => event.event === 'teardown-start'),
+        0,
+        f.detectorEvent(0, '2026-01-01T00:00:05.500Z', 'notification-center-inspection', orderedInspection)
+      );
+    } else if (variant === 'missing-teardown') {
+      f.events.splice(teardownIndex, 1);
+      f.events.push(f.detectorEvent(0, '2026-01-01T00:00:05.500Z', 'notification-center-inspection', orderedInspection));
+    } else {
+      const placement = {
+        'before-decision-sequence': { index: decisionIndex, timestamp: '2026-01-01T00:00:04.000Z' },
+        'after-teardown-sequence': { index: teardownIndex + 1, timestamp: '2026-01-01T00:00:06.000Z' },
+        'reversed-before-decision-time': { index: decisionIndex + 1, timestamp: '2026-01-01T00:00:03.900Z' },
+        'reversed-after-teardown-time': { index: teardownIndex, timestamp: '2026-01-01T00:00:06.100Z' },
+      }[variant];
+      f.events.splice(placement.index, 0, f.detectorEvent(0, placement.timestamp, 'notification-center-inspection', orderedInspection));
+    }
+    f.events.forEach((event, index) => {
+      event.sequence = index + 1;
+    });
+    f.summary.detector.timelineRecordCount = f.events.length;
+    f.writeDetector();
+    const [capture] = collectDetectorDiagnostics(f.root, [phase], invocation, true, identity);
+    assert.notEqual(capture.availability, 'available', variant);
+    assert.equal(capture.reason, 'timeline-incomplete', variant);
+  }
 });
 
 test('preserves closed-center and renderer-cleanup screenshot statuses', (t) => {

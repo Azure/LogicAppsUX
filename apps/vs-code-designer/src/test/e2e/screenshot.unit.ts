@@ -677,6 +677,7 @@ async function testRegenerationScreenshotOwnership(
       uncertainInput?: boolean;
       modal?: 'before';
       centerClosed?: boolean;
+      diagnosticInput?: boolean;
       first: 'captured' | 'unavailable';
       center: 'captured' | 'unavailable' | 'skipped';
       reason?: 'capture-unavailable' | 'document-changed' | 'uncertain-input' | 'renderer-cleanup-failed';
@@ -758,12 +759,12 @@ async function testRegenerationScreenshotOwnership(
         attempts: 1,
       },
       {
-        name: 'closed-center-is-not-revealed',
+        name: 'closed-center-is-revealed-diagnostically',
         centerClosed: true,
         first: 'captured',
-        center: 'skipped',
-        centerReason: 'notification-center-not-open',
-        attempts: 1,
+        center: 'captured',
+        attempts: 2,
+        diagnosticInput: true,
       },
       {
         name: 'center-unowned-before',
@@ -848,12 +849,16 @@ async function testRegenerationScreenshotOwnership(
         registration: 'unavailable',
       });
       let samples = 0;
+      const inspections: Record<string, unknown>[] = [];
       const diagnostics = {
         screenshots: { beforeTeardown: initialStatus(), notificationCenter: initialStatus() },
         input: {
           uncertain: test.uncertainInput ?? false,
           pending: 0,
           send: async <T>(_method: string, action: () => Promise<T>) => action(),
+        },
+        recordNotificationCenterInspection: (inspection: Record<string, unknown>) => {
+          inspections.push(inspection);
         },
         stopSampling: async () => undefined,
         stopAndSample: async () => {
@@ -891,13 +896,41 @@ async function testRegenerationScreenshotOwnership(
           42,
           1,
           'unit-workbench-target',
-          test.noAuthority ? undefined : identity.authority
+          test.noAuthority ? undefined : identity.authority,
+          undefined,
+          undefined,
+          async ({ input }) => {
+            if (test.diagnosticInput) {
+              await input.send('Input.dispatchMouseEvent', async () => {
+                cdp.events.push('Input.dispatchMouseEvent');
+                return {};
+              });
+            }
+            return {
+              availability: 'available',
+              target: test.centerClosed ? 'absent' : 'retained',
+              reason: 'inspected',
+              retainedCount: test.centerClosed ? 0 : 4,
+              targetInitializationCount: test.centerClosed ? 0 : 1,
+              otherProjectCount: 0,
+              sampleCount: 1,
+              scrollCount: 0,
+              truncated: false,
+              bottomVerified: Boolean(test.centerClosed),
+              openedByDiagnostic: Boolean(test.centerClosed),
+            };
+          }
         );
         const { beforeTeardown: first, notificationCenter: center } = diagnostics.screenshots;
         assert.strictEqual(first.status, test.first, test.name);
         assert.strictEqual(center.status, test.center, test.name);
         assert.strictEqual(cdp.captureAttempts, test.attempts, test.name);
-        assert.ok(!cdp.events.some((event) => event.startsWith('Input.')), `${test.name} must not send post-decision input`);
+        assert.strictEqual(
+          cdp.events.filter((event) => event.startsWith('Input.')).length,
+          test.diagnosticInput ? 1 : 0,
+          `${test.name} diagnostic input count`
+        );
+        assert.strictEqual(inspections.length, 1, `${test.name} must retain one fixed inspection result`);
         for (const [status, name] of [
           [first, firstName],
           [center, centerName],
@@ -925,6 +958,10 @@ async function testRegenerationScreenshotOwnership(
           assert.ok(cdp.events.indexOf('owner:3') < cdp.events.indexOf('capture:2'));
           assert.ok(cdp.events.indexOf('capture:2') < cdp.events.indexOf('owner:4'));
           assert.ok(cdp.events.indexOf('owner:4') < cdp.events.indexOf(`png:${centerName}`));
+        }
+        if (test.diagnosticInput) {
+          assert.ok(cdp.events.indexOf(`png:${firstName}`) < cdp.events.indexOf('Input.dispatchMouseEvent'));
+          assert.ok(cdp.events.indexOf('Input.dispatchMouseEvent') < cdp.events.indexOf('capture:2'));
         }
       } finally {
         restore();

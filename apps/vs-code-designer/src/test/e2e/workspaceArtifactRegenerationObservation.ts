@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { CdpConnection, CdpConsoleDiagnostic } from './cdpClient';
-import type { CdpEvaluator } from './cdpFormHelpers';
+import type { CdpConnection, CdpConsoleDiagnostic, CdpMainDocumentIdentity } from './cdpClient';
+import type { CdpEvaluator, Point } from './cdpFormHelpers';
 import {
   livePhysicalWorkspaceExpression,
   physicalWorkspacePaths,
@@ -35,6 +35,7 @@ type CaptureStatus = {
 
 interface RawCandidate {
   kind: CandidateKind;
+  retained: boolean;
   text: string;
   displayed: boolean;
   inViewport: boolean;
@@ -80,12 +81,96 @@ export interface SafeWorkbenchState {
   }>;
 }
 
+export type NotificationCenterInspectionReason =
+  | 'not-attempted'
+  | 'inspected'
+  | 'initial-capture-unavailable'
+  | 'renderer-cleanup-failed'
+  | 'uncertain-input'
+  | 'identity-unavailable'
+  | 'workbench-not-active'
+  | 'blocking-or-ambiguous-ui'
+  | 'affordance-unavailable'
+  | 'affordance-ambiguous'
+  | 'open-timeout'
+  | 'inspection-timeout';
+
+export interface NotificationCenterInspection {
+  availability: 'available' | 'unavailable';
+  target: 'retained' | 'absent' | 'unknown';
+  reason: NotificationCenterInspectionReason;
+  retainedCount: number;
+  targetInitializationCount: number;
+  otherProjectCount: number;
+  sampleCount: number;
+  scrollCount: number;
+  truncated: boolean;
+  bottomVerified: boolean;
+  openedByDiagnostic: boolean;
+}
+
 const maxTimelineBytes = 512 * 1024;
 const maxTimelineRecords = 1536;
 const maxConsoleRecords = 128;
 const maxCandidates = 16;
 const sampleIntervalMs = 250;
 const heartbeatIntervalMs = 1000;
+const maxNotificationCenterScrolls = 6;
+
+export const initialNotificationCenterInspection = (): NotificationCenterInspection => ({
+  availability: 'unavailable',
+  target: 'unknown',
+  reason: 'not-attempted',
+  retainedCount: 0,
+  targetInitializationCount: 0,
+  otherProjectCount: 0,
+  sampleCount: 0,
+  scrollCount: 0,
+  truncated: false,
+  bottomVerified: false,
+  openedByDiagnostic: false,
+});
+
+export function isValidNotificationCenterInspection(value: NotificationCenterInspection): boolean {
+  const boundedCount = (count: number, maximum: number): boolean => Number.isSafeInteger(count) && count >= 0 && count <= maximum;
+  const countsValid =
+    boundedCount(value.retainedCount, 64) &&
+    boundedCount(value.targetInitializationCount, 64) &&
+    boundedCount(value.otherProjectCount, 64) &&
+    boundedCount(value.sampleCount, 1_000_000) &&
+    boundedCount(value.scrollCount, maxNotificationCenterScrolls) &&
+    value.targetInitializationCount + value.otherProjectCount <= value.retainedCount;
+  if (!countsValid) {
+    return false;
+  }
+  if (value.availability === 'unavailable') {
+    if (value.target !== 'unknown' || value.targetInitializationCount !== 0 || value.bottomVerified || value.reason === 'inspected') {
+      return false;
+    }
+    return (
+      value.reason !== 'not-attempted' ||
+      (!value.truncated &&
+        !value.openedByDiagnostic &&
+        value.retainedCount === 0 &&
+        value.otherProjectCount === 0 &&
+        value.sampleCount === 0 &&
+        value.scrollCount === 0)
+    );
+  }
+  if (value.reason !== 'inspected') {
+    return false;
+  }
+  if (value.sampleCount === 0) {
+    return false;
+  }
+  if (value.target === 'retained') {
+    return value.targetInitializationCount > 0;
+  }
+  if (value.target === 'absent') {
+    return value.targetInitializationCount === 0 && !value.truncated && value.bottomVerified;
+  }
+  return value.targetInitializationCount === 0 && value.truncated;
+}
 
 /**
  * Raw text crosses only the in-memory CDP response so it can be matched with the
@@ -116,6 +201,7 @@ export const regenerationDiagnosticDomScript = `(() => {
     const g = geometry(container);
     const quick = container.classList.contains('quick-input-widget');
     const notification = container.classList.contains('notification-toast') || container.classList.contains('notification-list-item');
+    const retained = container.classList.contains('notification-list-item');
     const raw = normalize(container.innerText || container.textContent || '');
     const relevant = /Detected an Azure Logic App project|configuration files will be regenerated/i.test(raw);
     const allOptions = Array.from(container.querySelectorAll('a.monaco-button, button, .monaco-text-button, .monaco-list-row, [role="option"]'));
@@ -133,6 +219,7 @@ export const regenerationDiagnosticDomScript = `(() => {
     });
     return {
       kind: quick ? 'quickInput' : notification ? 'notification' : 'dialog',
+      retained,
       text: relevant ? raw.slice(0, 8192) : '',
       displayed: g.displayed,
       inViewport: g.inViewport,
@@ -319,6 +406,340 @@ export function sanitizeRegenerationDiagnosticState(
   };
 }
 
+interface NotificationCenterAffordanceState {
+  centerVisible: boolean;
+  candidateCount: number;
+  truncated: boolean;
+  point: Point | null;
+}
+
+interface NotificationCenterScrollState {
+  centerCount: number;
+  scrollableCount: number;
+  atEnd: boolean;
+  point: Point | null;
+  deltaY: number;
+}
+
+export const notificationCenterAffordanceScript = `(() => {
+  const visible = element => {
+    if (!(element instanceof HTMLElement)) return false;
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' &&
+      rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+  };
+  const point = element => {
+    const rect = element.getBoundingClientRect(), value = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const hit = document.elementFromPoint(value.x, value.y);
+    return hit && (hit === element || element.contains(hit)) ? value : null;
+  };
+  const centerVisible = Array.from(document.querySelectorAll('.notifications-center')).some(visible);
+  const raw = Array.from(document.querySelectorAll(
+    '#status\\\\.notifications, .statusbar-item, .statusbar [aria-label], .statusbar [title]'
+  ));
+  const unique = Array.from(new Set(raw.map(element => element.closest('.statusbar-item') || element)))
+    .filter(element => {
+      if (!visible(element) || element.getAttribute('aria-disabled') === 'true' || element.hasAttribute('disabled')) return false;
+      if (!element.closest('.statusbar, #workbench\\\\.parts\\\\.statusbar')) return false;
+      const label = [
+        element.id,
+        element.getAttribute('aria-label'),
+        element.getAttribute('title'),
+        element.textContent
+      ].filter(Boolean).join(' ').replace(/\\s+/g, ' ').trim().toLowerCase();
+      return /(^|\\s)(no )?notifications?(\\s|$|\\()/.test(label);
+    });
+  const hitTestable = unique.map(element => ({ element, point: point(element) })).filter(value => value.point);
+  return {
+    centerVisible,
+    candidateCount: Math.min(hitTestable.length, 64),
+    truncated: raw.length > 256 || unique.length > 64,
+    point: hitTestable.length === 1 ? hitTestable[0].point : null,
+  };
+})()`;
+
+export const notificationCenterScrollStateScript = `(() => {
+  const visible = element => {
+    if (!(element instanceof HTMLElement)) return false;
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' &&
+      rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+  };
+  const centers = Array.from(document.querySelectorAll('.notifications-center')).filter(visible);
+  if (centers.length !== 1) {
+    return { centerCount: Math.min(centers.length, 64), scrollableCount: 0, atEnd: false, point: null, deltaY: 0 };
+  }
+  const center = centers[0];
+  const primary = Array.from(center.querySelectorAll('.notifications-list-container .monaco-scrollable-element'))
+    .filter(visible).filter(element => element.scrollHeight > element.clientHeight + 1);
+  const fallback = Array.from(center.querySelectorAll('.notifications-list-container .monaco-list, .notifications-list-container'))
+    .filter(visible).filter(element => element.scrollHeight > element.clientHeight + 1);
+  const scrollable = primary.length > 0 ? primary : fallback;
+  if (scrollable.length === 0) {
+    return { centerCount: 1, scrollableCount: 0, atEnd: true, point: null, deltaY: 0 };
+  }
+  if (scrollable.length !== 1) {
+    return {
+      centerCount: 1,
+      scrollableCount: Math.min(scrollable.length, 64),
+      atEnd: false,
+      point: null,
+      deltaY: 0,
+    };
+  }
+  const element = scrollable[0], rect = element.getBoundingClientRect();
+  const value = { x: rect.left + rect.width / 2, y: rect.top + Math.min(rect.height / 2, Math.max(1, rect.height - 2)) };
+  const hit = document.elementFromPoint(value.x, value.y);
+  return {
+    centerCount: 1,
+    scrollableCount: 1,
+    atEnd: element.scrollTop + element.clientHeight >= element.scrollHeight - 1,
+    point: hit && (hit === element || element.contains(hit)) ? value : null,
+    deltaY: Math.max(100, Math.min(800, Math.round(element.clientHeight * 0.8))),
+  };
+})()`;
+
+class NotificationCenterInspectionUnavailable extends Error {
+  constructor(readonly reason: NotificationCenterInspectionReason) {
+    super(reason);
+  }
+}
+
+export async function inspectRegenerationNotificationCenter(options: {
+  cdp: CdpConnection;
+  input: RegenerationInputTracker;
+  expectation: RegularWorkbenchOwnershipExpectation;
+  appDir: string;
+  deadline: number;
+  expectedTargetId: string | undefined;
+  expectedTimeOrigin: number | undefined;
+  expectedContextGeneration: number | undefined;
+  admittedDocument?: CdpMainDocumentIdentity;
+  pinnedPaths?: readonly PhysicalPathIdentity[];
+  sampler?: RegenerationWorkbenchSampler;
+  wait?: (milliseconds: number) => Promise<void>;
+}): Promise<NotificationCenterInspection> {
+  const result = initialNotificationCenterInspection();
+  const sample = options.sampler ?? samplePhysicalRegenerationWorkbench;
+  const wait = options.wait ?? ((milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds)));
+  const remaining = (maximum: number): number => {
+    const value = options.deadline - Date.now();
+    if (value <= 0) {
+      throw new NotificationCenterInspectionUnavailable('inspection-timeout');
+    }
+    return Math.max(1, Math.min(maximum, value));
+  };
+  const assertSafe = (): void => {
+    if (options.input.uncertain || options.input.pending > 0) {
+      throw new NotificationCenterInspectionUnavailable('uncertain-input');
+    }
+    if (
+      !options.expectedTargetId ||
+      options.cdp.targetId !== options.expectedTargetId ||
+      typeof options.expectedTimeOrigin !== 'number' ||
+      !Number.isFinite(options.expectedTimeOrigin) ||
+      options.expectedTimeOrigin <= 0 ||
+      (options.admittedDocument
+        ? options.admittedDocument.targetId !== options.expectedTargetId || options.admittedDocument.invalidated !== false
+        : options.cdp.contextGeneration !== options.expectedContextGeneration)
+    ) {
+      throw new NotificationCenterInspectionUnavailable('identity-unavailable');
+    }
+  };
+  const bounded: CdpEvaluator = {
+    get targetId() {
+      return options.cdp.targetId;
+    },
+    get contextGeneration() {
+      return options.cdp.contextGeneration;
+    },
+    evaluate: (contextId, expression, evaluateOptions) =>
+      options.cdp.evaluate(contextId, expression, { timeoutMs: remaining(Math.min(evaluateOptions?.timeoutMs ?? 750, 750)) }),
+    send: (method, params, sendOptions) =>
+      options.input.send(method, () =>
+        options.cdp.send(method, params, { timeoutMs: remaining(Math.min(sendOptions?.timeoutMs ?? 1000, 1000)) })
+      ),
+  };
+  const read = async () => {
+    assertSafe();
+    const state = await sample(bounded, options.expectation, options.deadline, options.pinnedPaths);
+    assertSafe();
+    if (
+      !state.owner.owned ||
+      state.owner.timeOrigin !== options.expectedTimeOrigin ||
+      state.raw.timeOrigin !== options.expectedTimeOrigin
+    ) {
+      throw new NotificationCenterInspectionUnavailable('identity-unavailable');
+    }
+    const safe = sanitizeRegenerationDiagnosticState(state.raw, state.owner.shellOwned, options.expectedTimeOrigin, options.appDir);
+    if (safe.documentChanged) {
+      throw new NotificationCenterInspectionUnavailable('identity-unavailable');
+    }
+    if (!safe.documentVisible || !safe.documentFocused) {
+      throw new NotificationCenterInspectionUnavailable('workbench-not-active');
+    }
+    if (safe.blockingUiVisible) {
+      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    }
+    result.sampleCount = Math.min(1_000_000, result.sampleCount + 1);
+    result.retainedCount = Math.max(result.retainedCount, state.raw.retainedCount);
+    const retained = state.raw.candidates.filter((candidate) => candidate.retained);
+    result.targetInitializationCount = Math.max(
+      result.targetInitializationCount,
+      retained.filter((candidate) => category(candidate.text, options.appDir, candidate.kind) === 'initialization').length
+    );
+    result.otherProjectCount = Math.max(
+      result.otherProjectCount,
+      retained.filter((candidate) => category(candidate.text, options.appDir, candidate.kind) === 'other-project').length
+    );
+    result.truncated ||= safe.truncated;
+    return safe;
+  };
+  const unavailable = (reason: NotificationCenterInspectionReason): NotificationCenterInspection => ({
+    ...result,
+    availability: 'unavailable',
+    target: 'unknown',
+    reason,
+    targetInitializationCount: 0,
+    bottomVerified: false,
+  });
+  const readAffordance = async (): Promise<NotificationCenterAffordanceState> =>
+    bounded.evaluate<NotificationCenterAffordanceState>(undefined, notificationCenterAffordanceScript, {
+      timeoutMs: remaining(750),
+    });
+  const dispatchAffordanceEvent = async (
+    type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
+    buttons: number,
+    button: 'none' | 'left'
+  ): Promise<void> => {
+    await read();
+    const affordance = await readAffordance();
+    assertSafe();
+    if (affordance.truncated || affordance.candidateCount !== 1 || !affordance.point) {
+      throw new NotificationCenterInspectionUnavailable(
+        affordance.truncated || affordance.candidateCount > 1 ? 'affordance-ambiguous' : 'affordance-unavailable'
+      );
+    }
+    await read();
+    assertSafe();
+    await bounded.send('Input.dispatchMouseEvent', {
+      type,
+      x: affordance.point.x,
+      y: affordance.point.y,
+      button,
+      buttons,
+      ...(type === 'mouseMoved' ? {} : { clickCount: 1 }),
+    });
+  };
+  const dispatchScroll = async (): Promise<NotificationCenterScrollState> => {
+    await read();
+    const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
+      timeoutMs: remaining(750),
+    });
+    assertSafe();
+    if (scroll.centerCount !== 1 || scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    }
+    await read();
+    assertSafe();
+    await bounded.send('Input.dispatchMouseEvent', {
+      type: 'mouseWheel',
+      x: scroll.point.x,
+      y: scroll.point.y,
+      deltaX: 0,
+      deltaY: scroll.deltaY,
+    });
+    return scroll;
+  };
+
+  try {
+    let state = await read();
+    if (!state.centerVisible) {
+      const affordance = await readAffordance();
+      assertSafe();
+      if (affordance.truncated || affordance.candidateCount > 1) {
+        return unavailable('affordance-ambiguous');
+      }
+      if (affordance.centerVisible) {
+        state = await read();
+      } else {
+        if (affordance.candidateCount !== 1 || !affordance.point) {
+          return unavailable('affordance-unavailable');
+        }
+        const click = options.input.beginLogicalInput();
+        try {
+          await dispatchAffordanceEvent('mouseMoved', 0, 'none');
+          await dispatchAffordanceEvent('mousePressed', 1, 'left');
+          click.markPressed();
+          await dispatchAffordanceEvent('mouseReleased', 0, 'left');
+          click.complete();
+        } catch (error) {
+          click.fail();
+          throw error;
+        }
+        const openDeadline = Math.min(options.deadline, Date.now() + 2000);
+        while (Date.now() < openDeadline) {
+          state = await read();
+          if (state.centerVisible) {
+            break;
+          }
+          await wait(Math.min(100, openDeadline - Date.now()));
+        }
+        if (!state.centerVisible) {
+          return unavailable('open-timeout');
+        }
+        result.openedByDiagnostic = true;
+      }
+    }
+
+    for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
+      if (result.targetInitializationCount > 0) {
+        return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
+      }
+      const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
+        timeoutMs: remaining(750),
+      });
+      assertSafe();
+      if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
+        return unavailable('blocking-or-ambiguous-ui');
+      }
+      if (scroll.atEnd) {
+        result.bottomVerified = true;
+        return {
+          ...result,
+          availability: 'available',
+          target: result.truncated ? 'unknown' : 'absent',
+          reason: 'inspected',
+        };
+      }
+      if (index === maxNotificationCenterScrolls) {
+        return { ...result, availability: 'available', target: 'unknown', reason: 'inspected', truncated: true };
+      }
+      if (scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+        return unavailable('blocking-or-ambiguous-ui');
+      }
+      await dispatchScroll();
+      result.scrollCount = Math.min(maxNotificationCenterScrolls, result.scrollCount + 1);
+      await wait(100);
+      state = await read();
+      if (!state.centerVisible) {
+        return unavailable('inspection-timeout');
+      }
+    }
+    return { ...result, availability: 'available', target: 'unknown', reason: 'inspected', truncated: true };
+  } catch (error) {
+    return unavailable(
+      options.input.uncertain || options.input.pending > 0
+        ? 'uncertain-input'
+        : error instanceof NotificationCenterInspectionUnavailable
+          ? error.reason
+          : Date.now() >= options.deadline
+            ? 'inspection-timeout'
+            : 'identity-unavailable'
+    );
+  }
+}
+
 /** Replaces the old raw prompt text/coordinates in the existing observation log. */
 export function summarizeRegenerationPromptObservation(observation: RegenerationPromptObservation, appDir: string, missingCount: number) {
   const candidates = observation.containers.map((container) => {
@@ -368,10 +789,15 @@ export function regenerationPromptObservationForLog(
 export class RegenerationInputTracker {
   pending = 0;
   uncertain = false;
+  pendingInvalid = false;
+  private logicalInputPending = false;
 
   async send<T>(method: string, action: () => Promise<T>): Promise<T> {
     if (!method.startsWith('Input.')) {
       return action();
+    }
+    if (this.uncertain || this.pendingInvalid) {
+      throw new Error('diagnostic input state unavailable');
     }
     this.pending++;
     try {
@@ -383,12 +809,50 @@ export class RegenerationInputTracker {
       this.pending--;
     }
   }
+
+  beginLogicalInput(): {
+    markPressed(): void;
+    complete(): void;
+    fail(): void;
+  } {
+    if (this.uncertain || this.pendingInvalid || this.pending > 0 || this.logicalInputPending) {
+      throw new Error('diagnostic input state unavailable');
+    }
+    this.logicalInputPending = true;
+    let pressed = false;
+    let settled = false;
+    const settle = () => {
+      if (!settled) {
+        settled = true;
+        this.logicalInputPending = false;
+      }
+    };
+    return {
+      markPressed: () => {
+        pressed = true;
+      },
+      complete: settle,
+      fail: () => {
+        if (settled) {
+          return;
+        }
+        this.uncertain = true;
+        this.pendingInvalid ||= pressed;
+        settle();
+      },
+    };
+  }
+
+  hasPendingInput(): boolean {
+    return this.pending > 0 || this.logicalInputPending;
+  }
 }
 
 /** Bounded, best-effort collection; it never throws into the native assertions. */
 export class RegenerationObservation {
   readonly input = new RegenerationInputTracker();
   readonly screenshots: { beforeTeardown: CaptureStatus; notificationCenter: CaptureStatus };
+  notificationCenterInspection = initialNotificationCenterInspection();
   private fd: number | undefined;
   private rootSafe = false;
   private rootIdentity: { dev: number; ino: number } | undefined;
@@ -779,6 +1243,17 @@ export class RegenerationObservation {
     return this.owned && this.finalSampleSucceeded && this.lastSampleAt !== undefined && this.lastSampleAt >= time;
   }
 
+  recordNotificationCenterInspection(inspection: NotificationCenterInspection): void {
+    if (this.notificationCenterInspection.reason !== 'not-attempted') {
+      return;
+    }
+    const safeInspection = isValidNotificationCenterInspection(inspection)
+      ? inspection
+      : { ...initialNotificationCenterInspection(), reason: 'identity-unavailable' as const };
+    this.notificationCenterInspection = { ...safeInspection };
+    this.emit('notification-center-inspection', { ...safeInspection });
+  }
+
   async finish(decisionAt: number): Promise<void> {
     if (!this.stopped) {
       await this.stopAndSample();
@@ -860,8 +1335,13 @@ export class RegenerationObservation {
       },
       notification: this.decisionState,
       notificationSampledAtUtc: this.decisionStateSampledAt === undefined ? null : new Date(this.decisionStateSampledAt).toISOString(),
+      notificationCenterInspection: this.notificationCenterInspection,
       screenshots: this.screenshots,
-      input: { uncertain: this.input.uncertain, pending: this.input.pending > 0 },
+      input: {
+        uncertain: this.input.uncertain,
+        pending: this.input.hasPendingInput(),
+        pendingInvalid: this.input.pendingInvalid,
+      },
     };
     try {
       const currentRoot = fs.lstatSync(this.root);
