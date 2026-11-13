@@ -9,6 +9,7 @@ import { NodeText } from '../primitives/NodeText';
 import type { ConditionNodeKind, NodeHandleVariant } from '../types';
 import type { ActionNodeCardStrings, NodeStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
+import { getSwitchNodeSize } from '../metrics';
 import { categoryNodeIcons } from './categoryIcons';
 import { resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps } from './shared';
@@ -58,6 +59,7 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
       ref={ref}
       width="compact"
       size={kind === 'switch' && handleAxis !== 'vertical' ? 'switch' : 'medium'}
+      bodyHeight={kind === 'switch' && handleAxis !== 'vertical' ? getSwitchNodeSize(caseCount, 'horizontal').height : undefined}
       handleAxis={handleAxis}
       selected={selected}
       status={status}

@@ -12,6 +12,7 @@ const categories = defineMessages({
 
 export interface SharedNodeHoverCardProps {
   children: ReactNode;
+  className?: string;
   category: NodeCategory;
   icon: ReactNode;
   title: string;
@@ -25,6 +26,7 @@ const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
   children,
+  className,
   category,
   icon,
   title,
@@ -80,7 +82,13 @@ export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
     [category, icon, title, cardSubtitle, configured, description, strings]
   );
   return (
-    <NodeHoverCard card={renderCard} disabled={disabled} externalFocusTarget={canvasFocusTarget} triggerRef={triggerRef}>
+    <NodeHoverCard
+      className={className}
+      card={renderCard}
+      disabled={disabled}
+      externalFocusTarget={canvasFocusTarget}
+      triggerRef={triggerRef}
+    >
       {children}
     </NodeHoverCard>
   );

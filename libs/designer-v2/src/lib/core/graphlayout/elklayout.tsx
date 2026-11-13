@@ -36,7 +36,6 @@ export const spacing = {
 
 const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',
-  'elk.direction': 'DOWN',
   'elk.alignment': 'TOP',
   'elk.layered.layering.strategy': 'INTERACTIVE',
   'elk.edge.type': 'DIRECTED',
@@ -70,19 +69,31 @@ const readOnlyOptions: Record<string, string> = {
 const elk = new ELK();
 const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
 const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
+type FlowAxis = 'vertical' | 'horizontal';
+const getFlowAxis = (direction?: string): FlowAxis | undefined =>
+  direction === 'RIGHT' ? 'horizontal' : direction === 'DOWN' ? 'vertical' : undefined;
 
 /** Layout-only tool packing is flattened back to the original graph identities before rendering. */
 const flattenToolGroups = (node: ElkNode): ElkNode => {
   const toolGroup = node.children?.find((child) => child.layoutOptions?.toolGroup === 'true');
-  const children = node.children?.flatMap((child) =>
-    child === toolGroup
-      ? (child.children ?? []).map((tool) => ({
-          ...flattenToolGroups(tool),
-          x: (tool.x ?? 0) + (child.x ?? 0),
-          y: (tool.y ?? 0) + (child.y ?? 0),
-        }))
-      : [flattenToolGroups(child)]
-  );
+  const alignedTools = toolGroup?.children?.length
+    ? (() => {
+        const headerAnchors = toolGroup.children!.map((tool) => {
+          const header = tool.children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+          return (tool.x ?? 0) + (header?.x ?? 0);
+        });
+        const leftAnchor = Math.min(...headerAnchors);
+        return toolGroup.children!.map((tool, index) => {
+          const shift = headerAnchors[index] - leftAnchor;
+          return {
+            ...flattenToolGroups(tool),
+            x: (tool.x ?? 0) - shift + (toolGroup.x ?? 0),
+            y: (tool.y ?? 0) + (toolGroup.y ?? 0),
+          };
+        });
+      })()
+    : [];
+  const children = node.children?.flatMap((child) => (child === toolGroup ? alignedTools : [flattenToolGroups(child)]));
   return {
     ...node,
     children,
@@ -129,7 +140,8 @@ const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reu
 
   let nodeIndex = 1;
 
-  const processChildren = (node: ElkNode) => {
+  const processChildren = (node: ElkNode, inheritedAxis: FlowAxis = 'vertical') => {
+    const layoutAxis = getFlowAxis(node.layoutOptions?.['elk.direction']) ?? inheritedAxis;
     const edgesBySource: Record<string, Edge[]> = {};
     if (node.edges) {
       // Put edge objects into a record by sourceId
@@ -186,6 +198,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reu
           data: {
             label: n.id,
             nodeIndex: nodeIndex++,
+            handleAxis: layoutAxis,
             presentation: agentPanel ? { ...presentation, size: renderedSize } : presentation,
             ...(n.layoutOptions?.branchPorts && { branchPorts: JSON.parse(n.layoutOptions.branchPorts) }),
             ...(n.layoutOptions?.toolsPanel && { toolsPanel: JSON.parse(n.layoutOptions.toolsPanel) }),
@@ -228,7 +241,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reu
         }
 
         if (n?.children) {
-          processChildren(n);
+          processChildren(n, layoutAxis);
         }
 
         // Add edges to the edges array
@@ -256,16 +269,30 @@ const convertWorkflowGraphToElkGraph = (
   node: WorkflowNode,
   useSharedNodeUi = false,
   context: GraphPresentationContext = {},
-  depth = 0
+  depth = 0,
+  inRightwardToolBranch = false
 ): ElkNode => {
-  const presentation = getNodePresentation(node.type, useSharedNodeUi, getWorkflowNodePresentationContext(node, context));
+  const nodeMetadata = context.nodesMetadata?.[removeIdTag(node.id)];
+  const operationType = context.operations?.[removeIdTag(node.id)]?.type?.toLowerCase();
+  const rightwardToolBranch =
+    useSharedNodeUi &&
+    (nodeMetadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ||
+      nodeMetadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ||
+      (inRightwardToolBranch && !['agent', 'foreach', 'until'].includes(operationType ?? '')));
+  const presentation = getNodePresentation(node.type, useSharedNodeUi, {
+    ...getWorkflowNodePresentationContext(node, context),
+    // Admission and canonical rendering must use the same local axis, including nested Switch headers.
+    handleAxis: rightwardToolBranch ? 'horizontal' : 'vertical',
+  });
   if (isWorkflowNode(node)) {
     return {
       id: node.id,
       height: presentation.size?.height ?? node.height,
       width: presentation.size?.width ?? node.width,
       edges: undefined, // node has no edges
-      children: node.children?.map((child) => convertWorkflowGraphToElkGraph(child, useSharedNodeUi, context, depth + 1)),
+      children: node.children?.map((child) =>
+        convertWorkflowGraphToElkGraph(child, useSharedNodeUi, context, depth + 1, rightwardToolBranch)
+      ),
       layoutOptions: {
         nodeType: node?.type ?? defaultNodeType,
         presentation: JSON.stringify(presentation),
@@ -277,8 +304,9 @@ const convertWorkflowGraphToElkGraph = (
     };
   }
 
-  const children = node.children?.map((child) => convertWorkflowGraphToElkGraph(child, useSharedNodeUi, context, depth + 1));
-  const operationType = context.operations?.[removeIdTag(node.id)]?.type?.toLowerCase();
+  const children = node.children?.map((child) =>
+    convertWorkflowGraphToElkGraph(child, useSharedNodeUi, context, depth + 1, rightwardToolBranch)
+  );
   const branchPorts =
     useSharedNodeUi && (operationType === 'if' || operationType === 'switch')
       ? (node.children ?? [])
@@ -290,16 +318,23 @@ const convertWorkflowGraphToElkGraph = (
       : [];
   const header = children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
   if (header && branchPorts.length) {
-    const gap = operationType === 'switch' ? 8 : 16;
+    const gap = operationType === 'switch' ? nodeMetrics.cards.switch.outputGap : 16;
     const total = branchPorts.length * nodeMetrics.handle.size + (branchPorts.length - 1) * gap;
+    const horizontalPorts = rightwardToolBranch;
+    const headerWidth = header.width ?? 160;
+    const headerHeight = header.height ?? nodeMetrics.cards.condition.height;
     header.layoutOptions = { ...header.layoutOptions, branchPorts: JSON.stringify(branchPorts), 'elk.portConstraints': 'FIXED_POS' };
     header.ports = branchPorts.map((port, index) => ({
       id: `${header.id}::${port.id}`,
-      x: (header.width ?? 160) / 2 - total / 2 + nodeMetrics.handle.size / 2 + index * (nodeMetrics.handle.size + gap),
-      y: header.height,
+      x: horizontalPorts
+        ? headerWidth
+        : headerWidth / 2 - total / 2 + nodeMetrics.handle.size / 2 + index * (nodeMetrics.handle.size + gap),
+      y: horizontalPorts
+        ? headerHeight / 2 - total / 2 + nodeMetrics.handle.size / 2 + index * (nodeMetrics.handle.size + gap)
+        : headerHeight,
       width: 0,
       height: 0,
-      layoutOptions: { 'elk.port.side': 'SOUTH' },
+      layoutOptions: { 'elk.port.side': horizontalPorts ? 'EAST' : 'SOUTH' },
     }));
   }
 
@@ -341,7 +376,8 @@ const convertWorkflowGraphToElkGraph = (
         },
       })) ?? [],
     layoutOptions: {
-      'elk.padding': '[top=0,left=20,bottom=40,right=20]', // allow space for add buttons
+      // Terminal add controls consume the output side of the accepted local axis.
+      'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=40]' : '[top=0,left=20,bottom=40,right=20]',
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       // Set node type for layout
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
@@ -350,12 +386,13 @@ const convertWorkflowGraphToElkGraph = (
       ...(context.nodesMetadata?.[removeIdTag(node.id)]?.subgraphType && {
         subgraphType: context.nodesMetadata[removeIdTag(node.id)].subgraphType!,
       }),
-      ...(filteredEdges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
-        'elk.layered.nodePlacement.strategy': 'SIMPLE',
-        'elk.layered.spacing.edgeNodeBetweenLayers': spacing.onlyEdge,
-        'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
-        'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
-      }),
+      ...(filteredEdges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) &&
+        !rightwardToolBranch && {
+          'elk.layered.nodePlacement.strategy': 'SIMPLE',
+          'elk.layered.spacing.edgeNodeBetweenLayers': spacing.onlyEdge,
+          'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
+          'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
+        }),
       // If graph doesn't need space at the bottom for an add button, reduce padding
       ...(node.children?.every((child) => nestGraphTypes.includes(child.type)) && {
         'elk.padding': '[top=0,left=20,bottom=20,right=20]',
@@ -364,7 +401,7 @@ const convertWorkflowGraphToElkGraph = (
       ...(node.children?.length === 1 &&
         (node.children[0].type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE ||
           node.children[0].type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE) && {
-          'elk.padding': '[top=0,left=20,bottom=60,right=20]',
+          'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=60]' : '[top=0,left=20,bottom=60,right=20]',
         }),
       // If graph has a footer, reduce bottom padding further
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
@@ -378,6 +415,9 @@ const convertWorkflowGraphToElkGraph = (
             : nodeMetrics.frame.minBodyHeight
         })`,
       }),
+      // The root workflow stays DOWN; only expanded tool/action branch graphs use RIGHT.
+      'elk.direction': rightwardToolBranch ? 'RIGHT' : 'DOWN',
+      ...(rightwardToolBranch && { 'elk.hierarchyHandling': 'SEPARATE_CHILDREN' }),
     },
   };
   if (presentation.shared && operationType === 'agent' && header) {
@@ -418,6 +458,7 @@ const convertWorkflowGraphToElkGraph = (
           'elk.padding': collapsed ? '[top=0,left=0,bottom=0,right=0]' : '[top=52,left=16,bottom=16,right=16]',
           'elk.layered.spacing.nodeNodeBetweenLayers': '12',
           'elk.layered.spacing.edgeNodeBetweenLayers': '12',
+          'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP',
           'elk.nodeSize.constraints': 'MINIMUM_SIZE',
           'elk.nodeSize.minimum': `(${nodeMetrics.cards.agent.width},${collapsed ? collapsedPanelHeight : 0})`,
           'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',

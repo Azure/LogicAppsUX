@@ -43,6 +43,7 @@ export interface SharedActionCardProps extends ActionCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolKind?: NodeToolKind;
+  handleAxis?: 'vertical' | 'horizontal';
 }
 
 /** Host-only adapter: no graph/store/service/localization contracts leak into the presentation package. */
@@ -59,6 +60,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     description,
     isMonitoringView,
     toolKind,
+    handleAxis = 'vertical',
     drag,
     dragPreview,
     rootRef,
@@ -208,7 +210,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       statusDetail={runData?.duration}
       strings={cardStrings}
       {...(toolKind ? { kind: toolKind, size: 'small' as const } : { handles: false })}
-      handleAxis="vertical"
+      handleAxis={handleAxis}
       role="button"
       tabIndex={nodeIndex}
       id={`msla-node-${id}`}

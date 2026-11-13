@@ -32,7 +32,7 @@ import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/d
 import { EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
 import { AddFilled } from '@fluentui/react-icons';
 import { terminalConnectionLength, useConnectionStyles } from './connections.styles';
-import { Tooltip } from '@fluentui/react-components';
+import { mergeClasses, Tooltip } from '@fluentui/react-components';
 
 export interface DropZoneProps {
   graphId: string;
@@ -42,15 +42,17 @@ export interface DropZoneProps {
   tabIndex?: number;
   isRevealed?: boolean;
   sharedPresentation?: boolean;
+  axis?: 'vertical' | 'horizontal';
 }
 
 export const DropZone: React.FC<DropZoneProps> = memo(
-  ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0, isRevealed, sharedPresentation }) => {
+  ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0, isRevealed, sharedPresentation, axis = 'vertical' }) => {
     const intl = useIntl();
     const dispatch = useDispatch<AppDispatch>();
     const isA2AWorkflow = useIsA2AWorkflow();
     const enabled = useSharedNodeUi();
     const shared = sharedPresentation ?? enabled;
+    const horizontal = shared && axis === 'horizontal';
     const readOnly = useReadOnly();
     const styles = useConnectionStyles();
     const [hovered, setHovered] = useState(false);
@@ -269,10 +271,10 @@ export const DropZone: React.FC<DropZoneProps> = memo(
               {terminal ? (
                 <>
                   <NodeLine
-                    className={styles.terminalLine}
+                    className={mergeClasses(styles.terminalLine, horizontal && styles.terminalLineHorizontal)}
                     variant={terminalVariant}
                     length={terminalConnectionLength}
-                    orientation="vertical"
+                    orientation={horizontal ? 'horizontal' : 'vertical'}
                   />
                   <Tooltip content={tooltipText} relationship="label">
                     <NodeAddButton

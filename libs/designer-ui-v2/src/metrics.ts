@@ -2,3 +2,4 @@ import { nodeMetrics as canonicalNodeMetrics, nodeHoverCardTiming as canonicalNo
 
 export const nodeMetrics = canonicalNodeMetrics;
 export const nodeHoverCardTiming = canonicalNodeHoverCardTiming;
+export { getSwitchNodeSize } from './nodes/metrics';
