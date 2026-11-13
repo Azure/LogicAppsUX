@@ -13,14 +13,17 @@ import {
 import { SettingTokenField, type ChangeState } from '@microsoft/designer-ui';
 import {
   ConnectionReferenceKeyFormat,
+  ConnectionService,
   InitConnectionService,
   InitLoggerService,
   InitExperimentationServiceService,
   InitOperationManifestService,
   InitWorkflowService,
   LOCAL_STORAGE_KEYS,
+  LogEntryLevel,
   ManifestParser,
   OperationManifestService,
+  SerializationErrorCode,
   type Connection,
   type Connector,
   type LogicAppsV2,
@@ -45,11 +48,16 @@ import connectionsReducer, {
 } from '../../../state/connection/connectionSlice';
 import { getConnectionReferenceForNodeId } from '../../../state/connection/connectionSelector';
 import { initializeServices } from '../../../state/designerOptions/designerOptionsSlice';
-import operationsReducer, { ErrorLevel, initializeNodes, updateErrorDetails } from '../../../state/operation/operationMetadataSlice';
+import operationsReducer, {
+  ErrorLevel,
+  initializeNodes,
+  updateErrorDetails,
+  updateNodeParameters,
+} from '../../../state/operation/operationMetadataSlice';
 import panelReducer from '../../../state/panel/panelSlice';
 import tokensReducer from '../../../state/tokens/tokensSlice';
 import undoRedoReducer from '../../../state/undoRedo/undoRedoSlice';
-import workflowReducer from '../../../state/workflow/workflowSlice';
+import workflowReducer, { setIsWorkflowDirty } from '../../../state/workflow/workflowSlice';
 import workflowParametersReducer, { updateParameter } from '../../../state/workflowparameters/workflowparametersSlice';
 import { resetWorkflowState } from '../../../state/global';
 import { store, type RootState } from '../../../store';
@@ -236,10 +244,15 @@ const createDeferred = <T>(): Deferred<T> => {
   return { promise, resolve };
 };
 
-const createConnectionService = (connections: Connection[] | Promise<Connection[]>) => {
+const createConnectionService = (
+  connections: Connection[] | Promise<Connection[]>,
+  connectionResource: Connection | Promise<Connection> | null = null
+) => {
   const getConnections = vi.fn().mockImplementation(() => connections);
+  const getConnection = vi.fn().mockImplementation(() => connectionResource);
   return {
     getConnections,
+    getConnection,
   } as const;
 };
 
@@ -340,7 +353,6 @@ const observeProviderLifecycle = () => {
   const initialize = operationDeserializer.initializeDynamicDataInNodes;
   const runs: {
     nodeIds: string[] | undefined;
-    dispatch: typeof store.dispatch;
     actions: any[];
     settled: Promise<PromiseSettledResult<void>>;
   }[] = [];
@@ -356,7 +368,7 @@ const observeProviderLifecycle = () => {
       (value): PromiseFulfilledResult<void> => ({ status: 'fulfilled', value }),
       (reason): PromiseRejectedResult => ({ status: 'rejected', reason })
     );
-    runs.push({ nodeIds, dispatch: observedDispatch, actions, settled });
+    runs.push({ nodeIds, actions, settled });
     return promise;
   });
   return { runs, refreshes: vi.spyOn(parameterHelpers, 'updateDynamicDataInNode') };
@@ -370,11 +382,9 @@ const settleProviderRuns = async (observation: ReturnType<typeof observeProvider
 
 const ProviderLifecycleProbe = ({
   connectionService,
-  shouldValidate,
   mounts,
 }: {
   connectionService: unknown;
-  shouldValidate: boolean;
   mounts: { mounted: number; unmounted: number };
 }) => {
   useEffect(() => {
@@ -383,12 +393,10 @@ const ProviderLifecycleProbe = ({
       mounts.unmounted += 1;
     };
   }, [mounts]);
-  // A descendant passive effect must observe the replacement registered by its parent's layout effect.
+  // Observe registration ordering without initiating validation on behalf of production.
   useEffect(() => {
-    if (shouldValidate) {
-      void operationDeserializer.initializeDynamicDataInNodes(store.getState, store.dispatch, [nodeId]);
-    }
-  }, [connectionService, shouldValidate]);
+    expect(ConnectionService()).toBe(connectionService);
+  }, [connectionService]);
   return null;
 };
 
@@ -1075,6 +1083,187 @@ describe('ServiceProvider runtime connection expressions', () => {
     expect(validService.getConnections).toHaveBeenCalledTimes(1);
   });
 
+  it.each(['missing managed identity', 'connection setup denied'])(
+    'preserves %s recorded while a valid lookup is pending and keeps static serialization blocked',
+    async (message) => {
+      const state = await buildState('Sql');
+      const deferred = createDeferred<Connection | null>();
+      const lookup = vi.spyOn(connectionQueries, 'getConnection').mockReturnValue(deferred.promise);
+      const store = makeStore(state);
+      const validation = initializeDynamicDataInNodes(store.getState, store.dispatch, [nodeId]);
+      await waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+      const errorInfo = { level: ErrorLevel.Connection, message };
+      store.dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo,
+        })
+      );
+      deferred.resolve({ id: reference.connection.id, properties: {} } as Connection);
+      await validation;
+      expect(store.getState().operations.errors.Query?.[ErrorLevel.Connection]).toEqual(errorInfo);
+      await expect(serializeWorkflow(store.getState())).rejects.toMatchObject({ code: SerializationErrorCode.INVALID_CONNECTIONS });
+    }
+  );
+
+  it.each(['missing managed identity', 'connection setup denied'])(
+    'preserves %s recorded while an invalid lookup is pending',
+    async (message) => {
+      const state = await buildState('Sql');
+      const deferred = createDeferred<Connection | null>();
+      const lookup = vi.spyOn(connectionQueries, 'getConnection').mockReturnValue(deferred.promise);
+      const store = makeStore(state);
+      const validation = initializeDynamicDataInNodes(store.getState, store.dispatch, [nodeId]);
+      await waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+      const errorInfo = { level: ErrorLevel.Connection, message };
+      store.dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo,
+        })
+      );
+      deferred.resolve(null);
+      await validation;
+      expect(store.getState().operations.errors.Query?.[ErrorLevel.Connection]).toEqual(errorInfo);
+    }
+  );
+
+  it.each([true, false])('uses current service resource validity after a list miss (previous valid=%s)', async (previousValid) => {
+    const state = await buildState('Sql');
+    const store = makeStore(state);
+    const managedConnectorId = '/managedApis/sql';
+    const managedConnectionId = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Web/connections/sql';
+    const valid = { id: managedConnectionId, properties: {} } as Connection;
+    const invalid = { id: managedConnectionId, properties: { statuses: [{ status: 'Error' }] } } as Connection;
+    const previousService = createConnectionService([], previousValid ? valid : invalid);
+    const replacementService = createConnectionService([], previousValid ? invalid : valid);
+    const managedReference = { api: { id: managedConnectorId }, connection: { id: managedConnectionId } };
+    const managedOperation = { ...operationInfo, type: 'ApiConnection', connectorId: managedConnectorId };
+
+    await registerConnectionService(store, previousService);
+    expect(await isConnectionReferenceValid(managedOperation, managedReference)).toBe(previousValid);
+    expect(previousService.getConnection).toHaveBeenCalledTimes(1);
+    getReactQueryClient().setQueryData(['unrelated-query'], { keep: true });
+    await registerConnectionService(store, replacementService);
+    expect(await isConnectionReferenceValid(managedOperation, managedReference)).toBe(!previousValid);
+    expect(replacementService.getConnection).toHaveBeenCalledTimes(1);
+    expect(getReactQueryClient().getQueryData(['unrelated-query'])).toEqual({ keep: true });
+  });
+
+  it.each(['mapping', 'reference', 'service', 'unchanged'] as const)(
+    'keeps deferred schema writes owned by the current connection after a %s transition',
+    async (transition) => {
+      const currentStore = await initializeDynamicBodyStore();
+      currentStore.dispatch(setNodeConnectionMapping({ nodeId, mapping: 'Sql' }));
+      vi.spyOn(connectionQueries, 'getConnection').mockResolvedValue({ id: reference.connection.id, properties: {} } as Connection);
+      const deferred = createDeferred<OpenAPIV2.SchemaObject>();
+      const schemaRequest = vi
+        .spyOn(dynamicQueries, 'getDynamicSchemaProperties')
+        .mockReturnValueOnce(deferred.promise)
+        .mockResolvedValue(bodySchema);
+      const oldDispatch = vi.fn(currentStore.dispatch);
+      const pendingValidation = initializeDynamicDataInNodes(currentStore.getState, oldDispatch, [nodeId]);
+      await waitFor(() => expect(schemaRequest).toHaveBeenCalledTimes(1));
+      let selection: Promise<unknown> | undefined;
+      if (transition === 'mapping') {
+        selection = currentStore
+          .dispatch(
+            updateNodeConnectionExpression({
+              nodeId,
+              expression: "@outputs('Resolve_Connection')",
+              designTimeReferenceKey: 'Sql',
+            })
+          )
+          .unwrap();
+        await waitFor(() => expect(isExpressionConnectionMapping(currentStore.getState().connections.connectionsMapping.Query)).toBe(true));
+        expect(getConnectionReference(currentStore.getState().connections, nodeId)).toBe(reference);
+      } else if (transition === 'reference') {
+        currentStore.dispatch(initializeConnectionReferences({ Sql: { ...reference } }));
+      } else if (transition === 'service') {
+        InitConnectionService(createConnectionService([]) as any);
+      }
+
+      const inputsAfterTransition = currentStore.getState().operations.inputParameters.Query;
+      oldDispatch.mockClear();
+      deferred.resolve(bodySchema);
+      await pendingValidation;
+      await selection;
+      const nodeWrites = oldDispatch.mock.calls.filter(([action]) => (action as any)?.payload?.nodeId === nodeId);
+      if (transition === 'unchanged') {
+        expect(nodeWrites.length).toBeGreaterThan(0);
+        expect(currentStore.getState().operations.inputParameters.Query).not.toBe(inputsAfterTransition);
+        expect(currentStore.getState().operations.inputParameters.Query.parameterGroups.default.parameters).toContainEqual(
+          expect.objectContaining({ parameterKey: 'inputs.$.body.message' })
+        );
+      } else {
+        expect(nodeWrites).toEqual([]);
+        if (transition !== 'mapping') {
+          expect(currentStore.getState().operations.inputParameters.Query).toBe(inputsAfterTransition);
+        }
+      }
+    }
+  );
+
+  it.each([true, false])(
+    'ignores pending static validation after expression selection with the same reference (old valid=%s)',
+    async (oldValid) => {
+      const state = await buildState('Sql');
+      const deferred = createDeferred<Connection | null>();
+      const valid = { id: reference.connection.id, properties: {} } as Connection;
+      const lookup = vi.spyOn(connectionQueries, 'getConnection').mockReturnValueOnce(deferred.promise).mockResolvedValue(valid);
+      const store = makeStore(state);
+      const oldDispatch = vi.fn(store.dispatch);
+      const refresh = vi.spyOn(parameterHelpers, 'updateDynamicDataInNode');
+      const oldValidation = initializeDynamicDataInNodes(store.getState, oldDispatch, [nodeId]);
+      await waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+
+      await store
+        .dispatch(
+          updateNodeConnectionExpression({
+            nodeId,
+            expression: "@outputs('Resolve_Connection')",
+            designTimeReferenceKey: 'Sql',
+          })
+        )
+        .unwrap();
+      expect(getConnectionReference(store.getState().connections, nodeId)).toBe(reference);
+      expect(store.getState().connections.connectionsMapping.Query).toEqual({
+        kind: 'expression',
+        expression: "@outputs('Resolve_Connection')",
+        designTimeReferenceKey: 'Sql',
+      });
+
+      const refreshCountAfterSwitch = refresh.mock.calls.length;
+      deferred.resolve(oldValid ? valid : null);
+      await oldValidation;
+      expect(oldDispatch.mock.calls.filter(([action]) => (action as any)?.type === updateErrorDetails.type)).toEqual([]);
+      expect(refresh).toHaveBeenCalledTimes(refreshCountAfterSwitch);
+      expect(store.getState().operations.errors.Query?.[ErrorLevel.Connection]).toBeUndefined();
+    }
+  );
+
+  it('refreshes connector caches when returning to a thunk-registered service after direct service replacement', async () => {
+    const state = await buildState('Sql');
+    const store = makeStore(state);
+    const managedConnectorId = '/managedApis/sql';
+    const previousService = createConnectionService(Promise.resolve([]));
+    const directReplacementService = createConnectionService(
+      Promise.resolve([{ id: '/managedApis/sql/connections/direct' } as Connection])
+    );
+
+    await registerConnectionService(store, previousService);
+    expect(await connectionQueries.getConnectionsForConnector(managedConnectorId)).toEqual([]);
+
+    InitConnectionService(directReplacementService as any);
+    connectionQueries.clearConnectionCaches();
+    await connectionQueries.getConnectionsForConnector(managedConnectorId);
+    expect(directReplacementService.getConnections).toHaveBeenCalledTimes(1);
+
+    await registerConnectionService(store, previousService);
+    expect(await connectionQueries.getConnectionsForConnector(managedConnectorId)).toEqual([]);
+    expect(previousService.getConnections).toHaveBeenCalledTimes(2);
+  });
+
   it('keeps the current invalid-connection error when an older valid check resolves after same-alias reference replacement', async () => {
     const firstServiceConnections = createDeferred<Connection[]>();
     const initialValidService = createConnectionService(firstServiceConnections.promise);
@@ -1192,7 +1381,7 @@ describe('ServiceProvider runtime connection expressions', () => {
       workflowId,
       'provider-lifecycle',
       emptyService,
-      createElement(ProviderLifecycleProbe, { connectionService: emptyService, shouldValidate: false, mounts: mountStats })
+      createElement(ProviderLifecycleProbe, { connectionService: emptyService, mounts: mountStats })
     );
     await waitFor(() => expect(observation.runs).toHaveLength(1));
     await settleProviderRuns(observation);
@@ -1205,6 +1394,24 @@ describe('ServiceProvider runtime connection expressions', () => {
         errorInfo: { level: ErrorLevel.Default, message: 'preserve non-connection errors' },
       })
     );
+    const queryGroup = Object.entries(store.getState().operations.inputParameters.Query.parameterGroups).find(([, group]) =>
+      group.parameters.some((parameter) => parameter.parameterName === 'query')
+    )!;
+    const queryParameter = queryGroup[1].parameters.find((parameter) => parameter.parameterName === 'query')!;
+    store.dispatch(
+      updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            groupId: queryGroup[0],
+            parameterId: queryParameter.id,
+            propertiesToUpdate: { value: [{ id: 'user-edit', type: 'literal', value: 'edited without saving' }] },
+          },
+        ],
+      })
+    );
+    store.dispatch(setIsWorkflowDirty(true));
+    const graphBeforeReplacement = store.getState().workflow.graph;
     getReactQueryClient().setQueryData(['unrelated-query'], { keep: true });
 
     const renderTransition = () =>
@@ -1217,7 +1424,7 @@ describe('ServiceProvider runtime connection expressions', () => {
           createElement(
             BJSWorkflowProvider,
             { workflow, workflowId },
-            createElement(ProviderLifecycleProbe, { connectionService: validService, shouldValidate: true, mounts: mountStats })
+            createElement(ProviderLifecycleProbe, { connectionService: validService, mounts: mountStats })
           )
         )
       );
@@ -1230,6 +1437,14 @@ describe('ServiceProvider runtime connection expressions', () => {
     expect(getConnectionReference(store.getState().connections, nodeId)).toBe(reference);
 
     expect(store.getState().operations.errors.Query?.[ErrorLevel.Default]?.message).toBe('preserve non-connection errors');
+    expect(store.getState().workflow.graph).toBe(graphBeforeReplacement);
+    expect(store.getState().workflow.isDirty).toBe(true);
+    expect(
+      store
+        .getState()
+        .operations.inputParameters.Query.parameterGroups[queryGroup[0]].parameters.find((parameter) => parameter.id === queryParameter.id)
+        ?.value
+    ).toEqual([{ id: 'user-edit', type: 'literal', value: 'edited without saving' }]);
     expect(getReactQueryClient().getQueryData(['unrelated-query'])).toEqual({ keep: true });
     expect(getReactQueryClient().getQueryData(connectionsQueryKey)).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: reference.connection.id })])
@@ -1240,15 +1455,116 @@ describe('ServiceProvider runtime connection expressions', () => {
     const lookupCount = validService.getConnections.mock.calls.length;
     const connectionActions = observation.runs[1].actions.filter((action) => action.type === updateErrorDetails.type);
     expect(connectionActions).toContainEqual(updateErrorDetails({ id: nodeId, clearLevels: [ErrorLevel.Connection] }));
-    expect(
-      observation.refreshes.mock.calls.some(([id, , , , , dispatch]) => id === nodeId && dispatch === observation.runs[1].dispatch)
-    ).toBe(true);
+    expect(observation.refreshes.mock.calls.filter(([id]) => id === nodeId)).toHaveLength(1);
     rerender(renderTransition());
     await settleProviderRuns(observation);
     expect(observation.runs).toHaveLength(2);
     expect(getReactQueryClient().getQueryData(connectionsQueryKey)).toBe(cachedData);
     expect(validService.getConnections).toHaveBeenCalledTimes(lookupCount);
     expect(mountStats).toEqual({ mounted: 1, unmounted: 0 });
+  });
+
+  it.each([false, true])('validates a simultaneous workflow/service transition once (host acknowledgement=%s)', async (acknowledgement) => {
+    store.dispatch(resetWorkflowState());
+    getReactQueryClient().clear();
+    const observation = observeProviderLifecycle();
+    const oldService = createConnectionService([]);
+    const validService = createConnectionService([{ id: reference.connection.id, properties: {} } as Connection]);
+    const workflow = buildWorkflowForProviderLifecycle(reference);
+    const { rerender } = renderWithRealProviders(workflow, 'single-transition', 'single-transition', oldService);
+    await waitFor(() => expect(observation.runs).toHaveLength(1));
+    await settleProviderRuns(observation);
+    const nextWorkflow = acknowledgement ? workflow : { ...workflow, parameters: { changed: { type: 'String', value: 'new version' } } };
+
+    rerender(
+      createElement(
+        ReactQueryProvider,
+        {},
+        createElement(
+          DesignerProvider,
+          { id: 'single-transition', options: getProviderOptions(validService) },
+          createElement(
+            BJSWorkflowProvider,
+            {
+              workflow: nextWorkflow,
+              workflowId: 'single-transition',
+              ...(acknowledgement ? { externallyAppliedWorkflow: nextWorkflow } : {}),
+            },
+            createElement('div', { 'data-testid': 'provider-ready' })
+          )
+        )
+      )
+    );
+    await waitFor(() => expect(validService.getConnections).toHaveBeenCalledTimes(1));
+    await settleProviderRuns(observation);
+    expect(observation.runs).toHaveLength(2);
+    expect(store.getState().operations.errors.Query?.[ErrorLevel.Connection]).toBeUndefined();
+  });
+
+  it('does not revalidate a replacement service for an unsupported multi-trigger workflow', async () => {
+    store.dispatch(resetWorkflowState());
+    getReactQueryClient().clear();
+    const observation = observeProviderLifecycle();
+    const initialService = createConnectionService([]);
+    const replacementService = createConnectionService([]);
+    const workflow = buildWorkflowForProviderLifecycle(reference);
+    const { rerender } = renderWithRealProviders(workflow, 'multi-trigger', 'multi-trigger', initialService);
+    await waitFor(() => expect(observation.runs).toHaveLength(1));
+    await settleProviderRuns(observation);
+    const unsupportedWorkflow = {
+      ...workflow,
+      definition: { ...workflow.definition, triggers: { ...workflow.definition.triggers, second: workflow.definition.triggers!.manual } },
+    };
+    rerender(
+      createElement(
+        ReactQueryProvider,
+        {},
+        createElement(
+          DesignerProvider,
+          { id: 'multi-trigger', options: getProviderOptions(replacementService) },
+          createElement(BJSWorkflowProvider, { workflow: unsupportedWorkflow, workflowId: 'multi-trigger' })
+        )
+      )
+    );
+    await waitFor(() => expect(store.getState().workflow.hasUnsupportedMultipleTriggers).toBe(true));
+    expect(observation.runs).toHaveLength(1);
+    expect(replacementService.getConnections).not.toHaveBeenCalled();
+  });
+
+  it('reports service-only validation rejection at the logger boundary', async () => {
+    store.dispatch(resetWorkflowState());
+    getReactQueryClient().clear();
+    const observation = observeProviderLifecycle();
+    const initialService = createConnectionService([]);
+    const replacementService = createConnectionService([]);
+    const workflow = buildWorkflowForProviderLifecycle(reference);
+    const { rerender } = renderWithRealProviders(workflow, 'validation-error', 'validation-error', initialService);
+    await waitFor(() => expect(observation.runs).toHaveLength(1));
+    await settleProviderRuns(observation);
+    vi.mocked(operationDeserializer.initializeDynamicDataInNodes).mockRejectedValueOnce(new Error('validation unavailable'));
+    const log = vi.fn();
+    const options = getProviderOptions(replacementService);
+    options.services.loggerService = { log } as any;
+    rerender(
+      createElement(
+        ReactQueryProvider,
+        {},
+        createElement(
+          DesignerProvider,
+          { id: 'validation-error', options },
+          createElement(BJSWorkflowProvider, { workflow, workflowId: 'validation-error' })
+        )
+      )
+    );
+    await waitFor(() =>
+      expect(log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          level: LogEntryLevel.Error,
+          area: 'BJSWorkflowProvider:ConnectionValidation',
+          message: expect.stringContaining('validation unavailable'),
+        })
+      )
+    );
   });
 
   it('ignores a deferred stale empty result from an older provider service after a newer valid transition with the same alias/reference object', async () => {
@@ -1269,7 +1585,7 @@ describe('ServiceProvider runtime connection expressions', () => {
       workflowId,
       'provider-lifecycle',
       oldService,
-      createElement(ProviderLifecycleProbe, { connectionService: oldService, shouldValidate: false, mounts: mountStats })
+      createElement(ProviderLifecycleProbe, { connectionService: oldService, mounts: mountStats })
     );
     await waitFor(() => expect(observation.runs).toHaveLength(1));
     await waitFor(() => expect(oldService.getConnections).toHaveBeenCalledWith(connectorId, getReactQueryClient()));
@@ -1285,7 +1601,7 @@ describe('ServiceProvider runtime connection expressions', () => {
           createElement(
             BJSWorkflowProvider,
             { workflow, workflowId },
-            createElement(ProviderLifecycleProbe, { connectionService: validService, shouldValidate: true, mounts: mountStats })
+            createElement(ProviderLifecycleProbe, { connectionService: validService, mounts: mountStats })
           )
         )
       )
@@ -1299,6 +1615,7 @@ describe('ServiceProvider runtime connection expressions', () => {
     const cacheAfterValidTransition = getReactQueryClient().getQueryData(connectionsQueryKey);
     expect(cacheAfterValidTransition).toEqual(expect.arrayContaining([expect.objectContaining({ id: reference.connection.id })]));
     const operationsAfterValidTransition = store.getState().operations;
+    const refreshCountAfterValidTransition = observation.refreshes.mock.calls.length;
 
     oldServiceDeferred.resolve([]);
     await oldServiceDeferred.promise;
@@ -1310,9 +1627,7 @@ describe('ServiceProvider runtime connection expressions', () => {
     expect(
       observation.runs[0].actions.filter((action) => action.type === updateErrorDetails.type && action.payload?.id === nodeId)
     ).toEqual([]);
-    expect(
-      observation.refreshes.mock.calls.filter(([id, , , , , dispatch]) => id === nodeId && dispatch === observation.runs[0].dispatch)
-    ).toEqual([]);
+    expect(observation.refreshes).toHaveBeenCalledTimes(refreshCountAfterValidTransition);
     expect(observation.runs[1].actions).toContainEqual(updateErrorDetails({ id: nodeId, clearLevels: [ErrorLevel.Connection] }));
     expect(mountStats).toEqual({ mounted: 1, unmounted: 0 });
   });

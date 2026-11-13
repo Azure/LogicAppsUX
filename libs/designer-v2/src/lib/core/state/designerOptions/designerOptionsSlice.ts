@@ -27,6 +27,9 @@ import {
   InitCognitiveServiceService,
   InitCopilotWorkflowEditorService,
   InitResourceService,
+  ConnectionService,
+  AssertionException,
+  AssertionErrorCode,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -56,7 +59,16 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   },
 };
 
-let lastRegisteredConnectionService: ServiceOptions['connectionService'] | undefined;
+const getRegisteredConnectionService = () => {
+  try {
+    return ConnectionService();
+  } catch (error) {
+    if (error instanceof AssertionException && error.code === AssertionErrorCode.SERVICE_NOT_INITIALIZED) {
+      return undefined;
+    }
+    throw error;
+  }
+};
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',
@@ -87,12 +99,12 @@ export const initializeServices = createAsyncThunk(
     copilotWorkflowEditorService,
     resourceService,
   }: ServiceOptions) => {
-    const shouldRefreshConnectionCaches = !!lastRegisteredConnectionService && lastRegisteredConnectionService !== connectionService;
+    const activeRegisteredConnectionService = getRegisteredConnectionService();
+    const shouldRefreshConnectionCaches = !!activeRegisteredConnectionService && activeRegisteredConnectionService !== connectionService;
     if (shouldRefreshConnectionCaches) {
       // Cached connections belong to the service snapshot that produced them.
       clearConnectionCaches();
     }
-    lastRegisteredConnectionService = connectionService;
 
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {

@@ -1,5 +1,6 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { initializeDynamicDataInNodes } from './actions/bjsworkflow/operationdeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initCustomCode } from './state/customcode/customcodeSlice';
 import {
@@ -11,15 +12,15 @@ import {
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { resetWorkflowState } from './state/global';
 import { setWorkflowKind, setRunInstance, setHasUnsupportedMultipleTriggers, initWorkflowSpec } from './state/workflow/workflowSlice';
-import type { AppDispatch } from './store';
+import type { AppDispatch, RootState } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { hasMultipleTriggers } from '@microsoft/logic-apps-shared';
+import { hasMultipleTriggers, LoggerService, LogEntryLevel } from '@microsoft/logic-apps-shared';
 import { useCustomCompareEffect } from '@react-hookz/web';
 import isEqual from 'lodash.isequal';
 import type React from 'react';
 import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { isCancelledError, useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
 import { initializeDiscoveryPanelFavoriteOperations } from './actions/bjsworkflow/initialize';
@@ -60,11 +61,13 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   externallyAppliedWorkflow,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const connectionService = useContext(ProviderWrappedContext)?.connectionService;
 
   const isReadOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const initialized = useRef(false);
   const acknowledgedWorkflow = useRef<Workflow>();
+  const lastValidatedConnectionService = useRef(connectionService);
 
   // Computed synchronously during render (not in the effect below) and exposed via context so
   // Designer can pick the fallback on its very first render for this workflow -- see
@@ -85,6 +88,8 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
       if (alreadyApplied) {
         return;
       }
+      // Graph initialization already validates this service; do not repeat it in the service-only effect.
+      lastValidatedConnectionService.current = connectionService;
 
       // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
       // with more than one trigger. Detect this before initializing any graph/designer state so the
@@ -116,6 +121,31 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     [workflowId, runInstance, workflow, customCode, isReadOnly, isMonitoringView, isUnsupportedMultipleTriggers, externallyAppliedWorkflow],
     isEqual
   );
+
+  useEffect(() => {
+    if (lastValidatedConnectionService.current === connectionService) {
+      return;
+    }
+    lastValidatedConnectionService.current = connectionService;
+    if (isUnsupportedMultipleTriggers) {
+      return;
+    }
+
+    // Revalidate current nodes without rebuilding the graph or discarding unsaved inputs.
+    dispatch(async (innerDispatch, getState) => {
+      try {
+        await initializeDynamicDataInNodes(getState as () => RootState, innerDispatch);
+      } catch (error) {
+        if (!isCancelledError(error)) {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: 'BJSWorkflowProvider:ConnectionValidation',
+            message: `Failed to refresh connection validation: ${error instanceof Error ? error.message : String(error)}`,
+          });
+        }
+      }
+    });
+  }, [dispatch, connectionService, isUnsupportedMultipleTriggers]);
 
   // Store app settings in query to access outside of functional components
   useQuery({

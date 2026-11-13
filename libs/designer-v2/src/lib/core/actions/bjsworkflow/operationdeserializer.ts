@@ -10,6 +10,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type {
   DependencyInfo,
+  ErrorInfo,
   NodeData,
   NodeDependencies,
   NodeInputs,
@@ -118,6 +119,11 @@ export interface PasteScopeAdditionalParams extends PasteScopeParams {
   existingOutputTokens: Record<string, NodeTokens>;
   rootTriggerId: string;
 }
+
+const INVALID_CONNECTION_REFERENCE_VALIDATION_SOURCE = 'invalidConnectionReferenceValidation';
+
+const isValidatorOwnedConnectionError = (errorInfo: ErrorInfo | undefined): boolean =>
+  errorInfo?.error?.source === INVALID_CONNECTION_REFERENCE_VALIDATION_SOURCE;
 
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
@@ -843,6 +849,14 @@ const updateDynamicDataForValidConnection = async (
   };
   const mapping = getState().connections.connectionsMapping[nodeId];
   const connectionServiceAtValidationStart = getRegisteredConnectionService();
+  const isCurrentConnection = () => {
+    const { connections } = getState();
+    return (
+      connections.connectionsMapping[nodeId] === mapping &&
+      getConnectionReference(connections, nodeId) === reference &&
+      getRegisteredConnectionService() === connectionServiceAtValidationStart
+    );
+  };
   if (mapping && typeof mapping !== 'string') {
     // Runtime selection does not require a design-time connection. Keep raw inputs intact.
     if (!reference) {
@@ -850,27 +864,30 @@ const updateDynamicDataForValidConnection = async (
     }
   }
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
-  // Only the current reference/service pair can update connection validation outcomes.
-  if (
-    getConnectionReference(getState().connections, nodeId) !== reference ||
-    getRegisteredConnectionService() !== connectionServiceAtValidationStart
-  ) {
+  const currentConnectionError = getRecordEntry(getState().operations.errors, nodeId)?.[ErrorLevel.Connection];
+  // Mapping changes can keep the same design-time reference; all three identities own the pending outcome.
+  if (!isCurrentConnection()) {
     return;
   }
 
   if (isValidConnection) {
-    dispatch(updateErrorDetails({ id: nodeId, clearLevels: [ErrorLevel.Connection] }));
+    // Resource validity does not resolve independently owned identity or connection-setup errors.
+    if (!currentConnectionError || isValidatorOwnedConnectionError(currentConnectionError)) {
+      dispatch(updateErrorDetails({ id: nodeId, clearLevels: [ErrorLevel.Connection] }));
+    }
     const {
       tokens: { variables },
       workflowParameters: { definitions },
     } = getState() as RootState;
+    // Schema/value loading also awaits remote results; stale owners must not write dynamic metadata.
+    const dispatchForCurrentConnection: Dispatch = (action) => (isCurrentConnection() ? dispatch(action) : action);
     await updateDynamicDataInNode(
       nodeId,
       isTrigger,
       operationInfo,
       reference,
       dependencies,
-      dispatch,
+      dispatchForCurrentConnection,
       getState,
       variables,
       definitions,
@@ -878,6 +895,10 @@ const updateDynamicDataForValidConnection = async (
       operation
     );
   } else if (!isFreshCreatedAgent && (!mapping || typeof mapping === 'string')) {
+    if (currentConnectionError && !isValidatorOwnedConnectionError(currentConnectionError)) {
+      return;
+    }
+
     LoggerService().log({
       level: LogEntryLevel.Warning,
       area: 'OperationDeserializer:UpdateDynamicData',
@@ -890,6 +911,7 @@ const updateDynamicDataForValidConnection = async (
         id: nodeId,
         errorInfo: {
           level: ErrorLevel.Connection,
+          error: { source: INVALID_CONNECTION_REFERENCE_VALIDATION_SOURCE },
           message: intl.formatMessage({
             defaultMessage: 'Invalid connection. To load complete details, complete or update the connection.',
             id: '4bT5AR',
