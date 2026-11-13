@@ -25,7 +25,7 @@ import { ext } from '../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../utils/vsCodeConfig/settings';
 import {
   generateHostJson,
-  generateNugetHostJson,
+  generateCodelessNugetHostJson,
   generateDesignTimeHostJson,
   generateLocalSettingsJson,
   generateDesignTimeLocalSettingsJson,
@@ -75,8 +75,8 @@ const designTimeArtifactPrefix = 'design-time ';
 export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
-    const projectPackageType = await detectProjectPackageType(projectPath);
-    const hostResult = await ensureHostFile(projectPath, projectPackageType);
+    const [projectPackageType, projectType] = await Promise.all([detectProjectPackageType(projectPath), detectProjectType(projectPath)]);
+    const hostResult = await ensureHostFile(projectPath, projectPackageType, projectType);
     const localSettings = await ensureLocalSettingsFile(context, projectPath);
     const designTimeData = await ensureDesignTimeFiles(context, projectPath);
 
@@ -117,16 +117,19 @@ export async function ensureProjectFiles(context: IActionContext, projectPath: s
  */
 export async function ensureHostFile(
   projectPath: string,
-  projectPackageType?: ProjectPackageType
+  projectPackageType?: ProjectPackageType,
+  projectType?: ProjectType
 ): Promise<{ changed: boolean; changedArtifacts: string[] }> {
   const hostFilePath = path.join(projectPath, hostFileName);
   projectPackageType ??= await detectProjectPackageType(projectPath);
+  projectType ??= await detectProjectType(projectPath);
+  const isCodelessNugetProject = projectPackageType === ProjectPackageType.Nuget && projectType !== ProjectType.codeful;
 
-  if (await isHostFileValid(hostFilePath, false, projectPackageType)) {
+  if (await isHostFileValid(hostFilePath, false, isCodelessNugetProject)) {
     return { changed: false, changedArtifacts: [] };
   }
 
-  const hostFileContent = projectPackageType === ProjectPackageType.Nuget ? generateNugetHostJson() : generateHostJson();
+  const hostFileContent = isCodelessNugetProject ? generateCodelessNugetHostJson() : generateHostJson();
   await writeFormattedJson(hostFilePath, hostFileContent);
   return { changed: true, changedArtifacts: [hostFileName] };
 }
@@ -360,20 +363,16 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
 }
 
 /**
- * Validates host.json content for the project packaging model. Bundle-based root files and all
- * design-time files require the Workflows extension bundle. NuGet-based root files must omit
- * extensionBundle because runtime extensions come from package references. Design-time files also
- * enable workflow operation discovery host mode so the design-time API can enumerate operations.
+ * Validates host.json content for the project model. Bundle-based and codeful SDK root files, plus
+ * all design-time files, require the Workflows extension bundle. Codeless NuGet-based root files
+ * must omit extensionBundle because runtime extensions come from package references. Design-time
+ * files also enable workflow operation discovery host mode so the design-time API can enumerate operations.
  *
  * @param {string} hostFilePath - Absolute path to the host.json file.
  * @param {boolean} isDesignTime - Whether the file is the design-time host.json (stricter validation).
  * @returns {Promise<boolean>} True when host.json exists and is valid.
  */
-async function isHostFileValid(
-  hostFilePath: string,
-  isDesignTime: boolean,
-  projectPackageType: ProjectPackageType = ProjectPackageType.Bundle
-): Promise<boolean> {
+async function isHostFileValid(hostFilePath: string, isDesignTime: boolean, isCodelessNugetProject = false): Promise<boolean> {
   const content = await readFileTextSafe(hostFilePath);
   if (!content) {
     return false;
@@ -390,7 +389,7 @@ async function isHostFileValid(
       return false;
     }
 
-    if (!isDesignTime && projectPackageType === ProjectPackageType.Nuget) {
+    if (!isDesignTime && isCodelessNugetProject) {
       return parsed.extensionBundle === undefined;
     }
 

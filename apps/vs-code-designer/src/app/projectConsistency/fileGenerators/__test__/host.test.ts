@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
-import { generateHostJson, generateNugetHostJson, generateDesignTimeHostJson } from '../host';
+import { generateHostJson, generateCodelessNugetHostJson, generateDesignTimeHostJson } from '../host';
 import { extensionBundleId, defaultVersionRange, workflowOperationDiscoveryHostModeKey } from '../../../../constants';
 
 describe('hostGenerator', () => {
@@ -35,9 +35,9 @@ describe('hostGenerator', () => {
     });
   });
 
-  describe('generateNugetHostJson', () => {
+  describe('generateCodelessNugetHostJson', () => {
     it('should omit the extension bundle reference', () => {
-      const result = generateNugetHostJson();
+      const result = generateCodelessNugetHostJson();
 
       expect(result.version).toBe('2.0');
       expect(result.extensionBundle).toBeUndefined();
