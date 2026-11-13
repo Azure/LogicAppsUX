@@ -13,7 +13,7 @@
       "preLaunchTask": "npm: build:extension",
       "env": {
         "DEBUGTELEMETRY": "v",
-        "LSP_SERVER_DEV_PATH": "/Users/carloscastro/Documents/Dev/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"
+        "LSP_SERVER_DEV_PATH": "${workspaceFolder}/apps/vs-code-designer/lsp-server/Server/bin/Debug/net10.0/LogicAppsLanguageServer.dll"
       }
     },
     {
@@ -288,6 +288,12 @@
       "sourceMaps": true,
       "outFiles": ["${workspaceFolder}/libs/data-mapper-v3/out/compilerHost.js"],
       "resolveSourceMapLocations": ["${workspaceFolder}/libs/data-mapper-v3/**", "!**/node_modules/**"]
+    },
+    {
+      "name": "Attach to Logic Apps Language Server",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
     },
     {
       "name": "Attach to Data Mapper v3 Compiler Worker",

@@ -5,12 +5,12 @@ import {
   autoRuntimeDependenciesPathSettingKey,
   defaultDependencyPathValue,
   localSettingsFileName,
-  lspDirectory,
+  languageServerSdkDirectoryName,
   workflowCodefulEnabledKey,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
-import { lspSdkRevisionMarkerName } from './languageServerProtocolConstants';
+import { lspSdkRevisionMarkerName } from './languageServerAssetConstants';
 
 const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
 const codefulSdkPackageVersion = '1.0.0-preview.1';
@@ -86,14 +86,14 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
   }
 
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkRevisionMarkerPath = path.join(targetDirectory, lspSdkRevisionMarkerName);
 
   if (
     !(await fse.pathExists(installedSdkRevisionMarkerPath)) ||
     !(await fse.pathExists(nugetConfigPath)) ||
-    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, lspDirectoryPath))
+    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, languageServerSdkDirectoryPath))
   ) {
     return false;
   }
@@ -150,7 +150,7 @@ async function readTrimmedFileIfExists(filePath: string): Promise<string | undef
 async function codefulNugetConfigUsesExtensionSdkCache(
   nugetConfigPath: string,
   projectPath: string,
-  lspDirectoryPath: string
+  languageServerSdkDirectoryPath: string
 ): Promise<boolean> {
   const nugetConfig = await fse.readFile(nugetConfigPath, 'utf-8');
   const globalPackagesFolder = getXmlAddValue(nugetConfig, 'config', 'globalPackagesFolder');
@@ -160,7 +160,7 @@ async function codefulNugetConfigUsesExtensionSdkCache(
     globalPackagesFolder !== undefined &&
     normalizeNugetPath(projectPath, globalPackagesFolder) === normalizeNugetPath(projectPath, '.nuget\\packages') &&
     currentSource !== undefined &&
-    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, lspDirectoryPath)
+    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, languageServerSdkDirectoryPath)
   );
 }
 

@@ -14,7 +14,7 @@ import {
   extractHttpTriggerName,
   hasHttpRequestTrigger,
 } from '../../../../utils/codeful';
-import { getCodefulWorkflowMetadata } from '../../../../languageServer/languageServer';
+import { getCodefulWorkflowMetadata } from '../../../../languageServer/languageClient';
 import { getWorkflowProperties } from './overviewHelpers';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -102,7 +102,7 @@ export async function getCodefulWorkflowPropertiesList(
       const hasHttpTrigger = isHttpRequestTrigger(resolvedWorkflowData, workflowContent);
       const workflowTriggerName =
         resolvedWorkflowData.triggerName ??
-        (await getCodefulWorkflowMetadata(workflowFilePath)
+        (await getCodefulWorkflowMetadata(workflowFilePath, resolvedWorkflowData.workflowName)
           .then((metadata) => metadata?.triggerName)
           .catch(() => undefined)) ??
         getFallbackCodefulTriggerName(workflowContent, hasHttpTrigger);

@@ -41,7 +41,7 @@ describe('LSP SDK extraction EPERM repro', function () {
 
   it('reproduces real Windows EPERM when LSPServer cannot be created', async () => {
     const lspServerPath = path.join(depsRoot, 'LSPServer');
-    const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
+    const lspServerDllPath = path.join(lspServerPath, 'LogicAppsLanguageServer.dll');
     fs.rmSync(lspServerPath, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
     fs.rmSync(path.join(depsRoot, '.lspserver-revision'), { force: true });
 

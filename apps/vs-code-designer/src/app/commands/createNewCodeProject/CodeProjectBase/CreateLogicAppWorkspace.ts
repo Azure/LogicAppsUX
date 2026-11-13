@@ -10,7 +10,7 @@ import {
   jarFolderName,
   libDirectory,
   localSettingsFileName,
-  lspDirectory,
+  languageServerSdkDirectoryName,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
@@ -121,7 +121,7 @@ export const createCodefulWorkflowFile = async (
 ) => {
   const workflowTemplateFileName = getCodefulWorkflowTemplateFileName(workflowType);
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
 
   // Create the workflow-specific .cs file
   const capitalizedWorkflowName = (workflowName.charAt(0).toUpperCase() + workflowName.slice(1)).replace(/-/g, '_');
@@ -154,7 +154,10 @@ export const createCodefulWorkflowFile = async (
 
     // Create nuget.config file (only for first workflow)
     const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
+    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(
+      /<%= lspDirectory %>/g,
+      `"${languageServerSdkDirectoryPath}"`
+    );
     const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
     await fse.writeFile(nugetFilePath, templateNugetContent);
   }

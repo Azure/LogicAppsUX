@@ -86,7 +86,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 import { store as DesignerStore, resetDesignerDirtyState } from '@microsoft/logic-apps-designer';
-import { initializeLanguageServer } from './state/LanguageServerSlice';
+import { initializeConnectionView } from './state/ConnectionViewSlice';
 import {
   initializeProject,
   setProjectPath,
@@ -309,10 +309,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         }
         break;
       }
-      case ProjectName.languageServer: {
+      case ProjectName.connectionView: {
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {
-            dispatch(initializeLanguageServer(message.data));
+            dispatch(initializeConnectionView(message.data));
             break;
           }
         }

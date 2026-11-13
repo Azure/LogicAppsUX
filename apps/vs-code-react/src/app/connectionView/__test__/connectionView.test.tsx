@@ -6,8 +6,8 @@ import React from 'react';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { designerSlice, updateFileSystemConnection } from '../../../state/DesignerSlice';
-import { LanguageServerConnectionView } from '../connectionView';
-import { initializeLanguageServer, languageServerSlice } from '../../../state/LanguageServerSlice';
+import { ConnectionView } from '../connectionView';
+import { initializeConnectionView, connectionViewSlice } from '../../../state/ConnectionViewSlice';
 import { IntlProvider } from 'react-intl';
 
 const mocks = vi.hoisted(() => ({
@@ -100,12 +100,12 @@ function createStore({ connectorType = 'serviceProvider', azureConnectorsEnabled
   const store = configureStore({
     reducer: {
       designer: designerSlice.reducer,
-      languageServer: languageServerSlice.reducer,
+      connectionView: connectionViewSlice.reducer,
     },
   });
 
   store.dispatch(
-    initializeLanguageServer({
+    initializeConnectionView({
       apiHubServiceDetails: { subscriptionId: 'sub' },
       apiVersion: '2024-01-01',
       baseUrl: 'https://management.azure.com',
@@ -137,7 +137,7 @@ function renderConnectionView(options = {}) {
     <VSCodeContext.Provider value={{ postMessage }}>
       <Provider store={store}>
         <IntlProvider locale="en">
-          <LanguageServerConnectionView />
+          <ConnectionView />
         </IntlProvider>
       </Provider>
     </VSCodeContext.Provider>
@@ -146,7 +146,7 @@ function renderConnectionView(options = {}) {
   return { postMessage, store };
 }
 
-describe('LanguageServerConnectionView', () => {
+describe('ConnectionView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getDesignerServices.mockReturnValue({});
@@ -217,7 +217,7 @@ describe('LanguageServerConnectionView', () => {
     });
   });
 
-  it('creates file system connection requests through the language server slice', async () => {
+  it('creates file system connection requests through the connection view slice', async () => {
     const { postMessage, store } = renderConnectionView();
     const createFileSystemConnection = mocks.getDesignerServices.mock.calls[0][8];
 

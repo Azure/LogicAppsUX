@@ -3,7 +3,7 @@ import type { CompleteFileSystemConnectionData, DesignerPanelMetadata } from '@m
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface LanguageServerState {
+export interface ConnectionViewState {
   panelMetaData: DesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
@@ -21,7 +21,7 @@ export interface LanguageServerState {
   };
 }
 
-const initialState: LanguageServerState = {
+const initialState: ConnectionViewState = {
   panelMetaData: null,
   baseUrl: '/url',
   workflowRuntimeBaseUrl: '',
@@ -47,11 +47,11 @@ const initialState: LanguageServerState = {
   },
 };
 
-export const languageServerSlice: Slice<LanguageServerState> = createSlice({
-  name: 'languageServer',
+export const connectionViewSlice: Slice<ConnectionViewState> = createSlice({
+  name: 'connectionView',
   initialState,
   reducers: {
-    initializeLanguageServer: (state, action: PayloadAction<any>) => {
+    initializeConnectionView: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
         connectionData,
@@ -93,4 +93,4 @@ export const languageServerSlice: Slice<LanguageServerState> = createSlice({
   },
 });
 
-export const { initializeLanguageServer, createFileSystemConnection, updateFileSystemConnection } = languageServerSlice.actions;
+export const { initializeConnectionView, createFileSystemConnection, updateFileSystemConnection } = connectionViewSlice.actions;

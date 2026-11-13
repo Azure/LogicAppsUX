@@ -23,7 +23,6 @@ export const workflowDraftFileName = 'workflow-draft.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const powershellRequirementsFileName = 'requirements.psd1';
-export const sdkLspServer = 'SdkLspServer';
 
 // Directory names
 export const deploymentDirectory = 'deployment';
@@ -40,7 +39,7 @@ export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
-export const lspDirectory = 'LanguageServerLogicApps';
+export const languageServerSdkDirectoryName = 'LanguageServerLogicApps';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
@@ -311,7 +310,7 @@ export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensi
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServer = 'onStartLanguageServer';
+export const onStartLanguageClient = 'onStartLanguageClient';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';

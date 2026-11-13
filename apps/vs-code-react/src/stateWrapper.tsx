@@ -31,10 +31,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.dataMapper}`, { replace: true });
           break;
         }
-        case ProjectName.languageServer: {
+        case ProjectName.connectionView: {
           switch (projectState.route) {
             case RouteName.connectionView: {
-              navigate(`/${RouteName.languageServer}/${RouteName.connectionView}`, { replace: true });
+              navigate(`/${RouteName.connectionView}`, { replace: true });
               break;
             }
             default: {
