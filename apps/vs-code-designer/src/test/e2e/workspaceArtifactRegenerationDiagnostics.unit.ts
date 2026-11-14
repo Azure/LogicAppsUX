@@ -15,6 +15,7 @@ import {
   validRegenerationProductPayload,
 } from './workspaceArtifactRegenerationDiagnostics';
 import {
+  activateRetainedRegenerationInitialization,
   RegenerationInputTracker,
   RegenerationObservation,
   inspectRegenerationNotificationCenter,
@@ -818,6 +819,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
             disabledYesCount: 0,
             ariaDisabledYesCount: 0,
             obstructedYesCount: 0,
+            yesPoint: { x: 8, y: 9 },
           },
         ]
       : [],
@@ -863,7 +865,6 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       owner,
       raw: inspectionRaw(sent.length >= 3, sent.length >= 4),
     }),
-    wait: async () => undefined,
   });
   assert.deepStrictEqual(inspection, {
     availability: 'available',
@@ -1112,6 +1113,155 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   });
   assert.strictEqual(wheelRace.reason, 'identity-unavailable');
   assert.deepStrictEqual(wheelSent, [], 'Identity invalidation after wheel hit-test must prevent wheel input');
+
+  const activationRaw = (centerVisible: boolean, variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous'): RawWorkbenchState => {
+    const target = {
+      ...candidate,
+      retained: true,
+      text: prompt(appDir),
+      disabledYesCount: 0,
+      ariaDisabledYesCount: 0,
+      obstructedYesCount: 0,
+      yesPoint: { x: 8, y: 9 },
+    };
+    const candidates =
+      !centerVisible || variant === 'absent'
+        ? []
+        : variant === 'wrong-project'
+          ? [{ ...target, text: prompt(path.join(root, 'private-other')) }]
+          : variant === 'ambiguous'
+            ? [target, { ...target }]
+            : [target];
+    return {
+      ...inspectionRaw(centerVisible, false),
+      centerMounted: centerVisible,
+      centerVisible,
+      retainedCount: candidates.length,
+      candidates,
+    };
+  };
+  const activationCdp = (sentEvents: Array<{ method: string; params?: Record<string, unknown> }>, onSend?: () => void) =>
+    ({
+      targetId: 'owned-target',
+      contextGeneration: 1,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterAffordanceScript) {
+          return { centerVisible: false, candidateCount: 1, truncated: false, point: { x: 4, y: 5 } };
+        }
+        if (expression === notificationCenterScrollStateScript) {
+          return { centerCount: 1, scrollableCount: 0, atEnd: true, point: null, deltaY: 0 };
+        }
+        throw new Error('unexpected retained activation expression');
+      },
+      send: async (method: string, params?: Record<string, unknown>) => {
+        sentEvents.push({ method, params });
+        onSend?.();
+        return {};
+      },
+    }) as unknown as CdpConnection;
+  const activate = async (
+    variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous',
+    options: {
+      document?: { targetId: string; invalidated: boolean; dispose: () => void } | null;
+      input?: RegenerationInputTracker;
+      deadline?: number;
+      onSend?: () => void;
+    } = {}
+  ) => {
+    const sentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+    let captureCount = 0;
+    const document =
+      options.document === null
+        ? undefined
+        : (options.document ?? { targetId: 'owned-target', invalidated: false, dispose: () => undefined });
+    const result = await activateRetainedRegenerationInitialization({
+      cdp: activationCdp(sentEvents, options.onSend),
+      input: options.input ?? new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: options.deadline ?? Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: document,
+      sampler: async () => ({
+        before: owner,
+        owner,
+        raw: activationRaw(sentEvents.length >= 3, variant),
+      }),
+      capture: async () => {
+        captureCount++;
+      },
+    });
+    return { result, sentEvents, captureCount };
+  };
+  for (const admittedDocument of [undefined, { targetId: 'owned-target', invalidated: true, dispose: () => undefined }]) {
+    const noDocumentInput: Array<{ method: string; params?: Record<string, unknown> }> = [];
+    let noDocumentCaptureCount = 0;
+    await assert.rejects(
+      activateRetainedRegenerationInitialization({
+        cdp: activationCdp(noDocumentInput),
+        input: new RegenerationInputTracker(),
+        expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+        appDir,
+        deadline: Date.now() + 5000,
+        expectedTargetId: 'owned-target',
+        expectedTimeOrigin: 42,
+        expectedContextGeneration: 1,
+        admittedDocument,
+        sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'target') }),
+        capture: async () => {
+          noDocumentCaptureCount++;
+        },
+      }),
+      /requires an unchanged admitted main-document identity/
+    );
+    assert.deepStrictEqual(noDocumentInput, [], 'Missing or invalid admitted main-document identity must fail before all input');
+    assert.strictEqual(noDocumentCaptureCount, 0, 'Missing document authority must fail before retained-prompt evidence capture');
+  }
+  const activated = await activate('target');
+  assert.strictEqual(activated.result.timeOrigin, 42);
+  assert.strictEqual(activated.result.inspection.openedByDiagnostic, true);
+  assert.strictEqual(activated.captureCount, 1, 'The retained prompt must be captured once before its real Yes');
+  assert.strictEqual(
+    activated.sentEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    2,
+    'Exactly one physical bell click and one retained Yes click are allowed'
+  );
+  assert.strictEqual(
+    activated.sentEvents.filter((event) => event.params?.type === 'mouseReleased').length,
+    2,
+    'Both physical clicks must complete through trusted input'
+  );
+  assert.strictEqual(
+    activated.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The retained warning Yes must be pressed exactly once'
+  );
+  await assert.rejects(activate('absent'), /absent from Notification Center/);
+  await assert.rejects(activate('wrong-project'), /different project/);
+  await assert.rejects(activate('ambiguous'), /could not be activated safely/);
+  await assert.rejects(activate('target', { deadline: Date.now() - 1 }), /inspection-timeout/);
+
+  const invalidatedTargetDocument = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const invalidatedTargetInput = new RegenerationInputTracker();
+  let retainedDispatchCount = 0;
+  await assert.rejects(
+    activate('target', {
+      document: invalidatedTargetDocument,
+      input: invalidatedTargetInput,
+      onSend: () => {
+        retainedDispatchCount++;
+        if (retainedDispatchCount === 5) {
+          invalidatedTargetDocument.invalidated = true;
+        }
+      },
+    }),
+    /could not be activated safely/
+  );
+  assert.strictEqual(retainedDispatchCount, 5, 'Identity invalidation after retained Yes press must prevent its release');
+  assert.strictEqual(invalidatedTargetInput.uncertain, true);
+  assert.strictEqual(invalidatedTargetInput.pendingInvalid, true);
 
   let listener: ((event: CdpConsoleDiagnostic) => void) | undefined;
   let ownedRead: (() => void) | undefined;

@@ -159,15 +159,26 @@ export const workbenchPromptDomScript = `(() => {
     return element.getAttribute('aria-disabled') !== 'true' && !element.hasAttribute('disabled') &&
       !!hit && (hit === element || element.contains(hit)) ? point : undefined;
   };
-  const containers = Array.from(document.querySelectorAll(
+  const rawContainers = Array.from(document.querySelectorAll(
     '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
-  )).filter(container => visible(container) &&
+  ));
+  const semanticContainer = container =>
+    (container.classList.contains('notification-list-item') ? container : container.closest('.notification-list-item')) ||
+    container.querySelector('.notification-list-item') ||
+    (container.classList.contains('notification-toast') ? container : container.closest('.notification-toast')) ||
+    container.querySelector('.notification-toast') ||
+    container;
+  const containers = Array.from(new Set(rawContainers.map(semanticContainer))).filter(container => visible(container) &&
     (!container.classList.contains('quick-input-widget') ||
       (!container.inert && !container.classList.contains('quick-input-widget-closing'))));
   return containers.filter(container => !containers.some(other => other !== container && other.contains(container)))
     .map(container => {
       const quickInput = container.classList.contains('quick-input-widget');
-      const notification = container.classList.contains('notification-toast') || container.classList.contains('notification-list-item');
+      const retainedItem = container.classList.contains('notification-list-item')
+        ? container
+        : container.closest('.notification-list-item') || container.querySelector('.notification-list-item');
+      const retained = !!retainedItem?.closest('.notifications-center .notifications-list-container');
+      const notification = retained || container.classList.contains('notification-toast');
       const input = Array.from(container.querySelectorAll('input')).find(visible);
       const title = normalize(input?.getAttribute('placeholder') || container.querySelector('.quick-input-title')?.textContent);
       const placeholder = normalize(input?.getAttribute('placeholder'));
@@ -180,6 +191,7 @@ export const workbenchPromptDomScript = `(() => {
       }));
       return {
         kind: quickInput ? 'quickInput' : notification ? 'notification' : 'dialog',
+        retained,
         title, text,
         rows: options('.monaco-list-row, [role="option"]'),
         buttons: options('a.monaco-button, button, .monaco-text-button'),

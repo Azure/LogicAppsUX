@@ -25,6 +25,7 @@ export interface WorkbenchPromptOption {
 
 export interface WorkbenchPromptContainer {
   kind: 'quickInput' | 'dialog' | 'notification';
+  retained?: boolean;
   text: string;
   buttons: WorkbenchPromptOption[];
   rows: WorkbenchPromptOption[];

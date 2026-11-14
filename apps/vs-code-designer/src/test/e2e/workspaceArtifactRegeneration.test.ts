@@ -15,7 +15,7 @@ import { type CdpConnection, type CdpMainDocumentIdentity, waitForDevToolsActive
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
 import { pinPhysicalWorkspacePaths, type PhysicalPathIdentity } from './physicalWorkspaceIdentity';
 import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
-import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications, revealWorkbenchPromptOption } from './workbenchPrompts';
+import { readWorkbenchPrompts, revealWorkbenchPromptOption } from './workbenchPrompts';
 import {
   captureCdpScreenshot,
   ScreenshotCaptureCleanupError,
@@ -30,8 +30,9 @@ import {
 } from './workspaceArtifactRegenerationDiagnostics';
 import {
   initialNotificationCenterInspection,
+  activateRetainedRegenerationInitialization,
   inspectRegenerationNotificationCenter,
-  type RegenerationInputTracker,
+  RegenerationInputTracker,
   RegenerationObservation,
   regenerationPromptObservationForLog,
 } from './workspaceArtifactRegenerationObservation';
@@ -440,7 +441,12 @@ async function runFreshRegenerationHost(
   env: NodeJS.ProcessEnv,
   result: RegenerationResult,
   phaseName: string,
-  observe: (cdp: CdpConnection, phase: RegenerationDeadline, diagnostics?: RegenerationObservation) => Promise<void>
+  observe: (
+    cdp: CdpConnection,
+    phase: RegenerationDeadline,
+    diagnostics?: RegenerationObservation,
+    admittedDocument?: CdpMainDocumentIdentity
+  ) => Promise<void>
 ): Promise<void> {
   const phase = regenerationDeadline(phaseName);
   setOperationDiagnosticScope({ suite: 'workspaceArtifactRegeneration', phase: phaseName });
@@ -582,7 +588,12 @@ async function runFreshRegenerationHostCore(
   host: RegenerationHostPhase,
   probe: RegenerationProbe,
   diagnostics: RegenerationObservation | undefined,
-  observe: (cdp: CdpConnection, phase: RegenerationDeadline, diagnostics?: RegenerationObservation) => Promise<void>,
+  observe: (
+    cdp: CdpConnection,
+    phase: RegenerationDeadline,
+    diagnostics?: RegenerationObservation,
+    admittedDocument?: CdpMainDocumentIdentity
+  ) => Promise<void>,
   finalizeDiagnostics: (
     cdp: CdpConnection | undefined,
     observed: boolean,
@@ -708,7 +719,10 @@ async function runFreshRegenerationHostCore(
     admittedTimeOrigin = ownedWorkbench.state.timeOrigin;
     admittedContextGeneration = cdp.contextGeneration;
     admittedTargetId = cdp.targetId;
-    if (diagnostics) {
+    const requiresRetainedActivationAuthority = regenerationCases.some(
+      (entry) => entry.name === phaseName && entry.interaction === 'prompted'
+    );
+    if (diagnostics || requiresRetainedActivationAuthority) {
       const admissionConnection = cdp;
       const admissionGeneration = admittedContextGeneration;
       admittedDocumentPromise = admissionConnection
@@ -727,7 +741,8 @@ async function runFreshRegenerationHostCore(
     }
     diagnostics?.start(cdp, admittedTimeOrigin);
     assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
-    const observation = observe(cdp, phase, diagnostics).finally(() => {
+    const admittedDocument = await admittedDocumentPromise;
+    const observation = observe(cdp, phase, diagnostics, admittedDocument).finally(() => {
       observationSettled = true;
     });
     await Promise.race([
@@ -747,6 +762,9 @@ async function runFreshRegenerationHostCore(
       diagnostics.input.uncertain = true;
     }
     await finalizeDiagnostics(cdp, observed, admittedTimeOrigin, admittedContextGeneration, admittedTargetId, admittedDocumentPromise);
+    if (!diagnostics) {
+      (await admittedDocumentPromise)?.dispose();
+    }
     watcher?.close();
     cdp?.dispose();
     if (!host.close) {
@@ -856,9 +874,9 @@ export async function runWorkspaceArtifactRegeneration(
       deleteRegenerationTargets(context.workspaceParent, workspaceDir, appDir, entry.targets, before);
       let after: RegenerationSnapshot | undefined;
       let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
-      await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase, diagnostics) => {
-        const bounded = boundedConnection(cdp, phase, diagnostics?.input);
-        await revealRetainedWorkbenchNotifications(bounded, { workspaceFilePath, rootPaths: [appDir] }, phase.deadline);
+      await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase, diagnostics, admittedDocument) => {
+        const input = diagnostics?.input ?? new RegenerationInputTracker();
+        const bounded = boundedConnection(cdp, phase, input);
         const observationsPath = path.join(context.root, `${entry.name}-prompt-observations.jsonl`);
         let previousPromptObservation: string | undefined;
         const read = async () => {
@@ -904,6 +922,25 @@ export async function runWorkspaceArtifactRegeneration(
               revealWorkbenchPromptOption(bounded, `Detected an Azure Logic App project "${appDir}"`, ['Yes'], phase.deadline).then(
                 () => undefined
               ),
+            activateRetained: async (expectedTimeOrigin) => {
+              const expectedTargetId = cdp.targetId;
+              const expectedContextGeneration = cdp.contextGeneration;
+              const pinnedPaths = await pinPhysicalWorkspacePaths({ workspaceFilePath, rootPaths: [appDir] });
+              remainingRegenerationBudget(phase);
+              await activateRetainedRegenerationInitialization({
+                cdp,
+                input,
+                expectation: { workspaceFilePath, rootPaths: [appDir] },
+                appDir,
+                deadline: phase.deadline,
+                expectedTargetId,
+                expectedTimeOrigin,
+                expectedContextGeneration,
+                admittedDocument,
+                pinnedPaths,
+                capture: () => captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-before-yes`),
+              });
+            },
             click: (point) => clickPoint(bounded, point),
           });
           // Neither Yes is replayed or substituted with an API response. File writes

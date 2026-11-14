@@ -880,6 +880,23 @@ that retain an absolute managed path do not prove this full-activation contract.
 Regeneration can produce a second, distinct overwrite confirmation after the
 initial initialization prompt. Detect and affirm the actual second prompt once;
 do not repeatedly click the first prompt while waiting for files.
+Keep the foreground initialization warning as the primary route. When the exact
+owned-project warning is not foreground-visible, the existing regeneration phase
+may reveal Notification Center once through its unique visible, hit-tested
+status-bar bell—never through command dispatch—and consume only the original
+120-second deadline. Pin and recheck the physical workspace, target, document,
+active workbench, center, exact retained project warning, and its one enabled
+hit-tested **Yes** before capture and before every trusted input event. Preserve
+an unchanged admitted main-document identity from workbench admission; an
+unavailable, undefined, or invalidated tracked document blocks acceptance before
+any bell, scroll, or retained action input. Context-generation-only fallback
+remains diagnostic-only. Preserve the same `before-yes` evidence checkpoint with
+the retained warning visibly open,
+then click that real retained **Yes** once and continue to the unchanged separate
+overwrite modal. Do not retry either logical click, reset the clock, synthesize a
+dialog result, or select an unrelated notification. Wrong-project, absent,
+duplicate, truncated, disabled/covered, identity-changing, uncertain-input, or
+deadline-expired states fail closed. Foreground success must not open the center.
 
 ## 6. Cancellation must establish quiescence
 

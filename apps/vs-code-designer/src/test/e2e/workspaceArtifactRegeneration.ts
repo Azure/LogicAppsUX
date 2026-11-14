@@ -270,7 +270,7 @@ export function getMissingRegenerationInitializationFiles(before: RegenerationSn
 export function selectRegenerationYes(containers: WorkbenchPromptContainer[], appDir: string): WorkbenchPromptSelection {
   const matches = containers.filter((container) => {
     const promptProjectPath = initializationPromptProjectPath(container.text);
-    return promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
+    return !container.retained && promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
   });
   assert.ok(matches.length <= 1, 'Ambiguous initialization prompts cannot be credited');
   return selectWorkbenchPromptOption([{ matchText: 'Initialize for optimal use with VS Code?', optionText: 'Yes' }], matches);
@@ -321,6 +321,14 @@ export function assertRegenerationPromptObservation(observation: RegenerationPro
 export function assertSilentRegenerationObservation(observation: RegenerationPromptObservation, appDir: string): void {
   assertRegenerationPromptObservation(observation);
   assert.strictEqual(
+    observation.containers.some((container) => {
+      const promptProjectPath = initializationPromptProjectPath(container.text);
+      return promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
+    }),
+    false,
+    'Root artifact repair must not use the .vscode initialization prompt'
+  );
+  assert.strictEqual(
     selectRegenerationYes(observation.containers, appDir).visible,
     false,
     'Root artifact repair must not use the .vscode initialization prompt'
@@ -340,8 +348,12 @@ async function requireRegenerationYesObservation(
   clock: { now: () => number; poll: (remainingMs: number) => Promise<void> },
   expectedTimeOrigin?: number,
   revealBlocked?: () => Promise<void>,
-  stablePointReads = 1
-): Promise<{ observation: RegenerationPromptObservation; selection: WorkbenchPromptSelection }> {
+  stablePointReads = 1,
+  activateRetained?: (expectedTimeOrigin: number) => Promise<void>
+): Promise<
+  | { source: 'foreground'; observation: RegenerationPromptObservation; selection: WorkbenchPromptSelection }
+  | { source: 'retained'; observation: RegenerationPromptObservation }
+> {
   let silentHealingObserved = false;
   let blockedPromptObserved = false;
   let previousPoint: { x: number; y: number } | undefined;
@@ -369,7 +381,7 @@ async function requireRegenerationYesObservation(
           stableReads = 1;
         }
         if (stableReads >= stablePointReads) {
-          return { observation, selection };
+          return { source: 'foreground', observation, selection };
         }
       } else {
         previousPoint = undefined;
@@ -381,6 +393,23 @@ async function requireRegenerationYesObservation(
     } else {
       previousPoint = undefined;
       stableReads = 0;
+      if (activateRetained && observation.ready) {
+        const initializationProjects = observation.containers
+          .map((container) => initializationPromptProjectPath(container.text))
+          .filter((project): project is string => project !== undefined);
+        assert.ok(
+          initializationProjects.every((project) => isSamePromptProjectPath(project, appDir)),
+          'A foreground initialization warning for a different project must fail closed'
+        );
+        assert.strictEqual(
+          selectRegenerationOverwriteYes(observation.containers).visible,
+          false,
+          'Overwrite confirmation cannot precede the owned initialization warning'
+        );
+        await activateRetained(observation.timeOrigin);
+        remainingRegenerationBudget(phase, clock.now());
+        return { source: 'retained', observation };
+      }
     }
     await clock.poll(remainingRegenerationBudget(phase, clock.now()));
   }
@@ -404,7 +433,9 @@ export async function requireRegenerationYes(
   },
   revealBlocked?: () => Promise<void>
 ): Promise<WorkbenchPromptSelection> {
-  return (await requireRegenerationYesObservation(read, appDir, phase, filesHealed, clock, undefined, revealBlocked)).selection;
+  const result = await requireRegenerationYesObservation(read, appDir, phase, filesHealed, clock, undefined, revealBlocked);
+  assert.strictEqual(result.source, 'foreground');
+  return result.selection;
 }
 
 export async function confirmRegenerationPromptSequence(options: {
@@ -416,6 +447,7 @@ export async function confirmRegenerationPromptSequence(options: {
   capture: (kind: 'initialize' | 'overwrite') => Promise<void>;
   click: (point: { x: number; y: number }) => Promise<void>;
   revealBlocked?: () => Promise<void>;
+  activateRetained?: (expectedTimeOrigin: number) => Promise<void>;
   clock?: { now: () => number; poll: (remainingMs: number) => Promise<void> };
 }): Promise<{ initializationYesCount: number; overwriteYesCount: number }> {
   const clock = options.clock ?? {
@@ -430,45 +462,47 @@ export async function confirmRegenerationPromptSequence(options: {
     options.filesHealed,
     clock,
     undefined,
-    options.revealBlocked
-  );
-  assert.strictEqual(
-    selectRegenerationOverwriteYes(beforeCapture.observation.containers).visible,
-    false,
-    'Overwrite must be a second distinct prompt'
-  );
-  await options.capture('initialize');
-  budget();
-  const initial = await requireRegenerationYesObservation(
-    options.read,
-    options.appDir,
-    options.phase,
-    options.filesHealed,
-    clock,
-    beforeCapture.observation.timeOrigin,
     options.revealBlocked,
-    2
+    1,
+    options.activateRetained
   );
-  assert.strictEqual(
-    selectRegenerationOverwriteYes(initial.observation.containers).visible,
-    false,
-    'Overwrite must be a second distinct prompt'
-  );
-  options.assertBeforeOverwrite();
-  // An uncertain input RPC is fatal. Neither click is retried or replayed.
-  assert.ok(initial.selection.point);
-  await options.click(initial.selection.point);
-  budget();
+  let timeOrigin = beforeCapture.observation.timeOrigin;
+  if (beforeCapture.source === 'foreground') {
+    assert.strictEqual(
+      selectRegenerationOverwriteYes(beforeCapture.observation.containers).visible,
+      false,
+      'Overwrite must be a second distinct prompt'
+    );
+    await options.capture('initialize');
+    budget();
+    const initial = await requireRegenerationYesObservation(
+      options.read,
+      options.appDir,
+      options.phase,
+      options.filesHealed,
+      clock,
+      beforeCapture.observation.timeOrigin,
+      options.revealBlocked,
+      2
+    );
+    assert.strictEqual(initial.source, 'foreground');
+    assert.strictEqual(
+      selectRegenerationOverwriteYes(initial.observation.containers).visible,
+      false,
+      'Overwrite must be a second distinct prompt'
+    );
+    options.assertBeforeOverwrite();
+    assert.ok(initial.selection.point);
+    await options.click(initial.selection.point);
+    budget();
+    timeOrigin = initial.observation.timeOrigin;
+  }
   const initializationYesCount = 1;
   while (clock.now() < options.phase.deadline) {
     const view = await options.read();
     budget();
     assertRegenerationPromptObservation(view);
-    assert.strictEqual(
-      view.timeOrigin,
-      initial.observation.timeOrigin,
-      'The overwrite confirmation must belong to the same workbench document'
-    );
+    assert.strictEqual(view.timeOrigin, timeOrigin, 'The overwrite confirmation must belong to the same workbench document');
     options.assertBeforeOverwrite();
     const overwrite = selectRegenerationOverwriteYes(view.containers);
     if (view.ready && overwrite.visible) {
@@ -478,10 +512,7 @@ export async function confirmRegenerationPromptSequence(options: {
       const current = await options.read();
       budget();
       assertRegenerationPromptObservation(current);
-      assert.ok(
-        current.ready && current.timeOrigin === initial.observation.timeOrigin,
-        'Overwrite must retain the original app/workbench binding'
-      );
+      assert.ok(current.ready && current.timeOrigin === timeOrigin, 'Overwrite must retain the original app/workbench binding');
       const actual = selectRegenerationOverwriteYes(current.containers);
       assert.ok(actual.point, 'The same real overwrite modal must remain enabled immediately before Yes');
       options.assertBeforeOverwrite();

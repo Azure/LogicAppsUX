@@ -7,7 +7,8 @@ import {
   type WorkbenchPromptContainer,
 } from './workbenchPromptSelection';
 import type { CdpEvaluator } from './cdpFormHelpers';
-import { revealRetainedWorkbenchNotifications } from './workbenchPrompts';
+import { revealRetainedWorkbenchNotifications, workbenchPromptDomScript } from './workbenchPrompts';
+import { selectRegenerationYes } from './workspaceArtifactRegeneration';
 
 const dotnetPrompts: WorkbenchPrompt[] = [
   { matchText: 'Failed to run .NET runtime', optionText: 'Install', postClickDelayMs: 15000 },
@@ -28,8 +29,54 @@ async function run(): Promise<void> {
   preservesAzureQuickPickRows();
   selectsOnlyAffirmativeAzureOptions();
   selectsRealCancelWithoutNoOrEscapeFallback();
+  classifiesNestedRetainedRowsOutsideForegroundPath();
   await revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership();
   console.log('[workbenchPromptSelection.unit] all tests passed');
+}
+
+function classifiesNestedRetainedRowsOutsideForegroundPath(): void {
+  const { JSDOM } = require('jsdom') as {
+    JSDOM: new (
+      html: string,
+      options: Record<string, unknown>
+    ) => {
+      window: { eval: (script: string) => unknown; close: () => void };
+    };
+  };
+  const appDir = path.resolve('unit', 'retained-app');
+  const message = `Detected an Azure Logic App project "${appDir}" that may be missing files. Initialize for optimal use with VS Code?`;
+  const read = (body: string): WorkbenchPromptContainer[] => {
+    const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
+    try {
+      dom.window.eval(
+        'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20})'
+      );
+      dom.window.eval("document.elementFromPoint = () => document.querySelector('button')");
+      return JSON.parse(JSON.stringify(dom.window.eval(workbenchPromptDomScript))) as WorkbenchPromptContainer[];
+    } finally {
+      dom.window.close();
+    }
+  };
+  const retained = read(`
+    <div class="notifications-center"><div class="notifications-list-container">
+      <div class="monaco-list-row" role="dialog">
+        <div class="notification-list-item">${message}<button>Yes</button></div>
+      </div>
+    </div></div>
+  `);
+  assert.strictEqual(retained.length, 1);
+  assert.deepStrictEqual(
+    { kind: retained[0].kind, retained: retained[0].retained },
+    { kind: 'notification', retained: true },
+    'The semantic Notification Center item must survive its outer dialog row'
+  );
+  assert.strictEqual(selectRegenerationYes(retained, appDir).visible, false);
+  assert.strictEqual(selectRegenerationYes(retained, appDir).point, undefined, 'Foreground prompt handling must not click a retained row');
+
+  const toast = read(`<div class="notification-toast">${message}<button>Yes</button></div>`);
+  assert.strictEqual(toast.length, 1);
+  assert.strictEqual(toast[0].retained, false, 'A real foreground toast must not be classified as retained');
+  assert.deepStrictEqual(selectRegenerationYes(toast, appDir).point, { x: 10, y: 10 });
 }
 
 async function revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership(): Promise<void> {

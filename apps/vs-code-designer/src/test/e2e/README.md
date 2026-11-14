@@ -601,6 +601,22 @@ sequence; planned but unobserved branches cannot receive credit. These are the
 current harness assertions, not a claim of a new native outcome or an independent
 adjudication of the original source request.
 
+The foreground initialization warning remains the primary prompted path. If that
+exact owned-project warning is not foreground-visible, the same phase may reveal
+Notification Center once through the unique visible, hit-tested status-bar bell,
+never through command dispatch. The fallback pins the physical workspace, retains
+the original target/document/deadline, requires a live admitted main-document
+identity (with no context-generation-only acceptance fallback), scans and
+bounded-scrolls only the center,
+requires one exact retained warning with one real enabled hit-tested **Yes**,
+captures the existing `before-yes` evidence while that retained warning remains
+visible, then revalidates ownership and the action before every trusted mouse
+event. A wrong project, absent/duplicate target, ambiguous bell/center/action,
+identity or workspace change, deadline expiry, or uncertain/pending-invalid input
+fails closed. The bell and retained **Yes** are each attempted at most once;
+foreground success never opens the center. The separate overwrite modal and all
+post-Yes file, reopen, cleanup, and ordered-evidence assertions are unchanged.
+
 #### Diagnostic-only regeneration observations
 
 The runner may explicitly forward `LA_E2E_CLI_DIAGNOSTIC_ONLY=true` to this family.
@@ -680,10 +696,11 @@ separately bounded post-decision capture may be labeled post-deadline; it does
 not extend or satisfy the 120-second acceptance budget. A second image is
 attempted only after the untouched pre-input image succeeds and renderer cleanup,
 physical workspace ownership, admitted document identity, and input state remain
-safe. In diagnostic mode only, a closed center may be opened with one hit-tested
-click on the unique visible Notification Center status affordance; command
-dispatch is never used. The center is sampled and scrolled with bounded native
-wheel input without clicking notification actions. Every mouse-move, press,
+safe. The post-decision diagnostic path reuses the same one-attempt hit-tested
+Notification Center affordance and never uses command dispatch. The center is
+sampled and scrolled with bounded native wheel input without clicking notification
+actions. Unlike the in-deadline acceptance fallback above, this diagnostic
+inspection never clicks a retained action. Every mouse-move, press,
 release, and wheel event is separately fenced by fresh target, main-document,
 physical workspace, active-workbench, blocking-UI, and input-tracker checks; an
 identity change stops the logical input sequence without retries. The bell click

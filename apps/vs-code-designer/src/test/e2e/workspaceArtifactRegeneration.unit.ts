@@ -131,6 +131,11 @@ async function main(): Promise<void> {
       rows: [],
     };
     assert.strictEqual(selectRegenerationOverwriteYes([prompt]).visible, false);
+    assert.strictEqual(
+      selectRegenerationYes([{ ...prompt, kind: 'notification', retained: true }], appDir).visible,
+      false,
+      'A retained center item is not the foreground-primary prompt path'
+    );
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, kind: 'notification' }]).visible, false);
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, text: 'Overwrite unrelated files?' }]).visible, false);
     assert.throws(() => selectRegenerationOverwriteYes([overwrite, overwrite]), /Ambiguous/);
@@ -142,6 +147,7 @@ async function main(): Promise<void> {
     const sequenceClock = fakeClock();
     const clicks: Array<{ x: number; y: number }> = [];
     const captures: string[] = [];
+    let foregroundFallbackCalls = 0;
     const sequenceOptions = {
       appDir,
       phase: regenerationDeadline('two-real-prompts', 0),
@@ -161,6 +167,9 @@ async function main(): Promise<void> {
       capture: async (kind: 'initialize' | 'overwrite') => {
         captures.push(kind);
       },
+      activateRetained: async () => {
+        foregroundFallbackCalls++;
+      },
     };
     assert.deepStrictEqual(await confirmRegenerationPromptSequence(sequenceOptions), { initializationYesCount: 1, overwriteYesCount: 1 });
     assert.deepStrictEqual(
@@ -172,6 +181,83 @@ async function main(): Promise<void> {
       'Two distinct real controls, never replaying the first Yes'
     );
     assert.deepStrictEqual(captures, ['initialize', 'overwrite']);
+    assert.strictEqual(foregroundFallbackCalls, 0, 'Foreground success must not reveal Notification Center');
+    checks++;
+
+    const retainedClock = fakeClock();
+    const retainedClicks: Array<{ x: number; y: number }> = [];
+    const retainedCaptures: string[] = [];
+    let retainedFallbackCalls = 0;
+    let retainedActivated = false;
+    assert.deepStrictEqual(
+      await confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: retainedClock,
+        phase: regenerationDeadline('retained-initialization', 0),
+        read: async () => ({
+          ready: true,
+          timeOrigin: 1,
+          containers: retainedActivated ? [overwrite] : [],
+        }),
+        activateRetained: async (expectedTimeOrigin) => {
+          retainedFallbackCalls++;
+          assert.strictEqual(expectedTimeOrigin, 1);
+          retainedCaptures.push('initialize');
+          retainedActivated = true;
+        },
+        capture: async (kind) => {
+          retainedCaptures.push(kind);
+        },
+        assertBeforeOverwrite: () => {
+          assert.ok(retainedClicks.length < 1, 'No overwrite-side writes may precede the retained-path overwrite Yes');
+        },
+        click: async (point) => {
+          retainedClicks.push(point);
+        },
+      }),
+      { initializationYesCount: 1, overwriteYesCount: 1 }
+    );
+    assert.strictEqual(retainedFallbackCalls, 1, 'Retained fallback may reveal Notification Center only once');
+    assert.deepStrictEqual(
+      retainedCaptures,
+      ['initialize', 'overwrite'],
+      'Retained evidence preserves the existing ordered capture sequence'
+    );
+    assert.deepStrictEqual(retainedClicks, [{ x: 30, y: 40 }], 'The fallback owns initialization Yes and leaves overwrite Yes unchanged');
+
+    let wrongProjectFallbackCalls = 0;
+    await assert.rejects(
+      confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: fakeClock(),
+        phase: regenerationDeadline('wrong-project-foreground', 0),
+        read: async () => ({
+          ready: true,
+          timeOrigin: 1,
+          containers: [initializationPrompt(path.join(root, 'other-app'))],
+        }),
+        activateRetained: async () => {
+          wrongProjectFallbackCalls++;
+        },
+      }),
+      /different project/
+    );
+    assert.strictEqual(wrongProjectFallbackCalls, 0, 'A wrong-project foreground warning must fail before revealing the center');
+
+    const retainedExpiryClock = fakeClock();
+    await assert.rejects(
+      confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: retainedExpiryClock,
+        phase: regenerationDeadline('retained-expiry', 0),
+        read: async () => ({ ready: true, timeOrigin: 1, containers: [] }),
+        activateRetained: async () => {
+          retainedExpiryClock.advance(120000);
+        },
+      }),
+      /deadline expired/
+    );
+    assert.strictEqual(retainedExpiryClock.now(), 120000, 'Fallback cannot reset or extend the original phase deadline');
     checks++;
 
     const rerenderClock = fakeClock();
@@ -1196,16 +1282,19 @@ async function main(): Promise<void> {
       'Every regeneration host must discover the exact launched profile CDP port without a released-port collision window'
     );
     assert.ok(
-      nativeHostSource.indexOf('await revealRetainedWorkbenchNotifications(') <
-        nativeHostSource.indexOf('prompts = await confirmRegenerationPromptSequence({') &&
+      !nativeHostSource.includes('await revealRetainedWorkbenchNotifications(') &&
+        nativeHostSource.includes('activateRetainedRegenerationInitialization({') &&
+        nativeHostSource.includes('activateRetained: async (expectedTimeOrigin) =>') &&
+        nativeHostSource.includes('diagnostics || requiresRetainedActivationAuthority') &&
+        nativeHostSource.includes('const admittedDocument = await admittedDocumentPromise') &&
+        nativeHostSource.includes('pinPhysicalWorkspacePaths({ workspaceFilePath, rootPaths: [appDir] })') &&
+        nativeHostSource.includes('captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-before-yes`)') &&
         nativeHostSource.includes('readWorkbenchPrompts(cdp)') &&
         nativeHostSource.includes('readRegularWorkbenchOwnership(cdp, expectation)') &&
         nativeHostSource.includes('ready: ownership.shellOwned') &&
         nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
-        sharedPromptSource.includes("workbenchCommand(cdp, 'Notifications: Show Notifications', deadline)") &&
         sharedPromptSource.includes('Array.from(new Set(containers.flatMap(container =>') &&
         sharedPromptSource.includes("options[0].scrollIntoView({ block: 'center', inline: 'center' })") &&
-        sharedPromptSource.includes('.notifications-center, .notifications-list-container') &&
         nativeHostSource.includes('revealBlocked: () =>') &&
         nativeHostSource.includes('promptObservation !== previousPromptObservation') &&
         sharedWorkbenchSource.includes('waitForRegularWorkbenchShell(') &&
@@ -1213,7 +1302,7 @@ async function main(): Promise<void> {
         nativeHostSource.indexOf("JSON.parse(fs.readFileSync(path.join(workspaceDir, name), 'utf8'))") >
           nativeHostSource.indexOf('after = await waitForStableFiles(') &&
         !sharedWorkbenchSource.includes('const client = boundedCdp(cdp, connectionDeadline)'),
-      'The exact owned workspace must use shared prompt observation, settle initialization writes, and reveal retained notifications before the strict two-prompt sequence begins'
+      'The exact owned workspace must keep foreground prompt handling primary and use only the physically fenced retained fallback'
     );
     checks++;
     console.log(`[workspace-regeneration-unit] ${checks} focused contract groups passed; no VS Code/runtime/native coverage claimed.`);

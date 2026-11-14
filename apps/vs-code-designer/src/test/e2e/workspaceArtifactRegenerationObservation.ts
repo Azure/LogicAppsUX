@@ -45,6 +45,7 @@ interface RawCandidate {
   disabledYesCount: number;
   ariaDisabledYesCount: number;
   obstructedYesCount: number;
+  yesPoint?: Point | null;
 }
 
 export interface RawWorkbenchState {
@@ -215,8 +216,12 @@ export const regenerationDiagnosticDomScript = `(() => {
         disabled: option.hasAttribute('disabled'),
         ariaDisabled: option.getAttribute('aria-disabled') === 'true',
         obstructed: state.inViewport && (!hit || (hit !== option && !option.contains(hit))),
+        point: state.inViewport && hit && (hit === option || option.contains(hit))
+          ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+          : null,
       };
     });
+    const actionable = states.filter(state => state.visible && !state.disabled && !state.ariaDisabled && !state.obstructed && state.point);
     return {
       kind: quick ? 'quickInput' : notification ? 'notification' : 'dialog',
       retained,
@@ -229,6 +234,7 @@ export const regenerationDiagnosticDomScript = `(() => {
       disabledYesCount: Math.min(states.filter(state => state.disabled).length, 64),
       ariaDisabledYesCount: Math.min(states.filter(state => state.ariaDisabled).length, 64),
       obstructedYesCount: Math.min(states.filter(state => state.obstructed).length, 64),
+      yesPoint: states.length === 1 && actionable.length === 1 ? actionable[0].point : null,
       truncated: relevant && (raw.length > 8192 || allOptions.length > 128 || states.length > 64),
     };
   });
@@ -517,11 +523,14 @@ export async function inspectRegenerationNotificationCenter(options: {
   admittedDocument?: CdpMainDocumentIdentity;
   pinnedPaths?: readonly PhysicalPathIdentity[];
   sampler?: RegenerationWorkbenchSampler;
-  wait?: (milliseconds: number) => Promise<void>;
+  targetActivation?: {
+    capture: () => Promise<void>;
+    activated: boolean;
+    timeOrigin?: number;
+  };
 }): Promise<NotificationCenterInspection> {
   const result = initialNotificationCenterInspection();
   const sample = options.sampler ?? samplePhysicalRegenerationWorkbench;
-  const wait = options.wait ?? ((milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds)));
   const remaining = (maximum: number): number => {
     const value = options.deadline - Date.now();
     if (value <= 0) {
@@ -593,7 +602,7 @@ export async function inspectRegenerationNotificationCenter(options: {
       retained.filter((candidate) => category(candidate.text, options.appDir, candidate.kind) === 'other-project').length
     );
     result.truncated ||= safe.truncated;
-    return safe;
+    return { safe, raw: state.raw };
   };
   const unavailable = (reason: NotificationCenterInspectionReason): NotificationCenterInspection => ({
     ...result,
@@ -631,6 +640,73 @@ export async function inspectRegenerationNotificationCenter(options: {
       ...(type === 'mouseMoved' ? {} : { clickCount: 1 }),
     });
   };
+  const retainedInitializationTargets = (raw: RawWorkbenchState): RawCandidate[] => {
+    if (raw.truncated) {
+      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    }
+    const targets = raw.candidates.filter(
+      (candidate) => candidate.retained && category(candidate.text, options.appDir, candidate.kind) === 'initialization'
+    );
+    if (targets.length !== 1) {
+      throw new NotificationCenterInspectionUnavailable(targets.length > 1 ? 'blocking-or-ambiguous-ui' : 'affordance-unavailable');
+    }
+    return targets;
+  };
+  const retainedInitializationPoint = (raw: RawWorkbenchState): Point => {
+    const target = retainedInitializationTargets(raw)[0];
+    if (
+      !target.displayed ||
+      !target.inViewport ||
+      target.inactive ||
+      target.yesCount !== 1 ||
+      target.visibleYesCount !== 1 ||
+      target.disabledYesCount !== 0 ||
+      target.ariaDisabledYesCount !== 0 ||
+      target.obstructedYesCount !== 0 ||
+      !target.yesPoint
+    ) {
+      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    }
+    return target.yesPoint;
+  };
+  const dispatchRetainedTargetEvent = async (
+    type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
+    buttons: number,
+    button: 'none' | 'left'
+  ): Promise<void> => {
+    const state = await read();
+    const point = retainedInitializationPoint(state.raw);
+    assertSafe();
+    await bounded.send('Input.dispatchMouseEvent', {
+      type,
+      x: point.x,
+      y: point.y,
+      button,
+      buttons,
+      ...(type === 'mouseMoved' ? {} : { clickCount: 1 }),
+    });
+  };
+  const activateRetainedTarget = async (state: Awaited<ReturnType<typeof read>>): Promise<void> => {
+    retainedInitializationPoint(state.raw);
+    await options.targetActivation?.capture();
+    const current = await read();
+    retainedInitializationPoint(current.raw);
+    const click = options.input.beginLogicalInput();
+    try {
+      await dispatchRetainedTargetEvent('mouseMoved', 0, 'none');
+      await dispatchRetainedTargetEvent('mousePressed', 1, 'left');
+      click.markPressed();
+      await dispatchRetainedTargetEvent('mouseReleased', 0, 'left');
+      click.complete();
+      if (options.targetActivation) {
+        options.targetActivation.activated = true;
+        options.targetActivation.timeOrigin = current.raw.timeOrigin;
+      }
+    } catch (error) {
+      click.fail();
+      throw error;
+    }
+  };
   const dispatchScroll = async (): Promise<NotificationCenterScrollState> => {
     await read();
     const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
@@ -654,7 +730,7 @@ export async function inspectRegenerationNotificationCenter(options: {
 
   try {
     let state = await read();
-    if (!state.centerVisible) {
+    if (!state.safe.centerVisible) {
       const affordance = await readAffordance();
       assertSafe();
       if (affordance.truncated || affordance.candidateCount > 1) {
@@ -680,12 +756,11 @@ export async function inspectRegenerationNotificationCenter(options: {
         const openDeadline = Math.min(options.deadline, Date.now() + 2000);
         while (Date.now() < openDeadline) {
           state = await read();
-          if (state.centerVisible) {
+          if (state.safe.centerVisible) {
             break;
           }
-          await wait(Math.min(100, openDeadline - Date.now()));
         }
-        if (!state.centerVisible) {
+        if (!state.safe.centerVisible) {
           return unavailable('open-timeout');
         }
         result.openedByDiagnostic = true;
@@ -693,8 +768,21 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
 
     for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
-      if (result.targetInitializationCount > 0) {
-        return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
+      const currentTargets = state.raw.candidates.filter(
+        (candidate) => candidate.retained && category(candidate.text, options.appDir, candidate.kind) === 'initialization'
+      );
+      if (currentTargets.length > 0) {
+        if (currentTargets.length > 1 || state.raw.truncated) {
+          return unavailable('blocking-or-ambiguous-ui');
+        }
+        const target = currentTargets[0];
+        if (options.targetActivation && target.displayed && target.inViewport) {
+          await activateRetainedTarget(state);
+          return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
+        }
+        if (!options.targetActivation) {
+          return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
+        }
       }
       const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
         timeoutMs: remaining(750),
@@ -720,9 +808,8 @@ export async function inspectRegenerationNotificationCenter(options: {
       }
       await dispatchScroll();
       result.scrollCount = Math.min(maxNotificationCenterScrolls, result.scrollCount + 1);
-      await wait(100);
       state = await read();
-      if (!state.centerVisible) {
+      if (!state.safe.centerVisible) {
         return unavailable('inspection-timeout');
       }
     }
@@ -738,6 +825,32 @@ export async function inspectRegenerationNotificationCenter(options: {
             : 'identity-unavailable'
     );
   }
+}
+
+export async function activateRetainedRegenerationInitialization(
+  options: Omit<Parameters<typeof inspectRegenerationNotificationCenter>[0], 'targetActivation'> & {
+    capture: () => Promise<void>;
+  }
+): Promise<{ inspection: NotificationCenterInspection; timeOrigin: number }> {
+  if (
+    !options.admittedDocument ||
+    options.admittedDocument.targetId !== options.expectedTargetId ||
+    options.admittedDocument.invalidated !== false
+  ) {
+    throw new Error('Retained initialization activation requires an unchanged admitted main-document identity');
+  }
+  const activation = { capture: options.capture, activated: false, timeOrigin: undefined as number | undefined };
+  const inspection = await inspectRegenerationNotificationCenter({ ...options, targetActivation: activation });
+  if (!activation.activated || activation.timeOrigin === undefined) {
+    if (inspection.otherProjectCount > 0 && inspection.targetInitializationCount === 0) {
+      throw new Error('Notification Center retained an initialization warning for a different project');
+    }
+    if (inspection.availability === 'available' && inspection.target === 'absent') {
+      throw new Error('Retained initialization warning for the owned project was absent from Notification Center');
+    }
+    throw new Error(`Retained initialization warning could not be activated safely: ${inspection.reason}`);
+  }
+  return { inspection, timeOrigin: activation.timeOrigin };
 }
 
 /** Replaces the old raw prompt text/coordinates in the existing observation log. */
