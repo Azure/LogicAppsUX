@@ -760,6 +760,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     assert.deepStrictEqual(JSON.parse(JSON.stringify(scrollDom.window.eval(notificationCenterScrollStateScript))), {
       centerCount: 1,
       scrollableCount: 1,
+      atStart: true,
       atEnd: false,
       point: { x: 60, y: 70 },
       deltaY: 100,
@@ -815,6 +816,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
           {
             ...candidate,
             retained: true,
+            semanticIdentity: 'data-index:0',
             text: prompt(appDir),
             disabledYesCount: 0,
             ariaDisabledYesCount: 0,
@@ -841,7 +843,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
         return { centerVisible: false, candidateCount: 1, truncated: false, point: { x: 4, y: 5 } };
       }
       if (expression === notificationCenterScrollStateScript) {
-        return { centerCount: 1, scrollableCount: 1, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
+        return { centerCount: 1, scrollableCount: 1, atStart: true, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
       }
       throw new Error('unexpected diagnostic expression');
     },
@@ -1092,7 +1094,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
           if (scrollHitTests === 2) {
             invalidatedBeforeWheel.invalidated = true;
           }
-          return { centerCount: 1, scrollableCount: 1, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
+          return { centerCount: 1, scrollableCount: 1, atStart: true, atEnd: false, point: { x: 6, y: 7 }, deltaY: 200 };
         }
         throw new Error('unexpected diagnostic expression');
       },
@@ -1118,6 +1120,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     const target = {
       ...candidate,
       retained: true,
+      semanticIdentity: 'data-index:0',
       text: prompt(appDir),
       disabledYesCount: 0,
       ariaDisabledYesCount: 0,
@@ -1149,7 +1152,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
           return { centerVisible: false, candidateCount: 1, truncated: false, point: { x: 4, y: 5 } };
         }
         if (expression === notificationCenterScrollStateScript) {
-          return { centerCount: 1, scrollableCount: 0, atEnd: true, point: null, deltaY: 0 };
+          return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
         }
         throw new Error('unexpected retained activation expression');
       },
@@ -1160,15 +1163,18 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       },
     }) as unknown as CdpConnection;
   const activate = async (
-    variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous',
+    variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous' | (() => 'target' | 'absent' | 'wrong-project' | 'ambiguous'),
     options: {
       document?: { targetId: string; invalidated: boolean; dispose: () => void } | null;
       input?: RegenerationInputTracker;
       deadline?: number;
       onSend?: () => void;
+      now?: () => number;
+      poll?: (remainingMs: number) => Promise<void>;
+      sentEvents?: Array<{ method: string; params?: Record<string, unknown> }>;
     } = {}
   ) => {
-    const sentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+    const sentEvents = options.sentEvents ?? [];
     let captureCount = 0;
     const document =
       options.document === null
@@ -1180,6 +1186,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
       appDir,
       deadline: options.deadline ?? Date.now() + 5000,
+      now: options.now,
       expectedTargetId: 'owned-target',
       expectedTimeOrigin: 42,
       expectedContextGeneration: 1,
@@ -1187,8 +1194,9 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       sampler: async () => ({
         before: owner,
         owner,
-        raw: activationRaw(sentEvents.length >= 3, variant),
+        raw: activationRaw(sentEvents.length >= 3, typeof variant === 'function' ? variant() : variant),
       }),
+      poll: options.poll,
       capture: async () => {
         captureCount++;
       },
@@ -1238,10 +1246,256 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     1,
     'The retained warning Yes must be pressed exactly once'
   );
-  await assert.rejects(activate('absent'), /absent from Notification Center/);
-  await assert.rejects(activate('wrong-project'), /different project/);
+
+  const runPagedActivation = async (targetIdentitiesByPage: readonly (readonly string[])[], initialPage: number) => {
+    let page = initialPage;
+    let captureCount = 0;
+    const events: string[] = [];
+    const sentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+    const baseTarget = activationRaw(true, 'target').candidates[0];
+    const cdp = {
+      targetId: 'owned-target',
+      contextGeneration: 1,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterScrollStateScript) {
+          events.push(`scroll-state:${page}`);
+          return {
+            centerCount: 1,
+            scrollableCount: 1,
+            atStart: page === 0,
+            atEnd: page === targetIdentitiesByPage.length - 1,
+            point: { x: 6, y: 7 },
+            deltaY: 200,
+          };
+        }
+        throw new Error('unexpected paged activation expression');
+      },
+      send: async (method: string, params?: Record<string, unknown>) => {
+        sentEvents.push({ method, params });
+        if (method === 'Input.dispatchMouseEvent' && params?.type === 'mouseWheel') {
+          const direction = Number(params.deltaY) > 0 ? 1 : -1;
+          page = Math.max(0, Math.min(targetIdentitiesByPage.length - 1, page + direction));
+          events.push(`wheel:${direction}:${page}`);
+        } else if (params?.type === 'mousePressed') {
+          events.push(`press:${String(params.x)}:${String(params.y)}`);
+        }
+        return {};
+      },
+    } as unknown as CdpConnection;
+    const result = await activateRetainedRegenerationInitialization({
+      cdp,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const identities = targetIdentitiesByPage[page];
+        return {
+          before: owner,
+          owner,
+          raw: {
+            ...activationRaw(true, 'absent'),
+            retainedCount: identities.length,
+            candidates: identities.map((semanticIdentity) => ({ ...baseTarget, semanticIdentity })),
+          },
+        };
+      },
+      capture: async () => {
+        captureCount++;
+        events.push('capture');
+      },
+    });
+    return { result, events, sentEvents, captureCount };
+  };
+  const initiallyBottom = await runPagedActivation([['data-index:0'], []], 1);
+  assert.strictEqual(initiallyBottom.captureCount, 1, 'The unique target above the initial bottom position must be reacquired');
+  assert.strictEqual(
+    initiallyBottom.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9)
+      .length,
+    1
+  );
+  const bottomProofIndex = initiallyBottom.events.lastIndexOf('scroll-state:1');
+  const targetPressIndex = initiallyBottom.events.indexOf('press:8:9');
+  assert.ok(
+    bottomProofIndex >= 0 && targetPressIndex > bottomProofIndex,
+    'Retained Yes cannot be pressed before verified-bottom uniqueness'
+  );
+  assert.ok(
+    initiallyBottom.events.indexOf('wheel:-1:0') < initiallyBottom.events.indexOf('wheel:1:1'),
+    'Every full scan must normalize to the top before scanning toward the bottom'
+  );
+  assert.ok(
+    initiallyBottom.events.lastIndexOf('wheel:-1:0') > bottomProofIndex,
+    'The unique target must be restored and reacquired after the completed full scan'
+  );
+
+  const duplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    (async () => {
+      let page = 0;
+      const baseTarget = activationRaw(true, 'target').candidates[0];
+      await activateRetainedRegenerationInitialization({
+        cdp: {
+          targetId: 'owned-target',
+          contextGeneration: 1,
+          evaluate: async (_contextId: number | undefined, expression: string) => {
+            if (expression === notificationCenterScrollStateScript) {
+              return {
+                centerCount: 1,
+                scrollableCount: 1,
+                atStart: page === 0,
+                atEnd: page === 1,
+                point: { x: 6, y: 7 },
+                deltaY: 200,
+              };
+            }
+            throw new Error('unexpected duplicate-page expression');
+          },
+          send: async (method: string, params?: Record<string, unknown>) => {
+            duplicateEvents.push({ method, params });
+            if (params?.type === 'mouseWheel') {
+              page = Number(params.deltaY) > 0 ? 1 : 0;
+            }
+            return {};
+          },
+        } as unknown as CdpConnection,
+        input: new RegenerationInputTracker(),
+        expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+        appDir,
+        deadline: Date.now() + 5000,
+        expectedTargetId: 'owned-target',
+        expectedTimeOrigin: 42,
+        expectedContextGeneration: 1,
+        admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+        sampler: async () => ({
+          before: owner,
+          owner,
+          raw: {
+            ...activationRaw(true, 'absent'),
+            retainedCount: 1,
+            candidates: [{ ...baseTarget, semanticIdentity: `data-index:${page}` }],
+          },
+        }),
+        capture: async () => {
+          throw new Error('Duplicate targets must fail before capture');
+        },
+      });
+    })(),
+    /could not be activated safely: blocking-or-ambiguous-ui/
+  );
+  assert.strictEqual(
+    duplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Duplicate exact targets on separate virtualized pages must fail before retained Yes'
+  );
+
+  let delayedNow = 0;
+  let delayedTargetVisible = false;
+  let delayedPollCount = 0;
+  const delayedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const delayed = await activate(() => (delayedTargetVisible ? 'target' : 'absent'), {
+    deadline: 300,
+    now: () => delayedNow,
+    poll: async (remainingMs) => {
+      delayedPollCount++;
+      delayedNow += Math.min(100, remainingMs);
+      delayedTargetVisible = true;
+    },
+    sentEvents: delayedEvents,
+  });
+  assert.strictEqual(delayedPollCount, 1, 'An initially empty open center must be re-sampled for live list updates');
+  assert.strictEqual(delayed.result.timeOrigin, 42);
+  assert.strictEqual(
+    delayedEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'Delayed retained activation may reveal the bell only once'
+  );
+  assert.strictEqual(
+    delayedEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The later retained target must be clicked once without replay'
+  );
+
+  let absentNow = 0;
+  let absentPollCount = 0;
+  const absentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activate('absent', {
+      deadline: 300,
+      now: () => absentNow,
+      poll: async (remainingMs) => {
+        absentPollCount++;
+        absentNow += Math.min(100, remainingMs);
+      },
+      sentEvents: absentEvents,
+    }),
+    /absent from Notification Center before the original deadline/
+  );
+  assert.strictEqual(absentNow, 300, 'Persistent absence must consume the complete original deadline');
+  assert.strictEqual(absentPollCount, 3);
+  assert.strictEqual(
+    absentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'Persistent absence must not reveal the bell again'
+  );
+  assert.strictEqual(
+    absentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    0,
+    'Persistent absence must never fabricate or replay retained Yes'
+  );
+
+  let openNow = 0;
+  let openWaitCount = 0;
+  const openTimeoutEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(openTimeoutEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 5000,
+      now: () => openNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({ before: owner, owner, raw: activationRaw(false, 'absent') }),
+      poll: async (remainingMs) => {
+        openWaitCount++;
+        openNow += Math.min(500, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('A center that never opens cannot capture a retained target');
+      },
+    }),
+    /could not be activated safely: open-timeout/
+  );
+  assert.strictEqual(openNow, 2000, 'Center-open wait must terminate at its bounded timeout under the injected clock');
+  assert.strictEqual(openWaitCount, 4, 'Center-open retries must yield through the injected wait between reads');
+  assert.strictEqual(
+    openTimeoutEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'Center-open timeout must never click the bell again'
+  );
+
+  let wrongProjectNow = 0;
+  await assert.rejects(
+    activate('wrong-project', {
+      deadline: 200,
+      now: () => wrongProjectNow,
+      poll: async (remainingMs) => {
+        wrongProjectNow += Math.min(100, remainingMs);
+      },
+    }),
+    /absent from Notification Center before the original deadline/
+  );
+  assert.strictEqual(wrongProjectNow, 200, 'Wrong-project retained items are non-matches until the original deadline');
   await assert.rejects(activate('ambiguous'), /could not be activated safely/);
-  await assert.rejects(activate('target', { deadline: Date.now() - 1 }), /inspection-timeout/);
+  await assert.rejects(activate('target', { deadline: Date.now() - 1 }), /absent from Notification Center before the original deadline/);
 
   const invalidatedTargetDocument = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
   const invalidatedTargetInput = new RegenerationInputTracker();

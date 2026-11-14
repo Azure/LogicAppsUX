@@ -607,13 +607,21 @@ Notification Center once through the unique visible, hit-tested status-bar bell,
 never through command dispatch. The fallback pins the physical workspace, retains
 the original target/document/deadline, requires a live admitted main-document
 identity (with no context-generation-only acceptance fallback), scans and
-bounded-scrolls only the center,
-requires one exact retained warning with one real enabled hit-tested **Yes**,
+bounded-scrolls only the center, and keeps re-sampling its live list until the
+original phase deadline. An initially empty center or wrong-project item is a
+non-match, not terminal absence. Empty scans remain at the top; scans that scroll
+first normalize to the top, traverse through verified bottom, accumulate stable
+semantic target identities across virtualized pages, then restore and recheck
+the top. Exactly one owned-project target must exist across the full scan before
+the same identity is reacquired for input; duplicates anywhere fail ambiguous.
+Newly inserted items remain observable on the top recheck or the next live poll.
+The fallback requires one exact retained warning with one real enabled hit-tested **Yes**,
 captures the existing `before-yes` evidence while that retained warning remains
 visible, then revalidates ownership and the action before every trusted mouse
-event. A wrong project, absent/duplicate target, ambiguous bell/center/action,
-identity or workspace change, deadline expiry, or uncertain/pending-invalid input
-fails closed. The bell and retained **Yes** are each attempted at most once;
+event. Duplicate exact targets, ambiguous bell/center/action, identity or
+workspace change, or uncertain/pending-invalid input fail immediately. Exact
+target absence fails only at the unchanged original deadline. The bell and
+retained **Yes** are each attempted at most once;
 foreground success never opens the center. The separate overwrite modal and all
 post-Yes file, reopen, cleanup, and ordered-evidence assertions are unchanged.
 
