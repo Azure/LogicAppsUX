@@ -1209,8 +1209,12 @@ function createLocalConnectionsData(
       const rawValue = parameterValue;
       if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
         const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
+        // The runtime doesn't evaluate app setting values, so save the unescaped literal. The raw (escaped) value is still
+        // used for the test connection call, where the runtime evaluates it.
         result.settings[appSettingName] =
-          typeof parameterValues[parameterKey] !== 'string' ? JSON.stringify(parameterValues[parameterKey]) : parameterValues[parameterKey];
+          typeof parameterValues[parameterKey] !== 'string'
+            ? JSON.stringify(parameterValues[parameterKey])
+            : unescapeExpressionLiteral(parameterValues[parameterKey]);
 
         parameterValue = `@appsetting('${appSettingName}')`;
       }
@@ -1229,4 +1233,29 @@ function createLocalConnectionsData(
 
 export function escapeSpecialChars(value: string): string {
   return value.replace(/-/g, '_1');
+}
+
+/**
+ * Removes workflow expression escape characters from a literal connection parameter value before it's saved to an app setting.
+ *
+ * The runtime evaluates connection parameter values as expressions, so a literal value that starts with '@' or contains '@{'
+ * must be entered escaped as '@@' or '@@{'. The runtime doesn't evaluate the value returned by appsetting(), so the app setting
+ * must contain the unescaped literal. This mirrors the runtime escape rules:
+ * - A value that starts with '@@' is a literal without its first '@'.
+ * - In any other value, '@@{' is a literal '@{'.
+ * Values that contain an unescaped expression are returned unchanged.
+ *
+ * For more information, see https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-workflow-definition-language#expressions.
+ */
+export function unescapeExpressionLiteral(value: string): string {
+  if (value.length < 2) {
+    return value;
+  }
+
+  if (value.startsWith('@@')) {
+    return value.substring(1);
+  }
+
+  const isExpression = (value.startsWith('@') && value[1] !== '{') || /(^|[^@])@\{/.test(value);
+  return isExpression ? value : value.replace(/@@\{/g, '@{');
 }
