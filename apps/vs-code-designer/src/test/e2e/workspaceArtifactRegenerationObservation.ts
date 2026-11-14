@@ -92,6 +92,8 @@ export type NotificationCenterInspectionReason =
   | 'identity-unavailable'
   | 'workbench-not-active'
   | 'blocking-or-ambiguous-ui'
+  | 'temporarily-blocked'
+  | 'target-unactionable'
   | 'affordance-unavailable'
   | 'affordance-ambiguous'
   | 'open-timeout'
@@ -187,12 +189,24 @@ export const regenerationDiagnosticDomScript = `(() => {
     return { displayed, inViewport: displayed && rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth };
   };
   const visible = element => geometry(element).inViewport;
-  const found = Array.from(document.querySelectorAll(
+  const rawContainers = Array.from(document.querySelectorAll(
     '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
-  )).filter(element => !(
-    element.classList.contains('monaco-list-row') && element.getAttribute('role') === 'dialog' &&
-    element.closest('.notifications-center .notifications-list-container') && element.querySelector('.notification-list-item')
   ));
+  const semanticContainer = container => {
+    const notificationRow = container.classList.contains('monaco-list-row') &&
+      !!container.closest('.notifications-center .notifications-list-container') &&
+      !!container.querySelector('.notification-list-item');
+    const nestedBlockingUi = (container.classList.contains('monaco-dialog-box') ||
+      (container.getAttribute('role') === 'dialog' && !notificationRow)) &&
+      !!container.closest('.notification-list-item');
+    if (container.classList.contains('quick-input-widget') || nestedBlockingUi) return container;
+    return (container.classList.contains('notification-list-item') ? container : container.closest('.notification-list-item')) ||
+      container.querySelector('.notification-list-item') ||
+      (container.classList.contains('notification-toast') ? container : container.closest('.notification-toast')) ||
+      container.querySelector('.notification-toast') ||
+      container;
+  };
+  const found = Array.from(new Set(rawContainers.map(semanticContainer)));
   const all = found.slice(0, 128);
   const distinct = all.filter(container => !all.some(other =>
     other !== container && other.contains(container) && geometry(other).inViewport === geometry(container).inViewport &&
@@ -202,9 +216,20 @@ export const regenerationDiagnosticDomScript = `(() => {
   const candidates = distinct.slice(0, 64).map(container => {
     const g = geometry(container);
     const quick = container.classList.contains('quick-input-widget');
-    const notification = container.classList.contains('notification-toast') || container.classList.contains('notification-list-item');
-    const retained = container.classList.contains('notification-list-item');
-    const retainedRow = retained ? container.closest('.monaco-list-row') || container : null;
+    const notificationRow = container.classList.contains('monaco-list-row') &&
+      !!container.closest('.notifications-center .notifications-list-container') &&
+      !!container.querySelector('.notification-list-item');
+    const nestedBlockingUi = (container.classList.contains('monaco-dialog-box') ||
+      (container.getAttribute('role') === 'dialog' && !notificationRow)) &&
+      !!container.closest('.notification-list-item');
+    const retainedItem = nestedBlockingUi
+      ? null
+      : container.classList.contains('notification-list-item')
+        ? container
+        : container.closest('.notification-list-item') || container.querySelector('.notification-list-item');
+    const retained = !!retainedItem?.closest('.notifications-center .notifications-list-container');
+    const notification = retained || container.classList.contains('notification-toast');
+    const retainedRow = retained ? retainedItem.closest('.monaco-list-row') || retainedItem : null;
     const semanticIdentity = retainedRow
       ? [
           ['data-index', retainedRow.getAttribute('data-index')],
@@ -266,7 +291,7 @@ export const regenerationDiagnosticDomScript = `(() => {
     toastCount: Math.min(document.querySelectorAll('.notification-toast').length, 64),
     retainedCount: Math.min(document.querySelectorAll('.notification-list-item').length, 64),
     dnd: labeled.length <= 2000 && dndStates.length === 1 ? (dndStates[0] === 'true' ? 'on' : 'off') : 'unknown',
-    truncated: found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.truncated),
+    truncated: rawContainers.length > 128 || found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.truncated),
     candidates,
   };
 })()`;
@@ -540,6 +565,7 @@ export async function inspectRegenerationNotificationCenter(options: {
   now?: () => number;
   allowReveal?: boolean;
   wait?: (remainingMs: number) => Promise<void>;
+  revealState?: { attempted: boolean };
   targetActivation?: {
     capture: () => Promise<void>;
     activated: boolean;
@@ -613,7 +639,7 @@ export async function inspectRegenerationNotificationCenter(options: {
       throw new NotificationCenterInspectionUnavailable('workbench-not-active');
     }
     if (safe.blockingUiVisible) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable(options.targetActivation ? 'temporarily-blocked' : 'blocking-or-ambiguous-ui');
     }
     result.sampleCount = Math.min(1_000_000, result.sampleCount + 1);
     result.retainedCount = Math.max(result.retainedCount, state.raw.retainedCount);
@@ -682,18 +708,21 @@ export async function inspectRegenerationNotificationCenter(options: {
     if (semanticIdentity !== undefined && target.semanticIdentity !== semanticIdentity) {
       throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
     }
+    if (target.yesCount > 1) {
+      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    }
     if (
       !target.displayed ||
       !target.inViewport ||
       target.inactive ||
-      target.yesCount !== 1 ||
+      target.yesCount === 0 ||
       target.visibleYesCount !== 1 ||
       target.disabledYesCount !== 0 ||
       target.ariaDisabledYesCount !== 0 ||
       target.obstructedYesCount !== 0 ||
       !target.yesPoint
     ) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('target-unactionable');
     }
     return target.yesPoint;
   };
@@ -868,6 +897,12 @@ export async function inspectRegenerationNotificationCenter(options: {
         if (affordance.candidateCount !== 1 || !affordance.point) {
           return unavailable('affordance-unavailable');
         }
+        if (options.revealState?.attempted) {
+          return unavailable('open-timeout');
+        }
+        if (options.revealState) {
+          options.revealState.attempted = true;
+        }
         const click = options.input.beginLogicalInput();
         try {
           await dispatchAffordanceEvent('mouseMoved', 0, 'none');
@@ -995,6 +1030,8 @@ export async function activateRetainedRegenerationInitialization(
   let allowReveal = true;
   let openedByFallback = false;
   let safeAbsenceObserved = false;
+  let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | undefined;
+  const revealState = { attempted: false };
   while (now() < options.deadline) {
     const activation = { capture: options.capture, activated: false, timeOrigin: undefined as number | undefined };
     const inspection = await inspectRegenerationNotificationCenter({
@@ -1002,16 +1039,36 @@ export async function activateRetainedRegenerationInitialization(
       now,
       allowReveal,
       wait: poll,
+      revealState,
       targetActivation: activation,
     });
     openedByFallback ||= inspection.openedByDiagnostic;
-    allowReveal = false;
     if (activation.activated && activation.timeOrigin !== undefined) {
       return {
         inspection: { ...inspection, openedByDiagnostic: openedByFallback },
         timeOrigin: activation.timeOrigin,
       };
     }
+    if (inspection.reason === 'temporarily-blocked' || inspection.reason === 'target-unactionable') {
+      lastPollableReason = inspection.reason;
+      if (inspection.reason === 'target-unactionable') {
+        allowReveal = false;
+      }
+      const remainingMs = options.deadline - now();
+      if (remainingMs <= 0) {
+        break;
+      }
+      try {
+        await poll(remainingMs);
+      } catch (error) {
+        if (now() >= options.deadline) {
+          break;
+        }
+        throw error;
+      }
+      continue;
+    }
+    allowReveal = false;
     if (inspection.availability !== 'available' || inspection.target === 'unknown') {
       if (safeAbsenceObserved && inspection.reason === 'inspection-timeout' && now() >= options.deadline) {
         break;
@@ -1019,6 +1076,7 @@ export async function activateRetainedRegenerationInitialization(
       throw new Error(`Retained initialization warning could not be activated safely: ${inspection.reason}`);
     }
     safeAbsenceObserved = inspection.target === 'absent';
+    lastPollableReason = undefined;
     const remainingMs = options.deadline - now();
     if (remainingMs <= 0) {
       break;
@@ -1031,6 +1089,9 @@ export async function activateRetainedRegenerationInitialization(
       }
       throw error;
     }
+  }
+  if (lastPollableReason) {
+    throw new Error(`Retained initialization warning remained ${lastPollableReason} until the original Notification Center deadline`);
   }
   throw new Error('Retained initialization warning for the owned project was absent from Notification Center before the original deadline');
 }

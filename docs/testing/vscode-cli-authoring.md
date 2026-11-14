@@ -894,7 +894,8 @@ remains diagnostic-only. Preserve the same `before-yes` evidence checkpoint with
 the retained warning visibly open, then click that real retained **Yes** once and
 continue to the unchanged separate overwrite modal. Keep the revealed center open
 and re-sample its live list through the same original deadline. Initial emptiness
-and wrong-project items are non-matches; never click them. Empty scans remain at
+and wrong-project items are non-matches; never click them. Retained progress rows
+and unrelated notification actions are likewise non-target clutter. Empty scans remain at
 the top. Every retained-center scan must first normalize and verify the top,
 traverse bounded virtualized pages through verified bottom, accumulate stable
 semantic identities for exact owned-project targets, and prove exactly one before
@@ -902,10 +903,12 @@ input. Restore and reacquire that same identity for fresh action validation;
 duplicates on any page fail ambiguous. Recheck the top before polling again so
 later insertions are observable. Do not retry either logical
 click, reset the clock, synthesize a dialog result, or select an unrelated
-notification. Duplicate exact targets, truncated/ambiguous UI, disabled/covered
-actions, identity changes, and uncertain input fail immediately. Exact-target
-absence fails only at the unchanged original deadline. Foreground success must
-not open the center.
+notification. Duplicate exact targets, truncated or ambiguous center geometry,
+identity changes, and uncertain input fail immediately.
+Blocking modal/QuickInput state and an exact target action that is temporarily
+disabled, covered, or not hit-testable prevent input but may be polled until the
+unchanged deadline. Persistent target absence or unactionable state fails only at
+that original deadline. Foreground success must not open the center.
 
 ## 6. Cancellation must establish quiescence
 

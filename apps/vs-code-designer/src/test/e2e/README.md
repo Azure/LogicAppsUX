@@ -609,7 +609,9 @@ the original target/document/deadline, requires a live admitted main-document
 identity (with no context-generation-only acceptance fallback), scans and
 bounded-scrolls only the center, and keeps re-sampling its live list until the
 original phase deadline. An initially empty center or wrong-project item is a
-non-match, not terminal absence. Empty scans remain at the top; scans that scroll
+non-match, not terminal absence. Retained activation/progress items and unrelated
+notifications, including their actions, are also non-target clutter and are never
+clicked. Empty scans remain at the top; scans that scroll
 first normalize to the top, traverse through verified bottom, accumulate stable
 semantic target identities across virtualized pages, then restore and recheck
 the top. Exactly one owned-project target must exist across the full scan before
@@ -620,7 +622,9 @@ captures the existing `before-yes` evidence while that retained warning remains
 visible, then revalidates ownership and the action before every trusted mouse
 event. Duplicate exact targets, ambiguous bell/center/action, identity or
 workspace change, or uncertain/pending-invalid input fail immediately. Exact
-target absence fails only at the unchanged original deadline. The bell and
+target absence, a blocking modal/QuickInput, or an exact target whose action is
+temporarily disabled, covered, or not hit-testable is polled without input and
+fails only at the unchanged original deadline. The bell and
 retained **Yes** are each attempted at most once;
 foreground success never opens the center. The separate overwrite modal and all
 post-Yes file, reopen, cleanup, and ordered-evidence assertions are unchanged.

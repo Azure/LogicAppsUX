@@ -740,6 +740,23 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     appDir
   );
   assert.strictEqual(nestedModal.blockingUiVisible, true, 'A real dialog nested inside a notification remains blocking');
+  const retainedClutter = domState(`
+    <div class="notifications-center" role="dialog"><div class="notifications-list-container">
+      <div class="monaco-list-row" role="dialog" data-index="0">
+        <div class="notification-list-item">Activating Extensions...</div>
+      </div>
+      <div class="monaco-list-row" role="dialog" data-index="1">
+        <div class="notification-list-item">A Git repository was found<button>Yes</button><button>Always</button><button>Never</button></div>
+      </div>
+    </div></div>
+  `);
+  assert.strictEqual(retainedClutter.candidates.length, 2);
+  assert.ok(retainedClutter.candidates.every((entry) => entry.kind === 'notification' && entry.retained));
+  assert.strictEqual(
+    sanitizeRegenerationDiagnosticState(retainedClutter, true, undefined, appDir).blockingUiVisible,
+    false,
+    'Retained progress and unrelated-action rows must not become blocking outer dialogs'
+  );
   const scrollDom = new JSDOM(
     '<html><body><div class="notifications-center"><div class="notifications-list-container"><div class="monaco-scrollable-element"></div></div></div></body></html>',
     { runScripts: 'outside-only' }
@@ -1116,7 +1133,8 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   assert.strictEqual(wheelRace.reason, 'identity-unavailable');
   assert.deepStrictEqual(wheelSent, [], 'Identity invalidation after wheel hit-test must prevent wheel input');
 
-  const activationRaw = (centerVisible: boolean, variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous'): RawWorkbenchState => {
+  type ActivationVariant = 'target' | 'absent' | 'wrong-project' | 'ambiguous' | 'clutter' | 'obstructed-target' | 'blocking';
+  const activationRaw = (centerVisible: boolean, variant: ActivationVariant): RawWorkbenchState => {
     const target = {
       ...candidate,
       retained: true,
@@ -1127,6 +1145,22 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       obstructedYesCount: 0,
       yesPoint: { x: 8, y: 9 },
     };
+    const clutter = [
+      {
+        ...target,
+        semanticIdentity: 'data-index:10',
+        text: 'Activating Extensions...',
+        yesCount: 0,
+        visibleYesCount: 0,
+        yesPoint: null,
+      },
+      {
+        ...target,
+        semanticIdentity: 'data-index:11',
+        text: 'A Git repository was found',
+        yesPoint: { x: 30, y: 31 },
+      },
+    ];
     const candidates =
       !centerVisible || variant === 'absent'
         ? []
@@ -1134,12 +1168,18 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
           ? [{ ...target, text: prompt(path.join(root, 'private-other')) }]
           : variant === 'ambiguous'
             ? [target, { ...target }]
-            : [target];
+            : variant === 'clutter'
+              ? clutter
+              : variant === 'obstructed-target'
+                ? [{ ...target, obstructedYesCount: 1, yesPoint: null }]
+                : variant === 'blocking'
+                  ? [{ ...candidate, kind: 'dialog' as const, text: 'Blocking setup', retained: false }]
+                  : [target];
     return {
       ...inspectionRaw(centerVisible, false),
       centerMounted: centerVisible,
       centerVisible,
-      retainedCount: candidates.length,
+      retainedCount: candidates.filter((entry) => entry.retained).length,
       candidates,
     };
   };
@@ -1163,7 +1203,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       },
     }) as unknown as CdpConnection;
   const activate = async (
-    variant: 'target' | 'absent' | 'wrong-project' | 'ambiguous' | (() => 'target' | 'absent' | 'wrong-project' | 'ambiguous'),
+    variant: ActivationVariant | (() => ActivationVariant),
     options: {
       document?: { targetId: string; invalidated: boolean; dispose: () => void } | null;
       input?: RegenerationInputTracker;
@@ -1420,6 +1460,54 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     'The later retained target must be clicked once without replay'
   );
 
+  let clutterNow = 0;
+  let clutterCleared = false;
+  const clutterEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const clutterThenTarget = await activate(() => (clutterCleared ? 'target' : 'clutter'), {
+    deadline: 300,
+    now: () => clutterNow,
+    poll: async (remainingMs) => {
+      clutterNow += Math.min(100, remainingMs);
+      clutterCleared = true;
+    },
+    sentEvents: clutterEvents,
+  });
+  assert.strictEqual(clutterThenTarget.result.timeOrigin, 42);
+  assert.strictEqual(
+    clutterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'Clutter polling must preserve the single bell reveal'
+  );
+  assert.strictEqual(
+    clutterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 30 && event.params.y === 31).length,
+    0,
+    'Git and activation-progress clutter must never receive input'
+  );
+  assert.strictEqual(
+    clutterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The later exact Logic Apps target must receive one click'
+  );
+
+  let obstructedNow = 0;
+  let targetActionable = false;
+  const obstructedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const obstructedThenActionable = await activate(() => (targetActionable ? 'target' : 'obstructed-target'), {
+    deadline: 300,
+    now: () => obstructedNow,
+    poll: async (remainingMs) => {
+      obstructedNow += Math.min(100, remainingMs);
+      targetActionable = true;
+    },
+    sentEvents: obstructedEvents,
+  });
+  assert.strictEqual(obstructedThenActionable.captureCount, 1, 'Evidence capture must wait for the target action to become hit-testable');
+  assert.strictEqual(
+    obstructedEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'A temporarily obstructed target must be clicked once after it becomes actionable'
+  );
+
   let absentNow = 0;
   let absentPollCount = 0;
   const absentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
@@ -1446,6 +1534,52 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     absentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
     0,
     'Persistent absence must never fabricate or replay retained Yes'
+  );
+
+  let persistentClutterNow = 0;
+  const persistentClutterEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activate('clutter', {
+      deadline: 300,
+      now: () => persistentClutterNow,
+      poll: async (remainingMs) => {
+        persistentClutterNow += Math.min(100, remainingMs);
+      },
+      sentEvents: persistentClutterEvents,
+    }),
+    /absent from Notification Center before the original deadline/
+  );
+  assert.strictEqual(persistentClutterNow, 300, 'Persistent unrelated clutter must consume the original deadline');
+  assert.strictEqual(
+    persistentClutterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 30).length,
+    0,
+    'Persistent unrelated notification actions must never be clicked'
+  );
+
+  let persistentBlockingNow = 0;
+  const persistentBlockingEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activate('blocking', {
+      deadline: 300,
+      now: () => persistentBlockingNow,
+      poll: async (remainingMs) => {
+        persistentBlockingNow += Math.min(100, remainingMs);
+      },
+      sentEvents: persistentBlockingEvents,
+    }),
+    /remained temporarily-blocked until the original Notification Center deadline/
+  );
+  assert.strictEqual(persistentBlockingNow, 300, 'Persistent blocking UI must consume the original deadline');
+  assert.strictEqual(
+    persistentBlockingEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5)
+      .length,
+    1,
+    'Persistent blocking UI must not replay the bell reveal'
+  );
+  assert.strictEqual(
+    persistentBlockingEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
+    0,
+    'Persistent blocking UI must never permit retained Yes input'
   );
 
   let openNow = 0;
