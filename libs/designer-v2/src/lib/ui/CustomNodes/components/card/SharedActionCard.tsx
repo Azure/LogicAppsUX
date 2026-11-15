@@ -1,4 +1,10 @@
-import { ActionNodeCard, ToolItemCard, TriggerNodeCard, type NodeToolKind } from '@microsoft/designer-ui-v2';
+import {
+  ActionNodeCard,
+  ToolItemCard,
+  TriggerNodeCard,
+  NODE_HOVER_CARD_IGNORE_ATTRIBUTE,
+  type NodeToolKind,
+} from '@microsoft/designer-ui-v2';
 import { makeStyles, mergeClasses, Spinner, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
@@ -12,7 +18,8 @@ import {
   getOperationNodeDetail,
   getOperationNodeSubtitle,
   mapActionNodeStrings,
-  mapSharedRunStatus,
+  getSharedCardAccessibleName,
+  mapSharedRunPresentation,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { useCardStyles } from './card.styles';
@@ -20,10 +27,10 @@ import { useOperationNodeIcon } from './useOperationNodeIcon';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 
 const useStyles = makeStyles({
-  inactive: { opacity: 0.3 },
   pinned: { outline: `2px solid ${tokens.colorPalettePumpkinBorderActive}`, outlineOffset: '2px' },
   dynamic: { position: 'absolute', top: '8px', right: '8px' },
   progress: { position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clipPath: 'inset(50%)' },
+  after: { display: 'contents' },
 });
 
 const toolMessages = defineMessages({
@@ -89,38 +96,10 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   const hostStyles = useCardStyles();
   const intl = useIntl();
   const strings = useMemo(() => mapActionNodeStrings(intl), [intl]);
-  const status = mapSharedRunStatus(runData?.status);
-  const mappedStrings = useMemo(() => {
-    if (runData?.status === 'Waiting') {
-      return {
-        status: {
-          ...strings.status,
-          pending: intl.formatMessage({
-            defaultMessage: 'Waiting',
-            id: 'd0wgcV',
-            description: 'Indicates that the run is currently waiting',
-          }),
-        },
-      };
-    }
-    if (runData?.status === 'Resuming') {
-      return {
-        status: {
-          ...strings.status,
-          running: intl.formatMessage({
-            defaultMessage: 'Resuming',
-            id: 'jenxD4',
-            description: 'Indicates that the run is currently resuming',
-          }),
-        },
-      };
-    }
-    // Unknown service statuses were displayed verbatim by the previous host badge.
-    if (status === 'pending' && runData?.status && runData.status !== 'Pending') {
-      return { status: { ...strings.status, pending: runData.status } };
-    }
-    return strings;
-  }, [intl, runData?.status, status, strings]);
+  // One mapper yields the shared tone plus a truthful label (Waiting, Resuming, TimedOut, raw unknowns)
+  // so the localized status dictionary is never cloned per card.
+  const runPresentation = mapSharedRunPresentation(runData?.status, intl);
+  const { status, label: statusLabel } = runPresentation;
   const focusRef = useRef<HTMLDivElement>(null);
   const dndRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -184,7 +163,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       ]
     : errorMessages;
   const Card = toolKind ? ToolItemCard : isTrigger ? TriggerNodeCard : ActionNodeCard;
-  const cardStrings = useMemo(() => ({ ...mappedStrings, tool: mapToolNodeStrings(intl).tool }), [intl, mappedStrings]);
+  const cardStrings = useMemo(() => ({ ...strings, tool: mapToolNodeStrings(intl).tool }), [intl, strings]);
   const detail = getOperationNodeDetail(intl, operationType, operationKind, connectorName);
   const loadingLabel = intl.formatMessage({
     defaultMessage: 'Loading operation',
@@ -207,17 +186,19 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       selectedIcon={selectedIcon}
       selected={isSelected}
       status={status}
+      statusLabel={statusLabel}
       statusDetail={runData?.duration}
       strings={cardStrings}
+      inactive={!active}
       {...(toolKind ? { kind: toolKind, size: 'small' as const } : { handles: false })}
       handleAxis={handleAxis}
       role="button"
       tabIndex={nodeIndex}
       id={`msla-node-${id}`}
-      aria-label={toolAltText ?? cardAltText}
+      aria-label={getSharedCardAccessibleName(intl, toolAltText ?? cardAltText, runPresentation, cardStrings.status, runData?.duration)}
       aria-pressed={toolKind ? !!isSelected : undefined}
       aria-busy={primaryLoading || isLoadingDynamicData || undefined}
-      className={mergeClasses(!active && styles.inactive, isPinned && styles.pinned, copilotModified && hostStyles.copilotModified)}
+      className={mergeClasses(isPinned && styles.pinned, copilotModified && hostStyles.copilotModified)}
       data-pinned={isPinned || undefined}
       data-copilot-modified={copilotModified || undefined}
       data-testid={`card-${title}`}
@@ -227,11 +208,21 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
         onClick?.(event);
       }}
       onContextMenu={onContextMenu}
-      onKeyDown={keyboard.keyDown}
-      onKeyUp={keyboard.keyUp}
+      onKeyDown={(event) => {
+        // Focusable after badges own their keyboard gestures; only the card itself invokes canvas commands.
+        if (event.target === event.currentTarget) {
+          keyboard.keyDown(event);
+        }
+      }}
+      onKeyUp={(event) => {
+        if (event.target === event.currentTarget) {
+          keyboard.keyUp(event);
+        }
+      }}
       style={{ '--designer-ui-v2-node-text-end-reserve': `${indicatorCount * 20}px` } as CSSProperties}
       after={
-        <>
+        // A layout-neutral boundary excludes badges from rich hover while preserving their own tooltips.
+        <span className={styles.after} {...{ [NODE_HOVER_CARD_IGNORE_ATTRIBUTE]: true }}>
           {primaryLoading ? <span className={styles.progress} role="progressbar" aria-label={loadingLabel} /> : null}
           {!status && errors.length > 0 ? <CardErrorBadge messages={errors} /> : null}
           {isLoadingDynamicData ? (
@@ -245,7 +236,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
             nodeIndex={nodeIndex}
             staticResultsEnabled={staticResultsEnabled}
           />
-        </>
+        </span>
       }
     />
   );

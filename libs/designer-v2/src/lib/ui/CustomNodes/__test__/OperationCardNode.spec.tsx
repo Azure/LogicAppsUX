@@ -166,6 +166,10 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
@@ -327,6 +331,25 @@ describe('OperationCardNode (v2)', () => {
     await new Promise((resolve) => setTimeout(resolve, 420));
     expect(screen.queryByText('Monitoring description')).toBeNull();
     expect(container.querySelector('[data-node-info-card]')).toBeNull();
+  });
+
+  it.each([
+    [false, 'loops-pager-testNode', 'shared-loops-pager-testNode'],
+    [true, 'shared-loops-pager-testNode', 'loops-pager-testNode'],
+  ])('selects the MCP tool pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { repetitionCount: 2 },
+    });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
   });
 
   it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {

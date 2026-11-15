@@ -72,6 +72,17 @@ const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 type FlowAxis = 'vertical' | 'horizontal';
 const getFlowAxis = (direction?: string): FlowAxis | undefined =>
   direction === 'RIGHT' ? 'horizontal' : direction === 'DOWN' ? 'vertical' : undefined;
+// Keep terminal spacing in sync with the shared add-button geometry used by cards and edges.
+const TERMINAL_ADD_PADDING = nodeMetrics.actionAdd.buttonHeight + nodeMetrics.terminalConnectionLength;
+// Empty terminals need additional host graph space, not a numerically equal icon/header metric.
+const EXTRA_EMPTY_TERMINAL_PADDING = 20;
+const EMPTY_TERMINAL_ADD_PADDING = TERMINAL_ADD_PADDING + EXTRA_EMPTY_TERMINAL_PADDING;
+// These host packing values mirror branch/panel CSS; no semantic library metric exists for them.
+const SHARED_CONDITION_PORT_GAP = 16;
+const SHARED_TOOLS_PANEL_PADDING = 16;
+const SHARED_TOOLS_PANEL_HEADER_GAP = 16;
+const SHARED_TOOLS_PANEL_HEADER_OFFSET = SHARED_TOOLS_PANEL_PADDING + nodeMetrics.toolsHeader + SHARED_TOOLS_PANEL_HEADER_GAP;
+const SHARED_TOOLS_ROW_SPACING = '12';
 
 /** Layout-only tool packing is flattened back to the original graph identities before rendering. */
 const flattenToolGroups = (node: ElkNode): ElkNode => {
@@ -223,7 +234,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode, useSharedNodeUi = false, reu
           if (presentation.shared && n.layoutOptions?.operationType?.toLowerCase() === 'foreach') {
             const header = n.children.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
             if (header) {
-              const top = (header.y ?? 0) + (header.height ?? 0) + 40;
+              const top = (header.y ?? 0) + (header.height ?? 0) + TERMINAL_ADD_PADDING;
               nodeObject.data.bodyFrame = { y: top, height: n.height - top };
             }
           }
@@ -318,10 +329,10 @@ const convertWorkflowGraphToElkGraph = (
       : [];
   const header = children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
   if (header && branchPorts.length) {
-    const gap = operationType === 'switch' ? nodeMetrics.cards.switch.outputGap : 16;
+    const gap = operationType === 'switch' ? nodeMetrics.cards.switch.outputGap : SHARED_CONDITION_PORT_GAP;
     const total = branchPorts.length * nodeMetrics.handle.size + (branchPorts.length - 1) * gap;
     const horizontalPorts = rightwardToolBranch;
-    const headerWidth = header.width ?? 160;
+    const headerWidth = header.width ?? nodeMetrics.cards.condition.width;
     const headerHeight = header.height ?? nodeMetrics.cards.condition.height;
     header.layoutOptions = { ...header.layoutOptions, branchPorts: JSON.stringify(branchPorts), 'elk.portConstraints': 'FIXED_POS' };
     header.ports = branchPorts.map((port, index) => ({
@@ -376,8 +387,12 @@ const convertWorkflowGraphToElkGraph = (
         },
       })) ?? [],
     layoutOptions: {
-      // Terminal add controls consume the output side of the accepted local axis.
-      'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=40]' : '[top=0,left=20,bottom=40,right=20]',
+      // Shared terminal controls consume the local output side; library metric changes must not move legacy gutters.
+      'elk.padding': useSharedNodeUi
+        ? rightwardToolBranch
+          ? `[top=0,left=20,bottom=20,right=${TERMINAL_ADD_PADDING}]`
+          : `[top=0,left=20,bottom=${TERMINAL_ADD_PADDING},right=20]`
+        : '[top=0,left=20,bottom=40,right=20]',
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       // Set node type for layout
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
@@ -401,7 +416,11 @@ const convertWorkflowGraphToElkGraph = (
       ...(node.children?.length === 1 &&
         (node.children[0].type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE ||
           node.children[0].type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE) && {
-          'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=60]' : '[top=0,left=20,bottom=60,right=20]',
+          'elk.padding': useSharedNodeUi
+            ? rightwardToolBranch
+              ? `[top=0,left=20,bottom=20,right=${EMPTY_TERMINAL_ADD_PADDING}]`
+              : `[top=0,left=20,bottom=${EMPTY_TERMINAL_ADD_PADDING},right=20]`
+            : '[top=0,left=20,bottom=60,right=20]',
         }),
       // If graph has a footer, reduce bottom padding further
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
@@ -411,7 +430,7 @@ const convertWorkflowGraphToElkGraph = (
         'elk.nodeSize.constraints': 'MINIMUM_SIZE',
         'elk.nodeSize.minimum': `(${nodeMetrics.frame.minWidth},${
           operationType === 'foreach'
-            ? nodeMetrics.cards.loop.height + 40 + nodeMetrics.frame.minBodyHeight
+            ? nodeMetrics.cards.loop.height + TERMINAL_ADD_PADDING + nodeMetrics.frame.minBodyHeight
             : nodeMetrics.frame.minBodyHeight
         })`,
       }),
@@ -439,7 +458,7 @@ const convertWorkflowGraphToElkGraph = (
     };
     if (tools.length || toolIds.length) {
       const collapsed = tools.length === 0;
-      const collapsedPanelHeight = nodeMetrics.toolsHeader + 2 * 16 + 2;
+      const collapsedPanelHeight = nodeMetrics.toolsPanel.collapsedHeight;
       // Canonical panel: 16px padding, 20px heading, 16px heading/list gap, 12px row gap.
       // Keep arbitrary multi-action/nested tools intact; their real extents enlarge this local panel.
       const group: ElkNode = {
@@ -455,9 +474,11 @@ const convertWorkflowGraphToElkGraph = (
         layoutOptions: {
           toolGroup: 'true',
           ...(collapsed && { collapsedTools: JSON.stringify(toolIds.map((id) => ({ id }))) }),
-          'elk.padding': collapsed ? '[top=0,left=0,bottom=0,right=0]' : '[top=52,left=16,bottom=16,right=16]',
-          'elk.layered.spacing.nodeNodeBetweenLayers': '12',
-          'elk.layered.spacing.edgeNodeBetweenLayers': '12',
+          'elk.padding': collapsed
+            ? '[top=0,left=0,bottom=0,right=0]'
+            : `[top=${SHARED_TOOLS_PANEL_HEADER_OFFSET},left=${SHARED_TOOLS_PANEL_PADDING},bottom=${SHARED_TOOLS_PANEL_PADDING},right=${SHARED_TOOLS_PANEL_PADDING}]`,
+          'elk.layered.spacing.nodeNodeBetweenLayers': SHARED_TOOLS_ROW_SPACING,
+          'elk.layered.spacing.edgeNodeBetweenLayers': SHARED_TOOLS_ROW_SPACING,
           'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP',
           'elk.nodeSize.constraints': 'MINIMUM_SIZE',
           'elk.nodeSize.minimum': `(${nodeMetrics.cards.agent.width},${collapsed ? collapsedPanelHeight : 0})`,

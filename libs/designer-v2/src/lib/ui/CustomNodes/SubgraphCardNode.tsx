@@ -25,6 +25,7 @@ import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/
 import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitoring';
 import { getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { horizontalTerminalStyle } from '../connections/connections.styles';
 import {
@@ -48,6 +49,7 @@ import { useOperationQuery } from '../../core/state/selectors/actionMetadataSele
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { SharedBranchCard } from './components/card/SharedFamilyCards';
 import { NodeAddButton } from '@microsoft/designer-ui-v2';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const subgraphId = removeIdTag(id);
@@ -291,11 +293,22 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
             <>
               {shared && isAddCase ? (
                 readOnly ? null : (
-                  <NodeAddButton
-                    label={isAgentAddTool ? intlText.addTool : intlText.addCase}
-                    onClick={() => subgraphClick(subgraphId)}
-                    tabIndex={nodeIndex}
-                  />
+                  <div
+                    // Keep the add-button center aligned with the shared 232x44 ELK slot used for add-case ports/anchors.
+                    style={{
+                      width: '100%',
+                      height: presentation.size?.height ?? nodeMetrics.actionAdd.containerHeight,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <NodeAddButton
+                      label={isAgentAddTool ? intlText.addTool : intlText.addCase}
+                      onClick={() => subgraphClick(subgraphId)}
+                      tabIndex={nodeIndex}
+                    />
+                  </div>
                 )
               ) : shared ? (
                 <SharedBranchCard
@@ -347,7 +360,13 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   nodeIndex={nodeIndex}
                 />
               )}
-              {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
+              {shouldShowPager ? (
+                shared ? (
+                  <SharedLoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
+                ) : (
+                  <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
+                )
+              ) : null}
             </>
           ) : null}
           {sharedTool ? null : <DefaultHandle axis={handleAxis} type="source" />}

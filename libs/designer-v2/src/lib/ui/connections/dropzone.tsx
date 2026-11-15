@@ -29,7 +29,8 @@ import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSele
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { DropTarget } from './dropTarget';
 import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
+import { designerUiTokens, EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { AddFilled } from '@fluentui/react-icons';
 import { terminalConnectionLength, useConnectionStyles } from './connections.styles';
 import { mergeClasses, Tooltip } from '@fluentui/react-components';
@@ -59,6 +60,8 @@ export const DropZone: React.FC<DropZoneProps> = memo(
     const [focused, setFocused] = useState(false);
     const terminal = isRevealed === undefined;
     const revealed = terminal || isRevealed || hovered || focused;
+    const terminalControlSize = Math.max(nodeMetrics.actionAdd.buttonWidth, nodeMetrics.actionAdd.buttonHeight);
+    const controlSize = terminal ? terminalControlSize : nodeMetrics.edgeControl.hitTargetSize;
 
     const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
     const terminalVariant =
@@ -259,6 +262,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
               className={styles.control}
               data-edge-control={terminal ? 'terminal' : 'insertion'}
               data-revealed={revealed}
+              style={{ width: controlSize, height: controlSize }}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
               onFocus={() => setFocused(true)}
@@ -306,6 +310,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                   icon={<AddFilled />}
                   tooltip={tooltipText}
                   ariaLabel={tooltipText}
+                  maskColor={designerUiTokens.canvasBackground}
                   tabIndex={tabIndex}
                   isRevealed={revealed}
                   onActivate={openMenu}

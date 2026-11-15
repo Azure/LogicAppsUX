@@ -9,7 +9,7 @@ import { isNullOrUndefined, replaceWhiteSpaceWithUnderscore, useNodeIndex, WORKF
 import { useOperationsVisuals } from '../../core/state/operation/operationSelector';
 import { DefaultHandle } from './components/handles/DefaultHandle';
 import { useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
+import { getNodePresentation, SHARED_COLLAPSED_CARD_HEIGHT, type NodePresentation } from '../../core/utils/graph';
 import { CollapseChip } from '@microsoft/designer-ui-v2';
 import { toggleCollapsedActionId } from '../../core/state/workflow/workflowSlice';
 import { useIntl } from 'react-intl';
@@ -73,7 +73,7 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
     <div
       style={{
         width: presentation.size?.width ?? 200,
-        height: 50,
+        height: SHARED_COLLAPSED_CARD_HEIGHT,
       }}
     >
       <DefaultHandle axis={handleAxis} type="target" />

@@ -453,15 +453,16 @@ describe('shared visuals contain actual XYFlow ports', () => {
         ]}
       />
     );
-    const outputs = container.querySelector('[data-testid="node-output-handles"]')!;
+    const outputs = container.querySelector<HTMLElement>('[data-branch]')?.parentElement as HTMLElement;
     expect(outputs).toHaveAttribute('data-axis', 'horizontal');
     expect(outputs.querySelectorAll('.react-flow__handle.source')).toHaveLength(2);
-    expect(outputs.querySelector('[data-handle="success"] .react-flow__handle')).toHaveAttribute('data-handleid', 'actual-true');
-    expect(outputs.querySelector('[data-handle="danger"] .react-flow__handle')).toHaveAttribute('data-handleid', 'actual-false');
+    expect(outputs.querySelector('[data-branch="true"] .react-flow__handle')).toHaveAttribute('data-handleid', 'actual-true');
+    expect(outputs.querySelector('[data-branch="false"] .react-flow__handle')).toHaveAttribute('data-handleid', 'actual-false');
     expect(outputs.querySelector('[data-handleid="actual-true"]')).toHaveClass('react-flow__handle-right');
   });
 
   it('renders the actual deserialized tool-body edge through XYFlow and the registered heading-edge renderer', async () => {
+    options.shared = true;
     const original = agentMcpWorkflowDefinitionInput;
     const parsed = Deserialize(
       {
@@ -492,21 +493,27 @@ describe('shared visuals contain actual XYFlow ports', () => {
       ),
       true
     );
+    const edge = edges.find(({ source, target }) => source === 'NativeTool-#subgraph' && target === 'First')!;
+    expect(edge.type).toBe('HEADING_EDGE');
     // JSDOM cannot measure the real browser. Supply perimeter bounds to XYFlow's supported initial-handle API,
     // while separately asserting real DOM registration and the tool perimeter defect above.
     const nodes = accepted
-      .filter(({ parentId }) => parentId === 'NativeTool')
-      .map((node) => ({
-        ...node,
-        type: 'actual',
-        parentId: undefined,
-        handles: [
-          { type: 'target' as const, position: Position.Left, x: 0, y: node.height! / 2, width: 0, height: 0 },
-          { type: 'source' as const, position: Position.Right, x: node.width!, y: node.height! / 2, width: 0, height: 0 },
-        ],
-      }));
-    const edge = edges.find(({ source, target }) => source === 'NativeTool-#subgraph' && target === 'First')!;
-    expect(edge.type).toBe('HEADING_EDGE');
+      .filter(({ parentId, id }) => parentId === 'NativeTool' || id === edge.source)
+      .map((node) => {
+        const width = node.width ?? node.data?.size?.width ?? 200;
+        const height = node.height ?? node.data?.size?.height ?? 40;
+        return {
+          ...node,
+          type: 'actual',
+          parentId: undefined,
+          width,
+          height,
+          handles: [
+            { type: 'target' as const, position: Position.Left, x: 0, y: height / 2, width: 0, height: 0 },
+            { type: 'source' as const, position: Position.Right, x: width, y: height / 2, width: 0, height: 0 },
+          ],
+        };
+      });
     const store = createDesignerStore();
     store.dispatch(
       setStateAfterUndoRedo({

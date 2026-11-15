@@ -183,6 +183,43 @@ describe('GraphContainerNode', () => {
     });
   });
 
+  describe('shared inactive propagation', () => {
+    it.each([
+      ['monitoring without run data', true, {}, true],
+      ['monitoring with run data', true, { status: 'Succeeded' }, false],
+      ['authoring without run data', false, {}, false],
+    ])('dims the shared frame only for %s', (_name, monitoring, runData, inactive) => {
+      (useSharedNodeUi as Mock).mockReturnValue(true);
+      (useMonitoringView as Mock).mockReturnValue(monitoring);
+      (useRunData as Mock).mockReturnValue(runData);
+      (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+      const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+      expect(tree.root.findByType(NodeFrame).props.inactive).toBe(inactive);
+    });
+
+    it.each([
+      [true, {}, true],
+      [true, { status: 'Failed' }, false],
+      [false, {}, false],
+    ])('threads inactive into the merge junction (monitoring=%s, runData=%j)', (monitoring, runData, inactive) => {
+      (useSharedNodeUi as Mock).mockReturnValue(true);
+      (useMonitoringView as Mock).mockReturnValue(monitoring);
+      (useRunData as Mock).mockReturnValue(runData);
+      (useActionMetadata as Mock).mockReturnValue({ type: 'If' });
+      const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+      expect(tree.root.findByType(NodeMergePoint).props.inactive).toBe(inactive);
+    });
+
+    it('keeps the flag-off monitoring path on the legacy GraphContainer active prop', () => {
+      (useMonitoringView as Mock).mockReturnValue(true);
+      (useRunData as Mock).mockReturnValue({});
+      const tree = renderer.create(<GraphContainerNode {...defaultProps} />);
+      expect(tree.root.findAllByType(NodeFrame)).toHaveLength(0);
+      expect(tree.root.findAllByType(NodeMergePoint)).toHaveLength(0);
+      expect(tree.root.findByType(GraphContainer).props.active).toBe(false);
+    });
+  });
+
   it('uses the accepted Foreach body rectangle instead of stretching the frame behind its header', () => {
     (useActionMetadata as Mock).mockReturnValue({ type: 'Foreach' });
     const tree = renderer.create(

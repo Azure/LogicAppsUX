@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SharedAgentScopeCard, SharedBranchCard, SharedScopeCard } from '../SharedFamilyCards';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { NodeInactiveContext } from '@microsoft/designer-ui-v2';
 import type { ActionCardProps } from '../actionCard';
 import { PreviewOperationCard } from '../../../../panel/multiSelectPanel/SharedExtractionPreviewNode';
 const modelParameter = vi.hoisted(() => ({ current: undefined as { value: { value: string }[] } | undefined }));
@@ -50,6 +51,12 @@ const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
 };
 
 describe('shared family interaction adapters', () => {
+  it.each(['if', 'switch', 'loop', 'agent', 'scope'] as const)('keeps %s host status quiet and in the card name', (family) => {
+    const { container } = render(<SharedScopeCard {...props()} family={family} runData={{ status: 'Succeeded', duration: '1 s' }} />);
+    expect(screen.getByTestId('card-Renamed operation')).toHaveAccessibleName(/Succeeded/);
+    expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+  });
   it('keeps the extraction Scope header identical to the actual main Scope header', () => {
     const input = props();
     const { container } = render(
@@ -84,6 +91,18 @@ describe('shared family interaction adapters', () => {
     expect(container.querySelector(`[data-node-card="${surface}"]`)).not.toBeNull();
     expect(screen.getByTestId('card-Renamed operation')).toHaveAttribute('id', 'msla-node-real-id');
     expect(screen.getByRole('button', { name: 'Collapse' })).toHaveAttribute('id', 'real-id-collapse-toggle');
+  });
+
+  it('keeps Standard condition cards in multi-output mode and agent cards with below tools placement', () => {
+    const switchView = render(<SharedScopeCard {...props()} family="switch" />);
+    expect(switchView.container.querySelector('[data-node-card="switch"]')).not.toBeNull();
+    expect(switchView.container.querySelector('[data-mode="trunk"]')).toBeNull();
+    switchView.unmount();
+
+    const agentView = render(
+      <SharedScopeCard {...props()} family="agent" toolsPanel={{ width: 280, height: 54, bottomPadding: 0, items: [] }} />
+    );
+    expect(agentView.container.querySelector('[data-node-card="agent"]')).not.toHaveAttribute('data-tools-placement');
   });
 
   it.each(['Until', 'Until_Nested'])('keeps unique legacy Until Do/footer identities for %s', (id) => {
@@ -386,5 +405,64 @@ describe('shared family interaction adapters', () => {
     expect(screen.queryByAltText('Errors')).not.toBeInTheDocument();
     rerender(<SharedBranchCard {...input} runData={undefined} />);
     expect(screen.getByAltText('Errors')).toBeInTheDocument();
+  });
+  it('dims inactive scope, tool, and plain branch cards through the shared contract with truthful labels', () => {
+    const { container } = render(
+      <SharedScopeCard {...props()} operationType="Scope" active={false} runData={{ status: 'TimedOut' } as ActionCardProps['runData']} />
+    );
+    expect(container.querySelector('[data-node-card]')).toHaveAttribute('data-inactive', 'true');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Timed out');
+    cleanup();
+    const tool = render(
+      <SharedBranchCard
+        id="inactive-tool"
+        title="Tool"
+        subgraphType={SUBGRAPH_TYPES.AGENT_CONDITION}
+        active={false}
+        runData={{ status: 'Waiting' }}
+        onClick={vi.fn()}
+      />
+    );
+    expect(tool.container.querySelector('[data-node-card="tool"]')).toHaveAttribute('data-inactive', 'true');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Waiting');
+    cleanup();
+    const branch = render(
+      <SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active={false} onClick={vi.fn()} />
+    );
+    const plain = branch.container.querySelector('[data-inactive="true"]') as HTMLElement;
+    expect(plain).toBeInTheDocument();
+    expect(getMatchedStyleRules(plain).some((rule) => rule.style.opacity === String(nodeMetrics.inactiveOpacity))).toBe(true);
+    branch.rerender(<SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active onClick={vi.fn()} />);
+    expect(branch.container.querySelector('[data-inactive]')).toBeNull();
+  });
+
+  // The parent Switch frame already renders at 0.4; a nested untaken case must not multiply that to 0.16.
+  it('keeps the plain branch inactive marker but skips its own opacity under an inactive ancestor frame', () => {
+    const { container } = render(
+      <NodeInactiveContext.Provider value>
+        <SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active={false} onClick={vi.fn()} />
+      </NodeInactiveContext.Provider>
+    );
+    const plain = container.querySelector('[data-inactive="true"]') as HTMLElement;
+    expect(plain).toBeInTheDocument();
+    expect(getMatchedStyleRules(plain).some((rule) => rule.style.opacity === String(nodeMetrics.inactiveOpacity))).toBe(false);
+  });
+
+  it('appends the truthful status to scope and tool card accessible names only in monitoring', () => {
+    const scope = render(<SharedScopeCard {...props()} operationType="Scope" />);
+    const scopeName = scope.container
+      .querySelector('[data-node-card] [aria-label], [data-node-card][aria-label]')!
+      .getAttribute('aria-label');
+    scope.rerender(
+      <SharedScopeCard {...props()} operationType="Scope" runData={{ status: 'TimedOut', duration: '3s' } as ActionCardProps['runData']} />
+    );
+    expect(screen.getByLabelText(`${scopeName}, Timed out 3s`)).toBeInTheDocument();
+    cleanup();
+    const toolProps = { id: 'tool', title: 'Tool', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, onClick: vi.fn() };
+    const tool = render(<SharedBranchCard {...toolProps} />);
+    const toolName = tool.container.querySelector('[data-node-card="tool"]')!.getAttribute('aria-label');
+    expect(toolName).toBeTruthy();
+    tool.rerender(<SharedBranchCard {...toolProps} runData={{ status: 'Waiting', duration: '1m' }} />);
+    expect(tool.container.querySelector('[data-node-card="tool"]')).toHaveAttribute('aria-label', `${toolName}, Waiting 1m`);
   });
 });

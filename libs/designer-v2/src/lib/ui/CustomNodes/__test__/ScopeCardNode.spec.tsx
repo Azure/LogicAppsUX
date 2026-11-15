@@ -156,6 +156,10 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
@@ -311,6 +315,19 @@ describe('ScopeCardNode (v2)', () => {
       })
     );
     if (type === 'Agent') expect(screen.getByText('actual-model')).toBeInTheDocument();
+  });
+
+  it.each([
+    [false, 'loops-pager-testScope', 'shared-loops-pager-testScope'],
+    [true, 'shared-loops-pager-testScope', 'loops-pager-testScope'],
+  ])('selects the foreach pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Foreach', runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 2, runData: { status: 'Succeeded', repetitionCount: 3 } });
+    render(<ScopeCardNode {...defaultProps} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
   });
 
   it('keeps the accepted legacy scope renderer during a pending shared toggle', () => {

@@ -64,6 +64,9 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const hasAgentDecoration = shared && type === 'agent' && !!toolsPanel && toolsPanel.width > 0 && toolsPanel.height > 0;
   const agentToolsPanel = hasAgentDecoration ? toolsPanel : undefined;
+  // Same truth as the legacy GraphContainer `active` prop: in monitoring, a container with no run record was
+  // not reached, so the shared frame and its merge junction render at the single inactive opacity level.
+  const inactive = isMonitoringView && isNullOrUndefined(runData?.status);
 
   return (
     <>
@@ -82,6 +85,7 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
             <NodeFrame
               kind={kind}
               selected={selected || isMultiSelected}
+              inactive={inactive}
               handleAxis={handleAxis}
               style={{
                 width: '100%',
@@ -108,7 +112,7 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
           />
         ) : null}
         {merge ? (
-          <DefaultHandle axis={handleAxis} type="source" presentation="merge" label={label} />
+          <DefaultHandle axis={handleAxis} type="source" presentation="merge" label={label} inactive={inactive} />
         ) : isSubgraphContainer ? (
           <DefaultHandle axis={handleAxis} type="source" />
         ) : (

@@ -4,7 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ActionCardProps } from '../actionCard';
 import { SharedActionCard } from '../SharedActionCard';
 import { OperationNodeCard } from '../OperationNodeCard';
-import { getOperationNodeSubtitle, mapSharedRunStatus } from '../nodeUiStrings';
+import { getOperationNodeSubtitle, mapSharedRunPresentation, mapSharedRunStatus } from '../nodeUiStrings';
+import { createIntl } from 'react-intl';
 import { useCardStyles } from '../card.styles';
 import * as Intl from 'react-intl';
 import { getNodeGlyph } from '@microsoft/designer-ui-v2';
@@ -31,6 +32,47 @@ beforeEach(() => {
 });
 
 describe('shared host action adapter', () => {
+  it.each([{ key: 'Enter' }, { key: ' ' }, { key: 'Delete' }, { key: 'c', ctrlKey: true }])(
+    'ignores $key from after indicators while retaining the root command',
+    (event) => {
+      const onClick = vi.fn();
+      const onDeleteClick = vi.fn();
+      const onCopyClick = vi.fn();
+      render(
+        <SharedActionCard
+          {...props}
+          comment="Comment"
+          isSecureInputsOutputs
+          staticResultsEnabled
+          onClick={onClick}
+          onDeleteClick={onDeleteClick}
+          onCopyClick={onCopyClick}
+        />
+      );
+      const card = screen.getByRole('button');
+      const indicators = card.querySelectorAll<HTMLElement>('[tabindex="2"]');
+      expect(indicators).toHaveLength(3);
+      for (const indicator of indicators) {
+        indicator.focus();
+        fireEvent.keyDown(indicator, event);
+        fireEvent.keyUp(indicator, event);
+      }
+      expect(onClick).not.toHaveBeenCalled();
+      expect(onDeleteClick).not.toHaveBeenCalled();
+      expect(onCopyClick).not.toHaveBeenCalled();
+      card.focus();
+      fireEvent.keyDown(card, event);
+      const command = event.key === 'Delete' ? onDeleteClick : event.key === 'c' ? onCopyClick : onClick;
+      expect(command).toHaveBeenCalledOnce();
+    }
+  );
+
+  it('keeps host action status badges quiet while naming status on the card', () => {
+    const { container } = render(<SharedActionCard {...props} runData={{ status: 'Succeeded', duration: '1 s' }} />);
+    expect(screen.getByRole('button')).toHaveAccessibleName(/Succeeded/);
+    expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+  });
   it('normalizes raw identity without copying shared visual pairs or using the display name', () => {
     expect(getOperationNodeVisualKind('CoMpOsE')).toBe('compose');
     expect(getOperationNodeGlyph('CoMpOsE')).toMatchObject({
@@ -422,14 +464,59 @@ describe('shared host action adapter', () => {
         runData={{ status: 'Succeeded', duration: '1s' } as ActionCardProps['runData']}
       />
     );
-    expect(screen.getByRole('status')).toHaveTextContent('Succeeded 1s');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Succeeded 1s');
     expect(screen.queryByAltText('Errors')).toBeNull();
-    expect(screen.getAllByRole('status')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-badge-status]')).toHaveLength(1);
   });
 
   it.each(['Waiting', 'Resuming', 'Custom runtime state'])('does not lose monitoring label %s', (status) => {
     render(<SharedActionCard {...props} runData={{ status } as ActionCardProps['runData']} active={false} />);
-    expect(screen.getByRole('status')).toHaveTextContent(status);
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent(status);
+  });
+
+  it.each([
+    ['TimedOut', 'failed', 'Timed out'],
+    ['Resuming', 'running', 'Resuming'],
+    ['Waiting', 'pending', 'Waiting'],
+    ['Aborted', 'cancelled', 'Aborted'],
+    ['SucceededWithWarning', 'warning', 'Succeeded with warning'],
+    ['Custom runtime state', 'pending', 'Custom runtime state'],
+    ['Succeeded', 'succeeded', undefined],
+    ['FAILED', 'failed', undefined],
+    ['Pending', 'pending', undefined],
+    ['Skipped', 'skipped', undefined],
+    ['mock', 'mock', undefined],
+    ['  TimedOut  ', 'failed', 'Timed out'],
+    ['  Custom runtime state ', 'pending', 'Custom runtime state'],
+    ['   ', undefined, undefined],
+    [undefined, undefined, undefined],
+  ])('presents service status %s as tone %s with truthful label %s', (raw, status, label) => {
+    const intl = createIntl({ locale: 'en', defaultLocale: 'en' });
+    expect(mapSharedRunPresentation(raw, intl)).toEqual(label ? { status, label } : { status });
+  });
+
+  // Badges are no longer live regions, so monitoring status must reach assistive tech through the card name.
+  it('appends the truthful status label and duration to the card accessible name only in monitoring', () => {
+    const { rerender } = render(<SharedActionCard {...props} />);
+    const authoringName = screen.getByRole('button').getAttribute('aria-label');
+    expect(authoringName).toBe('Send request operation, HTTP connector');
+    rerender(<SharedActionCard {...props} runData={{ status: 'TimedOut', duration: '2s' } as ActionCardProps['runData']} />);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-label', `${authoringName}, Timed out 2s`);
+    rerender(<SharedActionCard {...props} runData={{ status: 'Succeeded' } as ActionCardProps['runData']} />);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-label', `${authoringName}, Succeeded`);
+    rerender(<SharedActionCard {...props} runData={{ status: '  ' } as ActionCardProps['runData']} />);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-label', authoringName);
+  });
+
+  it('marks inactive monitoring cards through the shared inactive contract instead of a host opacity class', () => {
+    const { rerender } = render(
+      <SharedActionCard {...props} runData={{ status: 'TimedOut' } as ActionCardProps['runData']} active={false} />
+    );
+    const card = screen.getByRole('button');
+    expect(card).toHaveAttribute('data-inactive', 'true');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Timed out');
+    rerender(<SharedActionCard {...props} active />);
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-inactive');
   });
 
   it.each([
@@ -438,6 +525,9 @@ describe('shared host action adapter', () => {
     ['SucceededWithWarning', 'warning'],
     ['Skipped', 'skipped'],
     ['Error', 'error'],
+    ['Mock', 'mock'],
+    [' Succeeded ', 'succeeded'],
+    ['   ', undefined],
     [undefined, undefined],
   ])('maps service status %s to presentation %s in the host', (status, expected) => {
     expect(mapSharedRunStatus(status)).toBe(expected);

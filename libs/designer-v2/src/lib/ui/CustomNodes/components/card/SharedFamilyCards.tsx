@@ -4,6 +4,7 @@ import {
   AgentToolsPanel,
   ConditionNodeCard,
   LoopNodeCard,
+  NodeInactiveContext,
   NodeLabeledHandle,
   NodeText,
   ToolItemCard,
@@ -11,7 +12,7 @@ import {
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore, SUBGRAPH_TYPES, type SubgraphType } from '@microsoft/logic-apps-shared';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, type ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import type { ActionCardProps } from './actionCard';
 import { useKeyboardInteraction } from './keyboardInteraction';
@@ -22,16 +23,19 @@ import {
   mapAgentNodeStrings,
   mapConditionNodeStrings,
   mapLoopNodeStrings,
-  mapSharedRunStatus,
+  getSharedCardAccessibleName,
+  mapSharedRunPresentation,
   mapToolNodeStrings,
 } from './nodeUiStrings';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { scopeNodeIcon } from './operationNodeGlyphs';
 import type { NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
 
 const useStyles = makeStyles({
-  inactive: { opacity: 0.3 },
+  // Plain branch labels are not shared NodeCards, so mirror the card's inactive dimming from shared metrics.
+  inactive: { opacity: nodeMetrics.inactiveOpacity },
   pinned: { outline: `2px solid ${tokens.colorPalettePumpkinBorderActive}`, outlineOffset: '2px' },
   collapse: { position: 'absolute', top: '4px', right: '4px', minWidth: 0 },
   branch: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' },
@@ -129,7 +133,8 @@ export const SharedScopeCard = ({
     }
   }, [props.setFocus]);
   const actionStrings = mapActionNodeStrings(intl);
-  const status = mapSharedRunStatus(props.runData?.status);
+  const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+  const { status, label: statusLabel } = runPresentation;
   const collapse = (
     <FamilyCollapseButton
       id={`${props.id}-collapse-toggle`}
@@ -144,17 +149,19 @@ export const SharedScopeCard = ({
     title: props.title,
     selected: props.isSelected,
     status,
+    statusLabel,
     statusDetail: props.runData?.duration,
+    inactive: props.active === false,
     handleAxis,
     id: `msla-node-${props.id}`,
     role: 'button',
     tabIndex: props.nodeIndex,
-    'aria-label': props.title,
+    'aria-label': getSharedCardAccessibleName(intl, props.title, runPresentation, actionStrings.status, props.runData?.duration),
     'aria-busy': props.isLoading || undefined,
     'data-node-id': props.id,
     'data-testid': `card-${props.title}`,
     'data-automation-id': `card-${replaceWhiteSpaceWithUnderscore(props.title)}`,
-    className: mergeClasses(props.active === false && styles.inactive, props.isPinned && styles.pinned),
+    className: mergeClasses(props.isPinned && styles.pinned),
     style: { marginInline: 'auto' },
     onClick: (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
@@ -199,6 +206,8 @@ export const SharedScopeCard = ({
       <ConditionNodeCard
         {...common}
         kind={family}
+        // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
+        mode="multiOutput"
         caseCount={caseCount}
         strings={mapConditionNodeStrings(intl)}
         inputSlot={inputSlot}
@@ -226,6 +235,8 @@ export const SharedScopeCard = ({
       <AgentNodeCard
         {...common}
         model={model}
+        // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
+        toolsPlacement="below"
         footerAction={footerAction ? <span className={styles.pagerSlot}>{footerAction}</span> : undefined}
         strings={strings}
         inputSlot={inputSlot}
@@ -293,6 +304,8 @@ interface SharedBranchCardProps {
 export const SharedBranchCard = (props: SharedBranchCardProps) => {
   const intl = useIntl();
   const styles = useStyles();
+  // A branch header rendered inside an already-dimmed shared frame must not apply its own 0.4 again.
+  const ancestorInactive = useContext(NodeInactiveContext);
   const isTrue = props.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_TRUE;
   const conditional = isTrue || props.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_FALSE;
   const compact = conditional || props.subgraphType === SUBGRAPH_TYPES.SWITCH_DEFAULT || props.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
@@ -314,7 +327,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
     role: 'button',
     tabIndex: props.nodeIndex,
     'aria-label': title,
-    className: mergeClasses(props.active === false && styles.inactive, props.pinned && styles.pinned),
+    className: mergeClasses(props.pinned && styles.pinned),
     onClick: (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       if (compact) {
@@ -340,7 +353,9 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
   );
   if (props.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
     const toolKind = props.toolKind ?? (props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? 'mcp' : 'action');
-    const status = mapSharedRunStatus(props.runData?.status);
+    const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+    const { status, label: statusLabel } = runPresentation;
+    const toolStrings = mapToolNodeStrings(intl);
     return (
       <SharedNodeHoverCard
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
@@ -354,22 +369,30 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
       >
         <ToolItemCard
           {...common}
-          aria-label={intl.formatMessage(
-            {
-              defaultMessage: '{kind, select, mcp {MCP tool} other {Tool}}: {name}',
-              id: 'Djf6IE',
-              description: 'Accessible name of an Agent tool row',
-            },
-            { kind: toolKind, name: title }
+          aria-label={getSharedCardAccessibleName(
+            intl,
+            intl.formatMessage(
+              {
+                defaultMessage: '{kind, select, mcp {MCP tool} other {Tool}}: {name}',
+                id: 'Djf6IE',
+                description: 'Accessible name of an Agent tool row',
+              },
+              { kind: toolKind, name: title }
+            ),
+            runPresentation,
+            toolStrings.status,
+            props.runData?.duration
           )}
           aria-pressed={props.selected ?? false}
           title={title}
           selected={props.selected}
           status={status}
+          statusLabel={statusLabel}
           statusDetail={props.runData?.duration}
+          inactive={props.active === false}
           kind={toolKind}
           size="small"
-          strings={mapToolNodeStrings(intl)}
+          strings={toolStrings}
           after={
             <>
               {props.inputSlot}
@@ -387,7 +410,8 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
     <div
       {...common}
       data-automation-id={compact ? `${props.id}-collapse-toggle-small` : common['data-automation-id']}
-      className={mergeClasses(styles.branch, common.className)}
+      className={mergeClasses(styles.branch, props.active === false && !ancestorInactive && styles.inactive, common.className)}
+      data-inactive={props.active === false || undefined}
     >
       {conditional ? <NodeLabeledHandle branch={isTrue ? 'true' : 'false'} label={title} lineLength={0} /> : <NodeText title={title} />}
       {collapse}

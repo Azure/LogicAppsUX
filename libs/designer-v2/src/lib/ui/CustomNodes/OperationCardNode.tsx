@@ -51,6 +51,7 @@ import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSele
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { useRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { horizontalTerminalStyle } from '../connections/connections.styles';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -411,7 +412,13 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           />
         </div>
       ) : null}
-      {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} /> : null}
+      {shouldShowPager ? (
+        shared ? (
+          <SharedLoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} />
+        ) : (
+          <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} />
+        )
+      ) : null}
     </>
   );
 };

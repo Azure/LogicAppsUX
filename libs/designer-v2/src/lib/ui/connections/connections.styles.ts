@@ -2,8 +2,8 @@ import { makeStyles } from '@fluentui/react-components';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import type { CSSProperties } from 'react';
 
-// Existing host terminal margin; the connector stops before the transparent add-circle button.
-export const terminalConnectionLength = 8;
+// Must stay in lockstep with shared add-button metrics used by ELK and Subgraph add cards.
+export const terminalConnectionLength = nodeMetrics.terminalConnectionLength;
 
 // All terminal hosts reserve the same output-side gap and canonical control hit target.
 export const horizontalTerminalStyle: CSSProperties = {

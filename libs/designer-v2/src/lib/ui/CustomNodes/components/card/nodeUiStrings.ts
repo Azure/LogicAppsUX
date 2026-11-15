@@ -1,4 +1,11 @@
-import { joinNodeSubtitle, type ActionNodeCardStrings, type NodeRunStatus, type ToolItemCardProps } from '@microsoft/designer-ui-v2';
+import {
+  getNodeStatusLabel,
+  joinNodeSubtitle,
+  type ActionNodeCardStrings,
+  type NodeRunStatus,
+  type NodeStatusStrings,
+  type ToolItemCardProps,
+} from '@microsoft/designer-ui-v2';
 import type { IntlShape } from 'react-intl';
 import { defineMessages } from 'react-intl';
 import { getOperationNodeVisualKind } from './operationNodeGlyphs';
@@ -9,6 +16,7 @@ const typeMessages = defineMessages({
   recurrence: { defaultMessage: 'Recurrence', id: 'CdyJ6f', description: 'Trigger belongs to Recurrence category' },
   http: { defaultMessage: 'Http', id: '+AUDeS', description: 'HTTP operation type on a shared node card' },
   response: { defaultMessage: 'Response', id: '2Y8w3K', description: 'Response operation type on a shared node card' },
+  nestedagent: { defaultMessage: 'Nested agent', id: 'i7iksp', description: 'Nested Agent built-in operation type' },
 });
 
 export function getOperationNodeSubtitle(
@@ -106,7 +114,8 @@ export function mapToolNodeStrings(intl: IntlShape): NonNullable<ToolItemCardPro
 
 /** Keep service status semantics in the host, including nonstandard runtime status labels. */
 export const mapSharedRunStatus = (status: string | undefined): NodeRunStatus | undefined => {
-  switch (status?.toLowerCase()) {
+  // Trim first so whitespace-only service values mean "no status" (no badge) instead of an unknown tone.
+  switch (status?.trim().toLowerCase()) {
     case undefined:
     case '':
       return undefined;
@@ -128,7 +137,94 @@ export const mapSharedRunStatus = (status: string | undefined): NodeRunStatus | 
       return 'warning';
     case 'error':
       return 'error';
+    // Only an explicit normalized mock state (Otto) maps here; Standard static results/sample input stay
+    // unbadged and use the separate test-data indicator instead of claiming a mock run.
+    case 'mock':
+      return 'mock';
     default:
       return 'pending';
   }
 };
+
+const runStatusMessages = defineMessages({
+  timedOut: {
+    defaultMessage: 'Timed out',
+    id: 'eofB85',
+    description: 'The status message to show timed out in monitoring view.',
+  },
+  resuming: { defaultMessage: 'Resuming', id: 'jenxD4', description: 'Indicates that the run is currently resuming' },
+  waiting: { defaultMessage: 'Waiting', id: 'd0wgcV', description: 'Indicates that the run is currently waiting' },
+  aborted: { defaultMessage: 'Aborted', id: 'x7IYBg', description: 'The status message to show in monitoring view.' },
+  succeededWithWarning: {
+    defaultMessage: 'Succeeded with warning',
+    id: 'rTqphD',
+    description: 'The status message to show when a run succeeded with a warning in monitoring view.',
+  },
+});
+
+const runStatusLabelKeys: Record<string, keyof typeof runStatusMessages> = {
+  timedout: 'timedOut',
+  resuming: 'resuming',
+  waiting: 'waiting',
+  aborted: 'aborted',
+  succeededwithwarning: 'succeededWithWarning',
+};
+
+const sharedNodeRunStatuses = new Set<string>([
+  'succeeded',
+  'failed',
+  'skipped',
+  'running',
+  'pending',
+  'cancelled',
+  'warning',
+  'error',
+  'mock',
+]);
+
+export interface SharedRunPresentation {
+  status: NodeRunStatus | undefined;
+  /** Visible label override; absent when the shared tone's default label is already truthful. */
+  label?: string;
+}
+
+/**
+ * Single host mapping from a raw service status to the frozen shared tone plus a truthful label.
+ * The shared lib only knows nine tones, so service states that collapse onto a tone (TimedOut -> failed,
+ * Waiting -> pending, ...) carry their own label instead of cloning the whole status dictionary per card.
+ * Unknown runtime states keep the previous host behavior of showing the raw text verbatim.
+ */
+export const mapSharedRunPresentation = (raw: string | undefined, intl: IntlShape): SharedRunPresentation => {
+  const trimmed = raw?.trim();
+  const status = mapSharedRunStatus(trimmed);
+  const key = trimmed?.toLowerCase();
+  if (!key || !status || sharedNodeRunStatuses.has(key)) {
+    return { status };
+  }
+  const messageKey = runStatusLabelKeys[key];
+  return { status, label: messageKey ? intl.formatMessage(runStatusMessages[messageKey]) : trimmed };
+};
+
+/**
+ * Accessible name for an interactive shared card that also carries its truthful run status and duration.
+ * Cards are role="button" with an explicit aria-label, which hides the badge text from the accessible name,
+ * and badges are no longer live regions (one per node floods screen readers). Status only exists in
+ * monitoring, so authoring names are unchanged.
+ */
+export const getSharedCardAccessibleName = (
+  intl: IntlShape,
+  name: string,
+  presentation: SharedRunPresentation,
+  statusStrings: NodeStatusStrings,
+  duration?: string
+): string =>
+  presentation.status
+    ? intl.formatMessage(
+        {
+          defaultMessage: '{name}, {status}',
+          id: 'iembiG',
+          description: 'Accessible name of a workflow node card in monitoring: the node name followed by its run status and duration',
+        },
+        { name, status: getNodeStatusLabel(presentation.status, statusStrings, duration, presentation.label) }
+      )
+    : name;

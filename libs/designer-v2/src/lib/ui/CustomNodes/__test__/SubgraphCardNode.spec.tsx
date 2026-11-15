@@ -116,6 +116,10 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
@@ -369,6 +373,25 @@ describe('SubgraphCardNode (v2)', () => {
 
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('loops-pager-testNode')).toBeInTheDocument();
+  });
+
+  it('selects the shared pager for agent subgraphs when the shared flag is on', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('parentAgent');
+    mockUseActionMetadata.mockImplementation((id: string) =>
+      id === 'parentAgent' ? { type: 'Agent', runAfter: {} } : { type: 'Scope', runAfter: {} }
+    );
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'graph1',
+      subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
+      actionCount: 1,
+      runData: { repetitionCount: 3 },
+    });
+
+    render(<SubgraphCardNode {...defaultProps} />);
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
+    expect(screen.queryByTestId('loops-pager-testNode')).toBeNull();
   });
 
   it('should not render SubgraphCard when no subgraphType in metadata', () => {

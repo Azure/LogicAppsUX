@@ -43,14 +43,21 @@ export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
 };
-// Canonical attached connector: half diamond + gap + label16 + spacingS8 + line + half dot.
+// Host measurements match the connector label and branch CSS, not unrelated equal-sized glyph metrics.
+const SHARED_CONNECTOR_LABEL_HEIGHT = 16;
+const SHARED_CONNECTOR_LABEL_GAP = 8;
+const SHARED_BRANCH_HEADER_PADDING = 16;
+// Canonical attached connector: half diamond + gap + label + spacing + line + half dot.
 export const AGENT_TOOL_CONNECTOR_HEIGHT =
   nodeMetrics.toolConnector.diamond / 2 +
   nodeMetrics.toolConnector.gap +
-  16 +
-  8 +
+  SHARED_CONNECTOR_LABEL_HEIGHT +
+  SHARED_CONNECTOR_LABEL_GAP +
   nodeMetrics.toolConnector.line +
   nodeMetrics.handle.size / 2;
+// ELK/ports/drop-zones all consume this accepted add-card height; derive it once from shared metrics.
+const SHARED_ADD_NODE_HEIGHT = nodeMetrics.actionAdd.containerHeight;
+export const SHARED_COLLAPSED_CARD_HEIGHT = 50;
 
 export interface NodePresentationContext {
   operationType?: string;
@@ -132,9 +139,13 @@ export const getNodePresentation = (
       };
     }
     if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
-      return { shared: true, family: 'add', size: { width: nodeMetrics.cards.action.width, height: 44 } };
+      return { shared: true, family: 'add', size: { width: nodeMetrics.cards.action.width, height: SHARED_ADD_NODE_HEIGHT } };
     }
-    return { shared: true, family: 'branch', size: { width: nodeMetrics.frame.minWidth, height: nodeMetrics.handle.labeledHeight + 16 } };
+    return {
+      shared: true,
+      family: 'branch',
+      size: { width: nodeMetrics.frame.minWidth, height: nodeMetrics.handle.labeledHeight + SHARED_BRANCH_HEADER_PADDING },
+    };
   }
   if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE || type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
     return { shared: true, family: 'frame' };
@@ -143,7 +154,7 @@ export const getNodePresentation = (
     return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
   }
   if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
-    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: 50 } };
+    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
   }
   // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
   return { shared: false };

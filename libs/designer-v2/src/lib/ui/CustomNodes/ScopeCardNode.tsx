@@ -44,6 +44,7 @@ import {
 } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { horizontalTerminalStyle } from '../connections/connections.styles';
@@ -414,10 +415,12 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
       const focusElement = (index: number, id: string) => {
         dispatch(setFocusElement(`${id}-${index}-0`));
       };
-      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
+      // Flag-on swaps only the pager presentation; run-index state and focus behavior stay identical.
+      const Pager = shared ? SharedLoopsPager : LoopsPager;
+      return <Pager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
     }
     return null;
-  }, [dispatch, graphCollapsed, metadata, scopeId]);
+  }, [dispatch, graphCollapsed, metadata, scopeId, shared]);
 
   const nodeIndex = useNodeIndex(id);
 
