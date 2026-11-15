@@ -3,6 +3,7 @@ import {
   appendResolvedRelativePath,
   applyRelativePathToCallback,
   getRelativePathParameterNames,
+  getRelativePathValue,
   readRelativePathTemplate,
   resolveRelativePath,
 } from '../relativePath';
@@ -45,6 +46,22 @@ describe('request trigger relative path parameters', () => {
     expect(appendResolvedRelativePath(runUrl, '/subscription/{subscriptionId}', { subscriptionId: 'abc' })).toBe(
       `${runUrl}/subscription/abc`
     );
+  });
+
+  it('appends a path whose value already appears elsewhere in the run URL', () => {
+    const runUrl =
+      '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Web/sites/app/hostruntime/runtime/webhooks/workflow/api/management/workflows/wf/triggers/manual/run';
+
+    expect(appendResolvedRelativePath(runUrl, '/{id}', { id: 'subscriptions' })).toBe(`${runUrl}/subscriptions`);
+  });
+
+  it('treats inherited Object property names as unset parameters', () => {
+    for (const name of ['constructor', 'toString', '__proto__']) {
+      const template = `/items/{${name}}`;
+      expect(getRelativePathValue({}, name)).toBe('');
+      expect(resolveRelativePath(template, {})).toBeUndefined();
+      expect(resolveRelativePath(template, Object.fromEntries([[name, 'abc']]))).toBe('/items/abc');
+    }
   });
 
   it('substitutes a callback URL in place and keeps the query string', () => {

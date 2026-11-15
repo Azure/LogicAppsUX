@@ -4,6 +4,7 @@ import { MonacoEditor, SimpleDictionary } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getPayloadPopoverMaxHeight } from './payloadPopoverLayout';
+import { getRelativePathValue } from './relativePath';
 import { usePayloadPopoverStyles } from './styles';
 import type { PayloadData } from './index';
 
@@ -155,14 +156,16 @@ export const PayloadPopover = ({
       body: bodyValue,
       ...(relativePathParameterNames.length > 0
         ? {
-            relativePathParameters: Object.fromEntries(relativePathParameterNames.map((name) => [name, relativePathValues[name] ?? ''])),
+            relativePathParameters: Object.fromEntries(
+              relativePathParameterNames.map((name) => [name, getRelativePathValue(relativePathValues, name)])
+            ),
           }
         : {}),
     });
     setOpen(false);
   }, [onSubmit, method, headersValue, queriesValue, bodyValue, relativePathParameterNames, relativePathValues, setOpen]);
 
-  const relativePathIncomplete = relativePathParameterNames.some((name) => !(relativePathValues[name] ?? '').trim());
+  const relativePathIncomplete = relativePathParameterNames.some((name) => !getRelativePathValue(relativePathValues, name).trim());
   const runDisabled = useMemo(() => !!bodyError || !method || relativePathIncomplete, [bodyError, method, relativePathIncomplete]);
 
   return (
@@ -208,7 +211,7 @@ export const PayloadPopover = ({
                     <Input aria-label={`${relativePathLabel} ${name} key`} value={name} readOnly />
                     <Input
                       aria-label={`${relativePathLabel} ${name}`}
-                      value={relativePathValues[name] ?? ''}
+                      value={getRelativePathValue(relativePathValues, name)}
                       placeholder={relativePathValuePlaceholder}
                       onChange={(_event, data) => {
                         setRelativePathValues((current) => ({ ...current, [name]: data.value }));

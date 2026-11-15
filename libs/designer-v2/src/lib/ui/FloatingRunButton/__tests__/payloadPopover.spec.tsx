@@ -346,6 +346,22 @@ describe('PayloadPopover', () => {
         })
       );
     });
+
+    it.each(['constructor', 'toString', '__proto__'])('should render and submit a parameter named %s', (name) => {
+      renderWithIntl({ ...defaultProps, relativePathParameterNames: [name] });
+
+      const input = screen.getByRole('textbox', { name: `Relative path ${name}` });
+      expect(input).toHaveValue('');
+      expect(screen.getByText('Run with payload')).toBeDisabled();
+
+      fireEvent.change(input, { target: { value: 'abc' } });
+      expect(input).toHaveValue('abc');
+      fireEvent.click(screen.getByText('Run with payload'));
+
+      const submitted = mockOnSubmit.mock.calls[0][0].relativePathParameters;
+      expect(Object.hasOwn(submitted, name)).toBe(true);
+      expect(submitted[name]).toBe('abc');
+    });
   });
 
   describe('Reset on Open', () => {

@@ -35,6 +35,18 @@ export function readRelativePathTemplate(parameter: { value?: Array<{ value?: st
 }
 
 /**
+ * Reads a parameter value by own property only. Template names such as `constructor`, `toString`
+ * or `__proto__` would otherwise resolve to inherited Object members instead of an unset value.
+ */
+export function getRelativePathValue(values: Record<string, string> | undefined, name: string): string {
+  if (!values || !Object.hasOwn(values, name)) {
+    return '';
+  }
+  const value = values[name];
+  return typeof value === 'string' ? value : '';
+}
+
+/**
  * Substitutes every `{name}` token when each declared parameter has a value.
  * Returns undefined when the template has no tokens or a required value is still empty,
  * so a partial entry does not rewrite the run URL.
@@ -44,16 +56,16 @@ export function resolveRelativePath(template: string | undefined, values: Record
   if (!template || names.length === 0) {
     return undefined;
   }
-  if (names.some((name) => !(values?.[name] ?? '').trim())) {
+  if (names.some((name) => !getRelativePathValue(values, name).trim())) {
     return undefined;
   }
 
   return template.replace(new RegExp(RELATIVE_PATH_PARAMETER.source, 'g'), (token, name: string) => {
-    const value = values?.[name];
-    if (!value?.trim()) {
+    const value = getRelativePathValue(values, name).trim();
+    if (!value) {
       return token;
     }
-    return encodeURIComponent(value.trim());
+    return encodeURIComponent(value);
   });
 }
 
@@ -77,7 +89,7 @@ function substituteTemplateInUrl(url: string, template: string, resolved: string
  */
 export function appendResolvedRelativePath(url: string, template: string | undefined, values: Record<string, string> | undefined): string {
   const resolved = resolveRelativePath(template, values);
-  if (!resolved || !url || url.includes(resolved)) {
+  if (!resolved || !url) {
     return url;
   }
 
