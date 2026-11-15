@@ -53,6 +53,8 @@ type ConnectionServiceOptions = {
 type DesignerOptions = {
   readOnly: boolean;
   isMonitoringView: boolean;
+  useSharedNodeUi?: boolean;
+  hostOptions?: Record<string, unknown>;
   services: { connectionService: { options: ConnectionServiceOptions } };
 };
 type DesignerSnapshot = { workflow: DesignerWorkflow; readOnly: boolean; monitoring: boolean };
@@ -498,6 +500,24 @@ describe('Standard designer draft artifact freshness', () => {
     expect(mocks.runButton?.forceSave).toBe(selected === 'production');
     expect(screen.getByTestId('command-bar').getAttribute('data-readonly')).toBe('false');
     expect(mocks.deploy).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['', false],
+    ['?useSharedNodeUi=false', false],
+    ['?useSharedNodeUi=TRUE', false],
+    ['?useSharedNodeUi=true', true],
+  ])('passes shared node UI query %j to the provider without changing host options', async (search, expected) => {
+    const originalUrl = window.location.href;
+    window.history.replaceState(null, '', `/designer${search}`);
+    try {
+      mountDesigner();
+      await waitFor(() => expect(mocks.options).toBeDefined());
+      expect(mocks.options?.useSharedNodeUi).toBe(expected);
+      expect(mocks.options?.hostOptions).not.toHaveProperty('useSharedNodeUi');
+    } finally {
+      window.history.replaceState(null, '', originalUrl);
+    }
   });
 
   it('preserves intentionally empty companions of a newer saved draft instead of resurrecting production values', async () => {
