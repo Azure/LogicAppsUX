@@ -13,14 +13,22 @@ export const nodeMetrics = {
   handle: { size: 12, stroke: 1.5, edgeOffset: -7, labeledHeight: 20 },
   badge: { height: 20, icon: 12, overhang: 10 },
   testData: { size: 20, icon: 16, textReserve: 32 },
-  toolConnector: { diamond: 12, gap: 9, line: 20, add: 20 },
+  toolConnector: { diamond: 12, gap: 9, line: 20, add: 20, sideRowHeight: 74 },
   toolsHeader: 20,
-  hoverCard: { width: 275, dismiss: 16, offset: 8 },
-  actionAdd: { buttonWidth: 20, buttonHeight: 32 },
+  toolsActionIcon: 16,
+  toolsPanel: { sideOffset: 10, collapsedHeight: 54 },
+  hoverCard: { width: 275, dismiss: 16, dismissHitSize: 24, offset: 8 },
+  actionAdd: { buttonWidth: 32, buttonHeight: 32, containerHeight: 44 },
+  terminalConnectionLength: 8,
+  runAfter: { legacyWidth: 36, legacyHeight: 12, sharedWidth: 44, sharedHeight: 16, spreadVertical: 48, spreadHorizontal: 18 },
   frame: { minWidth: 232, minBodyHeight: 106 },
   mergePoint: { size: 16, dot: 6 },
   edgeControl: { pillSize: 24, hitTargetSize: 32, dualHitTargetWidth: 68, interactionWidth: 20 },
   collapseChip: { height: 24, maxVisibleCount: 99 },
+  /** Run-path dimming for nodes, frames and outputs that did not execute; never compounded when nested. */
+  inactiveOpacity: 0.4,
+  /** Pinned Otto arrow-cap half-extent; getNodeLineArrowPath parity depends on this exact value. */
+  lineArrowSize: 3.18,
 } as const;
 
 /** Tight Switch output margins cancel body padding; the card still reserves both borders. */
@@ -35,4 +43,4 @@ export const getSwitchNodeSize = (caseCount = 1, axis: 'horizontal' | 'vertical'
     : { width: Math.max(nodeMetrics.cards.condition.width, outputExtent + 32), height: nodeMetrics.cards.condition.height };
 };
 
-export const nodeHoverCardTiming = { openDelay: 400, closeDelay: 200 } as const;
+export const nodeHoverCardTiming = { openDelay: 600, closeDelay: 200 } as const;

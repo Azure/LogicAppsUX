@@ -9,9 +9,11 @@ import {
   AgentToolsPanel,
   ConditionNodeCard,
   DesignerUiScope,
+  LoopNodeCard,
   NodeHoverCard,
   NodeInfoCard,
   NodeStatusBadge,
+  NodeFrame,
   NodeActionAdd,
   NodeLabeledHandle,
   NodeLine,
@@ -19,6 +21,7 @@ import {
   TriggerNodeCard,
   ToolItemCard,
   defaultNodeStrings,
+  getNodeStatusLabel,
 } from '../..';
 import { nodeMetrics } from '../../metrics';
 
@@ -194,7 +197,7 @@ describe('shared node presentation', () => {
     expect(onKeyDown).toHaveBeenCalledOnce();
   });
 
-  it('keeps the live-region element mounted across running to succeeded', () => {
+  it('keeps the default live-region element mounted across running to succeeded', () => {
     const { rerender } = render(<NodeStatusBadge status="running" />);
     const status = screen.getByRole('status');
     rerender(<NodeStatusBadge status="succeeded" strings={{ ...defaultNodeStrings.status, succeeded: 'Réussi' }} />);
@@ -202,9 +205,33 @@ describe('shared node presentation', () => {
     expect(status).toHaveTextContent('Réussi');
   });
 
+  it('preserves the standalone live default, explicit opt-out and explicit role precedence', () => {
+    const { rerender } = render(<NodeStatusBadge status="failed" />);
+    expect(screen.getByRole('status')).toHaveAttribute('data-badge-status', 'failed');
+    rerender(<NodeStatusBadge status="failed" live={false} />);
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(document.querySelector('[data-badge-status="failed"]')).not.toHaveAttribute('role');
+    rerender(<NodeStatusBadge status="failed" role="img" live />);
+    expect(screen.getByRole('img')).toHaveAttribute('data-badge-status', 'failed');
+  });
+
+  it.each([
+    ['action', <ActionNodeCard key="action" title="Action" status="succeeded" />],
+    ['trigger', <TriggerNodeCard key="trigger" title="Trigger" status="succeeded" />],
+    ['condition', <ConditionNodeCard key="condition" title="Condition" kind="if" status="succeeded" />],
+    ['loop', <LoopNodeCard key="loop" title="Loop" status="succeeded" />],
+    ['agent', <AgentNodeCard key="agent" title="Agent" status="succeeded" />],
+    ['tool', <ToolItemCard key="tool" title="Tool" status="succeeded" />],
+    ['frame', <NodeFrame key="frame" kind="scope" title="Frame" status="succeeded" />],
+  ])('keeps the %s canvas composite quiet without removing its status pill', (_family, card) => {
+    const { container } = render(card);
+    expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+  });
+
   it('preserves intentionally empty translated strings and uses the beaker instead of a duplicate mock status pill', () => {
     render(<ActionNodeCard title="Mock" status="mock" strings={{ status: { ...defaultNodeStrings.status, mock: '' } }} />);
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(document.querySelector('.fui-Badge[data-badge-status]')).not.toBeInTheDocument();
     expect(screen.getByRole('img')).toHaveAttribute('aria-label', '');
   });
 
@@ -449,8 +476,10 @@ describe('shared node presentation', () => {
       </FluentProvider>
     );
     const button = screen.getByRole('button', { name: 'Focus me' });
+    // Only keyboard-visible focus opens; jsdom has no keyboard modality, so mark it the way Fluent does.
+    button.setAttribute('data-fui-focus-visible', '');
     act(() => button.focus());
-    act(() => vi.advanceTimersByTime(400));
+    act(() => vi.advanceTimersByTime(600));
     expect(button).toHaveFocus();
     expect(button.getAttribute('aria-describedby')).toContain('existing');
     expect(screen.getByTestId('scope')).toContainElement(screen.getByText('Details'));
@@ -516,8 +545,9 @@ describe('shared node presentation', () => {
         </NodeHoverCard>
       </DesignerUiScope>
     );
+    external.setAttribute('data-fui-focus-visible', '');
     fireEvent.focusIn(external);
-    act(() => vi.advanceTimersByTime(400));
+    act(() => vi.advanceTimersByTime(600));
     expect(external.getAttribute('aria-describedby')).toContain('host-description');
     expect(screen.getByText('External details')).toBeInTheDocument();
     rerender(
@@ -547,7 +577,9 @@ describe('shared node presentation', () => {
       </DesignerUiScope>,
       { container }
     );
-    fireEvent.focus(within(container).getByRole('button'));
+    const iframeButton = within(container).getByRole('button');
+    iframeButton.setAttribute('data-fui-focus-visible', '');
+    fireEvent.focus(iframeButton);
     const details = await within(container).findByText('Iframe details');
     expect(details.ownerDocument).toBe(owner);
     expect(within(container).getByTestId('iframe-scope')).toContainElement(details);
@@ -562,10 +594,13 @@ describe('shared node presentation', () => {
     expect(ref.current).toBe(screen.getByRole('button'));
     expect(ref.current).toHaveAttribute('data-node-card', 'trigger');
     expect(ref.current?.querySelector('[data-handle]')).not.toBeNull();
-    expect(screen.getByRole('img', { name: 'Using test data' })).toBeInTheDocument();
+    // Trigger sample input is not an output mock: status is forwarded but the action-only beaker paint is absent.
+    expect(ref.current).toHaveAttribute('data-status', 'mock');
+    expect(screen.queryByRole('img', { name: 'Using test data' })).toBeNull();
+    expect(ref.current?.querySelector('[data-test-data]')).toBeNull();
     rerender(<TriggerNodeCard ref={ref} title="Request" role="button" handles={false} selected status="succeeded" />);
     expect(ref.current?.querySelector('[data-handle]')).toBeNull();
-    expect(screen.getByRole('status')).toHaveTextContent('Succeeded');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Succeeded');
   });
 
   it('retains the disabled insertion affordance without a callback and respects canvas propagation', () => {
@@ -617,15 +652,15 @@ describe('shared node presentation', () => {
     render(
       <>
         <ConditionNodeCard title="Condition" kind="if" />
-        <NodeLabeledHandle branch="true" label="" />
+        <NodeLabeledHandle branch="true" label="" data-testid="true-handle" />
         <NodeLabeledHandle branch="false" label="Non" />
         <NodeLine ref={ref} orientation="vertical" length={37} />
       </>
     );
     expect(screen.getByText('Non')).toBeInTheDocument();
-    expect(document.querySelector('[data-branch="true"]')).toHaveTextContent('');
+    expect(screen.getByTestId('true-handle')).toHaveTextContent('');
     expect(ref.current).toHaveAttribute('viewBox', '0 0 20 37');
-    expect(ref.current?.querySelector('path')).toHaveAttribute('d', 'M10 0 V37');
+    expect(ref.current?.querySelector('path')).toHaveAttribute('d', 'M10 0 V37 M 13.18 33.82 L 10 37 L 6.82 33.82');
     expect(ref.current).toHaveAttribute('aria-hidden', 'true');
   });
 
@@ -639,21 +674,116 @@ describe('shared node presentation', () => {
       </DesignerUiScope>
     );
     const trigger = screen.getByTestId('hover-trigger');
-    fireEvent.mouseEnter(trigger);
+    fireEvent.mouseOver(trigger);
     act(() => vi.advanceTimersByTime(50));
     fireEvent.mouseLeave(trigger);
     act(() => vi.advanceTimersByTime(100));
     expect(screen.queryByText('Hover details')).toBeNull();
-    fireEvent.mouseEnter(trigger);
+    fireEvent.mouseOver(trigger);
     act(() => vi.advanceTimersByTime(100));
     expect(screen.getByText('Hover details')).toBeInTheDocument();
     fireEvent.mouseLeave(trigger);
     act(() => vi.advanceTimersByTime(50));
-    fireEvent.mouseEnter(trigger);
+    fireEvent.mouseOver(trigger);
     act(() => vi.advanceTimersByTime(100));
     expect(screen.getByText('Hover details')).toBeInTheDocument();
     fireEvent.mouseLeave(trigger);
     act(() => vi.advanceTimersByTime(100));
     expect(screen.queryByText('Hover details')).toBeNull();
+  });
+});
+
+describe('status label contracts', () => {
+  const statuses = Object.keys(defaultNodeStrings.status) as (keyof typeof defaultNodeStrings.status)[];
+
+  it.each(statuses)('keeps the frozen %s tone and default text when no label override is given', (status) => {
+    render(<NodeStatusBadge status={status} />);
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', status);
+    expect(badge).toHaveTextContent(defaultNodeStrings.status[status]);
+    expect(getNodeStatusLabel(status)).toBe(defaultNodeStrings.status[status]);
+  });
+
+  it('overrides only the visible text while preserving the tone, including empty labels', () => {
+    const { rerender } = render(<NodeStatusBadge status="failed" label="Timed out" detail="2s" />);
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', 'failed');
+    expect(badge).toHaveTextContent('Timed out 2s');
+    rerender(<NodeStatusBadge status="failed" label="" />);
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!.textContent).toBe('');
+  });
+
+  it('keeps legacy two-argument getNodeStatusLabel calls and honors label/detail overrides', () => {
+    const strings = { ...defaultNodeStrings.status, failed: 'Echec' };
+    expect(getNodeStatusLabel('failed', strings)).toBe('Echec');
+    expect(getNodeStatusLabel('failed', strings, '3s')).toBe('Echec 3s');
+    expect(getNodeStatusLabel('failed', strings, undefined, 'Timed out')).toBe('Timed out');
+    expect(getNodeStatusLabel('failed', strings, '3s', '')).toBe(' 3s');
+  });
+
+  it('forwards statusLabel and statusAriaLabel from every card through NodeCard to the badge', () => {
+    render(
+      <ActionNodeCard
+        title="HTTP"
+        status="pending"
+        statusLabel="Waiting"
+        statusAriaLabel="HTTP is waiting"
+        statusDetail="1m"
+        data-testid="card"
+      />
+    );
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', 'pending');
+    expect(badge).toHaveTextContent('Waiting 1m');
+    expect(badge).toHaveAttribute('aria-label', 'HTTP is waiting');
+  });
+
+  it('defaults the card root to role=group but lets hosts override the role', () => {
+    const { rerender } = render(<ActionNodeCard title="HTTP" data-testid="card" />);
+    expect(screen.getByTestId('card')).toHaveAttribute('role', 'group');
+    rerender(<ActionNodeCard title="HTTP" role="button" data-testid="card" />);
+    expect(screen.getByTestId('card')).toHaveAttribute('role', 'button');
+  });
+
+  it('marks inactive cards with data-inactive while keeping refs, focus and interaction', () => {
+    const ref = createRef<HTMLDivElement>();
+    const onClick = vi.fn();
+    const { rerender } = render(<ActionNodeCard ref={ref} title="HTTP" inactive tabIndex={0} onClick={onClick} data-testid="card" />);
+    const card = screen.getByTestId('card');
+    expect(ref.current).toBe(card);
+    expect(card).toHaveAttribute('data-inactive', 'true');
+    card.focus();
+    expect(card).toHaveFocus();
+    fireEvent.click(card);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    rerender(<ActionNodeCard ref={ref} title="HTTP" tabIndex={0} data-testid="card" />);
+    expect(card).not.toHaveAttribute('data-inactive');
+  });
+
+  it('exposes inactive opacity as a shared metric', () => {
+    expect(nodeMetrics.inactiveOpacity).toBe(0.4);
+  });
+});
+
+describe('status contract forwarding across every card family', () => {
+  // Hosts adapt run status once and pass it to whichever family renders; a card that drops these
+  // props would silently show the generic tone label or keep an inactive node fully opaque.
+  const cards = [
+    ['ActionNodeCard', (p: object) => <ActionNodeCard title="Card" {...p} />],
+    ['TriggerNodeCard', (p: object) => <TriggerNodeCard title="Card" {...p} />],
+    ['ConditionNodeCard', (p: object) => <ConditionNodeCard kind="if" title="Card" {...p} />],
+    ['LoopNodeCard', (p: object) => <LoopNodeCard title="Card" {...p} />],
+    ['AgentNodeCard', (p: object) => <AgentNodeCard title="Card" {...p} />],
+    ['ToolItemCard', (p: object) => <ToolItemCard title="Card" {...p} />],
+  ] as const;
+
+  it.each(cards)('%s forwards statusLabel, statusAriaLabel, and inactive', (_, renderCard) => {
+    const { container } = render(
+      renderCard({ status: 'failed', statusLabel: 'Timed out', statusAriaLabel: 'Run timed out', inactive: true, 'data-testid': 'card' })
+    );
+    const card = screen.getByTestId('card');
+    expect(card).toHaveAttribute('data-inactive', 'true');
+    expect(container.querySelector('[aria-label="Run timed out"]')).not.toBeNull();
+    expect(screen.queryByText('Timed out')).not.toBeNull();
   });
 });

@@ -26,6 +26,17 @@ const declarations = (element: Element, property: string) =>
     .filter(Boolean);
 
 describe('canonical Switch count and body geometry', () => {
+  it.each((['horizontal', 'vertical'] as const).flatMap((handleAxis) => [0, 1, 4, 20].map((caseCount) => ({ handleAxis, caseCount }))))(
+    'keeps omitted mode identical to explicit multiOutput on $handleAxis with count=$caseCount',
+    ({ handleAxis, caseCount }) => {
+      const { container, rerender } = render(
+        <ConditionNodeCard kind="switch" title="Switch" handleAxis={handleAxis} caseCount={caseCount} />
+      );
+      const defaultMarkup = container.innerHTML;
+      rerender(<ConditionNodeCard kind="switch" title="Switch" handleAxis={handleAxis} caseCount={caseCount} mode="multiOutput" />);
+      expect(container.innerHTML).toBe(defaultMarkup);
+    }
+  );
   it.each(cases)('reserves the actual horizontal $outputs-dot stack for count=$count', ({ count, outputs, horizontalHeight }) => {
     // Literal expectations and actual CSS are independent of the sizing function under test.
     expect(getSwitchNodeSize(count, 'horizontal')).toEqual({ width: 160, height: horizontalHeight });
@@ -74,4 +85,18 @@ describe('canonical Switch count and body geometry', () => {
     expect(getComputedStyle(stack).gap).toBe('8px');
     expect(stack.querySelectorAll('[data-handle]')).toHaveLength(outputs);
   });
+
+  it.each((['horizontal', 'vertical'] as const).flatMap((handleAxis) => [0, 1, 20].map((caseCount) => ({ handleAxis, caseCount }))))(
+    'keeps trunk mode fixed at 160x74 for %s with caseCount=%s',
+    ({ handleAxis, caseCount }) => {
+      const view = render(<ConditionNodeCard kind="switch" mode="trunk" title="Switch" caseCount={caseCount} handleAxis={handleAxis} />);
+      const card = view.container.querySelector('[data-node-card="switch"]')!;
+      const surface = card.firstElementChild!;
+      expect(getComputedStyle(card).width).toBe('160px');
+      expect(getComputedStyle(surface).minHeight).toBe('74px');
+      const trunk = card.querySelector('[data-testid="node-output-handles"]')!;
+      expect(trunk).toHaveAttribute('data-mode', 'trunk');
+      expect(trunk.querySelectorAll('[data-handle="neutral"]')).toHaveLength(1);
+    }
+  );
 });

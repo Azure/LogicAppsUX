@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { Badge, Button, Card, CardHeader, Link, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
-import { CheckmarkCircle12Regular, DismissRegular, OpenRegular } from '@fluentui/react-icons';
+import { BeakerRegular, CheckmarkCircle12Regular, DismissRegular, OpenRegular } from '@fluentui/react-icons';
+import { designerUiTokens } from '../../theme/tokens';
 import { NodeIconTile } from '../primitives/NodeIconTile';
 import { nodeMetrics } from '../metrics';
 import type { NodeInfoCardStrings } from '../strings';
@@ -74,15 +75,20 @@ const useStyles = makeStyles({
     marginBlock: `calc((${tokens.lineHeightBase200} - ${nodeMetrics.badge.height}px) / 2)`,
     paddingInline: tokens.spacingHorizontalXS,
   },
+  testData: {
+    color: designerUiTokens.nodeTestDataForeground,
+    '@media (forced-colors: active)': { color: 'CanvasText' },
+  },
   actions: { display: 'flex', alignItems: 'center', columnGap: tokens.spacingHorizontalS },
+  // 24px border-box hit target around a 16px glyph; the negative margin keeps the glyph aligned with the header.
   dismiss: {
     alignSelf: 'flex-start',
-    boxSizing: 'content-box',
-    minWidth: `${nodeMetrics.hoverCard.dismiss}px`,
-    width: `${nodeMetrics.hoverCard.dismiss}px`,
-    height: `${nodeMetrics.hoverCard.dismiss}px`,
-    padding: tokens.spacingHorizontalXXS,
-    margin: `calc(-1 * ${tokens.spacingHorizontalXXS})`,
+    boxSizing: 'border-box',
+    minWidth: `${nodeMetrics.hoverCard.dismissHitSize}px`,
+    width: `${nodeMetrics.hoverCard.dismissHitSize}px`,
+    height: `${nodeMetrics.hoverCard.dismissHitSize}px`,
+    padding: 0,
+    margin: `${(nodeMetrics.hoverCard.dismiss - nodeMetrics.hoverCard.dismissHitSize) / 2}px`,
     fontSize: `${nodeMetrics.hoverCard.dismiss}px`,
     color: tokens.colorNeutralForeground3,
     '&.fui-Button, &.fui-Button[data-fui-focus-visible]': { borderRadius: tokens.borderRadiusSmall },
@@ -92,6 +98,12 @@ const useStyles = makeStyles({
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: 2,
     overflow: 'hidden',
+    fontSize: tokens.fontSizeBase200,
+    lineHeight: tokens.lineHeightBase200,
+    color: tokens.colorNeutralForeground2,
+  },
+  // Kept outside the two-line clamp so host controls (for example Edit test data) are never cut off.
+  footer: {
     fontSize: tokens.fontSizeBase200,
     lineHeight: tokens.lineHeightBase200,
     color: tokens.colorNeutralForeground2,
@@ -111,6 +123,13 @@ export interface NodeInfoCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   onDismiss?: () => void;
   actions?: ReactNode;
   strings?: NodeInfoCardStrings;
+  /**
+   * Output test data is substituted for this action. Presence (even `{}`) replaces the Configured confirmation and the
+   * ordinary description. Hosts must not pass it for a trigger's saved sample input.
+   */
+  testData?: { description?: string };
+  /** Host slot rendered below the description, outside its clamp. */
+  footer?: ReactNode;
 }
 export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(function NodeInfoCard(
   {
@@ -124,6 +143,8 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
     onDismiss,
     actions,
     strings = defaultNodeStrings.info,
+    testData,
+    footer,
     className,
     ...rest
   },
@@ -132,7 +153,14 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
   const styles = useStyles();
   const resolvedIcon = resolveNodeIcons({ icon }, categoryNodeIcons[category]).icon;
   const safeHref = toSafeExternalHref(learnMoreHref);
-  const hasDescription = description != null && description !== false && description !== '';
+  const isTestData = testData !== undefined;
+  const showConfigured = !!configured && !isTestData;
+  // `??` keeps an explicit empty string from a host or translation instead of falling back to English.
+  const effectiveDescription = isTestData
+    ? (testData.description ?? strings.testDataDescription ?? defaultNodeStrings.info.testDataDescription)
+    : description;
+  const hasDescription = effectiveDescription != null && effectiveDescription !== false && effectiveDescription !== '';
+  const hasFooter = footer != null && footer !== false && footer !== '';
   return (
     <Card
       {...rest}
@@ -145,7 +173,13 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
       <CardHeader
         className={styles.header}
         image={
-          <NodeIconTile category={category} icon={<span className={styles.tileIcon}>{resolvedIcon}</span>} size="small" bordered={false} />
+          <NodeIconTile
+            category={category}
+            icon={<span className={styles.tileIcon}>{resolvedIcon}</span>}
+            size="small"
+            bordered={isTestData}
+            testData={isTestData}
+          />
         }
         header={
           <h3 className={styles.title} title={title}>
@@ -153,15 +187,27 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
           </h3>
         }
         description={
-          subtitle || configured ? (
+          subtitle || showConfigured || isTestData ? (
             <div className={styles.subtext}>
               {subtitle ? (
                 <span className={styles.subtitle} title={subtitle}>
                   {subtitle}
                 </span>
               ) : null}
-              {subtitle && configured ? <span aria-hidden="true">·</span> : null}
-              {configured ? (
+              {subtitle && showConfigured ? <span aria-hidden="true">·</span> : null}
+              {isTestData ? (
+                <Badge
+                  className={mergeClasses(styles.configured, styles.testData)}
+                  appearance="ghost"
+                  size="medium"
+                  shape="circular"
+                  icon={<BeakerRegular aria-hidden="true" />}
+                  data-node-info-test-data=""
+                >
+                  {strings.testData ?? defaultNodeStrings.info.testData}
+                </Badge>
+              ) : null}
+              {showConfigured ? (
                 <Badge
                   className={styles.configured}
                   appearance="ghost"
@@ -196,7 +242,7 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
       />
       {hasDescription || safeHref ? (
         <div className={styles.description}>
-          {description}
+          {effectiveDescription}
           {hasDescription && safeHref ? ' ' : null}
           {safeHref ? (
             <Link className={styles.link} href={safeHref} target="_blank" rel="noopener noreferrer">
@@ -204,6 +250,11 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
               <OpenRegular className={styles.linkIcon} aria-label={strings.opensInNewTab} />
             </Link>
           ) : null}
+        </div>
+      ) : null}
+      {hasFooter ? (
+        <div className={styles.footer} data-node-info-footer="">
+          {footer}
         </div>
       ) : null}
     </Card>

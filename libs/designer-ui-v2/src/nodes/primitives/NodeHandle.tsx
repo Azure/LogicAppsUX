@@ -21,7 +21,20 @@ const useStyles = makeStyles({
   neutral: { ...shorthands.borderWidth(`${nodeMetrics.handle.stroke}px`), ...shorthands.borderColor(tokens.colorNeutralStroke1) },
   success: { ...shorthands.borderWidth(tokens.strokeWidthThick), ...shorthands.borderColor(tokens.colorStatusSuccessForeground1) },
   danger: { ...shorthands.borderWidth(tokens.strokeWidthThick), ...shorthands.borderColor(tokens.colorStatusDangerForeground1) },
-  inactive: { opacity: 0.4 },
+  inactive: { opacity: nodeMetrics.inactiveOpacity },
+  interactive: {
+    transitionProperty: 'border-color, background-color',
+    transitionDuration: tokens.durationFast,
+    transitionTimingFunction: tokens.curveEasyEase,
+    ':hover': {
+      ...shorthands.borderColor(tokens.colorBrandStroke1),
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+    },
+    '@media (prefers-reduced-motion: reduce)': { transitionDuration: '0.01ms' },
+    '@media (forced-colors: active)': {
+      ':hover': { ...shorthands.borderColor('CanvasText'), backgroundColor: 'Canvas' },
+    },
+  },
   input: { position: 'absolute', top: '50%', left: `${nodeMetrics.handle.edgeOffset}px`, transform: 'translateY(-50%)' },
   inputVertical: { position: 'absolute', top: `${nodeMetrics.handle.edgeOffset}px`, left: '50%', transform: 'translateX(-50%)' },
   outputs: {
@@ -47,20 +60,37 @@ const useStyles = makeStyles({
 export type NodeHandleAxis = 'horizontal' | 'vertical';
 export const NodeHandleAxisContext = createContext<NodeHandleAxis>('horizontal');
 export const useNodeHandleAxis = () => useContext(NodeHandleAxisContext);
+
+/**
+ * True inside an already-dimmed card or frame. Opacity multiplies through the DOM, so nested
+ * inactive surfaces, outputs, and handles keep `data-inactive` but skip their own opacity to stay
+ * at one `nodeMetrics.inactiveOpacity` level.
+ */
+export const NodeInactiveContext = createContext(false);
 export interface NodeHandleProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: NodeHandleVariant;
   inactive?: boolean;
+  /** Source hover invites a connection drag; inputs and inactive surfaces suppress it. */
+  hoverable?: boolean;
 }
 export const NodeHandle = forwardRef<HTMLSpanElement, NodeHandleProps>(function NodeHandle(
-  { variant = 'neutral', inactive = false, className, children, ...rest },
+  { variant = 'neutral', inactive = false, hoverable = true, className, children, ...rest },
   ref
 ) {
   const styles = useStyles();
+  const ancestorInactive = useContext(NodeInactiveContext);
   return (
     <span
       {...rest}
       ref={ref}
-      className={mergeClasses(styles.dot, styles[variant], inactive && styles.inactive, className)}
+      className={mergeClasses(
+        styles.dot,
+        styles[variant],
+        inactive && !ancestorInactive && styles.inactive,
+        // An inactive ancestor already dims this dot and must also suppress connection affordances.
+        !inactive && !ancestorInactive && hoverable && styles.interactive,
+        className
+      )}
       data-handle={variant}
       data-inactive={inactive || undefined}
       aria-hidden={children == null ? true : undefined}
@@ -72,7 +102,15 @@ export const NodeHandle = forwardRef<HTMLSpanElement, NodeHandleProps>(function 
 export const NodeInputHandle = forwardRef<HTMLSpanElement, NodeHandleProps>(function NodeInputHandle({ className, ...rest }, ref) {
   const styles = useStyles();
   const axis = useNodeHandleAxis();
-  return <NodeHandle {...rest} ref={ref} className={mergeClasses(axis === 'vertical' ? styles.inputVertical : styles.input, className)} />;
+  // Set after the spread: callers cannot turn a drop-only input into a draggable-looking source.
+  return (
+    <NodeHandle
+      {...rest}
+      hoverable={false}
+      ref={ref}
+      className={mergeClasses(axis === 'vertical' ? styles.inputVertical : styles.input, className)}
+    />
+  );
 });
 export interface NodeOutputHandlesProps extends HTMLAttributes<HTMLSpanElement> {
   handles: readonly NodeHandleVariant[];
