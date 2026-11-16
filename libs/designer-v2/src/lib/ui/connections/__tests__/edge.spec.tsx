@@ -314,7 +314,12 @@ describe('ButtonEdge', () => {
     expect(path?.style.strokeWidth).toBe(nodeLineStrokes.solid.strokeWidth);
     expect(path).not.toHaveAttribute('stroke-dasharray');
     expect(path).not.toHaveAttribute('stroke-width');
-    expect(path).not.toHaveAttribute('marker-end');
+    // The shared cap is a stroke-owned marker so hiding/restoring the stroke repaints both atomically.
+    expect(path).toHaveAttribute('marker-end', 'url(#test-guid)');
+    const capMarker = container.querySelector('marker#test-guid')!;
+    expect(capMarker).toHaveAttribute('markerUnits', 'userSpaceOnUse');
+    expect(capMarker).toHaveAttribute('orient', '0');
+    expect(capMarker.querySelector('.msla-shared-edge-cap')).toHaveAttribute('data-line-cap', 'solid');
     expect(container.querySelector('[data-edge-hit-target]')).toHaveAttribute('stroke-width', '20');
   });
 
@@ -420,9 +425,11 @@ describe('ButtonEdge', () => {
       for (const path of paths) {
         expect(path.style.stroke).toBe(stroke.stroke);
         expect(path.style.strokeWidth).toBe(stroke.strokeWidth);
-        expect(path.style.opacity).toBe('0.4');
         expect(path).not.toHaveAttribute('data-state');
       }
+      // The stroke owns opacity and composites its marker cap; the cap must not repeat it.
+      expect(paths[0].style.opacity).toBe('0.4');
+      expect(paths[1].style.opacity).toBe('');
       expect(paths[1].style.strokeDasharray).toBe('none');
       expect(container.querySelector('[data-testid^="dropzone-"]')).toBeNull();
       expect(container.querySelector('button')).toBeNull();
@@ -610,7 +617,8 @@ describe('ButtonEdge', () => {
       </svg>
     );
     expect(container.querySelector('#edge-1')).toHaveAttribute('data-line', 'solid');
-    expect(container.querySelector('#edge-1')).not.toHaveAttribute('marker-end');
+    expect(container.querySelector('#edge-1')).toHaveAttribute('marker-end', 'url(#test-guid)');
+    expect(container.querySelector('marker#test-guid .msla-shared-edge-cap')).not.toBeNull();
   });
 
   it('keeps legacy edge chrome when the shared flag is on but neither endpoint has accepted shared presentation', () => {

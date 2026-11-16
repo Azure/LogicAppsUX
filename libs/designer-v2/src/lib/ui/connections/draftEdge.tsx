@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { type ConnectionLineComponentProps, getBezierPath, useReactFlow } from '@xyflow/react';
-import { getNodeLineArrowPath } from '@microsoft/designer-ui-v2';
 import { useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
+import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 
 export const DraftEdge: React.FC<ConnectionLineComponentProps> = ({
   fromX: sourceX,
@@ -61,16 +61,17 @@ export const DraftEdge: React.FC<ConnectionLineComponentProps> = ({
         className={'react-flow__edge-path highlighted'}
         d={d}
         strokeDasharray={'0'}
-        markerEnd={shared ? undefined : 'url("#arrow-end-draft")'}
+        markerEnd={shared ? 'url("#arrow-end-draft-shared")' : 'url("#arrow-end-draft")'}
       />
       {shared && (
-        <path
-          d={getNodeLineArrowPath(targetX, targetY, getSharedEdgeArrowDirection(targetPosition))}
+        // The shared cap is a marker owned by the draft stroke so both always paint as one unit.
+        <SharedEdgeArrowCap
+          id="arrow-end-draft-shared"
+          x={targetX}
+          y={targetY}
+          direction={getSharedEdgeArrowDirection(targetPosition)}
           style={connectionLineStyle}
           className={'react-flow__edge-path highlighted'}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
         />
       )}
     </g>

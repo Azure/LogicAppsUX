@@ -232,6 +232,8 @@ describe('shared presentation contracts', () => {
     );
     expect(sharedOnly.container.querySelectorAll('.msla-shared-edge-path')).toHaveLength(1);
     expect(sharedOnly.container.querySelector('.msla-shared-edge-cap')).toHaveAttribute('d', expectedArrow);
+    const onlyCapMarker = sharedOnly.container.querySelector('.msla-shared-edge-cap')!.closest('marker')!;
+    expect(sharedOnly.container.querySelector('.msla-shared-edge-path')).toHaveAttribute('marker-end', `url(#${onlyCapMarker.id})`);
     sharedOnly.unmount();
 
     const draftProps = {
@@ -257,6 +259,8 @@ describe('shared presentation contracts', () => {
     expect(draftPaths).toHaveLength(2);
     expect(draftPaths[1]).toHaveAttribute('d', expectedArrow);
     expect(sharedDraft.container.querySelector('marker#arrow-end-draft')).toBeNull();
+    expect(sharedDraft.container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft-shared")');
+    expect(draftPaths[1].closest('marker#arrow-end-draft-shared')).not.toBeNull();
     sharedDraft.unmount();
 
     state.targetAccepted = false;
@@ -392,7 +396,10 @@ describe('shared presentation contracts', () => {
       expect(paths[0].getAttribute('d')).toMatch(/300,200$/);
       expect(paths[1]).toHaveAttribute('d', getNodeLineArrowPath(300, 200, direction));
       expect(paths[1].getAttribute('d')).toContain('L 300 200 L');
-      expect(container.querySelector('marker')).toBeNull();
+      // Shared mode owns the cap as its own marker; the legacy arrow marker is not rendered.
+      expect(container.querySelectorAll('marker')).toHaveLength(1);
+      expect(container.querySelector('marker#arrow-end-draft')).toBeNull();
+      expect(container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft-shared")');
       const sharedShaftPath = paths[0].getAttribute('d') ?? '';
       state.shared = false;
       rerender(

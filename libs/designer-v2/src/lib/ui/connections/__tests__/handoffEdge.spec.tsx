@@ -128,7 +128,8 @@ describe('actual A2A handoff presentation', () => {
     expect(container.querySelector('#handoff')).toHaveAttribute('data-line', 'dashedNeutral');
     expect(container.querySelectorAll('.msla-shared-edge-path')).toHaveLength(1);
     expect(container.querySelectorAll('.msla-shared-edge-cap')).toHaveLength(1);
-    expect(container.querySelector('#handoff')).not.toHaveAttribute('marker-end');
+    expect(container.querySelector('#handoff')).toHaveAttribute('marker-end', 'url(#handoff-cap)');
+    expect(container.querySelector('marker#handoff-cap .msla-shared-edge-cap')).not.toBeNull();
   });
 
   it('keeps legacy handoff chrome when the live flag is on but endpoints are not accepted', () => {

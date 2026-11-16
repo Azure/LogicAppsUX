@@ -15,7 +15,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { getNodeLineArrowPath, getNodeLineStroke, useEdgeActiveState, useNodeLineStyles } from '@microsoft/designer-ui-v2';
+import { getNodeLineStroke, useEdgeActiveState, useNodeLineStyles } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { useConnectionStyles } from './connections.styles';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
@@ -25,6 +25,7 @@ import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import { SharedCollapsedRunAfterIndicator, SharedRunAfterIndicator } from './runAfterIndicator/SharedRunAfterIndicator';
 import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
+import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -246,25 +247,26 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         strokeDasharray={shared ? undefined : showRunAfter ? '4 6' : '0'}
         strokeWidth={shared ? undefined : 2}
         strokeLinecap={'round'}
-        markerEnd={shared ? undefined : `url(#${capGuid})`}
+        // Both modes reference `capGuid`; only one marker definition is rendered per mode.
+        markerEnd={`url(#${capGuid})`}
       />
       {shared && (
         <>
-          <path
-            d={getNodeLineArrowPath(endpoint.x, endpoint.y, getSharedEdgeArrowDirection(targetPosition))}
+          {/* The cap uses its own class/attribute so `.msla-shared-edge-path` and `data-line` keep naming exactly one
+              stroke per edge; as a marker it is painted by that stroke (see SharedEdgeArrowCap). */}
+          <SharedEdgeArrowCap
+            id={capGuid}
+            x={endpoint.x}
+            y={endpoint.y}
+            direction={getSharedEdgeArrowDirection(targetPosition)}
+            variant={variant}
             style={{
               ...style,
               stroke: stroke.stroke,
               strokeWidth: stroke.strokeWidth,
               strokeDasharray: 'none',
             }}
-            // The cap uses its own class/attribute so `.msla-shared-edge-path` and `data-line` keep naming exactly one
-            // stroke per edge; geometry probes and selection styling rely on that single-path contract.
             className={css('msla-shared-edge-cap', lineStyles.base, lineStyles[variant])}
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            data-line-cap={variant}
           />
           <path
             d={d}

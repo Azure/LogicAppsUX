@@ -5,14 +5,7 @@ import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, useReactFlow, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import { Button } from '@fluentui/react-components';
-import {
-  EdgePillButton,
-  getNodeLineArrowPath,
-  getNodeLineStroke,
-  useEdgeActiveState,
-  useNodeLineStyles,
-  designerUiTokens,
-} from '@microsoft/designer-ui-v2';
+import { EdgePillButton, getNodeLineStroke, useEdgeActiveState, useNodeLineStyles, designerUiTokens } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { useIntl } from 'react-intl';
 import { useConnectionStyles } from './connections.styles';
@@ -29,6 +22,7 @@ import {
 import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
+import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import type { AppDispatch } from '../../core';
 import { HandoffIcon } from './dynamicsvgs/handoffIcon';
@@ -300,7 +294,8 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         d={splinePath}
         strokeDasharray={shared ? undefined : '4 6'}
         strokeLinecap={'round'}
-        markerEnd={shared ? undefined : `url(#${capGuid})`}
+        // Both modes reference `capGuid`; only one marker definition is rendered per mode.
+        markerEnd={`url(#${capGuid})`}
       />
       {shared && (
         <path
@@ -312,20 +307,20 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         />
       )}
       {shared && splinePoints.length > 0 && (
-        <path
-          d={getNodeLineArrowPath(splinePoints[splinePoints.length - 1].x, splinePoints[splinePoints.length - 1].y, arrowDirection)}
+        // Distinct cap class keeps `.msla-shared-edge-path`/`data-line` unique to the handoff stroke; the marker is painted by it.
+        <SharedEdgeArrowCap
+          id={capGuid}
+          x={splinePoints[splinePoints.length - 1].x}
+          y={splinePoints[splinePoints.length - 1].y}
+          direction={arrowDirection}
+          variant="dashedNeutral"
           style={{
             ...style,
             stroke: stroke.stroke,
             strokeWidth: stroke.strokeWidth,
             strokeDasharray: 'none',
           }}
-          // Distinct cap class keeps `.msla-shared-edge-path`/`data-line` unique to the handoff stroke itself.
           className={css('msla-shared-edge-cap', line.base, line.dashedNeutral)}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          data-line-cap="dashedNeutral"
         />
       )}
 
