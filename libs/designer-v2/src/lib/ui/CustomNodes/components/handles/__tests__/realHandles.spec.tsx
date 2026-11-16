@@ -6,7 +6,7 @@ import { EdgeDrawTargetHandle } from '../EdgeDrawTargetHandle';
 import { DefaultHandle } from '../DefaultHandle';
 import { NodeHandle } from '@microsoft/designer-ui-v2';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge } from 'elkjs';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
 import type { ReactNode } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';

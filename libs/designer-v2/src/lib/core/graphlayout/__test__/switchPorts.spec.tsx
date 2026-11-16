@@ -4,7 +4,7 @@ import { ConditionNodeCard } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { ReactFlow } from '@xyflow/react';
 import type { Node, NodeProps } from '@xyflow/react';
-import type { ElkNode } from 'elkjs';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { tokens, webLightTheme } from '@fluentui/react-components';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';

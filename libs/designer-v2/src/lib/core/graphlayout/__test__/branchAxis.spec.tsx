@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { agentMcpWorkflowDefinitionInput } from '../../parsers/BJSWorkflow/__test__/agentMcpWorkflowDefinition';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';

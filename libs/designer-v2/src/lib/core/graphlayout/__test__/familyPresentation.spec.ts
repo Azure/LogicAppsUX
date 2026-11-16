@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, buildSvgSpline } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { getNodePresentation } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -14,7 +14,6 @@ import { createElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import type { ElkNode } from 'elkjs';
 import { initialWorkflowState } from '../../state/workflow/workflowSlice';
 import { useRootWorkflowGraphForLayout } from '../../state/workflow/workflowSelectors';
 import Constants from '../../../common/constants';
