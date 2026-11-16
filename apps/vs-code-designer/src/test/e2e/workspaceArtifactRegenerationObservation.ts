@@ -1165,6 +1165,7 @@ export async function activateRetainedRegenerationInitialization(
   let openedByFallback = false;
   let safeAbsenceObserved = false;
   let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | 'list-changed' | undefined;
+  let centerNotVisibleAfterReveal = false;
   const revealState = { attempted: false };
   while (now() < options.deadline) {
     const activation = { capture: options.capture, activated: false, timeOrigin: undefined as number | undefined };
@@ -1182,6 +1183,21 @@ export async function activateRetainedRegenerationInitialization(
         inspection: { ...inspection, openedByDiagnostic: openedByFallback },
         timeOrigin: activation.timeOrigin,
       };
+    }
+    if (revealState.attempted && inspection.reason === 'open-timeout' && now() < options.deadline) {
+      centerNotVisibleAfterReveal = true;
+      lastPollableReason = undefined;
+      allowReveal = false;
+      const remainingMs = options.deadline - now();
+      try {
+        await poll(remainingMs);
+      } catch (error) {
+        if (now() >= options.deadline) {
+          break;
+        }
+        throw error;
+      }
+      continue;
     }
     if (
       inspection.reason === 'temporarily-blocked' ||
@@ -1213,6 +1229,7 @@ export async function activateRetainedRegenerationInitialization(
       }
       throw new Error(`Retained initialization warning could not be activated safely: ${inspection.reason}`);
     }
+    centerNotVisibleAfterReveal = false;
     safeAbsenceObserved = inspection.target === 'absent';
     lastPollableReason = undefined;
     const remainingMs = options.deadline - now();
@@ -1227,6 +1244,9 @@ export async function activateRetainedRegenerationInitialization(
       }
       throw error;
     }
+  }
+  if (centerNotVisibleAfterReveal) {
+    throw new Error('Retained initialization warning could not be activated safely: open-timeout');
   }
   if (lastPollableReason) {
     throw new Error(`Retained initialization warning remained ${lastPollableReason} until the original Notification Center deadline`);
@@ -1446,7 +1466,6 @@ export class RegenerationObservation {
         : {}
     );
   }
-
   onConnection(cdp: CdpConnection): void {
     try {
       this.detachConsole = cdp.onConsoleDiagnostic(

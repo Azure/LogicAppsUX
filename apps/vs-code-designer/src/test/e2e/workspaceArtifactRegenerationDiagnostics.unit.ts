@@ -2036,6 +2036,90 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     'Persistent pre-open blocking must preserve the one bell click'
   );
 
+  let reopenedCenterNow = 0;
+  let reopenedCenterStage = 0;
+  const reopenedCenterEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const reopenedCenter = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(reopenedCenterEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 300,
+    now: () => reopenedCenterNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => {
+      const bellClicked = reopenedCenterEvents.length >= 3;
+      const centerVisible = bellClicked && reopenedCenterStage !== 1;
+      return {
+        before: owner,
+        owner,
+        raw: activationRaw(centerVisible, reopenedCenterStage === 2 ? 'target' : 'absent'),
+      };
+    },
+    poll: async (remainingMs) => {
+      reopenedCenterNow += Math.min(100, remainingMs);
+      reopenedCenterStage++;
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(reopenedCenter.timeOrigin, 42);
+  assert.strictEqual(reopenedCenterNow, 200, 'Temporary post-reveal invisibility must use the unchanged original clock');
+  assert.strictEqual(
+    reopenedCenterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'A temporarily invisible center after safe absence must not replay the bell'
+  );
+  assert.strictEqual(
+    reopenedCenterEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The target must be clicked once after the already-revealed center reappears'
+  );
+
+  let persistentInvisibleNow = 0;
+  let persistentInvisible = false;
+  const persistentInvisibleEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(persistentInvisibleEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 300,
+      now: () => persistentInvisibleNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const bellClicked = persistentInvisibleEvents.length >= 3;
+        return {
+          before: owner,
+          owner,
+          raw: activationRaw(bellClicked && !persistentInvisible, 'absent'),
+        };
+      },
+      poll: async (remainingMs) => {
+        persistentInvisibleNow += Math.min(100, remainingMs);
+        persistentInvisible = true;
+      },
+      capture: async () => {
+        throw new Error('Persistent center invisibility cannot capture a target');
+      },
+    }),
+    /could not be activated safely: open-timeout/
+  );
+  assert.strictEqual(persistentInvisibleNow, 300, 'Persistent post-reveal invisibility must consume the original deadline');
+  assert.strictEqual(
+    persistentInvisibleEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5)
+      .length,
+    1,
+    'Persistent post-reveal invisibility must never replay the bell'
+  );
+  assert.strictEqual(persistentInvisibleEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length, 0);
+
   let openNow = 0;
   let openWaitCount = 0;
   const openTimeoutEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];

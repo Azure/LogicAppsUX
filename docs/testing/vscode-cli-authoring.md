@@ -888,7 +888,10 @@ status-bar bell—never through command dispatch—and consume only the original
 that same deadline without a private open timeout or a second click. If a
 transient modal or QuickInput blocks observation after bell input, preserve the
 attempted reveal and keep yielded no-click polling until it clears, the center
-opens, or the original deadline expires. Pin and recheck the physical workspace, target, document,
+opens, or the original deadline expires. If the already-revealed center later
+becomes temporarily invisible after a safe absence/list-change scan, keep
+`allowReveal` false and poll `open-timeout` under that same deadline rather than
+re-clicking or failing early. Pin and recheck the physical workspace, target, document,
 active workbench, center, exact retained project warning, and its one enabled
 hit-tested **Yes** before capture and before every trusted input event. Preserve
 an unchanged admitted main-document identity from workbench admission; an

@@ -608,7 +608,10 @@ never through command dispatch. After that one click, center visibility is polle
 through the same original phase deadline; there is no private open grace window
 and the bell is never replayed. A transient blocking modal/QuickInput after bell
 input pauses center-visible observation without clearing that one-attempt reveal
-state; polling resumes after it clears. The fallback pins the physical workspace, retains
+state; polling resumes after it clears. The same applies if a previously visible
+center temporarily disappears after a safe absence/list-change scan: `open-timeout`
+is pollable until the original deadline, with `allowReveal` remaining false.
+The fallback pins the physical workspace, retains
 the original target/document/deadline, requires a live admitted main-document
 identity (with no context-generation-only acceptance fallback), scans and
 bounded-scrolls only the center, and keeps re-sampling its live list until the
