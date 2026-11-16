@@ -209,7 +209,9 @@ const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
     vertex.rank = compressed.get(vertex.rank)!;
     layers[vertex.rank].push(index);
   });
-  for (const link of links) {
+  // Long-edge dummies sort before later real siblings by their lower endpoint's model order (as ELK does).
+  const orderKeys = new Map<number, [number, number]>();
+  links.forEach((link, linkIndex) => {
     const chain = [link.source];
     for (let rank = vertices[link.source].rank + 1; rank < vertices[link.target].rank; rank++) {
       if (vertices.length >= 100_000) {
@@ -218,9 +220,20 @@ const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
       const index = vertices.length;
       vertices.push({ width: 0, height: 0, order: index, rank, x: 0, y: 0 });
       layers[rank].push(index);
+      orderKeys.set(index, [vertices[link.target].order, linkIndex]);
       chain.push(index);
     }
     link.chain = [...chain, link.target];
+  });
+  if (orderKeys.size) {
+    const key = (index: number) => orderKeys.get(index) ?? [vertices[index].order, -1];
+    for (const layer of layers) {
+      layer.sort((a, b) => {
+        const [orderA, linkA] = key(a);
+        const [orderB, linkB] = key(b);
+        return orderA - orderB || linkA - linkB;
+      });
+    }
   }
   return layers;
 };
@@ -356,7 +369,7 @@ interface Anchors {
   target: Map<Link, number>;
 }
 
-/** Horizontal attachment offsets, spread symmetrically per endpoint and sorted by the opposite end's x. */
+/** Horizontal attachment offsets, spread symmetrically per endpoint and sorted by the adjacent hop's center x. */
 const anchorOffsets = (vertices: Vertex[], links: Link[], portSpacing: number): Anchors => {
   interface Endpoint {
     link: Link;
@@ -374,13 +387,16 @@ const anchorOffsets = (vertices: Vertex[], links: Link[], portSpacing: number): 
   for (const link of links) {
     const source = link.reversed ? link.target : link.source;
     const target = link.reversed ? link.source : link.target;
-    add(link.sourcePort || !link.reversed ? bottomGroups : topGroups, source, { link, atSource: true, opposite: target });
-    add(link.targetPort || link.reversed ? bottomGroups : topGroups, target, { link, atSource: false, opposite: source });
+    // Long edges leave through their first dummy lane, not straight toward the far endpoint.
+    const hop = (endpoint: number) => (endpoint === link.chain[0] ? link.chain[1] : link.chain[link.chain.length - 2]);
+    add(link.sourcePort || !link.reversed ? bottomGroups : topGroups, source, { link, atSource: true, opposite: hop(source) });
+    add(link.targetPort || link.reversed ? bottomGroups : topGroups, target, { link, atSource: false, opposite: hop(target) });
   }
+  const center = (index: number) => vertices[index].x + vertices[index].width / 2;
   const anchors: Anchors = { source: new Map(), target: new Map() };
   for (const groups of [topGroups, bottomGroups]) {
     for (const [index, group] of groups) {
-      group.sort((a, b) => vertices[a.opposite].x - vertices[b.opposite].x);
+      group.sort((a, b) => center(a.opposite) - center(b.opposite));
       const width = vertices[index].width;
       const spacing = Math.min(portSpacing, width / Math.max(1, group.length));
       group.forEach(({ link, atSource }, position) => {
@@ -415,11 +431,14 @@ const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint
     points.push(end);
   }
   const result: ElkPoint[] = [];
-  // Duplicate endpoints as cubic controls so each waypoint remains on the rendered path.
+  // Vertical-tangent controls (like React Flow's bezier edges) keep every waypoint on the path; level segments stay straight.
   for (let index = 1; index < points.length; index++) {
-    result.push({ ...points[index - 1] }, { ...points[index] });
+    const from = points[index - 1];
+    const to = points[index];
+    const y = (from.y + to.y) / 2;
+    result.push({ x: from.x, y }, { x: to.x, y });
     if (index < points.length - 1) {
-      result.push({ ...points[index] });
+      result.push({ ...to });
     }
   }
   return result;
@@ -476,11 +495,6 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       // Sloped transitions then lie in layer gaps, not inside node ranks.
       bends.push(...(link.reversed ? [bottom, top] : [top, bottom]));
     }
-    if (chain.length === 2) {
-      const gapStart = link.reversed ? bends[bends.length - 1] : lead;
-      const gapEnd = link.reversed ? lead : end;
-      bends.push({ x: (gapStart.x + gapEnd.x) / 2, y: (gapStart.y + gapEnd.y) / 2 });
-    }
     if (link.reversed && lead.y !== end.y) {
       bends.push(lead);
     }
@@ -491,7 +505,7 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       id: `${link.edge.id}_s0`,
       startPoint: start,
       endPoint: end,
-      bendPoints: chain.length === 2 && bends.length === 2 ? bends : cubicBends(start, bends, end),
+      bendPoints: cubicBends(start, bends, end),
       incomingShape: link.edge.sources[0],
       outgoingShape: link.edge.targets[0],
     };

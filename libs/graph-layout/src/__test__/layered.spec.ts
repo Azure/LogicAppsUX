@@ -295,7 +295,16 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       } else {
         expect(section.startPoint).toEqual(port);
         expect(section.bendPoints).toContainEqual(lead);
-        expect(section.endPoint).toEqual({ x: center(far) - (mode === 'long' ? 10 : 0), y: far.y! });
+        expect(section.endPoint.y).toBe(far.y);
+        if (mode === 'long') {
+          // Entries into `far` keep the same left-to-right order as the lanes they arrive from.
+          const other = graph.edges![2].sections![0];
+          const lane = section.bendPoints![section.bendPoints!.length - 3].x;
+          expect(Math.sign(section.endPoint.x - other.endPoint.x)).toBe(Math.sign(lane - other.startPoint.x));
+          expect(Math.abs(section.endPoint.x - center(far))).toBe(10);
+        } else {
+          expect(section.endPoint.x).toBe(center(far));
+        }
       }
       expect(short.ports![0]).toMatchObject({ x: 20, y: 20 });
       if (mode !== 'direct') {
@@ -303,6 +312,34 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       }
     }
   );
+
+  it('orders long-edge lanes by edge model order and keeps shared-source anchors uncrossed', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'triage', width: 240, height: 148 },
+        { id: 'sales', width: 800, height: 392 },
+        { id: 'refund', width: 240, height: 148 },
+      ],
+      edges: [
+        { id: 'triage-sales', sources: ['triage'], targets: ['sales'] },
+        { id: 'triage-refund', sources: ['triage'], targets: ['refund'] },
+        { id: 'sales-triage', sources: ['sales'], targets: ['triage'] },
+        { id: 'refund-triage', sources: ['refund'], targets: ['triage'] },
+        { id: 'refund-sales', sources: ['refund'], targets: ['sales'] },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: bkOptions });
+    const [triage, , refund] = graph.children!;
+    const [toSales, toRefund, fromSales, fromRefund] = graph.edges!.map((edge) => edge.sections![0]);
+    // The Triage→Sales lane (and its reversed return) is laid out before Refund, as in ELK.
+    expect(toSales.bendPoints!.every((point) => point.x < refund.x!)).toBe(true);
+    // Triage's bottom anchors follow their lanes left to right, so no edges cross below it.
+    const anchors = [toSales.startPoint, fromSales.endPoint, toRefund.startPoint, fromRefund.endPoint];
+    expect(anchors.every((point) => point.y === triage.y! + triage.height!)).toBe(true);
+    expect(anchors.map((point) => point.x)).toEqual([...anchors.map((point) => point.x)].sort((a, b) => a - b));
+    expect(layoutQuality(graph).edgeNodeHits).toBe(0);
+  });
 
   it('groups a shuffled uneven four-rank forest beneath its parents with zero route crossings', async () => {
     const forest: ElkNode = { id: 'root', children: [], edges: [] };
