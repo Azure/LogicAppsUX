@@ -884,7 +884,11 @@ Keep the foreground initialization warning as the primary route. When the exact
 owned-project warning is not foreground-visible, the existing regeneration phase
 may reveal Notification Center once through its unique visible, hit-tested
 status-bar bell—never through command dispatch—and consume only the original
-120-second deadline. Pin and recheck the physical workspace, target, document,
+120-second deadline. After the one bell click, wait for center visibility under
+that same deadline without a private open timeout or a second click. If a
+transient modal or QuickInput blocks observation after bell input, preserve the
+attempted reveal and keep yielded no-click polling until it clears, the center
+opens, or the original deadline expires. Pin and recheck the physical workspace, target, document,
 active workbench, center, exact retained project warning, and its one enabled
 hit-tested **Yes** before capture and before every trusted input event. Preserve
 an unchanged admitted main-document identity from workbench admission; an

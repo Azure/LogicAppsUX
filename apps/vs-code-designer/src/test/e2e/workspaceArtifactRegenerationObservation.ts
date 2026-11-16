@@ -886,44 +886,52 @@ export async function inspectRegenerationNotificationCenter(options: {
       if (options.allowReveal === false) {
         return unavailable('open-timeout');
       }
-      const affordance = await readAffordance();
-      assertSafe();
-      if (affordance.truncated || affordance.candidateCount > 1) {
-        return unavailable('affordance-ambiguous');
-      }
-      if (affordance.centerVisible) {
-        state = await read();
-      } else {
-        if (affordance.candidateCount !== 1 || !affordance.point) {
-          return unavailable('affordance-unavailable');
-        }
-        if (options.revealState?.attempted) {
-          return unavailable('open-timeout');
-        }
-        if (options.revealState) {
-          options.revealState.attempted = true;
-        }
-        const click = options.input.beginLogicalInput();
-        try {
-          await dispatchAffordanceEvent('mouseMoved', 0, 'none');
-          await dispatchAffordanceEvent('mousePressed', 1, 'left');
-          click.markPressed();
-          await dispatchAffordanceEvent('mouseReleased', 0, 'left');
-          click.complete();
-        } catch (error) {
-          click.fail();
-          throw error;
-        }
-        const openDeadline = Math.min(options.deadline, now() + 2000);
-        state = await read();
-        while (!state.safe.centerVisible && now() < openDeadline) {
-          await wait(openDeadline - now());
+      if (options.revealState?.attempted) {
+        while (!state.safe.centerVisible && now() < options.deadline) {
+          await wait(options.deadline - now());
           state = await read();
         }
         if (!state.safe.centerVisible) {
           return unavailable('open-timeout');
         }
         result.openedByDiagnostic = true;
+      } else {
+        const affordance = await readAffordance();
+        assertSafe();
+        if (affordance.truncated || affordance.candidateCount > 1) {
+          return unavailable('affordance-ambiguous');
+        }
+        if (affordance.centerVisible) {
+          state = await read();
+        } else {
+          if (affordance.candidateCount !== 1 || !affordance.point) {
+            return unavailable('affordance-unavailable');
+          }
+          if (options.revealState) {
+            options.revealState.attempted = true;
+          }
+          const click = options.input.beginLogicalInput();
+          try {
+            await dispatchAffordanceEvent('mouseMoved', 0, 'none');
+            await dispatchAffordanceEvent('mousePressed', 1, 'left');
+            click.markPressed();
+            await dispatchAffordanceEvent('mouseReleased', 0, 'left');
+            click.complete();
+          } catch (error) {
+            click.fail();
+            throw error;
+          }
+          const openDeadline = options.deadline;
+          state = await read();
+          while (!state.safe.centerVisible && now() < openDeadline) {
+            await wait(openDeadline - now());
+            state = await read();
+          }
+          if (!state.safe.centerVisible) {
+            return unavailable('open-timeout');
+          }
+          result.openedByDiagnostic = true;
+        }
       }
     }
 

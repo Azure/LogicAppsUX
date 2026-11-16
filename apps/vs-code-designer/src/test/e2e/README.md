@@ -604,7 +604,11 @@ adjudication of the original source request.
 The foreground initialization warning remains the primary prompted path. If that
 exact owned-project warning is not foreground-visible, the same phase may reveal
 Notification Center once through the unique visible, hit-tested status-bar bell,
-never through command dispatch. The fallback pins the physical workspace, retains
+never through command dispatch. After that one click, center visibility is polled
+through the same original phase deadline; there is no private open grace window
+and the bell is never replayed. A transient blocking modal/QuickInput after bell
+input pauses center-visible observation without clearing that one-attempt reveal
+state; polling resumes after it clears. The fallback pins the physical workspace, retains
 the original target/document/deadline, requires a live admitted main-document
 identity (with no context-generation-only acceptance fallback), scans and
 bounded-scrolls only the center, and keeps re-sampling its live list until the

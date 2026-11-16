@@ -1582,6 +1582,139 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     'Persistent blocking UI must never permit retained Yes input'
   );
 
+  let delayedOpenNow = 0;
+  let delayedOpenWaitCount = 0;
+  const delayedOpenEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const delayedOpen = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(delayedOpenEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 5000,
+    now: () => delayedOpenNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({
+      before: owner,
+      owner,
+      raw: activationRaw(delayedOpenNow >= 3000, delayedOpenNow >= 3000 ? 'target' : 'absent'),
+    }),
+    poll: async (remainingMs) => {
+      delayedOpenWaitCount++;
+      delayedOpenNow += Math.min(500, remainingMs);
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(delayedOpen.timeOrigin, 42, 'A center opening after the former private window must still activate the target');
+  assert.strictEqual(delayedOpenNow, 3000);
+  assert.strictEqual(delayedOpenWaitCount, 6, 'Center-open polling must yield under the original phase deadline');
+  assert.strictEqual(
+    delayedOpenEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'A delayed center open must use exactly one bell click'
+  );
+  assert.strictEqual(
+    delayedOpenEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The retained target must be clicked once after the center becomes visible'
+  );
+
+  let transientOpenNow = 0;
+  let transientOpenPolls = 0;
+  let transientBlocker = true;
+  let transientCenterVisible = false;
+  const transientOpenEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const transientOpen = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(transientOpenEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 5000,
+    now: () => transientOpenNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => {
+      const bellClicked = transientOpenEvents.length >= 3;
+      const raw =
+        bellClicked && transientBlocker
+          ? {
+              ...activationRaw(false, 'absent'),
+              candidates: [{ ...candidate, kind: 'dialog' as const, text: 'Transient setup blocker' }],
+            }
+          : activationRaw(transientCenterVisible, transientCenterVisible ? 'target' : 'absent');
+      return { before: owner, owner, raw };
+    },
+    poll: async (remainingMs) => {
+      transientOpenPolls++;
+      transientOpenNow += Math.min(500, remainingMs);
+      if (transientOpenPolls === 1) {
+        transientBlocker = false;
+      } else {
+        transientCenterVisible = true;
+      }
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(transientOpen.timeOrigin, 42);
+  assert.strictEqual(transientOpenNow, 1000, 'Transient blocking must yield without resetting the original phase clock');
+  assert.strictEqual(
+    transientOpenEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'A blocker between bell input and center visibility must not replay the bell'
+  );
+  assert.strictEqual(
+    transientOpenEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1,
+    'The target must be clicked once after the transient blocker clears and the center opens'
+  );
+
+  let preOpenBlockingNow = 0;
+  const preOpenBlockingEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(preOpenBlockingEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 5000,
+      now: () => preOpenBlockingNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const bellClicked = preOpenBlockingEvents.length >= 3;
+        return {
+          before: owner,
+          owner,
+          raw: bellClicked
+            ? {
+                ...activationRaw(false, 'absent'),
+                candidates: [{ ...candidate, kind: 'dialog' as const, text: 'Persistent setup blocker' }],
+              }
+            : activationRaw(false, 'absent'),
+        };
+      },
+      poll: async (remainingMs) => {
+        preOpenBlockingNow += Math.min(500, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('Persistent pre-open blocking cannot capture or click a target');
+      },
+    }),
+    /remained temporarily-blocked until the original Notification Center deadline/
+  );
+  assert.strictEqual(preOpenBlockingNow, 5000, 'Persistent pre-open blocking must expire at the original deadline');
+  assert.strictEqual(
+    preOpenBlockingEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
+    1,
+    'Persistent pre-open blocking must preserve the one bell click'
+  );
+
   let openNow = 0;
   let openWaitCount = 0;
   const openTimeoutEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
@@ -1608,8 +1741,8 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     }),
     /could not be activated safely: open-timeout/
   );
-  assert.strictEqual(openNow, 2000, 'Center-open wait must terminate at its bounded timeout under the injected clock');
-  assert.strictEqual(openWaitCount, 4, 'Center-open retries must yield through the injected wait between reads');
+  assert.strictEqual(openNow, 5000, 'A never-open center must consume the complete original phase deadline');
+  assert.strictEqual(openWaitCount, 10, 'Center-open retries must yield through the injected wait until the original deadline');
   assert.strictEqual(
     openTimeoutEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 4 && event.params.y === 5).length,
     1,
