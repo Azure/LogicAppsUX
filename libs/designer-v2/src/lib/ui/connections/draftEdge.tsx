@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { type ConnectionLineComponentProps, getBezierPath, useReactFlow } from '@xyflow/react';
-import { useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
 import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 
@@ -16,7 +15,6 @@ export const DraftEdge: React.FC<ConnectionLineComponentProps> = ({
   toNode,
   connectionLineStyle,
 }: ConnectionLineComponentProps) => {
-  const enabled = useSharedNodeUi();
   const reactFlow = useReactFlow();
   const sourceId = typeof fromNode?.id === 'string' ? fromNode.id : undefined;
   const targetId = typeof toNode?.id === 'string' ? toNode.id : undefined;
@@ -31,8 +29,10 @@ export const DraftEdge: React.FC<ConnectionLineComponentProps> = ({
           (toNode as { data?: { presentation?: { shared?: boolean } } } | undefined)?.data?.presentation?.shared
       )
     : true;
-  // Draft arrows can follow a free pointer target, but only after the accepted source (and real target when present) adopts shared mode.
-  const shared = enabled && sourceAccepted && targetAccepted;
+  // A draft has no edge stamp of its own, so it follows the presentation already accepted by its endpoints rather than the live
+  // flag: during a pending flag toggle the nodes and handles keep their previous presentation until the replacement layout lands.
+  // A free pointer target (no node under the cursor) defers entirely to the source.
+  const shared = sourceAccepted && targetAccepted;
   const [d] = React.useMemo(
     () =>
       getBezierPath({

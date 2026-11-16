@@ -304,6 +304,9 @@ describe('shared presentation contracts', () => {
     expect(legacyOnly.container.querySelector('.msla-shared-edge-path')).toBeNull();
     legacyOnly.unmount();
 
+    // Draft presentation follows the accepted endpoints, so the legacy draft comes from unstamped nodes.
+    state.sourceAccepted = false;
+    state.targetAccepted = false;
     const legacyDraft = renderWithIntl(
       <svg>
         <DraftEdge {...draftProps} />
@@ -312,6 +315,48 @@ describe('shared presentation contracts', () => {
     expect(legacyDraft.container.querySelectorAll('path.react-flow__edge-path.highlighted')).toHaveLength(1);
     expect(legacyDraft.container.querySelector('marker#arrow-end-draft')).not.toBeNull();
     expect(legacyDraft.container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft")');
+  });
+
+  it('keeps DraftEdge on the accepted node presentation while a flag toggle waits for its replacement layout', () => {
+    const draftProps = {
+      fromX: defaultProps.sourceX,
+      fromY: defaultProps.sourceY,
+      fromPosition: defaultProps.sourcePosition,
+      toX: defaultProps.targetX,
+      toY: defaultProps.targetY,
+      toPosition: defaultProps.targetPosition,
+      toNode: { id: 'targetNode' } as any,
+      connectionLineType: 'default' as any,
+      connectionStatus: null,
+      fromNode: { id: 'sourceNode' } as any,
+      fromHandle: {} as any,
+      pointer: { x: defaultProps.targetX, y: defaultProps.targetY },
+    };
+
+    // shared -> legacy pending: the flag is already off, but the nodes are still stamped shared.
+    state.shared = false;
+    const sharedPending = renderWithIntl(
+      <svg>
+        <DraftEdge {...draftProps} />
+      </svg>
+    );
+    expect(sharedPending.container.querySelector('marker#arrow-end-draft')).toBeNull();
+    expect(sharedPending.container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft-shared")');
+    expect(sharedPending.container.querySelector('marker#arrow-end-draft-shared path')).not.toBeNull();
+    sharedPending.unmount();
+
+    // legacy -> shared pending: the flag is already on, but the nodes are not stamped shared yet.
+    state.shared = true;
+    state.sourceAccepted = false;
+    state.targetAccepted = false;
+    const legacyPending = renderWithIntl(
+      <svg>
+        <DraftEdge {...draftProps} />
+      </svg>
+    );
+    expect(legacyPending.container.querySelector('marker#arrow-end-draft')).not.toBeNull();
+    expect(legacyPending.container.querySelector('marker#arrow-end-draft-shared')).toBeNull();
+    expect(legacyPending.container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft")');
   });
 
   it('keeps terminal add controls centered at 32x32 and applies shared mask color only in shared insertion mode', () => {
@@ -402,6 +447,8 @@ describe('shared presentation contracts', () => {
       expect(container.querySelector('#draft-connection-path')).toHaveAttribute('marker-end', 'url("#arrow-end-draft-shared")');
       const sharedShaftPath = paths[0].getAttribute('d') ?? '';
       state.shared = false;
+      state.sourceAccepted = false;
+      state.targetAccepted = false;
       rerender(
         <IntlProvider locale="en">
           <svg>
