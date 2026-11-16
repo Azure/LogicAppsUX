@@ -13,6 +13,7 @@ import { createElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import type { ElkNode } from 'elkjs';
 import { initialWorkflowState } from '../../state/workflow/workflowSlice';
 import { useRootWorkflowGraphForLayout } from '../../state/workflow/workflowSelectors';
 import Constants from '../../../common/constants';
@@ -287,6 +288,74 @@ describe('family admission and matching geometry', () => {
     expect(graph).toEqual(baseline);
   });
 
+  it('keeps tool inventory vertical while laying expanded multi-action tool continuations to the right', async () => {
+    const fixture = Deserialize(agentMcpWorkflowDefinitionInput, null);
+    const graph = structuredClone(fixture.graph!);
+    const agent = graph.children![1];
+    agent.children!.splice(2, 0, {
+      id: 'real-multi-action-tool',
+      type: 'SUBGRAPH_NODE',
+      children: [
+        { id: 'real-multi-action-tool-#subgraph', type: 'SUBGRAPH_CARD_NODE' },
+        { id: 'first-action', type: 'OPERATION_NODE' },
+        { id: 'second-action', type: 'OPERATION_NODE' },
+        { id: 'third-action', type: 'OPERATION_NODE' },
+      ],
+      edges: [
+        { id: 'tool-body', source: 'real-multi-action-tool-#subgraph', target: 'first-action', type: 'ONLY_EDGE' },
+        { id: 'tool-sequence-1', source: 'first-action', target: 'second-action', type: 'BUTTON_EDGE' },
+        { id: 'tool-sequence-2', source: 'second-action', target: 'third-action', type: 'BUTTON_EDGE' },
+      ],
+    });
+    agent.edges!.splice(1, 0, {
+      id: 'real-tool-association',
+      source: 'WorkflowAgent-#scope',
+      target: 'real-multi-action-tool',
+      type: 'ONLY_EDGE',
+    });
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: fixture.actionData,
+      nodesMetadata: {
+        ...fixture.nodesMetadata,
+        'real-multi-action-tool': { graphId: 'WorkflowAgent', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION },
+      },
+    });
+    const findNode = (root: ElkNode, id: string): ElkNode | undefined => {
+      if (root.id === id) {
+        return root;
+      }
+      for (const child of root.children ?? []) {
+        const found = findNode(child, id);
+        if (found) {
+          return found;
+        }
+      }
+      return undefined;
+    };
+    expect(findNode(converted, 'real-multi-action-tool')?.layoutOptions?.['elk.direction']).toBe('RIGHT');
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+
+    const mcp = nodes.find(({ id }) => id === 'McpFileServer')!;
+    const nested = nodes.find(({ id }) => id === 'real-multi-action-tool')!;
+    const add = nodes.find(({ id }) => id === 'WorkflowAgent-addCase')!;
+    expect(nested.position.y).toBeGreaterThanOrEqual(mcp.position.y + mcp.height! + 12);
+    expect(add.position.y).toBeGreaterThanOrEqual(nested.position.y + nested.height! + 12);
+
+    const toolCard = nodes.find(({ id }) => id === 'real-multi-action-tool-#subgraph')!;
+    const first = nodes.find(({ id }) => id === 'first-action')!;
+    const second = nodes.find(({ id }) => id === 'second-action')!;
+    const third = nodes.find(({ id }) => id === 'third-action')!;
+    expect(first.parentId).toBe(nested.id);
+    expect(second.parentId).toBe(nested.id);
+    expect(third.parentId).toBe(nested.id);
+    expect(first.position.x).toBeGreaterThanOrEqual((toolCard.position.x ?? 0) + (toolCard.width ?? 0) + 12);
+    expect(second.position.x).toBeGreaterThanOrEqual((first.position.x ?? 0) + (first.width ?? 0) + 12);
+    expect(third.position.x).toBeGreaterThanOrEqual((second.position.x ?? 0) + (second.width ?? 0) + 12);
+    expect(Math.abs(first.position.y - toolCard.position.y)).toBeLessThanOrEqual(20);
+    expect(Math.abs(second.position.y - first.position.y)).toBeLessThanOrEqual(20);
+    expect(Math.abs(third.position.y - second.position.y)).toBeLessThanOrEqual(20);
+  });
+
   it('keeps the canonical collapsed Agent panel/count while the real tool nodes are absent from layout', async () => {
     const fixture = expectedAgentMcpWorkflowDefinitionOutput;
     const graph = structuredClone(fixture.graph) as WorkflowNode;
@@ -439,9 +508,70 @@ describe('family admission and matching geometry', () => {
     const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
     const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, true, context);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const absolutePosition = (id: string) => {
+      const node = nodeById.get(id)!;
+      let x = node.position.x;
+      let y = node.position.y;
+      let parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+      while (parent) {
+        x += parent.position.x;
+        y += parent.position.y;
+        parent = parent.parentId ? nodeById.get(parent.parentId) : undefined;
+      }
+      return { x, y };
+    };
+    const container = nodes.find(({ id }) => id === 'WorkflowAgent')!;
     const header = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!;
+    const headerParent = nodeById.get(header.parentId ?? '');
+    expect(headerParent?.id).toBe(container.id);
+    expect(container.type).toBe(WORKFLOW_NODE_TYPES.GRAPH_NODE);
+    expect(container.data.presentation).toMatchObject({ shared: true, family: 'frame' });
+    expect(typeof container.width).toBe('number');
+    expect(typeof container.height).toBe('number');
+    const panelBounds = container.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    for (const value of [panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+    expect(panelBounds.x).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.y).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.width).toBeGreaterThan(0);
+    expect(panelBounds.height).toBeGreaterThan(0);
+    expect(panelBounds.x + panelBounds.width).toBeLessThanOrEqual(container.width as number);
+    expect(panelBounds.y + panelBounds.height).toBeLessThanOrEqual(container.height as number);
     expect(header.data.presentation).toMatchObject({ shared: true, family: 'agent' });
-    const panel = header.data.toolsPanel as { collapsed: boolean; items: { id: string }[] };
+    expect(header.width).toBe(panelBounds.width);
+    expect(header.height).toBe(container.height);
+    const panel = header.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    const containerAbsolute = absolutePosition(container.id);
+    const headerParentAbsolute = absolutePosition(headerParent!.id);
+    const backgroundAbsolute = {
+      x: containerAbsolute.x + panelBounds.x,
+      y: containerAbsolute.y + panelBounds.y,
+      width: panelBounds.width,
+      height: panelBounds.height,
+    };
+    const foregroundAbsolute = {
+      x: headerParentAbsolute.x + panel.x,
+      y: headerParentAbsolute.y + panel.y,
+      width: panel.width,
+      height: panel.height,
+    };
+    expect(foregroundAbsolute).toEqual(backgroundAbsolute);
     expect(panel.collapsed).toBe(collapsed);
     expect(nodes.some(({ id }) => id === 'HandoffOnly')).toBe(nested && !collapsed);
     expect(nodes.some(({ id }) => id === 'Transfer')).toBe(nested && !collapsed);

@@ -10,6 +10,7 @@ const meta = {
     variant: { control: 'select', options: ['solid', 'solidSuccess', 'solidDanger', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] },
     orientation: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
     length: { control: { type: 'range', min: 4, max: 240, step: 4 } },
+    state: { control: 'select', options: ['default', 'taken', 'notTaken', 'highlighted', 'running'] },
   },
   parameters: {
     docs: {
@@ -35,3 +36,32 @@ export const Variants: Story = {
   ),
 };
 export const Vertical: Story = { args: { orientation: 'vertical', length: 120 } };
+export const RunStates: Story = {
+  render: (args) => (
+    <div className="sb-grid">
+      {(['solid', 'dashedNeutral'] as const).flatMap((variant) =>
+        (['default', 'taken', 'notTaken', 'highlighted', 'running'] as const).map((state) => (
+          <Example key={`${variant}-${state}`} label={`Host-supplied ${state} evidence; ${variant}`}>
+            <NodeLine {...args} variant={variant} state={state} />
+          </Example>
+        ))
+      )}
+    </div>
+  ),
+};
+export const VariantsAndArrows: Story = {
+  render: (args) => (
+    <div className="sb-grid">
+      {(['horizontal', 'vertical'] as const).flatMap((orientation) =>
+        (['solid', 'solidSuccess', 'solidDanger', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] as const).map((variant) => (
+          <Example
+            key={`${orientation}-${variant}`}
+            label={`${orientation}; ${variant}${variant === 'solid' ? ' owns arrow' : '; no arrow'}`}
+          >
+            <NodeLine {...args} variant={variant} orientation={orientation} />
+          </Example>
+        ))
+      )}
+    </div>
+  ),
+};

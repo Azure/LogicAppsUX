@@ -58,7 +58,7 @@ import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
 import { OnlyEdge } from './connections/onlyEdge';
 import { NodeNavigation } from './NodeNavigation';
-import { tokens } from '@fluentui/react-components';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 import { DESIGNER_MIN_ZOOM, fitSharedDesignerViewport } from './designerViewport';
 
 const DesignerReactFlow = (props: any) => {
@@ -678,7 +678,9 @@ const DesignerReactFlow = (props: any) => {
   return (
     <ReactFlow
       colorMode={isDarkMode ? 'dark' : 'light'}
-      style={sharedOption ? { backgroundColor: tokens.colorNeutralBackground1 } : undefined}
+      // The flow root, xy variable and <Background> share one canvas role so the pane never shows two tones;
+      // outside DesignerUiScope the role falls back to Background1.
+      style={sharedOption ? { backgroundColor: designerUiTokens.canvasBackground } : undefined}
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}

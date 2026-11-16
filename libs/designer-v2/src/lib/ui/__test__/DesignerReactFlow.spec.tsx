@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { act, render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { tokens } from '@fluentui/react-components';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { getViewportForBounds } from '@xyflow/react';
 import { DESIGNER_MIN_ZOOM } from '../designerViewport';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 // ── Mock state toggles ──────────────────────────────────────────────────────
 let mockIsInitialized = true;
@@ -219,8 +219,9 @@ describe('DesignerReactFlow (designer-v2)', () => {
       mockIsDarkMode = dark;
       mockSharedNodeUi = true;
       const view = render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      // The shared canvas role resolves through the DesignerUiScope variable, falling back to Background1.
       expect(capturedReactFlowProps.style).toEqual({
-        backgroundColor: tokens.colorNeutralBackground1,
+        backgroundColor: designerUiTokens.canvasBackground,
       });
       expect(capturedReactFlowProps.colorMode).toBe(dark ? 'dark' : 'light');
       mockSharedNodeUi = false;

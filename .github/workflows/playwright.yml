@@ -70,6 +70,11 @@ jobs:
         with:
           node-version: 24.x
           package-manager-cache: false
+      - uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v7
@@ -79,7 +84,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: pnpm exec playwright merge-reports --reporter html ./all-blob-reports
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v6
@@ -145,6 +150,11 @@ jobs:
         with:
           node-version: 24.x
           package-manager-cache: false
+      - uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v7
@@ -154,7 +164,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: pnpm exec playwright merge-reports --reporter html ./all-blob-reports
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v6
