@@ -310,8 +310,12 @@ describe('family admission and matching geometry', () => {
       target: nested.id,
       hidden: true,
     });
-    expect(edges.find(({ id }) => id === 'tool-sequence')?.hidden).not.toBe(true);
-    expect(edges.find(({ id }) => id === 'WorkflowAgent-#scope-WorkflowAgent-addCase')?.hidden).not.toBe(true);
+    const toolSequence = edges.find(({ id }) => id === 'tool-sequence');
+    const addEdge = edges.find(({ id }) => id === 'WorkflowAgent%2D#scope-WorkflowAgent%2DaddCase');
+    expect(toolSequence).toBeDefined();
+    expect(toolSequence?.hidden).not.toBe(true);
+    expect(addEdge).toBeDefined();
+    expect(addEdge?.hidden).not.toBe(true);
     expect(nodes.some(({ id }) => id.includes('::tools'))).toBe(false);
     expect(edges.some(({ id }) => id.includes('::layout') || id.includes('::tools-layout'))).toBe(false);
     expect(graph).toEqual(baseline);

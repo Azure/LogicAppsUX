@@ -4,7 +4,6 @@
   "useSharedNodeUi": false,
   "layoutOptions": {
     "elk.algorithm": "org.eclipse.elk.layered",
-    "elk.direction": "DOWN",
     "elk.alignment": "TOP",
     "elk.layered.layering.strategy": "INTERACTIVE",
     "elk.edge.type": "DIRECTED",
@@ -105,7 +104,8 @@
                       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "SUBGRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -136,7 +136,8 @@
                       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "SUBGRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -162,7 +163,8 @@
                   "elk.layered.nodePlacement.strategy": "SIMPLE",
                   "elk.layered.spacing.edgeNodeBetweenLayers": "20",
                   "elk.layered.spacing.nodeNodeBetweenLayers": "20",
-                  "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+                  "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -178,7 +180,8 @@
               "elk.padding": "[top=0,left=20,bottom=40,right=20]",
               "elk.position": "(0, 0)",
               "nodeType": "SUBGRAPH_NODE",
-              "presentation": "{\"shared\":false}"
+              "presentation": "{\"shared\":false}",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -249,7 +252,8 @@
                       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "GRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -269,7 +273,8 @@
                       "elk.padding": "[top=0,left=20,bottom=60,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "GRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -297,7 +302,8 @@
                   "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                   "elk.position": "(0, 0)",
                   "nodeType": "GRAPH_NODE",
-                  "presentation": "{\"shared\":false}"
+                  "presentation": "{\"shared\":false}",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -313,7 +319,8 @@
               "elk.padding": "[top=0,left=20,bottom=40,right=20]",
               "elk.position": "(0, 0)",
               "nodeType": "SUBGRAPH_NODE",
-              "presentation": "{\"shared\":false}"
+              "presentation": "{\"shared\":false}",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -378,7 +385,8 @@
                       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "GRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -398,7 +406,8 @@
                       "elk.padding": "[top=0,left=20,bottom=60,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "GRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -432,7 +441,8 @@
                   "elk.padding": "[top=0,left=20,bottom=40,right=20]",
                   "elk.position": "(0, 0)",
                   "nodeType": "GRAPH_NODE",
-                  "presentation": "{\"shared\":false}"
+                  "presentation": "{\"shared\":false}",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -448,7 +458,8 @@
               "elk.padding": "[top=0,left=20,bottom=40,right=20]",
               "elk.position": "(0, 0)",
               "nodeType": "SUBGRAPH_NODE",
-              "presentation": "{\"shared\":false}"
+              "presentation": "{\"shared\":false}",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -525,7 +536,8 @@
                       "elk.padding": "[top=0,left=20,bottom=0,right=20]",
                       "elk.position": "(0, 0)",
                       "nodeType": "GRAPH_NODE",
-                      "presentation": "{\"shared\":false}"
+                      "presentation": "{\"shared\":false}",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -565,7 +577,8 @@
                   "elk.padding": "[top=0,left=20,bottom=0,right=20]",
                   "elk.position": "(0, 0)",
                   "nodeType": "GRAPH_NODE",
-                  "presentation": "{\"shared\":false}"
+                  "presentation": "{\"shared\":false}",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -581,7 +594,8 @@
               "elk.padding": "[top=0,left=20,bottom=40,right=20]",
               "elk.position": "(0, 0)",
               "nodeType": "SUBGRAPH_NODE",
-              "presentation": "{\"shared\":false}"
+              "presentation": "{\"shared\":false}",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -624,7 +638,8 @@
               "elk.padding": "[top=0,left=20,bottom=40,right=20]",
               "elk.position": "(0, 0)",
               "nodeType": "SUBGRAPH_NODE",
-              "presentation": "{\"shared\":false}"
+              "presentation": "{\"shared\":false}",
+              "elk.direction": "DOWN"
             }
           }
         ],
@@ -674,7 +689,8 @@
           "elk.layered.nodePlacement.strategy": "SIMPLE",
           "elk.layered.spacing.edgeNodeBetweenLayers": "20",
           "elk.layered.spacing.nodeNodeBetweenLayers": "20",
-          "elk.layered.crossingMinimization.forceNodeModelOrder": "true"
+          "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
+          "elk.direction": "DOWN"
         }
       },
       {
@@ -697,7 +713,8 @@
       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
       "elk.position": "(0, 0)",
       "nodeType": "GRAPH_NODE",
-      "presentation": "{\"shared\":false}"
+      "presentation": "{\"shared\":false}",
+      "elk.direction": "DOWN"
     }
   }
 }

@@ -4,7 +4,6 @@
   "useSharedNodeUi": true,
   "layoutOptions": {
     "elk.algorithm": "org.eclipse.elk.layered",
-    "elk.direction": "DOWN",
     "elk.alignment": "TOP",
     "elk.layered.layering.strategy": "INTERACTIVE",
     "elk.edge.type": "DIRECTED",
@@ -1583,7 +1582,8 @@
       "nodeType": "GRAPH_NODE",
       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-      "elk.nodeSize.minimum": "(232,106)"
+      "elk.nodeSize.minimum": "(232,106)",
+      "elk.direction": "DOWN"
     }
   }
 }

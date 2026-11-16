@@ -4,7 +4,6 @@
   "useSharedNodeUi": true,
   "layoutOptions": {
     "elk.algorithm": "org.eclipse.elk.layered",
-    "elk.direction": "DOWN",
     "elk.alignment": "TOP",
     "elk.layered.layering.strategy": "INTERACTIVE",
     "elk.edge.type": "DIRECTED",
@@ -192,7 +191,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "subgraphType": "CONDITIONAL_TRUE",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,106)"
+                      "elk.nodeSize.minimum": "(232,106)",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -233,7 +233,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "subgraphType": "CONDITIONAL_FALSE",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,106)"
+                      "elk.nodeSize.minimum": "(232,106)",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -266,7 +267,8 @@
                   "elk.layered.spacing.nodeNodeBetweenLayers": "20",
                   "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
                   "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                  "elk.nodeSize.minimum": "(232,106)"
+                  "elk.nodeSize.minimum": "(232,106)",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -285,7 +287,8 @@
               "presentation": "{\"shared\":true,\"family\":\"frame\"}",
               "subgraphType": "SWITCH_CASE",
               "elk.nodeSize.constraints": "MINIMUM_SIZE",
-              "elk.nodeSize.minimum": "(232,106)"
+              "elk.nodeSize.minimum": "(232,106)",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -378,7 +381,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "foreach",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,220)"
+                      "elk.nodeSize.minimum": "(232,220)",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -404,7 +408,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "foreach",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,220)"
+                      "elk.nodeSize.minimum": "(232,220)",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -435,7 +440,8 @@
                   "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                   "operationType": "foreach",
                   "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                  "elk.nodeSize.minimum": "(232,220)"
+                  "elk.nodeSize.minimum": "(232,220)",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -454,7 +460,8 @@
               "presentation": "{\"shared\":true,\"family\":\"frame\"}",
               "subgraphType": "SWITCH_CASE",
               "elk.nodeSize.constraints": "MINIMUM_SIZE",
-              "elk.nodeSize.minimum": "(232,106)"
+              "elk.nodeSize.minimum": "(232,106)",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -541,7 +548,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "scope",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,106)"
+                      "elk.nodeSize.minimum": "(232,106)",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -567,7 +575,8 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "scope",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,106)"
+                      "elk.nodeSize.minimum": "(232,106)",
+                      "elk.direction": "DOWN"
                     }
                   }
                 ],
@@ -604,7 +613,8 @@
                   "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                   "operationType": "scope",
                   "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                  "elk.nodeSize.minimum": "(232,106)"
+                  "elk.nodeSize.minimum": "(232,106)",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -623,7 +633,8 @@
               "presentation": "{\"shared\":true,\"family\":\"frame\"}",
               "subgraphType": "SWITCH_CASE",
               "elk.nodeSize.constraints": "MINIMUM_SIZE",
-              "elk.nodeSize.minimum": "(232,106)"
+              "elk.nodeSize.minimum": "(232,106)",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -729,7 +740,8 @@
                       "operationType": "until",
                       "subgraphType": "UNTIL_DO",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,106)"
+                      "elk.nodeSize.minimum": "(232,106)",
+                      "elk.direction": "DOWN"
                     }
                   },
                   {
@@ -777,7 +789,8 @@
                   "operationType": "until",
                   "subgraphType": "UNTIL_DO",
                   "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                  "elk.nodeSize.minimum": "(232,106)"
+                  "elk.nodeSize.minimum": "(232,106)",
+                  "elk.direction": "DOWN"
                 }
               }
             ],
@@ -796,7 +809,8 @@
               "presentation": "{\"shared\":true,\"family\":\"frame\"}",
               "subgraphType": "SWITCH_CASE",
               "elk.nodeSize.constraints": "MINIMUM_SIZE",
-              "elk.nodeSize.minimum": "(232,106)"
+              "elk.nodeSize.minimum": "(232,106)",
+              "elk.direction": "DOWN"
             }
           },
           {
@@ -853,7 +867,8 @@
               "presentation": "{\"shared\":true,\"family\":\"frame\"}",
               "subgraphType": "SWITCH_DEFAULT",
               "elk.nodeSize.constraints": "MINIMUM_SIZE",
-              "elk.nodeSize.minimum": "(232,106)"
+              "elk.nodeSize.minimum": "(232,106)",
+              "elk.direction": "DOWN"
             }
           }
         ],
@@ -906,7 +921,8 @@
           "elk.layered.spacing.nodeNodeBetweenLayers": "20",
           "elk.layered.crossingMinimization.forceNodeModelOrder": "true",
           "elk.nodeSize.constraints": "MINIMUM_SIZE",
-          "elk.nodeSize.minimum": "(232,106)"
+          "elk.nodeSize.minimum": "(232,106)",
+          "elk.direction": "DOWN"
         }
       },
       {
@@ -931,7 +947,8 @@
       "nodeType": "GRAPH_NODE",
       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-      "elk.nodeSize.minimum": "(232,106)"
+      "elk.nodeSize.minimum": "(232,106)",
+      "elk.direction": "DOWN"
     }
   }
 }

@@ -190,7 +190,7 @@ describe('nested Switch accepted geometry and canonical named ports', () => {
         header.ports!.forEach((port) => expect(port.layoutOptions?.['elk.port.side']).toBe('SOUTH'));
       } else {
         expect(header.ports).toBeUndefined();
-        expect(header.height).toBe(40);
+        expect(header.height).toBe(44);
       }
     }
   );
@@ -206,6 +206,6 @@ describe('nested Switch accepted geometry and canonical named ports', () => {
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
     expect(nodes.find(({ id }) => id === header.id)!.data.handleAxis).toBe('vertical');
     expect(header.ports).toBeUndefined();
-    expect(header.height).toBe(40);
+    expect(header.height).toBe(44);
   });
 });
