@@ -881,8 +881,14 @@ Regeneration can produce a second, distinct overwrite confirmation after the
 initial initialization prompt. Detect and affirm the actual second prompt once;
 do not repeatedly click the first prompt while waiting for files.
 Keep the foreground initialization warning as the primary route. When the exact
-owned-project warning is not foreground-visible, the existing regeneration phase
-may reveal Notification Center once through its unique visible, hit-tested
+owned-project warning is not foreground-visible, continuously observe the real
+foreground prompt surface for 15 seconds from the first owned-ready read, bounded
+by any earlier original phase deadline. Do not trigger activation or idle on an
+unobserved sleep: keep bounded reads/polls active. A foreground target wins
+immediately and must prevent center reveal. This window addresses native evidence
+where an immediate one-shot center reveal auto-closed before Logic Apps scheduled
+the warning. Only after the window completes may the existing regeneration phase
+reveal Notification Center once through its unique visible, hit-tested
 status-bar bell—never through command dispatch—and consume only the original
 120-second deadline. After the one bell click, wait for center visibility under
 that same deadline without a private open timeout or a second click. If a

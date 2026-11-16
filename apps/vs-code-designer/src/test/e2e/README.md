@@ -602,7 +602,12 @@ current harness assertions, not a claim of a new native outcome or an independen
 adjudication of the original source request.
 
 The foreground initialization warning remains the primary prompted path. If that
-exact owned-project warning is not foreground-visible, the same phase may reveal
+exact owned-project warning is not foreground-visible, the harness first performs
+a fixed 15-second foreground-primary observation window beginning at the first
+owned-ready prompt read. It continuously re-reads the bounded foreground prompt
+surface; a matching warning is clicked immediately and Notification Center is
+never opened. This window consumes the existing phase deadline and is shortened
+to its remaining budget. Only after the window completes with no exact target may the same phase reveal
 Notification Center once through the unique visible, hit-tested status-bar bell,
 never through command dispatch. After that one click, center visibility is polled
 through the same original phase deadline; there is no private open grace window
@@ -654,6 +659,9 @@ fails only at the unchanged original deadline. The bell and
 retained **Yes** are each attempted at most once;
 foreground success never opens the center. The separate overwrite modal and all
 post-Yes file, reopen, cleanup, and ordered-evidence assertions are unchanged.
+The delay exists because native evidence showed the center could auto-hide before
+Logic Apps published its initialization warning when the one-shot reveal occurred
+immediately after shell ownership.
 Benign child-frame execution-context churn may reacquire one fresh atomic sample
 only while the admitted main-document tracker remains valid and the same target,
 time origin, owned shell, pinned workspace file, and physical roots are

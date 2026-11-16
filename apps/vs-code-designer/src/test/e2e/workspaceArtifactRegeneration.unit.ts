@@ -22,6 +22,7 @@ import {
   regenerationDeadline,
   regenerationPhaseIds,
   regenerationOverwriteMessage,
+  retainedFallbackForegroundObservationMs,
   remainingRegenerationBudget,
   requireRegenerationYes,
   selectRegenerationYes,
@@ -184,6 +185,41 @@ async function main(): Promise<void> {
     assert.strictEqual(foregroundFallbackCalls, 0, 'Foreground success must not reveal Notification Center');
     checks++;
 
+    const delayedForegroundClock = fakeClock();
+    const delayedForegroundClicks: Array<{ x: number; y: number }> = [];
+    let delayedForegroundFallbackCalls = 0;
+    assert.deepStrictEqual(
+      await confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: delayedForegroundClock,
+        phase: regenerationDeadline('delayed-foreground', 0),
+        read: async () => ({
+          ready: true,
+          timeOrigin: 1,
+          containers: delayedForegroundClicks.length > 0 ? [overwrite] : delayedForegroundClock.now() >= 5000 ? [prompt] : [],
+        }),
+        activateRetained: async () => {
+          delayedForegroundFallbackCalls++;
+        },
+        assertBeforeOverwrite: () => {
+          assert.ok(delayedForegroundClicks.length < 2);
+        },
+        click: async (point) => {
+          delayedForegroundClicks.push(point);
+        },
+      }),
+      { initializationYesCount: 1, overwriteYesCount: 1 }
+    );
+    assert.ok(
+      delayedForegroundClock.now() >= 5000 && delayedForegroundClock.now() < retainedFallbackForegroundObservationMs,
+      'Foreground target must win before the retained fallback boundary'
+    );
+    assert.strictEqual(delayedForegroundFallbackCalls, 0, 'A foreground target inside the observation window must avoid center reveal');
+    assert.deepStrictEqual(delayedForegroundClicks, [
+      { x: 10, y: 20 },
+      { x: 30, y: 40 },
+    ]);
+
     const retainedClock = fakeClock();
     const retainedClicks: Array<{ x: number; y: number }> = [];
     const retainedCaptures: string[] = [];
@@ -202,6 +238,11 @@ async function main(): Promise<void> {
         activateRetained: async (expectedTimeOrigin) => {
           retainedFallbackCalls++;
           assert.strictEqual(expectedTimeOrigin, 1);
+          assert.strictEqual(
+            retainedClock.now(),
+            retainedFallbackForegroundObservationMs,
+            'Retained fallback must not reveal before the foreground-primary observation window'
+          );
           retainedCaptures.push('initialize');
           retainedActivated = true;
         },
@@ -224,6 +265,24 @@ async function main(): Promise<void> {
       'Retained evidence preserves the existing ordered capture sequence'
     );
     assert.deepStrictEqual(retainedClicks, [{ x: 30, y: 40 }], 'The fallback owns initialization Yes and leaves overwrite Yes unchanged');
+    assert.strictEqual(retainedFallbackForegroundObservationMs, 15000);
+
+    const shortPhaseClock = fakeClock();
+    let shortPhaseFallbackCalls = 0;
+    await assert.rejects(
+      confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: shortPhaseClock,
+        phase: { phase: 'short-foreground-window', startedAt: 0, deadline: 10000 },
+        read: async () => ({ ready: true, timeOrigin: 1, containers: [] }),
+        activateRetained: async () => {
+          shortPhaseFallbackCalls++;
+        },
+      }),
+      /required initialization prompt\/real Yes was absent before the original deadline/
+    );
+    assert.strictEqual(shortPhaseClock.now(), 10000);
+    assert.strictEqual(shortPhaseFallbackCalls, 0, 'A shorter remaining phase must expire without revealing or resetting the clock');
 
     let wrongProjectFallbackCalls = 0;
     await assert.rejects(
@@ -252,7 +311,7 @@ async function main(): Promise<void> {
         phase: regenerationDeadline('retained-expiry', 0),
         read: async () => ({ ready: true, timeOrigin: 1, containers: [] }),
         activateRetained: async () => {
-          retainedExpiryClock.advance(120000);
+          retainedExpiryClock.advance(120000 - retainedExpiryClock.now());
         },
       }),
       /deadline expired/

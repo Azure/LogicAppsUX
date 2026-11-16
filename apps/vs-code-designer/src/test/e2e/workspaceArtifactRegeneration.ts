@@ -94,6 +94,7 @@ export interface RegenerationDeadline {
 }
 
 export const regenerationTimeoutMs = 120000;
+export const retainedFallbackForegroundObservationMs = 15000;
 
 export function regenerationDeadline(phase: string, now = Date.now()): RegenerationDeadline {
   return { phase, startedAt: now, deadline: now + regenerationTimeoutMs };
@@ -358,6 +359,7 @@ async function requireRegenerationYesObservation(
   let blockedPromptObserved = false;
   let previousPoint: { x: number; y: number } | undefined;
   let stableReads = 0;
+  let firstOwnedReadyWithoutPromptAt: number | undefined;
   while (clock.now() < phase.deadline) {
     remainingRegenerationBudget(phase, clock.now());
     const observation = await read();
@@ -406,12 +408,21 @@ async function requireRegenerationYesObservation(
           false,
           'Overwrite confirmation cannot precede the owned initialization warning'
         );
-        await activateRetained(observation.timeOrigin);
-        remainingRegenerationBudget(phase, clock.now());
-        return { source: 'retained', observation };
+        firstOwnedReadyWithoutPromptAt ??= clock.now();
+        const fallbackAt = Math.min(phase.deadline, firstOwnedReadyWithoutPromptAt + retainedFallbackForegroundObservationMs);
+        if (clock.now() >= fallbackAt && fallbackAt < phase.deadline) {
+          await activateRetained(observation.timeOrigin);
+          remainingRegenerationBudget(phase, clock.now());
+          return { source: 'retained', observation };
+        }
       }
     }
-    await clock.poll(remainingRegenerationBudget(phase, clock.now()));
+    const remaining = remainingRegenerationBudget(phase, clock.now());
+    const foregroundRemaining =
+      firstOwnedReadyWithoutPromptAt === undefined
+        ? remaining
+        : Math.max(1, firstOwnedReadyWithoutPromptAt + retainedFallbackForegroundObservationMs - clock.now());
+    await clock.poll(Math.min(remaining, foregroundRemaining));
   }
   throw new Error(
     silentHealingObserved
