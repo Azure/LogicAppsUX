@@ -58,6 +58,7 @@ export interface RawWorkbenchState {
   centerVisible: boolean;
   toastCount: number;
   retainedCount: number;
+  listSnapshot?: string | null;
   dnd: 'on' | 'off' | 'unknown';
   truncated: boolean;
   candidates: RawCandidate[];
@@ -94,6 +95,7 @@ export type NotificationCenterInspectionReason =
   | 'blocking-or-ambiguous-ui'
   | 'temporarily-blocked'
   | 'target-unactionable'
+  | 'list-changed'
   | 'affordance-unavailable'
   | 'affordance-ambiguous'
   | 'open-timeout'
@@ -232,10 +234,11 @@ export const regenerationDiagnosticDomScript = `(() => {
     const retainedRow = retained ? retainedItem.closest('.monaco-list-row') || retainedItem : null;
     const semanticIdentity = retainedRow
       ? [
+          ['id', retainedRow.id],
+          ['data-id', retainedRow.getAttribute('data-id')],
           ['data-index', retainedRow.getAttribute('data-index')],
           ['aria-posinset', retainedRow.getAttribute('aria-posinset')],
           ['aria-rowindex', retainedRow.getAttribute('aria-rowindex')],
-          ['id', retainedRow.id],
         ].find(([, value]) => value)?.join(':') || null
       : null;
     const raw = normalize(container.innerText || container.textContent || '');
@@ -275,6 +278,36 @@ export const regenerationDiagnosticDomScript = `(() => {
     };
   });
   const centers = Array.from(document.querySelectorAll('.notifications-center'));
+  const retainedItems = Array.from(document.querySelectorAll('.notification-list-item'));
+  const listSizes = Array.from(document.querySelectorAll('.notifications-center [aria-setsize]'))
+    .map(element => Number(element.getAttribute('aria-setsize')))
+    .filter(value => Number.isSafeInteger(value) && value >= 0);
+  const scrollHeights = Array.from(document.querySelectorAll(
+    '.notifications-center .notifications-list-container .monaco-scrollable-element'
+  )).filter(visible).map(element => element.scrollHeight);
+  const hash = value => {
+    let first = 2166136261, second = 2246822519;
+    for (let index = 0; index < value.length; index++) {
+      const code = value.charCodeAt(index);
+      first = Math.imul(first ^ code, 16777619);
+      second = Math.imul(second ^ code, 3266489917);
+    }
+    return [first >>> 0, second >>> 0].map(value => value.toString(16).padStart(8, '0')).join('');
+  };
+  const orderFingerprint = hash(retainedItems.slice(0, 64).map(item => {
+    const row = item.closest('.monaco-list-row') || item;
+    const opaqueId = row.id || row.getAttribute('data-id') || '';
+    const text = normalize(item.innerText || item.textContent || '').slice(0, 8192);
+    const actions = Array.from(item.querySelectorAll('a.monaco-button, button, .monaco-text-button'))
+      .slice(0, 64)
+      .map(action => normalize(action.querySelector('.label-name')?.textContent || action.textContent))
+      .join('|');
+    return [hash(opaqueId), hash(text), hash(actions)].join('.');
+  }).join(';'));
+  const declaredTotal = listSizes.length > 0 ? Math.max(...listSizes) : -1;
+  const listSnapshot = centers.length === 1 && scrollHeights.length <= 1
+    ? [declaredTotal, scrollHeights[0] ?? 0, orderFingerprint].join(':')
+    : null;
   const labeled = Array.from(document.querySelectorAll('[aria-label], [title]'));
   const dndControls = labeled.slice(0, 2000).filter(element =>
     visible(element) && /do not disturb/i.test((element.getAttribute('aria-label') || '') + ' ' + (element.getAttribute('title') || ''))
@@ -289,7 +322,8 @@ export const regenerationDiagnosticDomScript = `(() => {
     centerMounted: centers.length > 0,
     centerVisible: centers.some(visible),
     toastCount: Math.min(document.querySelectorAll('.notification-toast').length, 64),
-    retainedCount: Math.min(document.querySelectorAll('.notification-list-item').length, 64),
+    retainedCount: Math.min(retainedItems.length, 64),
+    listSnapshot,
     dnd: labeled.length <= 2000 && dndStates.length === 1 ? (dndStates[0] === 'true' ? 'on' : 'off') : 'unknown',
     truncated: rawContainers.length > 128 || found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.truncated),
     candidates,
@@ -723,10 +757,13 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
     return targets;
   };
-  const retainedInitializationPoint = (raw: RawWorkbenchState, semanticIdentity?: string): Point => {
+  const retainedInitializationPoint = (raw: RawWorkbenchState, semanticIdentity?: string, expectedListSnapshot?: string): Point => {
     const target = retainedInitializationTargets(raw)[0];
+    if (expectedListSnapshot !== undefined && raw.listSnapshot !== expectedListSnapshot) {
+      throw new NotificationCenterInspectionUnavailable('list-changed');
+    }
     if (semanticIdentity !== undefined && target.semanticIdentity !== semanticIdentity) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('list-changed');
     }
     if (target.yesCount > 1) {
       throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
@@ -750,10 +787,11 @@ export async function inspectRegenerationNotificationCenter(options: {
     type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
     buttons: number,
     button: 'none' | 'left',
-    semanticIdentity: string
+    semanticIdentity: string,
+    listSnapshot: string
   ): Promise<void> => {
     const state = await read();
-    const point = retainedInitializationPoint(state.raw, semanticIdentity);
+    const point = retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot);
     assertSafe();
     await bounded.send('Input.dispatchMouseEvent', {
       type,
@@ -764,17 +802,21 @@ export async function inspectRegenerationNotificationCenter(options: {
       ...(type === 'mouseMoved' ? {} : { clickCount: 1 }),
     });
   };
-  const activateRetainedTarget = async (state: Awaited<ReturnType<typeof read>>, semanticIdentity: string): Promise<void> => {
-    retainedInitializationPoint(state.raw, semanticIdentity);
+  const activateRetainedTarget = async (
+    state: Awaited<ReturnType<typeof read>>,
+    semanticIdentity: string,
+    listSnapshot: string
+  ): Promise<void> => {
+    retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot);
     await options.targetActivation?.capture();
     const current = await read();
-    retainedInitializationPoint(current.raw, semanticIdentity);
+    retainedInitializationPoint(current.raw, semanticIdentity, listSnapshot);
     const click = options.input.beginLogicalInput();
     try {
-      await dispatchRetainedTargetEvent('mouseMoved', 0, 'none', semanticIdentity);
-      await dispatchRetainedTargetEvent('mousePressed', 1, 'left', semanticIdentity);
+      await dispatchRetainedTargetEvent('mouseMoved', 0, 'none', semanticIdentity, listSnapshot);
+      await dispatchRetainedTargetEvent('mousePressed', 1, 'left', semanticIdentity, listSnapshot);
       click.markPressed();
-      await dispatchRetainedTargetEvent('mouseReleased', 0, 'left', semanticIdentity);
+      await dispatchRetainedTargetEvent('mouseReleased', 0, 'left', semanticIdentity, listSnapshot);
       click.complete();
       if (options.targetActivation) {
         options.targetActivation.activated = true;
@@ -837,16 +879,23 @@ export async function inspectRegenerationNotificationCenter(options: {
         return candidate.semanticIdentity;
       });
   };
-  const fullActivationScan = async (): Promise<{ identities: Set<string>; bottomVerified: true }> => {
+  interface ActivationScan {
+    identities: Set<string>;
+    pageSnapshots: string[];
+    bottomVerified: true;
+  }
+  const fullActivationScan = async (): Promise<ActivationScan> => {
     await restoreCenterTop();
     let state = await read();
     const identities = new Set<string>();
+    const pageSnapshots: string[] = [];
     for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
+      if (!state.raw.listSnapshot) {
+        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      }
+      pageSnapshots.push(state.raw.listSnapshot);
       for (const identity of exactTargetIdentities(state.raw)) {
         identities.add(identity);
-      }
-      if (identities.size > 1) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
       }
       const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
         timeoutMs: remaining(750),
@@ -856,7 +905,7 @@ export async function inspectRegenerationNotificationCenter(options: {
         throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
       }
       if (scroll.atEnd) {
-        return { identities, bottomVerified: true };
+        return { identities, pageSnapshots, bottomVerified: true };
       }
       if (index === maxNotificationCenterScrolls || scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
         throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
@@ -867,17 +916,72 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
     throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
   };
-  const reacquireActivationTarget = async (semanticIdentity: string): Promise<Awaited<ReturnType<typeof read>>> => {
+  const verifyActivationScan = async (expected: ActivationScan): Promise<void> => {
+    await restoreCenterTop();
+    let state = await read();
+    const identities = new Set<string>();
+    for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
+      if (state.raw.listSnapshot !== expected.pageSnapshots[index]) {
+        throw new NotificationCenterInspectionUnavailable('list-changed');
+      }
+      for (const identity of exactTargetIdentities(state.raw)) {
+        identities.add(identity);
+      }
+      const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
+        timeoutMs: remaining(750),
+      });
+      assertSafe();
+      if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
+        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      }
+      if (scroll.atEnd) {
+        if (
+          index + 1 !== expected.pageSnapshots.length ||
+          identities.size !== expected.identities.size ||
+          [...identities].some((identity) => !expected.identities.has(identity))
+        ) {
+          throw new NotificationCenterInspectionUnavailable('list-changed');
+        }
+        if (identities.size > 1) {
+          throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        }
+        return;
+      }
+      if (
+        index === maxNotificationCenterScrolls ||
+        index + 1 >= expected.pageSnapshots.length ||
+        scroll.scrollableCount !== 1 ||
+        !scroll.point ||
+        scroll.deltaY <= 0
+      ) {
+        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      }
+      await dispatchScroll(1);
+      state = await read();
+    }
+    throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+  };
+  const reacquireActivationTarget = async (
+    semanticIdentity: string,
+    pageSnapshots: readonly string[]
+  ): Promise<{ state: Awaited<ReturnType<typeof read>>; listSnapshot: string }> => {
     await restoreCenterTop();
     let state = await read();
     for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
+      if (state.raw.listSnapshot !== pageSnapshots[index]) {
+        throw new NotificationCenterInspectionUnavailable('list-changed');
+      }
       const identities = exactTargetIdentities(state.raw);
-      if (new Set(identities).size > 1 || identities.some((identity) => identity !== semanticIdentity)) {
+      if (new Set(identities).size > 1) {
         throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
       }
+      if (identities.some((identity) => identity !== semanticIdentity)) {
+        throw new NotificationCenterInspectionUnavailable('list-changed');
+      }
       if (identities.includes(semanticIdentity)) {
-        retainedInitializationPoint(state.raw, semanticIdentity);
-        return state;
+        const listSnapshot = pageSnapshots[index];
+        retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot);
+        return { state, listSnapshot };
       }
       const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
         timeoutMs: remaining(750),
@@ -888,6 +992,7 @@ export async function inspectRegenerationNotificationCenter(options: {
         scroll.scrollableCount > 1 ||
         scroll.atEnd ||
         index === maxNotificationCenterScrolls ||
+        index + 1 >= pageSnapshots.length ||
         scroll.scrollableCount !== 1 ||
         !scroll.point ||
         scroll.deltaY <= 0
@@ -972,9 +1077,10 @@ export async function inspectRegenerationNotificationCenter(options: {
           return { ...result, availability: 'available', target: 'absent', reason: 'inspected' };
         }
       }
+      await verifyActivationScan(scan);
       const [semanticIdentity] = scan.identities;
-      const reacquired = await reacquireActivationTarget(semanticIdentity);
-      await activateRetainedTarget(reacquired, semanticIdentity);
+      const reacquired = await reacquireActivationTarget(semanticIdentity, scan.pageSnapshots);
+      await activateRetainedTarget(reacquired.state, semanticIdentity, reacquired.listSnapshot);
       return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
     }
 
@@ -1058,7 +1164,7 @@ export async function activateRetainedRegenerationInitialization(
   let allowReveal = true;
   let openedByFallback = false;
   let safeAbsenceObserved = false;
-  let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | undefined;
+  let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | 'list-changed' | undefined;
   const revealState = { attempted: false };
   while (now() < options.deadline) {
     const activation = { capture: options.capture, activated: false, timeOrigin: undefined as number | undefined };
@@ -1077,9 +1183,13 @@ export async function activateRetainedRegenerationInitialization(
         timeOrigin: activation.timeOrigin,
       };
     }
-    if (inspection.reason === 'temporarily-blocked' || inspection.reason === 'target-unactionable') {
+    if (
+      inspection.reason === 'temporarily-blocked' ||
+      inspection.reason === 'target-unactionable' ||
+      inspection.reason === 'list-changed'
+    ) {
       lastPollableReason = inspection.reason;
-      if (inspection.reason === 'target-unactionable') {
+      if (inspection.reason === 'target-unactionable' || inspection.reason === 'list-changed') {
         allowReveal = false;
       }
       const remainingMs = options.deadline - now();

@@ -620,6 +620,17 @@ first normalize to the top, traverse through verified bottom, accumulate stable
 semantic target identities across virtualized pages, then restore and recheck
 the top. Exactly one owned-project target must exist across the full scan before
 the same identity is reacquired for input; duplicates anywhere fail ambiguous.
+The scan also binds an in-memory-only list snapshot containing declared count,
+scroll extent, and a bounded one-way order fingerprint derived inside the
+renderer from opaque row identity plus normalized text/action shape. Raw values
+and the fingerprint are never serialized. If unrelated insertion or reordering
+changes the snapshot or list position before reacquisition, no stale point is
+used: the attempt becomes pollable `list-changed` and restarts a fresh
+top-to-bottom uniqueness scan under the same deadline.
+Positional target identities from the first traversal are provisional: a second
+bounded traversal must reproduce every page fingerprint and target occurrence
+set. More than one exact target becomes fatal duplicate ambiguity only after both
+traversals agree.
 Newly inserted items remain observable on the top recheck or the next live poll.
 The fallback requires one exact retained warning with one real enabled hit-tested **Yes**,
 captures the existing `before-yes` evidence while that retained warning remains

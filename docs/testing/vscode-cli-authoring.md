@@ -912,7 +912,17 @@ traverse bounded virtualized pages through verified bottom, accumulate stable
 semantic identities for exact owned-project targets, and prove exactly one before
 input. Restore and reacquire that same identity for fresh action validation;
 duplicates on any page fail ambiguous. Recheck the top before polling again so
-later insertions are observable. Do not retry either logical
+later insertions are observable. Bind an in-memory-only list snapshot containing
+declared count, scroll extent, and a deterministic bounded one-way order
+fingerprint computed in the renderer from opaque row identity and normalized
+text/action shape. Never serialize the raw inputs or fingerprint. Position,
+row-identity, or fingerprint drift from unrelated insertion/reorder must
+invalidate the stale point as pollable `list-changed`, then restart a complete
+scan under the original deadline; it must not authorize input or become fatal
+ambiguity by itself. Treat first-traversal positional identities as provisional:
+a second bounded traversal must reproduce page fingerprints and target occurrence
+sets before multiple exact targets can be classified as stable duplicate
+ambiguity. Do not retry either logical
 click, reset the clock, synthesize a dialog result, or select an unrelated
 notification. Duplicate exact targets, truncated or ambiguous center geometry,
 identity changes, and uncertain input fail immediately.
