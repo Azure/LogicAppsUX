@@ -1,6 +1,6 @@
 import type React from 'react';
 import { memo, useMemo, type HTMLAttributes } from 'react';
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
 import { EdgeLabelRenderer, getBezierPath, getSmoothStepPath, Position, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';

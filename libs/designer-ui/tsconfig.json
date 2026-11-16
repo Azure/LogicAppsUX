@@ -14,7 +14,8 @@
     "outDir": "./build/lib",
     "baseUrl": "./src",
     "rootDir": "./src",
-    "declaration": true
+    "declaration": true,
+    "stripInternal": true
   },
   "files": [],
   "include": ["**/src/**/*.ts", "**/src/**/*.tsx"],

@@ -11,7 +11,7 @@ const expectedTerminalCenterOffset = nodeMetrics.actionAdd.buttonHeight / 2 + no
 const getPaddingValue = (padding: string, key: 'bottom' | 'right') => Number(padding.match(new RegExp(`${key}=(\\d+)`))?.[1] ?? Number.NaN);
 
 describe('shared node geometry contracts', () => {
-  it('keeps legacy 200x40 node sizing and omits ReactFlow width/height when shared presentation is off', async () => {
+  it('keeps legacy 200x44 node sizing and omits ReactFlow width/height when shared presentation is off', async () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, false)).toEqual({ shared: false });
 
     const graph: WorkflowNode = {
@@ -20,7 +20,7 @@ describe('shared node geometry contracts', () => {
       children: [createWorkflowNode('action')],
     };
     const result = exportForTesting.convertWorkflowGraphToElkGraph(graph, false);
-    expect(result.children?.[0]).toMatchObject({ width: 200, height: 40 });
+    expect(result.children?.[0]).toMatchObject({ width: 200, height: 44 });
 
     const laidOut = await exportForTesting.elkLayout(result);
     const [rfNodes] = exportForTesting.convertElkGraphToReactFlow(laidOut, false);

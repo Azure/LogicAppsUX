@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { EdgeProps } from '@xyflow/react';
+import ELK, { type ElkEdgeSection } from '@microsoft/logic-apps-graph-layout';
 import HandoffEdge from '../handoffEdge';
 import { getNodeLineStroke } from '@microsoft/designer-ui-v2';
 
@@ -11,6 +12,7 @@ const state = vi.hoisted(() => ({
   targetAccepted: true,
   readOnly: false,
   end: 100,
+  section: undefined as ElkEdgeSection | undefined,
   panelSelected: false,
   multiSelected: false,
   selectedNode: undefined as string | undefined,
@@ -44,7 +46,9 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   useGuid: () => 'handoff-cap',
   useEdgeIndex: () => 4,
   useNodeGlobalPosition: () => ({ x: 0, y: 0 }),
-  useEdgesData: () => ({ data: { elkEdge: { sections: [{ startPoint: { x: 0, y: 0 }, endPoint: { x: state.end, y: state.end } }] } } }),
+  useEdgesData: () => ({
+    data: { elkEdge: { sections: [state.section ?? { startPoint: { x: 0, y: 0 }, endPoint: { x: state.end, y: state.end } }] } },
+  }),
 }));
 
 describe('actual A2A handoff presentation', () => {
@@ -55,6 +59,7 @@ describe('actual A2A handoff presentation', () => {
     state.targetAccepted = true;
     state.readOnly = false;
     state.end = 100;
+    state.section = undefined;
     state.panelSelected = false;
     state.multiSelected = false;
     state.selectedNode = undefined;
@@ -224,5 +229,36 @@ describe('actual A2A handoff presentation', () => {
       </svg>
     );
     expect(wrapper).toHaveStyle({ left: '84px', top: '84px' });
+  });
+
+  it.each([
+    [3, false],
+    [4, false],
+    [3, true],
+  ])('renders a routed handoff over %i ranks (reversed=%s)', async (count, reversed) => {
+    const children = Array.from({ length: count }, (_, index) => ({ id: `agent-${index}`, width: 100, height: 40 }));
+    const edges = [
+      ...children.slice(1).map((child, index) => ({
+        id: `chain-${index}`,
+        sources: [children[index].id],
+        targets: [child.id],
+      })),
+      {
+        id: 'handoff',
+        sources: [children[reversed ? count - 1 : 0].id],
+        targets: [children[reversed ? 0 : count - 1].id],
+      },
+    ];
+    const layout = await new ELK().layout({ id: 'root', children, edges }, { layoutOptions: { 'elk.algorithm': 'layered' } });
+    state.section = layout.edges!.find((edge) => edge.id === 'handoff')!.sections![0];
+
+    const { container } = render(
+      <svg>
+        <HandoffEdge {...props} />
+      </svg>
+    );
+    const path = container.querySelector('#handoff')?.getAttribute('d');
+    expect(path).toMatch(/^M .+ C /);
+    expect(path).toContain(`${state.section.endPoint.x},${state.section.endPoint.y}`);
   });
 });

@@ -4,7 +4,7 @@ import { ConditionNodeCard } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { ReactFlow } from '@xyflow/react';
 import type { Node, NodeProps } from '@xyflow/react';
-import type { ElkNode } from 'elkjs';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { tokens, webLightTheme } from '@fluentui/react-components';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';
@@ -190,7 +190,7 @@ describe('nested Switch accepted geometry and canonical named ports', () => {
         header.ports!.forEach((port) => expect(port.layoutOptions?.['elk.port.side']).toBe('SOUTH'));
       } else {
         expect(header.ports).toBeUndefined();
-        expect(header.height).toBe(40);
+        expect(header.height).toBe(44);
       }
     }
   );
@@ -206,6 +206,6 @@ describe('nested Switch accepted geometry and canonical named ports', () => {
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
     expect(nodes.find(({ id }) => id === header.id)!.data.handleAxis).toBe('vertical');
     expect(header.ports).toBeUndefined();
-    expect(header.height).toBe(40);
+    expect(header.height).toBe(44);
   });
 });

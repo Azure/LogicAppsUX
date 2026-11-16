@@ -18,7 +18,6 @@
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
     "@xyflow/react": "^12.3.5",
-    "elkjs": "0.8.2",
     "file-saver": "2.0.5",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
@@ -46,6 +45,7 @@
   },
   "devDependencies": {
     "@formatjs/intl": "^2.10.1",
+    "@microsoft/logic-apps-graph-layout": "workspace:*",
     "@types/file-saver": "^2.0.5",
     "@types/lodash.frompairs": "^4.0.9",
     "@types/lodash.isequal": "^4.5.8",
@@ -91,8 +91,9 @@
     }
   },
   "scripts": {
-    "build:lib": "tsup && tsc --emitDeclarationOnly",
+    "build:lib": "tsup && tsc --emitDeclarationOnly && pnpm --dir ../graph-layout exec tsup --dts-only --out-dir ../designer-v2/build/lib/_graph-layout && node ./scripts/bundle-graph-layout-types.mjs",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
+    "test:package-types": "node ./scripts/check-package-declarations.mjs",
     "test:lib": "vitest run --retry=3",
     "unpublish:local": "pnpm unpublish --force"
   },

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { agentMcpWorkflowDefinitionInput } from '../../parsers/BJSWorkflow/__test__/agentMcpWorkflowDefinition';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -254,7 +254,7 @@ describe('actual deserialized tool-branch axis contracts', () => {
     expect(collapsed.data.handleAxis).toBe(shared ? 'horizontal' : 'vertical');
     expect(nodes.some(({ id }) => id === 'Delay' || id === lastId)).toBe(false);
     expect(edges.find(({ source: from, target }) => from === `${toolId}-#subgraph` && target === firstId)).toMatchObject({
-      id: `${toolId}-#subgraph-${firstId}`,
+      id: `${toolId}%2D#subgraph-${firstId}`,
       type: 'HEADING_EDGE',
     });
     expect(store.getState().workflow.graph).toEqual(parsed.graph);
@@ -298,7 +298,7 @@ describe('actual deserialized tool-branch axis contracts', () => {
     expect(collapsed.some(({ id }) => id === firstId || id === 'Delay' || id === lastId)).toBe(false);
     expect(collapsed.find(({ id }) => id === toolId)!.width).toBeLessThan(expanded.find(({ id }) => id === toolId)!.width!);
     expect(collapsedEdges.find(({ source, target }) => source === `${agentId}-#scope` && target === toolId)).toMatchObject({
-      id: `${agentId}-#scope-${toolId}`,
+      id: `${agentId}%2D#scope-${toolId}`,
       hidden: true,
     });
     expect(collapsed.find(({ id }) => id === 'McpFileServer')).toBeDefined();
