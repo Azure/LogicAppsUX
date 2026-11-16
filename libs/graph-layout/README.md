@@ -11,7 +11,9 @@ tree-shakable TypeScript.
 
 The designer-v2 build includes graph-layout's declarations in its published output. After packing designer-v2,
 `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory>` checks the
-package without resolving this private dependency. The new directory must be outside the repository.
+package without resolving this private dependency, using both Node and bundler resolution with
+`noUncheckedSideEffectImports` enabled. Runtime stylesheet imports remain in the JavaScript/CSS bundles, but
+are omitted from the designer-v2 and designer-ui declarations. The new directory must be outside the repository.
 
 ## Usage
 
