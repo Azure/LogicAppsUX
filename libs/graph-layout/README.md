@@ -78,6 +78,7 @@ workflows and graphs larger than StressTest200 are not represented in the retain
 | Command | What it does |
 | --- | --- |
 | `pnpm test:lib` | Unit tests, fixture geometry invariants, elkjs determinism and simple-chain parity |
+| `pnpm typecheck` | Builds `dist` for the report's production-artifact import, then checks the source and benchmark types |
 | `ELKJS_EXACT_PARITY=1 pnpm test:lib` | Full coordinate/endpoint parity audit (currently fails; set the environment variable using your shell's syntax) |
 | `pnpm bench` | `vitest bench` timings for the retained fixtures |
 | `pnpm bench:report [fixture-name]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
