@@ -1,17 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, within } from '@storybook/test';
 import { NodeStatusBadge, defaultNodeStrings } from '@microsoft/designer-ui-v2';
 import { BrowserPreferences, Example, statuses } from './storyFixtures';
 
 const meta = {
   title: 'Presentation/NodeStatusBadge',
   component: NodeStatusBadge,
-  args: { status: 'succeeded' },
-  argTypes: { status: { control: 'select', options: statuses } },
+  args: { status: 'succeeded', live: true },
+  argTypes: { status: { control: 'select', options: statuses }, live: { control: 'boolean' } },
   parameters: {
     docs: {
       description: {
         component:
-          'Stable role=status label for nine supplied run states, with optional detail. Running animation uses the actual prefers-reduced-motion media query. No fake run or loading lifecycle.',
+          'Nine supplied tones with optional mapped label/detail. Standalone use defaults to one polite status region; canvas composites use live=false. An explicit role wins. Running animation uses the actual prefers-reduced-motion media query.',
       },
     },
   },
@@ -24,11 +25,31 @@ export const AllStatuses: Story = {
     <div className="sb-grid">
       {statuses.map((status) => (
         <Example key={status} label={status}>
-          <NodeStatusBadge {...args} status={status} />
+          <NodeStatusBadge {...args} status={status} live={false} />
         </Example>
       ))}
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).queryByRole('status')).not.toBeInTheDocument();
+  },
+};
+export const MappedServiceLabel: Story = {
+  args: {
+    status: 'failed',
+    label: 'Timed out',
+    detail: 'after 30 seconds',
+    'aria-label': 'Send request timed out after 30 seconds',
+  },
+};
+export const LiveRegionOptIn: Story = {
+  args: { status: 'running', live: true },
+  play: async ({ canvasElement }) => {
+    const region = within(canvasElement).getByRole('status');
+    // role=status supplies implicit polite live semantics; the component does not add aria-live.
+    await expect(region).toHaveAttribute('role', 'status');
+    await expect(within(canvasElement).getAllByRole('status')).toHaveLength(1);
+  },
 };
 export const WithDetail: Story = { args: { status: 'failed', detail: '502 · upstream response' } };
 export const Localized: Story = { args: { strings: { ...defaultNodeStrings.status, succeeded: 'Correcto' } } };

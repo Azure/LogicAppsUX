@@ -61,6 +61,133 @@ describe('layered SIMPLE milestone', () => {
     });
   });
 
+  it.each(['SIMPLE', 'BRANDES_KOEPF'] as const)(
+    'lays out a rightward scope with east ports inside a downward workflow using %s placement',
+    async (placement) => {
+      const graph: ElkNode = {
+        id: 'root',
+        children: [
+          {
+            id: 'scope',
+            layoutOptions: {
+              'elk.direction': 'RIGHT',
+              'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
+              'elk.padding': '[top=12,left=20,bottom=22,right=30]',
+              'elk.nodeSize.minimum': '(1000,300)',
+            },
+            children: [
+              {
+                id: 'source',
+                width: 80,
+                height: 30,
+                layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+                ports: [{ id: 'east', x: 80, y: 15, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'EAST' } }],
+              },
+              {
+                id: 'nested',
+                layoutOptions: { 'elk.direction': 'DOWN' },
+                children: [
+                  { id: 'inner-1', width: 40, height: 30 },
+                  { id: 'inner-2', width: 60, height: 25 },
+                ],
+                edges: [{ id: 'inner-edge', sources: ['inner-1'], targets: ['inner-2'] }],
+              },
+            ],
+            edges: [
+              { id: 'right-edge', sources: ['east'], targets: ['nested'] },
+              { id: 'right-loop', sources: ['east'], targets: ['east'] },
+            ],
+          },
+          { id: 'after', width: 60, height: 40 },
+        ],
+        edges: [{ id: 'down-edge', sources: ['scope'], targets: ['after'] }],
+      };
+
+      await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': placement } });
+      const [scope, after] = graph.children!;
+      const [source, nested] = scope.children!;
+      const [first, second] = nested.children!;
+      expect(nested.x!).toBeGreaterThanOrEqual(source.x! + source.width!);
+      expect(second.y!).toBeGreaterThanOrEqual(first.y! + first.height!);
+      expect(after.y!).toBeGreaterThanOrEqual(scope.y! + scope.height!);
+      expect(scope.width!).toBeGreaterThanOrEqual(1000);
+      expect(scope.height!).toBeGreaterThanOrEqual(300);
+      expect(source.x!).toBeGreaterThanOrEqual(20);
+      expect(source.y!).toBeGreaterThanOrEqual(12);
+
+      const rightEdge = scope.edges![0].sections![0];
+      expect(rightEdge.startPoint).toEqual({ x: source.x! + 80, y: source.y! + 15 });
+      expect(rightEdge.endPoint.x).toBe(nested.x);
+      const loop = scope.edges![1].sections![0];
+      expect(loop.startPoint).toEqual(rightEdge.startPoint);
+      expect(loop.endPoint).toEqual(rightEdge.startPoint);
+      for (const section of [rightEdge, loop]) {
+        const points = [section.startPoint, ...(section.bendPoints ?? []), section.endPoint];
+        expect((points.length - 1) % 3).toBe(0);
+        for (const point of points) {
+          expect(point.x).toBeGreaterThanOrEqual(0);
+          expect(point.y).toBeGreaterThanOrEqual(0);
+          expect(point.x).toBeLessThanOrEqual(scope.width!);
+          expect(point.y).toBeLessThanOrEqual(scope.height!);
+        }
+      }
+    }
+  );
+
+  it('uses x positions for interactive ranks in rightward graphs', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'later', x: 100, y: 0, width: 40, height: 20 },
+        { id: 'earlier', x: 0, y: 100, width: 40, height: 20 },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: { ...options, 'elk.direction': 'RIGHT' } });
+    expect(graph.children![1].x!).toBeLessThan(graph.children![0].x!);
+  });
+
+  it.each([
+    ['SOUTH', 80, 15, /port side/],
+    ['EAST', 79, 15, /right border/],
+    ['EAST', 80, 31, /right border/],
+  ] as const)('rejects invalid %s port at (%i, %i) without mutating the graph', async (side, x, y, error) => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        {
+          id: 'source',
+          width: 80,
+          height: 30,
+          layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+          ports: [{ id: 'port', x, y, width: 0, height: 0, layoutOptions: { 'elk.port.side': side } }],
+        },
+      ],
+    };
+    const original = structuredClone(graph);
+    await expect(elk.layout(graph, { layoutOptions: { ...options, 'elk.direction': 'RIGHT' } })).rejects.toThrow(error);
+    expect(graph).toEqual(original);
+  });
+
+  it('uses the upper-left Brandes-Koepf alignment when requested', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: ['a', 'b', 'c'].map((id) => ({ id, width: 100, height: 40 })),
+      edges: [
+        { id: 'ac', sources: ['a'], targets: ['c'] },
+        { id: 'bc', sources: ['b'], targets: ['c'] },
+      ],
+    };
+    await elk.layout(graph, {
+      layoutOptions: {
+        ...options,
+        'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+        'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP',
+      },
+    });
+    expect(graph.children![1].x!).toBeGreaterThan(graph.children![0].x!);
+    expect(graph.children![2].x).toBe(graph.children![0].x);
+  });
+
   it('reverses DFS back edges without changing their public endpoints', async () => {
     const graph = chain();
     graph.edges!.push({ id: 'ba', sources: ['b'], targets: ['a'] });
@@ -322,9 +449,9 @@ describe('layered SIMPLE milestone', () => {
   });
 
   it.each([
-    [{ 'elk.direction': 'RIGHT' }, undefined, /direction/],
+    [{ 'elk.direction': 'LEFT' }, undefined, /direction/],
     [{ 'elk.layered.nodePlacement.strategy': 'LINEAR_SEGMENTS' }, undefined, /Unsupported layered node placement/],
-    [{ 'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP' }, undefined, /fixedAlignment/],
+    [{ 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTDOWN' }, undefined, /fixedAlignment/],
     [{ 'elk.padding': 'invalid' }, undefined, /padding/],
     [{ 'elk.position': '(10,20)' }, undefined, /position/],
     [

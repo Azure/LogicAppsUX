@@ -175,17 +175,17 @@ const breakCycles = (vertices: Vertex[], links: Link[]): void => {
   }
 };
 
-const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
+const assignLayers = (vertices: Vertex[], links: Link[], rightward: boolean): number[][] => {
   const adjacency = outgoing(vertices.length, links);
   const degrees = new Int32Array(vertices.length);
   links.forEach((link) => degrees[link.target]++);
   const positioned = vertices
-    .map((vertex, index) => ({ index, y: vertex.node?.y }))
-    .filter((entry): entry is { index: number; y: number } => entry.y !== undefined)
-    .sort((a, b) => a.y - b.y || a.index - b.index);
+    .map((vertex, index) => ({ index, position: rightward ? vertex.node?.x : vertex.node?.y }))
+    .filter((entry): entry is { index: number; position: number } => entry.position !== undefined)
+    .sort((a, b) => a.position - b.position || a.index - b.index);
   let initialRank = 0;
   for (let i = 0; i < positioned.length; i++) {
-    if (i > 0 && positioned[i].y !== positioned[i - 1].y) {
+    if (i > 0 && positioned[i].position !== positioned[i - 1].position) {
       initialRank++;
     }
     vertices[positioned[i].index].rank = initialRank;
@@ -454,6 +454,16 @@ const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint
   return result;
 };
 
+const transposeSection = (section: ElkEdgeSection): ElkEdgeSection => {
+  const transpose = ({ x, y }: ElkPoint): ElkPoint => ({ x: y, y: x });
+  return {
+    ...section,
+    startPoint: transpose(section.startPoint),
+    endPoint: transpose(section.endPoint),
+    bendPoints: section.bendPoints?.map(transpose),
+  };
+};
+
 const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], anchors: Anchors, options: LayeredOptions): ElkEdgeSection[] => {
   const rankHeights: number[] = [];
   const rankStarts: number[] = [];
@@ -593,6 +603,18 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
     }
     const sources = [container.layoutOptions, ...globalSources];
     const options = layeredOptions(sources);
+    const rightward = options.direction === 'RIGHT';
+    const localOptions = rightward
+      ? {
+          ...options,
+          padding: {
+            top: options.padding.left,
+            right: options.padding.bottom,
+            bottom: options.padding.right,
+            left: options.padding.top,
+          },
+        }
+      : options;
     const [minimumWidth, minimumHeight] = sizeOption(readOption(sources, 'nodeSize.minimum'), 'nodeSize.minimum');
     const children = container.children ?? [];
     const vertices: Vertex[] = [];
@@ -604,23 +626,38 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
         throw new GraphLayoutError(`Ambiguous duplicate node id '${node.id}' in '${container.id}'.`);
       }
       endpoints.set(node.id, { vertex: index });
-      vertices.push({ node, width: geometry.width, height: geometry.height, order: index, rank: 0, x: 0, y: 0 });
+      vertices.push({
+        node,
+        width: rightward ? geometry.height : geometry.width,
+        height: rightward ? geometry.width : geometry.height,
+        order: index,
+        rank: 0,
+        x: 0,
+        y: 0,
+      });
       for (const port of node.ports ?? []) {
         if (endpoints.has(port.id) || readOption([node.layoutOptions], 'portConstraints') !== 'FIXED_POS') {
           throw new GraphLayoutError(`Port '${port.id}' requires a unique id and FIXED_POS constraints.`);
         }
         const side = readOption([port.layoutOptions], 'port.side');
-        if (side !== 'SOUTH') {
+        const expectedSide = rightward ? 'EAST' : 'SOUTH';
+        if (side !== expectedSide) {
           throw new GraphLayoutError(`Unsupported port side '${side}' on '${port.id}'.`);
         }
         const px = finite(port.x, `${port.id}.x`, true);
         const py = finite(port.y, `${port.id}.y`, true);
         const pw = finite(port.width, `${port.id}.width`, true);
         const ph = finite(port.height, `${port.id}.height`, true);
-        if (px + pw > geometry.width || py !== geometry.height || ph !== 0) {
-          throw new GraphLayoutError(`Fixed SOUTH port '${port.id}' must lie on the node's bottom border.`);
+        const valid = rightward
+          ? px === geometry.width && pw === 0 && py + ph <= geometry.height
+          : px + pw <= geometry.width && py === geometry.height && ph === 0;
+        if (!valid) {
+          throw new GraphLayoutError(
+            `Fixed ${expectedSide} port '${port.id}' must lie on the node's ${rightward ? 'right' : 'bottom'} border.`
+          );
         }
-        endpoints.set(port.id, { vertex: index, port });
+        const localPort = rightward ? { ...port, x: py, y: px, width: ph, height: pw } : port;
+        endpoints.set(port.id, { vertex: index, port: localPort });
       }
     }
     const edgeIds = new Set<string>();
@@ -655,17 +692,19 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
     }
     let geometry: NodeGeometry;
     if (children.length) {
-      const loopClearance = Math.max(options.edgeNodeSpacing, 1);
-      const loopSpacing = Math.max(options.edgeSpacing, 1);
+      const loopClearance = Math.max(localOptions.edgeNodeSpacing, 1);
+      const loopSpacing = Math.max(localOptions.edgeSpacing, 1);
       for (const [index, group] of loops) {
         vertices[index].rightMargin = loopClearance + (group.length - 1) * loopSpacing;
       }
       breakCycles(vertices, links);
-      const layers = assignLayers(vertices, links);
-      orderLayers(vertices, layers, links, options);
+      const layers = assignLayers(vertices, links, rightward);
+      orderLayers(vertices, layers, links, localOptions);
       const width =
-        options.placement === 'SIMPLE' ? placeLayers(vertices, layers, options) : placeBalancedLayers(vertices, layers, links, options);
-      const anchors = anchorOffsets(vertices, links, options.portSpacing);
+        localOptions.placement === 'SIMPLE'
+          ? placeLayers(vertices, layers, localOptions)
+          : placeBalancedLayers(vertices, layers, links, localOptions);
+      const anchors = anchorOffsets(vertices, links, localOptions.portSpacing);
       const loopBottoms: number[] = [];
       for (const [index, group] of loops) {
         const vertex = vertices[index];
@@ -673,26 +712,34 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
           loopBottoms[vertex.rank] = Math.max(loopBottoms[vertex.rank] ?? 0, loopClearance + (2 * group.length - 1) * loopSpacing);
         }
       }
-      const height = stackLayers(vertices, layers, links, options, anchors, loopBottoms);
-      geometry = { x: 0, y: 0, width: Math.max(width, minimumWidth), height: Math.max(height, minimumHeight) };
+      const height = stackLayers(vertices, layers, links, localOptions, anchors, loopBottoms);
+      geometry = {
+        x: 0,
+        y: 0,
+        width: Math.max(width, rightward ? minimumHeight : minimumWidth),
+        height: Math.max(height, rightward ? minimumWidth : minimumHeight),
+      };
       for (const vertex of vertices) {
         if (vertex.node) {
-          geometries.get(vertex.node)!.x = vertex.x;
-          geometries.get(vertex.node)!.y = vertex.y;
+          geometries.get(vertex.node)!.x = rightward ? vertex.y : vertex.x;
+          geometries.get(vertex.node)!.y = rightward ? vertex.x : vertex.y;
         }
       }
-      const sections = routeEdges(container, vertices, links, anchors, options);
+      const sections = routeEdges(container, vertices, links, anchors, localOptions);
       links.forEach((link, index) => {
         const section = sections[index];
         if (link.reversed && link.sourcePort) {
           for (const point of section.bendPoints ?? []) {
-            geometry.width = Math.max(geometry.width, point.x + options.padding.right);
+            geometry.width = Math.max(geometry.width, point.x + localOptions.padding.right);
           }
         }
-        routes.set(link.edge, { container: container.id, sections: [section] });
+        routes.set(link.edge, { container: container.id, sections: [rightward ? transposeSection(section) : section] });
       });
       for (const [link, section] of routeSelfLoops(container, vertices, loops, loopClearance, loopSpacing)) {
-        routes.set(link.edge, { container: container.id, sections: [section] });
+        routes.set(link.edge, { container: container.id, sections: [rightward ? transposeSection(section) : section] });
+      }
+      if (rightward) {
+        geometry = { ...geometry, width: geometry.height, height: geometry.width };
       }
     } else {
       geometry = {

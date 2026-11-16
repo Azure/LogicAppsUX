@@ -8,6 +8,11 @@ export interface RunFilterOptions {
   startTimeTo?: string;
 }
 
+export interface RunServiceDevData {
+  inputs: Record<string, unknown>;
+  outputs: Record<string, unknown>;
+}
+
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;

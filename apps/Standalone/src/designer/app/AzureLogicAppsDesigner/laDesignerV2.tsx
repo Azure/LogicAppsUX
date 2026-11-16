@@ -37,6 +37,7 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
 import { mergeConnectionsData, shouldUseProductionArtifacts } from './Utilities/draftArtifacts';
+import { isSharedNodeUiRequested } from './Utilities/sharedNodeUi';
 import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
@@ -831,6 +832,10 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
           readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
+          // Read the URL directly instead of useLocation: this editor is also mounted without a
+          // router (for example in its own specs), and the flag is a top-level provider option,
+          // never a host option, so legacy hosts are unaffected when it is absent.
+          useSharedNodeUi: isSharedNodeUiRequested(window.location.search),
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,

@@ -3,7 +3,14 @@ import type { AppStore } from '../../../libs/designer-v2/src/lib/core/store';
 
 type DesignerWindow = Window & { DesignerStoreV2: Pick<AppStore, 'getState' | 'dispatch'> };
 
-export async function openSharedWorkflow(page: Page, fixture: string, flag: 'true' | 'false' | 'omitted' = 'true') {
+// The development-only Standalone host exposes this store; acceptance specs do not add a production API.
+declare global {
+  interface Window {
+    DesignerStoreV2: Pick<AppStore, 'getState' | 'dispatch'>;
+  }
+}
+
+export async function openSharedWorkflow(page: Page, fixture: string, flag: 'true' | 'false' | 'omitted' | '1' | 'True' | 'TRUE' = 'true') {
   await page.goto(`/v2${flag === 'omitted' ? '' : `?useSharedNodeUi=${flag}`}`);
   await page.getByText('Local', { exact: true }).click();
   await page.getByRole('combobox').first().click();

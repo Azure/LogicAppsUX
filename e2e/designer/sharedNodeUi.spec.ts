@@ -39,7 +39,12 @@ test.describe('Shared node UI host integration', { tag: ['@mock', '@shared-node-
     await expect(compose).not.toHaveAttribute('data-selected', 'true');
     await info.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(info).not.toBeVisible();
+    // Only keyboard-visible focus opens the card (programmatic or click focus must not), so reach the
+    // card through real Tab navigation, which makes Fluent mark it focus-visible.
     await compose.focus();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    await expect(compose).toBeFocused();
     await expect(info).toBeVisible();
     await compose.press('Escape');
     await expect(info).not.toBeVisible();
@@ -76,7 +81,12 @@ test.describe('Shared node UI host integration', { tag: ['@mock', '@shared-node-
       name: 'Insert a new step between manual and Initialize variable',
       exact: true,
     });
-    await insert.focus();
+    // Reach the control with real Tab presses: the reveal depends on Fluent's keyboard-only
+    // data-fui-focus-visible marker, which programmatic focus() does not set.
+    await page.locator('body').click({ position: { x: 1, y: 1 } });
+    for (let presses = 0; presses < 80 && !(await insert.evaluate((element) => element === document.activeElement)); presses++) {
+      await page.keyboard.press('Tab');
+    }
     await expect(insert).toBeFocused();
     await expect(insert).toHaveCSS('opacity', '1');
     await insert.press('Enter');

@@ -94,8 +94,8 @@ const compactBlocks = (
 };
 
 /**
- * Brandes–Köpf BALANCED placement: conflict-free median alignment in four
- * sweep directions, block compaction, then the mean of the two middle centers.
+ * Brandes–Köpf placement: conflict-free median alignment and block compaction.
+ * BALANCED averages the middle centers of four sweeps; LEFTUP uses the first.
  * Centers (not left borders) keep unequal-width aligned nodes truly centered.
  * Port anchor offsets are routed afterward, not optimized by this placement.
  */
@@ -124,8 +124,8 @@ export const balancedCenters = (
   }
   const conflicts = markConflicts(vertices, layers, incoming, position);
   const placements: { centers: Float64Array; left: number; right: number; fromRight: boolean }[] = [];
-  for (const down of [true, false]) {
-    for (const right of [false, true]) {
+  for (const down of options.fixedAlignment === 'LEFTUP' ? [true] : [true, false]) {
+    for (const right of options.fixedAlignment === 'LEFTUP' ? [false] : [false, true]) {
       const root = Int32Array.from(vertices, (_, v) => v);
       for (let step = 0; step < layers.length; step++) {
         const layer = layers[down ? step : layers.length - 1 - step];
@@ -158,6 +158,9 @@ export const balancedCenters = (
       });
       placements.push({ centers, left, right: farRight, fromRight: right });
     }
+  }
+  if (options.fixedAlignment === 'LEFTUP') {
+    return placements[0].centers;
   }
   const narrowest = placements.reduce((best, candidate) => (candidate.right - candidate.left < best.right - best.left ? candidate : best));
   for (const placement of placements) {

@@ -13,6 +13,7 @@ const visualExports = [
   'ConditionNodeCard',
   'AgentNodeCard',
   'AgentToolsPanel',
+  'AgentToolsDecoration',
   'ToolItemCard',
   'NodeInfoCard',
   'NodeHoverCard',
@@ -31,6 +32,7 @@ const visualExports = [
   'NodeToolConnector',
   'NodeLabeledHandle',
   'NodeBranchOutputs',
+  'NodeBranchLabel',
   'NodeLine',
   'NodeActionAdd',
   'IfIconRegular',
@@ -40,6 +42,8 @@ const visualExports = [
   'EdgePillButton',
   'NodeAddButton',
   'CollapseChip',
+  'NodeIterationPager',
+  'NodeRunAfterIndicator',
 ];
 const storiesDir = new URL('../stories/', import.meta.url);
 const nonvisualExports = [
@@ -61,6 +65,19 @@ const nonvisualExports = [
   'useNodeLineStyles',
   'toSafeExternalHref',
   'PLACEHOLDER_TRIGGER_TITLE',
+  'NodeInactiveContext',
+  'defaultBranchTakenString',
+  'defaultNodeFrameStrings',
+  'defaultNodeIterationPagerStrings',
+  'defaultNodeRunAfterStrings',
+  'COLLAPSE_REVEAL_EXPAND_MS',
+  'COLLAPSE_REVEAL_COLLAPSE_MS',
+  'getNodeLineStroke',
+  'getNodeLineArrowPath',
+  'useCollapseReveal',
+  'useEdgeActiveState',
+  'useNodeHeaderButtonStyles',
+  'NODE_HOVER_CARD_IGNORE_ATTRIBUTE',
 ];
 
 function assertPublicValueInventory(actual, visual, nonvisual) {
@@ -204,6 +221,6 @@ test('story examples never teach unsupported package subpaths or internal source
       specifiers.every((specifier) => ['@microsoft/designer-ui-v2', '@microsoft/designer-ui-v2/metrics'].includes(specifier)),
       fileURLToPath(new URL(file, storiesDir))
     );
-    assert.doesNotMatch(source, /from ['"]\.\.\/(?:src|build)\//, file);
+    assert.doesNotMatch(source, /from ['"]\.\.\/(?:src|build)(?:\/|['"])/, file);
   }
 });

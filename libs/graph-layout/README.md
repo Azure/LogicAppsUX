@@ -5,7 +5,7 @@ designers use. It keeps the elkjs JSON graph format and `new ELK().layout(graph,
 call sites can switch with an import change, but implements only the supported option subset in plain,
 tree-shakable TypeScript.
 
-> **Experimental:** flat overlap removal, SIMPLE and balanced Brandes-Köpf layered placement are implemented.
+> **Experimental:** flat overlap removal, SIMPLE and Brandes-Köpf layered placement are implemented.
 > Exact elkjs parity is not a goal. designer-v2 uses this package (bundled into its build); designer v1 and
 > data-mapper-v2 still use elkjs.
 
@@ -36,13 +36,14 @@ algorithms reject instead of silently falling back.
 It supports unpositioned or positioned flat nodes, `LEFT` direction, and non-negative `spacing.nodeNode` (default 8).
 It rejects nested graphs, edges, ports, invalid geometry, and unsupported directions. The input graph is updated in place.
 
-Layered layout supports DOWN, DFS cycle breaking, interactive layering, model-order/barycenter ordering,
-long-edge dummy nodes, SIMPLE and BALANCED Brandes-Köpf placement, local nested scopes, padding/minimum sizes, and fixed SOUTH ports.
+Layered layout supports DOWN and RIGHT, DFS cycle breaking, interactive layering, model-order/barycenter ordering,
+long-edge dummy nodes, SIMPLE and BALANCED/LEFTUP Brandes-Köpf placement, locally laid-out nested scopes,
+padding/minimum sizes, and fixed SOUTH or EAST ports matching the graph direction.
 Balanced placement aligns median neighbors in four directions, protects inner dummy segments from conflicting
-alignments, compacts vertical blocks, and combines the four layouts without violating horizontal spacing.
+alignments, compacts blocks, and combines the four layouts without violating spacing; LEFTUP uses one directional sweep.
 Fixed port coordinates are preserved, but placement currently optimizes node centers rather than port anchors.
-Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Self-loops reserve
-space beside their node and retain fixed SOUTH port endpoints. Edges receive
+Cycle-reversed edges with a fixed source port detour around their source rank. Self-loops reserve
+space beside their node and retain fixed port endpoints. Edges receive
 container-relative sections, but general obstacle avoidance and spline visual parity are not established.
 Nonzero `elk.position` hints, cross-hierarchy edges, hyperedges, labels, and unsupported
 option values reject.

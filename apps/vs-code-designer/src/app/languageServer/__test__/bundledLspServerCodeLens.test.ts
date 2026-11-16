@@ -1,10 +1,12 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
-import { mkdtemp, rm } from 'fs/promises';
+import { mkdtemp, readFile, rm } from 'fs/promises';
 import path from 'path';
 import { PassThrough } from 'stream';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -286,6 +288,33 @@ describe('bundled LSP server CodeLens', () => {
     expect(JSON.stringify(agentCodeLens.command?.arguments)).toContain('agent');
   }, 60_000);
 
+  it('returns symbol metadata for repeated hover requests', async () => {
+    lspProcess = await startBundledLspServer();
+    const documentUri = pathToFileURL(path.join(await createTempDirectory(), 'AgentWorkflow.cs')).toString();
+    lspProcess.notify('textDocument/didOpen', {
+      textDocument: {
+        uri: documentUri,
+        languageId: 'csharp',
+        version: 1,
+        text: agentWorkflowSource,
+      },
+    });
+
+    const lines = agentWorkflowSource.split('\n');
+    const line = lines.findIndex((value) => value.includes('CreateConversationalAgentTrigger'));
+    const character = lines[line].indexOf('CreateConversationalAgentTrigger') + 5;
+    const hoverParams = {
+      textDocument: { uri: documentUri },
+      position: { line, character },
+    };
+
+    const firstHover = await lspProcess.request('textDocument/hover', hoverParams);
+    const secondHover = await lspProcess.request('textDocument/hover', hoverParams);
+
+    expect(JSON.stringify(firstHover)).toContain('CreateConversationalAgentTrigger');
+    expect(JSON.stringify(secondHover)).toContain('CreateConversationalAgentTrigger');
+  }, 60_000);
+
   async function getAgentCodeLens(initializationOptions?: Record<string, unknown>): Promise<CodeLensResult> {
     lspProcess = await startBundledLspServer(initializationOptions);
 
@@ -314,11 +343,15 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const zipPath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'LSPServer.zip');
+    const assetManifest = JSON.parse(await readFile(path.join(lspServerAssetsDirectory, 'lsp-assets.json'), 'utf8')) as {
+      serverArchive: string;
+      sdkPackage: string;
+    };
+    const zipPath = path.join(lspServerAssetsDirectory, assetManifest.serverArchive);
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
-    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'LogicAppsLanguageServer.dll');
+    const sdkPackagePath = path.join(lspServerAssetsDirectory, assetManifest.sdkPackage);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -333,6 +366,9 @@ describe('bundled LSP server CodeLens', () => {
         textDocument: {
           codeLens: {
             dynamicRegistration: false,
+          },
+          hover: {
+            contentFormat: ['markdown'],
           },
         },
       },

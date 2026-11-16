@@ -25,7 +25,9 @@ import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/
 import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitoring';
 import { getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import {
   WORKFLOW_NODE_TYPES,
   isBuiltInAgentTool,
@@ -47,6 +49,7 @@ import { useOperationQuery } from '../../core/state/selectors/actionMetadataSele
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { SharedBranchCard } from './components/card/SharedFamilyCards';
 import { NodeAddButton } from '@microsoft/designer-ui-v2';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const subgraphId = removeIdTag(id);
@@ -279,21 +282,33 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const nodeIndex = useNodeIndex(subgraphId);
   const shouldShowPager =
     isMonitoringView && (normalizedType === constants.NODE.TYPE.UNTIL || (isParentAgent && (metadata?.runData?.repetitionCount ?? 0) > 1));
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
 
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative', ...(shared && presentation.size) }}>
-          {sharedTool ? null : <DefaultHandle type="target" />}
+          {sharedTool ? null : <DefaultHandle axis={handleAxis} type="target" />}
           {metadata?.subgraphType ? (
             <>
               {shared && isAddCase ? (
                 readOnly ? null : (
-                  <NodeAddButton
-                    label={isAgentAddTool ? intlText.addTool : intlText.addCase}
-                    onClick={() => subgraphClick(subgraphId)}
-                    tabIndex={nodeIndex}
-                  />
+                  <div
+                    // Keep the add-button center aligned with the shared 232x44 ELK slot used for add-case ports/anchors.
+                    style={{
+                      width: '100%',
+                      height: presentation.size?.height ?? nodeMetrics.actionAdd.containerHeight,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <NodeAddButton
+                      label={isAgentAddTool ? intlText.addTool : intlText.addCase}
+                      onClick={() => subgraphClick(subgraphId)}
+                      tabIndex={nodeIndex}
+                    />
+                  </div>
                 )
               ) : shared ? (
                 <SharedBranchCard
@@ -301,8 +316,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   title={title}
                   subgraphType={metadata.subgraphType}
                   toolKind={presentation.toolKind}
-                  inputSlot={sharedTool ? <DefaultHandle type="target" /> : undefined}
-                  outputSlot={sharedTool ? <DefaultHandle type="source" /> : undefined}
+                  handleAxis={handleAxis}
+                  inputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="target" /> : undefined}
+                  outputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="source" /> : undefined}
                   selected={selected}
                   pinned={isPinned}
                   active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
@@ -344,10 +360,16 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   nodeIndex={nodeIndex}
                 />
               )}
-              {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
+              {shouldShowPager ? (
+                shared ? (
+                  <SharedLoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
+                ) : (
+                  <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
+                )
+              ) : null}
             </>
           ) : null}
-          {sharedTool ? null : <DefaultHandle type="source" />}
+          {sharedTool ? null : <DefaultHandle axis={handleAxis} type="source" />}
         </div>
       </div>
       {graphCollapsed ? (
@@ -359,12 +381,13 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
         readOnly ? (
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
-          <div className={'edge-drop-zone-container'}>
+          <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
             <DropZone
               graphId={subgraphId}
               parentId={id}
               isLeaf={isLeaf}
               tabIndex={nodeIndex}
+              axis={handleAxis}
               {...(data?.presentation ? { sharedPresentation: shared } : {})}
             />
           </div>
