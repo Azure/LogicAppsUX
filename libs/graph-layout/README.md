@@ -41,9 +41,10 @@ long-edge dummy nodes, SIMPLE and BALANCED Brandes-Köpf placement, local nested
 Balanced placement aligns median neighbors in four directions, protects inner dummy segments from conflicting
 alignments, compacts vertical blocks, and combines the four layouts without violating horizontal spacing.
 Fixed port coordinates are preserved, but placement currently optimizes node centers rather than port anchors.
-Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Edges receive
+Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Self-loops reserve
+space beside their node and retain fixed SOUTH port endpoints. Edges receive
 container-relative sections, but general obstacle avoidance and spline visual parity are not established.
-Nonzero `elk.position` hints, cross-hierarchy edges, self-loops, hyperedges, labels, and unsupported
+Nonzero `elk.position` hints, cross-hierarchy edges, hyperedges, labels, and unsupported
 option values reject.
 Successful calls mutate and return the input, matching bundled elkjs; failed validation leaves it unchanged.
 
@@ -105,5 +106,5 @@ Notes:
   designer-v2 currently uses the new engine directly without a fallback.
 - To check packed designer-v2 declarations manually, build and pack that package, then run
   `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory-outside-repo>`.
-  The consumer links workspace dependencies and is not run in CI. Its stricter side-effect-import check currently
-  reports pre-existing unresolved `.less` and `.css` declarations; default TypeScript side-effect checking passes.
+  The consumer links workspace dependencies and is not run in CI. It verifies strict side-effect imports
+  under both bundler and Node resolution.

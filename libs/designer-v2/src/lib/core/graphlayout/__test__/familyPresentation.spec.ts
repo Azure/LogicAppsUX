@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, buildSvgSpline } from '@microsoft/logic-apps-shared';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
 import { getNodePresentation } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -455,6 +456,60 @@ describe('family admission and matching geometry', () => {
       WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
       WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
     ]);
+  });
+
+  it.each([false, true])('retains imported self-dependencies and self-targeted handoffs with shared=%s', async (shared) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          WorkflowAgent: {
+            ...sourceAgent,
+            runAfter: { WorkflowAgent: ['Succeeded'] },
+            tools: {
+              HandoffSelf: {
+                type: 'AgentCondition',
+                actions: { Transfer: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'WorkflowAgent' }, runAfter: {} } },
+              },
+            },
+          },
+        },
+      },
+      null
+    );
+    expect(parsed.nodesMetadata.WorkflowAgent.handoffs).toEqual({ HandoffSelf: 'WorkflowAgent' });
+    const inputParameters = {
+      Transfer: { parameterGroups: { default: { parameters: [{ parameterName: 'name', value: [{ value: 'WorkflowAgent' }] }] } } },
+    };
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+        },
+        operations: { inputParameters },
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const selfEdges = result.current!.edges!.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'WorkflowAgent');
+    expect(selfEdges.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, shared, {
+      operations: parsed.actionData,
+      nodesMetadata: parsed.nodesMetadata,
+    });
+    const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), shared);
+    expect(nodes.some(({ id }) => id === 'WorkflowAgent')).toBe(true);
+    const selfEdgesInLayout = edges.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'WorkflowAgent');
+    expect(selfEdgesInLayout.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    const handoff = selfEdgesInLayout.find((edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)!;
+    const section = (handoff.data!.elkEdge as ElkExtendedEdge).sections![0];
+    expect(section.startPoint).not.toEqual(section.endPoint);
+    expect(buildSvgSpline([section.startPoint, ...(section.bendPoints ?? []), section.endPoint])).toMatch(/^M .* C /);
   });
 
   it.each([

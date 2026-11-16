@@ -1,6 +1,6 @@
 import { GraphLayoutError } from '../options';
 import type { ElkEdgeSection, ElkExtendedEdge, ElkNode, ElkPoint, ElkPort, LayoutOptions } from '../types';
-import { balancedCenters } from './horizontal';
+import { balancedCenters, horizontalGap } from './horizontal';
 import { layeredOptions, readOption, sizeOption, type LayeredOptions } from './options';
 
 interface Vertex {
@@ -11,6 +11,7 @@ interface Vertex {
   rank: number;
   x: number;
   y: number;
+  rightMargin?: number;
 }
 
 const orderLayers = (vertices: Vertex[], layers: number[][], links: Link[], options: LayeredOptions): void => {
@@ -240,18 +241,17 @@ const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
 
 const placeLayers = (vertices: Vertex[], layers: number[][], options: LayeredOptions): number => {
   const widths: number[] = [];
-  const gap = (left: Vertex, right: Vertex) =>
-    left.node && right.node ? options.nodeSpacing : left.node || right.node ? options.edgeNodeSpacing : options.edgeSpacing;
   for (const layer of layers) {
     let width = 0;
     layer.forEach((index, position) => {
       const vertex = vertices[index];
       if (position) {
-        width += gap(vertices[layer[position - 1]], vertex);
+        width += horizontalGap(vertices[layer[position - 1]], vertex, options);
       }
       vertex.x = width;
       width += vertex.width;
     });
+    width += vertices[layer[layer.length - 1]].rightMargin ?? 0;
     widths.push(width);
   }
   const contentWidth = widths.reduce((max, width) => Math.max(max, width), 0);
@@ -274,7 +274,7 @@ const placeBalancedLayers = (vertices: Vertex[], layers: number[][], links: Link
   let right = Number.NEGATIVE_INFINITY;
   vertices.forEach((vertex, v) => {
     left = Math.min(left, centers[v] - vertex.width / 2);
-    right = Math.max(right, centers[v] + vertex.width / 2);
+    right = Math.max(right, centers[v] + vertex.width / 2 + (vertex.rightMargin ?? 0));
   });
   vertices.forEach((vertex, v) => {
     vertex.x = options.padding.left + centers[v] - vertex.width / 2 - left;
@@ -293,7 +293,14 @@ const SEGMENT_TRIM = 0.05;
  * ELK ranks pairwise slot dependencies; the maximum overlap depth of the trimmed hop intervals is its
  * lower bound and is computed by an O(s log s) sweep per gap.
  */
-const stackLayers = (vertices: Vertex[], layers: number[][], links: Link[], options: LayeredOptions, anchors: Anchors): number => {
+const stackLayers = (
+  vertices: Vertex[],
+  layers: number[][],
+  links: Link[],
+  options: LayeredOptions,
+  anchors: Anchors,
+  loopBottoms: number[]
+): number => {
   const gaps: number[][] = layers.map(() => []);
   for (const link of links) {
     const start = anchorX(vertices, link, true, anchors);
@@ -329,9 +336,12 @@ const stackLayers = (vertices: Vertex[], layers: number[][], links: Link[], opti
     y += height;
     if (rank < layers.length - 1) {
       const slots = maxOverlap(gaps[rank]);
-      y += slots
+      const gap = slots
         ? Math.max(options.layerSpacing, 2 * options.edgeNodeLayerSpacing + (slots - 1) * options.edgeEdgeLayerSpacing)
         : options.layerSpacing;
+      y += Math.max(gap, loopBottoms[rank] ? loopBottoms[rank] + options.edgeNodeLayerSpacing : 0);
+    } else {
+      y += loopBottoms[rank] ?? 0;
     }
   });
   return y + options.padding.bottom;
@@ -451,7 +461,7 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
   for (const vertex of vertices) {
     rankHeights[vertex.rank] = Math.max(rankHeights[vertex.rank] ?? 0, vertex.height);
     rankStarts[vertex.rank] = vertex.y;
-    rankRights[vertex.rank] = Math.max(rankRights[vertex.rank] ?? 0, vertex.x + vertex.width);
+    rankRights[vertex.rank] = Math.max(rankRights[vertex.rank] ?? 0, vertex.x + vertex.width + (vertex.rightMargin ?? 0));
   }
   const returnLanes = new Map<number, number>();
   const sourceOffsets = anchors.source;
@@ -512,6 +522,58 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
   });
 };
 
+const routeSelfLoops = (
+  container: ElkNode,
+  vertices: Vertex[],
+  loops: Map<number, Link[]>,
+  clearance: number,
+  spacing: number
+): Map<Link, ElkEdgeSection> => {
+  const rankBottoms: number[] = [];
+  for (const vertex of vertices) {
+    rankBottoms[vertex.rank] = Math.max(rankBottoms[vertex.rank] ?? 0, vertex.y + vertex.height);
+  }
+  const sections = new Map<Link, ElkEdgeSection>();
+  for (const [index, group] of loops) {
+    const vertex = vertices[index];
+    group.forEach((link, position) => {
+      const laneIndex = group.length - position - 1;
+      const lane = vertex.x + vertex.width + clearance + laneIndex * spacing;
+      const below = rankBottoms[vertex.rank] + clearance + 2 * laneIndex * spacing;
+      const start = link.sourcePort
+        ? portPoint(vertex, link.sourcePort, true, 0)
+        : { x: vertex.x + vertex.width, y: vertex.y + (vertex.height * (position + 1)) / (2 * group.length + 1) };
+      const end = link.targetPort
+        ? portPoint(vertex, link.targetPort, true, 0)
+        : { x: vertex.x + vertex.width, y: vertex.y + (vertex.height * (2 * group.length - position)) / (2 * group.length + 1) };
+      const bends: ElkPoint[] = link.sourcePort
+        ? [
+            { x: start.x, y: below },
+            { x: lane, y: below },
+          ]
+        : [{ x: lane, y: start.y }];
+      if (link.targetPort || (vertex.height === 0 && !link.sourcePort)) {
+        bends.push({ x: lane, y: below + spacing }, { x: end.x, y: below + spacing });
+      } else {
+        bends.push({ x: lane, y: end.y });
+      }
+      const bendPoints = cubicBends(start, bends, end);
+      if ([start, ...bendPoints, end].some((point) => !Number.isFinite(point.x) || !Number.isFinite(point.y))) {
+        throw new GraphLayoutError(`Edge '${link.edge.id}' has non-finite route geometry in '${container.id}'.`);
+      }
+      sections.set(link, {
+        id: `${link.edge.id}_s0`,
+        startPoint: start,
+        endPoint: end,
+        bendPoints,
+        incomingShape: link.edge.sources[0],
+        outgoingShape: link.edge.targets[0],
+      });
+    });
+  }
+  return sections;
+};
+
 /** Locally scoped compound layout; publish geometry only after every scope succeeds. */
 export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | undefined)[]): ElkNode => {
   const geometries = new Map<ElkNode, NodeGeometry>();
@@ -562,7 +624,9 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
       }
     }
     const edgeIds = new Set<string>();
-    const links: Link[] = (container.edges ?? []).map((edge) => {
+    const links: Link[] = [];
+    const loops = new Map<number, Link[]>();
+    for (const edge of container.edges ?? []) {
       if (edge.sources.length !== 1 || edge.targets.length !== 1 || edge.labels?.length || edgeIds.has(edge.id)) {
         throw new GraphLayoutError(`Edge '${edge.id}' requires one source, one target, a unique id, and no labels.`);
       }
@@ -572,10 +636,7 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
       if (!source || !target) {
         throw new GraphLayoutError(`Cross-hierarchy or missing endpoint on '${edge.id}' in '${container.id}' is not supported yet.`);
       }
-      if (source.vertex === target.vertex) {
-        throw new GraphLayoutError(`Self-loop '${edge.id}' is not supported.`);
-      }
-      return {
+      const link: Link = {
         edge,
         source: source.vertex,
         target: target.vertex,
@@ -584,16 +645,35 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
         reversed: false,
         chain: [],
       };
-    });
+      if (source.vertex === target.vertex) {
+        const group = loops.get(source.vertex) ?? [];
+        group.push(link);
+        loops.set(source.vertex, group);
+      } else {
+        links.push(link);
+      }
+    }
     let geometry: NodeGeometry;
     if (children.length) {
+      const loopClearance = Math.max(options.edgeNodeSpacing, 1);
+      const loopSpacing = Math.max(options.edgeSpacing, 1);
+      for (const [index, group] of loops) {
+        vertices[index].rightMargin = loopClearance + (group.length - 1) * loopSpacing;
+      }
       breakCycles(vertices, links);
       const layers = assignLayers(vertices, links);
       orderLayers(vertices, layers, links, options);
       const width =
         options.placement === 'SIMPLE' ? placeLayers(vertices, layers, options) : placeBalancedLayers(vertices, layers, links, options);
       const anchors = anchorOffsets(vertices, links, options.portSpacing);
-      const height = stackLayers(vertices, layers, links, options, anchors);
+      const loopBottoms: number[] = [];
+      for (const [index, group] of loops) {
+        const vertex = vertices[index];
+        if (vertex.height === 0 || group.some((link) => link.sourcePort || link.targetPort)) {
+          loopBottoms[vertex.rank] = Math.max(loopBottoms[vertex.rank] ?? 0, loopClearance + (2 * group.length - 1) * loopSpacing);
+        }
+      }
+      const height = stackLayers(vertices, layers, links, options, anchors, loopBottoms);
       geometry = { x: 0, y: 0, width: Math.max(width, minimumWidth), height: Math.max(height, minimumHeight) };
       for (const vertex of vertices) {
         if (vertex.node) {
@@ -611,6 +691,9 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
         }
         routes.set(link.edge, { container: container.id, sections: [section] });
       });
+      for (const [link, section] of routeSelfLoops(container, vertices, loops, loopClearance, loopSpacing)) {
+        routes.set(link.edge, { container: container.id, sections: [section] });
+      }
     } else {
       geometry = {
         x: 0,

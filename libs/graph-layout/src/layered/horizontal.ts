@@ -5,10 +5,12 @@ import type { LayeredOptions } from './options';
 interface HorizontalVertex {
   node?: ElkNode;
   width: number;
+  rightMargin?: number;
 }
 
 export const horizontalGap = (left: HorizontalVertex, right: HorizontalVertex, options: LayeredOptions): number =>
-  left.node && right.node ? options.nodeSpacing : left.node || right.node ? options.edgeNodeSpacing : options.edgeSpacing;
+  (left.node && right.node ? options.nodeSpacing : left.node || right.node ? options.edgeNodeSpacing : options.edgeSpacing) +
+  (left.rightMargin ?? 0);
 
 const segmentKey = (a: number, b: number): string => (a < b ? `${a}:${b}` : `${b}:${a}`);
 
@@ -152,7 +154,7 @@ export const balancedCenters = (
       let farRight = Number.NEGATIVE_INFINITY;
       vertices.forEach((vertex, v) => {
         left = Math.min(left, centers[v] - vertex.width / 2);
-        farRight = Math.max(farRight, centers[v] + vertex.width / 2);
+        farRight = Math.max(farRight, centers[v] + vertex.width / 2 + (vertex.rightMargin ?? 0));
       });
       placements.push({ centers, left, right: farRight, fromRight: right });
     }

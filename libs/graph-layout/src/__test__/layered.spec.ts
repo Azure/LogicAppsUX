@@ -77,6 +77,152 @@ describe('layered SIMPLE milestone', () => {
     expect(findOverlaps(extractGeometry(graph), 0)).toEqual([]);
   });
 
+  it.each(['SIMPLE', 'BRANDES_KOEPF'] as const)(
+    'keeps repeated self-loops and fixed-port endpoints outside nodes with %s placement',
+    async (placement) => {
+      const graph: ElkNode = {
+        id: 'root',
+        children: [
+          {
+            id: 'a',
+            width: 100,
+            height: 40,
+            layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+            ports: [{ id: 'port', x: 25, y: 40, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'SOUTH' } }],
+          },
+          { id: 'neighbor', width: 100, height: 100 },
+          { id: 'next', width: 100, height: 40 },
+        ],
+        edges: [
+          { id: 'loop-1', sources: ['a'], targets: ['a'] },
+          { id: 'loop-2', sources: ['a'], targets: ['a'] },
+          { id: 'from-port', sources: ['port'], targets: ['a'] },
+          { id: 'to-port', sources: ['a'], targets: ['port'] },
+          { id: 'same-port', sources: ['port'], targets: ['port'] },
+          { id: 'next-edge', sources: ['a'], targets: ['next'] },
+        ],
+      };
+      await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': placement } });
+      const node = graph.children![0];
+      const portPosition = { x: node.x! + 25, y: node.y! + node.height! };
+      const loops = graph.edges!.slice(0, 5);
+      for (const edge of loops) {
+        const section = edge.sections![0];
+        expect(edge.container).toBe('root');
+        expect(section.incomingShape).toBe(edge.sources[0]);
+        expect(section.outgoingShape).toBe(edge.targets[0]);
+        const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+        expect((points.length - 1) % 3).toBe(0);
+        expect(Math.max(...points.map(({ x }) => x))).toBeGreaterThan(node.x! + node.width!);
+        for (const point of points) {
+          expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
+          expect(point.x).toBeGreaterThanOrEqual(0);
+          expect(point.y).toBeGreaterThanOrEqual(0);
+          expect(point.x).toBeLessThanOrEqual(graph.width!);
+          expect(point.y).toBeLessThanOrEqual(graph.height!);
+        }
+        for (let index = 1; index < points.length; index++) {
+          for (const child of graph.children!) {
+            expect(crossesNodeInterior(points[index - 1], points[index], child), `${edge.id} crosses ${child.id}`).toBe(false);
+          }
+        }
+      }
+      expect(loops[0].sections![0].startPoint).not.toEqual(loops[0].sections![0].endPoint);
+      expect(loops[0].sections![0].bendPoints).not.toEqual(loops[1].sections![0].bendPoints);
+      expect(loops[2].sections![0].startPoint).toEqual(portPosition);
+      expect(loops[3].sections![0].endPoint).toEqual(portPosition);
+      expect(loops[4].sections![0]).toMatchObject({ startPoint: portPosition, endPoint: portPosition });
+      expect(graph.edges![5].sections).toHaveLength(1);
+    }
+  );
+
+  it('keeps self-loop sections container-relative inside nested scopes', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        {
+          id: 'scope',
+          children: [{ id: 'inner', width: 100, height: 40 }],
+          edges: [{ id: 'self', sources: ['inner'], targets: ['inner'] }],
+        },
+        { id: 'sibling', width: 100, height: 40 },
+      ],
+      edges: [{ id: 'outside', sources: ['scope'], targets: ['sibling'] }],
+    };
+    await elk.layout(graph, { layoutOptions: options });
+    const scope = graph.children![0];
+    const section = scope.edges![0].sections![0];
+    expect(scope.edges![0].container).toBe('scope');
+    for (const point of [section.startPoint, ...section.bendPoints!, section.endPoint]) {
+      expect(point.x).toBeGreaterThanOrEqual(0);
+      expect(point.y).toBeGreaterThanOrEqual(0);
+      expect(point.x).toBeLessThanOrEqual(scope.width!);
+      expect(point.y).toBeLessThanOrEqual(scope.height!);
+    }
+  });
+
+  it('keeps self-loop clearance separate from a fixed-port return edge in a cyclic graph', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'a', width: 100, height: 40 },
+        {
+          id: 'b',
+          width: 100,
+          height: 40,
+          layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+          ports: [{ id: 'b-port', x: 25, y: 40, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'SOUTH' } }],
+        },
+        { id: 'c', width: 100, height: 40 },
+      ],
+      edges: [
+        { id: 'ab', sources: ['a'], targets: ['b'] },
+        { id: 'bc', sources: ['b'], targets: ['c'] },
+        { id: 'ac', sources: ['a'], targets: ['c'] },
+        { id: 'back', sources: ['b-port'], targets: ['a'] },
+        { id: 'self', sources: ['b'], targets: ['b'] },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF' } });
+    const back = graph.edges!.find(({ id }) => id === 'back')!.sections![0];
+    const self = graph.edges!.find(({ id }) => id === 'self')!.sections![0];
+    expect(Math.max(...back.bendPoints!.map(({ x }) => x))).toBeGreaterThan(Math.max(...self.bendPoints!.map(({ x }) => x)));
+    for (const section of [back, self]) {
+      const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+      for (let index = 1; index < points.length; index++) {
+        for (const child of graph.children!) {
+          expect(crossesNodeInterior(points[index - 1], points[index], child)).toBe(false);
+        }
+      }
+    }
+  });
+
+  it('gives a zero-sized self-loop finite, visible geometry even with zero spacing', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [{ id: 'a', width: 0, height: 0 }],
+      edges: [{ id: 'self', sources: ['a'], targets: ['a'] }],
+    };
+    await elk.layout(graph, {
+      layoutOptions: {
+        ...options,
+        'elk.padding': '[top=0,left=0,bottom=0,right=0]',
+        'elk.spacing.edgeNode': '0',
+        'elk.spacing.edgeEdge': '0',
+      },
+    });
+    const section = graph.edges![0].sections![0];
+    const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+    expect((points.length - 1) % 3).toBe(0);
+    expect(Math.max(...points.map(({ x }) => x))).toBeGreaterThan(section.startPoint.x);
+    expect(Math.max(...points.map(({ y }) => y))).toBeGreaterThan(section.startPoint.y);
+    for (const point of points) {
+      expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
+      expect(point.x).toBeLessThanOrEqual(graph.width!);
+      expect(point.y).toBeLessThanOrEqual(graph.height!);
+    }
+  });
+
   it('uses local container options without leaking them into descendants', async () => {
     const inner = chain();
     inner.id = 'inner';
@@ -193,7 +339,6 @@ describe('layered SIMPLE milestone', () => {
     [{}, { id: 'root', children: [{ id: 'a' }, { id: 'b' }], edges: [{ id: 'hyper', sources: ['a', 'b'], targets: ['b'] }] }, /one source/],
     [{ 'elk.layered.spacing.nodeNodeBetweenLayers': '-1' }, undefined, /non-negative/],
     [{}, { id: 'root', children: [{ id: 'a', width: Number.NaN }] }, /finite/],
-    [{}, { id: 'root', children: [{ id: 'a' }], edges: [{ id: 'e', sources: ['a'], targets: ['a'] }] }, /Self-loop/],
     [{}, { id: 'root', children: [{ id: 'a' }], edges: [{ id: 'e', sources: ['a'], targets: ['missing'] }] }, /endpoint/],
   ])('rejects unsupported inputs without partial mutation', async (overrides, input, message) => {
     const graph: ElkNode = input ?? chain();
