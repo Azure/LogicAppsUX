@@ -1396,6 +1396,139 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     'The retained warning Yes must be pressed exactly once'
   );
 
+  const runCenterTransition = (options: { targetInitiallyVisible: boolean; persistent: boolean }) => {
+    let now = 0;
+    let pollCount = 0;
+    let geometryStable = false;
+    let targetVisible = options.targetInitiallyVisible;
+    const sentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+    const cdp = {
+      targetId: 'owned-target',
+      contextGeneration: 1,
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterScrollStateScript) {
+          return geometryStable
+            ? { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 }
+            : { centerCount: 1, scrollableCount: 2, atStart: false, atEnd: false, point: null, deltaY: 0 };
+        }
+        throw new Error('unexpected center-transition expression');
+      },
+      send: async (method: string, params?: Record<string, unknown>) => {
+        sentEvents.push({ method, params });
+        return {};
+      },
+    } as unknown as CdpConnection;
+    const promise = activateRetainedRegenerationInitialization({
+      cdp,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 300,
+      now: () => now,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({ before: owner, owner, raw: activationRaw(true, targetVisible ? 'target' : 'absent') }),
+      poll: async (remainingMs) => {
+        pollCount++;
+        now += Math.min(100, remainingMs);
+        if (!options.persistent) {
+          geometryStable = true;
+          if (pollCount > 1) {
+            targetVisible = true;
+          }
+        }
+      },
+      capture: async () => undefined,
+    });
+    return { promise, sentEvents, getNow: () => now, getPollCount: () => pollCount };
+  };
+  const transientGeometry = runCenterTransition({ targetInitiallyVisible: true, persistent: false });
+  assert.strictEqual((await transientGeometry.promise).timeOrigin, 42);
+  assert.strictEqual(transientGeometry.getPollCount(), 1);
+  assert.strictEqual(
+    transientGeometry.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9)
+      .length,
+    1,
+    'Transient multiple-scroll-container geometry must not block a later exact target click'
+  );
+
+  const absentDuringTransition = runCenterTransition({ targetInitiallyVisible: false, persistent: false });
+  assert.strictEqual((await absentDuringTransition.promise).timeOrigin, 42);
+  assert.strictEqual(absentDuringTransition.getPollCount(), 2, 'No-target plus transient geometry must wait for later publication');
+  assert.strictEqual(
+    absentDuringTransition.sentEvents.filter(
+      (event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9
+    ).length,
+    1
+  );
+
+  const persistentGeometry = runCenterTransition({ targetInitiallyVisible: true, persistent: true });
+  await assert.rejects(persistentGeometry.promise, /remained center-transitioning until the original Notification Center deadline/);
+  assert.strictEqual(persistentGeometry.getNow(), 300);
+  assert.strictEqual(
+    persistentGeometry.sentEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Persistent center transition must expire without any target input'
+  );
+
+  let oversizedPolls = 0;
+  const oversizedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: {
+        targetId: 'owned-target',
+        contextGeneration: 1,
+        evaluate: async (_contextId: number | undefined, expression: string) => {
+          if (expression === notificationCenterScrollStateScript) {
+            return {
+              centerCount: 1,
+              scrollableCount: 1,
+              atStart: true,
+              atEnd: false,
+              point: { x: 6, y: 7 },
+              deltaY: 200,
+            };
+          }
+          throw new Error('unexpected oversized-list expression');
+        },
+        send: async (method: string, params?: Record<string, unknown>) => {
+          oversizedEvents.push({ method, params });
+          return {};
+        },
+      } as unknown as CdpConnection,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 300,
+      now: () => 0,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'target') }),
+      poll: async () => {
+        oversizedPolls++;
+      },
+      capture: async () => {
+        throw new Error('An unbounded list cannot capture or click a target');
+      },
+    }),
+    /could not be activated safely: target-ambiguous/
+  );
+  assert.strictEqual(oversizedPolls, 0, 'Stable scan-bound exhaustion must be fatal without outer retry');
+  assert.strictEqual(
+    oversizedEvents.filter((event) => event.params?.type === 'mouseWheel').length,
+    6,
+    'Stable oversized-list failure must perform only one bounded wheel cycle'
+  );
+  assert.strictEqual(
+    oversizedEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Stable oversized-list ambiguity must not send target input'
+  );
+
   const runPagedActivation = async (targetIdentitiesByPage: readonly (readonly string[])[], initialPage: number) => {
     let page = initialPage;
     let captureCount = 0;
@@ -1677,7 +1810,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   );
 
   const duplicateAfterShift = runReorderingActivation('duplicate-after-shift');
-  await assert.rejects(duplicateAfterShift.promise, /could not be activated safely: blocking-or-ambiguous-ui/);
+  await assert.rejects(duplicateAfterShift.promise, /could not be activated safely: target-ambiguous/);
   assert.strictEqual(
     duplicateAfterShift.sentEvents.filter((event) => event.params?.type === 'mousePressed').length,
     0,
@@ -1746,7 +1879,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
         },
       });
     })(),
-    /could not be activated safely: blocking-or-ambiguous-ui/
+    /could not be activated safely: target-ambiguous/
   );
   assert.strictEqual(
     duplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
@@ -2166,7 +2299,20 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     /absent from Notification Center before the original deadline/
   );
   assert.strictEqual(wrongProjectNow, 200, 'Wrong-project retained items are non-matches until the original deadline');
-  await assert.rejects(activate('ambiguous'), /could not be activated safely/);
+  let ambiguousNow = 0;
+  let ambiguousPolls = 0;
+  await assert.rejects(
+    activate('ambiguous', {
+      deadline: 300,
+      now: () => ambiguousNow,
+      poll: async (remainingMs) => {
+        ambiguousPolls++;
+        ambiguousNow += Math.min(100, remainingMs);
+      },
+    }),
+    /could not be activated safely: target-ambiguous/
+  );
+  assert.strictEqual(ambiguousPolls, 0, 'Stable duplicate exact targets must never become pollable');
   await assert.rejects(activate('target', { deadline: Date.now() - 1 }), /absent from Notification Center before the original deadline/);
 
   const invalidatedTargetDocument = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };

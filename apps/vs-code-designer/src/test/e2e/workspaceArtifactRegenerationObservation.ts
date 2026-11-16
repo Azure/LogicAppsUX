@@ -95,6 +95,8 @@ export type NotificationCenterInspectionReason =
   | 'blocking-or-ambiguous-ui'
   | 'temporarily-blocked'
   | 'target-unactionable'
+  | 'target-ambiguous'
+  | 'center-transitioning'
   | 'list-changed'
   | 'affordance-unavailable'
   | 'affordance-ambiguous'
@@ -747,13 +749,13 @@ export async function inspectRegenerationNotificationCenter(options: {
   };
   const retainedInitializationTargets = (raw: RawWorkbenchState): RawCandidate[] => {
     if (raw.truncated) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('target-ambiguous');
     }
     const targets = raw.candidates.filter(
       (candidate) => candidate.retained && category(candidate.text, options.appDir, candidate.kind) === 'initialization'
     );
     if (targets.length !== 1) {
-      throw new NotificationCenterInspectionUnavailable(targets.length > 1 ? 'blocking-or-ambiguous-ui' : 'affordance-unavailable');
+      throw new NotificationCenterInspectionUnavailable(targets.length > 1 ? 'target-ambiguous' : 'target-unactionable');
     }
     return targets;
   };
@@ -766,7 +768,7 @@ export async function inspectRegenerationNotificationCenter(options: {
       throw new NotificationCenterInspectionUnavailable('list-changed');
     }
     if (target.yesCount > 1) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('target-ambiguous');
     }
     if (
       !target.displayed ||
@@ -834,7 +836,7 @@ export async function inspectRegenerationNotificationCenter(options: {
     });
     assertSafe();
     if (scroll.centerCount !== 1 || scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('center-transitioning');
     }
     await read();
     assertSafe();
@@ -855,26 +857,29 @@ export async function inspectRegenerationNotificationCenter(options: {
       });
       assertSafe();
       if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       if (scroll.atStart) {
         return;
       }
-      if (index === maxNotificationCenterScrolls || scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      if (index === maxNotificationCenterScrolls) {
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+      }
+      if (scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       await dispatchScroll(-1);
     }
   };
   const exactTargetIdentities = (raw: RawWorkbenchState): string[] => {
     if (raw.truncated) {
-      throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      throw new NotificationCenterInspectionUnavailable('target-ambiguous');
     }
     return raw.candidates
       .filter((candidate) => candidate.retained && category(candidate.text, options.appDir, candidate.kind) === 'initialization')
       .map((candidate) => {
         if (!candidate.semanticIdentity) {
-          throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+          throw new NotificationCenterInspectionUnavailable('target-ambiguous');
         }
         return candidate.semanticIdentity;
       });
@@ -891,7 +896,7 @@ export async function inspectRegenerationNotificationCenter(options: {
     const pageSnapshots: string[] = [];
     for (let index = 0; index <= maxNotificationCenterScrolls; index++) {
       if (!state.raw.listSnapshot) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       pageSnapshots.push(state.raw.listSnapshot);
       for (const identity of exactTargetIdentities(state.raw)) {
@@ -902,19 +907,22 @@ export async function inspectRegenerationNotificationCenter(options: {
       });
       assertSafe();
       if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       if (scroll.atEnd) {
         return { identities, pageSnapshots, bottomVerified: true };
       }
-      if (index === maxNotificationCenterScrolls || scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      if (index === maxNotificationCenterScrolls) {
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+      }
+      if (scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       await dispatchScroll(1);
       result.scrollCount = Math.min(maxNotificationCenterScrolls, result.scrollCount + 1);
       state = await read();
     }
-    throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    throw new NotificationCenterInspectionUnavailable('target-ambiguous');
   };
   const verifyActivationScan = async (expected: ActivationScan): Promise<void> => {
     await restoreCenterTop();
@@ -932,7 +940,7 @@ export async function inspectRegenerationNotificationCenter(options: {
       });
       assertSafe();
       if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       if (scroll.atEnd) {
         if (
@@ -943,23 +951,23 @@ export async function inspectRegenerationNotificationCenter(options: {
           throw new NotificationCenterInspectionUnavailable('list-changed');
         }
         if (identities.size > 1) {
-          throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+          throw new NotificationCenterInspectionUnavailable('target-ambiguous');
         }
         return;
       }
-      if (
-        index === maxNotificationCenterScrolls ||
-        index + 1 >= expected.pageSnapshots.length ||
-        scroll.scrollableCount !== 1 ||
-        !scroll.point ||
-        scroll.deltaY <= 0
-      ) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      if (index + 1 >= expected.pageSnapshots.length) {
+        throw new NotificationCenterInspectionUnavailable('list-changed');
+      }
+      if (index === maxNotificationCenterScrolls) {
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+      }
+      if (scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       await dispatchScroll(1);
       state = await read();
     }
-    throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    throw new NotificationCenterInspectionUnavailable('target-ambiguous');
   };
   const reacquireActivationTarget = async (
     semanticIdentity: string,
@@ -973,7 +981,7 @@ export async function inspectRegenerationNotificationCenter(options: {
       }
       const identities = exactTargetIdentities(state.raw);
       if (new Set(identities).size > 1) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
       }
       if (identities.some((identity) => identity !== semanticIdentity)) {
         throw new NotificationCenterInspectionUnavailable('list-changed');
@@ -987,22 +995,22 @@ export async function inspectRegenerationNotificationCenter(options: {
         timeoutMs: remaining(750),
       });
       assertSafe();
-      if (
-        scroll.centerCount !== 1 ||
-        scroll.scrollableCount > 1 ||
-        scroll.atEnd ||
-        index === maxNotificationCenterScrolls ||
-        index + 1 >= pageSnapshots.length ||
-        scroll.scrollableCount !== 1 ||
-        !scroll.point ||
-        scroll.deltaY <= 0
-      ) {
-        throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+      if (scroll.centerCount !== 1 || scroll.scrollableCount > 1) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
+      }
+      if (scroll.atEnd || index + 1 >= pageSnapshots.length) {
+        throw new NotificationCenterInspectionUnavailable('list-changed');
+      }
+      if (index === maxNotificationCenterScrolls) {
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+      }
+      if (scroll.scrollableCount !== 1 || !scroll.point || scroll.deltaY <= 0) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
       }
       await dispatchScroll(1);
       state = await read();
     }
-    throw new NotificationCenterInspectionUnavailable('blocking-or-ambiguous-ui');
+    throw new NotificationCenterInspectionUnavailable('target-ambiguous');
   };
 
   try {
@@ -1164,7 +1172,7 @@ export async function activateRetainedRegenerationInitialization(
   let allowReveal = true;
   let openedByFallback = false;
   let safeAbsenceObserved = false;
-  let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | 'list-changed' | undefined;
+  let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | 'center-transitioning' | 'list-changed' | undefined;
   let centerNotVisibleAfterReveal = false;
   const revealState = { attempted: false };
   while (now() < options.deadline) {
@@ -1202,10 +1210,15 @@ export async function activateRetainedRegenerationInitialization(
     if (
       inspection.reason === 'temporarily-blocked' ||
       inspection.reason === 'target-unactionable' ||
+      inspection.reason === 'center-transitioning' ||
       inspection.reason === 'list-changed'
     ) {
       lastPollableReason = inspection.reason;
-      if (inspection.reason === 'target-unactionable' || inspection.reason === 'list-changed') {
+      if (
+        inspection.reason === 'target-unactionable' ||
+        inspection.reason === 'center-transitioning' ||
+        inspection.reason === 'list-changed'
+      ) {
         allowReveal = false;
       }
       const remainingMs = options.deadline - now();

@@ -927,8 +927,15 @@ a second bounded traversal must reproduce page fingerprints and target occurrenc
 sets before multiple exact targets can be classified as stable duplicate
 ambiguity. Do not retry either logical
 click, reset the clock, synthesize a dialog result, or select an unrelated
-notification. Duplicate exact targets, truncated or ambiguous center geometry,
-identity changes, and uncertain input fail immediately.
+notification. Identity changes and uncertain input fail immediately. Use fixed classifications:
+`target-ambiguous` only for stable duplicate exact owned-project targets or
+truncation that prevents uniqueness proof; `center-transitioning` for temporary
+center-count, scroll-container, hit-geometry, or list-layout ambiguity. The
+latter is pollable without input until the original deadline, while
+`target-ambiguous` is immediately fatal. Stable exhaustion of the fixed
+top-to-bottom scan bound is fatal truncated/`target-ambiguous`; never restart
+another wheel cycle. Expected page-count, premature-end, and snapshot mismatch
+remain pollable `list-changed`.
 Blocking modal/QuickInput state and an exact target action that is temporarily
 disabled, covered, or not hit-testable prevent input but may be polled until the
 unchanged deadline. Persistent target absence or unactionable state fails only at

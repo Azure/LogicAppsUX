@@ -638,8 +638,16 @@ Newly inserted items remain observable on the top recheck or the next live poll.
 The fallback requires one exact retained warning with one real enabled hit-tested **Yes**,
 captures the existing `before-yes` evidence while that retained warning remains
 visible, then revalidates ownership and the action before every trusted mouse
-event. Duplicate exact targets, ambiguous bell/center/action, identity or
-workspace change, or uncertain/pending-invalid input fail immediately. Exact
+event. Ambiguous bell affordances, stable duplicate target/action ambiguity,
+identity or workspace change, or uncertain/pending-invalid input fail immediately. Stable
+duplicate exact targets are reported as fatal `target-ambiguous`; raw truncation
+that prevents uniqueness proof is also fatal. Temporary center/list geometry
+states—such as multiple transient scroll containers, missing hit geometry, or
+layout transition—are `center-transitioning` and poll without input until the
+original deadline. Exhausting the fixed scan bound while stable content still
+extends beyond verified top/bottom coverage is fatal `target-ambiguous`
+(truncated), not a transition. Expected page-count, premature-end, or snapshot
+mismatch remains pollable `list-changed`. Exact
 target absence, a blocking modal/QuickInput, or an exact target whose action is
 temporarily disabled, covered, or not hit-testable is polled without input and
 fails only at the unchanged original deadline. The bell and
