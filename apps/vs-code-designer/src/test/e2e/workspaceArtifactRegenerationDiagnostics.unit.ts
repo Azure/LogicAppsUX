@@ -16,6 +16,7 @@ import {
 } from './workspaceArtifactRegenerationDiagnostics';
 import {
   activateRetainedRegenerationInitialization,
+  RegenerationContextGenerationChanged,
   RegenerationInputTracker,
   RegenerationObservation,
   inspectRegenerationNotificationCenter,
@@ -1267,6 +1268,90 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     assert.deepStrictEqual(noDocumentInput, [], 'Missing or invalid admitted main-document identity must fail before all input');
     assert.strictEqual(noDocumentCaptureCount, 0, 'Missing document authority must fail before retained-prompt evidence capture');
   }
+
+  const runContextReacquisition = async (options: {
+    admittedDocument: { targetId: string; invalidated: boolean; dispose: () => void };
+    mutateAfterFirstSample?: (cdp: CdpConnection) => void;
+    secondSample?: () => Promise<{ before: typeof owner; owner: typeof owner; raw: RawWorkbenchState }>;
+    sentEvents?: Array<{ method: string; params?: Record<string, unknown> }>;
+  }) => {
+    const sentEvents = options.sentEvents ?? [];
+    const cdp = activationCdp(sentEvents);
+    let reads = 0;
+    const result = await activateRetainedRegenerationInitialization({
+      cdp,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: options.admittedDocument,
+      sampler: async () => {
+        reads++;
+        if (reads === 1) {
+          options.mutateAfterFirstSample?.(cdp);
+          throw new RegenerationContextGenerationChanged();
+        }
+        return options.secondSample?.() ?? { before: owner, owner, raw: activationRaw(true, 'target') };
+      },
+      capture: async () => undefined,
+    });
+    return { result, reads, sentEvents };
+  };
+  const benignReacquisition = await runContextReacquisition({
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+  });
+  assert.ok(benignReacquisition.reads > 1, 'Benign child-context churn must reacquire the owned main-document sample');
+  assert.strictEqual(
+    benignReacquisition.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9)
+      .length,
+    1,
+    'Reacquired continuity may click only the exact retained target once'
+  );
+
+  const mainFrameChanged = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const mainFrameEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    runContextReacquisition({
+      admittedDocument: mainFrameChanged,
+      sentEvents: mainFrameEvents,
+      mutateAfterFirstSample: () => {
+        mainFrameChanged.invalidated = true;
+      },
+    }),
+    /could not be activated safely: identity-unavailable/
+  );
+  assert.deepStrictEqual(mainFrameEvents, [], 'Main-document invalidation must never be rebound for input');
+
+  const targetChangedDocument = { targetId: 'owned-target', invalidated: false, dispose: () => undefined };
+  const targetChangedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    runContextReacquisition({
+      admittedDocument: targetChangedDocument,
+      sentEvents: targetChangedEvents,
+      mutateAfterFirstSample: (cdp) => {
+        (cdp as unknown as { targetId: string }).targetId = 'foreign-target';
+      },
+    }),
+    /could not be activated safely: identity-unavailable/
+  );
+  assert.deepStrictEqual(targetChangedEvents, [], 'Target replacement must fail before every input event');
+
+  const physicalChangedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    runContextReacquisition({
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sentEvents: physicalChangedEvents,
+      secondSample: async () => {
+        throw new Error('physical workspace continuity rejected');
+      },
+    }),
+    /could not be activated safely: identity-unavailable/
+  );
+  assert.deepStrictEqual(physicalChangedEvents, [], 'Physical workspace rejection must not be bypassed by context reacquisition');
+
   const activated = await activate('target');
   assert.strictEqual(activated.result.timeOrigin, 42);
   assert.strictEqual(activated.result.inspection.openedByDiagnostic, true);
@@ -1783,6 +1868,58 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   assert.strictEqual(retainedDispatchCount, 5, 'Identity invalidation after retained Yes press must prevent its release');
   assert.strictEqual(invalidatedTargetInput.uncertain, true);
   assert.strictEqual(invalidatedTargetInput.pendingInvalid, true);
+
+  const churnDuringClickInput = new RegenerationInputTracker();
+  const churnDuringClickEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  let retainedTargetPressed = false;
+  let postPressSamplerCalls = 0;
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(churnDuringClickEvents, () => {
+        const event = churnDuringClickEvents.at(-1);
+        if (event?.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9) {
+          retainedTargetPressed = true;
+        }
+      }),
+      input: churnDuringClickInput,
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        if (retainedTargetPressed) {
+          postPressSamplerCalls++;
+          throw new RegenerationContextGenerationChanged();
+        }
+        return { before: owner, owner, raw: activationRaw(true, 'target') };
+      },
+      capture: async () => undefined,
+    }),
+    /could not be activated safely: uncertain-input/
+  );
+  assert.strictEqual(postPressSamplerCalls, 1, 'Context churn during a logical click must not retry the sampler');
+  assert.strictEqual(
+    churnDuringClickEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1
+  );
+  assert.strictEqual(
+    churnDuringClickEvents.filter((event) => event.params?.type === 'mouseReleased' && event.params.x === 8 && event.params.y === 9).length,
+    0,
+    'No retained Yes release may be sent after post-press context churn'
+  );
+  assert.strictEqual(churnDuringClickInput.uncertain, true);
+  assert.strictEqual(churnDuringClickInput.pendingInvalid, true);
+  await assert.rejects(
+    churnDuringClickInput.send('Input.dispatchMouseEvent', async () => {
+      churnDuringClickEvents.push({ method: 'unexpected-later-input' });
+      return {};
+    }),
+    /diagnostic input state unavailable/
+  );
+  assert.ok(!churnDuringClickEvents.some((event) => event.method === 'unexpected-later-input'));
 
   let listener: ((event: CdpConsoleDiagnostic) => void) | undefined;
   let ownedRead: (() => void) | undefined;

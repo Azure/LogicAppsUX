@@ -632,6 +632,13 @@ fails only at the unchanged original deadline. The bell and
 retained **Yes** are each attempted at most once;
 foreground success never opens the center. The separate overwrite modal and all
 post-Yes file, reopen, cleanup, and ordered-evidence assertions are unchanged.
+Benign child-frame execution-context churn may reacquire one fresh atomic sample
+only while the admitted main-document tracker remains valid and the same target,
+time origin, owned shell, pinned workspace file, and physical roots are
+re-proven. Main-frame/ambiguous lifecycle changes, target replacement, navigation,
+or physical workspace changes remain immediate failures. Reacquisition is also
+forbidden while any logical input is pending; post-press churn marks the click
+uncertain/pending-invalid and prevents release or later input.
 
 #### Diagnostic-only regeneration observations
 

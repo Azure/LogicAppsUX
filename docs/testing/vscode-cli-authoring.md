@@ -894,7 +894,14 @@ hit-tested **Yes** before capture and before every trusted input event. Preserve
 an unchanged admitted main-document identity from workbench admission; an
 unavailable, undefined, or invalidated tracked document blocks acceptance before
 any bell, scroll, or retained action input. Context-generation-only fallback
-remains diagnostic-only. Preserve the same `before-yes` evidence checkpoint with
+remains diagnostic-only. A generation change caused by proven child-frame
+context churn may reacquire one atomic workbench sample only when the admitted
+main-document tracker is still valid and the same target, time origin, owned
+shell, pinned workspace file, and physical roots are re-established. Never
+rebind across main-frame/ambiguous lifecycle events, navigation, target
+replacement, or physical workspace changes. Never reacquire while a logical
+input is pending: churn after press must mark uncertainty/pending-invalid and
+block release plus all later input. Preserve the same `before-yes` evidence checkpoint with
 the retained warning visibly open, then click that real retained **Yes** once and
 continue to the unchanged separate overwrite modal. Keep the revealed center open
 and re-sample its live list through the same original deadline. Initial emptiness

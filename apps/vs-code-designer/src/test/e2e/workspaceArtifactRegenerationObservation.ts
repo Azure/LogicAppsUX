@@ -310,6 +310,7 @@ export type RegenerationWorkbenchSampler = (
 ) => Promise<{ before: RegularWorkbenchOwnershipState; raw: RawWorkbenchState; owner: RegularWorkbenchOwnershipState }>;
 
 class PhysicalWorkspaceUnavailable extends Error {}
+export class RegenerationContextGenerationChanged extends Error {}
 
 /** The model and DOM are read in one renderer task; the result is still a discrete sample. */
 export const samplePhysicalRegenerationWorkbench: RegenerationWorkbenchSampler = async (cdp, expectation, deadline, pinnedPaths) => {
@@ -359,8 +360,11 @@ export const samplePhysicalRegenerationWorkbench: RegenerationWorkbenchSampler =
   } finally {
     clearTimeout(timer);
   }
-  if (cdp.targetId !== targetId || cdp.contextGeneration !== generation) {
+  if (cdp.targetId !== targetId) {
     throw new PhysicalWorkspaceUnavailable();
+  }
+  if (cdp.contextGeneration !== generation) {
+    throw new RegenerationContextGenerationChanged();
   }
   const owner: RegularWorkbenchOwnershipState = {
     ...sample.owner,
@@ -622,7 +626,23 @@ export async function inspectRegenerationNotificationCenter(options: {
     });
   const read = async () => {
     assertSafe();
-    const state = await sample(bounded, options.expectation, options.deadline, options.pinnedPaths);
+    let state: Awaited<ReturnType<RegenerationWorkbenchSampler>>;
+    try {
+      state = await sample(bounded, options.expectation, options.deadline, options.pinnedPaths);
+    } catch (error) {
+      if (
+        !(error instanceof RegenerationContextGenerationChanged) ||
+        !options.targetActivation ||
+        !options.admittedDocument ||
+        options.input.hasPendingInput()
+      ) {
+        throw error;
+      }
+      // Reacquire only after proven child-context churn. The admitted main
+      // document tracker rejects main-frame/ambiguous lifecycle changes.
+      assertSafe();
+      state = await sample(bounded, options.expectation, options.deadline, options.pinnedPaths);
+    }
     assertSafe();
     if (
       !state.owner.owned ||
