@@ -13,8 +13,8 @@ import {
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs';
-import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
+import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -43,19 +43,27 @@ export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
 };
-// Canonical attached connector: half diamond + gap + label16 + spacingS8 + line + half dot.
+// Host measurements match the connector label and branch CSS, not unrelated equal-sized glyph metrics.
+const SHARED_CONNECTOR_LABEL_HEIGHT = 16;
+const SHARED_CONNECTOR_LABEL_GAP = 8;
+const SHARED_BRANCH_HEADER_PADDING = 16;
+// Canonical attached connector: half diamond + gap + label + spacing + line + half dot.
 export const AGENT_TOOL_CONNECTOR_HEIGHT =
   nodeMetrics.toolConnector.diamond / 2 +
   nodeMetrics.toolConnector.gap +
-  16 +
-  8 +
+  SHARED_CONNECTOR_LABEL_HEIGHT +
+  SHARED_CONNECTOR_LABEL_GAP +
   nodeMetrics.toolConnector.line +
   nodeMetrics.handle.size / 2;
+// ELK/ports/drop-zones all consume this accepted add-card height; derive it once from shared metrics.
+const SHARED_ADD_NODE_HEIGHT = nodeMetrics.actionAdd.containerHeight;
+export const SHARED_COLLAPSED_CARD_HEIGHT = 50;
 
 export interface NodePresentationContext {
   operationType?: string;
   subgraphType?: SubgraphType;
   caseCount?: number;
+  handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
   hasToolStatus?: boolean;
 }
@@ -98,17 +106,10 @@ export const getNodePresentation = (
       case 'if':
         return { shared: true, family: 'if', size: nodeMetrics.cards.condition };
       case 'switch':
-        // The host flows DOWN. Canonical Switch uses the compact 74px body in this axis.
         return {
           shared: true,
           family: 'switch',
-          size: {
-            width: Math.max(
-              nodeMetrics.cards.condition.width,
-              (context.caseCount ?? 1) * nodeMetrics.handle.size + Math.max(0, (context.caseCount ?? 1) - 1) * 8 + 32
-            ),
-            height: nodeMetrics.cards.condition.height,
-          },
+          size: getSwitchNodeSize(context.caseCount, context.handleAxis),
         };
       case 'foreach':
       case 'until':
@@ -138,9 +139,13 @@ export const getNodePresentation = (
       };
     }
     if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
-      return { shared: true, family: 'add', size: { width: nodeMetrics.cards.action.width, height: 44 } };
+      return { shared: true, family: 'add', size: { width: nodeMetrics.cards.action.width, height: SHARED_ADD_NODE_HEIGHT } };
     }
-    return { shared: true, family: 'branch', size: { width: nodeMetrics.frame.minWidth, height: nodeMetrics.handle.labeledHeight + 16 } };
+    return {
+      shared: true,
+      family: 'branch',
+      size: { width: nodeMetrics.frame.minWidth, height: nodeMetrics.handle.labeledHeight + SHARED_BRANCH_HEADER_PADDING },
+    };
   }
   if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE || type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
     return { shared: true, family: 'frame' };
@@ -149,37 +154,85 @@ export const getNodePresentation = (
     return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
   }
   if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
-    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: 50 } };
+    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
   }
   // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
   return { shared: false };
 };
 
+// Initial sizes of the rendered legacy cards, used until the DOM measurement is observed.
+// Action, scope header and large branch cards: 2px border + 8px padding + 24px icon/20px title row (workflowCardStyles.ts).
+const LEGACY_LARGE_NODE_SIZE = { width: 200, height: 44 };
+// Small branch cards: 120px wide, 6px padding + 16px line height + border (card.styles.ts).
+const SMALL_SUBGRAPH_CARD_SIZE = { width: 120, height: 32 };
+// Add-case cards: a 44px tall grid that shrink-wraps its 20px add button (subgraphCard.tsx).
+const ADD_SUBGRAPH_CARD_SIZE = { width: 20, height: 44 };
+// AddActionCardV2: 64px card plus its label (addActionCardV2.styles.ts).
+const PLACEHOLDER_NODE_SIZE = { width: 64, height: 96 };
+// CollapsedCardNode renders a fixed 50px tall wrapper.
+export const COLLAPSED_NODE_SIZE = { width: 200, height: 50 };
+
+const smallSubgraphTypes = new Set<SubgraphType>([
+  SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+  SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+  SUBGRAPH_TYPES.SWITCH_DEFAULT,
+  SUBGRAPH_TYPES.UNTIL_DO,
+]);
+
+export const getDefaultNodeSize = (type?: WorkflowNodeType, subgraphType?: SubgraphType): { width: number; height: number } => {
+  switch (type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+    case WORKFLOW_NODE_TYPES.OPERATION_NODE:
+    case WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE:
+      return { ...LEGACY_LARGE_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE: {
+      if (subgraphType && smallSubgraphTypes.has(subgraphType)) {
+        return { ...SMALL_SUBGRAPH_CARD_SIZE };
+      }
+      if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
+        return { ...ADD_SUBGRAPH_CARD_SIZE };
+      }
+      return { ...LEGACY_LARGE_NODE_SIZE };
+    }
+    case WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE:
+      return { ...PLACEHOLDER_NODE_SIZE };
+    case WORKFLOW_NODE_TYPES.COLLAPSED_NODE:
+      return { ...COLLAPSED_NODE_SIZE };
+    default:
+      // Hidden nodes and graph containers are layout-only; containers are sized by the layout.
+      return { ...DEFAULT_NODE_SIZE };
+  }
+};
+
 // Creating generic layout nodes and edges below
 
-export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
+export const createWorkflowNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): WorkflowNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   type: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
 });
 
-export const createElkNode = (id: string, type?: WorkflowNodeType): ElkNode => ({
+export const createElkNode = (id: string, type?: WorkflowNodeType, subgraphType?: SubgraphType): ElkNode => ({
   id,
-  ...DEFAULT_NODE_SIZE,
+  ...getDefaultNodeSize(type, subgraphType),
   layoutOptions: {
     nodeType: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
   },
 });
 
+// Escape the separator and escape marker so different endpoint pairs cannot share an ID.
+const escapeEdgeIdPart = (id: string): string => id.replace(/%/g, '%25').replace(/-/g, '%2D');
+
+export const getWorkflowEdgeId = (source: string, target: string): string => `${escapeEdgeIdPart(source)}-${escapeEdgeIdPart(target)}`;
+
 export const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   source,
   target,
   type: type ?? WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
 });
 
 export const createElkEdge = (source: string, target: string, type?: WorkflowEdgeType): ElkExtendedEdge => ({
-  id: `${source}-${target}`,
+  id: getWorkflowEdgeId(source, target),
   sources: [source],
   targets: [target],
   layoutOptions: {

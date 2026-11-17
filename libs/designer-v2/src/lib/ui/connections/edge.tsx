@@ -1,7 +1,7 @@
 import type React from 'react';
-import { memo, useMemo, useState } from 'react';
-import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import { EdgeLabelRenderer, getBezierPath, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { memo, useMemo, type HTMLAttributes } from 'react';
+import type { ElkExtendedEdge } from '@microsoft/logic-apps-graph-layout';
+import { EdgeLabelRenderer, getBezierPath, getSmoothStepPath, Position, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
@@ -15,7 +15,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { nodeLineStrokes, useNodeLineStyles } from '@microsoft/designer-ui-v2';
+import { getNodeLineStroke, useEdgeActiveState, useNodeLineStyles } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { useConnectionStyles } from './connections.styles';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
@@ -23,6 +23,9 @@ import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../co
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
+import { SharedCollapsedRunAfterIndicator, SharedRunAfterIndicator } from './runAfterIndicator/SharedRunAfterIndicator';
+import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
+import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -33,11 +36,13 @@ interface EdgeContentProps {
   tabIndex?: number;
   isRevealed?: boolean;
   sharedPresentation: boolean;
+  controlProps?: HTMLAttributes<HTMLDivElement>;
 }
 
 const EdgeContent = (props: EdgeContentProps) => (
   <EdgeLabelRenderer>
     <div
+      {...props.controlProps}
       style={{
         width: props.sharedPresentation ? nodeMetrics.edgeControl.hitTargetSize : edgeContentWidth,
         height: props.sharedPresentation ? nodeMetrics.edgeControl.hitTargetSize : edgeContentHeight,
@@ -73,8 +78,10 @@ export interface LogicAppsEdgeProps {
 const edgeContentHeight = 24;
 const edgeContentWidth = 92;
 
-const runAfterWidth = 36;
-const runAfterHeight = 12;
+const offsetFromPort = (x: number, y: number, position: Position, distance: number) => ({
+  x: x + (position === Position.Left ? -distance : position === Position.Right ? distance : 0),
+  y: y + (position === Position.Top ? -distance : position === Position.Bottom ? distance : 0),
+});
 
 const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
@@ -93,11 +100,20 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const readOnly = useReadOnly();
   const enabled = useSharedNodeUi();
   const accepted = data as { presentation?: { shared?: boolean } } | undefined;
-  const shared = accepted?.presentation?.shared ?? enabled;
+  const reactFlow = useReactFlow();
+  const sourceAccepted = Boolean(
+    (reactFlow.getNode(source)?.data as { presentation?: { shared?: boolean } } | undefined)?.presentation?.shared
+  );
+  const targetAccepted = Boolean(
+    (reactFlow.getNode(target)?.data as { presentation?: { shared?: boolean } } | undefined)?.presentation?.shared
+  );
+  // Accepted edge presentation wins in both directions so edges stay atomically aligned with cards/handles until ELK commits.
+  const edgeMode = accepted?.presentation?.shared ?? enabled;
+  const shared = edgeMode && sourceAccepted && targetAccepted;
   const lineStyles = useNodeLineStyles();
   const styles = useConnectionStyles();
-  const [hovered, setHovered] = useState(false);
-  const reactFlow = useReactFlow();
+  const activeState = useEdgeActiveState();
+  const hovered = shared ? activeState.isActive : false;
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
@@ -125,13 +141,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
+  const horizontalTarget = targetPosition === Position.Left || targetPosition === Position.Right;
   const raIndex: number = useMemo(() => {
+    const crossAxis = horizontalTarget ? 'y' : 'x';
     const sortedRunAfters = Object.keys(filteredRunAfters)
       .slice(0)
-      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.x ?? 0) - (reactFlow.getNode(id1)?.position?.x ?? 0));
+      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.[crossAxis] ?? 0) - (reactFlow.getNode(id1)?.position?.[crossAxis] ?? 0));
 
     return sortedRunAfters?.findIndex((key) => key === source);
-  }, [filteredRunAfters, reactFlow, source]);
+  }, [filteredRunAfters, horizontalTarget, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const runAfterCount = Object.keys(filteredRunAfters).length;
@@ -145,21 +163,34 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const multipleTargets = edgeTargets.length > 1;
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
+  const runAfterWidth = shared ? nodeMetrics.runAfter.sharedWidth : nodeMetrics.runAfter.legacyWidth;
+  const runAfterHeight = shared ? nodeMetrics.runAfter.sharedHeight : nodeMetrics.runAfter.legacyHeight;
 
-  const runAfterX = targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
-  const runAfterY = targetY - runAfterHeight;
+  // Keep the indicator upright, reserving its width or height along the target port's normal.
+  const indicatorExtent = horizontalTarget ? runAfterWidth : runAfterHeight;
+  const indicatorCenter = offsetFromPort(targetX, targetY, targetPosition, indicatorExtent / 2);
+  const spreadPerEdge = horizontalTarget ? nodeMetrics.runAfter.spreadHorizontal : nodeMetrics.runAfter.spreadVertical;
+  const indicatorSpread = shared
+    ? (numRunAfters - 1 - raIndex * 2) * (spreadPerEdge / 2)
+    : (numRunAfters - 1 - raIndex * 2) * ((horizontalTarget ? runAfterHeight : runAfterWidth) / 2 + 4);
+  const runAfterX = indicatorCenter.x - runAfterWidth / 2 + (horizontalTarget ? 0 : indicatorSpread);
+  const runAfterY = indicatorCenter.y - runAfterHeight / 2 + (horizontalTarget ? indicatorSpread : 0);
+  const sourceButton = offsetFromPort(sourceX, sourceY, sourcePosition, 28);
+  const targetButton = offsetFromPort(targetX, targetY, targetPosition, 32 + (numRunAfters !== 0 ? 4 : 0));
 
-  const [d] = useMemo(() => {
+  const { d, endpoint } = useMemo(() => {
+    const endpoint = offsetFromPort(targetX, targetY, targetPosition, (numRunAfters !== 0 ? indicatorExtent : 0) + (shared ? 0 : 2));
     const endpoints = {
       sourceX,
       sourceY,
       sourcePosition,
-      targetX,
-      targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - (shared ? 0 : 2),
+      targetX: endpoint.x,
+      targetY: endpoint.y,
       targetPosition,
     };
-    return shared ? getBezierPath(endpoints) : getSmoothStepPath({ ...endpoints, borderRadius: 8, centerY });
-  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY, shared]);
+    const [path] = shared ? getBezierPath(endpoints) : getSmoothStepPath({ ...endpoints, borderRadius: 8, centerY });
+    return { d: path, endpoint };
+  }, [numRunAfters, indicatorExtent, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY, shared]);
 
   const tabIndex = useEdgeIndex(id);
 
@@ -182,6 +213,9 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           ? 'dashedNeutral'
           : 'solid';
 
+  // Selection is authoring emphasis, not run evidence; legacy monitoring also highlights selected endpoints.
+  const stroke = getNodeLineStroke(variant, { state: highlighted ? 'highlighted' : 'default' });
+
   return (
     <>
       {!shared && (
@@ -202,7 +236,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
       <path
         id={id}
-        style={shared ? { ...style, ...nodeLineStrokes[variant] } : style}
+        style={shared ? { ...style, ...stroke } : style}
         className={
           shared
             ? css('msla-shared-edge-path', lineStyles.base, lineStyles[variant])
@@ -213,17 +247,35 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         strokeDasharray={shared ? undefined : showRunAfter ? '4 6' : '0'}
         strokeWidth={shared ? undefined : 2}
         strokeLinecap={'round'}
-        markerEnd={shared ? undefined : `url(#${capGuid})`}
+        // Both modes reference `capGuid`; only one marker definition is rendered per mode.
+        markerEnd={`url(#${capGuid})`}
       />
       {shared && (
-        <path
-          d={d}
-          className={styles.hitPath}
-          strokeWidth={nodeMetrics.edgeControl.interactionWidth}
-          data-edge-hit-target
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        />
+        <>
+          {/* The cap uses its own class/attribute so `.msla-shared-edge-path` and `data-line` keep naming exactly one
+              stroke per edge; as a marker it is painted by that stroke (see SharedEdgeArrowCap). */}
+          <SharedEdgeArrowCap
+            id={capGuid}
+            x={endpoint.x}
+            y={endpoint.y}
+            direction={getSharedEdgeArrowDirection(targetPosition)}
+            variant={variant}
+            style={{
+              ...style,
+              stroke: stroke.stroke,
+              strokeWidth: stroke.strokeWidth,
+              strokeDasharray: 'none',
+            }}
+            className={css('msla-shared-edge-cap', lineStyles.base, lineStyles[variant])}
+          />
+          <path
+            d={d}
+            className={styles.hitPath}
+            strokeWidth={nodeMetrics.edgeControl.interactionWidth}
+            data-edge-hit-target
+            {...activeState.lineProps}
+          />
+        </>
       )}
 
       {/* ADD ACTION / BRANCH BUTTONS */}
@@ -232,14 +284,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* TOP BUTTON */}
           {((multipleTargets && showSourceButton) || multipleSources) && (
             <EdgeContent
-              x={sourceX - edgeContentWidth / 2}
-              y={sourceY + 28 - edgeContentHeight / 2}
+              x={sourceButton.x - edgeContentWidth / 2}
+              y={sourceButton.y - edgeContentHeight / 2}
               graphId={graphId}
               parentId={source}
               childId={multipleTargets ? undefined : target}
               tabIndex={tabIndex}
               isRevealed={hovered}
               sharedPresentation={shared}
+              controlProps={shared ? activeState.wrapperProps : undefined}
             />
           )}
 
@@ -254,14 +307,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               tabIndex={tabIndex}
               isRevealed={hovered}
               sharedPresentation={shared}
+              controlProps={shared ? activeState.wrapperProps : undefined}
             />
           )}
 
           {/* BOTTOM BUTTOM */}
           {((multipleSources && showTargetButton) || multipleTargets) && (
             <EdgeContent
-              x={targetX - edgeContentWidth / 2}
-              y={targetY - 32 - edgeContentHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              x={targetButton.x - edgeContentWidth / 2}
+              y={targetButton.y - edgeContentHeight / 2}
               graphId={graphId}
               parentId={multipleSources ? undefined : source}
               childId={target}
@@ -269,6 +323,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               tabIndex={tabIndex}
               isRevealed={hovered}
               sharedPresentation={shared}
+              controlProps={shared ? activeState.wrapperProps : undefined}
             />
           )}
         </>
@@ -277,7 +332,12 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       {/* RUN AFTER INDICATOR */}
       {showRunAfter ? (
         <foreignObject id="msla-run-after-traffic-light" width={runAfterWidth} height={runAfterHeight} x={runAfterX} y={runAfterY}>
-          <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
+          {/* Same slot, thresholds, and source data in both modes; only the indicator presentation is flag-selected. */}
+          {shared ? (
+            <SharedRunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
+          ) : (
+            <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
+          )}
         </foreignObject>
       ) : null}
       {/* RUN AFTER INDICATOR WHEN COLLAPSED */}
@@ -286,10 +346,14 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           id="msla-run-after-traffic-light"
           width={runAfterWidth}
           height={runAfterHeight}
-          x={targetX - runAfterWidth / 2}
-          y={targetY - runAfterHeight}
+          x={indicatorCenter.x - runAfterWidth / 2}
+          y={indicatorCenter.y - runAfterHeight / 2}
         >
-          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
+          {shared ? (
+            <SharedCollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
+          ) : (
+            <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
+          )}
         </foreignObject>
       ) : null}
     </>

@@ -1,10 +1,10 @@
-import { forwardRef } from 'react';
+import { forwardRef, useContext } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 import { nodeMetrics } from '../metrics';
-import { defaultNodeStrings } from '../strings';
+import { defaultBranchTakenString, defaultNodeStrings } from '../strings';
 import type { NodeLabeledHandleBranch } from '../types';
-import { useNodeHandleAxis } from './NodeHandle';
+import { NodeInactiveContext, useNodeHandleAxis } from './NodeHandle';
 
 const useStyles = makeStyles({
   outputs: {
@@ -37,7 +37,16 @@ const useStyles = makeStyles({
     whiteSpace: 'nowrap',
   },
   outputVertical: { flexDirection: 'column', gap: tokens.spacingVerticalXS, height: 'auto' },
-  inactive: { opacity: 0.4 },
+  inactive: { opacity: nodeMetrics.inactiveOpacity },
+  // Visually hidden but announced; avoids a new visible caption on the tight output rail.
+  srOnly: {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    overflow: 'hidden',
+    clipPath: 'inset(50%)',
+    whiteSpace: 'nowrap',
+  },
   tick: {
     flexShrink: 0,
     width: tokens.strokeWidthThick,
@@ -68,26 +77,33 @@ export interface NodeBranchOutputsProps extends Omit<HTMLAttributes<HTMLSpanElem
   slots?: readonly ReactNode[];
   /** Index of the branch that ran; omission leaves every branch undimmed. */
   activeIndex?: number;
+  /** Formats the announced phrase for the taken branch; defaults to English "<label>, branch taken". */
+  takenLabel?: (label: string) => string;
 }
 
 /** If outputs in display order; hosts own real handles passed through slots. */
 export const NodeBranchOutputs = forwardRef<HTMLSpanElement, NodeBranchOutputsProps>(function NodeBranchOutputs(
-  { branches, labels, slots, activeIndex, className, ...rest },
+  { branches, labels, slots, activeIndex, takenLabel = defaultBranchTakenString, className, ...rest },
   ref
 ) {
   const styles = useStyles();
   const axis = useNodeHandleAxis();
   const isVertical = axis === 'vertical';
+  // An inactive card already dims everything inside it; dimming untaken outputs again would compound.
+  const ancestorInactive = useContext(NodeInactiveContext);
   return (
     <span {...rest} ref={ref} className={mergeClasses(isVertical ? styles.outputsVertical : styles.outputs, className)} data-axis={axis}>
       {branches.map((branch, index) => {
         const inactive = activeIndex !== undefined && index !== activeIndex;
+        const taken = activeIndex !== undefined && index === activeIndex;
+        const label = labels?.[index] ?? defaultNodeStrings.branch[branch];
         return (
           <span
             key={`${branch}-${index}`}
-            className={mergeClasses(styles.output, isVertical && styles.outputVertical, inactive && styles.inactive)}
+            className={mergeClasses(styles.output, isVertical && styles.outputVertical, inactive && !ancestorInactive && styles.inactive)}
             data-branch={branch}
             data-inactive={inactive || undefined}
+            data-taken={taken || undefined}
           >
             <span
               className={mergeClasses(
@@ -97,7 +113,17 @@ export const NodeBranchOutputs = forwardRef<HTMLSpanElement, NodeBranchOutputsPr
               )}
               aria-hidden="true"
             />
-            <span>{labels?.[index] ?? defaultNodeStrings.branch[branch]}</span>
+            {/* One caption child keeps the tick -> caption -> slot anatomy; the taken phrase is one localizable string. */}
+            <span>
+              {taken ? (
+                <>
+                  <span aria-hidden="true">{label}</span>
+                  <span className={styles.srOnly}>{takenLabel(label)}</span>
+                </>
+              ) : (
+                label
+              )}
+            </span>
             <span className={mergeClasses(styles.slot, isVertical && styles.slotVertical)}>{slots?.[index]}</span>
           </span>
         );

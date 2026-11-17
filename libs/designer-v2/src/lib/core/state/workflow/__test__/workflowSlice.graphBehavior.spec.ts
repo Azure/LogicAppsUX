@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { RUN_AFTER_STATUS, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
+import { reassignEdgeSources, reassignEdgeTargets } from '../../../parsers/restructuringHelpers';
+import { createWorkflowEdge } from '../../../utils/graph';
 import { getWorkflowNodeFromGraphState } from '../workflowGraphTraversal';
 import type { WorkflowState } from '../workflowInterfaces';
 import reducer, { initialWorkflowState, workflowSlice } from '../workflowSlice';
@@ -110,7 +112,7 @@ describe('workflow graph mutations preserve authoring topology', () => {
     expect(result.operations.Loop).toMatchObject({ type: 'Foreach', foreach: '@createArray(1)' });
   });
 
-  it('replaces a deleted trigger with a placeholder and rewires it when the real trigger is added again', () => {
+  it.each(['Replacement', 'Replacement-Trigger'])('rewires the trigger placeholder to %s', (replacement) => {
     const deleted = reducer(linear(), actions.deleteNode({ nodeId: 'manual', isTrigger: true }));
     const placeholder = Object.keys(deleted.nodesMetadata).find((id) => deleted.nodesMetadata[id].isTrigger)!;
     expect(placeholder).not.toBe('manual');
@@ -118,7 +120,7 @@ describe('workflow graph mutations preserve authoring topology', () => {
     const restored = reducer(
       deleted,
       actions.addNode({
-        nodeId: 'Replacement',
+        nodeId: replacement,
         isTrigger: true,
         operation: {
           id: 'request',
@@ -141,7 +143,7 @@ describe('workflow graph mutations preserve authoring topology', () => {
     );
     expect(restored.operations[placeholder]).toBeUndefined();
     expect(restored.nodesMetadata[placeholder]).toBeUndefined();
-    expect(restored.graph?.edges).toEqual(expect.arrayContaining([expect.objectContaining({ source: 'Replacement', target: 'A' })]));
+    expect(restored.graph?.edges).toEqual(expect.arrayContaining([createWorkflowEdge(replacement, 'A')]));
   });
 
   it('pastes an action between existing neighbors without replacing their definitions', () => {
@@ -162,6 +164,26 @@ describe('workflow graph mutations preserve authoring topology', () => {
     );
     expect(result.operations.A).toMatchObject({ inputs: 'first' });
     expect(result.operations.B).toMatchObject({ inputs: 'second' });
+  });
+
+  it('creates stable IDs when pasting between hyphenated action names', () => {
+    const state = fixture({
+      actions: {
+        'A-B': { type: 'Compose', inputs: 'first' },
+        C: { type: 'Compose', inputs: 'second', runAfter: { 'A-B': ['Succeeded'] } },
+      },
+    });
+    const result = reducer(
+      state,
+      actions.pasteNode({
+        nodeId: 'Pasted-action',
+        relationshipIds: { graphId: 'root', parentId: 'A-B', childId: 'C' },
+        operation: { type: 'Compose', connectorId: 'connectionless', operationId: 'compose' },
+      })
+    );
+    expect(result.graph?.edges).toEqual(
+      expect.arrayContaining([createWorkflowEdge('A-B', 'Pasted-action'), createWorkflowEdge('Pasted-action', 'C')])
+    );
   });
 
   it('adds, updates and removes run-after links in a nested scope without modifying root edges', () => {
@@ -195,6 +217,55 @@ describe('workflow graph mutations preserve authoring topology', () => {
     expect(repeated.graph?.edges?.filter(({ id }) => id === 'C-A')).toHaveLength(1);
     const removed = reducer(repeated, actions.removeRunAfter({ childOperationId: 'A', parentOperationId: 'C' }));
     expect(removed.operations.A).toMatchObject({ runAfter: {} });
+  });
+
+  it.each(['run-after editor', 'code-view edit'])('keeps distinct hyphenated dependencies when using the %s', (method) => {
+    const state = fixture({
+      triggers: { manual: { type: 'Request', kind: 'Http', inputs: {} } },
+      actions: {
+        A: { type: 'Compose', inputs: 'first' },
+        'A-B': { type: 'Compose', inputs: 'second' },
+        'B-C': { type: 'Compose', inputs: 'third', runAfter: { A: ['Succeeded'] } },
+        C: { type: 'Compose', inputs: 'fourth' },
+      },
+    });
+    const result =
+      method === 'run-after editor'
+        ? reducer(state, actions.addRunAfter({ childOperationId: 'C', parentOperationId: 'A-B' }))
+        : reducer(
+            state,
+            actions.replaceOperationDefinition({
+              nodeId: 'C',
+              operationDefinition: { type: 'Compose', inputs: 'fourth', runAfter: { 'A-B': ['Succeeded'] } },
+            })
+          );
+    const dependencies = result.graph!.edges!.filter(
+      ({ source, target }) => (source === 'A' && target === 'B-C') || (source === 'A-B' && target === 'C')
+    );
+    expect(dependencies).toHaveLength(2);
+    expect(new Set(dependencies.map(({ id }) => id)).size).toBe(2);
+  });
+
+  it.each(['source', 'target'])('keeps distinct IDs when reassigning an edge %s', (endpoint) => {
+    const state = fixture({
+      actions: {
+        A: { type: 'Compose', inputs: 'first' },
+        'A-B': { type: 'Compose', inputs: 'second' },
+        'B-C': { type: 'Compose', inputs: 'third', ...(endpoint === 'source' && { runAfter: { A: ['Succeeded'] } }) },
+        Old: { type: 'Compose', inputs: 'old', ...(endpoint === 'target' && { runAfter: { A: ['Succeeded'] } }) },
+        C: { type: 'Compose', inputs: 'fourth', runAfter: { [endpoint === 'source' ? 'Old' : 'A-B']: ['Succeeded'] } },
+      },
+    });
+    if (endpoint === 'source') {
+      reassignEdgeSources(state, 'Old', 'A-B', state.graph!);
+    } else {
+      reassignEdgeTargets(state, 'Old', 'B-C', state.graph!);
+    }
+    const dependencies = state.graph!.edges!.filter(
+      ({ source, target }) => (source === 'A' && target === 'B-C') || (source === 'A-B' && target === 'C')
+    );
+    expect(dependencies).toEqual(expect.arrayContaining([createWorkflowEdge('A', 'B-C'), createWorkflowEdge('A-B', 'C')]));
+    expect(new Set(dependencies.map(({ id }) => id)).size).toBe(2);
   });
 
   it('adds and deletes authored Switch cases and Agent tools through their existing reducer commands', () => {

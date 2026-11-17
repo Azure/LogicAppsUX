@@ -2,6 +2,7 @@ import type { ConsumptionWorkflowMetadata } from '@microsoft/logic-apps-shared';
 import { equals, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
+import { COLLAPSED_NODE_SIZE } from '../../utils/graph';
 import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
 
 // Keep graph pruning and definition-backed collapsed tool counts on the same Handoff predicate.
@@ -29,6 +30,8 @@ const pruneTree = (node: WorkflowNode, nodesToRemove: Set<string>, collapsedIds:
   // update its type and remove its children/edges.
   if (collapsedIds[node.id]) {
     newNode.type = 'COLLAPSED_NODE';
+    newNode.width = COLLAPSED_NODE_SIZE.width;
+    newNode.height = COLLAPSED_NODE_SIZE.height;
     delete newNode.children;
     delete newNode.edges;
     return newNode;

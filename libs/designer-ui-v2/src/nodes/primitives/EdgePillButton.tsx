@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { ButtonHTMLAttributes, ReactElement } from 'react';
+import type { ButtonHTMLAttributes, CSSProperties, ReactElement } from 'react';
 import { Button, makeStyles, mergeClasses, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { nodeMetrics } from '../metrics';
 
@@ -27,6 +27,17 @@ const useStyles = makeStyles({
   },
   hidden: { opacity: 0, transform: 'scale(0.8)', pointerEvents: 'none' },
   visible: { opacity: 1, transform: 'scale(1)' },
+  masked: {
+    backgroundColor: 'var(--node-edge-mask-color)',
+    ':hover': { backgroundColor: 'var(--node-edge-mask-color)' },
+    ':active': { backgroundColor: 'var(--node-edge-mask-color)' },
+    // Keep the mask in CSS rather than inline background paint so system colors win in every state.
+    '@media (forced-colors: active)': {
+      backgroundColor: 'Canvas',
+      ':hover': { backgroundColor: 'Canvas' },
+      ':active': { backgroundColor: 'Canvas' },
+    },
+  },
 });
 
 export interface EdgePillButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> {
@@ -37,11 +48,13 @@ export interface EdgePillButtonProps extends Omit<ButtonHTMLAttributes<HTMLButto
   isRevealed: boolean;
   /** Unavailable callbacks retain a disabled affordance rather than an inert button. */
   onActivate?: () => void;
+  /** Optional canvas-colored mask for the line behind the pill. System colors remain authoritative. */
+  maskColor?: string;
 }
 
 /** Canonical Otto edge hover-reveal pill. Host owns placement, enlarged hit area and reveal state. */
 export const EdgePillButton = forwardRef<HTMLButtonElement, EdgePillButtonProps>(function EdgePillButton(
-  { icon, tooltip, ariaLabel, isRevealed, onActivate, disabled, className, onKeyDown, onKeyUp, onMouseDown, ...rest },
+  { icon, tooltip, ariaLabel, isRevealed, onActivate, maskColor, disabled, className, style, onKeyDown, onKeyUp, onMouseDown, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -52,7 +65,13 @@ export const EdgePillButton = forwardRef<HTMLButtonElement, EdgePillButtonProps>
         ref={ref}
         type="button"
         shape="circular"
-        className={mergeClasses(styles.button, isRevealed ? styles.visible : styles.hidden, className)}
+        className={mergeClasses(
+          styles.button,
+          isRevealed ? styles.visible : styles.hidden,
+          maskColor !== undefined && styles.masked,
+          className
+        )}
+        style={{ '--node-edge-mask-color': maskColor, ...style } as CSSProperties}
         icon={icon}
         onClick={(event) => {
           event.stopPropagation();

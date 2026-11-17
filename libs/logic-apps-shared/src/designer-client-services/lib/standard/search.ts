@@ -5,8 +5,7 @@ import type {
   Connector,
   SomeKindOfAzureOperationDiscovery,
 } from '../../../utils/src';
-import { connectorsSearchResultsMock, validateRequiredServiceArguments } from '../../../utils/src';
-import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
+import { validateRequiredServiceArguments } from '../../../utils/src';
 import { BaseSearchService } from '../base';
 import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../base/search';
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
@@ -48,7 +47,7 @@ export class StandardSearchService extends BaseSearchService {
     const filterOperation = (operation: DiscoveryOperation<BuiltInOperation>) =>
       filterStateful(operation, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(filterOperation)]);
+      return [...this.getDevData('builtInOperations'), ...getClientBuiltInOperations(filterOperation)];
     }
     const { apiVersion, baseUrl, httpClient, showStatefulOperations, locale } = this.options;
     const uri = `${baseUrl}/operations`;
@@ -149,7 +148,7 @@ export class StandardSearchService extends BaseSearchService {
   public async getBuiltInConnectors(): Promise<Connector[]> {
     const filterConnector = (connector: Connector) => filterStateful(connector, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(filterConnector)]);
+      return [...this.getDevData('builtInConnectors'), ...getClientBuiltInConnectors(filterConnector)];
     }
     const { apiVersion, baseUrl, httpClient, locale } = this.options;
     const uri = `${baseUrl}/operationGroups`;

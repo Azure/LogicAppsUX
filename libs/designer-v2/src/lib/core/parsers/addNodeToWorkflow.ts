@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
@@ -114,7 +113,7 @@ const createSubgraphNode = (
   const node = createWorkflowNode(id, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
   node.subGraphLocation = location;
   addChildNode(parent, node);
-  const graphHeading = createWorkflowNode(`${id}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const graphHeading = createWorkflowNode(`${id}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType);
   addChildNode(node, graphHeading);
   nodesMetadata[id] = {
     graphId: parent.id,
@@ -135,11 +134,13 @@ const handleExtraScopeNodeSetup = (
 
   let scopeHeadingId = `${node.id}-#scope`;
   let scopeHeadingType = WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE;
+  let scopeHeadingSubgraphType: SubgraphType | undefined;
   if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.UNTIL) {
     scopeHeadingId = `${node.id}-#subgraph`;
     scopeHeadingType = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
+    scopeHeadingSubgraphType = SUBGRAPH_TYPES.UNTIL_DO;
   }
-  const scopeHeadingNode = createWorkflowNode(scopeHeadingId, scopeHeadingType);
+  const scopeHeadingNode = createWorkflowNode(scopeHeadingId, scopeHeadingType, scopeHeadingSubgraphType);
   addChildNode(node, scopeHeadingNode);
 
   // Handle CONDITIONALS
@@ -161,7 +162,11 @@ const handleExtraScopeNodeSetup = (
     const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);
     addCaseGraph.subGraphLocation = 'addCase';
     addChildNode(node, addCaseGraph);
-    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    const addCaseGraphHeading = createWorkflowNode(
+      `${addCaseGraphId}-#subgraph`,
+      WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+      SUBGRAPH_TYPES.SWITCH_ADD_CASE
+    );
     addChildNode(addCaseGraph, addCaseGraphHeading);
     nodesMetadata[addCaseGraphId] = {
       graphId: node.id,
@@ -190,7 +195,11 @@ const handleExtraScopeNodeSetup = (
     const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);
     addCaseGraph.subGraphLocation = 'addCase';
     addChildNode(node, addCaseGraph);
-    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    const addCaseGraphHeading = createWorkflowNode(
+      `${addCaseGraphId}-#subgraph`,
+      WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+      SUBGRAPH_TYPES.AGENT_ADD_CONDITON
+    );
     addChildNode(addCaseGraph, addCaseGraphHeading);
     nodesMetadata[addCaseGraphId] = {
       graphId: node.id,
@@ -221,7 +230,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   caseNode.subGraphLocation = 'cases';
   // addChildNode(switchNode, caseNode);
   switchNode.children?.splice(switchNode.children.length - 2, 0, caseNode);
-  const caseHeading = createWorkflowNode(`${caseId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const caseHeading = createWorkflowNode(`${caseId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, SUBGRAPH_TYPES.SWITCH_CASE);
   addChildNode(caseNode, caseHeading);
   nodesMetadata[caseId] = {
     graphId: switchNode.id,
@@ -248,7 +257,11 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
   const conditionNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
   conditionNode.subGraphLocation = 'tools';
   agentNode.children?.splice(agentNode.children.length - 2, 0, conditionNode);
-  const conditionHeading = createWorkflowNode(`${toolId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const conditionHeading = createWorkflowNode(
+    `${toolId}-#subgraph`,
+    WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+    SUBGRAPH_TYPES.AGENT_CONDITION
+  );
   addChildNode(conditionNode, conditionHeading);
   nodesMetadata[toolId] = {
     graphId: agentNode.id,

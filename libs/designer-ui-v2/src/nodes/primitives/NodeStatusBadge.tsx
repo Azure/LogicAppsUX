@@ -55,13 +55,26 @@ const useStyles = makeStyles({
   },
 });
 export interface NodeStatusBadgeProps extends HTMLAttributes<HTMLDivElement> {
+  /** Visual tone; the nine-value union is frozen, so richer service states map onto it with `label`. */
   status: NodeRunStatus;
   detail?: string;
+  /** Visible text override (for example "Timed out" on a failed tone); an empty string is honored. */
+  label?: string;
   strings?: NodeStatusStrings;
+  /**
+   * Defaults to a polite live region (`role="status"`) for standalone use. Canvas composites explicitly
+   * opt out to avoid announcing every node, carrying status in the owning card's accessible name instead.
+   * An explicit `role` takes precedence.
+   */
+  live?: boolean;
 }
-export const getNodeStatusLabel = (status: NodeRunStatus, strings = defaultNodeStrings.status) => strings[status];
+/** Text a badge renders; hosts reuse it for accessible names so both stay in sync. */
+export const getNodeStatusLabel = (status: NodeRunStatus, strings = defaultNodeStrings.status, detail?: string, label?: string) => {
+  const text = label ?? strings[status];
+  return detail ? `${text} ${detail}` : text;
+};
 export const NodeStatusBadge = forwardRef<HTMLDivElement, NodeStatusBadgeProps>(function NodeStatusBadge(
-  { status, detail, strings = defaultNodeStrings.status, className, ...rest },
+  { status, detail, label, strings = defaultNodeStrings.status, live = true, className, role, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -75,10 +88,10 @@ export const NodeStatusBadge = forwardRef<HTMLDivElement, NodeStatusBadgeProps>(
       color={colors[status]}
       className={mergeClasses(styles.root, status === 'mock' && styles.mock, className)}
       icon={{ children: icons[status], 'aria-hidden': true, className: mergeClasses(styles.icon, status === 'running' && styles.spin) }}
-      role="status"
+      role={role ?? (live ? 'status' : undefined)}
       data-badge-status={status}
     >
-      {strings[status]}
+      {label ?? strings[status]}
       {detail ? <> {detail}</> : null}
     </Badge>
   );

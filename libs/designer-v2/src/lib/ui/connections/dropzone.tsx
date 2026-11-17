@@ -29,10 +29,11 @@ import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSele
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { DropTarget } from './dropTarget';
 import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
+import { designerUiTokens, EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { AddFilled } from '@fluentui/react-icons';
 import { terminalConnectionLength, useConnectionStyles } from './connections.styles';
-import { Tooltip } from '@fluentui/react-components';
+import { mergeClasses, Tooltip } from '@fluentui/react-components';
 
 export interface DropZoneProps {
   graphId: string;
@@ -42,21 +43,25 @@ export interface DropZoneProps {
   tabIndex?: number;
   isRevealed?: boolean;
   sharedPresentation?: boolean;
+  axis?: 'vertical' | 'horizontal';
 }
 
 export const DropZone: React.FC<DropZoneProps> = memo(
-  ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0, isRevealed, sharedPresentation }) => {
+  ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0, isRevealed, sharedPresentation, axis = 'vertical' }) => {
     const intl = useIntl();
     const dispatch = useDispatch<AppDispatch>();
     const isA2AWorkflow = useIsA2AWorkflow();
     const enabled = useSharedNodeUi();
     const shared = sharedPresentation ?? enabled;
+    const horizontal = shared && axis === 'horizontal';
     const readOnly = useReadOnly();
     const styles = useConnectionStyles();
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const terminal = isRevealed === undefined;
     const revealed = terminal || isRevealed || hovered || focused;
+    const terminalControlSize = Math.max(nodeMetrics.actionAdd.buttonWidth, nodeMetrics.actionAdd.buttonHeight);
+    const controlSize = terminal ? terminalControlSize : nodeMetrics.edgeControl.hitTargetSize;
 
     const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
     const terminalVariant =
@@ -257,6 +262,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
               className={styles.control}
               data-edge-control={terminal ? 'terminal' : 'insertion'}
               data-revealed={revealed}
+              style={{ width: controlSize, height: controlSize }}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
               onFocus={() => setFocused(true)}
@@ -269,10 +275,10 @@ export const DropZone: React.FC<DropZoneProps> = memo(
               {terminal ? (
                 <>
                   <NodeLine
-                    className={styles.terminalLine}
+                    className={mergeClasses(styles.terminalLine, horizontal && styles.terminalLineHorizontal)}
                     variant={terminalVariant}
                     length={terminalConnectionLength}
-                    orientation="vertical"
+                    orientation={horizontal ? 'horizontal' : 'vertical'}
                   />
                   <Tooltip content={tooltipText} relationship="label">
                     <NodeAddButton
@@ -304,6 +310,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                   icon={<AddFilled />}
                   tooltip={tooltipText}
                   ariaLabel={tooltipText}
+                  maskColor={designerUiTokens.canvasBackground}
                   tabIndex={tabIndex}
                   isRevealed={revealed}
                   onActivate={openMenu}

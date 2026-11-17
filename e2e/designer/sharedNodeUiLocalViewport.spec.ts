@@ -308,8 +308,11 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
       }
       await page.getByRole('button', { name: 'Zoom view to fit', exact: true }).click();
       await waitForViewport(page);
+      // Legacy Switch ports are intentionally absent; the global source handles must still prove visible geometry.
+      const sourceHandles = page.locator('.react-flow__handle.source');
+      expect(await sourceHandles.count()).toBeGreaterThan(0);
       expect(
-        await page.locator('.react-flow__handle.source').evaluateAll((elements) =>
+        await sourceHandles.evaluateAll((elements) =>
           elements.every((element) => {
             const rect = element.getBoundingClientRect();
             return Number.isFinite(rect.x) && Number.isFinite(rect.y) && rect.width > 0 && rect.height > 0;

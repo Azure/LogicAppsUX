@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { getNodeGlyph, type NodeVisualKind } from '@microsoft/designer-ui-v2';
 import { isBuiltInOperation } from '@microsoft/logic-apps-shared';
-import { BoxMultipleRegular } from '@fluentui/react-icons';
+import { AgentsFilled, AgentsRegular, BoxMultipleRegular } from '@fluentui/react-icons';
 
 export const scopeNodeIcon = <BoxMultipleRegular />;
 
@@ -41,6 +41,7 @@ const groups: { types: readonly string[]; visualKind: NodeVisualKind }[] = [
 ];
 
 const visualKinds = new Map(groups.flatMap((group) => group.types.map((type) => [type, group.visualKind] as const)));
+const agentIdentity = new Set(['agent', 'nestedagent']);
 
 /** Raw workflow identity stays host-owned; null suppresses built-in branding, undefined preserves connector branding. */
 export function getOperationNodeVisualKind(type: string, kind?: string): NodeVisualKind | null | undefined {
@@ -50,6 +51,11 @@ export function getOperationNodeVisualKind(type: string, kind?: string): NodeVis
 }
 
 export function getOperationNodeGlyph(type: string, kind?: string): OperationNodeGlyph | null | undefined {
+  const identity = (type.toLowerCase() === 'expression' && kind ? kind : type).toLowerCase();
+  if (agentIdentity.has(identity)) {
+    // NestedAgent intentionally reuses the canonical Agent glyph without extending the shared visual-kind union.
+    return { icon: <AgentsRegular />, selectedIcon: <AgentsFilled /> };
+  }
   const visualKind = getOperationNodeVisualKind(type, kind);
   if (visualKind == null) {
     return visualKind;

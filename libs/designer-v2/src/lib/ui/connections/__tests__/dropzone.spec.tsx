@@ -224,6 +224,42 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     expect(state.dispatch.mock.calls[0][0].payload).toMatchObject({ graphId: 'nested', parentId: 'last', isLeaf: true });
   });
 
+  it.each([
+    { axis: 'horizontal' as const, width: '8', height: '20', path: 'M0 10 H8', top: '50%', left: '-8px', transform: 'translateY(-50%)' },
+    { axis: 'vertical' as const, width: '20', height: '8', path: 'M10 0 V8', top: '-8px', left: '50%', transform: 'translateX(-50%)' },
+  ])(
+    'renders the actual $axis terminal line and canonical control from accepted presentation',
+    ({ axis, width, height, path, top, left, transform }) => {
+      state.shared = false;
+      const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf axis={axis} sharedPresentation />);
+      const line = container.querySelector('[data-line="dashedNeutral"]')!;
+      expect(line).toHaveAttribute('width', width);
+      expect(line).toHaveAttribute('height', height);
+      expect(line.querySelector('path')).toHaveAttribute('d', path);
+      expect(line).toHaveStyle({ top, left, transform });
+      expect(container.querySelector('[data-edge-control="terminal"]')).toHaveStyle({ width: '32px', height: '32px' });
+      expect(screen.getByRole('button')).toBeEnabled();
+      fireEvent.click(screen.getByRole('button'));
+      expect(state.dispatch.mock.calls[0][0].payload).toMatchObject({ graphId: 'nested', parentId: 'last', isLeaf: true });
+    }
+  );
+
+  it('keeps an accepted legacy terminal off the canonical axis-specific path during a live flag change', () => {
+    const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf axis="horizontal" sharedPresentation={false} />);
+    expect(container.querySelector('.msla-drop-zone-viewmanager')).toBeInTheDocument();
+    expect(container.querySelector('[data-line]')).toBeNull();
+    expect(container.querySelector('[data-edge-control]')).toBeNull();
+  });
+
+  it('disables the real accepted horizontal terminal control in read-only mode', () => {
+    state.readOnly = true;
+    const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf axis="horizontal" sharedPresentation />);
+    expect(container.querySelector('[data-line="dashedNeutral"] path')).toHaveAttribute('d', 'M0 10 H8');
+    expect(screen.getByRole('button')).toBeDisabled();
+    fireEvent.click(screen.getByRole('button'));
+    expect(state.dispatch).not.toHaveBeenCalled();
+  });
+
   it('disables the flagged mutation surface when read-only and never dispatches', () => {
     state.readOnly = true;
     render(<DropZone {...props} />);

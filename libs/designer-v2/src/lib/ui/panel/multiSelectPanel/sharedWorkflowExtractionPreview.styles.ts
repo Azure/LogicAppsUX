@@ -1,4 +1,5 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 export const useSharedPreviewStyles = makeStyles({
   root: {
@@ -8,12 +9,13 @@ export const useSharedPreviewStyles = makeStyles({
     minWidth: 0,
     minHeight: '320px',
     overflow: 'hidden',
-    backgroundColor: tokens.colorNeutralBackground1,
+    // The preview mirrors the main shared canvas role so extracted nodes are judged against the same paint.
+    backgroundColor: designerUiTokens.canvasBackground,
     color: tokens.colorNeutralForeground1,
   },
   flow: {
     minHeight: '320px',
-    '--xy-background-color': tokens.colorNeutralBackground1,
+    '--xy-background-color': designerUiTokens.canvasBackground,
     '& > .react-flow__panel': {
       zIndex: '5 !important',
       margin: `${tokens.spacingHorizontalL} !important`,

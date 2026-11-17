@@ -1,6 +1,6 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { lspDirectory } from '../../../constants';
+import { languageServerSdkDirectoryName } from '../../../constants';
 import {
   codefulProjectsExist,
   detectAgentCodefulWorkflow,
@@ -54,7 +54,7 @@ vi.mock('../../../extensionVariables', () => ({
 describe('invalidateCodefulSdkCacheIfNeeded', () => {
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
   const runtimeDependenciesPath = 'D:\\runtime-dependencies';
-  const lspDirectoryPath = path.join(runtimeDependenciesPath, lspDirectory);
+  const languageServerSdkDirectoryPath = path.join(runtimeDependenciesPath, languageServerSdkDirectoryName);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkRevisionMarkerPath = path.join(runtimeDependenciesPath, '.lspsdk-revision');
   const projectSdkRevisionMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-revision');
@@ -71,7 +71,7 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
     <add key="globalPackagesFolder" value=".nuget\\packages" />
   </config>
   <packageSources>
-    <add key="current" value="${lspDirectoryPath}" />
+    <add key="current" value="${languageServerSdkDirectoryPath}" />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
 </configuration>`;
@@ -156,7 +156,7 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
         return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
-        return codefulNugetConfig.replace(lspDirectoryPath, 'https://api.nuget.org/v3/index.json');
+        return codefulNugetConfig.replace(languageServerSdkDirectoryPath, 'https://api.nuget.org/v3/index.json');
       }
       if (filePath === installedSdkRevisionMarkerPath) {
         return currentSdkRevision;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { AgentToolsPanel, ToolItemCard } from '@microsoft/designer-ui-v2';
 import type { AgentToolsPanelProps } from '@microsoft/designer-ui-v2';
 
@@ -8,7 +8,7 @@ const meta = {
   title: 'Agents/AgentToolsPanel',
   component: AgentToolsPanel,
   args: { expanded: true },
-  argTypes: { children: { control: false } },
+  argTypes: { children: { control: false }, surface: { control: 'inline-radio', options: ['opaque', 'transparent'] } },
   parameters: {
     docs: {
       description: {
@@ -33,7 +33,7 @@ export const MultipleTools: Story = {
 export const CollapsedWithoutToggle: Story = { args: { expanded: false, children: <ToolItemCard title="Get request" size="small" /> } };
 function LocalPanel(args: AgentToolsPanelProps) {
   const [expanded, setExpanded] = useState(args.expanded ?? true);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(args.children ? 2 : 0);
   return (
     <div className="sb-stack">
       <AgentToolsPanel
@@ -41,8 +41,8 @@ function LocalPanel(args: AgentToolsPanelProps) {
         expanded={expanded}
         onAddTool={
           args.onAddTool
-            ? () => {
-                args.onAddTool?.();
+            ? (anchor) => {
+                args.onAddTool?.(anchor);
                 setCount((value) => value + 1);
               }
             : undefined
@@ -79,6 +79,50 @@ export const AddAndToggle: Story = {
     toggle.focus();
     await userEvent.keyboard(' ');
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(canvas.queryByText('Local tool 1')).not.toBeInTheDocument();
+    // Reveal keeps the body mounted until its collapse motion settles.
+    await waitFor(() => expect(canvas.queryByText('Local tool 1')).not.toBeInTheDocument());
   },
 };
+export const ControlledReveal: Story = {
+  args: { ...MultipleTools.args, onToggleExpanded: fn() },
+  render: (args) => <LocalPanel {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Collapse tools' }));
+    await expect(canvas.getByRole('button', { name: 'Expand tools' })).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() => expect(canvas.queryByText('Local tool 1')).not.toBeInTheDocument());
+    await userEvent.click(canvas.getByRole('button', { name: 'Expand tools' }));
+    await expect(canvas.getByRole('button', { name: 'Collapse tools' })).toHaveAttribute('aria-expanded', 'true');
+    await expect(canvas.getByText('Local tool 1')).toBeInTheDocument();
+  },
+};
+export const TransparentSurface: Story = { args: { ...MultipleTools.args, surface: 'transparent' } };
+export const AnchorCallbacks: Story = {
+  render: (args) => <PanelAnchors {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Add tools' }));
+    await expect(canvas.getByText(/Host-owned anchors:/)).toHaveTextContent('panel SECTION; add button BUTTON');
+  },
+};
+function PanelAnchors(args: AgentToolsPanelProps) {
+  const [panel, setPanel] = useState<HTMLElement | null>(null);
+  const [anchor, setAnchor] = useState('none');
+  return (
+    <div className="sb-stack">
+      <AgentToolsPanel
+        {...args}
+        ref={setPanel}
+        onAddTool={(element) => {
+          args.onAddTool?.(element);
+          setAnchor(element?.tagName ?? 'none');
+        }}
+      >
+        {MultipleTools.args?.children}
+      </AgentToolsPanel>
+      <output>
+        Host-owned anchors: panel {panel?.tagName ?? 'mounting'}; add button {anchor}. No graph positioning is computed here.
+      </output>
+    </div>
+  );
+}

@@ -1,8 +1,17 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import type { RootState } from '../../libs/designer-v2/src/lib/core/store';
 import { getSerializedWorkflowFromStateV2 } from './utils/designerFunctions';
 import { LoadRunFile } from './utils/GoToWorkflow';
 import { dragOperationToInsertion, openSharedWorkflow, waitForViewport } from './utils/sharedNodeUi';
+
+async function readNodePosition(node: Locator) {
+  const style = await node.getAttribute('style');
+  const translate = style?.match(/translate\(\s*(-?\d+(?:\.\d+)?)px\s*,\s*(-?\d+(?:\.\d+)?)px\s*\)/);
+  if (!translate) {
+    throw new Error('The React Flow node wrapper must have a translate(x, y) position.');
+  }
+  return { x: Number(translate[1]), y: Number(translate[2]) };
+}
 
 for (const flag of ['true', 'false'] as const) {
   test.describe(`Shared node UI structural and canvas commands, flag ${flag}`, { tag: ['@mock', '@shared-node-ui'] }, () => {
@@ -23,7 +32,7 @@ for (const flag of ['true', 'false'] as const) {
       await expect
         .poll(async () => JSON.parse(await page.evaluate(() => navigator.clipboard.readText())))
         .toMatchObject({ nodeId: 'Scope-copy', isScopeNode: true, serializedOperation: before.definition.actions.Scope });
-      expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
+      expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
       await expect(page.locator('.react-flow__edgeupdater')).toHaveCount(0);
     });
 
@@ -54,13 +63,22 @@ for (const flag of ['true', 'false'] as const) {
       await page.getByRole('button', { name: 'Zoom out', exact: true }).click();
       await waitForViewport(page);
       const before = await getSerializedWorkflowFromStateV2(page);
+      const wrapper = page.locator('[data-testid="rf__node-HTTP"]');
+      const originalPosition = await readNodePosition(wrapper);
       await dragOperationToInsertion(
         page,
         page.locator('#msla-node-HTTP'),
         page.getByTestId('msla-plus-button-manual-initialize_arrayvariable'),
         false
       );
-      expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
+      expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
+      // Rejection restores position, not style identity: React Flow may rewrite spacing or z-index.
+      await expect
+        .poll(async () => {
+          const restoredPosition = await readNodePosition(wrapper);
+          return Math.max(Math.abs(restoredPosition.x - originalPosition.x), Math.abs(restoredPosition.y - originalPosition.y));
+        })
+        .toBeLessThanOrEqual(1);
     });
 
     test('edits and drags the real note and serializes its content and position without changing operations', async ({ page }) => {
@@ -91,8 +109,9 @@ for (const flag of ['true', 'false'] as const) {
       expect(after.definition.actions).toEqual(before.definition.actions);
     });
 
-    test('keeps actual loop monitoring pagination and returns to the original repetition', async ({ page }) => {
+    test('keeps recorded Until fixture pagination through the normal loader (not a live backend run)', async ({ page }, testInfo) => {
       await openSharedWorkflow(page, 'Loops pager', flag);
+      const before = await getSerializedWorkflowFromStateV2(page);
       await LoadRunFile(page, 'SuccessRun');
       const pager = page.getByTestId('msla-pager-v2-until');
       await expect(pager).toBeVisible();
@@ -103,17 +122,24 @@ for (const flag of ['true', 'false'] as const) {
               .runIndex ?? 0
         );
       const original = await readIndex();
-      const before = await getSerializedWorkflowFromStateV2(page);
-      await pager.getByLabel('Next', { exact: true }).click();
+      const next = flag === 'true' ? 'Next iteration' : 'Next';
+      const previous = flag === 'true' ? 'Previous iteration' : 'Previous';
+      await pager.getByLabel(next, { exact: true }).click();
       await expect.poll(readIndex).not.toBe(original);
-      await pager.getByLabel('Previous', { exact: true }).click();
+      await pager.getByLabel(previous, { exact: true }).click();
       await expect.poll(readIndex).toBe(original);
-      expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
+      expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
       await expect(page.getByRole('button', { name: /Insert a new step/ })).toHaveCount(0);
+      await testInfo.attach('recorded-until-evidence', {
+        body: 'recorded fixture through the normal run loader; not a live backend run',
+        contentType: 'text/plain',
+      });
+      await testInfo.attach('recorded-until-pager', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
     });
 
     test('retains keyboard viewport, minimap and search controls with shared canvas presentation', async ({ page }) => {
       await openSharedWorkflow(page, 'General Run After', flag);
+      const definitionBefore = await getSerializedWorkflowFromStateV2(page);
       const viewport = page.locator('.react-flow__viewport');
       const before = await viewport.getAttribute('style');
       if (!before) {
@@ -131,6 +157,7 @@ for (const flag of ['true', 'false'] as const) {
       await page.keyboard.press('Escape');
       await expect(search).not.toBeVisible();
       await expect(page.getByRole('button', { name: 'Search workflow actions', exact: true })).toBeFocused();
+      expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(definitionBefore.definition);
     });
   });
 }
