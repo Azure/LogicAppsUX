@@ -9,6 +9,7 @@ import { NodeIconTile } from '../primitives/NodeIconTile';
 import { NodeText } from '../primitives/NodeText';
 import type { LoopNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
+import type { NodeHandleVariant } from '../types';
 import { resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps } from './shared';
 
@@ -24,6 +25,7 @@ export type LoopBodyPlacement = 'end' | 'bottom' | 'none';
 export interface LoopNodeCardProps extends Omit<BaseNodeCardProps, 'strings'> {
   handles?: boolean;
   bodyPlacement?: LoopBodyPlacement;
+  inputVariant?: NodeHandleVariant;
   inputSlot?: ReactNode;
   /** [body, done] for end; [next] otherwise. */
   outputSlots?: readonly ReactNode[];
@@ -44,6 +46,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
     status,
     statusDetail,
     bodyPlacement = 'end',
+    inputVariant,
     inputSlot,
     outputSlots,
     bodySlot,
@@ -75,7 +78,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
       data-body-placement={bodyPlacement}
     >
       <NodeCardBody testData={testData} testDataLabel={strings.status.mock}>
-        {handles ? <NodeInputHandle>{inputSlot}</NodeInputHandle> : null}
+        {handles ? <NodeInputHandle variant={inputVariant}>{inputSlot}</NodeInputHandle> : null}
         <NodeIconTile
           category="control"
           selected={selected}

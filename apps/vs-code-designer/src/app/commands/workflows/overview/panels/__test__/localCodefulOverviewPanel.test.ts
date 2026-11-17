@@ -141,7 +141,7 @@ vi.mock('../../../../../utils/codeful', () => ({
   hasHttpRequestTrigger: mocks.hasHttpRequestTrigger,
 }));
 
-vi.mock('../../../../../languageServer/languageServer', () => ({
+vi.mock('../../../../../languageServer/languageClient', () => ({
   getCodefulWorkflowMetadata: mocks.getCodefulWorkflowMetadata,
 }));
 
@@ -250,6 +250,8 @@ describe('LocalCodefulOverviewPanel', () => {
     expect(initializePayload.workflowPropertiesList).toHaveLength(2);
     expect(initializePayload.workflowPropertiesList.map((w: any) => w.name)).toEqual(['workflow-a', 'workflow-b']);
     expect(initializePayload.workflowPropertiesList[0].triggerName).toBe('lspManual');
+    expect(mocks.getCodefulWorkflowMetadata).toHaveBeenCalledWith(codefulFilePath, 'workflow-a');
+    expect(mocks.getCodefulWorkflowMetadata).toHaveBeenCalledWith(codefulFilePath, 'workflow-b');
     expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).toContain(
       '/workflows/workflow-a/triggers/lspManual/listCallbackUrl'
     );

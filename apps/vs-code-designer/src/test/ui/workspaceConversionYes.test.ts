@@ -269,7 +269,7 @@ describe('Workspace Conversion — Click Yes', function () {
     await captureScreenshot(driver, 'conversion-yes-focus-applied', EXPLICIT_SCREENSHOT_DIR);
 
     // R2 + R3 + R4 + R6: single retrying handle, force-focus + visibility wait
-    // + Tab+Enter fallback, using the locale-locked Yes label (see
+    // + named-button Enter fallback, using the locale-locked Yes label (see
     // YES_BUTTON_LABEL constant) instead of scanning a fallback list.
     let clickThrew: unknown;
     try {
@@ -375,4 +375,3 @@ describe('Workspace Conversion — Click Yes', function () {
     console.log('[conversionYes] PASSED — prompt appeared, Yes clicked, post-conditions verified');
   });
 });
-

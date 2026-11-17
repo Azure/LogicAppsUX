@@ -21,10 +21,10 @@ exports with explicit visual/nonvisual classifications; new unclassified values
 fail until classified. It also checks exact visual metadata coverage and
 supported public imports, while excluding type-only exports from runtime counts.
 
-Start with **Start here / Introduction** and **API and boundaries**. All **33**
+Start with **Start here / Introduction** and **API and boundaries**. All **37**
 public visual exports (including `DesignerUiScope` and both condition icons)
 have individual typed metadata, native Overview docs, and supported examples.
-The API page documents all **18** nonvisual exports and all public types without
+The API page documents all **31** nonvisual runtime exports and public types without
 inventing UI for helpers or metrics. Add/collapse/selection/dismissal examples
 show visible local state; they are not workflow execution or a fake backend.
 
@@ -75,11 +75,20 @@ Excluded: `NodeBodyToggle` (no verified runtime dependency), CoreAI code/assets/
 
 **Unverified acceptance:** written file-level OSS/legal clearance (MIT declaration is not clearance); public design acceptance; complete rendered interaction and matched two-host visual acceptance, including light/dark, RTL, forced colors and reduced motion; iframe/webview/CSP/clipping checks; feed/name/provenance and ownership/ruleset confirmation. Release eligibility does not establish that these checks passed.
 
+Phase 1b additionally uses the pinned Otto baseline `2a3e8ef` for the incremental presentation ports. These references are provenance inputs, not redistribution clearance.
+
+- [ ] File-level OSS/legal and attribution clearance.
+- [ ] Public design and accessibility sign-off, including matched two-host visual acceptance.
+- [ ] Verified package owner and review/ruleset policy.
+- [ ] Registry/feed/name confirmation and a separately authorized publication.
+
+Package-ready or packed-contract verified does **not** mean released. W10 performs no package publishing.
+
 **Coordinated release:** Designer-v2 externalizes this runtime dependency, so UI-v2 must publish alongside it through the existing release workflow. `scripts/update-versions.js` includes both packages, and the root publish script builds libraries before `pnpm publish -r`. The UI-v2 manifest omits `private`, matching sibling libraries, so recursive publication does not skip it. Keep integration default-off; do not bundle or copy shared source to work around package distribution.
 
 ## Boundaries and APIs
 
-The ESM root exports cards, stable primitives, typed string dictionaries, scoped tokens and `DesignerUiScope`. `@microsoft/designer-ui-v2/metrics` exports **numeric, React-free** structural metrics and timing only. There are no supported source/build deep imports or per-family subpaths. Runtime dependencies are icons; required peers are React 18, ReactDOM 18 and public Fluent v9 components. No Fluent v8, localization framework, shared application library, Query, XYFlow or store dependencies.
+The ESM root exports cards, stable primitives, typed string dictionaries, scoped tokens and `DesignerUiScope`. `@microsoft/designer-ui-v2/metrics` exports **React-free** `nodeMetrics`, `nodeHoverCardTiming`, `getSwitchNodeSize` and `getNodeLineArrowPath`, plus the type `NodeLineArrowDirection`. It has no React, Fluent or theme runtime/declaration dependency. `./package.json` exposes metadata. Workspace exports resolve to `src`; packed root and `/metrics` runtime/types resolve to `build/lib`, while the manifest remains at the package root. `files` includes only the built library. There are no supported source/build deep imports or per-family subpaths. Runtime dependencies are icons; required peers are React 18, ReactDOM 18 and public Fluent v9 components. No Fluent v8, localization framework, shared application library, Query, XYFlow or store dependencies.
 
 ```tsx
 import { ActionNodeCard, DesignerUiScope } from '@microsoft/designer-ui-v2';
@@ -100,13 +109,44 @@ import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 // host layout uses nodeMetrics.cards.action: { width: 232, height: 74 }
 ```
 
-Cards forward DOM refs, HTML/ARIA attributes and events; hosts own keyboard navigation, DnD, graph roles, real handles, layout and dynamic measurements. `after` preserves host badges/controls. `AgentNodeCard` takes keyed `tools`, controlled `toolsExpanded`/`onToggleTools`, add callbacks and handle/footer slots; it already composes its own tools panel, so do not nest another `AgentToolsPanel` inside it. `ConditionNodeCard` takes If/Switch kind, ordered output slots, finite case count and taken-output index; its default outputs stay on `NodeOutputHandles`. `NodeBranchOutputs` is an opt-in primitive for tick/caption/slot branch labels when hosts supply real branch handles. `LoopNodeCard`, `NodeFrame` and `NodeMergePoint` provide existing structural presentation, with `NodeFrame` now exposing additive branch kind/tone/collapsed/subtitle placement states. Widths are structural canvas geometry, not responsive page widths. Hosts must account for real Agent/model/tool/frame extents and actual ports together, rather than assigning a fixed whole-Agent height.
+Cards forward DOM refs, HTML/ARIA attributes and events; hosts own keyboard navigation, DnD, graph roles, real handles, layout and dynamic measurements. `after` preserves host badges/controls. `AgentNodeCard` takes keyed `tools`, controlled `toolsExpanded`/`onToggleTools`, add callbacks and handle/footer slots; it already composes its own tools panel, so do not nest another `AgentToolsPanel` inside it. `ConditionNodeCard` takes If/Switch kind, ordered output slots, finite case count and taken-output index; If uses `NodeBranchOutputs`, while Switch defaults to `NodeOutputHandles`. Hosts supply real branch handles through slots. `LoopNodeCard`, `NodeFrame` and `NodeMergePoint` provide structural presentation. Widths are structural canvas geometry, not responsive page widths. Hosts must account for real Agent/model/tool/frame extents and actual ports together, rather than assigning a fixed whole-Agent height.
 
 Action, Trigger, Condition, Loop and Agent accept `handles={false}` to suppress decorative ports for a navigation-only projection. The default remains `true`. For Agent this also omits its attached tool connector, but never removes actual supplied tools, the model footer or `after` content. This does not disable host-owned XYFlow handles automatically.
 
 `getNodeGlyph(kind: NodeVisualKind)` returns canonical `{ regular, filled }` component constructors for fourteen finite visual kinds. Each host maps its raw operation identity to that vocabulary, then passes rendered icons into the existing `icon`/`selectedIcon` slots. Display names do not choose a type or glyph. Unknown built-ins use card defaults without manifest branding; connectors retain real pending/image/error behavior. Missing image URI is not a loading state. No workflow-type registry, loading schema or model-state API belongs in this package.
 
-Each component accepts its relevant typed string dictionary, with `defaultNodeStrings` supplying English. Strings are literal, including intentional empty values; parameterized tools headings are functions, never translated nouns concatenated into English grammar. Hosts perform localization. Icons are decorative unless explicitly meaningful; info tiles share the canonical category defaults. Status uses a stable live region. Controls preserve their canonical disabled-versus-omitted behavior; unavailable callbacks never leave an apparently active inert action. Links accept only absolute HTTP(S). Motion honors both OS reduced motion and `[data-reduce-motion="true"]`.
+Each component accepts its relevant typed string dictionary, with `defaultNodeStrings` supplying English. New string keys are optional so old client dictionaries still compile. Strings are literal, including intentional empty values; parameterized tools headings are functions, never translated nouns concatenated into English grammar. Hosts perform localization. Icons are decorative unless explicitly meaningful; info tiles share the canonical category defaults. Standalone badges default to **a polite live region**; canvas composites explicitly opt out and hosts carry status in the owning card's accessible name. Controls preserve their canonical disabled-versus-omitted behavior; unavailable callbacks never leave an apparently active inert action. Links accept only absolute HTTP(S). Motion honors both OS reduced motion and `[data-reduce-motion="true"]`.
+
+### Phase 1a/1b additive contracts
+
+All added props are optional; omitted values retain the previous behavior.
+
+| API | Optional props and defaults |
+|---|---|
+| `NodeStatusBadge` | `label` defaults to `strings[status]`; `detail` defaults to none; explicit empty `label` is preserved. `live=true` is the standalone default (`role="status"` with implicit polite semantics); `live=false` opts out. Explicit `role` takes precedence. Canvas composites opt out. Forwarded `aria-label` is host-supplied. The nine `NodeRunStatus` tones are frozen. |
+| Cards, `NodeCard`, `NodeFrame` | `statusLabel` defaults to dictionary text; `statusAriaLabel` defaults to no badge-name override; `statusDetail` defaults to none; `inactive=false`. Inactive ancestors provide `NodeInactiveContext` so nested inactive cards/handles/branch outputs do not compound the 0.4 opacity. The host supplies the card's `aria-label`. |
+| `getNodeStatusLabel(status, strings?, detail?, label?)` | Returns `(label ?? strings[status])` plus a nonempty detail. Strings default to English; detail/label default to none. Hosts reuse this text when constructing the owning card's accessible name. |
+| `NodeIterationPager` | Required `current`, `count`, `onChange` use zero-based indices; display/input is one-based. `editable=false`; `failed` omitted means no failed-jump controls; `strings` defaults to `defaultNodeIterationPagerStrings`. Invalid/nonpositive totals render nothing; indices and input are bounded. Run dispatch and failure evidence stay host-owned. |
+| `NodeRunAfterIndicator` | Required `statuses` uses `succeeded`, `timedOut`, `skipped`, `failed`; fixed dot order is preserved. `collapsedCount` defaults to none (dots); when supplied it renders `×N`. `strings` defaults to `defaultNodeRunAfterStrings`, including the accessible summary. |
+| `NodeLine` | `variant='solid'`, `length=85`, `orientation='horizontal'`, `state='default'`. `NodeLineState` is `default`, `taken`, `notTaken`, `highlighted`, `running`. Only canonical solid owns an arrow; running dashes become static under reduced motion. `getNodeLineStroke(variant, { state? } = {})` composes static state over `nodeLineStrokes`; it does not animate or infer evidence. |
+| `NodeBranchLabel` | Required literal `label`; `tone='neutral'` (also success/danger); `state` omitted leaves it undimmed (also taken/notTaken); `action` defaults to none; `strings.taken` defaults to `defaultBranchTakenString`. Taken text is announced, not color-only. Position and action behavior belong to the host. |
+| `NodeBranchOutputs` | `labels` defaults to English True/False; `slots` defaults to none; `activeIndex` omitted leaves all outputs undimmed; `takenLabel=defaultBranchTakenString`. These are host-provided branch captions, port slots and evidence. |
+| `ConditionNodeCard` | `mode='multiOutput'`; trunk is opt-in for Switch only and has one visual tick with semantic slots retained. `caseCount=4`, `takenOutput` omitted; `action`, `inputSlot`, `outputSlots` default to none; `inputVariant` defaults to the neutral input handle. If preserves success/danger exits. |
+| `NodeFrame` | `tone='neutral'`, `collapsed=false`, `subtitlePlacement='inline'`, `handles=false`, `handleAxis='horizontal'`, `showInputHandle=true`, `inputVariant='neutral'`, `headerAppearance='default'`, `motion='none'`. `actionCount`, `action`, `inputSlot`, `outputSlot`, `handleTop`, `handleLeft` default to none. Slots imply handles; hiding input does not remove output. Title omitted/empty means no header. Host-supplied border-relative offsets are compensated once for the thin border. `strings.frame` defaults to `defaultNodeFrameStrings`. |
+| `collapseReveal` / `nodeHeaderButton` | Root exports `useCollapseReveal({ enabled=true, expanded, collapsedHeight, measureFull, apply, clear, motionRoot? })`; omitted motion root uses document preferences. Returns mounted/open/hidden presentation state. `COLLAPSE_REVEAL_EXPAND_MS=240`, `COLLAPSE_REVEAL_COLLAPSE_MS=180`; reduced motion settles instantly. `useNodeHeaderButtonStyles()` provides 20×20 header buttons, 16px icons and extended hit areas, not menus or commands. `NodeFrame.motion='reveal'` opts in; default collapse preserves mounted descendants. |
+| `NodeMergePoint` | `showCircle=true`; false suppresses decoration without removing host convergence children. |
+| `NodeHandle` / `NodeInputHandle` | `hoverable=true` on standalone/output handles; inactivity (own or inherited) disables hover emphasis. Input handles always set `hoverable=false`, even if a caller tries to override it. |
+| `EdgePillButton` | `maskColor` defaults to none, preserving its existing background; a supplied canvas color masks the line beneath the pill without overriding forced-colors system paint. `onActivate` defaults to none, leaving a disabled affordance. The host supplies `isRevealed`, placement and the enlarged hit area. |
+| `AgentNodeCard` | `toolsPlacement='below'`; side is opt-in only with `handleAxis='vertical'`, otherwise it falls back below. `toolsExpanded=true` through the panel; `onToggleTools`, `onAddTool`, `tools`, `toolsPanelSlot`, `footerAction`, input/output slots default to none. `onAddTool(anchor?: HTMLElement \| null)` receives the invoking button. `toolsPanelSlot` replaces, never duplicates, the built-in panel. Empty read-only Agents omit panel/connector; addable empty Agents expose Add tool. |
+| `AgentToolsPanel` / `AgentToolsDecoration` | `expanded=true`, `surface='opaque'`; transparent is opt-in for split-layer hosts. `onToggleExpanded` and `onAddTool` default to none, omitting controls; `strings` defaults to the tools dictionary. Ref forwards the panel element. Controlled reveal uses collapse timings above; decoration paints the separate opaque background without owning tool nodes. |
+| `NodeHoverCard` | `openDelay=600ms`, `closeDelay=200ms`, `disabled=false`; `externalFocusTarget` and `triggerRef` default to none. Keyboard-visible focus opens; programmatic/mouse focus does not. Escape/dismiss restores the owner without reopening. Presence of `NODE_HOVER_CARD_IGNORE_ATTRIBUTE` (`data-node-hover-card-ignore`, even empty) ignores pointer/focus on that subtree. Enabled `DesignerUiScope` coordinates its own hover group; a disabled boundary does not affect its parent group. |
+| `NodeInfoCard` | `testData` defaults to none; presence replaces Configured and the ordinary description. `testData.description` defaults to localized/English test-data copy; `''` intentionally suppresses it. `footer` defaults to none and remains outside the two-line clamp. `onDismiss` omitted hides the 24×24 dismiss target. `learnMoreHref` omitted or non-HTTP(S) suppresses the link; safe links use `_blank` and `noopener noreferrer`. |
+| `useEdgeActiveState()` | Local `isHovered`, `isActive`, `reset`, `wrapperProps`, `lineProps`; attach handlers to the host's line/control region. Activation is immediate from pointer or Fluent keyboard-visible focus; reset clears pointer only. No timer, routing or command behavior. |
+| `lineGeometry` | `getNodeLineArrowPath(x, y, direction='right', size=nodeMetrics.lineArrowSize)` returns an open chevron path; directions also include down/left/up. Available at root and `/metrics`; no graph dependency. |
+
+`nodeMetrics` includes `inactiveOpacity=0.4`, `lineArrowSize=3.18`, run-after slots (shared **44×16**, legacy **36×12**), terminal add **32×32** in a **44px** container with an **8px** stem (`terminalConnectionLength`). Tool connector metrics include diamond 12, gap 9, line/add 20 and side row 74; tools panels add sideOffset 10 and collapsedHeight 54. Info dismissal is 16px glyph / 24px target; edge controls use 24px pills, 32px hit targets and a 20px interaction stroke.
+
+Palette roles `designerUiTokens.canvasBackground`, `nodeBorder`, and `nodeToolConnectorFill` map to scoped `canvas-background`, `node-border`, and `node-tool-connector-fill` overrides. Canvas falls back to Fluent `colorNeutralBackground1`, border to `colorNeutralStroke3`, and tool fill to the existing handle-background role then Fluent canvas. Disabled scopes write no overrides.
 
 `DesignerUiScope` inherits the host font and Fluent provider/brand, sets variables only on its subtree, accepts typed `tokens` overrides, and owns a popover outlet in the same document. No `:root` writes, CoreAI provider, font assets, or inline script injection. The host must place the scope above clipping/transform boundaries; clipping and strict CSP still require real-host validation. It does not claim stock web-brand matches Azure-brand without visual review.
 
@@ -146,6 +186,26 @@ Standalone declares an icon version compatible with this library and deduplicate
 
 The scope stays structurally mounted while disabled, without shared theme variables or an active shared outlet. Its layout-neutral host wrapper forwards the inherited canvas height and preserves child identity, draft/focus and the XYFlow viewport store during option changes.
 
+### Standard integration and evidence
+
+Standard deliberately keeps Switch **multiOutput** and Agent tools **below**; trunk and side are package capabilities, not host defaults. Only `/v2?useSharedNodeUi=true` enables shared presentation; omitted, `false`, `1`, `True` or `TRUE` remain legacy. Below placement preserves the existing DOM and emits no `data-tools-placement`; only side mode is marked. Verify below placement with panel/card geometry rather than an invented attribute.
+
+- Recorded run files: **recorded fixture through the normal run loader; not a live backend run**.
+- Store-injected runs: **simulated component state; not observed backend evidence**.
+- Live backend acceptance requires a separately verified Azure run; neither of these deterministic surfaces proves it.
+
+The write-only specs cover Standard topology/geometry/flag parsing, recorded Agent/Until paging and read-only restrictions, simulated Foreach/tool paging, and existing context/drag/notes/viewport commands. Tool/MCP failed jumps are not claimed: the current host failure source is scope-only.
+
+User-owned browser validation, from root (not executed by W10):
+
+```sh
+pnpm run start:e2e
+# After the server is ready, in a second terminal (local non-CI mode reuses it):
+pnpm run test:e2e:designer e2e/designer/sharedNodeUiStandard.spec.ts e2e/designer/sharedNodeUiMonitoring.spec.ts e2e/designer/sharedNodeUiSimulatedRuns.spec.ts e2e/designer/sharedNodeUiCommands.spec.ts --project=chromium
+```
+
+The script selects `playwright.designer.config.ts`, whose base URL is `http://localhost:4200` and webServer command is `pnpm run start:e2e`. Library builds/typechecks, Storybook static builds and written assertions are not rendered-browser acceptance.
+
 ## Validation and contribution
 
 Build follows siblings: source workspace exports, `publishConfig` redirects to `build/lib`, `tsup && tsc --emitDeclarationOnly`, ESM splitting/source maps, `sideEffects: false`. Test the actual packed manifest and isolated metrics closure before any publication.
@@ -155,9 +215,14 @@ Turbo schedules one shared `build:lib` prerequisite for both libraries' tests. D
 ```sh
 pnpm --filter @microsoft/designer-ui-v2 build:lib
 pnpm --filter @microsoft/designer-ui-v2 test:lib
+pnpm --filter @microsoft/designer-ui-v2 typecheck:storybook
+pnpm --filter @microsoft/designer-ui-v2 test:storybook-inventory
+pnpm --filter @microsoft/designer-ui-v2 build:storybook
 pnpm --filter @microsoft/logic-apps-designer-v2 build:lib
 ```
 
 Independent review and real-host visual acceptance are separate gates, not developer self-certification. New contributions require approved inventory, string contracts, scoped theme, accessible interaction and metrics/tests. Legacy `designer-ui` remains untouched.
+
+The unit suite separately checks additive prop/dictionary compatibility, built metrics dependency closure and build-only manifest targets. Inventory checks enforce exactly one typed visual story and classify every runtime export. An actual package pack/distribution check remains a release gate; source and build checks are not evidence of registry availability.
 
 License metadata follows the repository's MIT convention; release eligibility does not establish provenance/attribution or redistribution approval.

@@ -144,19 +144,32 @@ test.describe('Canonical shared extraction preview families', { tag: ['@mock', '
       );
       const canvasPaint = await preview.locator('[role="region"]').evaluate((root) => {
         const probe = root.ownerDocument.createElement('span');
-        probe.style.backgroundColor = 'var(--colorNeutralBackground1)';
+        // Resolve the shared canvas role exactly as designer-ui-v2 tokens do (scope value, else Background1).
+        probe.style.backgroundColor = 'var(--designer-ui-v2-canvas-background, var(--colorNeutralBackground1))';
         root.appendChild(probe);
         const expected = getComputedStyle(probe).backgroundColor;
+        // Independent references so a wrong-but-opaque value cannot pass: the system Canvas color
+        // under forced colors (proves the !important override beats the inline scope value),
+        // otherwise Fluent Background1 for the dark scope.
+        probe.style.backgroundColor = 'Canvas';
+        const systemCanvas = getComputedStyle(probe).backgroundColor;
+        probe.style.backgroundColor = 'var(--colorNeutralBackground1)';
+        const fluentBackground1 = getComputedStyle(probe).backgroundColor;
         probe.remove();
         return {
+          forcedColors: matchMedia('(forced-colors: active)').matches,
+          systemCanvas,
+          fluentBackground1,
           expected,
           root: getComputedStyle(root).backgroundColor,
           flow: getComputedStyle(root.querySelector('.react-flow')!).backgroundColor,
           background: getComputedStyle(root.querySelector('.react-flow__background')!).backgroundColor,
         };
       });
-      expect(canvasPaint.expected).not.toBe('rgba(0, 0, 0, 0)');
-      expect(canvasPaint).toEqual({
+      const { forcedColors, systemCanvas, fluentBackground1, ...paint } = canvasPaint;
+      const contract = forcedColors ? systemCanvas : operation.type === 'Agent' ? fluentBackground1 : 'rgb(250, 250, 250)';
+      expect(canvasPaint.expected).toBe(contract);
+      expect(paint).toEqual({
         expected: canvasPaint.expected,
         root: canvasPaint.expected,
         flow: canvasPaint.expected,

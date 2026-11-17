@@ -99,8 +99,8 @@ vi.mock('../app/commands/runProjectConsistencyCheck', () => ({
   runProjectConsistencyCheck: vi.fn(),
 }));
 
-vi.mock('../app/languageServer/languageServer', () => ({
-  startLanguageServer: vi.fn(),
+vi.mock('../app/languageServer/languageClient', () => ({
+  startLogicAppsLanguageClient: vi.fn(),
 }));
 
 vi.mock('../app/projectConsistency/projectFilesConsistency', () => ({

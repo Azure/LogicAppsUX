@@ -19,6 +19,7 @@ import { WORKFLOW_PREVIEW_NODE_WIDTH } from './types';
 import type { WorkflowPreviewNode, WorkflowPreviewProps } from './types';
 import { useWorkflowPreviewStyles } from './workflowPreview.styles';
 import { useWorkflowPreviewNodeInternals } from './useWorkflowPreviewNodeInternals';
+/** @internal The bundled stylesheet is a runtime dependency, not a declaration dependency. */
 import '@xyflow/react/dist/style.css';
 
 export * from './types';

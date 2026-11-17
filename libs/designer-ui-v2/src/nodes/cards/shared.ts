@@ -11,6 +11,10 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
+  /** Forwarded through `rest` to NodeCard; see NodeCardProps for semantics. */
+  statusLabel?: string;
+  statusAriaLabel?: string;
+  inactive?: boolean;
   strings?: ActionNodeCardStrings;
   handleAxis?: NodeHandleAxis;
   after?: ReactNode;

@@ -1,7 +1,7 @@
 import { dataMapSlice as dataMapSliceV1 } from './DataMapSlice';
 import { dataMapSlice as dataMapSliceV2 } from './DataMapSliceV2';
 import { designerSlice } from './DesignerSlice';
-import { languageServerSlice } from './LanguageServerSlice';
+import { connectionViewSlice } from './ConnectionViewSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
 import { createWorkspaceSlice } from './createWorkspaceSlice';
@@ -14,7 +14,7 @@ export const store = configureStore({
     designer: designerSlice.reducer,
     dataMapDataLoader: dataMapSliceV1.reducer, // Data Mapper V1
     dataMap: dataMapSliceV2.reducer, // Data Mapper V2
-    languageServer: languageServerSlice.reducer,
+    connectionView: connectionViewSlice.reducer,
     createWorkspace: createWorkspaceSlice.reducer,
   },
 });

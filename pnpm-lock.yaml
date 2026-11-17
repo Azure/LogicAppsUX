@@ -389,6 +389,9 @@ importers:
       '@esbuild-plugins/node-globals-polyfill':
         specifier: ^0.2.3
         version: 0.2.3(esbuild@0.27.0)
+      '@microsoft/logic-apps-graph-layout':
+        specifier: workspace:*
+        version: link:../../libs/graph-layout
       '@types/lodash.isequal':
         specifier: ^4.5.8
         version: 4.5.8
@@ -398,6 +401,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.0
         version: 18.3.0
+      elkjs:
+        specifier: 0.8.2
+        version: 0.8.2
       rollup-plugin-polyfill-node:
         specifier: ^0.13.0
         version: 0.13.0(rollup@4.62.2)
@@ -1681,9 +1687,6 @@ importers:
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      elkjs:
-        specifier: 0.8.2
-        version: 0.8.2
       file-saver:
         specifier: 2.0.5
         version: 2.0.5
@@ -1766,6 +1769,9 @@ importers:
       '@formatjs/intl':
         specifier: ^2.10.1
         version: 2.10.1(typescript@4.9.5)
+      '@microsoft/logic-apps-graph-layout':
+        specifier: workspace:*
+        version: link:../graph-layout
       '@types/file-saver':
         specifier: ^2.0.5
         version: 2.0.7
@@ -1784,6 +1790,15 @@ importers:
       '@types/to-title-case':
         specifier: ^1.0.2
         version: 1.0.2
+
+  libs/graph-layout:
+    devDependencies:
+      elkjs:
+        specifier: 0.8.2
+        version: 0.8.2
+      esbuild:
+        specifier: 0.25.5
+        version: 0.25.5
 
   libs/logic-apps-shared:
     dependencies:

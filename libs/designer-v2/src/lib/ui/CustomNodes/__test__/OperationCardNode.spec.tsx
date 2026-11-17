@@ -166,12 +166,20 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -323,6 +331,25 @@ describe('OperationCardNode (v2)', () => {
     await new Promise((resolve) => setTimeout(resolve, 420));
     expect(screen.queryByText('Monitoring description')).toBeNull();
     expect(container.querySelector('[data-node-info-card]')).toBeNull();
+  });
+
+  it.each([
+    [false, 'loops-pager-testNode', 'shared-loops-pager-testNode'],
+    [true, 'shared-loops-pager-testNode', 'loops-pager-testNode'],
+  ])('selects the MCP tool pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { repetitionCount: 2 },
+    });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
   });
 
   it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {
@@ -513,6 +540,41 @@ describe('OperationCardNode (v2)', () => {
 
     render(<DefaultNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-root')).toBeInTheDocument();
+  });
+
+  it('places the accepted RIGHT terminal after the operation even while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN terminal placement and presentation while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('does not render a terminal for an accepted RIGHT operation in read-only mode', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
   });
 
   it('should not show DropZone when not a leaf node', () => {

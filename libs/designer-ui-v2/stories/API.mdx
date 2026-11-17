@@ -22,12 +22,13 @@ import { nodeMetrics, nodeHoverCardTiming } from '@microsoft/designer-ui-v2/metr
 ```
 
 The root exports the visual components, nonvisual APIs and types below.
-`/metrics` is the React-free numeric data/timing entry; it does not re-export
+`/metrics` is the React-free geometry/timing entry (`nodeMetrics`,
+`nodeHoverCardTiming`, `getSwitchNodeSize`, `getNodeLineArrowPath`); it does not re-export
 components or hooks. `/package.json` exposes manifest metadata. Source/build
 deep imports and a package `/nodes` subpath are unsupported. Storybook's exact
 source aliases do not change the package export map.
 
-## All 18 nonvisual runtime exports
+## All 31 nonvisual runtime exports
 
 <table aria-label="Nonvisual runtime exports">
   <thead>
@@ -41,7 +42,7 @@ source aliases do not change the package export map.
     <tr>
       <th scope="row"><code>defaultNodeStrings</code></th>
       <td><code>NodeStrings</code> English dictionary with parameterized label functions</td>
-      <td>Supply the relevant <strong>complete</strong> dictionary to each component. Hosts localize; intentional empty strings are preserved. No Intl provider is required.</td>
+      <td>Supply the relevant dictionary to each component; additive keys are optional with English defaults. Hosts localize; intentional empty strings are preserved. No Intl provider is required.</td>
     </tr>
     <tr>
       <th scope="row"><code>NODE_GLYPHS</code></th>
@@ -105,8 +106,8 @@ source aliases do not change the package export map.
     </tr>
     <tr>
       <th scope="row"><code>getNodeStatusLabel</code></th>
-      <td>Required <code>NodeRunStatus</code>, optional complete <code>NodeStatusStrings</code> → <code>string</code></td>
-      <td>Defaults to English status text. No status inference or execution.</td>
+      <td><code>getNodeStatusLabel(status, strings?, detail?, label?)</code> → <code>string</code></td>
+      <td>Defaults to English; label overrides tone text, nonempty detail is appended. Hosts use it for owning card names; standalone badges default to a polite live region and canvas composites explicitly opt out.</td>
     </tr>
     <tr>
       <th scope="row"><code>nodeLineStrokes</code></th>
@@ -130,6 +131,29 @@ source aliases do not change the package export map.
     </tr>
   </tbody>
 </table>
+
+The additional 13 Phase 1a/1b runtime exports are:
+
+| Export | Contract |
+|---|---|
+| `NodeInactiveContext` | Boolean presentation context (default false); nested cards/ports avoid applying opacity twice. |
+| `defaultBranchTakenString` | `(label) => "<label>, branch taken"`; hosts may localize it. |
+| `defaultNodeFrameStrings` | English `actionCount(count)` formatter; old frame dictionaries remain valid. |
+| `defaultNodeIterationPagerStrings` | English pager labels, input range and one-based position formatter. |
+| `defaultNodeRunAfterStrings` | Four status labels, full summary and collapsed-count formatter. |
+| `COLLAPSE_REVEAL_EXPAND_MS` | 240ms presentation-only reveal duration. |
+| `COLLAPSE_REVEAL_COLLAPSE_MS` | 180ms presentation-only collapse duration. |
+| `getNodeLineStroke` | `(variant, { state? } = {})` composes static state on a variant; does not animate or route. |
+| `getNodeLineArrowPath` | `(x, y, direction='right', size=3.18)` returns an open chevron path; root and React-free `/metrics`. |
+| `useCollapseReveal` | Required expanded/collapsedHeight/measureFull/apply/clear; enabled defaults true, motionRoot is optional. Returns mounted/open/hidden; reduced motion settles instantly. |
+| `useEdgeActiveState` | No arguments; returns isHovered/isActive/reset/wrapperProps/lineProps for immediate pointer/keyboard-visible focus. Host attaches handlers. |
+| `useNodeHeaderButtonStyles` | No arguments; 20×20 header buttons, 16px icons and extended hit areas. No menus. |
+| `NODE_HOVER_CARD_IGNORE_ATTRIBUTE` | Presence-only `data-node-hover-card-ignore` marker on ignored trigger descendants, including an empty value. |
+
+`getSwitchNodeSize(caseCount=1, axis='vertical')` is a `/metrics`-only helper,
+not an additional root runtime export. The root visual inventory has 37 entries
+and includes `NodeBranchLabel`, `NodeIterationPager`, `NodeRunAfterIndicator`
+and `AgentToolsDecoration`, each with its own typed metadata.
 
 ### Glyph vocabulary
 
@@ -304,6 +328,18 @@ runtime UI, registration or service dependency.
       <td><code>solid</code>, <code>solidSuccess</code>, <code>solidDanger</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
     </tr>
     <tr>
+      <th scope="row"><code>NodeLineState</code>, <code>NodeLineArrowDirection</code></th>
+      <td>default/taken/notTaken/highlighted/running; right/down/left/up. Arrow direction is also available from <code>/metrics</code>.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>AgentToolsPlacement</code>, <code>AgentToolsSurface</code></th>
+      <td>below/side; opaque/transparent. Standard keeps multiOutput and below; these capabilities do not change topology.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeRunAfterStatus</code></th>
+      <td>succeeded/timedOut/skipped/failed</td>
+    </tr>
+    <tr>
       <th scope="row"><code>ConditionNodeKind</code></th>
       <td><code>if</code>, <code>switch</code></td>
     </tr>
@@ -366,7 +402,7 @@ runtime UI, registration or service dependency.
     </tr>
     <tr>
       <th scope="row"><code>DesignerUiThemeOverrides</code></th>
-      <td>Partial record of the 13 admitted node palette keys; not arbitrary global CSS</td>
+      <td>Partial record of admitted node palette keys, including canvas-background, node-border and node-tool-connector-fill; not arbitrary global CSS</td>
     </tr>
     <tr>
       <th scope="row"><code>DesignerUiScopeProps</code></th>
@@ -374,6 +410,12 @@ runtime UI, registration or service dependency.
     </tr>
   </tbody>
 </table>
+
+Additive type-only contracts include `NodeFrameStrings`, `NodeIterationPagerStrings`,
+`NodeRunAfterStrings`, `NodeBranchLabelStrings`, `NodeBranchLabelProps`,
+`NodeIterationPagerProps`, `NodeRunAfterIndicatorProps`, `AgentToolsDecorationProps`,
+`CollapseRevealOptions`, `CollapseRevealState` and `EdgeActiveStateResult`.
+Their defaults and host boundaries are documented in the package README.
 
 ### Component and glyph contracts
 

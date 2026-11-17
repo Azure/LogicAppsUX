@@ -1,5 +1,5 @@
 import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isTriggerNode } from '../graph';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import * as graphUtils from '../graph';
 import { getTestIntl } from '../../../__test__/intl-test-helper';
@@ -111,11 +111,42 @@ describe('Graph Utilities', () => {
     expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true)).toEqual({ shared: false, size: undefined });
   });
 
+  it('defaults parser nodes to the rendered card size for each node type and subgraph variant', () => {
+    const { getDefaultNodeSize } = graphUtils;
+    expect(getDefaultNodeSize()).toEqual({ width: 200, height: 44 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.OPERATION_NODE)).toEqual({ width: 200, height: 44 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)).toEqual({ width: 200, height: 44 });
+    for (const subgraphType of [SUBGRAPH_TYPES.SWITCH_CASE, SUBGRAPH_TYPES.AGENT_CONDITION, SUBGRAPH_TYPES.MCP_CLIENT, undefined]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 200, height: 44 });
+    }
+    for (const subgraphType of [
+      SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+      SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+      SUBGRAPH_TYPES.SWITCH_DEFAULT,
+      SUBGRAPH_TYPES.UNTIL_DO,
+    ]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 120, height: 32 });
+    }
+    for (const subgraphType of [SUBGRAPH_TYPES.SWITCH_ADD_CASE, SUBGRAPH_TYPES.AGENT_ADD_CONDITON]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 20, height: 44 });
+    }
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE)).toEqual({ width: 64, height: 96 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.COLLAPSED_NODE)).toEqual({ width: 200, height: 50 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.HIDDEN_NODE)).toEqual({ width: 200, height: 40 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.GRAPH_NODE)).toEqual({ width: 200, height: 40 });
+    expect(createWorkflowNode('case', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, SUBGRAPH_TYPES.SWITCH_DEFAULT)).toEqual({
+      id: 'case',
+      type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+      width: 120,
+      height: 32,
+    });
+  });
+
   it('keeps graph and ELK factories aligned and excludes hidden edges from leaf detection', () => {
     expect(graphUtils.createElkNode('action')).toMatchObject({
       id: 'action',
       width: 200,
-      height: 40,
+      height: 44,
       layoutOptions: { nodeType: WORKFLOW_NODE_TYPES.OPERATION_NODE },
     });
     expect(graphUtils.createElkEdge('one', 'two')).toMatchObject({
@@ -125,6 +156,20 @@ describe('Graph Utilities', () => {
     });
     expect(graphUtils.isLeafNodeFromEdges([createWorkflowEdge('one', 'two', WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)])).toBe(true);
     expect(graphUtils.isLeafNodeFromEdges([createWorkflowEdge('one', 'two')])).toBe(false);
+  });
+
+  it('distinguishes edge endpoints containing hyphens and escape-like characters', () => {
+    const pairs = [
+      ['A', 'B-C'],
+      ['A-B', 'C'],
+      ['A%2DB', 'C'],
+      ['A%', 'B-C'],
+    ] as const;
+    const edges = pairs.map(([source, target]) => createWorkflowEdge(source, target));
+    expect(new Set(edges.map(({ id }) => id)).size).toBe(pairs.length);
+    for (const [source, target] of pairs) {
+      expect(graphUtils.createElkEdge(source, target).id).toBe(createWorkflowEdge(source, target).id);
+    }
   });
 
   it('finds the actual root trigger and tolerates a graph with no trigger', () => {
