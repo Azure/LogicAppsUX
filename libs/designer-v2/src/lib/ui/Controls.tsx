@@ -25,7 +25,7 @@ const CustomControls = ({ canvasRef }: { canvasRef?: RefObject<HTMLDivElement> }
   const searchId = 'control-search-button';
 
   const flow = useReactFlow();
-  const { fitView, zoomIn, zoomOut } = flow;
+  const { zoomIn, zoomOut } = flow;
   const [nodes, , flowSize] = useLayout();
   const sharedOption = useSharedNodeUi();
   const minimapToggleClick = () => {
@@ -84,7 +84,11 @@ const CustomControls = ({ canvasRef }: { canvasRef?: RefObject<HTMLDivElement> }
     if (canvasRef?.current && shared) {
       fitSharedDesignerViewport(flow, canvasRef.current, flowSize);
     } else {
-      fitView();
+      // fitView ignores unmeasured, culled nodes; public bounds also include their initial dimensions.
+      const visibleNodes = flow.getNodes().filter((node) => !node.hidden);
+      if (visibleNodes.length) {
+        flow.fitBounds(flow.getNodesBounds(visibleNodes));
+      }
     }
   };
 

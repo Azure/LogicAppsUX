@@ -5,9 +5,6 @@ import type { NodePresentation } from '../utils/graph';
 
 const getSubgraphCardHandleHeight = (subgraphType?: string, readOnly = false): number | undefined => {
   switch (subgraphType) {
-    case SUBGRAPH_TYPES.SWITCH_CASE:
-    case SUBGRAPH_TYPES.AGENT_CONDITION:
-      return 44;
     case SUBGRAPH_TYPES.CONDITIONAL_TRUE:
     case SUBGRAPH_TYPES.CONDITIONAL_FALSE:
     case SUBGRAPH_TYPES.SWITCH_DEFAULT:
@@ -24,6 +21,7 @@ const getSubgraphCardHandleHeight = (subgraphType?: string, readOnly = false): n
 /**
  * Initial bounds for the simple, CSS-positioned handles. Embedded family ports and
  * container handles still use DOM measurement because their offsets depend on children.
+ * Switch-case and agent-condition titles can wrap, so their header handles also require measurement.
  * Horizontal cards also retain DOM measurement; the provisional bounds below are vertical only.
  */
 export const getPrecomputedHandles = (

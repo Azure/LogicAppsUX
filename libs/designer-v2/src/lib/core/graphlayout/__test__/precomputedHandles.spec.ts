@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Position, type Node } from '@xyflow/react';
+import { adoptUserNodes, type NodeLookup, type ParentLookup } from '@xyflow/system';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { getPrecomputedHandles } from '../precomputedHandles';
 import { exportForTesting } from '../elklayout';
@@ -28,7 +29,8 @@ describe('provisional public XYFlow handles', () => {
 
   it('positions subgraph card handles at the header edge, not the full node including its DropZone', () => {
     const branch = { ...operation, type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, id: 'case-#subgraph' };
-    expect(getPrecomputedHandles(branch, 200, 68, false, SUBGRAPH_TYPES.SWITCH_CASE)?.[1]).toMatchObject({ y: 38 });
+    expect(getPrecomputedHandles(branch, 200, 68, false, SUBGRAPH_TYPES.SWITCH_CASE)).toBeUndefined();
+    expect(getPrecomputedHandles(branch, 200, 68, false, SUBGRAPH_TYPES.AGENT_CONDITION)).toBeUndefined();
     expect(getPrecomputedHandles(branch, 120, 56, false, SUBGRAPH_TYPES.CONDITIONAL_TRUE)?.[1]).toMatchObject({ y: 26 });
     expect(getPrecomputedHandles(branch, 20, 44, false, SUBGRAPH_TYPES.SWITCH_ADD_CASE)?.[1]).toMatchObject({ y: 38 });
     expect(getPrecomputedHandles(branch, 20, 44, true, SUBGRAPH_TYPES.SWITCH_ADD_CASE)).toBeUndefined();
@@ -45,6 +47,35 @@ describe('provisional public XYFlow handles', () => {
     expect(getPrecomputedHandles({ ...shared, data: { ...shared.data, handleAxis: 'horizontal' } }, 232, 74)).toBeUndefined();
     expect(getPrecomputedHandles({ ...shared, data: { branchPorts: [{ id: 'case' }] } }, 232, 74)).toBeUndefined();
   });
+
+  it.each([SUBGRAPH_TYPES.SWITCH_CASE, SUBGRAPH_TYPES.AGENT_CONDITION])(
+    'remeasures a wrapping %s header when another card selection recreates the node',
+    (subgraphType) => {
+      const branch: Node = {
+        ...operation,
+        id: 'wrapping-branch-#subgraph',
+        type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+        initialWidth: 200,
+        initialHeight: 68,
+        data: { ...operation.data, title: 'A branch title that wraps onto several lines' },
+      };
+      branch.handles = getPrecomputedHandles(branch, 200, 68, false, subgraphType);
+      const nodeLookup: NodeLookup = new Map();
+      const parentLookup: ParentLookup = new Map();
+      adoptUserNodes([branch], nodeLookup, parentLookup);
+      const measured = nodeLookup.get(branch.id)!;
+      measured.measured = { width: 200, height: 120 };
+      measured.internals.handleBounds = {
+        target: [{ nodeId: branch.id, type: 'target', position: Position.Top, x: 0, y: 0, width: 200, height: 96 }],
+        source: [{ nodeId: branch.id, type: 'source', position: Position.Bottom, x: 97, y: 90, width: 6, height: 6 }],
+      };
+
+      // DesignerReactFlow recreates nonselectable subgraph cards when panel selection changes.
+      adoptUserNodes([{ ...branch, selected: false, selectable: false }], nodeLookup, parentLookup);
+
+      expect(nodeLookup.get(branch.id)?.internals.handleBounds).toBeUndefined();
+    }
+  );
 
   it('preserves main shared structural source offsets without promoting them to draw handles', () => {
     const collapsed = {
