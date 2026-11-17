@@ -46,7 +46,7 @@ import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
 import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
-import { tokens } from '@fluentui/react-components';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -269,7 +269,9 @@ export const Designer = (props: DesignerProps) => {
                 {backgroundProps ? (
                   <Background {...backgroundProps} />
                 ) : sharedOption ? (
-                  <Background bgColor={tokens.colorNeutralBackground1} />
+                  // The shared canvas role resolves inside DesignerUiScope and falls back to Background1 outside it,
+                  // so hosts that do not mount the scope keep the previous flag-on color.
+                  <Background bgColor={designerUiTokens.canvasBackground} />
                 ) : (
                   <Background
                     bgColor={isReadOnly ? '#80808010' : undefined}

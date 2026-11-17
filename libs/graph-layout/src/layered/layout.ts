@@ -1,6 +1,6 @@
 import { GraphLayoutError } from '../options';
 import type { ElkEdgeSection, ElkExtendedEdge, ElkNode, ElkPoint, ElkPort, LayoutOptions } from '../types';
-import { balancedCenters } from './horizontal';
+import { balancedCenters, horizontalGap } from './horizontal';
 import { layeredOptions, readOption, sizeOption, type LayeredOptions } from './options';
 
 interface Vertex {
@@ -11,6 +11,7 @@ interface Vertex {
   rank: number;
   x: number;
   y: number;
+  rightMargin?: number;
 }
 
 const orderLayers = (vertices: Vertex[], layers: number[][], links: Link[], options: LayeredOptions): void => {
@@ -174,17 +175,17 @@ const breakCycles = (vertices: Vertex[], links: Link[]): void => {
   }
 };
 
-const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
+const assignLayers = (vertices: Vertex[], links: Link[], rightward: boolean): number[][] => {
   const adjacency = outgoing(vertices.length, links);
   const degrees = new Int32Array(vertices.length);
   links.forEach((link) => degrees[link.target]++);
   const positioned = vertices
-    .map((vertex, index) => ({ index, y: vertex.node?.y }))
-    .filter((entry): entry is { index: number; y: number } => entry.y !== undefined)
-    .sort((a, b) => a.y - b.y || a.index - b.index);
+    .map((vertex, index) => ({ index, position: rightward ? vertex.node?.x : vertex.node?.y }))
+    .filter((entry): entry is { index: number; position: number } => entry.position !== undefined)
+    .sort((a, b) => a.position - b.position || a.index - b.index);
   let initialRank = 0;
   for (let i = 0; i < positioned.length; i++) {
-    if (i > 0 && positioned[i].y !== positioned[i - 1].y) {
+    if (i > 0 && positioned[i].position !== positioned[i - 1].position) {
       initialRank++;
     }
     vertices[positioned[i].index].rank = initialRank;
@@ -209,7 +210,9 @@ const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
     vertex.rank = compressed.get(vertex.rank)!;
     layers[vertex.rank].push(index);
   });
-  for (const link of links) {
+  // Long-edge dummies sort before later real siblings by their lower endpoint's model order (as ELK does).
+  const orderKeys = new Map<number, [number, number]>();
+  links.forEach((link, linkIndex) => {
     const chain = [link.source];
     for (let rank = vertices[link.source].rank + 1; rank < vertices[link.target].rank; rank++) {
       if (vertices.length >= 100_000) {
@@ -218,27 +221,37 @@ const assignLayers = (vertices: Vertex[], links: Link[]): number[][] => {
       const index = vertices.length;
       vertices.push({ width: 0, height: 0, order: index, rank, x: 0, y: 0 });
       layers[rank].push(index);
+      orderKeys.set(index, [vertices[link.target].order, linkIndex]);
       chain.push(index);
     }
     link.chain = [...chain, link.target];
+  });
+  if (orderKeys.size) {
+    const key = (index: number) => orderKeys.get(index) ?? [vertices[index].order, -1];
+    for (const layer of layers) {
+      layer.sort((a, b) => {
+        const [orderA, linkA] = key(a);
+        const [orderB, linkB] = key(b);
+        return orderA - orderB || linkA - linkB;
+      });
+    }
   }
   return layers;
 };
 
 const placeLayers = (vertices: Vertex[], layers: number[][], options: LayeredOptions): number => {
   const widths: number[] = [];
-  const gap = (left: Vertex, right: Vertex) =>
-    left.node && right.node ? options.nodeSpacing : left.node || right.node ? options.edgeNodeSpacing : options.edgeSpacing;
   for (const layer of layers) {
     let width = 0;
     layer.forEach((index, position) => {
       const vertex = vertices[index];
       if (position) {
-        width += gap(vertices[layer[position - 1]], vertex);
+        width += horizontalGap(vertices[layer[position - 1]], vertex, options);
       }
       vertex.x = width;
       width += vertex.width;
     });
+    width += vertices[layer[layer.length - 1]].rightMargin ?? 0;
     widths.push(width);
   }
   const contentWidth = widths.reduce((max, width) => Math.max(max, width), 0);
@@ -261,7 +274,7 @@ const placeBalancedLayers = (vertices: Vertex[], layers: number[][], links: Link
   let right = Number.NEGATIVE_INFINITY;
   vertices.forEach((vertex, v) => {
     left = Math.min(left, centers[v] - vertex.width / 2);
-    right = Math.max(right, centers[v] + vertex.width / 2);
+    right = Math.max(right, centers[v] + vertex.width / 2 + (vertex.rightMargin ?? 0));
   });
   vertices.forEach((vertex, v) => {
     vertex.x = options.padding.left + centers[v] - vertex.width / 2 - left;
@@ -280,7 +293,14 @@ const SEGMENT_TRIM = 0.05;
  * ELK ranks pairwise slot dependencies; the maximum overlap depth of the trimmed hop intervals is its
  * lower bound and is computed by an O(s log s) sweep per gap.
  */
-const stackLayers = (vertices: Vertex[], layers: number[][], links: Link[], options: LayeredOptions, anchors: Anchors): number => {
+const stackLayers = (
+  vertices: Vertex[],
+  layers: number[][],
+  links: Link[],
+  options: LayeredOptions,
+  anchors: Anchors,
+  loopBottoms: number[]
+): number => {
   const gaps: number[][] = layers.map(() => []);
   for (const link of links) {
     const start = anchorX(vertices, link, true, anchors);
@@ -316,9 +336,12 @@ const stackLayers = (vertices: Vertex[], layers: number[][], links: Link[], opti
     y += height;
     if (rank < layers.length - 1) {
       const slots = maxOverlap(gaps[rank]);
-      y += slots
+      const gap = slots
         ? Math.max(options.layerSpacing, 2 * options.edgeNodeLayerSpacing + (slots - 1) * options.edgeEdgeLayerSpacing)
         : options.layerSpacing;
+      y += Math.max(gap, loopBottoms[rank] ? loopBottoms[rank] + options.edgeNodeLayerSpacing : 0);
+    } else {
+      y += loopBottoms[rank] ?? 0;
     }
   });
   return y + options.padding.bottom;
@@ -356,7 +379,7 @@ interface Anchors {
   target: Map<Link, number>;
 }
 
-/** Horizontal attachment offsets, spread symmetrically per endpoint and sorted by the opposite end's x. */
+/** Horizontal attachment offsets, spread symmetrically per endpoint and sorted by the adjacent hop's center x. */
 const anchorOffsets = (vertices: Vertex[], links: Link[], portSpacing: number): Anchors => {
   interface Endpoint {
     link: Link;
@@ -374,13 +397,16 @@ const anchorOffsets = (vertices: Vertex[], links: Link[], portSpacing: number): 
   for (const link of links) {
     const source = link.reversed ? link.target : link.source;
     const target = link.reversed ? link.source : link.target;
-    add(link.sourcePort || !link.reversed ? bottomGroups : topGroups, source, { link, atSource: true, opposite: target });
-    add(link.targetPort || link.reversed ? bottomGroups : topGroups, target, { link, atSource: false, opposite: source });
+    // Long edges leave through their first dummy lane, not straight toward the far endpoint.
+    const hop = (endpoint: number) => (endpoint === link.chain[0] ? link.chain[1] : link.chain[link.chain.length - 2]);
+    add(link.sourcePort || !link.reversed ? bottomGroups : topGroups, source, { link, atSource: true, opposite: hop(source) });
+    add(link.targetPort || link.reversed ? bottomGroups : topGroups, target, { link, atSource: false, opposite: hop(target) });
   }
+  const center = (index: number) => vertices[index].x + vertices[index].width / 2;
   const anchors: Anchors = { source: new Map(), target: new Map() };
   for (const groups of [topGroups, bottomGroups]) {
     for (const [index, group] of groups) {
-      group.sort((a, b) => vertices[a.opposite].x - vertices[b.opposite].x);
+      group.sort((a, b) => center(a.opposite) - center(b.opposite));
       const width = vertices[index].width;
       const spacing = Math.min(portSpacing, width / Math.max(1, group.length));
       group.forEach(({ link, atSource }, position) => {
@@ -415,14 +441,27 @@ const cubicBends = (start: ElkPoint, bends: ElkPoint[], end: ElkPoint): ElkPoint
     points.push(end);
   }
   const result: ElkPoint[] = [];
-  // Duplicate endpoints as cubic controls so each waypoint remains on the rendered path.
+  // Vertical-tangent controls (like React Flow's bezier edges) keep every waypoint on the path; level segments stay straight.
   for (let index = 1; index < points.length; index++) {
-    result.push({ ...points[index - 1] }, { ...points[index] });
+    const from = points[index - 1];
+    const to = points[index];
+    const y = (from.y + to.y) / 2;
+    result.push({ x: from.x, y }, { x: to.x, y });
     if (index < points.length - 1) {
-      result.push({ ...points[index] });
+      result.push({ ...to });
     }
   }
   return result;
+};
+
+const transposeSection = (section: ElkEdgeSection): ElkEdgeSection => {
+  const transpose = ({ x, y }: ElkPoint): ElkPoint => ({ x: y, y: x });
+  return {
+    ...section,
+    startPoint: transpose(section.startPoint),
+    endPoint: transpose(section.endPoint),
+    bendPoints: section.bendPoints?.map(transpose),
+  };
 };
 
 const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], anchors: Anchors, options: LayeredOptions): ElkEdgeSection[] => {
@@ -432,7 +471,7 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
   for (const vertex of vertices) {
     rankHeights[vertex.rank] = Math.max(rankHeights[vertex.rank] ?? 0, vertex.height);
     rankStarts[vertex.rank] = vertex.y;
-    rankRights[vertex.rank] = Math.max(rankRights[vertex.rank] ?? 0, vertex.x + vertex.width);
+    rankRights[vertex.rank] = Math.max(rankRights[vertex.rank] ?? 0, vertex.x + vertex.width + (vertex.rightMargin ?? 0));
   }
   const returnLanes = new Map<number, number>();
   const sourceOffsets = anchors.source;
@@ -476,11 +515,6 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       // Sloped transitions then lie in layer gaps, not inside node ranks.
       bends.push(...(link.reversed ? [bottom, top] : [top, bottom]));
     }
-    if (chain.length === 2) {
-      const gapStart = link.reversed ? bends[bends.length - 1] : lead;
-      const gapEnd = link.reversed ? lead : end;
-      bends.push({ x: (gapStart.x + gapEnd.x) / 2, y: (gapStart.y + gapEnd.y) / 2 });
-    }
     if (link.reversed && lead.y !== end.y) {
       bends.push(lead);
     }
@@ -491,11 +525,63 @@ const routeEdges = (container: ElkNode, vertices: Vertex[], links: Link[], ancho
       id: `${link.edge.id}_s0`,
       startPoint: start,
       endPoint: end,
-      bendPoints: chain.length === 2 && bends.length === 2 ? bends : cubicBends(start, bends, end),
+      bendPoints: cubicBends(start, bends, end),
       incomingShape: link.edge.sources[0],
       outgoingShape: link.edge.targets[0],
     };
   });
+};
+
+const routeSelfLoops = (
+  container: ElkNode,
+  vertices: Vertex[],
+  loops: Map<number, Link[]>,
+  clearance: number,
+  spacing: number
+): Map<Link, ElkEdgeSection> => {
+  const rankBottoms: number[] = [];
+  for (const vertex of vertices) {
+    rankBottoms[vertex.rank] = Math.max(rankBottoms[vertex.rank] ?? 0, vertex.y + vertex.height);
+  }
+  const sections = new Map<Link, ElkEdgeSection>();
+  for (const [index, group] of loops) {
+    const vertex = vertices[index];
+    group.forEach((link, position) => {
+      const laneIndex = group.length - position - 1;
+      const lane = vertex.x + vertex.width + clearance + laneIndex * spacing;
+      const below = rankBottoms[vertex.rank] + clearance + 2 * laneIndex * spacing;
+      const start = link.sourcePort
+        ? portPoint(vertex, link.sourcePort, true, 0)
+        : { x: vertex.x + vertex.width, y: vertex.y + (vertex.height * (position + 1)) / (2 * group.length + 1) };
+      const end = link.targetPort
+        ? portPoint(vertex, link.targetPort, true, 0)
+        : { x: vertex.x + vertex.width, y: vertex.y + (vertex.height * (2 * group.length - position)) / (2 * group.length + 1) };
+      const bends: ElkPoint[] = link.sourcePort
+        ? [
+            { x: start.x, y: below },
+            { x: lane, y: below },
+          ]
+        : [{ x: lane, y: start.y }];
+      if (link.targetPort || (vertex.height === 0 && !link.sourcePort)) {
+        bends.push({ x: lane, y: below + spacing }, { x: end.x, y: below + spacing });
+      } else {
+        bends.push({ x: lane, y: end.y });
+      }
+      const bendPoints = cubicBends(start, bends, end);
+      if ([start, ...bendPoints, end].some((point) => !Number.isFinite(point.x) || !Number.isFinite(point.y))) {
+        throw new GraphLayoutError(`Edge '${link.edge.id}' has non-finite route geometry in '${container.id}'.`);
+      }
+      sections.set(link, {
+        id: `${link.edge.id}_s0`,
+        startPoint: start,
+        endPoint: end,
+        bendPoints,
+        incomingShape: link.edge.sources[0],
+        outgoingShape: link.edge.targets[0],
+      });
+    });
+  }
+  return sections;
 };
 
 /** Locally scoped compound layout; publish geometry only after every scope succeeds. */
@@ -517,6 +603,18 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
     }
     const sources = [container.layoutOptions, ...globalSources];
     const options = layeredOptions(sources);
+    const rightward = options.direction === 'RIGHT';
+    const localOptions = rightward
+      ? {
+          ...options,
+          padding: {
+            top: options.padding.left,
+            right: options.padding.bottom,
+            bottom: options.padding.right,
+            left: options.padding.top,
+          },
+        }
+      : options;
     const [minimumWidth, minimumHeight] = sizeOption(readOption(sources, 'nodeSize.minimum'), 'nodeSize.minimum');
     const children = container.children ?? [];
     const vertices: Vertex[] = [];
@@ -528,27 +626,44 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
         throw new GraphLayoutError(`Ambiguous duplicate node id '${node.id}' in '${container.id}'.`);
       }
       endpoints.set(node.id, { vertex: index });
-      vertices.push({ node, width: geometry.width, height: geometry.height, order: index, rank: 0, x: 0, y: 0 });
+      vertices.push({
+        node,
+        width: rightward ? geometry.height : geometry.width,
+        height: rightward ? geometry.width : geometry.height,
+        order: index,
+        rank: 0,
+        x: 0,
+        y: 0,
+      });
       for (const port of node.ports ?? []) {
         if (endpoints.has(port.id) || readOption([node.layoutOptions], 'portConstraints') !== 'FIXED_POS') {
           throw new GraphLayoutError(`Port '${port.id}' requires a unique id and FIXED_POS constraints.`);
         }
         const side = readOption([port.layoutOptions], 'port.side');
-        if (side !== 'SOUTH') {
+        const expectedSide = rightward ? 'EAST' : 'SOUTH';
+        if (side !== expectedSide) {
           throw new GraphLayoutError(`Unsupported port side '${side}' on '${port.id}'.`);
         }
         const px = finite(port.x, `${port.id}.x`, true);
         const py = finite(port.y, `${port.id}.y`, true);
         const pw = finite(port.width, `${port.id}.width`, true);
         const ph = finite(port.height, `${port.id}.height`, true);
-        if (px + pw > geometry.width || py !== geometry.height || ph !== 0) {
-          throw new GraphLayoutError(`Fixed SOUTH port '${port.id}' must lie on the node's bottom border.`);
+        const valid = rightward
+          ? px === geometry.width && pw === 0 && py + ph <= geometry.height
+          : px + pw <= geometry.width && py === geometry.height && ph === 0;
+        if (!valid) {
+          throw new GraphLayoutError(
+            `Fixed ${expectedSide} port '${port.id}' must lie on the node's ${rightward ? 'right' : 'bottom'} border.`
+          );
         }
-        endpoints.set(port.id, { vertex: index, port });
+        const localPort = rightward ? { ...port, x: py, y: px, width: ph, height: pw } : port;
+        endpoints.set(port.id, { vertex: index, port: localPort });
       }
     }
     const edgeIds = new Set<string>();
-    const links: Link[] = (container.edges ?? []).map((edge) => {
+    const links: Link[] = [];
+    const loops = new Map<number, Link[]>();
+    for (const edge of container.edges ?? []) {
       if (edge.sources.length !== 1 || edge.targets.length !== 1 || edge.labels?.length || edgeIds.has(edge.id)) {
         throw new GraphLayoutError(`Edge '${edge.id}' requires one source, one target, a unique id, and no labels.`);
       }
@@ -558,10 +673,7 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
       if (!source || !target) {
         throw new GraphLayoutError(`Cross-hierarchy or missing endpoint on '${edge.id}' in '${container.id}' is not supported yet.`);
       }
-      if (source.vertex === target.vertex) {
-        throw new GraphLayoutError(`Self-loop '${edge.id}' is not supported.`);
-      }
-      return {
+      const link: Link = {
         edge,
         source: source.vertex,
         target: target.vertex,
@@ -570,33 +682,65 @@ export const layoutLayered = (graph: ElkNode, globalSources: (LayoutOptions | un
         reversed: false,
         chain: [],
       };
-    });
+      if (source.vertex === target.vertex) {
+        const group = loops.get(source.vertex) ?? [];
+        group.push(link);
+        loops.set(source.vertex, group);
+      } else {
+        links.push(link);
+      }
+    }
     let geometry: NodeGeometry;
     if (children.length) {
+      const loopClearance = Math.max(localOptions.edgeNodeSpacing, 1);
+      const loopSpacing = Math.max(localOptions.edgeSpacing, 1);
+      for (const [index, group] of loops) {
+        vertices[index].rightMargin = loopClearance + (group.length - 1) * loopSpacing;
+      }
       breakCycles(vertices, links);
-      const layers = assignLayers(vertices, links);
-      orderLayers(vertices, layers, links, options);
+      const layers = assignLayers(vertices, links, rightward);
+      orderLayers(vertices, layers, links, localOptions);
       const width =
-        options.placement === 'SIMPLE' ? placeLayers(vertices, layers, options) : placeBalancedLayers(vertices, layers, links, options);
-      const anchors = anchorOffsets(vertices, links, options.portSpacing);
-      const height = stackLayers(vertices, layers, links, options, anchors);
-      geometry = { x: 0, y: 0, width: Math.max(width, minimumWidth), height: Math.max(height, minimumHeight) };
-      for (const vertex of vertices) {
-        if (vertex.node) {
-          geometries.get(vertex.node)!.x = vertex.x;
-          geometries.get(vertex.node)!.y = vertex.y;
+        localOptions.placement === 'SIMPLE'
+          ? placeLayers(vertices, layers, localOptions)
+          : placeBalancedLayers(vertices, layers, links, localOptions);
+      const anchors = anchorOffsets(vertices, links, localOptions.portSpacing);
+      const loopBottoms: number[] = [];
+      for (const [index, group] of loops) {
+        const vertex = vertices[index];
+        if (vertex.height === 0 || group.some((link) => link.sourcePort || link.targetPort)) {
+          loopBottoms[vertex.rank] = Math.max(loopBottoms[vertex.rank] ?? 0, loopClearance + (2 * group.length - 1) * loopSpacing);
         }
       }
-      const sections = routeEdges(container, vertices, links, anchors, options);
+      const height = stackLayers(vertices, layers, links, localOptions, anchors, loopBottoms);
+      geometry = {
+        x: 0,
+        y: 0,
+        width: Math.max(width, rightward ? minimumHeight : minimumWidth),
+        height: Math.max(height, rightward ? minimumWidth : minimumHeight),
+      };
+      for (const vertex of vertices) {
+        if (vertex.node) {
+          geometries.get(vertex.node)!.x = rightward ? vertex.y : vertex.x;
+          geometries.get(vertex.node)!.y = rightward ? vertex.x : vertex.y;
+        }
+      }
+      const sections = routeEdges(container, vertices, links, anchors, localOptions);
       links.forEach((link, index) => {
         const section = sections[index];
         if (link.reversed && link.sourcePort) {
           for (const point of section.bendPoints ?? []) {
-            geometry.width = Math.max(geometry.width, point.x + options.padding.right);
+            geometry.width = Math.max(geometry.width, point.x + localOptions.padding.right);
           }
         }
-        routes.set(link.edge, { container: container.id, sections: [section] });
+        routes.set(link.edge, { container: container.id, sections: [rightward ? transposeSection(section) : section] });
       });
+      for (const [link, section] of routeSelfLoops(container, vertices, loops, loopClearance, loopSpacing)) {
+        routes.set(link.edge, { container: container.id, sections: [rightward ? transposeSection(section) : section] });
+      }
+      if (rightward) {
+        geometry = { ...geometry, width: geometry.height, height: geometry.width };
+      }
     } else {
       geometry = {
         x: 0,

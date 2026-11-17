@@ -24,6 +24,7 @@ const getSubgraphCardHandleHeight = (subgraphType?: string, readOnly = false): n
 /**
  * Initial bounds for the simple, CSS-positioned handles. Embedded family ports and
  * container handles still use DOM measurement because their offsets depend on children.
+ * Horizontal cards also retain DOM measurement; the provisional bounds below are vertical only.
  */
 export const getPrecomputedHandles = (
   node: Node,
@@ -45,6 +46,7 @@ export const getPrecomputedHandles = (
       WORKFLOW_NODE_TYPES.COLLAPSED_NODE,
     ].some((type) => type === node.type) ||
     node.data.branchPorts ||
+    node.data.handleAxis === 'horizontal' ||
     (presentation?.shared && presentation.family && !['scope', 'placeholder', 'collapsed'].includes(presentation.family)) ||
     subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
   ) {
@@ -58,7 +60,8 @@ export const getPrecomputedHandles = (
     node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || (node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE && node.id.endsWith('#footer'));
   const sharedSource = presentation?.shared && edgeDraw;
   const size = sharedSource ? nodeMetrics.handle.size : edgeDraw ? 10 : 6;
-  const y = sharedSource
+  // Main applies the shared perimeter offset to structural DefaultHandle sources too.
+  const y = presentation?.shared
     ? sourceHeight - size - nodeMetrics.handle.edgeOffset
     : edgeDraw && !readOnly
       ? sourceHeight - size / 2

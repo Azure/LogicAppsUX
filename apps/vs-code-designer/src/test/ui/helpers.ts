@@ -750,23 +750,43 @@ export function isSessionEnded(e: unknown): boolean {
 }
 
 /**
- * Force-focus the primary button of the active modal dialog. xvfb does not
- * auto-raise modal windows, so the focused element on the underlying editor
- * can swallow click events directed at the dialog. Calling .focus() via JS
- * on the modal's primary button bypasses this and ensures Tab+Enter / click
- * targets the dialog.
+ * Focus a visible modal button and retain its element so keyboard input cannot
+ * accidentally land on the underlying editor if the dialog disappears.
  */
-export async function focusModalPrimaryButton(driver: WebDriver): Promise<boolean> {
-  try {
-    const focused = await driver.executeScript<boolean>(`
-      const btn = document.querySelector('.monaco-dialog-box button.primary, .monaco-dialog-box button');
-      if (btn) { btn.focus(); return true; }
-      return false;
-    `);
-    return focused === true;
-  } catch {
-    return false;
-  }
+async function focusModalButton(driver: WebDriver, label?: string): Promise<WebElement | null> {
+  return driver.executeScript<WebElement | null>((buttonLabel: string | null) => {
+    const dialogs = Array.from(document.querySelectorAll<HTMLElement>('.monaco-dialog-box')).filter((dialog) => {
+      const style = getComputedStyle(dialog);
+      return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && dialog.getClientRects().length > 0;
+    });
+    if (dialogs.length !== 1) {
+      return null;
+    }
+
+    const buttons = Array.from(dialogs[0].querySelectorAll<HTMLElement>('button, .monaco-text-button')).filter((button) => {
+      const style = getComputedStyle(button);
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0' &&
+        button.getClientRects().length > 0 &&
+        !button.hasAttribute('disabled') &&
+        button.getAttribute('aria-disabled') !== 'true'
+      );
+    });
+    const button = buttonLabel
+      ? buttons.find((candidate) => (candidate.textContent || '').trim() === buttonLabel)
+      : (buttons.find((candidate) => candidate.classList.contains('primary')) ?? buttons[0]);
+    if (!button) {
+      return null;
+    }
+    button.focus();
+    return document.activeElement === button ? button : null;
+  }, label ?? null);
+}
+
+export async function focusModalPrimaryButton(driver: WebDriver, label?: string): Promise<boolean> {
+  return Boolean(await focusModalButton(driver, label));
 }
 
 /**
@@ -812,32 +832,43 @@ export async function dumpDialogDiagnostics(driver: WebDriver, label: string, di
  * having the second go stale, and (b) the first click silently failing
  * because xvfb hadn't routed focus to the dialog yet.
  *
- * The retry path force-focuses the primary button before re-attempting,
- * waits for it to be visible, and finally falls back to Tab+Enter — which
- * is the most xvfb-robust way to activate the default modal button.
+ * The retry path focuses the named button before re-attempting and waits for
+ * it to be visible. The final keyboard fallback targets that same button,
+ * rather than sending keys to whichever element happens to have focus.
  */
 export async function pushDialogButtonWithRetry(driver: WebDriver, label: string, retries = 3, diagnosticsDir?: string): Promise<void> {
   let lastErr: Error | undefined;
   for (let i = 0; i < retries; i++) {
+    const dialog = new ModalDialog();
+    // AbstractElement.wait() exists on older versions; guard with optional chain.
     try {
-      const dialog = new ModalDialog();
-      // AbstractElement.wait() exists on older versions; guard with optional chain.
-      try {
-        await (dialog as unknown as { wait?: (timeout: number) => Promise<void> }).wait?.(5000);
-      } catch {
-        /* ignore — pushButton will throw the real error if dialog is missing */
+      await (dialog as unknown as { wait?: (timeout: number) => Promise<void> }).wait?.(5000);
+    } catch (error) {
+      // A missing, stale or not-yet-visible modal is handled by the click path.
+      if (
+        isSessionEnded(error) ||
+        !(error instanceof Error && ['TimeoutError', 'NoSuchElementError', 'StaleElementReferenceError'].includes(error.name))
+      ) {
+        throw error;
       }
-      // Force focus + wait for visibility BEFORE click — xvfb sometimes leaves
-      // focus on the underlying editor, which swallows the click.
-      await focusModalPrimaryButton(driver);
+    }
+    // Keep driver failures out of the click retry/fallback path.
+    await focusModalPrimaryButton(driver, label);
+    try {
       await sleep(200);
-      try {
-        const btn = await driver.findElement(By.css('.monaco-dialog-box button.primary, .monaco-dialog-box button'));
-        await driver.wait(until.elementIsVisible(btn), 5000).catch(() => undefined);
-      } catch {
-        /* dialog may have closed already */
+      const buttons = await dialog.getButtons();
+      let button: WebElement | undefined;
+      for (const candidate of buttons) {
+        if ((await candidate.getText()).trim() === label) {
+          button = candidate;
+          break;
+        }
       }
-      await dialog.pushButton(label);
+      if (!button) {
+        throw new Error(`Modal dialog does not contain button "${label}"`);
+      }
+      await driver.wait(until.elementIsVisible(button), 5000);
+      await button.click();
       console.log(`[pushDialogButtonWithRetry] Clicked "${label}" (attempt ${i + 1})`);
       return;
     } catch (e) {
@@ -855,15 +886,15 @@ export async function pushDialogButtonWithRetry(driver: WebDriver, label: string
         await sleep(500);
         continue;
       }
-      // Final fallback on the last attempt: Tab+Enter — xvfb-robust default-button activation.
+      // Only send Enter to the verified matching button, never to the workbench.
       if (i === retries - 1) {
+        const button = await focusModalButton(driver, label);
+        if (!button) {
+          throw lastErr;
+        }
         try {
-          await focusModalPrimaryButton(driver);
-          await sleep(200);
-          await driver.actions().sendKeys(Key.TAB).perform();
-          await sleep(150);
-          await driver.actions().sendKeys(Key.ENTER).perform();
-          console.log('[pushDialogButtonWithRetry] Fell back to Tab+Enter');
+          await button.sendKeys(Key.ENTER);
+          console.log(`[pushDialogButtonWithRetry] Activated "${label}" with Enter`);
           return;
         } catch (fallbackErr) {
           if (isSessionEnded(fallbackErr)) {

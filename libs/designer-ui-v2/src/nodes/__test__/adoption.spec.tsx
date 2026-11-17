@@ -123,7 +123,7 @@ describe('confirmed canonical source drift', () => {
       </div>
     );
     const card = container.querySelector('[data-node-card="action"]')!.lastElementChild!;
-    const icon = screen.getByRole('status').querySelector('.fui-Badge__icon')!;
+    const icon = document.querySelector<HTMLElement>('[data-badge-status]')!.querySelector('.fui-Badge__icon')!;
     expect(propertyValues(card, 'transition-duration')).toContain('0.01ms');
     expect(propertyValues(icon, 'animation-name')).toContain('none');
   });
@@ -198,7 +198,7 @@ describe('admitted canonical components', () => {
     expect(ref.current).toBe(button);
     expect(container.querySelector('[data-handle], [data-line]')).toBeNull();
     expect(container.querySelector('[data-icon-name="AddCircle20Regular"]')).not.toBeNull();
-    expect(propertyValues(button, 'width')).toContain('20px');
+    expect(propertyValues(button, 'width')).toContain('32px');
     expect(propertyValues(button, 'height')).toContain('32px');
     await user.tab();
     await user.keyboard('{Enter}');
@@ -315,7 +315,7 @@ describe('admitted canonical components', () => {
       />
     );
     expect(screen.queryByText('For each')).toBeNull();
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(document.querySelector('.fui-Badge[data-badge-status]')).toBeNull();
     expect(screen.getByRole('img')).toHaveAttribute('aria-label', '');
     expect(container.querySelector('[data-icon-name="ArrowRepeatAllFilled"]')).not.toBeNull();
   });
@@ -358,7 +358,7 @@ describe('admitted canonical components', () => {
     expect(ref.current).toBe(screen.getByRole('group', { name: 'Frame' }));
     expect(ref.current).toHaveAttribute('data-node-card', data);
     expect(ref.current).toHaveAttribute('data-selected', 'true');
-    expect(screen.getByRole('status')).toHaveTextContent('En cours 1s');
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('En cours 1s');
     expect(screen.getByRole('button', { name: 'Pager' })).toBeInTheDocument();
     expect(screen.getByText('· 2 actions')).toBeInTheDocument();
     expect(container.querySelector(`[data-icon-name="${glyph}"]`)).not.toBeNull();
@@ -381,8 +381,8 @@ describe('admitted canonical components', () => {
     const handles = container.querySelectorAll<HTMLElement>('[data-node-card="loop-frame"] > [data-handle]');
     expect(handles).toHaveLength(2);
     expect(handles[0]).not.toHaveAttribute('aria-hidden');
-    expect(handles[0].style.top).toBe(handleAxis === 'horizontal' ? '89px' : '');
-    expect(handles[1].style.left).toBe(handleAxis === 'vertical' ? '140px' : '');
+    expect(handles[0].style.top).toBe(handleAxis === 'horizontal' ? '88px' : '');
+    expect(handles[1].style.left).toBe(handleAxis === 'vertical' ? '139px' : '');
     expect(container.querySelector('[data-icon-name]')).toBeNull();
   });
 
@@ -395,7 +395,9 @@ describe('admitted canonical components', () => {
       </ui.DesignerUiScope>
     );
     expect(container.querySelectorAll('[data-node-card="scope"] > [data-handle]')).toHaveLength(2);
-    expect(propertyValues(screen.getByRole('status'), 'background-color')).toContain(ui.designerUiTokens.agentNativeBadgeBackground);
+    expect(propertyValues(document.querySelector<HTMLElement>('[data-badge-status]')!, 'background-color')).toContain(
+      ui.designerUiTokens.agentNativeBadgeBackground
+    );
     expect(screen.getByTestId('scope').style.getPropertyValue('--designer-ui-v2-agent-native-badge-background')).toBe('#1B2E52');
   });
 
@@ -471,5 +473,80 @@ describe('admitted canonical components', () => {
     unmount();
     expect(observer.disconnect).toHaveBeenCalledOnce();
     iframe.remove();
+  });
+});
+
+describe('scoped palette roles', () => {
+  const scopeVar = (name: string) => screen.getByTestId('scope').style.getPropertyValue(`--designer-ui-v2-${name}`);
+
+  it('writes no shared variables when the scope is disabled so flag-off rendering is unchanged', () => {
+    render(
+      <ui.DesignerUiScope enabled={false} mode="light" tokens={{ 'canvas-background': '#123456' }} data-testid="scope">
+        <ui.ActionNodeCard kind="http" title="HTTP" subtitle="" />
+      </ui.DesignerUiScope>
+    );
+    const style = screen.getByTestId('scope').getAttribute('style') ?? '';
+    expect(style).not.toContain('--designer-ui-v2-');
+    expect(screen.getByTestId('scope').hasAttribute('data-designer-ui-v2')).toBe(false);
+  });
+
+  it('maps the canvas role to the system Canvas color under forced colors only for enabled scopes', () => {
+    render(
+      <>
+        <ui.DesignerUiScope mode="light" data-testid="on" />
+        <ui.DesignerUiScope enabled={false} mode="light" data-testid="off" />
+      </>
+    );
+    const forced = declarations(screen.getByTestId('on'), '', '(forced-colors: active)').map((style) =>
+      style.getPropertyValue('--designer-ui-v2-canvas-background').trim()
+    );
+    expect(forced).toContain('Canvas');
+    expect(declarations(screen.getByTestId('off'), '', '(forced-colors: active)')).toHaveLength(0);
+  });
+
+  it('paints white light cards on a tinted canvas with a visible rest border and white connector fill', () => {
+    render(<ui.DesignerUiScope mode="light" data-testid="scope" />);
+    expect(scopeVar('node-surface')).toBe('#ffffff');
+    expect(scopeVar('canvas-background')).toBe('#fafafa');
+    expect(scopeVar('node-border')).toBe('#e0e0e0');
+    expect(scopeVar('node-tool-connector-fill')).toBe('#ffffff');
+  });
+
+  it('maps the new dark roles to the Fluent variables components used before the roles existed', () => {
+    render(<ui.DesignerUiScope mode="dark" data-testid="scope" />);
+    expect(scopeVar('canvas-background')).toBe('var(--colorNeutralBackground1)');
+    expect(scopeVar('node-border')).toBe('var(--colorNeutralStroke3)');
+    expect(scopeVar('node-tool-connector-fill')).toBe('var(--colorNeutralBackground4)');
+    expect(scopeVar('node-surface')).toBe('#141414');
+  });
+
+  it('lets hosts override the canvas independently of node surfaces', () => {
+    render(<ui.DesignerUiScope mode="light" tokens={{ 'canvas-background': '#101010' }} data-testid="scope" />);
+    expect(scopeVar('canvas-background')).toBe('#101010');
+    expect(scopeVar('node-surface')).toBe('#ffffff');
+  });
+
+  it('keeps alias fallbacks equal to the pre-role values', () => {
+    expect(ui.designerUiTokens.canvasBackground).toBe('var(--designer-ui-v2-canvas-background, var(--colorNeutralBackground1))');
+    expect(ui.designerUiTokens.nodeBorder).toBe('var(--designer-ui-v2-node-border, var(--colorNeutralStroke3))');
+    expect(ui.designerUiTokens.nodeToolConnectorFill).toBe(
+      'var(--designer-ui-v2-node-tool-connector-fill, var(--designer-ui-v2-node-handle-background, var(--colorNeutralBackground1)))'
+    );
+  });
+
+  it('routes the card rest border and tool connector fill through the new roles while keeping forced colors', () => {
+    const { container } = render(
+      <>
+        <ui.ActionNodeCard kind="http" title="HTTP" subtitle="" />
+        <ui.NodeToolConnector />
+      </>
+    );
+    // The visible surface is the root's first child; the root only sizes and positions it.
+    const card = container.querySelector('[data-node-card] > div');
+    expect(card).not.toBeNull();
+    expect(propertyValues(card as Element, 'border')).toContain(`${tokens.strokeWidthThin} solid ${ui.designerUiTokens.nodeBorder}`);
+    expect(propertyValues(card as Element, 'border-top-color', '', '(forced-colors: active)')).toContain('CanvasText');
+    const fills = Array.from(container.querySelectorAll('*')).flatMap((el) => propertyValues(el, 'background-color'));
+    expect(fills).toContain(ui.designerUiTokens.nodeToolConnectorFill);
   });
 });

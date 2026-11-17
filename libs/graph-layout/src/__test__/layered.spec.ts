@@ -61,6 +61,133 @@ describe('layered SIMPLE milestone', () => {
     });
   });
 
+  it.each(['SIMPLE', 'BRANDES_KOEPF'] as const)(
+    'lays out a rightward scope with east ports inside a downward workflow using %s placement',
+    async (placement) => {
+      const graph: ElkNode = {
+        id: 'root',
+        children: [
+          {
+            id: 'scope',
+            layoutOptions: {
+              'elk.direction': 'RIGHT',
+              'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
+              'elk.padding': '[top=12,left=20,bottom=22,right=30]',
+              'elk.nodeSize.minimum': '(1000,300)',
+            },
+            children: [
+              {
+                id: 'source',
+                width: 80,
+                height: 30,
+                layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+                ports: [{ id: 'east', x: 80, y: 15, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'EAST' } }],
+              },
+              {
+                id: 'nested',
+                layoutOptions: { 'elk.direction': 'DOWN' },
+                children: [
+                  { id: 'inner-1', width: 40, height: 30 },
+                  { id: 'inner-2', width: 60, height: 25 },
+                ],
+                edges: [{ id: 'inner-edge', sources: ['inner-1'], targets: ['inner-2'] }],
+              },
+            ],
+            edges: [
+              { id: 'right-edge', sources: ['east'], targets: ['nested'] },
+              { id: 'right-loop', sources: ['east'], targets: ['east'] },
+            ],
+          },
+          { id: 'after', width: 60, height: 40 },
+        ],
+        edges: [{ id: 'down-edge', sources: ['scope'], targets: ['after'] }],
+      };
+
+      await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': placement } });
+      const [scope, after] = graph.children!;
+      const [source, nested] = scope.children!;
+      const [first, second] = nested.children!;
+      expect(nested.x!).toBeGreaterThanOrEqual(source.x! + source.width!);
+      expect(second.y!).toBeGreaterThanOrEqual(first.y! + first.height!);
+      expect(after.y!).toBeGreaterThanOrEqual(scope.y! + scope.height!);
+      expect(scope.width!).toBeGreaterThanOrEqual(1000);
+      expect(scope.height!).toBeGreaterThanOrEqual(300);
+      expect(source.x!).toBeGreaterThanOrEqual(20);
+      expect(source.y!).toBeGreaterThanOrEqual(12);
+
+      const rightEdge = scope.edges![0].sections![0];
+      expect(rightEdge.startPoint).toEqual({ x: source.x! + 80, y: source.y! + 15 });
+      expect(rightEdge.endPoint.x).toBe(nested.x);
+      const loop = scope.edges![1].sections![0];
+      expect(loop.startPoint).toEqual(rightEdge.startPoint);
+      expect(loop.endPoint).toEqual(rightEdge.startPoint);
+      for (const section of [rightEdge, loop]) {
+        const points = [section.startPoint, ...(section.bendPoints ?? []), section.endPoint];
+        expect((points.length - 1) % 3).toBe(0);
+        for (const point of points) {
+          expect(point.x).toBeGreaterThanOrEqual(0);
+          expect(point.y).toBeGreaterThanOrEqual(0);
+          expect(point.x).toBeLessThanOrEqual(scope.width!);
+          expect(point.y).toBeLessThanOrEqual(scope.height!);
+        }
+      }
+    }
+  );
+
+  it('uses x positions for interactive ranks in rightward graphs', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'later', x: 100, y: 0, width: 40, height: 20 },
+        { id: 'earlier', x: 0, y: 100, width: 40, height: 20 },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: { ...options, 'elk.direction': 'RIGHT' } });
+    expect(graph.children![1].x!).toBeLessThan(graph.children![0].x!);
+  });
+
+  it.each([
+    ['SOUTH', 80, 15, /port side/],
+    ['EAST', 79, 15, /right border/],
+    ['EAST', 80, 31, /right border/],
+  ] as const)('rejects invalid %s port at (%i, %i) without mutating the graph', async (side, x, y, error) => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        {
+          id: 'source',
+          width: 80,
+          height: 30,
+          layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+          ports: [{ id: 'port', x, y, width: 0, height: 0, layoutOptions: { 'elk.port.side': side } }],
+        },
+      ],
+    };
+    const original = structuredClone(graph);
+    await expect(elk.layout(graph, { layoutOptions: { ...options, 'elk.direction': 'RIGHT' } })).rejects.toThrow(error);
+    expect(graph).toEqual(original);
+  });
+
+  it('uses the upper-left Brandes-Koepf alignment when requested', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: ['a', 'b', 'c'].map((id) => ({ id, width: 100, height: 40 })),
+      edges: [
+        { id: 'ac', sources: ['a'], targets: ['c'] },
+        { id: 'bc', sources: ['b'], targets: ['c'] },
+      ],
+    };
+    await elk.layout(graph, {
+      layoutOptions: {
+        ...options,
+        'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+        'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP',
+      },
+    });
+    expect(graph.children![1].x!).toBeGreaterThan(graph.children![0].x!);
+    expect(graph.children![2].x).toBe(graph.children![0].x);
+  });
+
   it('reverses DFS back edges without changing their public endpoints', async () => {
     const graph = chain();
     graph.edges!.push({ id: 'ba', sources: ['b'], targets: ['a'] });
@@ -75,6 +202,152 @@ describe('layered SIMPLE milestone', () => {
     expect(backward.startPoint.x).not.toBe(forward.endPoint.x);
     expect(backward.endPoint.x).not.toBe(forward.startPoint.x);
     expect(findOverlaps(extractGeometry(graph), 0)).toEqual([]);
+  });
+
+  it.each(['SIMPLE', 'BRANDES_KOEPF'] as const)(
+    'keeps repeated self-loops and fixed-port endpoints outside nodes with %s placement',
+    async (placement) => {
+      const graph: ElkNode = {
+        id: 'root',
+        children: [
+          {
+            id: 'a',
+            width: 100,
+            height: 40,
+            layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+            ports: [{ id: 'port', x: 25, y: 40, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'SOUTH' } }],
+          },
+          { id: 'neighbor', width: 100, height: 100 },
+          { id: 'next', width: 100, height: 40 },
+        ],
+        edges: [
+          { id: 'loop-1', sources: ['a'], targets: ['a'] },
+          { id: 'loop-2', sources: ['a'], targets: ['a'] },
+          { id: 'from-port', sources: ['port'], targets: ['a'] },
+          { id: 'to-port', sources: ['a'], targets: ['port'] },
+          { id: 'same-port', sources: ['port'], targets: ['port'] },
+          { id: 'next-edge', sources: ['a'], targets: ['next'] },
+        ],
+      };
+      await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': placement } });
+      const node = graph.children![0];
+      const portPosition = { x: node.x! + 25, y: node.y! + node.height! };
+      const loops = graph.edges!.slice(0, 5);
+      for (const edge of loops) {
+        const section = edge.sections![0];
+        expect(edge.container).toBe('root');
+        expect(section.incomingShape).toBe(edge.sources[0]);
+        expect(section.outgoingShape).toBe(edge.targets[0]);
+        const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+        expect((points.length - 1) % 3).toBe(0);
+        expect(Math.max(...points.map(({ x }) => x))).toBeGreaterThan(node.x! + node.width!);
+        for (const point of points) {
+          expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
+          expect(point.x).toBeGreaterThanOrEqual(0);
+          expect(point.y).toBeGreaterThanOrEqual(0);
+          expect(point.x).toBeLessThanOrEqual(graph.width!);
+          expect(point.y).toBeLessThanOrEqual(graph.height!);
+        }
+        for (let index = 1; index < points.length; index++) {
+          for (const child of graph.children!) {
+            expect(crossesNodeInterior(points[index - 1], points[index], child), `${edge.id} crosses ${child.id}`).toBe(false);
+          }
+        }
+      }
+      expect(loops[0].sections![0].startPoint).not.toEqual(loops[0].sections![0].endPoint);
+      expect(loops[0].sections![0].bendPoints).not.toEqual(loops[1].sections![0].bendPoints);
+      expect(loops[2].sections![0].startPoint).toEqual(portPosition);
+      expect(loops[3].sections![0].endPoint).toEqual(portPosition);
+      expect(loops[4].sections![0]).toMatchObject({ startPoint: portPosition, endPoint: portPosition });
+      expect(graph.edges![5].sections).toHaveLength(1);
+    }
+  );
+
+  it('keeps self-loop sections container-relative inside nested scopes', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        {
+          id: 'scope',
+          children: [{ id: 'inner', width: 100, height: 40 }],
+          edges: [{ id: 'self', sources: ['inner'], targets: ['inner'] }],
+        },
+        { id: 'sibling', width: 100, height: 40 },
+      ],
+      edges: [{ id: 'outside', sources: ['scope'], targets: ['sibling'] }],
+    };
+    await elk.layout(graph, { layoutOptions: options });
+    const scope = graph.children![0];
+    const section = scope.edges![0].sections![0];
+    expect(scope.edges![0].container).toBe('scope');
+    for (const point of [section.startPoint, ...section.bendPoints!, section.endPoint]) {
+      expect(point.x).toBeGreaterThanOrEqual(0);
+      expect(point.y).toBeGreaterThanOrEqual(0);
+      expect(point.x).toBeLessThanOrEqual(scope.width!);
+      expect(point.y).toBeLessThanOrEqual(scope.height!);
+    }
+  });
+
+  it('keeps self-loop clearance separate from a fixed-port return edge in a cyclic graph', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'a', width: 100, height: 40 },
+        {
+          id: 'b',
+          width: 100,
+          height: 40,
+          layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
+          ports: [{ id: 'b-port', x: 25, y: 40, width: 0, height: 0, layoutOptions: { 'elk.port.side': 'SOUTH' } }],
+        },
+        { id: 'c', width: 100, height: 40 },
+      ],
+      edges: [
+        { id: 'ab', sources: ['a'], targets: ['b'] },
+        { id: 'bc', sources: ['b'], targets: ['c'] },
+        { id: 'ac', sources: ['a'], targets: ['c'] },
+        { id: 'back', sources: ['b-port'], targets: ['a'] },
+        { id: 'self', sources: ['b'], targets: ['b'] },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: { ...options, 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF' } });
+    const back = graph.edges!.find(({ id }) => id === 'back')!.sections![0];
+    const self = graph.edges!.find(({ id }) => id === 'self')!.sections![0];
+    expect(Math.max(...back.bendPoints!.map(({ x }) => x))).toBeGreaterThan(Math.max(...self.bendPoints!.map(({ x }) => x)));
+    for (const section of [back, self]) {
+      const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+      for (let index = 1; index < points.length; index++) {
+        for (const child of graph.children!) {
+          expect(crossesNodeInterior(points[index - 1], points[index], child)).toBe(false);
+        }
+      }
+    }
+  });
+
+  it('gives a zero-sized self-loop finite, visible geometry even with zero spacing', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [{ id: 'a', width: 0, height: 0 }],
+      edges: [{ id: 'self', sources: ['a'], targets: ['a'] }],
+    };
+    await elk.layout(graph, {
+      layoutOptions: {
+        ...options,
+        'elk.padding': '[top=0,left=0,bottom=0,right=0]',
+        'elk.spacing.edgeNode': '0',
+        'elk.spacing.edgeEdge': '0',
+      },
+    });
+    const section = graph.edges![0].sections![0];
+    const points = [section.startPoint, ...section.bendPoints!, section.endPoint];
+    expect((points.length - 1) % 3).toBe(0);
+    expect(Math.max(...points.map(({ x }) => x))).toBeGreaterThan(section.startPoint.x);
+    expect(Math.max(...points.map(({ y }) => y))).toBeGreaterThan(section.startPoint.y);
+    for (const point of points) {
+      expect(Number.isFinite(point.x) && Number.isFinite(point.y)).toBe(true);
+      expect(point.x).toBeLessThanOrEqual(graph.width!);
+      expect(point.y).toBeLessThanOrEqual(graph.height!);
+    }
   });
 
   it('uses local container options without leaking them into descendants', async () => {
@@ -176,9 +449,9 @@ describe('layered SIMPLE milestone', () => {
   });
 
   it.each([
-    [{ 'elk.direction': 'RIGHT' }, undefined, /direction/],
+    [{ 'elk.direction': 'LEFT' }, undefined, /direction/],
     [{ 'elk.layered.nodePlacement.strategy': 'LINEAR_SEGMENTS' }, undefined, /Unsupported layered node placement/],
-    [{ 'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP' }, undefined, /fixedAlignment/],
+    [{ 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTDOWN' }, undefined, /fixedAlignment/],
     [{ 'elk.padding': 'invalid' }, undefined, /padding/],
     [{ 'elk.position': '(10,20)' }, undefined, /position/],
     [
@@ -193,7 +466,6 @@ describe('layered SIMPLE milestone', () => {
     [{}, { id: 'root', children: [{ id: 'a' }, { id: 'b' }], edges: [{ id: 'hyper', sources: ['a', 'b'], targets: ['b'] }] }, /one source/],
     [{ 'elk.layered.spacing.nodeNodeBetweenLayers': '-1' }, undefined, /non-negative/],
     [{}, { id: 'root', children: [{ id: 'a', width: Number.NaN }] }, /finite/],
-    [{}, { id: 'root', children: [{ id: 'a' }], edges: [{ id: 'e', sources: ['a'], targets: ['a'] }] }, /Self-loop/],
     [{}, { id: 'root', children: [{ id: 'a' }], edges: [{ id: 'e', sources: ['a'], targets: ['missing'] }] }, /endpoint/],
   ])('rejects unsupported inputs without partial mutation', async (overrides, input, message) => {
     const graph: ElkNode = input ?? chain();
@@ -295,7 +567,16 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       } else {
         expect(section.startPoint).toEqual(port);
         expect(section.bendPoints).toContainEqual(lead);
-        expect(section.endPoint).toEqual({ x: center(far) - (mode === 'long' ? 10 : 0), y: far.y! });
+        expect(section.endPoint.y).toBe(far.y);
+        if (mode === 'long') {
+          // Entries into `far` keep the same left-to-right order as the lanes they arrive from.
+          const other = graph.edges![2].sections![0];
+          const lane = section.bendPoints![section.bendPoints!.length - 3].x;
+          expect(Math.sign(section.endPoint.x - other.endPoint.x)).toBe(Math.sign(lane - other.startPoint.x));
+          expect(Math.abs(section.endPoint.x - center(far))).toBe(10);
+        } else {
+          expect(section.endPoint.x).toBe(center(far));
+        }
       }
       expect(short.ports![0]).toMatchObject({ x: 20, y: 20 });
       if (mode !== 'direct') {
@@ -303,6 +584,34 @@ describe('layered Brandes–Köpf BALANCED placement', () => {
       }
     }
   );
+
+  it('orders long-edge lanes by edge model order and keeps shared-source anchors uncrossed', async () => {
+    const graph: ElkNode = {
+      id: 'root',
+      children: [
+        { id: 'triage', width: 240, height: 148 },
+        { id: 'sales', width: 800, height: 392 },
+        { id: 'refund', width: 240, height: 148 },
+      ],
+      edges: [
+        { id: 'triage-sales', sources: ['triage'], targets: ['sales'] },
+        { id: 'triage-refund', sources: ['triage'], targets: ['refund'] },
+        { id: 'sales-triage', sources: ['sales'], targets: ['triage'] },
+        { id: 'refund-triage', sources: ['refund'], targets: ['triage'] },
+        { id: 'refund-sales', sources: ['refund'], targets: ['sales'] },
+      ],
+    };
+    await elk.layout(graph, { layoutOptions: bkOptions });
+    const [triage, , refund] = graph.children!;
+    const [toSales, toRefund, fromSales, fromRefund] = graph.edges!.map((edge) => edge.sections![0]);
+    // The Triage→Sales lane (and its reversed return) is laid out before Refund, as in ELK.
+    expect(toSales.bendPoints!.every((point) => point.x < refund.x!)).toBe(true);
+    // Triage's bottom anchors follow their lanes left to right, so no edges cross below it.
+    const anchors = [toSales.startPoint, fromSales.endPoint, toRefund.startPoint, fromRefund.endPoint];
+    expect(anchors.every((point) => point.y === triage.y! + triage.height!)).toBe(true);
+    expect(anchors.map((point) => point.x)).toEqual([...anchors.map((point) => point.x)].sort((a, b) => a - b));
+    expect(layoutQuality(graph).edgeNodeHits).toBe(0);
+  });
 
   it('groups a shuffled uneven four-rank forest beneath its parents with zero route crossings', async () => {
     const forest: ElkNode = { id: 'root', children: [], edges: [] };

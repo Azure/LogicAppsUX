@@ -1033,16 +1033,6 @@
             "description": "Enable to use SMB deployment for hybrid logic apps.",
             "default": false
           },
-          "azureLogicAppsStandard.languageServerDLLPath": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "Absolute path to the server DLL."
-          },
-          "azureLogicAppsStandard.languageServerNupkgPath": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "Absolute path to the .nupkg file."
-          },
           "azureLogicAppsStandard.useExperimentalExtensionBundle": {
             "type": "boolean",
             "default": false,

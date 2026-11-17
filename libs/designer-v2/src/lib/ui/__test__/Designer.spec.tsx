@@ -2,7 +2,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { tokens } from '@fluentui/react-components';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 const mockDispatch = vi.fn();
 let mockCanUndo = false;
@@ -389,10 +389,19 @@ describe('Designer', () => {
     expect(screen.getByTestId('background').getAttribute('data-size')).toBe('4');
   });
 
-  it('maps only the default shared Background to the host Background1 role', () => {
+  it('maps only the default shared Background to the shared canvas role', () => {
     mockSharedNodeUi = true;
     render(<Designer />);
-    expect(screen.getByTestId('background').getAttribute('data-bg-color')).toBe(tokens.colorNeutralBackground1);
+    expect(screen.getByTestId('background').getAttribute('data-bg-color')).toBe(designerUiTokens.canvasBackground);
+  });
+
+  it('keeps the legacy dotted Background when shared presentation is disabled', () => {
+    mockSharedNodeUi = false;
+    render(<Designer />);
+    const background = screen.getByTestId('background');
+    expect(background.getAttribute('data-bg-color')).toBeNull();
+    expect(background.getAttribute('data-color')).toBe('#80808080');
+    expect(background.getAttribute('data-size')).toBe('2');
   });
 
   it('preserves an explicit host background color while shared presentation is enabled', () => {

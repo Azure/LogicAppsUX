@@ -5,13 +5,15 @@ designers use. It keeps the elkjs JSON graph format and `new ELK().layout(graph,
 call sites can switch with an import change, but implements only the supported option subset in plain,
 tree-shakable TypeScript.
 
-> **Experimental:** flat overlap removal, SIMPLE and balanced Brandes-Köpf layered placement are implemented.
+> **Experimental:** flat overlap removal, SIMPLE and Brandes-Köpf layered placement are implemented.
 > Exact elkjs parity is not a goal. designer-v2 uses this package (bundled into its build); designer v1 and
 > data-mapper-v2 still use elkjs.
 
 The designer-v2 build includes graph-layout's declarations in its published output. After packing designer-v2,
 `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory>` checks the
-package without resolving this private dependency. The new directory must be outside the repository.
+package without resolving this private dependency, using both Node and bundler resolution with
+`noUncheckedSideEffectImports` enabled. Runtime stylesheet imports remain in the JavaScript/CSS bundles, but
+are omitted from the designer-v2 and designer-ui declarations. The new directory must be outside the repository.
 
 ## Usage
 
@@ -34,14 +36,16 @@ algorithms reject instead of silently falling back.
 It supports unpositioned or positioned flat nodes, `LEFT` direction, and non-negative `spacing.nodeNode` (default 8).
 It rejects nested graphs, edges, ports, invalid geometry, and unsupported directions. The input graph is updated in place.
 
-Layered layout supports DOWN, DFS cycle breaking, interactive layering, model-order/barycenter ordering,
-long-edge dummy nodes, SIMPLE and BALANCED Brandes-Köpf placement, local nested scopes, padding/minimum sizes, and fixed SOUTH ports.
+Layered layout supports DOWN and RIGHT, DFS cycle breaking, interactive layering, model-order/barycenter ordering,
+long-edge dummy nodes, SIMPLE and BALANCED/LEFTUP Brandes-Köpf placement, locally laid-out nested scopes,
+padding/minimum sizes, and fixed SOUTH or EAST ports matching the graph direction.
 Balanced placement aligns median neighbors in four directions, protects inner dummy segments from conflicting
-alignments, compacts vertical blocks, and combines the four layouts without violating horizontal spacing.
+alignments, compacts blocks, and combines the four layouts without violating spacing; LEFTUP uses one directional sweep.
 Fixed port coordinates are preserved, but placement currently optimizes node centers rather than port anchors.
-Cycle-reversed edges with a fixed SOUTH source port detour around their source rank. Edges receive
+Cycle-reversed edges with a fixed source port detour around their source rank. Self-loops reserve
+space beside their node and retain fixed port endpoints. Edges receive
 container-relative sections, but general obstacle avoidance and spline visual parity are not established.
-Nonzero `elk.position` hints, cross-hierarchy edges, self-loops, hyperedges, labels, and unsupported
+Nonzero `elk.position` hints, cross-hierarchy edges, hyperedges, labels, and unsupported
 option values reject.
 Successful calls mutate and return the input, matching bundled elkjs; failed validation leaves it unchanged.
 
@@ -74,6 +78,7 @@ workflows and graphs larger than StressTest200 are not represented in the retain
 | Command | What it does |
 | --- | --- |
 | `pnpm test:lib` | Unit tests, fixture geometry invariants, elkjs determinism and simple-chain parity |
+| `pnpm typecheck` | Builds `dist` for the report's production-artifact import, then checks the source and benchmark types |
 | `ELKJS_EXACT_PARITY=1 pnpm test:lib` | Full coordinate/endpoint parity audit (currently fails; set the environment variable using your shell's syntax) |
 | `pnpm bench` | `vitest bench` timings for the retained fixtures |
 | `pnpm bench:report [fixture-name]` | Builds `dist`, then prints minified/gzip/brotli bundle sizes and median layout times per fixture (Node ≥ 22.18) |
@@ -103,5 +108,5 @@ Notes:
   designer-v2 currently uses the new engine directly without a fallback.
 - To check packed designer-v2 declarations manually, build and pack that package, then run
   `pnpm --filter @microsoft/logic-apps-designer-v2 test:package-types <package.tgz> <new-directory-outside-repo>`.
-  The consumer links workspace dependencies and is not run in CI. Its stricter side-effect-import check currently
-  reports pre-existing unresolved `.less` and `.css` declarations; default TypeScript side-effect checking passes.
+  The consumer links workspace dependencies and is not run in CI. It verifies strict side-effect imports
+  under both bundler and Node resolution.

@@ -6,6 +6,12 @@ import type { NodeProps } from '@xyflow/react';
 // react-intl's useIntl is already mocked by test-setup.ts via mockUseIntl()
 
 const mockDispatch = vi.fn();
+const mockUseInitialMountSettled = vi.fn().mockReturnValue(true);
+const mockUseNodeRepetition = vi.fn().mockReturnValue({ isFetching: false, data: undefined });
+
+vi.mock('../../../core/hooks/useInitialMountSettled', () => ({
+  useInitialMountSettled: () => mockUseInitialMountSettled(),
+}));
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
@@ -23,7 +29,7 @@ vi.mock('react-hotkeys-hook', () => ({
 
 // Mock the core barrel to prevent loading the full module tree (undoRedoTypes, etc.)
 vi.mock('../../../core', () => ({
-  useNodeRepetition: () => ({ isFetching: false, data: undefined }),
+  useNodeRepetition: (...args: any[]) => mockUseNodeRepetition(...args),
 }));
 
 vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
@@ -166,12 +172,20 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -231,6 +245,8 @@ describe('OperationCardNode (v2)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseInitialMountSettled.mockReturnValue(true);
+    mockUseNodeRepetition.mockReturnValue({ isFetching: false, data: undefined });
     cleanup();
     mockUseReadOnly.mockReturnValue(false);
     mockUseSharedNodeUi.mockReturnValue(false);
@@ -323,6 +339,25 @@ describe('OperationCardNode (v2)', () => {
     await new Promise((resolve) => setTimeout(resolve, 420));
     expect(screen.queryByText('Monitoring description')).toBeNull();
     expect(container.querySelector('[data-node-info-card]')).toBeNull();
+  });
+
+  it.each([
+    [false, 'loops-pager-testNode', 'shared-loops-pager-testNode'],
+    [true, 'shared-loops-pager-testNode', 'loops-pager-testNode'],
+  ])('selects the MCP tool pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { repetitionCount: 2 },
+    });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
   });
 
   it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {
@@ -508,11 +543,68 @@ describe('OperationCardNode (v2)', () => {
     );
   });
 
+  it('defers the leaf DropZone until initial mount settles without changing accepted shared geometry', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseInitialMountSettled.mockReturnValue(false);
+    const props = { ...defaultProps, data: { presentation: { shared: true }, handleAxis: 'horizontal' as const } };
+    const { rerender } = render(<DefaultNode {...props} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
+    mockUseInitialMountSettled.mockReturnValue(true);
+    // The mocked hook has no subscription; change props to re-render the memoized card.
+    rerender(<DefaultNode {...props} data={{ ...props.data }} />);
+    expect(screen.getByTestId('dropzone-root')).toHaveAttribute('data-axis', 'horizontal');
+    expect(screen.getByTestId('dropzone-root')).toHaveAttribute('data-shared', 'true');
+  });
+
+  it('only subscribes to repetition run data while monitoring', () => {
+    mockUseNodeRepetition.mockClear();
+    const { rerender } = render(<DefaultNode {...defaultProps} />);
+    expect(mockUseNodeRepetition).not.toHaveBeenCalled();
+    mockUseMonitoringView.mockReturnValue(true);
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(mockUseNodeRepetition).toHaveBeenCalled();
+  });
+
   it('should show DropZone for leaf nodes', () => {
     mockUseIsLeafNode.mockReturnValue(true);
 
     render(<DefaultNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-root')).toBeInTheDocument();
+  });
+
+  it('places the accepted RIGHT terminal after the operation even while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN terminal placement and presentation while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('does not render a terminal for an accepted RIGHT operation in read-only mode', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
   });
 
   it('should not show DropZone when not a leaf node', () => {

@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
-import { ActionNodeCard, NodeHoverCard, NodeInfoCard } from '@microsoft/designer-ui-v2';
+import {
+  ActionNodeCard,
+  NodeHoverCard,
+  NodeInfoCard,
+  NODE_HOVER_CARD_IGNORE_ATTRIBUTE,
+  nodeHoverCardTiming,
+} from '@microsoft/designer-ui-v2';
 import type { NodeHoverCardProps } from '@microsoft/designer-ui-v2';
 import { requestIcon } from './storyFixtures';
 
@@ -12,8 +18,8 @@ const meta = {
   title: 'Information/NodeHoverCard',
   component: NodeHoverCard,
   args: {
-    openDelay: 400,
-    closeDelay: 200,
+    openDelay: nodeHoverCardTiming.openDelay,
+    closeDelay: nodeHoverCardTiming.closeDelay,
     disabled: false,
     card: information,
     children: <ActionNodeCard title="Send request" role="group" tabIndex={0} aria-label="Inspect Send request" />,
@@ -36,7 +42,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Delayed hover/focus description, Escape dismissal and render-function close. The preview scope provides the real same-document outlet. Focus stays with the consumer, not a graph host.',
+          '600ms hover or keyboard-visible focus opening, 200ms close grace, Escape dismissal and render-function close. Each preview scope coordinates its own cards and provides the same-document outlet. Programmatic focus does not open; focus stays with the consumer.',
       },
     },
   },
@@ -74,7 +80,10 @@ export const FocusEscapeAndDismiss: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('group', { name: 'Inspect Send request' });
-    trigger.focus();
+    // Start at the following control, then use real keyboard navigation so Fluent marks the node's focus.
+    canvas.getByRole('button', { name: 'Next focus target' }).focus();
+    await userEvent.tab({ shift: true });
+    await expect(trigger).toHaveFocus();
     const focusedClose = await canvas.findByRole('button', { name: 'Close' });
     // Fluent mounts the popup before its enter motion makes descendants visible.
     await waitFor(() => expect(focusedClose).toBeVisible());
@@ -105,3 +114,36 @@ function ExternalTarget(args: NodeHoverCardProps) {
     </div>
   );
 }
+export const DefaultDelay: Story = { args: { openDelay: undefined } };
+export const KeyboardVisibleFocus: Story = {
+  ...FocusEscapeAndDismiss,
+  args: { openDelay: 0, closeDelay: 0 },
+};
+export const IgnoredInteractiveDescendant: Story = {
+  args: {
+    openDelay: 0,
+    closeDelay: 0,
+    children: (
+      <div role="group" tabIndex={0} aria-label="Node with an interactive descendant">
+        Node owner
+        <button type="button" {...{ [NODE_HOVER_CARD_IGNORE_ATTRIBUTE]: 'true' }}>
+          Ignored action
+        </button>
+      </div>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const ignored = canvas.getByRole('button', { name: 'Ignored action' });
+    await userEvent.hover(ignored);
+    await expect(canvas.queryByText('Send request details')).not.toBeInTheDocument();
+    await userEvent.click(ignored);
+    await expect(canvas.queryByText('Send request details')).not.toBeInTheDocument();
+    await userEvent.unhover(ignored);
+    // Keyboard focus on the marked descendant is ignored as well as click-driven focus.
+    await userEvent.tab();
+    await userEvent.tab({ shift: true });
+    await expect(ignored).toHaveFocus();
+    await expect(canvas.queryByText('Send request details')).not.toBeInTheDocument();
+  },
+};

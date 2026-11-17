@@ -42,7 +42,24 @@ describe('provisional public XYFlow handles', () => {
       expect(getPrecomputedHandles({ ...shared, data: { presentation: { shared: true, family } } }, 232, 74)).toBeUndefined();
     }
     expect(getPrecomputedHandles(operation, 200, 44, false, SUBGRAPH_TYPES.MCP_CLIENT)).toBeUndefined();
+    expect(getPrecomputedHandles({ ...shared, data: { ...shared.data, handleAxis: 'horizontal' } }, 232, 74)).toBeUndefined();
     expect(getPrecomputedHandles({ ...shared, data: { branchPorts: [{ id: 'case' }] } }, 232, 74)).toBeUndefined();
+  });
+
+  it('preserves main shared structural source offsets without promoting them to draw handles', () => {
+    const collapsed = {
+      ...operation,
+      type: WORKFLOW_NODE_TYPES.COLLAPSED_NODE,
+      data: { presentation: { shared: true, family: 'collapsed' } },
+    };
+    expect(getPrecomputedHandles(collapsed, 232, 50)?.[1]).toEqual({
+      type: 'source',
+      position: Position.Bottom,
+      x: 113,
+      y: 51,
+      width: 6,
+      height: 6,
+    });
   });
 
   it('leaves unknown, structural and unsized nodes on the normal DOM measurement path', () => {
@@ -63,6 +80,20 @@ describe('provisional public XYFlow handles', () => {
     expect(nodes[0]).not.toHaveProperty('height');
     expect(nodes[0]).not.toHaveProperty('width');
     expect(nodes[0]).not.toHaveProperty('measured');
+    expect(nodes[0]).not.toHaveProperty('internals');
+  });
+
+  it('supplies public handles with accepted shared dimensions on the first layout', () => {
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(
+      { id: 'root', children: [{ id: 'action', x: 0, y: 0, width: 232, height: 74 }] },
+      true
+    );
+    expect(nodes[0]).toMatchObject({
+      width: 232,
+      height: 74,
+      data: { presentation: { shared: true }, handleAxis: 'vertical' },
+      handles: getPrecomputedHandles({ ...operation, data: { presentation: { shared: true } } }, 232, 74),
+    });
     expect(nodes[0]).not.toHaveProperty('internals');
   });
 });

@@ -1,6 +1,5 @@
-import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { IRunService, RunFilterOptions } from '../run';
+import type { IRunService, RunFilterOptions, RunServiceDevData } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
@@ -24,6 +23,8 @@ export interface ConsumptionRunServiceOptions {
   accessToken?: string;
   workflowId: string;
   isDev?: boolean;
+  /** Required by getActionLinks when isDev is true. */
+  devData?: RunServiceDevData;
 }
 
 export class ConsumptionRunService implements IRunService {
@@ -471,9 +472,14 @@ export class ConsumptionRunService implements IRunService {
     let outputs: Record<string, any> = {};
 
     if (this._isDev) {
-      inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
-      outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
-      return Promise.resolve({ inputs, outputs });
+      const { devData } = this.options;
+      if (!devData) {
+        throw new Error('Run service devData is required by getActionLinks when isDev is true');
+      }
+      return {
+        inputs: getRecordEntry(devData.inputs, nodeId) ?? {},
+        outputs: getRecordEntry(devData.outputs, nodeId) ?? {},
+      };
     }
 
     try {

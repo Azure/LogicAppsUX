@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useContext } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { designerUiTokens as ui, nodeCardVars } from '../../theme/tokens';
@@ -6,7 +6,7 @@ import { nodeMetrics } from '../metrics';
 import type { ActionNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import type { NodeCardShape, NodeCardWidth, NodeRunStatus } from '../types';
-import { NodeHandleAxisContext } from './NodeHandle';
+import { NodeHandleAxisContext, NodeInactiveContext } from './NodeHandle';
 import type { NodeHandleAxis } from './NodeHandle';
 import { NodeStatusBadge } from './NodeStatusBadge';
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
-    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke3}`,
+    border: `${tokens.strokeWidthThin} solid ${ui.nodeBorder}`,
     borderRadius: tokens.borderRadius2XLarge,
     backgroundColor: `var(${bg})`,
     color: tokens.colorNeutralForeground1,
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
   medium: { minHeight: `${nodeMetrics.cards.action.height}px` },
   small: { minHeight: `${nodeMetrics.cards.tool.smallHeight}px` },
-  switch: { minHeight: `${nodeMetrics.cards.switch.height}px` },
+  switch: { minHeight: `${nodeMetrics.cards.switch.height}px`, ...shorthands.borderWidth(`${nodeMetrics.cards.switch.borderWidth}px`) },
   pill: {
     borderTopLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
     borderBottomLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
@@ -71,16 +71,25 @@ const useStyles = makeStyles({
   focus: { ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' } },
   badge: { position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1 },
   badgeVertical: { left: 'auto', right: tokens.spacingHorizontalL, transform: 'translateY(-50%)' },
+  // Dimming only: inactive nodes stay focusable, hoverable and inspectable.
+  inactive: { opacity: nodeMetrics.inactiveOpacity },
 });
 export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   width?: NodeCardWidth;
   size?: 'medium' | 'small' | 'switch';
+  bodyHeight?: number;
   shape?: NodeCardShape;
   surface?: 'neutral' | 'agent';
   appearance?: 'default' | 'placeholder';
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
+  /** Visible badge text override for service states that share a tone. */
+  statusLabel?: string;
+  /** Accessible name for the badge when it differs from the visible text. */
+  statusAriaLabel?: string;
+  /** Dims a node that did not run on the selected path; it remains interactive. */
+  inactive?: boolean;
   strings?: ActionNodeCardStrings;
   after?: ReactNode;
   handleAxis?: NodeHandleAxis;
@@ -89,12 +98,16 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   {
     width = 'standard',
     size = 'medium',
+    bodyHeight,
     shape = 'rounded',
     surface = 'neutral',
     appearance = 'default',
     selected = false,
     status,
     statusDetail,
+    statusLabel,
+    statusAriaLabel,
+    inactive = false,
     strings = defaultNodeStrings,
     after,
     handleAxis = 'horizontal',
@@ -105,24 +118,32 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   ref
 ) {
   const styles = useStyles();
+  const ancestorInactive = useContext(NodeInactiveContext);
+  const dimmed = inactive || ancestorInactive;
   return (
     <div
+      role="group"
       {...rest}
       ref={ref}
-      className={mergeClasses(styles.root, styles[width], styles.focus, className)}
+      className={mergeClasses(styles.root, styles[width], styles.focus, inactive && !ancestorInactive && styles.inactive, className)}
       data-selected={selected || undefined}
       data-status={status}
       data-handle-axis={handleAxis}
+      data-inactive={inactive || undefined}
     >
       {status && status !== 'mock' ? (
         <NodeStatusBadge
+          live={false}
           status={status}
           detail={statusDetail}
+          label={statusLabel}
+          aria-label={statusAriaLabel}
           strings={strings.status}
           className={mergeClasses(styles.badge, handleAxis === 'vertical' && styles.badgeVertical)}
         />
       ) : null}
       <div
+        style={bodyHeight === undefined ? undefined : { minHeight: bodyHeight }}
         className={mergeClasses(
           styles.card,
           styles[size],
@@ -133,9 +154,13 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
           selected && styles.selected
         )}
       >
-        <NodeHandleAxisContext.Provider value={handleAxis}>{children}</NodeHandleAxisContext.Provider>
+        <NodeInactiveContext.Provider value={dimmed}>
+          <NodeHandleAxisContext.Provider value={handleAxis}>{children}</NodeHandleAxisContext.Provider>
+        </NodeInactiveContext.Provider>
       </div>
-      <NodeHandleAxisContext.Provider value={handleAxis}>{after}</NodeHandleAxisContext.Provider>
+      <NodeInactiveContext.Provider value={dimmed}>
+        <NodeHandleAxisContext.Provider value={handleAxis}>{after}</NodeHandleAxisContext.Provider>
+      </NodeInactiveContext.Provider>
     </div>
   );
 });

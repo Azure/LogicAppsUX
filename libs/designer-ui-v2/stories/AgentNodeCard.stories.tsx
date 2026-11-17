@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Children, useState } from 'react';
 import { Button } from '@fluentui/react-components';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
@@ -21,6 +21,7 @@ const meta = {
   argTypes: {
     handleAxis: axisControl,
     status: statusControl,
+    toolsPlacement: { control: 'inline-radio', options: ['below', 'side'] },
     tools: { control: false },
     toolsPanelSlot: { control: false },
     footerAction: { control: false },
@@ -62,7 +63,7 @@ export const WithoutHandles: Story = {
 };
 
 function LocalAgent(args: AgentNodeCardProps) {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(args.tools ? Children.count(args.tools) : 1);
   const [expanded, setExpanded] = useState(args.toolsExpanded ?? true);
   const [inspected, setInspected] = useState(false);
   return (
@@ -80,8 +81,8 @@ function LocalAgent(args: AgentNodeCardProps) {
         }
         onAddTool={
           args.onAddTool
-            ? () => {
-                args.onAddTool?.();
+            ? (anchor) => {
+                args.onAddTool?.(anchor);
                 setCount((value) => value + 1);
               }
             : undefined
@@ -125,8 +126,8 @@ function EmptyAgent(args: AgentNodeCardProps) {
     <div className="sb-stack">
       <AgentNodeCard
         {...args}
-        onAddTool={() => {
-          args.onAddTool?.();
+        onAddTool={(anchor) => {
+          args.onAddTool?.(anchor);
           setAdded(true);
         }}
         tools={added ? <ToolItemCard title="New local tool" size="small" /> : undefined}
@@ -135,3 +136,51 @@ function EmptyAgent(args: AgentNodeCardProps) {
     </div>
   );
 }
+export const BelowToolsDefault: Story = {
+  args: { ...WithTools.args, toolsPlacement: 'below', onAddTool: fn(), onToggleTools: fn() },
+  render: (args) => <LocalAgent {...args} />,
+};
+export const SideToolsVertical: Story = {
+  args: { ...WithTools.args, handleAxis: 'vertical', toolsPlacement: 'side' },
+  render: (args) => <AnchoredAgent {...args} />,
+};
+function AnchoredAgent(args: AgentNodeCardProps) {
+  const [anchor, setAnchor] = useState('No add anchor received');
+  return (
+    <div className="sb-stack">
+      <AgentNodeCard
+        {...args}
+        onAddTool={(element) => {
+          args.onAddTool?.(element);
+          setAnchor(element?.tagName ?? 'No element');
+        }}
+      />
+      <output>Host receives an Add tool button anchor: {anchor}. Graph coordinates remain host-owned.</output>
+    </div>
+  );
+}
+export const SideRequestFallsBackHorizontal: Story = {
+  args: { ...WithTools.args, handleAxis: 'horizontal', toolsPlacement: 'side' },
+  parameters: {
+    docs: { description: { story: 'Horizontal cards fall back to below tools; side placement requires a vertical main flow.' } },
+  },
+};
+export const ReadOnlyEmptyTools: Story = {
+  args: { tools: undefined, onAddTool: undefined },
+  parameters: {
+    docs: {
+      description: { story: 'Empty read-only Agents omit the connector and panel; there is no empty-state copy or dead Add button.' },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).queryByRole('button', { name: /Add tool/ })).not.toBeInTheDocument();
+  },
+};
+export const AddableEmptyTools: Story = {
+  ...EmptyAddTool,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Add tool' }));
+    await expect(canvas.getByText('New local tool')).toBeInTheDocument();
+  },
+};

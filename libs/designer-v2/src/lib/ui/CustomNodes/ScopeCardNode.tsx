@@ -44,8 +44,10 @@ import {
 } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import { WORKFLOW_NODE_TYPES, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -413,10 +415,12 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
       const focusElement = (index: number, id: string) => {
         dispatch(setFocusElement(`${id}-${index}-0`));
       };
-      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
+      // Flag-on swaps only the pager presentation; run-index state and focus behavior stay identical.
+      const Pager = shared ? SharedLoopsPager : LoopsPager;
+      return <Pager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
     }
     return null;
-  }, [dispatch, graphCollapsed, metadata, scopeId]);
+  }, [dispatch, graphCollapsed, metadata, scopeId, shared]);
 
   const nodeIndex = useNodeIndex(id);
 
@@ -437,12 +441,13 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
 
   const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
   const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const branchPorts = (data?.branchPorts ?? []) as { id: string }[];
-  const inputSlot = <EdgeDrawTargetHandle contained />;
+  const inputSlot = <EdgeDrawTargetHandle contained axis={handleAxis} />;
   const sourceSlot = isFooter ? (
-    <EdgeDrawSourceHandle contained highlighted={selected || isMultiSelected} />
+    <EdgeDrawSourceHandle axis={handleAxis} contained highlighted={selected || isMultiSelected} />
   ) : (
-    <DefaultHandle contained type="source" />
+    <DefaultHandle axis={handleAxis} contained type="source" />
   );
   const model = getScopeModel(node);
   const Card = shared ? (presentation.family === 'agent' ? SharedAgentScopeCard : SharedScopeCard) : ActionCard;
@@ -451,9 +456,10 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     <>
       <div className="msla-scope-card nopan" ref={ref as any} style={shared ? { width: presentation.size?.width } : undefined}>
         <div ref={rootRef}>
-          {!shared || presentation.family === 'scope' ? <EdgeDrawTargetHandle /> : null}
+          {!shared || presentation.family === 'scope' ? <EdgeDrawTargetHandle axis={handleAxis} /> : null}
           <Card
             family={presentation.family}
+            handleAxis={handleAxis}
             id={scopeId}
             active={isCardActive}
             brandColor={brandColor}
@@ -483,7 +489,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
               operationType: node.type,
               inputSlot,
               outputSlots: branchPorts.length
-                ? branchPorts.map((port) => <DefaultHandle key={port.id} id={port.id} contained type="source" />)
+                ? branchPorts.map((port) => <DefaultHandle key={port.id} axis={handleAxis} id={port.id} contained type="source" />)
                 : [sourceSlot],
               caseCount: branchPorts.length || undefined,
               model: typeof model === 'string' && model.length > 0 ? model : undefined,
@@ -497,9 +503,9 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
           {shouldShowPager && (!shared || !isAgent) ? renderLoopsPager : null}
           {!shared || presentation.family === 'scope' ? (
             isFooter ? (
-              <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} />
+              <EdgeDrawSourceHandle axis={handleAxis} highlighted={selected || isMultiSelected} />
             ) : (
-              <DefaultHandle type="source" />
+              <DefaultHandle axis={handleAxis} type="source" />
             )
           ) : null}
         </div>
@@ -518,12 +524,13 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
         readOnly ? (
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
-          <div className={'edge-drop-zone-container'}>
+          <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
             <DropZone
               graphId={scopeId}
               parentId={id}
               isLeaf={isLeaf}
               tabIndex={nodeIndex}
+              axis={handleAxis}
               {...(data?.presentation ? { sharedPresentation: shared } : {})}
             />
           </div>

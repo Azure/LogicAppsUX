@@ -4,7 +4,6 @@
   "useSharedNodeUi": false,
   "layoutOptions": {
     "elk.algorithm": "org.eclipse.elk.layered",
-    "elk.direction": "DOWN",
     "elk.alignment": "TOP",
     "elk.layered.layering.strategy": "INTERACTIVE",
     "elk.edge.type": "DIRECTED",
@@ -1581,7 +1580,8 @@
       "elk.padding": "[top=0,left=20,bottom=40,right=20]",
       "elk.position": "(0, 0)",
       "nodeType": "GRAPH_NODE",
-      "presentation": "{\"shared\":false}"
+      "presentation": "{\"shared\":false}",
+      "elk.direction": "DOWN"
     }
   }
 }

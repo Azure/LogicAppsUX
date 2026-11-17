@@ -16,7 +16,8 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
   { title, subtitle, icon, selectedIcon, selected, status, statusDetail, strings = defaultNodeStrings, handles = true, ...rest },
   ref
 ) {
-  const testData = status === 'mock';
+  // Triggers consume saved sample *input*; they never substitute output, so `mock` is forwarded for status-union
+  // compatibility without the action-only beaker paint.
   return (
     <NodeCard
       {...rest}
@@ -29,13 +30,8 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
       strings={strings}
       data-node-card="trigger"
     >
-      <NodeCardBody testData={testData} testDataLabel={strings.status.mock}>
-        <NodeIconTile
-          category="trigger"
-          selected={selected}
-          testData={testData}
-          {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)}
-        />
+      <NodeCardBody>
+        <NodeIconTile category="trigger" selected={selected} {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)} />
         <NodeText title={title} subtitle={subtitle} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>

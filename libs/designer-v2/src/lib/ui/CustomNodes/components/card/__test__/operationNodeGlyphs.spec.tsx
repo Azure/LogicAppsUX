@@ -1,6 +1,7 @@
 import { getNodeGlyph } from '@microsoft/designer-ui-v2';
 import { createIntl } from 'react-intl';
 import { describe, expect, it } from 'vitest';
+import { AgentsFilled, AgentsRegular } from '@fluentui/react-icons';
 import * as dateTimeOperations from '../../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/operations/datetime';
 import {
   csvTableOperation,
@@ -44,5 +45,13 @@ describe('host operation identity normalization', () => {
 
   it('does not interpret the kind of a connector as a built-in operation identity', () => {
     expect(getOperationNodeVisualKind('ApiConnection', 'CurrentTime')).toBeUndefined();
+  });
+
+  it.each(['agent', 'nestedagent'])('maps %s to the existing agent glyph without extending visual-kind contracts', (type) => {
+    expect(getOperationNodeVisualKind(type)).toBeNull();
+    expect(getOperationNodeGlyph(type)).toMatchObject({
+      icon: { type: AgentsRegular },
+      selectedIcon: { type: AgentsFilled },
+    });
   });
 });

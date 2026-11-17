@@ -10,14 +10,19 @@ const readPaint = (page: Page) =>
     const card = document.getElementById('msla-node-Compose')!;
     const surface = card.hasAttribute('data-node-card') ? card.querySelector(':scope > div')! : card;
     const probe = document.createElement('span');
-    probe.style.backgroundColor = 'var(--colorNeutralBackground1)';
+    // Resolve the shared canvas role exactly as designer-ui-v2 tokens do (scope value, else Background1).
+    probe.style.backgroundColor = 'var(--designer-ui-v2-canvas-background, var(--colorNeutralBackground1))';
     root.appendChild(probe);
     const background1 = getComputedStyle(probe).backgroundColor;
+    // Independent reference: Fluent Background1 without the shared canvas variable.
+    probe.style.backgroundColor = 'var(--colorNeutralBackground1)';
+    const fluentBackground1 = getComputedStyle(probe).backgroundColor;
     probe.remove();
     const flowColor = getComputedStyle(flow).backgroundColor;
     const backgroundColor = getComputedStyle(background).backgroundColor;
     return {
       background1,
+      fluentBackground1,
       root: getComputedStyle(root).backgroundColor,
       flow: flowColor,
       background: backgroundColor,
@@ -68,7 +73,9 @@ for (const dark of [false, true]) {
         await testInfo.attach('settled-main-canvas-fit', { path: screenshot, contentType: 'image/png' });
         expect(paint.flowClass.split(' ')).toContain(dark ? 'dark' : 'light');
         if (flag === 'true') {
-          expect(paint.background1).not.toBe('rgba(0, 0, 0, 0)');
+          // Pin the resolved role to its contract rather than to the variable under test:
+          // light scope paints #fafafa, dark scope falls back to Fluent Background1.
+          expect(paint.background1).toBe(dark ? paint.fluentBackground1 : 'rgb(250, 250, 250)');
           expect(paint.flow).toBe(paint.background1);
           expect(paint.backgroundOverFlow).toBe(paint.background1);
         } else {

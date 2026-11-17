@@ -2,7 +2,9 @@ import { getOption, GraphLayoutError } from '../options';
 import type { LayoutOptions } from '../types';
 
 export interface LayeredOptions {
+  direction: 'DOWN' | 'RIGHT';
   placement: 'SIMPLE' | 'BRANDES_KOEPF';
+  fixedAlignment: 'BALANCED' | 'LEFTUP';
   forceModelOrder: boolean;
   nodeSpacing: number;
   /** nodeNodeBetweenLayers: the gap between ranks without bent hops. */
@@ -52,9 +54,9 @@ export const layeredOptions = (sources: (LayoutOptions | undefined)[]): LayeredO
     throw new GraphLayoutError(`Unsupported layered node placement '${placement}'.`);
   }
   for (const [key, accepted] of [
-    ['direction', ['DOWN']],
+    ['direction', ['DOWN', 'RIGHT']],
     ['alignment', ['TOP']],
-    ['hierarchyHandling', ['INCLUDE_CHILDREN']],
+    ['hierarchyHandling', ['INCLUDE_CHILDREN', 'SEPARATE_CHILDREN']],
     ['layered.layering.strategy', ['INTERACTIVE']],
     ['layered.cycleBreaking.strategy', ['DEPTH_FIRST']],
     ['layered.considerModelOrder.strategy', ['NODES_AND_EDGES']],
@@ -63,7 +65,7 @@ export const layeredOptions = (sources: (LayoutOptions | undefined)[]): LayeredO
     ['layered.edgeRouting.splines.mode', ['CONSERVATIVE_SOFT']],
     ['layered.unnecessaryBendpoints', ['false']],
     ['layered.crossingMinimization.forceNodeModelOrder', ['true', 'false']],
-    ['layered.nodePlacement.bk.fixedAlignment', ['BALANCED']],
+    ['layered.nodePlacement.bk.fixedAlignment', ['BALANCED', 'LEFTUP']],
     ['portAlignment.default', ['CENTER']],
     ['nodeSize.constraints', ['MINIMUM_SIZE']],
     ['portConstraints', ['FIXED_POS']],
@@ -94,7 +96,9 @@ export const layeredOptions = (sources: (LayoutOptions | undefined)[]): LayeredO
   }
   sizeOption(readOption(sources, 'nodeSize.minimum'), 'nodeSize.minimum');
   return {
+    direction: readOption(sources, 'direction') === 'RIGHT' ? 'RIGHT' : 'DOWN',
     placement: placement ?? 'BRANDES_KOEPF',
+    fixedAlignment: readOption(sources, 'layered.nodePlacement.bk.fixedAlignment') === 'LEFTUP' ? 'LEFTUP' : 'BALANCED',
     forceModelOrder: readOption(sources, 'layered.crossingMinimization.forceNodeModelOrder') === 'true',
     nodeSpacing: numberOption(sources, 'spacing.nodeNode', 20),
     layerSpacing: numberOption(sources, 'layered.spacing.nodeNodeBetweenLayers', 80),
