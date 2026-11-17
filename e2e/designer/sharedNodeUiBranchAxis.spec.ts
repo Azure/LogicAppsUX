@@ -188,7 +188,10 @@ for (const { count, height } of [
       await page.mouse.move(0, 0);
       await expectOpaqueForegroundNegative(page, testInfo, 'WorkflowAgent', 'Before_switch-Nested_switch');
       for (const port of geometry.outputs) {
-        await expectEdgePaint(page, testInfo, 'WorkflowAgent', `Nested_switch-#scope-${port.id}`);
+        if (!port.id) {
+          throw new Error('Each Switch output must have a branch identity.');
+        }
+        await expectEdgePaint(page, testInfo, 'WorkflowAgent', `Nested_switch%2D#scope-${port.id.replace(/-/g, '%2D')}`);
       }
       if (count === 4) {
         const nested = page.locator('#msla-node-Nested_Agent');
