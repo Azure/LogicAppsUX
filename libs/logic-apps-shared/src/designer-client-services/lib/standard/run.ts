@@ -73,14 +73,30 @@ export class StandardRunService implements IRunService {
   }
 
   async getMoreRuns(continuationToken: string): Promise<Runs> {
-    const { httpClient } = this.options;
+    const { baseUrl, httpClient, standardManagement } = this.options;
 
     try {
       const request = {
         uri: continuationToken,
       };
-      const standardManagement = this.options.standardManagement;
-      const directContinuation = /^https?:\/\/[^/]+\/api\/v1(?:\/|[?#]|$)/i.test(continuationToken);
+      const directContinuation = standardManagement?.isDirectManagementUrl(continuationToken) === true;
+      if (standardManagement && !directContinuation) {
+        // A replacement client may not remember an endpoint that issued this continuation.
+        let isArmContinuation = false;
+        try {
+          const armUrl = new URL(baseUrl);
+          const continuationUrl = new URL(continuationToken, armUrl);
+          isArmContinuation = (armUrl.protocol === 'https:' || armUrl.protocol === 'http:') && continuationUrl.origin === armUrl.origin;
+        } catch {
+          // Invalid URLs cannot be safely passed to the legacy transport.
+        }
+        if (!isArmContinuation) {
+          throw new StandardManagementError(
+            'InvalidManagementContinuation',
+            'The run history continuation is no longer available. Refresh run history to continue.'
+          );
+        }
+      }
       const legacyRequest = () => {
         if (directContinuation) {
           throw new StandardManagementError(

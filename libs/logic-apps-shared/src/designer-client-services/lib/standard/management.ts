@@ -6,7 +6,7 @@ export const standardDirectManagementFeatureGate = 'enableStandardDirectManageme
 export const standardManagementApiVersion = '2018-11-01';
 
 const managementPath = '/runtime/webhooks/workflow/api/management';
-const directPath = '/api/v1';
+const directVersionPath = '/v1';
 type SessionClass = 'reader' | 'contributor';
 type Method = 'GET' | 'POST';
 type FailurePhase = 'issuance' | 'business';
@@ -171,6 +171,8 @@ export class StandardManagementError extends Error {
 export class StandardManagementHttpClient {
   private state?: ContextState;
   private disposed = false;
+  // Retained across context changes so stale direct links are never sent through ARM.
+  private readonly directEndpoints = new Set<string>();
   private readonly experimentationService: IExperimentationService;
 
   constructor(private readonly options: StandardManagementHttpClientOptions | ArmOnlyManagementOptions) {
@@ -298,6 +300,11 @@ export class StandardManagementHttpClient {
     return this.request('GET', options, 'workflow.runtimeList', legacyRequest);
   }
 
+  /** True when the URL is under an endpoint issued to this client; such URLs must never use the legacy request. */
+  isDirectManagementUrl(uri: string): boolean {
+    return getDirectEndpoint(this.directEndpoints, uri) !== undefined;
+  }
+
   /** Callers must select their unchanged legacy implementation when this returns false. */
   async isEnabled(): Promise<boolean> {
     if (this.disposed) {
@@ -344,9 +351,9 @@ export class StandardManagementHttpClient {
       throw contextError();
     }
     const state = this.state;
-    const directUrl = isDirectManagementUrl(options.uri);
+    const directEndpoint = getDirectEndpoint(this.directEndpoints, options.uri);
     if (!state || !state.supported) {
-      if (directUrl) {
+      if (directEndpoint) {
         throw contextError();
       }
       return legacyRequest ? legacyRequest() : send(this.options.armClient, method, options);
@@ -354,12 +361,12 @@ export class StandardManagementHttpClient {
     const enabled = await this.getEnablement(state);
     this.assertCurrent(state);
     // Do not interpret or change legacy ARM requests while the feature is off.
-    if (!enabled && !directUrl) {
+    if (!enabled && !directEndpoint) {
       return legacyRequest ? legacyRequest() : send(this.options.armClient, method, options);
     }
-    const target = getTarget(state.context, method, options);
+    const target = getTarget(state.context, method, options, directEndpoint);
     if (!target) {
-      if (directUrl) {
+      if (directEndpoint) {
         throw new StandardManagementError(
           'InvalidManagementRequest',
           'The direct management endpoint does not match the current app context.'
@@ -376,7 +383,7 @@ export class StandardManagementHttpClient {
     }
     const session = await this.getSession(state, target.operation.sessionClass);
     this.assertCurrent(state);
-    if (!session) {
+    if (!session || (target.direct && session.endpoint !== directEndpoint)) {
       return this.sendArm(state, method, options, target, legacyRequest);
     }
     return this.sendDirect(state, method, options, target, session, true, legacyRequest);
@@ -390,20 +397,17 @@ export class StandardManagementHttpClient {
     legacyRequest?: () => Promise<T>
   ): Promise<T> {
     this.assertCurrent(state);
+    if (target.direct) {
+      // A direct link carries no ARM authority and must not be replayed through ARM.
+      throw new StandardManagementError(
+        'InvalidManagementContinuation',
+        'The direct management session is no longer available. Refresh to continue.'
+      );
+    }
     checkThrottle(state);
-    const request = target.direct
-      ? {
-          ...options,
-          uri: `${state.context.armOrigin}${state.context.resourceId}/hostruntime${managementPath}${target.path}`,
-          queryParameters: target.query,
-          noAuth: false,
-          includeAuth: true,
-          headers: businessHeaders(options.headers),
-        }
-      : options;
     let response: T;
     try {
-      response = await (legacyRequest && !target.direct ? legacyRequest() : send<T>(this.options.armClient, method, request));
+      response = await (legacyRequest ? legacyRequest() : send<T>(this.options.armClient, method, options));
     } catch (error) {
       this.assertCurrent(state);
       throw error;
@@ -471,6 +475,7 @@ export class StandardManagementHttpClient {
         }
         const session = validateEnvelope(response, state.context, sessionClass);
         state.sessions.set(sessionClass, session);
+        this.directEndpoints.add(session.endpoint);
         state.blockedUntil.delete(sessionClass);
         return session;
       } catch (error) {
@@ -552,7 +557,7 @@ export class StandardManagementHttpClient {
         }
         const renewed = await this.getSession(state, session.sessionClass);
         this.assertCurrent(state);
-        if (renewed) {
+        if (renewed && (!target.direct || renewed.endpoint === session.endpoint)) {
           return this.sendDirect(state, method, options, target, renewed, false, legacyRequest);
         }
         return this.sendArm(state, method, options, target, legacyRequest);
@@ -567,7 +572,7 @@ export class StandardManagementHttpClient {
       throw error;
     }
     this.assertCurrent(state);
-    validatePaging(response, state.context, target);
+    validatePaging(response, state.context, target, session.endpoint);
     return response;
   }
 }
@@ -581,7 +586,12 @@ function send<T>(client: IHttpClient, method: Method, options: HttpRequestOption
   }
 }
 
-function getTarget(context: StandardManagementContext, method: Method, options: HttpRequestOptions<unknown>): RequestTarget | undefined {
+function getTarget(
+  context: StandardManagementContext,
+  method: Method,
+  options: HttpRequestOptions<unknown>,
+  directEndpoint?: string
+): RequestTarget | undefined {
   let url: URL;
   try {
     url = new URL(options.uri, context.armOrigin);
@@ -589,7 +599,9 @@ function getTarget(context: StandardManagementContext, method: Method, options: 
     return undefined;
   }
   const armPath = `${context.resourceId}/hostruntime${managementPath}`;
-  const direct = url.origin === context.runtimeOrigin && url.pathname.startsWith(`${directPath}/`);
+  // Only a URL under an issued endpoint is interpreted as direct.
+  const directBasePath = directEndpoint ? new URL(directEndpoint).pathname : '';
+  const direct = directBasePath !== '' && url.origin === context.runtimeOrigin && url.pathname.startsWith(`${directBasePath}/`);
   const arm = url.origin === context.armOrigin && url.pathname.slice(0, armPath.length).toLowerCase() === armPath.toLowerCase();
   if (!direct && !arm) {
     return undefined;
@@ -603,7 +615,7 @@ function getTarget(context: StandardManagementContext, method: Method, options: 
   ) {
     throw new StandardManagementError('InvalidManagementRequest', 'The management request URL or method is unsafe.');
   }
-  const path = url.pathname.slice(direct ? directPath.length : armPath.length);
+  const path = url.pathname.slice(direct ? directBasePath.length : armPath.length);
   const operation = operations.find((item) => item.method === method && item.path.test(path));
   if (!operation || !safePath(path)) {
     if (direct) {
@@ -629,15 +641,6 @@ function getTarget(context: StandardManagementContext, method: Method, options: 
   }
   query['api-version'] = standardManagementApiVersion;
   return { operation, path, query, direct };
-}
-
-function isDirectManagementUrl(uri: string): boolean {
-  try {
-    const path = new URL(uri).pathname;
-    return path === directPath || path.startsWith(`${directPath}/`);
-  } catch {
-    return false;
-  }
 }
 
 function safePath(path: string): boolean {
@@ -683,7 +686,7 @@ function validateEnvelope(value: unknown, context: StandardManagementContext, se
   const envelope = value as Record<string, unknown>;
   if (
     Object.keys(envelope).length !== 3 ||
-    envelope['endpoint'] !== `${context.runtimeOrigin}${directPath}` ||
+    !isDirectEndpoint(envelope['endpoint'], context.runtimeOrigin) ||
     typeof envelope['apiKey'] !== 'string' ||
     !/^[A-Za-z0-9_-]{1,16384}$/.test(envelope['apiKey']) ||
     typeof envelope['expiresOn'] !== 'string' ||
@@ -709,7 +712,38 @@ function validateEnvelope(value: unknown, context: StandardManagementContext, se
   };
 }
 
-function validatePaging(response: unknown, context: StandardManagementContext, target: RequestTarget): void {
+/** The runtime serves direct access at `/{routePrefix}/v1`; the default prefix is `api`, and an empty prefix gives `/v1`. */
+function isDirectEndpoint(value: unknown, runtimeOrigin: string): value is string {
+  if (typeof value !== 'string') {
+    return false;
+  }
+  try {
+    const { pathname } = new URL(value);
+    return (
+      value === `${runtimeOrigin}${pathname}` && pathname.endsWith(directVersionPath) && !pathname.includes('//') && safePath(pathname)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function getDirectEndpoint(endpoints: ReadonlySet<string>, uri: string): string | undefined {
+  let url: URL;
+  try {
+    url = new URL(uri);
+  } catch {
+    return undefined;
+  }
+  const base = `${url.origin}${url.pathname}`;
+  for (const endpoint of endpoints) {
+    if (base.startsWith(`${endpoint}/`)) {
+      return endpoint;
+    }
+  }
+  return undefined;
+}
+
+function validatePaging(response: unknown, context: StandardManagementContext, target: RequestTarget, directEndpoint: string): void {
   if (!response || typeof response !== 'object' || !('nextLink' in response) || !response.nextLink) {
     return;
   }
@@ -717,7 +751,7 @@ function validatePaging(response: unknown, context: StandardManagementContext, t
     if (typeof response.nextLink !== 'string') {
       throw new Error();
     }
-    const link = getTarget(context, 'GET', { uri: response.nextLink });
+    const link = getTarget(context, 'GET', { uri: response.nextLink }, directEndpoint);
     if (!link?.direct || link.path !== target.path || link.operation.id !== target.operation.id) {
       throw new Error();
     }
