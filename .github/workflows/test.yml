@@ -41,6 +41,13 @@ jobs:
               args: [--frozen-lockfile, --strict-peer-dependencies]
             
       # - run: npx nx affected --target=lint --parallel
+      - name: Check shared UI boundaries
+        env:
+          POLICY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          node scripts/check-designer-ui-policy.js "$POLICY_BASE"
+          node --test scripts/check-designer-ui-policy.test.js
+          pnpm exec eslint libs/designer-ui-v2/src
       - run: pnpm turbo run build --cache-dir=.turbo
       - run: pnpm turbo run test:lib --cache-dir=.turbo
       - run: pnpm turbo run build:extension --cache-dir=.turbo

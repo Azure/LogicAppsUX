@@ -10,7 +10,7 @@ import {
   jarFolderName,
   libDirectory,
   localSettingsFileName,
-  lspDirectory,
+  languageServerSdkDirectoryName,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
@@ -122,7 +122,7 @@ export const createCodefulWorkflowFile = async (
 ) => {
   const workflowTemplateFileName = getCodefulWorkflowTemplateFileName(workflowType);
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
 
   // Create the workflow-specific .cs file
   const capitalizedWorkflowName = (workflowName.charAt(0).toUpperCase() + workflowName.slice(1)).replace(/-/g, '_');
@@ -144,8 +144,7 @@ export const createCodefulWorkflowFile = async (
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
-    const programContent = templateProgramContent
-      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
+    const programContent = templateProgramContent.replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)
@@ -157,7 +156,10 @@ export const createCodefulWorkflowFile = async (
 
     // Create nuget.config file (only for first workflow)
     const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
+    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(
+      /<%= lspDirectory %>/g,
+      `"${languageServerSdkDirectoryPath}"`
+    );
     const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
     await fse.writeFile(nugetFilePath, templateNugetContent);
   }
@@ -359,10 +361,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
       await createFunctionAppFilesStep.setup(mySubContext);
     }
 
-    // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
-    // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
-    // directory. No-op for rulesEngine, codeful, standard, or NetFx.
-    await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+    await addCustomCodeDotNetVersionSetting(
+      context,
+      mySubContext.projectPath,
+      mySubContext.projectType,
+      mySubContext.targetFramework,
+      true
+    );
 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }

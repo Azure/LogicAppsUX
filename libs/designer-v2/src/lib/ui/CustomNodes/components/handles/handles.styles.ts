@@ -1,4 +1,15 @@
 import { makeStyles } from '@fluentui/react-components';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import type { CSSProperties } from 'react';
+
+// Inline positioning wins XYFlow's side offsets when a real port is inside a shared dot.
+export const containedHandleStyle: CSSProperties = {
+  top: '50%',
+  left: '50%',
+  right: 'auto',
+  bottom: 'auto',
+  transform: 'translate(-50%, -50%)',
+};
 
 export const useHandleStyles = makeStyles({
   nodeHandle: {
@@ -21,6 +32,22 @@ export const useHandleStyles = makeStyles({
     transform: 'translate(-50%, 0%)',
   },
 
+  left: {
+    transform: 'translate(0%, -50%)',
+    left: '0px',
+    width: '100%',
+    height: '100%',
+    borderRadius: '2px',
+    background: 'transparent',
+    boxSizing: 'border-box',
+    zIndex: '2',
+  },
+
+  right: {
+    visibility: 'hidden',
+    transform: 'translate(0%, -50%)',
+  },
+
   edgeDrawStart: {
     visibility: 'visible',
     background: 'var(--colorEdge)',
@@ -38,5 +65,52 @@ export const useHandleStyles = makeStyles({
 
   edgeDrawStartHighlighted: {
     background: 'var(--colorSelection)',
+  },
+
+  sharedPort: {
+    width: `${nodeMetrics.handle.size}px`,
+    height: `${nodeMetrics.handle.size}px`,
+    minWidth: 0,
+    minHeight: 0,
+    border: 'none',
+    background: 'transparent',
+    visibility: 'visible',
+    zIndex: 3,
+  },
+  sharedSource: {
+    bottom: `${nodeMetrics.handle.edgeOffset}px`,
+    transform: 'translateX(-50%)',
+  },
+  sharedSourceHorizontal: {
+    right: `${nodeMetrics.handle.edgeOffset}px`,
+    transform: 'translateY(-50%)',
+  },
+  inputDot: {
+    position: 'absolute',
+    top: `${nodeMetrics.handle.edgeOffset}px`,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    pointerEvents: 'none',
+  },
+  inputDotHorizontal: {
+    position: 'absolute',
+    left: `${nodeMetrics.handle.edgeOffset}px`,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    pointerEvents: 'none',
+  },
+  dot: { pointerEvents: 'none' },
+  merge: {
+    position: 'absolute',
+    left: '50%',
+    bottom: `${-nodeMetrics.mergePoint.size / 2}px`,
+    transform: 'translateX(-50%)',
+    zIndex: 3,
+  },
+  mergeHorizontal: {
+    left: 'auto',
+    right: `${-nodeMetrics.mergePoint.size / 2}px`,
+    bottom: '50%',
+    transform: 'translateY(50%)',
   },
 });

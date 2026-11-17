@@ -17,6 +17,34 @@ To develop against Azure Resource Manager, run `pnpm run start:arm` from the rep
 
 For local-only PR deployments triggered by the `ephemeral` label, see [PR preview setup and lifecycle](EPHEMERAL.md).
 
+### Azure-connected drafts
+
+The V2 Azure-connected hosts use production artifacts as the in-memory draft when
+production is at least as recent as the saved draft. Consumption compares
+`properties.changedTime`; Standard compares the workflow files' VFS `mtime`
+metadata and selects workflow, connections, parameters, and notes consistently.
+Newer drafts are preserved. Missing or invalid timestamps preserve the existing
+draft and emit a diagnostic. Loading does not overwrite the persisted draft.
+When production supersedes a stale Standard draft, the next draft save includes
+all companion artifacts so a workflow-only edit cannot revive stale connections,
+parameters, or notes. Connections and parameters are app-wide: reconciliation
+retains draft-only entries for other workflows while production and local edits
+take precedence for matching names. Initializing a missing workflow draft does
+not replace existing shared draft files, including intentionally empty files.
+Initialization remains single-flight through both artifact refetches. Discard
+also clears unsaved local connection edits, and shared parameter reconciliation
+does not undo intentional deletions. Both hosts save superseded server-side
+drafts before running, even if the designer has no local edits; a failed save
+aborts the run. Read-only users cannot run a superseded saved draft and can
+switch to the published version to run current production instead. Autosave is
+suspended while discard resets the draft, so a queued save cannot restore
+discarded edits. A failed reset keeps the editor mounted and resumes pending
+autosave for retained edits without requiring another edit.
+Opening directly in monitoring initializes the selected run's
+historical definition without letting artifact refreshes replace it.
+Returning from monitoring reloads production and draft
+artifacts before restoring the editable workflow.
+
 ## Commands
 
 | Command | Run from | Description |

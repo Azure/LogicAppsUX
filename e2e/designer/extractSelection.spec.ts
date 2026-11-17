@@ -20,6 +20,15 @@ interface WorkflowSnapshot {
   parameters?: Record<string, { type: string; value?: unknown }>;
 }
 
+const isSharedNodeUi = process.env.SHARED_NODE_UI_EXTRACTION === 'true';
+const sharedNodeQuery = isSharedNodeUi
+  ? '&useSharedNodeUi=true'
+  : process.env.SHARED_NODE_UI_EXTRACTION === 'false'
+    ? '&useSharedNodeUi=false'
+    : '';
+const sourceUrl = `/v2?extraction=true&local=ExtractSelection.json${sharedNodeQuery}`;
+const genericSourceUrl = `/v2?extraction=true&local=ExtractActions.json${sharedNodeQuery}`;
+
 const readWorkflow = (page: Page): Promise<WorkflowSnapshot> => getSerializedWorkflowFromStateV2(page);
 
 const readInvocationMetadata = (page: Page, invocationName: string) =>
@@ -74,12 +83,25 @@ const ensureDarkMode = async (page: Page) => {
   if (await isDarkMode()) {
     return;
   }
+  await page.getByRole('button', { name: 'Toolbox', exact: true }).evaluate(async (nub) => {
+    await Promise.all(nub.parentElement!.getAnimations().map((animation) => animation.finished));
+  });
   const contextSettings = page.getByRole('heading', { name: /Context Settings/ });
   const bounds = await contextSettings.boundingBox();
-  if (!bounds || bounds.y < 0) {
+  const viewport = page.viewportSize();
+  if (
+    !bounds ||
+    !viewport ||
+    bounds.x < 0 ||
+    bounds.y < 0 ||
+    bounds.x + bounds.width > viewport.width ||
+    bounds.y + bounds.height > viewport.height
+  ) {
     await page.getByRole('button', { name: 'Toolbox' }).click();
   }
-  await contextSettings.click();
+  if (!(await page.getByRole('checkbox', { name: 'Dark Mode', exact: true }).isVisible())) {
+    await contextSettings.click();
+  }
   await page.getByText('Dark Mode', { exact: true }).click();
   await expect.poll(isDarkMode).toBe(true);
   await page.getByRole('button', { name: 'Toolbox' }).click();
@@ -132,8 +154,11 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
       const url = new URL(route.request().url());
       return url.origin === localOrigin ? route.continue() : route.abort();
     });
-    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+    await page.goto(sourceUrl);
     await expect(page.getByTestId('card-consume_result')).toBeVisible();
+    if (isSharedNodeUi) {
+      await expect(page.getByTestId('card-consume_result')).toHaveAttribute('data-node-card', 'action');
+    }
     await ensureDarkMode(page);
   });
 
@@ -165,6 +190,66 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(page.getByTestId('card-build_result')).toBeVisible();
   });
 
+  test('traps native modal Tab and ShiftTab and restores the native card target after Escape and Cancel', async ({ page }, testInfo) => {
+    const original = await readWorkflow(page);
+    await selectActions(page, ['Read_customer', 'Build_message', 'Build_result']);
+    const trigger = page.getByTestId('multi-select-action-buttons').getByRole('button', { name: 'Extract to new workflow', exact: true });
+    await trigger.focus();
+    await trigger.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'Extract to new workflow', exact: true });
+    const name = dialog.getByLabel('Workflow name', { exact: true });
+    await expect(name).toBeFocused();
+    const traversals: { key: string; targets: string[] }[] = [];
+    for (const key of ['Tab', 'Shift+Tab']) {
+      const targets: string[] = [];
+      let returned = false;
+      for (let step = 0; step < 40; step++) {
+        await page.keyboard.press(key);
+        const focus = await dialog.evaluate((surface) => {
+          const element = surface.ownerDocument.activeElement;
+          return {
+            inside: !!element && surface.contains(element),
+            target: element?.getAttribute('aria-label') ?? element?.textContent ?? '',
+          };
+        });
+        expect(focus.inside).toBe(true);
+        targets.push(focus.target);
+        if (await name.evaluate((element) => element === element.ownerDocument.activeElement)) {
+          returned = true;
+          break;
+        }
+      }
+      expect(returned).toBe(true);
+      expect(targets.length).toBeGreaterThan(2);
+      traversals.push({ key, targets });
+    }
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+    await expect(page.locator('#msla-node-Build_result')).toBeFocused();
+    const escapeFocus = await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 500));
+    const triggerTabsterAttributes = await trigger.getAttribute('data-tabster');
+    expect(await readWorkflow(page)).toEqual(original);
+    await trigger.focus();
+    await trigger.press('Enter');
+    await expect(name).toBeFocused();
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(dialog).not.toBeVisible();
+    await expect(page.locator('#msla-node-Build_result')).toBeFocused();
+    const cancelFocus = await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 500));
+    expect(await readWorkflow(page)).toEqual(original);
+    await testInfo.attach('native-modal-keyboard-traversal', {
+      body: JSON.stringify({
+        shared: isSharedNodeUi,
+        traversals,
+        escapeFocus,
+        cancelFocus,
+        triggerTabsterAttributes,
+        restoration: 'Native Restorer returns to the existing card target; standalone Extract has no DialogTrigger/restorer target.',
+      }),
+      contentType: 'application/json',
+    });
+  });
+
   test('navigates an isolated read-only flow preview above collapsible bindings', async ({ page }, testInfo) => {
     const original = await readWorkflow(page);
     const dialog = await openPreview(page);
@@ -185,7 +270,26 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
           .selectedNodeIds
     );
     await expect(preview.locator('.react-flow__node')).toHaveCount(4);
+    await testInfo.attach('initial-preview-geometry', {
+      body: JSON.stringify(
+        await preview.evaluate((element) => ({
+          viewport: element.querySelector('.react-flow__viewport')?.getAttribute('style'),
+          nodes: [...element.querySelectorAll<HTMLElement>('.react-flow__node')].map((node) => ({
+            id: node.dataset.id,
+            style: node.getAttribute('style'),
+            bounds: node.getBoundingClientRect().toJSON(),
+            html: node.innerHTML.slice(0, 1600),
+          })),
+        })),
+        null,
+        2
+      ),
+      contentType: 'application/json',
+    });
     await expect(preview.locator('.react-flow__edge')).toHaveCount(3);
+    if (isSharedNodeUi) {
+      await expect(preview.locator('[data-node-card="action"]').first()).toBeVisible();
+    }
     const frame = preview.getByTestId('extraction-workflow-preview-frame');
     const canvas = preview.getByRole('region', { name: 'Child workflow preview', exact: true });
     await expect(details.getByRole('heading', { name: 'Extract to new workflow', exact: true })).toBeVisible();
@@ -215,7 +319,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     for (const node of await nodes.all()) {
       await expect(node).not.toHaveClass(/\b(draggable|selectable)\b/);
     }
-    const previewCard = nodes.nth(1).locator('[title="Build message"]');
+    const previewCard = nodes.nth(1).locator(isSharedNodeUi ? '[data-node-card="action"]' : '[title="Build message"]');
     const designerCard = page.getByTestId('card-build_message');
     const cardStyle = (card: Locator) =>
       card.evaluate((element) => {
@@ -230,6 +334,20 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
         };
       });
     expect(await cardStyle(previewCard)).toEqual(await cardStyle(designerCard));
+    if (isSharedNodeUi) {
+      expect(await cardStyle(previewCard.locator(':scope > div').first())).toEqual(
+        await cardStyle(designerCard.locator(':scope > div').first())
+      );
+      await expect(preview.locator('[data-node-card="trigger"]')).toHaveCount(1);
+      await expect(preview.locator('[data-node-card="action"]')).toHaveCount(3);
+      await expect(preview.locator('[data-handle], [data-tool-connector], [role="button"][data-node-card]')).toHaveCount(0);
+      await expect(preview.locator('.react-flow__handle')).toHaveCount(8);
+      await expect(preview.locator('path[data-line="solid"]')).toHaveCount(3);
+      const mainIds = await editor.locator('[id]').evaluateAll((elements) => elements.map((element) => element.id));
+      const previewIds = await preview.locator('[id]').evaluateAll((elements) => elements.map((element) => element.id));
+      expect(previewIds.filter((id) => mainIds.includes(id))).toEqual([]);
+      expect(new Set(previewIds).size).toBe(previewIds.length);
+    }
     const titleStyle = (title: Locator) =>
       title.evaluate((element) => {
         const style = getComputedStyle(element);
@@ -238,10 +356,12 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     expect(await titleStyle(previewCard.getByText('Build message', { exact: true }))).toEqual(
       await titleStyle(designerCard.getByText('Build message', { exact: true }))
     );
-    const geometry = await previewCard.evaluate((card) => {
+    const geometry = await previewCard.evaluate((card, shared) => {
       const bounds = card.getBoundingClientRect();
-      const icon = card.querySelector('span[aria-hidden="true"]')!.getBoundingClientRect();
-      const label = card.querySelector('span:not([aria-hidden])')!.getBoundingClientRect();
+      const icon = card.querySelector(shared ? '[data-category]' : 'span[aria-hidden="true"]')!.getBoundingClientRect();
+      const label = shared
+        ? card.querySelector('[title="Build message"]')!.parentElement!.getBoundingClientRect()
+        : card.querySelector('span:not([aria-hidden])')!.getBoundingClientRect();
       return {
         iconCenter: icon.y + icon.height / 2 - bounds.y,
         labelCenter: label.y + label.height / 2 - bounds.y,
@@ -250,14 +370,17 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
           return (handleBounds.x + handleBounds.width / 2 - bounds.x) / bounds.width;
         }),
       };
-    });
+    }, isSharedNodeUi);
     expect(geometry.iconCenter).toBeCloseTo(geometry.labelCenter, 0);
     for (const center of geometry.handleCenters) {
       expect(center).toBeCloseTo(0.5, 2);
     }
     const readEdgeGeometry = () =>
-      preview.evaluate((element) => {
-        const cards = Array.from(element.querySelectorAll('.react-flow__node [title]'), (card) => card.getBoundingClientRect());
+      preview.evaluate((element, shared) => {
+        const cards = Array.from(
+          element.querySelectorAll(shared ? '.react-flow__node [data-node-card]' : '.react-flow__node [title]'),
+          (card) => card.getBoundingClientRect()
+        );
         return Array.from(element.querySelectorAll<SVGPathElement>('.react-flow__edge-path'), (path, index) => {
           const matrix = path.getScreenCTM()!;
           const start = path.getPointAtLength(0).matrixTransform(matrix);
@@ -267,12 +390,22 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
             end: end.x,
             source: cards[index].x + cards[index].width / 2,
             target: cards[index + 1].x + cards[index + 1].width / 2,
+            startY: start.y,
+            endY: end.y,
+            sourceY: cards[index].bottom,
+            targetY: cards[index + 1].top,
           };
         });
-      });
+      }, isSharedNodeUi);
     await expect
       .poll(async () =>
-        Math.max(...(await readEdgeGeometry()).flatMap((edge) => [Math.abs(edge.start - edge.source), Math.abs(edge.end - edge.target)]))
+        Math.max(
+          ...(await readEdgeGeometry()).flatMap((edge) => [
+            Math.abs(edge.start - edge.source),
+            Math.abs(edge.end - edge.target),
+            ...(isSharedNodeUi ? [Math.abs(edge.startY - edge.sourceY), Math.abs(edge.endY - edge.targetY)] : []),
+          ])
+        )
       )
       .toBeLessThan(0.5);
     const nodeBounds = await nodes.nth(1).boundingBox();
@@ -301,6 +434,13 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await page.mouse.move(paneBounds.x + 76, paneBounds.y + 56, { steps: 5 });
     await page.mouse.up();
     await expect(previewViewport).not.toHaveAttribute('style', beforePan ?? '');
+    if (isSharedNodeUi) {
+      const userViewport = await previewViewport.getAttribute('style');
+      await dialog.getByLabel('Workflow name', { exact: true }).fill('Renamed_preview_child');
+      await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
+      await preview.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await expect(previewViewport).toHaveAttribute('style', userViewport ?? '');
+    }
     await expect(editorViewport).toHaveAttribute('style', editorTransform ?? '');
     expect(await readWorkflow(page)).toEqual(original);
     expect(
@@ -468,6 +608,12 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(dialog).toBeVisible();
     expect(await readWorkflow(page)).toEqual(source);
     await childPage.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
+    if (isSharedNodeUi) {
+      const childUrl = new URL(childPage.url());
+      childUrl.searchParams.set('useSharedNodeUi', 'true');
+      await childPage.goto(childUrl.href);
+      await expect(childPage.getByTestId('card-build_message')).toHaveAttribute('data-node-card', 'action');
+    }
     await expect(childPage.getByTestId('card-build_message')).toBeVisible();
     await expect(childPage.getByTestId('card-build_result')).toBeVisible();
     const child = await readWorkflow(childPage);
@@ -502,7 +648,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     expect(await readWorkflow(childPage)).toEqual(child);
     await childPage.close();
 
-    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+    await page.goto(sourceUrl);
     await page.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
     await expect(page.getByTestId(`card-${invocationName.toLowerCase()}`)).toBeVisible();
     await expect.poll(async () => (await readInvocationMetadata(page, invocationName)).ready).toBe(true);
@@ -561,7 +707,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     test(`extracts generic Query and HTTP actions with ${includeVariableDeclaration ? 'contained' : 'incoming'} variable state`, async ({
       page,
     }, testInfo) => {
-      await page.goto('/v2?extraction=true&local=ExtractActions.json');
+      await page.goto(genericSourceUrl);
       await expect(page.getByTestId('card-http')).toBeVisible();
       await page.getByRole('button', { name: 'Toolbox' }).click();
       const original = await readWorkflow(page);
@@ -647,7 +793,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
       await page.reload();
       await expect(page.getByTestId('card-http')).toBeVisible();
       expect(await readWorkflow(page)).toEqual(child);
-      await page.goto('/v2?extraction=true&local=ExtractActions.json');
+      await page.goto(genericSourceUrl);
       await expect(page.getByTestId(`card-${invocationName.toLowerCase()}`)).toBeVisible();
       expect(await readWorkflow(page)).toEqual(source);
       expect((await readInvocationMetadata(page, invocationName)).outputs.outputs['outputs.$.body.output_Filter_array']).toMatchObject({
@@ -658,7 +804,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
   }
 
   test('extracts a whole Scope with nested generic actions and its following action', async ({ page }) => {
-    await page.goto('/v2?extraction=true&local=ExtractActions.json');
+    await page.goto(genericSourceUrl);
     await expect(page.getByTestId('card-http')).toBeVisible();
     const workflow = await readWorkflow(page);
     const { Initialize_ArrayVariable, Parse_JSON, Filter_array, HTTP, Consume_result } = workflow.definition.actions;
@@ -688,7 +834,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
         ),
       workflow
     );
-    await page.goto('/v2?extraction=true&local=ExtractActions.json');
+    await page.goto(genericSourceUrl);
     await expect(page.getByTestId('card-processing')).toBeVisible();
     await page.getByRole('button', { name: 'Toolbox' }).click();
     await selectActions(page, ['Processing', 'Build_result']);
@@ -827,7 +973,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
           ),
         workflow
       );
-      await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+      await page.goto(sourceUrl);
       await expect(page.getByTestId('card-consume_result')).toBeVisible();
       const dialog = await openPreview(page);
       const bindings = dialog.getByRole('button', { name: 'Input and output bindings', exact: true });

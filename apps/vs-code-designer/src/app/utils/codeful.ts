@@ -7,13 +7,14 @@ import {
   CodefulSdkVersion,
   defaultDependencyPathValue,
   localSettingsFileName,
-  lspDirectory,
+  languageServerSdkDirectoryName,
   workflowCodefulEnabledKey,
-  lspSdkHashMarkerName,
-  codefulSdkProjectHashMarkerName,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
+import { lspSdkRevisionMarkerName } from './languageServerAssetConstants';
+
+const codefulSdkProjectRevisionMarkerName = '.logicapps-lspsdk-revision';
 
 /**
  * Checks whether any workspace folder contains a codeful Logic Apps project.
@@ -85,25 +86,25 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
   }
 
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkHashMarkerPath = path.join(targetDirectory, lspSdkHashMarkerName);
+  const installedSdkRevisionMarkerPath = path.join(targetDirectory, lspSdkRevisionMarkerName);
 
   if (
-    !(await fse.pathExists(installedSdkHashMarkerPath)) ||
+    !(await fse.pathExists(installedSdkRevisionMarkerPath)) ||
     !(await fse.pathExists(nugetConfigPath)) ||
-    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, lspDirectoryPath))
+    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, languageServerSdkDirectoryPath))
   ) {
     return false;
   }
 
-  const installedSdkHash = (await fse.readFile(installedSdkHashMarkerPath, 'utf-8')).trim();
-  if (!installedSdkHash) {
+  const installedSdkRevision = (await fse.readFile(installedSdkRevisionMarkerPath, 'utf-8')).trim();
+  if (!installedSdkRevision) {
     return false;
   }
 
   const projectNugetFolder = path.join(projectPath, '.nuget');
-  const projectSdkHashMarkerPath = path.join(projectNugetFolder, codefulSdkProjectHashMarkerName);
+  const projectSdkRevisionMarkerPath = path.join(projectNugetFolder, codefulSdkProjectRevisionMarkerName);
   const projectSdkPackagePath = path.join(
     projectNugetFolder,
     'packages',
@@ -115,7 +116,7 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
     path.join(projectPath, 'obj', 'project.nuget.cache'),
   ];
 
-  if ((await readTrimmedFileIfExists(projectSdkHashMarkerPath)) === installedSdkHash) {
+  if ((await readTrimmedFileIfExists(projectSdkRevisionMarkerPath)) === installedSdkRevision) {
     return false;
   }
 
@@ -128,7 +129,8 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
 
   await Promise.all(restoreNoOpCachePaths.map((cachePath) => removeIfExists(cachePath)));
   await fse.ensureDir(projectNugetFolder);
-  await fse.writeFile(projectSdkHashMarkerPath, installedSdkHash);
+  await fse.writeFile(projectSdkRevisionMarkerPath, installedSdkRevision);
+  await fse.remove(path.join(projectNugetFolder, '.logicapps-lspsdk-hash'));
   return true;
 };
 
@@ -153,7 +155,7 @@ async function readTrimmedFileIfExists(filePath: string): Promise<string | undef
 async function codefulNugetConfigUsesExtensionSdkCache(
   nugetConfigPath: string,
   projectPath: string,
-  lspDirectoryPath: string
+  languageServerSdkDirectoryPath: string
 ): Promise<boolean> {
   const nugetConfig = await fse.readFile(nugetConfigPath, 'utf-8');
   const globalPackagesFolder = getXmlAddValue(nugetConfig, 'config', 'globalPackagesFolder');
@@ -163,7 +165,7 @@ async function codefulNugetConfigUsesExtensionSdkCache(
     globalPackagesFolder !== undefined &&
     normalizeNugetPath(projectPath, globalPackagesFolder) === normalizeNugetPath(projectPath, '.nuget\\packages') &&
     currentSource !== undefined &&
-    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, lspDirectoryPath)
+    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, languageServerSdkDirectoryPath)
   );
 }
 

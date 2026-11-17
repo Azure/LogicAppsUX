@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { nodeJsDependencyName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../../utils/binaries';
+import { binariesExist, getLatestNodeJsVersion } from '../../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
@@ -36,7 +36,6 @@ vi.mock('../../../../extensionVariables', () => ({
 vi.mock('../../../utils/binaries', () => ({
   binariesExist: vi.fn(),
   getLatestNodeJsVersion: vi.fn(),
-  verifyDependencyIntegrity: vi.fn(() => true),
 }));
 
 vi.mock('../../../state/dependencies', () => ({
@@ -94,29 +93,26 @@ describe('validateNodeJsIsLatest', () => {
     vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(true);
   });
 
-  it('reinstalls when binaries exist but the on-disk integrity check fails', async () => {
-    vi.mocked(binariesExist).mockResolvedValue(true);
-    vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
-
-    await validateNodeJsIsLatest(context, '20');
-
-    expect(verifyDependencyIntegrity).toHaveBeenCalledWith(context, nodeJsDependencyName);
-    expect(installNodeJs).toHaveBeenCalledWith(context, '20');
-    expect(context.telemetry.properties.integrityValid).toBe('false');
-    expect(getLocalNodeJsVersion).not.toHaveBeenCalled();
-  });
-
-  it('does not reinstall when binaries exist and the on-disk integrity check passes', async () => {
+  it('does not reinstall when binaries exist and the version is current', async () => {
     vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
-    vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.0.0');
 
     await validateNodeJsIsLatest(context, '18');
 
     expect(installNodeJs).not.toHaveBeenCalled();
-    expect(context.telemetry.properties.integrityValid).toBe('true');
+  });
+
+  it('still probes the local executable when update warnings are suppressed', async () => {
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(true);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalNodeJsVersion).mockResolvedValue('20.0.0');
+
+    await validateNodeJsIsLatest(context, '20');
+
+    expect(getLocalNodeJsVersion).toHaveBeenCalledWith(context);
+    expect(installNodeJs).not.toHaveBeenCalled();
   });
 
   it('installs without checking GitHub latest version when binaries are missing', async () => {

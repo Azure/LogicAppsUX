@@ -1,5 +1,5 @@
 import { createWorkflowNode } from '../../utils/graph';
-import { addNodeToWorkflow } from '../addNodeToWorkflow';
+import { addAgentToolToWorkflow, addNodeToWorkflow, addSwitchCaseToWorkflow } from '../addNodeToWorkflow';
 import type { WorkflowNode } from '../models/workflowNode';
 import { initialState, mockGraph } from './mocks/workflowMock';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -62,5 +62,67 @@ describe('edit workflow', () => {
     );
 
     expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === nodeToAdd.id)).toBeDefined();
+  });
+
+  it.each([
+    [
+      'If',
+      [
+        ['If-actions-#subgraph', 120, 32],
+        ['If-elseActions-#subgraph', 120, 32],
+      ],
+    ],
+    [
+      'Switch',
+      [
+        ['Switch-addCase-#subgraph', 20, 44],
+        ['Switch-defaultCase-#subgraph', 120, 32],
+      ],
+    ],
+    ['Agent', [['Agent-addCase-#subgraph', 20, 44]]],
+    ['Until', [['Until-#subgraph', 120, 32]]],
+  ] as const)('sizes newly added %s headers for their rendered variants', (type, expected) => {
+    const root: WorkflowNode = { id: 'root', type: 'GRAPH_NODE', children: [], edges: [] };
+    const state = structuredClone(initialState);
+    state.operations = {};
+    state.newlyAddedOperations = {};
+    const metadata = {};
+    addNodeToWorkflow(
+      {
+        operation: {
+          id: type,
+          name: type,
+          type,
+          properties: {
+            api: { id: type, displayName: type, iconUri: '' },
+            operationType: type,
+            summary: '',
+            description: '',
+            brandColor: '',
+            visibility: '',
+            iconUri: '',
+          },
+        },
+        nodeId: type,
+        relationshipIds: { graphId: 'root' },
+      },
+      root,
+      metadata,
+      state
+    );
+    const added = root.children!.find((child) => child.id === type)!;
+    const headings = [...(added.children ?? []), ...(added.children ?? []).flatMap((child) => child.children ?? [])];
+    for (const [id, width, height] of expected) {
+      expect(headings.find((heading) => heading.id === id)).toMatchObject({ width, height });
+    }
+
+    if (type === 'Switch') {
+      addSwitchCaseToWorkflow('new-case', added, metadata, state);
+      expect(added.children!.find((child) => child.id === 'new-case')!.children![0]).toMatchObject({ width: 200, height: 44 });
+    }
+    if (type === 'Agent') {
+      addAgentToolToWorkflow('new-tool', added, metadata, state);
+      expect(added.children!.find((child) => child.id === 'new-tool')!.children![0]).toMatchObject({ width: 200, height: 44 });
+    }
   });
 });

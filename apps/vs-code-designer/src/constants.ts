@@ -23,7 +23,6 @@ export const workflowDraftFileName = 'workflow-draft.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const powershellRequirementsFileName = 'requirements.psd1';
-export const sdkLspServer = 'SdkLspServer';
 
 // Directory names
 export const deploymentDirectory = 'deployment';
@@ -40,7 +39,7 @@ export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
-export const lspDirectory = 'LanguageServerLogicApps';
+export const languageServerSdkDirectoryName = 'LanguageServerLogicApps';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
@@ -310,22 +309,14 @@ export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExten
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
-export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServer = 'onStartLanguageServer';
+export const onStartLanguageClient = 'onStartLanguageClient';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
-export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
-
-// globalState key + interval throttling the expensive full-byte extension-bundle
-// integrity hash. On most launches a fast lstat tree fingerprint is compared
-// instead; the deep byte-hash only runs when this throttle says a verification is
-// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
-// Mirrors the dependency update-check throttle pattern.
-export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
-export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+export const bundleInstallCompleteFile = '.install-complete';
+export const legacyBundleInstallMarkerFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
@@ -378,13 +369,13 @@ export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationD
 
 // Fallback Dependency Versions
 export const DependencyVersion = {
-  dotnet8: '8.0.318',
+  dotnet10: '10.0.403',
   funcCoreTools: '4.0.7030',
-  nodeJs: '24.15.0',
+  nodeJs: '24.22.2',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
-export const defaultDotnetMajorVersion = '8';
+export const defaultDotnetMajorVersion = '10';
 
 export const hostFileContent = {
   version: '2.0',
@@ -490,9 +481,3 @@ export const CodefulSdkVersion = {
   WorkflowsSDK: '1.0.0-preview.3',
 };
 export type CodefulSdkVersion = (typeof CodefulSdkVersion)[keyof typeof CodefulSdkVersion];
-
-export const codefulSdkPackageFileName = `${CodefulSdk.WorkflowsSDK}.${CodefulSdkVersion.WorkflowsSDK}.nupkg`;
-export const lspServerDirectoryName = 'LSPServer';
-export const lspServerHashMarkerName = '.lspserver-hash';
-export const lspSdkHashMarkerName = '.lspsdk-hash';
-export const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';

@@ -1,11 +1,11 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
-import { mkdtemp, rm } from 'fs/promises';
+import { mkdtemp, readFile, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from 'path';
+import { PassThrough } from 'stream';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { codefulSdkPackageFileName } from '../../../constants';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
 const processShutdownTimeoutMs = 5_000;
@@ -38,11 +38,12 @@ class LspProcess {
     }
   >();
   private readonly stderrChunks: string[] = [];
-  private readonly closePromise: Promise<void>;
+  private readonly closed: Promise<void>;
   private disposed = false;
 
   public constructor(private readonly child: ChildProcessWithoutNullStreams) {
-    this.closePromise = new Promise((resolve) => child.once('close', () => resolve()));
+    // Observe close from construction so disposal also works after the event has fired.
+    this.closed = new Promise((resolve) => child.once('close', () => resolve()));
     child.stdout.on('data', (chunk: Buffer) => this.handleStdout(chunk));
     child.stderr.on('data', (chunk: Buffer) => this.stderrChunks.push(chunk.toString('utf8')));
     child.on('exit', (code, signal) => {
@@ -90,18 +91,16 @@ class LspProcess {
   public async dispose(): Promise<void> {
     this.disposed = true;
 
-    try {
-      await this.request('shutdown', undefined);
-      this.notify('exit', undefined);
-    } catch {
-      // The process is being torn down; a failed shutdown request should not hide the test assertion.
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
+      try {
+        await this.request('shutdown', undefined);
+        this.notify('exit', undefined);
+      } catch {
+        // The process is being torn down; a failed shutdown request should not hide the test assertion.
+      }
     }
 
-    if (await this.waitForClose(processShutdownTimeoutMs)) {
-      return;
-    }
-
-    if (this.child.exitCode === null && this.child.signalCode === null) {
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
       this.child.kill();
     }
 
@@ -114,7 +113,7 @@ class LspProcess {
     let timeout: NodeJS.Timeout | undefined;
     try {
       return await Promise.race([
-        this.closePromise.then(() => true),
+        this.closed.then(() => true),
         new Promise<boolean>((resolve) => {
           timeout = setTimeout(() => resolve(false), timeoutMs);
         }),
@@ -169,6 +168,107 @@ class LspProcess {
   }
 }
 
+describe('LspProcess disposal', () => {
+  let child: ChildProcessWithoutNullStreams;
+  let server: LspProcess;
+
+  beforeEach(async () => {
+    const { ChildProcess } = await vi.importActual<typeof import('child_process')>('child_process');
+    const stdin = new PassThrough();
+    const stdout = new PassThrough();
+    const stderr = new PassThrough();
+    const stdio: ChildProcessWithoutNullStreams['stdio'] = [stdin, stdout, stderr, null, null];
+    child = Object.assign(new ChildProcess(), { stdin, stdout, stderr, stdio });
+    vi.spyOn(child, 'kill').mockImplementation(() => {
+      Object.assign(child, { killed: true });
+      return true;
+    });
+    server = new LspProcess(child);
+    vi.spyOn(server, 'request').mockResolvedValue(undefined);
+    vi.spyOn(server, 'notify').mockImplementation(() => {});
+  });
+
+  it.each([false, true])('waits for close after exact-child fallback (shutdown fails: %s)', async (shutdownFails) => {
+    if (shutdownFails) {
+      vi.mocked(server.request).mockRejectedValue(new Error('Shutdown failed'));
+    }
+    const onDisposed = vi.fn();
+    const disposal = server.dispose().then(onDisposed);
+
+    // Drain promise continuations without advancing the fake child's lifecycle.
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(server.request).toHaveBeenCalledWith('shutdown', undefined);
+    if (shutdownFails) {
+      expect(server.notify).not.toHaveBeenCalled();
+    } else {
+      expect(server.notify).toHaveBeenCalledWith('exit', undefined);
+      expect(server.notify).toHaveBeenCalledBefore(vi.mocked(child.kill));
+    }
+    expect(child.kill).toHaveBeenCalledOnce();
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    Object.assign(child, { signalCode: 'SIGTERM' });
+    child.emit('exit', null, 'SIGTERM');
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    child.emit('close', null, 'SIGTERM');
+    await disposal;
+    expect(onDisposed).toHaveBeenCalledOnce();
+  });
+
+  it('waits for close when already killed without sending shutdown or another signal', async () => {
+    Object.assign(child, { killed: true });
+    const onDisposed = vi.fn();
+    const disposal = server.dispose().then(onDisposed);
+
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(server.request).not.toHaveBeenCalled();
+    expect(server.notify).not.toHaveBeenCalled();
+    expect(child.kill).not.toHaveBeenCalled();
+    expect(onDisposed).not.toHaveBeenCalled();
+
+    child.emit('close', null, 'SIGTERM');
+    await disposal;
+    expect(onDisposed).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { exitCode: 0, signalCode: null },
+    { exitCode: null, signalCode: 'SIGTERM' },
+  ] satisfies Pick<ChildProcessWithoutNullStreams, 'exitCode' | 'signalCode'>[])(
+    'waits for close after an earlier exit: %j',
+    async ({ exitCode, signalCode }) => {
+      Object.assign(child, { exitCode, signalCode });
+      child.emit('exit', exitCode, signalCode);
+      const onDisposed = vi.fn();
+      const disposal = server.dispose().then(onDisposed);
+
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(server.request).not.toHaveBeenCalled();
+      expect(server.notify).not.toHaveBeenCalled();
+      expect(child.kill).not.toHaveBeenCalled();
+      expect(onDisposed).not.toHaveBeenCalled();
+
+      child.emit('close', exitCode, signalCode);
+      await disposal;
+      expect(onDisposed).toHaveBeenCalledOnce();
+    }
+  );
+
+  it('does not hang when the child already exited and closed before disposal', async () => {
+    Object.assign(child, { exitCode: 0 });
+    child.emit('exit', 0, null);
+    child.emit('close', 0, null);
+
+    await server.dispose();
+
+    expect(server.request).not.toHaveBeenCalled();
+    expect(server.notify).not.toHaveBeenCalled();
+    expect(child.kill).not.toHaveBeenCalled();
+  });
+});
+
 describe('bundled LSP server CodeLens', () => {
   let tempDirectories: string[] = [];
   let lspProcess: LspProcess | undefined;
@@ -207,6 +307,33 @@ describe('bundled LSP server CodeLens', () => {
     expect(JSON.stringify(agentCodeLens.command?.arguments)).toContain('agent');
   }, 60_000);
 
+  it('returns symbol metadata for repeated hover requests', async () => {
+    lspProcess = await startBundledLspServer();
+    const documentUri = pathToFileURL(path.join(await createTempDirectory(), 'AgentWorkflow.cs')).toString();
+    lspProcess.notify('textDocument/didOpen', {
+      textDocument: {
+        uri: documentUri,
+        languageId: 'csharp',
+        version: 1,
+        text: agentWorkflowSource,
+      },
+    });
+
+    const lines = agentWorkflowSource.split('\n');
+    const line = lines.findIndex((value) => value.includes('CreateConversationalAgentTrigger'));
+    const character = lines[line].indexOf('CreateConversationalAgentTrigger') + 5;
+    const hoverParams = {
+      textDocument: { uri: documentUri },
+      position: { line, character },
+    };
+
+    const firstHover = await lspProcess.request('textDocument/hover', hoverParams);
+    const secondHover = await lspProcess.request('textDocument/hover', hoverParams);
+
+    expect(JSON.stringify(firstHover)).toContain('CreateConversationalAgentTrigger');
+    expect(JSON.stringify(secondHover)).toContain('CreateConversationalAgentTrigger');
+  }, 60_000);
+
   async function getAgentCodeLens(initializationOptions?: Record<string, unknown>): Promise<CodeLensResult> {
     lspProcess = await startBundledLspServer(initializationOptions);
 
@@ -235,11 +362,15 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const zipPath = path.join(lspServerAssetsDirectory, 'LSPServer.zip');
+    const assetManifest = JSON.parse(await readFile(path.join(lspServerAssetsDirectory, 'lsp-assets.json'), 'utf8')) as {
+      serverArchive: string;
+      sdkPackage: string;
+    };
+    const zipPath = path.join(lspServerAssetsDirectory, assetManifest.serverArchive);
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
-    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(lspServerAssetsDirectory, codefulSdkPackageFileName);
+    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'LogicAppsLanguageServer.dll');
+    const sdkPackagePath = path.join(lspServerAssetsDirectory, assetManifest.sdkPackage);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -254,6 +385,9 @@ describe('bundled LSP server CodeLens', () => {
         textDocument: {
           codeLens: {
             dynamicRegistration: false,
+          },
+          hover: {
+            contentFormat: ['markdown'],
           },
         },
       },

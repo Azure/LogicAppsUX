@@ -42,8 +42,10 @@ const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 const mockUseSuppressDefault = vi.fn().mockReturnValue(false);
 const mockUseNodeSelectCallback = vi.fn().mockReturnValue(undefined);
+const mockUseSharedNodeUi = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useSharedNodeUi: () => mockUseSharedNodeUi(),
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
   useSuppressDefaultNodeSelectFunctionality: () => mockUseSuppressDefault(),
@@ -164,12 +166,20 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -231,6 +241,7 @@ describe('OperationCardNode (v2)', () => {
     vi.clearAllMocks();
     cleanup();
     mockUseReadOnly.mockReturnValue(false);
+    mockUseSharedNodeUi.mockReturnValue(false);
     mockUseMonitoringView.mockReturnValue(false);
     mockUseSuppressDefault.mockReturnValue(false);
     mockUseNodeSelectCallback.mockReturnValue(undefined);
@@ -268,6 +279,153 @@ describe('OperationCardNode (v2)', () => {
   it('should render without crashing', () => {
     const { container } = render(<DefaultNode {...defaultProps} />);
     expect(container).toBeTruthy();
+  });
+
+  it('forwards actual trigger metadata to shared presentation without replacing host handles', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', isTrigger: true });
+    mockUseOperationInfo.mockReturnValue({ type: 'Request', connectorId: 'connectionProviders/request', operationId: 'request' });
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByRole('button');
+    expect(card).toHaveAttribute('data-node-card', 'trigger');
+    expect(card).toHaveAttribute('tabindex', '1');
+    expect(screen.getByText('Trigger · Request')).toBeInTheDocument();
+    expect(card.querySelector('[data-category="trigger"]')).toBeInTheDocument();
+    expect(screen.getByTestId('edge-draw-target-handle')).toBeInTheDocument();
+    expect(screen.getByTestId('edge-draw-source-handle')).toBeInTheDocument();
+    fireEvent.click(card);
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
+  });
+
+  it('keeps actual accepted ordinary presentation while the live flag changes', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    const { container, rerender } = render(<DefaultNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(container.querySelector('[data-node-card]')).toBeNull();
+    mockUseSharedNodeUi.mockReturnValue(false);
+    rerender(<DefaultNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+    expect(container.querySelector('[data-node-card="action"]')).toBeInTheDocument();
+  });
+
+  it('passes resolved operation description into the real hover consumer', async () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseOperationQuery.mockReturnValue({
+      isFetching: false,
+      isError: false,
+      data: { properties: { description: 'Actual manifest description' } },
+    });
+    render(<DefaultNode {...defaultProps} />);
+    fireEvent.mouseEnter(screen.getByRole('button').parentElement!);
+    expect(await screen.findByText('Actual manifest description')).toBeInTheDocument();
+  });
+
+  it('suppresses the real ordinary hover consumer in monitoring', async () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseOperationQuery.mockReturnValue({
+      isFetching: false,
+      isError: false,
+      data: { properties: { description: 'Monitoring description' } },
+    });
+    const { container } = render(<DefaultNode {...defaultProps} />);
+    fireEvent.mouseEnter(screen.getByRole('button').parentElement!);
+    await new Promise((resolve) => setTimeout(resolve, 420));
+    expect(screen.queryByText('Monitoring description')).toBeNull();
+    expect(container.querySelector('[data-node-info-card]')).toBeNull();
+  });
+
+  it.each([
+    [false, 'loops-pager-testNode', 'shared-loops-pager-testNode'],
+    [true, 'shared-loops-pager-testNode', 'loops-pager-testNode'],
+  ])('selects the MCP tool pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { repetitionCount: 2 },
+    });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
+  });
+
+  it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'actual-agent', parentNodeId: 'actual-agent' });
+    mockUseNodeDisplayName.mockReturnValue('Ordinary user-defined label');
+    mockUseOperationInfo.mockReturnValue({ type: 'Workflow', operationId: 'invokeworkflow' });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-node-card', 'tool');
+    expect(screen.getByRole('button')).toHaveAttribute('data-tool-kind', 'subWorkflow');
+  });
+
+  it('keeps real actions inside a named Agent tool body ordinary, not duplicate tool rows', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'actual-tool-definition', parentNodeId: 'actual-agent' });
+    mockUseOperationInfo.mockReturnValue({ type: 'Workflow', operationId: 'invokeworkflow' });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-node-card', 'action');
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-tool-kind');
+  });
+
+  it('honors accepted toolKind absence instead of reclassifying a pending layout from live metadata', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'actual-agent', parentNodeId: 'actual-agent' });
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true } }} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-node-card', 'action');
+  });
+
+  it('keeps accepted tool presentation while live metadata waits for replacement geometry', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true, toolKind: 'subWorkflow' } }} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-node-card', 'tool');
+    expect(screen.getByRole('button')).toHaveAttribute('data-tool-kind', 'subWorkflow');
+  });
+
+  it('does not derive Agent tool membership from an operation or parent display name', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('ordinary-scope');
+    mockUseActionMetadata.mockReturnValue({ type: 'Scope', name: 'Agent' });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'ordinary-scope', parentNodeId: 'ordinary-scope' });
+    mockUseNodeDisplayName.mockReturnValue('Agent');
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-node-card', 'action');
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-tool-kind');
+  });
+
+  it('uses the existing host error for settled empty metadata, not a loading spinner or fake success', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseOperationQuery.mockReturnValue({
+      isFetching: false,
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+      data: { properties: {} },
+    });
+    mockUseOperationVisuals.mockReturnValue({ iconUri: undefined });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByAltText('Errors')).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByRole('button')).not.toHaveAttribute('aria-busy');
+  });
+
+  it('retains the existing manifest error when a metadata request rejects', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseOperationQuery.mockReturnValue({ isFetching: false, isError: true, isLoading: false });
+    mockUseOperationVisuals.mockReturnValue({ iconUri: undefined });
+    render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByAltText('Errors')).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByRole('button')).not.toHaveAttribute('aria-busy');
   });
 
   it('should render ActionCard with correct title', () => {
@@ -382,6 +540,41 @@ describe('OperationCardNode (v2)', () => {
 
     render(<DefaultNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-root')).toBeInTheDocument();
+  });
+
+  it('places the accepted RIGHT terminal after the operation even while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN terminal placement and presentation while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('does not render a terminal for an accepted RIGHT operation in read-only mode', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
   });
 
   it('should not show DropZone when not a leaf node', () => {

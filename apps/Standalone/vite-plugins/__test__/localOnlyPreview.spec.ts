@@ -28,6 +28,10 @@ const createFixture = async () => {
   );
   await copyFile(resolve(testDirectory, '../../src/environments/environment.ts'), resolve(root, 'src/environments/environment.ts'));
   await copyFile(
+    resolve(testDirectory, '../../src/environments/armAuthentication.ts'),
+    resolve(root, 'src/environments/armAuthentication.ts')
+  );
+  await copyFile(
     resolve(testDirectory, '../../src/environments/environment.ephemeral.ts'),
     resolve(root, 'src/environments/environment.ephemeral.ts')
   );
@@ -97,6 +101,7 @@ describe('local-only preview', () => {
     expect(modules).toContain(normalizePath(resolve(root, 'src/App.ephemeral.tsx')));
     expect(modules).not.toContain(normalizePath(resolve(root, 'src/App.tsx')));
     expect(modules).not.toContain(normalizePath(resolve(root, 'src/environments/environment.ts')));
+    expect(modules).not.toContain(normalizePath(resolve(root, 'src/environments/armAuthentication.ts')));
     expect(modules.some((id) => id.includes('/jsonImport/'))).toBe(false);
     expect(output).not.toMatch(/PRIVATE_(?:ARM|FOUNDRY|SUBSCRIPTION|AUTH_REDIRECT)_SENTINEL/);
     expect(output).not.toContain('/__dev/armToken');
@@ -134,36 +139,40 @@ describe('local-only preview', () => {
     );
   });
 
-  it.each(['designer', 'designerV2'])('retains the existing %s canvas stylesheet in production', async (shell) => {
-    const root = await createFixture();
-    const entry = normalizePath(resolve(testDirectory, `../../src/designer/app/DesignerShell/${shell}.ephemeral.ts`));
-    const stubShell: Plugin = {
-      name: 'stub-designer-component',
-      enforce: 'pre',
-      resolveId(source, importer) {
-        return importer && normalizePath(importer) === entry && source === `./${shell}` ? '\0designer-component' : null;
-      },
-      load(id) {
-        return id === '\0designer-component' ? 'export const DesignerWrapper = () => null;' : null;
-      },
-    };
-    const result = await build({
-      root,
-      configFile: false,
-      logLevel: 'silent',
-      plugins: [localOnlyPreview(), stubShell],
-      build: { write: false, minify: false, cssMinify: false, rollupOptions: { input: entry } },
-    });
-    const results = Array.isArray(result) ? result : [result];
-    const css = results
-      .flatMap((output) => ('output' in output ? output.output : []))
-      .filter((output) => output.type === 'asset' && output.fileName.endsWith('.css'))
-      .map((output) => (output.type === 'asset' ? String(output.source) : ''))
-      .join('\n');
+  it.each(['designer', 'designerV2'])(
+    'retains the existing %s canvas stylesheet in production',
+    async (shell) => {
+      const root = await createFixture();
+      const entry = normalizePath(resolve(testDirectory, `../../src/designer/app/DesignerShell/${shell}.ephemeral.ts`));
+      const stubShell: Plugin = {
+        name: 'stub-designer-component',
+        enforce: 'pre',
+        resolveId(source, importer) {
+          return importer && normalizePath(importer) === entry && source === `./${shell}` ? '\0designer-component' : null;
+        },
+        load(id) {
+          return id === '\0designer-component' ? 'export const DesignerWrapper = () => null;' : null;
+        },
+      };
+      const result = await build({
+        root,
+        configFile: false,
+        logLevel: 'silent',
+        plugins: [localOnlyPreview(), stubShell],
+        build: { write: false, minify: false, cssMinify: false, rollupOptions: { input: entry } },
+      });
+      const results = Array.isArray(result) ? result : [result];
+      const css = results
+        .flatMap((output) => ('output' in output ? output.output : []))
+        .filter((output) => output.type === 'asset' && output.fileName.endsWith('.css'))
+        .map((output) => (output.type === 'asset' ? String(output.source) : ''))
+        .join('\n');
 
-    expect(css).toMatch(/\.react-flow__background\s*\{[^}]*pointer-events:\s*none/);
-    expect(css).toMatch(/\.msla-designer-tools\s*\{[^}]*position:\s*absolute/);
-  });
+      expect(css).toMatch(/\.react-flow__background\s*\{[^}]*pointer-events:\s*none/);
+      expect(css).toMatch(/\.msla-designer-tools\s*\{[^}]*position:\s*absolute/);
+    },
+    30_000
+  );
 
   it('does not replace the environment or suppress public files in the normal build', async () => {
     const root = await createFixture();

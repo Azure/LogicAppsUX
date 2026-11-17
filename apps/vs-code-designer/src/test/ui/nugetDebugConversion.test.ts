@@ -17,6 +17,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { EditorView, Key, type WebDriver, Workbench } from 'vscode-extension-tester';
 import { clearBlockingUI, pushDialogButtonWithRetry, sleep, waitForQuickInputAndType } from './helpers';
+import { confirmVSCodeRegenerationIfVisible, waitForExactNugetDebugFiles } from './nugetDebugConversionHelpers';
 import { openWorkspaceFileInSession, waitForDependencyValidation } from './designerHelpers';
 import {
   assertRunTriggerable,
@@ -215,89 +216,23 @@ async function waitForDialogText(driver: WebDriver, pattern: RegExp, timeoutMs: 
   throw new Error(`Timed out waiting for dialog matching ${pattern}`);
 }
 
-async function waitForFilePredicate(filePath: string, predicate: () => boolean, timeoutMs: number, description: string): Promise<void> {
+async function waitForFilePredicate(
+  driver: WebDriver,
+  filePath: string,
+  predicate: () => boolean,
+  timeoutMs: number,
+  description: string
+): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     if (fs.existsSync(filePath) && predicate()) {
       return;
     }
-    await sleep(1000);
-  }
-
-  throw new Error(`Timed out waiting for ${description}: ${filePath}`);
-}
-
-async function confirmVSCodeRegenerationIfVisible(driver: WebDriver): Promise<boolean> {
-  await driver
-    .switchTo()
-    .defaultContent()
-    .catch(() => undefined);
-
-  const clicked = await driver
-    .executeScript<boolean>(`
-      const dialogs = Array.from(document.querySelectorAll('[role="dialog"], .monaco-dialog-box'));
-      for (const dialog of dialogs) {
-        const text = dialog.textContent || '';
-        if (!text.includes('The .vscode configuration files will be regenerated to match the current project settings')) {
-          continue;
-        }
-
-        const buttons = Array.from(dialog.querySelectorAll('button'));
-        const yesButton = buttons.find((button) => (button.textContent || '').trim() === 'Yes');
-        if (yesButton instanceof HTMLElement) {
-          yesButton.click();
-          return true;
-        }
-      }
-      return false;
-    `)
-    .catch(() => false);
-
-  if (clicked) {
-    console.log('[nugetDebugConversion] Confirmed .vscode regeneration prompt');
-    await sleep(1000);
-    return true;
-  }
-
-  try {
-    await pushDialogButtonWithRetry(driver, 'Yes', 1);
-    console.log('[nugetDebugConversion] Confirmed .vscode regeneration prompt via ModalDialog');
-    await sleep(1000);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function confirmVSCodeRegenerationPrompt(driver: WebDriver): Promise<void> {
-  const deadline = Date.now() + COMMAND_TIMEOUT;
-  while (Date.now() < deadline) {
-    if (await confirmVSCodeRegenerationIfVisible(driver)) {
-      return;
-    }
-    await sleep(500);
-  }
-
-  throw new Error('Timed out waiting for .vscode regeneration confirmation prompt');
-}
-
-async function waitForExactNugetDebugFiles(entry: WorkspaceManifestEntry, driver: WebDriver): Promise<void> {
-  const deadline = Date.now() + CONVERSION_TIMEOUT;
-  let lastError: unknown;
-  while (Date.now() < deadline) {
-    try {
-      assertNugetDebugFiles(entry);
-      return;
-    } catch (error) {
-      lastError = error;
-    }
     await confirmVSCodeRegenerationIfVisible(driver);
     await sleep(1000);
   }
 
-  throw new Error(
-    `Timed out waiting for exact converted NuGet .vscode files: ${lastError instanceof Error ? lastError.message : String(lastError)}`
-  );
+  throw new Error(`Timed out waiting for ${description}: ${filePath}`);
 }
 
 function seedBundleProjectFilesIfNeeded(entry: WorkspaceManifestEntry): void {
@@ -762,11 +697,11 @@ describe('NuGet conversion debug lifecycle', function () {
     await runCommandFromPalette(driver, CONVERT_COMMAND_TITLE);
     await waitForDialogText(driver, /NuGet-based project/, COMMAND_TIMEOUT);
     await pushDialogButtonWithRetry(driver, MOVE_BUTTON_LABEL, 3);
-    await confirmVSCodeRegenerationPrompt(driver);
 
     const csprojPath = path.join(entry.appDir, `${entry.appName}.csproj`);
-    await waitForFilePredicate(csprojPath, () => fs.existsSync(csprojPath), CONVERSION_TIMEOUT, 'NuGet project file');
-    await waitForExactNugetDebugFiles(entry, driver);
+    await waitForFilePredicate(driver, csprojPath, () => fs.existsSync(csprojPath), CONVERSION_TIMEOUT, 'NuGet project file');
+    // The regeneration prompt is optional; the file poll confirms it only if visible.
+    await waitForExactNugetDebugFiles(driver, () => assertNugetDebugFiles(entry), CONVERSION_TIMEOUT);
     assertRunnableWorkflow(entry, 'nuget');
     await assertNoPostConversionVSCodeRegenerationPrompt(driver);
 

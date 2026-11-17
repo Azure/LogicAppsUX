@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid DateTime Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- 1: Add Days(StartDate, 30 const) -> FutureDate -->
+      <Link LinkID="10" SourceID="/Root/StartDate" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/StartDate"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/FutureDate" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/FutureDate"/>
+      <Functoid FunctoidID="1" TypeID="122" Name="Add Days" X="240" Y="240">
+        <Input-Parameters>
+          <Parameter Index="1" Type="constant" Value="30"/>
+        </Input-Parameters>
+      </Functoid>
+    </Page>
+  </Pages>
+</mapsource>

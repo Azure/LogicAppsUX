@@ -72,6 +72,10 @@ const timeZones = [
     displayName: '(UTC-06:00) Guadalajara, Mexico City, Monterrey',
   },
   {
+    value: 'Alberta Standard Time',
+    displayName: '(UTC-06:00) Mountain Time (Alberta)',
+  },
+  {
     value: 'Canada Central Standard Time',
     displayName: '(UTC-06:00) Saskatchewan',
   },

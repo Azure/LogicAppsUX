@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "lib": ["ES2022", "DOM"],
+    "types": ["react", "react-dom", "node"],
+    "rootDir": "../../..",
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "baseUrl": "../../..",
+    "paths": {
+      "@microsoft/logic-apps-data-mapper-v2": ["libs/data-mapper-v2/src/index.ts"],
+      "@microsoft/logic-apps-shared": ["libs/logic-apps-shared/src/index.ts"],
+      "@microsoft/designer-ui": ["libs/designer-ui/src/index.ts"],
+      "@reduxjs/toolkit": ["libs/data-mapper-v2/node_modules/@reduxjs/toolkit"],
+      "react-redux": ["libs/data-mapper-v2/node_modules/react-redux"],
+      "redux-undo": ["libs/data-mapper-v2/node_modules/redux-undo"],
+      "models": ["libs/data-mapper-v2/src/models/index.ts"]
+    }
+  },
+  "include": ["src/lml/**/*", "../src/lml/editorProtocol.ts"],
+  "exclude": []
+}

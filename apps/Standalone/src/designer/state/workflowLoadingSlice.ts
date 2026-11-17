@@ -44,6 +44,8 @@ export interface WorkflowLoadingState {
     enableMultiVariable?: boolean; // supports creating multiple variables in one action
     enableEditableCodeView?: boolean; // allow editing an action's JSON inline from the node code view tab
     enableWorkflowExtraction?: boolean; // offline local Standard authoring only
+    enableStandardDirectManagement?: boolean;
+    standardManagementIssuerFailureBackoffMs?: number;
   };
   showPerformanceDebug?: boolean;
   isFirstDesignerV2Load?: boolean;
@@ -75,6 +77,8 @@ const initialState: WorkflowLoadingState = {
     collapseGraphsByDefault: false,
     enableMultiVariable: true,
     enableEditableCodeView: true,
+    enableStandardDirectManagement: false,
+    standardManagementIssuerFailureBackoffMs: 10_000,
   },
   showPerformanceDebug: false,
   isFirstDesignerV2Load: false,

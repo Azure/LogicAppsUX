@@ -28,10 +28,12 @@ vi.mock('../../../core/queries/operation', () => ({
 
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
+const mockUseSharedNodeUi = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
+  useSharedNodeUi: () => mockUseSharedNodeUi(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -114,12 +116,20 @@ vi.mock('../../common/LoopsPager/helper', () => ({
   getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
 }));
 
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
+}));
+
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
   LoopsPager: ({ scopeId }: any) => <div data-testid={`loops-pager-${scopeId}`}>LoopsPager</div>,
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -172,6 +182,7 @@ describe('SubgraphCardNode (v2)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseSharedNodeUi.mockReturnValue(false);
     mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
     mockUseActionMetadata.mockReturnValue({ type: 'Scope', runAfter: {} });
     mockUseIsLeafNode.mockReturnValue(false);
@@ -191,6 +202,34 @@ describe('SubgraphCardNode (v2)', () => {
     mockUseOperationErrorInfo.mockReturnValue(undefined);
     mockUseSettingValidationErrors.mockReturnValue([]);
     mockUseOperationQuery.mockReturnValue({ isError: false });
+  });
+
+  it.each([
+    [SUBGRAPH_TYPES.SWITCH_ADD_CASE, 'Add case'],
+    [SUBGRAPH_TYPES.AGENT_ADD_CONDITON, 'Add tool'],
+  ])('preserves actual %s add commands and suppresses them read-only', (subgraphType, label) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType, actionCount: 0 });
+    const view = render(<SubgraphCardNode {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: label }));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE
+        ? { type: 'workflow/addSwitchCase', payload: { caseId: 'newCase-1', graphId: 'graph1' } }
+        : expect.objectContaining({ type: 'panel/expandDiscoveryPanel', payload: expect.objectContaining({ isAgentTool: true }) })
+    );
+    mockUseReadOnly.mockReturnValue(true);
+    view.rerender(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'add' } }} />);
+    expect(screen.queryByRole('button', { name: label })).toBeNull();
+  });
+
+  it('keeps the actual multi-action tool editor and canonical tool surface', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 2 });
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool).toHaveAttribute('id', 'msla-node-testNode');
+    fireEvent.click(tool);
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
   });
 
   it('should render without crashing', () => {
@@ -264,6 +303,45 @@ describe('SubgraphCardNode (v2)', () => {
     expect(screen.getByTestId('dropzone-testNode')).toBeInTheDocument();
   });
 
+  it('places an empty Tool accepted RIGHT terminal after its header while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 0 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-testNode');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN branch terminal placement while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 0 });
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-testNode');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('keeps an accepted RIGHT empty Tool read-only without an insertion control', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 0 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-testNode')).not.toBeInTheDocument();
+    expect(screen.getByText('No actions')).toBeInTheDocument();
+  });
+
   it('should not show DropZone when not a leaf node', () => {
     mockUseIsLeafNode.mockReturnValue(false);
     render(<SubgraphCardNode {...defaultProps} />);
@@ -295,6 +373,25 @@ describe('SubgraphCardNode (v2)', () => {
 
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('loops-pager-testNode')).toBeInTheDocument();
+  });
+
+  it('selects the shared pager for agent subgraphs when the shared flag is on', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('parentAgent');
+    mockUseActionMetadata.mockImplementation((id: string) =>
+      id === 'parentAgent' ? { type: 'Agent', runAfter: {} } : { type: 'Scope', runAfter: {} }
+    );
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'graph1',
+      subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
+      actionCount: 1,
+      runData: { repetitionCount: 3 },
+    });
+
+    render(<SubgraphCardNode {...defaultProps} />);
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
+    expect(screen.queryByTestId('loops-pager-testNode')).toBeNull();
   });
 
   it('should not render SubgraphCard when no subgraphType in metadata', () => {

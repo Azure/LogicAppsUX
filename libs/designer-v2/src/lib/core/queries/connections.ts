@@ -19,6 +19,7 @@ export const clearConnectionCaches = () => {
   const queryClient = getReactQueryClient();
   queryClient.removeQueries([allConnectionsKey], { exact: true });
   queryClient.removeQueries([connectionKey]);
+  queryClient.removeQueries(['connection']);
 };
 
 export const updateNewConnectionInQueryCache = async (connectorId: string, connection: Connection) => {

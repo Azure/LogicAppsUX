@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Location contains a backslash: resolved relative to the .btm folder. Source xsd uses xs:import .\Common.xsd. -->
+<mapsource Name="01 File reference .\file.xsd" Version="2" OmitXmlDeclaration="Yes"
+           PreserveSequenceOrder="Yes" TreatElementsAsRecords="Yes">
+  <SrcTree>
+    <Reference Location=".\Import_Relative.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\InvoiceTarget.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Links>
+        <Link LinkID="link1" SourceID="/Order/OrderId" SourcePath="/Order/OrderId" TargetID="/Invoice/InvoiceId" TargetPath="/Invoice/InvoiceId" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link2" SourceID="/Order/CustomerName" SourcePath="/Order/CustomerName" TargetID="/Invoice/Customer" TargetPath="/Invoice/Customer" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link3" SourceID="/Order/ShipTo/Street" SourcePath="/Order/ShipTo/Street" TargetID="/Invoice/BillTo/Street" TargetPath="/Invoice/BillTo/Street" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link4" SourceID="/Order/ShipTo/City" SourcePath="/Order/ShipTo/City" TargetID="/Invoice/BillTo/City" TargetPath="/Invoice/BillTo/City" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link5" SourceID="/Order/Total" SourcePath="/Order/Total" TargetID="/Invoice/Amount" TargetPath="/Invoice/Amount" SourceType="schemaNode" TargetType="schemaNode"/>
+      </Links>
+      <Functoids/>
+    </Page>
+  </Pages>
+</mapsource>

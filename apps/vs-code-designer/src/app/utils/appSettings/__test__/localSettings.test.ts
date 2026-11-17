@@ -62,6 +62,39 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
   const readLocalSettings = async () => fse.readJson(path.join(projectPath, 'local.settings.json'));
 
   describe('positive cases', () => {
+    it.each([undefined, TargetFramework.Net8, TargetFramework.Net10, TargetFramework.NetFx])(
+      'defaults new regular projects to .NET 10 with framework=%s and preserves unrelated settings',
+      async (targetFramework) => {
+        const values = {
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          MyCustomSetting: 'keep-me',
+        };
+        await writeExistingLocalSettings(values);
+
+        await addCustomCodeDotNetVersionSetting(mockContext, projectPath, ProjectType.logicApp, targetFramework, true);
+
+        expect(await readLocalSettings()).toEqual({
+          IsEncrypted: false,
+          Values: { ...values, LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: 'net10.0' },
+        });
+      }
+    );
+
+    it('preserves encryption when initializing a new regular project', async () => {
+      await writeExistingLocalSettings({ ExistingSecret: 'encrypted-value' }, true);
+
+      await addCustomCodeDotNetVersionSetting(mockContext, projectPath, ProjectType.logicApp, undefined, true);
+
+      expect(await readLocalSettings()).toEqual({
+        IsEncrypted: true,
+        Values: { ExistingSecret: 'encrypted-value', LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: 'net10.0' },
+      });
+      expect(encryptionMockState.decryptCallCount).toBe(1);
+      expect(encryptionMockState.encryptCallCount).toBe(2);
+    });
+
     it('writes LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net8" for customCode + Net8', async () => {
       await writeExistingLocalSettings({ AzureWebJobsStorage: 'UseDevelopmentStorage=true' });
 
@@ -133,9 +166,39 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
 
   describe('negative cases (no-op, must not modify local.settings.json)', () => {
     it.each([
+      [ProjectType.rulesEngine, TargetFramework.Net10],
+      [ProjectType.rulesEngine, undefined],
+      [ProjectType.codeful, TargetFramework.Net10],
+      [ProjectType.codeful, undefined],
+      [ProjectType.customCode, TargetFramework.NetFx],
+      [ProjectType.customCode, undefined],
+      [undefined, TargetFramework.Net10],
+    ])('does not alter excluded new project type=%s framework=%s', async (projectType, targetFramework) => {
+      await writeExistingLocalSettings({ Existing: 'keep-me' }, true);
+      const settingsPath = path.join(projectPath, 'local.settings.json');
+      const before = await fse.readFile(settingsPath, 'utf8');
+
+      await addCustomCodeDotNetVersionSetting(mockContext, projectPath, projectType, targetFramework, true);
+
+      expect(await fse.readFile(settingsPath, 'utf8')).toBe(before);
+      expect(encryptionMockState.decryptCallCount).toBe(0);
+      expect(encryptionMockState.encryptCallCount).toBe(0);
+    });
+
+    it.each([undefined, 'net8', 'net10.0'])('does not backfill or overwrite an existing regular project setting=%s', async (version) => {
+      await writeExistingLocalSettings(version ? { LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: version } : {});
+      const settingsPath = path.join(projectPath, 'local.settings.json');
+      const before = await fse.readFile(settingsPath, 'utf8');
+
+      await addCustomCodeDotNetVersionSetting(mockContext, projectPath, ProjectType.logicApp, TargetFramework.Net10);
+
+      expect(await fse.readFile(settingsPath, 'utf8')).toBe(before);
+    });
+
+    it.each([
       ['rulesEngine', ProjectType.rulesEngine, TargetFramework.Net8],
       ['codeful', ProjectType.codeful, TargetFramework.Net8],
-      ['logicApp (standard)', ProjectType.logicApp, TargetFramework.Net8],
+      ['existing logicApp (standard)', ProjectType.logicApp, TargetFramework.Net8],
     ])('does not add the setting for projectType=%s', async (_label, projectType, targetFramework) => {
       await writeExistingLocalSettings({ AzureWebJobsStorage: 'UseDevelopmentStorage=true' });
 

@@ -73,8 +73,8 @@ describe('runtime dependency installers', () => {
     vi.mocked(promptForFuncVersion).mockResolvedValue('4' as any);
   });
 
-  it('installs .NET into the ensured runtime dependency path', async () => {
-    await installDotNet(context, '8');
+  it.each([undefined, '8', '10'])('installs .NET into the ensured runtime dependency path (major %s)', async (majorVersion) => {
+    await installDotNet(context, majorVersion);
 
     expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(downloadAndExtractDependency).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('runtime dependency installers', () => {
       'D:\\dependencies',
       dotnetDependencyName,
       null,
-      '8'
+      majorVersion
     );
   });
 

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>BizTalk.DataMapper.FrameworkTransform</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Saxon-HE" Version="9.9.1.2" />
+    <None Include="$(NuGetPackageRoot)saxon-he\9.9.1.2\lib\net40\*.dll"
+          Link="%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(NuGetPackageRoot)saxon-he\9.9.1.2\notices\*.txt"
+          Link="notices\Saxon-HE\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

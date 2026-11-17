@@ -12,6 +12,8 @@ import { LocalDesigner } from '../LocalDesigner/localDesignerV2';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';
 import { useQuery } from '@tanstack/react-query';
 import { getWorkflowExtractionRoute } from './workflowExtractionRoute';
+import { useStandaloneStandardManagement } from './useStandaloneStandardManagement';
+import { StandaloneStandardManagementProvider } from './StandaloneStandardManagementProvider';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -25,6 +27,7 @@ export const DesignerWrapper = () => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
   const queryCachePersist = useQueryCachePersist();
+  const { managementHost } = useStandaloneStandardManagement();
   useEffect(() => {
     const extractionRoute = getWorkflowExtractionRoute(search);
     dispatch(setHostOptions({ enableWorkflowExtraction: extractionRoute.enabled }));
@@ -41,20 +44,22 @@ export const DesignerWrapper = () => {
 
   return (
     <ReactQueryProvider persistEnabled={queryCachePersist}>
-      <LoadWhenArmTokenIsLoaded>
-        <div style={{ height: '100vh' }}>
-          <SettingsBox />
-          {isLocal ? (
-            <LocalDesigner />
-          ) : resourcePath ? (
-            hostingPlan === 'consumption' ? (
-              <LogicAppsDesignerConsumption />
-            ) : (
-              <LogicAppsDesignerStandard />
-            )
-          ) : null}
-        </div>
-      </LoadWhenArmTokenIsLoaded>
+      <StandaloneStandardManagementProvider configuration={managementHost}>
+        <LoadWhenArmTokenIsLoaded>
+          <div style={{ height: '100vh' }}>
+            <SettingsBox />
+            {isLocal ? (
+              <LocalDesigner />
+            ) : resourcePath ? (
+              hostingPlan === 'consumption' ? (
+                <LogicAppsDesignerConsumption />
+              ) : (
+                <LogicAppsDesignerStandard managementHost={hostingPlan === 'standard' ? managementHost : undefined} />
+              )
+            ) : null}
+          </div>
+        </LoadWhenArmTokenIsLoaded>
+      </StandaloneStandardManagementProvider>
     </ReactQueryProvider>
   );
 };

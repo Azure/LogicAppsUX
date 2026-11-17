@@ -7,6 +7,7 @@ import {
   useHostOptions,
   useIsVSCode,
   useIsDarkMode,
+  useSharedNodeUi,
 } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
@@ -45,6 +46,7 @@ import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
 import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -69,6 +71,7 @@ export const Designer = (props: DesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
+  const sharedOption = useSharedNodeUi();
 
   const styles = useDesignerStyles();
 
@@ -265,6 +268,10 @@ export const Designer = (props: DesignerProps) => {
               <DesignerReactFlow canvasRef={canvasRef}>
                 {backgroundProps ? (
                   <Background {...backgroundProps} />
+                ) : sharedOption ? (
+                  // The shared canvas role resolves inside DesignerUiScope and falls back to Background1 outside it,
+                  // so hosts that do not mount the scope keep the previous flag-on color.
+                  <Background bgColor={designerUiTokens.canvasBackground} />
                 ) : (
                   <Background
                     bgColor={isReadOnly ? '#80808010' : undefined}
@@ -282,7 +289,7 @@ export const Designer = (props: DesignerProps) => {
                 <EdgeContextualMenu />
                 <RunDisplay />
                 <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-                  <Controls />
+                  <Controls canvasRef={canvasRef} />
                   <Minimap />
                 </div>
               </DesignerReactFlow>

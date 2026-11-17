@@ -1,6 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
+import type AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+import * as cp from 'child_process';
+import { Readable } from 'stream';
+import { createHash } from 'crypto';
 import axios from 'axios';
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
@@ -20,8 +25,6 @@ import {
   getNodeJsSha256,
   getFuncCoreToolsSha256,
   computeFileSha256,
-  verifyDependencyIntegrity,
-  writeDependencyIntegrityManifest,
   useBinariesDependencies,
   removeWithLockWait,
   mkdirWithLockWait,
@@ -40,8 +43,9 @@ import {
   nodeJsBinaryPathSettingKey,
   dotNetBinaryPathSettingKey,
   nodeJsDependencyName,
+  extensionBundleId,
 } from '../../../constants';
-import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
+import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../codeless/startDesignTimeApi';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
 import {
@@ -61,10 +65,18 @@ vi.mock('../vsCodeConfig/settings');
 vi.mock('../vsCodeConfig/tasks');
 vi.mock('../../commands/nodeJs/validateNodeJsInstalled');
 vi.mock('../devContainerUtils');
+vi.mock('../codeless/startDesignTimeApi', () => ({
+  startAllDesignTimeApis: vi.fn(),
+  stopAllDesignTimeApis: vi.fn(),
+}));
 
 describe('binaries', () => {
   describe('downloadAndExtractDependency', () => {
     let context: IActionContext;
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
 
     beforeEach(() => {
       context = {
@@ -85,6 +97,47 @@ describe('binaries', () => {
       await expect(
         downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion)
       ).rejects.toThrowError();
+    });
+
+    it.each([
+      [Platform.windows, undefined, '10.0'],
+      [Platform.linux, undefined, '10.0'],
+      [Platform.windows, '10', '10.0'],
+      [Platform.linux, '10', '10.0'],
+      [Platform.windows, '8', '8.0'],
+      [Platform.linux, '8', '8.0'],
+    ])('downloads and installs the requested SDK channel on %s (major %s)', async (platform, majorVersion, channel) => {
+      vi.stubGlobal('process', { ...process, platform });
+      const writer = new EventEmitter();
+      const data = new EventEmitter() as EventEmitter & { pipe: (destination: EventEmitter) => EventEmitter };
+      data.pipe = (destination) => {
+        setImmediate(() => {
+          data.emit('data', Buffer.from('installer'));
+          destination.emit('finish');
+        });
+        return destination;
+      };
+      vi.mocked(fs.createWriteStream).mockReturnValueOnce(writer as fs.WriteStream);
+      vi.mocked(axios.get).mockResolvedValueOnce({ headers: {}, data });
+      const scriptUrl = getDotNetBinariesReleaseUrl();
+      const targetRoot = path.join('dependencies', dotnetDependencyName);
+      const scriptPath = expect.stringMatching(
+        new RegExp(`${dotnetDependencyName}-[a-f0-9-]+[\\\\/]${dotnetDependencyName}\\${path.extname(scriptUrl)}$`)
+      );
+
+      await downloadAndExtractDependency(context, scriptUrl, 'dependencies', dotnetDependencyName, undefined, majorVersion);
+
+      expect(axios.get).toHaveBeenCalledWith(scriptUrl, expect.objectContaining({ responseType: 'stream' }));
+      const scriptCommand = platform === Platform.windows ? ['powershell -ExecutionPolicy Bypass -File', scriptPath] : [scriptPath];
+      expect(executeCommand).toHaveBeenCalledWith(
+        ext.outputChannel,
+        undefined,
+        ...scriptCommand,
+        '-InstallDir',
+        targetRoot,
+        '-Channel',
+        channel
+      );
     });
 
     describe('download failure reporting', () => {
@@ -662,17 +715,17 @@ describe('binaries', () => {
           properties: {},
         },
       } as IActionContext;
-      majorVersion = '6';
+      majorVersion = '10';
     });
 
     it('should return the latest .NET version', async () => {
-      const response = [{ tag_name: 'v6.0.0' }];
+      const response = [{ tag_name: 'v8.0.318' }, { tag_name: 'v10.0.402' }, { tag_name: 'v10.0.403' }];
 
       (axios.get as Mock).mockResolvedValue({ data: response, status: 200 });
 
       const result = await getLatestDotNetVersion(context, majorVersion);
 
-      expect(result).toBe('6.0.0');
+      expect(result).toBe('10.0.403');
     });
 
     it('should return fallback .NET version without showing an error when GitHub latest-version lookup fails', async () => {
@@ -682,7 +735,7 @@ describe('binaries', () => {
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestDotNetVersion(context, majorVersion);
-      expect(result).toBe(DependencyVersion.dotnet8);
+      expect(result).toBe(DependencyVersion.dotnet10);
       expect(showErrorMessage).not.toHaveBeenCalled();
       expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
       expect(context.telemetry.properties.errorNewestDotNetVersion).toContain('Request failed with status code 403');
@@ -691,7 +744,14 @@ describe('binaries', () => {
     it('should return fallback dotnet version when no major version is sent', async () => {
       const result = await getLatestDotNetVersion(context);
 
-      expect(result).toBe(DependencyVersion.dotnet8);
+      expect(result).toBe(DependencyVersion.dotnet10);
+      expect(result).toBe('10.0.403');
+    });
+
+    it('returns the .NET 10 fallback when the feed has no matching release', async () => {
+      (axios.get as Mock).mockResolvedValue({ data: [{ tag_name: 'v8.0.318' }], status: 200 });
+
+      expect(await getLatestDotNetVersion(context, majorVersion)).toBe(DependencyVersion.dotnet10);
     });
   });
 
@@ -1316,294 +1376,387 @@ describe('binaries', () => {
     });
   });
 
-  describe('verifyDependencyIntegrity', () => {
+  describe('offline staged bundle installation', () => {
+    // Bypass the global fs mock only for this suite, as in verifyExtractedZip.
+    // Production fs calls still go through mocks so individual failures can be
+    // injected, but successful operations use genuine files, streams and ZIPs.
+    const realFs: typeof fs = require('node:fs');
+    const realOs: typeof os = require('node:os');
+    const RealAdmZip: typeof AdmZip = require('adm-zip');
+    // The global setup supplies a mutable mock object, not native fs bindings.
+    const mockedFilesystem = vi.mocked(fs);
+    const filesystemMethods = [
+      'existsSync',
+      'mkdirSync',
+      'chmodSync',
+      'createWriteStream',
+      'createReadStream',
+      'readdirSync',
+      'readFileSync',
+      'writeFileSync',
+      'renameSync',
+      'rmSync',
+      'statSync',
+    ] as const;
+    const url = 'https://offline.invalid/bundle.zip';
+    const oldBytes = Buffer.from([0x00, 0xff, 0x10, 0x42]);
+    const newBytes = Buffer.from('new workflow extension assembly');
+    let root: string;
+    let cache: string;
+    let target: string;
+    let archive: Buffer;
     let context: IActionContext;
+    let descriptors: Map<string, PropertyDescriptor | undefined>;
+
+    function assertIsolatedPath(value: unknown) {
+      if (typeof value !== 'string' || (value !== root && !value.startsWith(`${root}${path.sep}`))) {
+        throw new Error(`Offline test attempted filesystem access outside its sandbox: ${String(value)}`);
+      }
+    }
+
+    function snapshot(directory: string): Record<string, Buffer> {
+      const files: Record<string, Buffer> = {};
+      function walk(current: string) {
+        for (const entry of realFs.readdirSync(current, { withFileTypes: true })) {
+          const absolute = path.join(current, entry.name);
+          if (entry.isDirectory()) {
+            walk(absolute);
+          } else {
+            files[path.relative(directory, absolute)] = realFs.readFileSync(absolute);
+          }
+        }
+      }
+      walk(directory);
+      return files;
+    }
+
+    function expectPreviousInstall(directory = target) {
+      expect(snapshot(directory)).toEqual({
+        'extension.dll': oldBytes,
+        [path.join('stale', 'obsolete.dll')]: Buffer.from('stale extension'),
+      });
+    }
+
+    function stageDirectories() {
+      return realFs.readdirSync(cache).filter((entry) => entry.startsWith('.bundle-install-'));
+    }
+
+    function serveArchive(body = archive, headers: Record<string, string> = {}) {
+      vi.mocked(axios.get).mockImplementation(async (requestUrl) => {
+        expect(requestUrl).toBe(url);
+        // A fresh real stream is required on each integrity retry.
+        return {
+          data: Readable.from([body]),
+          headers: {
+            'content-length': String(body.length),
+            'content-md5': createHash('md5').update(body).digest('base64'),
+            ...headers,
+          },
+        };
+      });
+    }
+
+    function install(validate?: (directory: string) => Promise<void>) {
+      return downloadAndExtractDependency(context, url, cache, extensionBundleId, extensionBundleId, undefined, validate);
+    }
+
+    function failPublish(rollbackError?: Error) {
+      const publishError = Object.assign(new Error('synthetic publish failure'), { code: 'EIO' });
+      vi.mocked(fs.renameSync).mockImplementation((from, to) => {
+        assertIsolatedPath(from);
+        assertIsolatedPath(to);
+        if (path.basename(String(from)) === 'content' && to === target) {
+          throw publishError;
+        }
+        if (rollbackError && path.basename(String(from)) === 'previous' && to === target) {
+          throw rollbackError;
+        }
+        realFs.renameSync(from, to);
+      });
+      return publishError;
+    }
 
     beforeEach(() => {
-      context = { telemetry: { properties: {} } } as IActionContext;
-      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+      root = realFs.mkdtempSync(path.join(realOs.tmpdir(), 'offline-bundle-install-'));
+      cache = path.join(root, 'cache');
+      target = path.join(cache, extensionBundleId);
+      realFs.mkdirSync(path.join(target, 'stale'), { recursive: true });
+      realFs.writeFileSync(path.join(target, 'extension.dll'), oldBytes);
+      realFs.writeFileSync(path.join(target, 'stale', 'obsolete.dll'), 'stale extension');
+      const zip = new RealAdmZip();
+      zip.addFile('extension.dll', newBytes);
+      zip.addFile('bin/new.dll', Buffer.from('new nested assembly'));
+      archive = zip.toBuffer();
+      context = { telemetry: { properties: {}, measurements: {} } } as IActionContext;
+
+      descriptors = new Map();
+      for (const method of filesystemMethods) {
+        descriptors.set(method, Object.getOwnPropertyDescriptor(mockedFilesystem, method));
+        Object.defineProperty(mockedFilesystem, method, {
+          configurable: true,
+          writable: true,
+          value: vi.fn((...args: unknown[]) => {
+            assertIsolatedPath(args[0]);
+            if (method === 'renameSync') {
+              assertIsolatedPath(args[1]);
+            }
+            return Reflect.apply(realFs[method], realFs, args);
+          }),
+        });
+      }
+      vi.spyOn(os, 'tmpdir').mockReturnValue(path.join(root, 'downloads'));
+      vi.mocked(axios.get).mockReset();
+      vi.mocked(axios.head).mockReset();
+      vi.mocked(stopAllDesignTimeApis).mockReset();
+      vi.mocked(startAllDesignTimeApis).mockReset();
+      vi.mocked(ext.outputChannel.appendLog).mockClear();
+      vi.mocked(executeCommand).mockClear();
+      vi.mocked(cp.spawn).mockClear();
+      vi.mocked(cp.exec).mockClear();
+      vi.mocked(getGlobalSetting).mockClear();
+      vi.mocked(updateGlobalSetting).mockClear();
+      // Even accidental process liveness probes must not reach a real PID.
+      vi.spyOn(process, 'kill').mockImplementation(() => {
+        throw Object.assign(new Error('offline: no process exists'), { code: 'ESRCH' });
+      });
+      serveArchive();
     });
 
-    it('returns true when every manifest file exists with the recorded size', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 2,
-        files: [
-          { path: 'func.exe', size: 100 },
-          { path: 'in-proc8/func.dll', size: 200 },
-        ],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => ({
-        size: filePath.endsWith('func.exe') ? 100 : 200,
-        isFile: () => true,
-      }));
-
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(true);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
+    afterEach(() => {
+      try {
+        expect(startAllDesignTimeApis).not.toHaveBeenCalled();
+        expect(executeCommand).not.toHaveBeenCalled();
+        expect(cp.spawn).not.toHaveBeenCalled();
+        expect(cp.exec).not.toHaveBeenCalled();
+        expect(process.kill).not.toHaveBeenCalled();
+        expect(axios.head).not.toHaveBeenCalled();
+        expect(getGlobalSetting).not.toHaveBeenCalled();
+        expect(updateGlobalSetting).not.toHaveBeenCalled();
+      } finally {
+        vi.restoreAllMocks();
+        for (const [method, descriptor] of descriptors) {
+          if (descriptor) {
+            Object.defineProperty(mockedFilesystem, method, descriptor);
+          } else {
+            Reflect.deleteProperty(mockedFilesystem, method);
+          }
+        }
+        realFs.rmSync(root, { recursive: true, force: true });
+      }
     });
 
-    it('returns false and schedules reinstall when the manifest is missing', async () => {
-      (fs.existsSync as Mock).mockReturnValue(false);
+    it('preserves installed bytes and never stops design-time on HTTP 404', async () => {
+      const notFound = Object.assign(new Error('synthetic 404'), { response: { status: 404 } });
+      vi.mocked(axios.get).mockRejectedValue(notFound);
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+      await expect(install()).rejects.toBe(notFound);
 
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-missing');
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(stageDirectories()).toEqual([]);
+      expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
-    it('returns false when a recorded file is missing on disk', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 1,
-        files: [{ path: 'in-proc8/func.dll', size: 200 }],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockRejectedValue(new Error('ENOENT'));
+    it('does not precreate an absent install directory when downloading fails', async () => {
+      realFs.rmSync(target, { recursive: true, force: true });
+      vi.mocked(axios.get).mockRejectedValue(Object.assign(new Error('synthetic 404'), { response: { status: 404 } }));
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+      await expect(install()).rejects.toThrow('synthetic 404');
 
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('file-missing');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityMissingFile).toBe('in-proc8/func.dll');
+      expect(realFs.existsSync(target)).toBe(false);
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(fs.mkdirSync).not.toHaveBeenCalledWith(target, expect.anything());
+      expect(fs.rmSync).not.toHaveBeenCalledWith(target, expect.anything());
+      expect(stageDirectories()).toEqual([]);
     });
 
-    it('returns false when a recorded file has a different size', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 1,
-        files: [{ path: 'func.exe', size: 100 }],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockResolvedValue({ size: 999, isFile: () => true });
+    it.each([
+      ['size', { 'content-length': '999999' }],
+      ['md5', { 'content-md5': Buffer.alloc(16).toString('base64') }],
+    ] as const)(
+      'preserves installed bytes and never stops design-time after transport %s failure',
+      async (reason, headers) => {
+        serveArchive(archive, headers);
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+        await expect(install()).rejects.toMatchObject({ name: 'DownloadIntegrityError', reason });
 
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
-    });
+        expectPreviousInstall();
+        expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+        expect(fs.renameSync).not.toHaveBeenCalled();
+        expect(stageDirectories()).toEqual([]);
+        expect(axios.get).toHaveBeenCalledTimes(3);
+      },
+      15_000
+    );
 
-    it('returns false when a recorded file is no longer a regular file', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 1,
-        files: [{ path: 'func.exe', size: 100 }],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockResolvedValue({ size: 100, isFile: () => false });
+    it('preserves installed bytes and never stops design-time on publisher SHA256 mismatch', async () => {
+      // Bundles use transport MD5; exercise the shared helper's publisher-SHA
+      // branch with Node's dependency identity and the same existing directory.
+      vi.mocked(axios.get).mockImplementation(async (requestUrl) => {
+        if (requestUrl === url) {
+          return { data: Readable.from([archive]), headers: { 'content-length': String(archive.length) } };
+        }
+        expect(requestUrl).toBe('https://offline.invalid/SHASUMS256.txt');
+        return { data: `${'0'.repeat(64)}  bundle.zip\n` };
+      });
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('not-a-file');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('func.exe');
-    });
-
-    it('returns false when the manifest is not valid JSON', async () => {
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue('not-json');
-
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('error');
-    });
-
-    it('returns false when the manifest files property is not an array', async () => {
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(
-        JSON.stringify({ dependencyName: funcDependencyName, createdAt: '2024-01-01T00:00:00.000Z', fileCount: 0, files: 'nope' })
+      await expect(downloadAndExtractDependency(context, url, cache, nodeJsDependencyName, extensionBundleId)).rejects.toThrow(
+        'Checksum verification failed'
       );
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-invalid');
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(stageDirectories()).toEqual([]);
+      expect(context.telemetry.properties.actualSha256).toBe(createHash('sha256').update(archive).digest('hex'));
     });
 
-    it('returns false when the binaries location setting is not configured', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(undefined);
+    it('preserves installed bytes and never stops design-time when ZIP extraction fails', async () => {
+      serveArchive(Buffer.from('not a valid ZIP archive'));
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+      await expect(install()).rejects.toThrow();
 
-      expect(result).toBe(false);
-      expect(fs.existsSync).not.toHaveBeenCalled();
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(stageDirectories()).toEqual([]);
     });
 
-    it('verifies a NodeJs install against its manifest', async () => {
-      const manifest = {
-        dependencyName: nodeJsDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 2,
-        files: [
-          { path: 'node.exe', size: 300 },
-          { path: 'node_modules/npm/bin/npm', size: 50 },
-        ],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => ({
-        size: filePath.endsWith('node.exe') ? 300 : 50,
-        isFile: () => true,
-      }));
-
-      const result = await verifyDependencyIntegrity(context, nodeJsDependencyName);
-
-      expect(result).toBe(true);
-      expect(context.telemetry.properties.NodeJsIntegrityResult).toBe('passed');
-    });
-
-    it('verifies a large manifest spanning multiple stat batches', async () => {
-      const files = Array.from({ length: 200 }, (_, i) => ({ path: `lib/file-${i}.dll`, size: i + 1 }));
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: files.length,
-        files,
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
-        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
-        return { size: index + 1, isFile: () => true };
+    it('validates real staged content before stopping design-time or replacing installed bytes', async () => {
+      const validationError = new Error('required bundle content missing');
+      const validate = vi.fn(async (directory: string) => {
+        expect(path.dirname(path.dirname(directory))).toBe(cache);
+        expect(path.basename(path.dirname(directory))).toMatch(/^\.bundle-install-/);
+        expect(path.basename(directory)).toBe('content');
+        expect(snapshot(directory)).toEqual({
+          'extension.dll': newBytes,
+          [path.join('bin', 'new.dll')]: Buffer.from('new nested assembly'),
+        });
+        expectPreviousInstall();
+        expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+        throw validationError;
       });
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+      await expect(install(validate)).rejects.toBe(validationError);
 
-      expect(result).toBe(true);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
-      // Every recorded file must be stat'd, proving the batched loop covers the whole manifest.
-      expect((fs.promises.stat as Mock).mock.calls).toHaveLength(files.length);
+      expect(validate).toHaveBeenCalledTimes(1);
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+      expect(fs.renameSync).not.toHaveBeenCalled();
+      expect(stageDirectories()).toEqual([]);
     });
 
-    it('returns false when a file in a later batch has a size mismatch', async () => {
-      const files = Array.from({ length: 130 }, (_, i) => ({ path: `lib/file-${i}.dll`, size: 10 }));
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: files.length,
-        files,
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      // File index 100 lives in the third 64-file batch; give it the wrong size on disk.
-      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
-        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
-        return { size: index === 100 ? 999 : 10, isFile: () => true };
+    it('replaces the complete install, removes stale files and stops only after extraction and validation', async () => {
+      let validatedDirectory: string | undefined;
+      const validate = vi.fn(async (directory: string) => {
+        expectPreviousInstall();
+        expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
+        expect(realFs.readFileSync(path.join(directory, 'extension.dll'))).toEqual(newBytes);
+        validatedDirectory = directory;
+      });
+      vi.mocked(stopAllDesignTimeApis).mockImplementation(() => {
+        expect(validate).toHaveBeenCalledTimes(1);
+        expectPreviousInstall();
+        expect(realFs.readFileSync(path.join(validatedDirectory!, 'bin', 'new.dll'))).toEqual(Buffer.from('new nested assembly'));
+        expect(fs.renameSync).not.toHaveBeenCalled();
       });
 
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await install(validate);
 
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('lib/file-100.dll');
-    });
-  });
-
-  describe('writeDependencyIntegrityManifest', () => {
-    let context: IActionContext;
-
-    beforeEach(() => {
-      context = { telemetry: { properties: {} } } as IActionContext;
-    });
-
-    it('writes a manifest with path + size for every file', () => {
-      const targetFolder = path.join('binariesLocation', funcDependencyName);
-      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
-        if (dir === targetFolder) {
-          return [
-            { name: 'func.exe', isDirectory: () => false, isFile: () => true },
-            { name: 'README.md', isDirectory: () => false, isFile: () => true },
-            { name: 'in-proc8', isDirectory: () => true, isFile: () => false },
-          ];
-        }
-        return [{ name: 'func.dll', isDirectory: () => false, isFile: () => true }];
+      expect(result?.actualSize).toBe(archive.length);
+      expect(snapshot(target)).toEqual({
+        'extension.dll': newBytes,
+        [path.join('bin', 'new.dll')]: Buffer.from('new nested assembly'),
       });
-      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
-        size: filePath.endsWith('func.exe') ? 100 : 200,
-      }));
+      expect(stopAllDesignTimeApis).toHaveBeenCalledTimes(1);
+      expect(stageDirectories()).toEqual([]);
+      expect(fs.renameSync).toHaveBeenNthCalledWith(1, target, path.join(path.dirname(validatedDirectory!), 'previous'));
+      expect(fs.renameSync).toHaveBeenNthCalledWith(2, validatedDirectory, target);
+    });
 
-      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+    it('restores the original bytes and removes staging when publishing fails', async () => {
+      const publishError = failPublish();
 
-      expect(fs.writeFileSync).toHaveBeenCalledWith(
-        path.join(targetFolder, '.logicapps-integrity.json'),
-        expect.stringContaining('func.exe')
+      await expect(install()).rejects.toBe(publishError);
+
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).toHaveBeenCalledTimes(1);
+      expect(fs.renameSync).toHaveBeenCalledTimes(3);
+      expect(stageDirectories()).toEqual([]);
+    });
+
+    it('preserves a recoverable previous install and logs its path when rollback also fails', async () => {
+      const rollbackError = new Error('synthetic rollback failure');
+      const publishError = failPublish(rollbackError);
+
+      await expect(install()).rejects.toBe(publishError);
+
+      expect(realFs.existsSync(target)).toBe(false);
+      expect(stageDirectories()).toHaveLength(1);
+      const backup = path.join(cache, stageDirectories()[0], 'previous');
+      expectPreviousInstall(backup);
+      expect(realFs.readFileSync(path.join(cache, stageDirectories()[0], 'content', 'extension.dll'))).toEqual(newBytes);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+        expect.stringContaining(`Previous install preserved at ${backup}: ${String(rollbackError)}`)
       );
-      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
-      expect(written.fileCount).toBe(3);
-      const funcExe = written.files.find((f: { path: string }) => f.path === 'func.exe');
-      const funcDll = written.files.find((f: { path: string }) => f.path === 'in-proc8/func.dll');
-      const readme = written.files.find((f: { path: string }) => f.path === 'README.md');
-      expect(funcExe).toEqual({ path: 'func.exe', size: 100 });
-      expect(funcDll).toEqual({ path: 'in-proc8/func.dll', size: 200 });
-      expect(readme).toEqual({ path: 'README.md', size: 200 });
-      expect(written.files.some((f: { sha256?: string }) => f.sha256 !== undefined)).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('true');
+      expect(stopAllDesignTimeApis).toHaveBeenCalledTimes(1);
+      expect(fs.rmSync).not.toHaveBeenCalledWith(path.dirname(backup), expect.anything());
     });
 
-    it('records size-only entries for NodeJs files', () => {
-      const targetFolder = path.join('binariesLocation', nodeJsDependencyName);
-      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
-        if (dir === targetFolder) {
-          return [
-            { name: 'node.exe', isDirectory: () => false, isFile: () => true },
-            { name: 'npm.cmd', isDirectory: () => false, isFile: () => true },
-          ];
+    it('logs staging cleanup failure without masking the original publish error or undoing rollback', async () => {
+      const publishError = failPublish();
+      const cleanupError = new Error('synthetic staging cleanup failure');
+      vi.mocked(fs.rmSync).mockImplementation((directory, options) => {
+        assertIsolatedPath(directory);
+        if (path.basename(String(directory)).startsWith('.bundle-install-')) {
+          throw cleanupError;
         }
-        return [];
-      });
-      (fs.statSync as Mock).mockReturnValue({ size: 42 });
-
-      writeDependencyIntegrityManifest(context, targetFolder, nodeJsDependencyName);
-
-      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
-      const nodeExe = written.files.find((f: { path: string }) => f.path === 'node.exe');
-      const npmCmd = written.files.find((f: { path: string }) => f.path === 'npm.cmd');
-      expect(nodeExe).toEqual({ path: 'node.exe', size: 42 });
-      expect(npmCmd).toEqual({ path: 'npm.cmd', size: 42 });
-    });
-
-    it('records telemetry but does not throw when writing the manifest fails', () => {
-      const targetFolder = path.join('binariesLocation', funcDependencyName);
-      (fs.readdirSync as Mock).mockReturnValue([]);
-      (fs.writeFileSync as Mock).mockImplementation(() => {
-        throw new Error('disk full');
+        realFs.rmSync(directory, options);
       });
 
-      expect(() => writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).not.toThrow();
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('false');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestError).toContain('disk full');
+      await expect(install()).rejects.toBe(publishError);
+
+      expectPreviousInstall();
+      expect(stageDirectories()).toHaveLength(1);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+        `Failed to clean extension bundle staging directory ${path.join(cache, stageDirectories()[0])}: ${String(cleanupError)}`
+      );
     });
 
-    it('excludes the integrity manifest itself from the recorded file list', () => {
-      const targetFolder = path.join('binariesLocation', funcDependencyName);
-      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
-        if (dir === targetFolder) {
-          return [
-            { name: 'func.exe', isDirectory: () => false, isFile: () => true },
-            { name: '.logicapps-integrity.json', isDirectory: () => false, isFile: () => true },
-          ];
+    it('logs download-temp cleanup failure without masking the original publish error', async () => {
+      const publishError = failPublish();
+      const cleanupError = new Error('synthetic download-temp cleanup failure');
+      vi.mocked(fs.rmSync).mockImplementation((directory, options) => {
+        assertIsolatedPath(directory);
+        if (String(directory).startsWith(`${path.join(root, 'downloads')}${path.sep}`)) {
+          throw cleanupError;
         }
-        return [];
+        realFs.rmSync(directory, options);
       });
-      (fs.statSync as Mock).mockReturnValue({ size: 100 });
 
-      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+      await expect(install()).rejects.toBe(publishError);
 
-      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
-      expect(written.fileCount).toBe(1);
-      expect(written.files.map((f: { path: string }) => f.path)).toEqual(['func.exe']);
-      expect(written.files).not.toContainEqual(expect.objectContaining({ path: '.logicapps-integrity.json' }));
+      expectPreviousInstall();
+      expect(stageDirectories()).toEqual([]);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining(cleanupError.message));
+    });
+
+    it('uses a distinct download directory for each failed install without touching the old cache', async () => {
+      vi.mocked(axios.get).mockRejectedValue(Object.assign(new Error('synthetic 404'), { response: { status: 404 } }));
+      await expect(install()).rejects.toThrow('synthetic 404');
+      await expect(install()).rejects.toThrow('synthetic 404');
+
+      const downloadDirectories = vi.mocked(fs.mkdirSync).mock.calls.map(([directory]) => String(directory));
+      expect(downloadDirectories).toHaveLength(2);
+      expect(new Set(downloadDirectories).size).toBe(2);
+      for (const directory of downloadDirectories) {
+        expect(directory).toContain(path.join(root, 'downloads'));
+        expect(path.basename(directory)).toMatch(new RegExp(`^${extensionBundleId}-[0-9a-f-]{36}$`));
+        expect(realFs.existsSync(directory)).toBe(false);
+      }
+      expectPreviousInstall();
+      expect(stopAllDesignTimeApis).not.toHaveBeenCalled();
     });
   });
 

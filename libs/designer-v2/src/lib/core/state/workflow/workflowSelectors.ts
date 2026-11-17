@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
-import { collapseFlowTree } from './helper';
+import { collapseFlowTree, isSingleHandoffAction } from './helper';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
@@ -235,6 +235,11 @@ const handoffToolAdjustment = (
   rootState: { workflow: WorkflowState; operations: OperationMetadataState }
 ): WorkflowNode => {
   const operations = rootState.workflow.operations;
+  const edges = [...(graph.edges ?? [])];
+  let edgeIds: Set<string> | undefined;
+  const handoffPairs = new Set(
+    edges.filter((edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE).map((edge) => JSON.stringify([edge.source, edge.target]))
+  );
 
   // Iterate over graph, if any agent action tools only have a single handoff action, log it
   const handoffToolIds: string[] = [];
@@ -245,7 +250,7 @@ const handoffToolAdjustment = (
       for (const tool of tools ?? []) {
         const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
         // If the tool only has a single handoff action, add it to the list to be removed
-        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
+        if (isSingleHandoffAction(toolActions.map((action) => operations[action.id]))) {
           handoffToolIds.push(tool.id);
         }
         // If the tool has a handoff action at all, add a handoff edge to the graph
@@ -253,13 +258,36 @@ const handoffToolAdjustment = (
         if (firstHandoffAction) {
           const inputParameters = rootState.operations?.inputParameters?.[firstHandoffAction.id]?.parameterGroups?.default?.parameters;
           const handoffTarget = inputParameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
-          graph = {
-            ...graph,
-            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
-          };
+          const pair = JSON.stringify([child.id, handoffTarget]);
+          if (!handoffPairs.has(pair)) {
+            if (!edgeIds) {
+              edgeIds = new Set<string>();
+              const pending = [graph];
+              while (pending.length > 0) {
+                const node = pending.pop()!;
+                for (const existing of node.edges ?? []) {
+                  edgeIds.add(existing.id);
+                }
+                pending.push(...(node.children ?? []));
+              }
+            }
+            const edge = createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE);
+            let id = edge.id;
+            let suffix = 1;
+            while (edgeIds.has(id)) {
+              id = `${edge.id}::handoff:${suffix++}`;
+            }
+            edges.push({ ...edge, id });
+            edgeIds.add(id);
+            handoffPairs.add(pair);
+          }
         }
       }
     }
+  }
+
+  if (edges.length !== (graph.edges?.length ?? 0)) {
+    graph = { ...graph, edges };
   }
 
   // Remove handoff tools from graph
@@ -870,12 +898,7 @@ const selectHandoffEdges = createSelector([(state: RootState) => state.workflow.
   const handoffEdges: WorkflowEdge[] = [];
   for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
     for (const agent of Object.values(metadata.handoffs ?? {})) {
-      handoffEdges.push({
-        id: `${nodeId}-${agent}`,
-        source: nodeId,
-        target: agent,
-        type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-      });
+      handoffEdges.push(createWorkflowEdge(nodeId, agent, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
     }
   }
   return handoffEdges;

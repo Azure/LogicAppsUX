@@ -332,8 +332,9 @@ function assertSafeTriggerSchema(value: unknown): asserts value is Schema {
     }
   }
   for (const key of ['oneOf', 'anyOf', 'allOf', 'prefixItems']) {
-    if (Array.isArray(schema[key])) {
-      schema[key].forEach(assertSafeTriggerSchema);
+    const value = schema[key];
+    if (Array.isArray(value)) {
+      value.forEach(assertSafeTriggerSchema);
     }
   }
   for (const key of ['additionalProperties', 'not', 'if', 'then', 'else', 'contains']) {
@@ -628,7 +629,9 @@ export function buildWorkflowExtractionPlan(
     if (!supplied && !definition) {
       fail('missing-parameter', `Parameter "${name}" used by the selection is missing from the workflow.`);
     }
-    const representations = [supplied, definition].filter((parameter) => parameter !== undefined);
+    const representations = [supplied, definition].filter(
+      (parameter): parameter is NonNullable<typeof parameter> => parameter !== undefined
+    );
     if (representations.some((parameter) => /^secure/i.test(parameter.type))) {
       fail('parameter-boundary', `Secure parameter "${name}" cannot be copied into the extracted workflow.`);
     }

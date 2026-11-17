@@ -1,23 +1,42 @@
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import {
   useActionMetadata,
   useIsLeafNode,
   useNodeMetadata,
+  useNodeDisplayName,
   useParentNodeId,
   useRunData,
 } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined, removeIdTag } from '@microsoft/logic-apps-shared';
+import {
+  SUBGRAPH_TYPES,
+  WORKFLOW_NODE_TYPES,
+  useNodeSize,
+  useNodeLeafIndex,
+  isNullOrUndefined,
+  removeIdTag,
+} from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { DefaultHandle } from './components/handles/DefaultHandle';
+import { AgentToolsDecoration, NodeFrame } from '@microsoft/designer-ui-v2';
+import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 
-const GraphContainerNode = ({ id }: NodeProps) => {
+interface AgentToolsPanelBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+const GraphContainerNode = ({ id, data }: NodeProps) => {
   const readOnly = useReadOnly();
+  const sharedOption = useSharedNodeUi();
 
   const selected = useIsNodeSelectedInOperationPanel(id);
   const isMultiSelected = useIsNodeInMultiSelection(id);
@@ -29,10 +48,25 @@ const GraphContainerNode = ({ id }: NodeProps) => {
   const isSubgraphContainer = nodeMetadata?.subgraphType !== undefined;
   const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
   const graphContainerId = isSubgraphContainer ? removeIdTag(id) : id;
+  const label = useNodeDisplayName(graphContainerId);
   const parentNodeId = useParentNodeId(graphContainerId);
   const runData = useRunData(isSubgraphContainer ? (parentNodeId ?? graphContainerId) : graphContainerId);
   const nodeSize = useNodeSize(id);
   const nodeLeafIndex = useNodeLeafIndex(id);
+  const presentation =
+    (data?.presentation as NodePresentation | undefined) ?? getNodePresentation(WORKFLOW_NODE_TYPES.GRAPH_NODE, sharedOption);
+  const shared = presentation.shared;
+  const type = actionMetadata?.type?.toLowerCase();
+  const kind = type === 'if' ? 'condition' : type === 'switch' ? 'switch' : type === 'foreach' || type === 'until' ? 'loop' : 'scope';
+  const merge = shared && (type === 'if' || type === 'switch');
+  const bodyFrame = data?.bodyFrame as { y: number; height: number } | undefined;
+  const toolsPanel = data?.toolsPanel as AgentToolsPanelBounds | undefined;
+  const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
+  const hasAgentDecoration = shared && type === 'agent' && !!toolsPanel && toolsPanel.width > 0 && toolsPanel.height > 0;
+  const agentToolsPanel = hasAgentDecoration ? toolsPanel : undefined;
+  // Same truth as the legacy GraphContainer `active` prop: in monitoring, a container with no run record was
+  // not reached, so the shared frame and its merge junction render at the single inactive opacity level.
+  const inactive = isMonitoringView && isNullOrUndefined(runData?.status);
 
   return (
     <>
@@ -41,15 +75,64 @@ const GraphContainerNode = ({ id }: NodeProps) => {
         style={{
           width: nodeSize?.width ?? 0,
           height: nodeSize?.height ?? 0,
+          ...(shared && { padding: 0 }),
         }}
       >
-        <DefaultHandle type="target" />
-        <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} />}
+        {/* Structural targets use the graph boundary; contained positioning is only for a canonical handle dot. */}
+        <DefaultHandle axis={handleAxis} type="target" />
+        {shared ? (
+          type === 'agent' || type === 'if' || type === 'switch' ? null : (
+            <NodeFrame
+              kind={kind}
+              selected={selected || isMultiSelected}
+              inactive={inactive}
+              handleAxis={handleAxis}
+              style={{
+                width: '100%',
+                height: bodyFrame?.height ?? '100%',
+                ...(bodyFrame && { position: 'absolute', top: bodyFrame.y }),
+              }}
+            />
+          )
+        ) : (
+          <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
+        )}
+        {agentToolsPanel ? (
+          <AgentToolsDecoration
+            aria-hidden="true"
+            role="presentation"
+            data-agent-tools-decoration={id}
+            style={{
+              position: 'absolute',
+              left: agentToolsPanel.x,
+              top: agentToolsPanel.y,
+              width: agentToolsPanel.width,
+              height: agentToolsPanel.height,
+            }}
+          />
+        ) : null}
+        {merge ? (
+          <DefaultHandle axis={handleAxis} type="source" presentation="merge" label={label} inactive={inactive} />
+        ) : isSubgraphContainer ? (
+          <DefaultHandle axis={handleAxis} type="source" />
+        ) : (
+          <EdgeDrawSourceHandle
+            axis={handleAxis}
+            highlighted={selected || isMultiSelected}
+            {...(shared && type === 'agent' && handleAxis === 'vertical' && { contained: true })}
+          />
+        )}
       </div>
       {showLeafComponents && (
-        <div className="edge-drop-zone-container">
-          <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeLeafIndex} />
+        <div className="edge-drop-zone-container" style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
+          <DropZone
+            graphId={nodeMetadata?.graphId ?? ''}
+            parentId={id}
+            isLeaf={isLeaf}
+            tabIndex={nodeLeafIndex}
+            axis={handleAxis}
+            {...(data?.presentation ? { sharedPresentation: shared } : {})}
+          />
         </div>
       )}
     </>

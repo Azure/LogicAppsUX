@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Conversion Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- 1: ASCII to Character(Code) -> CharOut -->
+      <Link LinkID="10" SourceID="/Root/Code" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Code"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/CharOut" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/CharOut"/>
+      <!-- 2: Character to ASCII(Ch) -> AscOut -->
+      <Link LinkID="11" SourceID="/Root/Ch" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Ch"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/AscOut" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/AscOut"/>
+      <!-- 3: Hexadecimal(HexNum) -> HexOut -->
+      <Link LinkID="12" SourceID="/Root/HexNum" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/HexNum"/>
+      <Link LinkID="22" SourceID="3" TargetID="/Root/HexOut" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/HexOut"/>
+      <!-- 4: Octal(HexNum) -> OctOut -->
+      <Link LinkID="13" SourceID="/Root/HexNum" TargetID="4" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/HexNum"/>
+      <Link LinkID="23" SourceID="4" TargetID="/Root/OctOut" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/OctOut"/>
+      <Functoid FunctoidID="1" TypeID="126" Name="ASCII to Character" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="127" Name="Character to ASCII" X="240" Y="260"/>
+      <Functoid FunctoidID="3" TypeID="128" Name="Hexadecimal" X="240" Y="280"/>
+      <Functoid FunctoidID="4" TypeID="129" Name="Octal" X="240" Y="300"/>
+    </Page>
+  </Pages>
+</mapsource>

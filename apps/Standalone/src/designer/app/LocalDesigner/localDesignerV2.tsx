@@ -4,6 +4,7 @@ import { CustomConnectionParameterEditorService } from './customConnection/custo
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBarV2 } from './pseudoCommandBar';
+import { localRunDevData, localSearchDevData } from './localServiceDevData';
 import {
   createConsumptionWorkflowConnectorService,
   createLocalWorkflowConnectorService,
@@ -12,9 +13,9 @@ import {
   selectWorkflowConnectorService,
 } from './localWorkflowManifest';
 import { localWorkflowPrefix, localWorkflowRegistry } from './localWorkflowRegistry';
+import { LocalOperationManifestService } from './localOperationManifestService';
 import {
   StandardConnectionService,
-  StandardOperationManifestService,
   StandardSearchService,
   BaseOAuthService,
   BaseGatewayService,
@@ -41,6 +42,7 @@ import {
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const httpClient = new HttpClient();
 const connectionServiceStandard = new StandardConnectionService({
@@ -72,7 +74,7 @@ const connectionServiceConsumption = new ConsumptionConnectionService({
   httpClient,
 });
 
-const operationManifestServiceStandard = new StandardOperationManifestService({
+const operationManifestServiceStandard = new LocalOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
@@ -107,6 +109,7 @@ const searchServiceStandard = new StandardSearchService({
     location: '',
   },
   isDev: true,
+  devData: localSearchDevData,
   showStatefulOperations: true,
 });
 
@@ -118,6 +121,7 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
+  devData: localSearchDevData,
 });
 
 const oAuthService = new BaseOAuthService({
@@ -169,6 +173,7 @@ const runService = new StandardRunService({
   workflowName: 'app',
   httpClient,
   isDev: true,
+  devData: localRunDevData,
 });
 
 const roleService = new BaseRoleService({
@@ -211,6 +216,7 @@ const editorService = new CustomEditorService();
 const connectionParameterEditorService = new CustomConnectionParameterEditorService();
 
 export const LocalDesigner = () => {
+  const { search } = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const {
     workflowDefinition,
@@ -286,6 +292,7 @@ export const LocalDesigner = () => {
     isMonitoringView,
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
+    useSharedNodeUi: new URLSearchParams(search).get('useSharedNodeUi') === 'true',
     showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,

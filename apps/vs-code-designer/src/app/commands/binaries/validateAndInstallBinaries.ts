@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
+import { defaultDotnetMajorVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import { ensureRuntimeDependenciesDir, getDependencyTimeout } from '../../utils/binaries';
 import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../utils/bundleFeed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../utils/languageServerProtocol';
+import { installLogicAppsLanguageServerAssets } from '../../utils/languageServerInstaller';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../utils/timeout';
@@ -95,8 +96,12 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: '.NET SDK' });
             const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
+            // Older bundle feeds still list only .NET 6/8; new custom-code projects require .NET 10 too.
+            const dotnetVersions = dotnetDependencies
+              ? [...new Set([...dotnetDependencies.split(','), defaultDotnetMajorVersion])].join(',')
+              : undefined;
             await runWithTimeout(
-              () => validateDotNetIsLatest(actionContext, dotnetDependencies),
+              () => validateDotNetIsLatest(actionContext, dotnetVersions),
               '.NET SDK',
               dependencyTimeoutMs,
               'https://dotnet.microsoft.com/en-us/download/dotnet'
@@ -108,8 +113,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             async (_actionContext: IActionContext) => {
               _actionContext.errorHandling.rethrow = true;
               _actionContext.errorHandling.suppressDisplay = true;
-              progress.report({ increment: 10, message: 'SDK LSP Server' });
-              await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
+              progress.report({ increment: 10, message: 'Logic Apps language server' });
+              await runWithTimeout(() => installLogicAppsLanguageServerAssets(), 'Logic Apps language server', dependencyTimeoutMs);
               // TODO(aeldridge): Why is setDotNetCommand called here?
               await setDotNetCommand();
             }
@@ -122,15 +127,15 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           throw failure.reason;
         }
 
-        // Block validation success on a healthy extension bundle. The bundle
+        // Block validation success on a ready extension bundle. The bundle
         // download is fired-and-forgotten from activation so the UI stays
         // responsive, but validation is the right place to surface a failed
         // install: without a healthy bundle, the design-time host and any
         // workflow runtime will be broken, and we'd rather fail loudly here
-        // than let func.exe spawn against a missing/corrupt bundle.
+        // than let func.exe spawn against an incomplete installation.
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
-        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation, forceRecheck: true });
+        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
 
         // Only advance the throttle window when we actually performed the update checks and the
         // whole pass succeeded, so a failed or skipped run still retries on the next activation.

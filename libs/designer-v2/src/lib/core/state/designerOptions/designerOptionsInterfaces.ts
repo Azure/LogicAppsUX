@@ -41,6 +41,8 @@ export interface DesignerOptionsState {
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
+  /** Private local PoC: atomically adopts shared operation cards and their layout metrics. Default false. */
+  useSharedNodeUi?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
