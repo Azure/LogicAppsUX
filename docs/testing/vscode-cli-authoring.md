@@ -942,6 +942,21 @@ latter is pollable without input until the original deadline, while
 top-to-bottom scan bound is fatal truncated/`target-ambiguous`; never restart
 another wheel cycle. Expected page-count, premature-end, and snapshot mismatch
 remain pollable `list-changed`.
+An admitted non-scrollable fast path is allowed only when one center has zero
+scrollable containers, reports both top and bottom, is not truncated, and every
+bounded retained item is mounted. Require a known bounded declared logical count
+from `aria-setsize`/the list model that exactly equals mounted retained and
+candidate counts; unavailable, oversized, or mismatched counts cannot use the
+fast path. Require one exact target and revalidate the same safe list snapshot,
+retained count, exact count, actionable point, document, physical workspace, and
+input state before each event. Snapshot/count drift before any dispatch is
+pollable `list-changed` without input uncertainty. After move/press/release
+dispatch begins, later drift is fatal uncertainty; pressed failures remain
+pending-invalid. Exact duplicates are fatal. Keep double scans for scrollable lists.
+A visible, non-truncated center with no declared count and exactly zero mounted
+retained rows/candidates is the only safe exception: treat it as pollable empty
+absence until insertion or the original deadline. Any retained row restores the
+mandatory declared-count equality gate.
 Blocking modal/QuickInput state and an exact target action that is temporarily
 disabled, covered, or not hit-testable prevent input but may be polled until the
 unchanged deadline. Persistent target absence or unactionable state fails only at

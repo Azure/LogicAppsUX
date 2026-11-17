@@ -639,6 +639,23 @@ Positional target identities from the first traversal are provisional: a second
 bounded traversal must reproduce every page fingerprint and target occurrence
 set. More than one exact target becomes fatal duplicate ambiguity only after both
 traversals agree.
+When the center proves exactly one container, zero scrollable lists, top and
+bottom simultaneously, no truncation, and every bounded retained row mounted, a
+non-scrollable fast path treats full-list coverage as complete. It requires
+an explicit bounded declared logical count from the list model/`aria-setsize`,
+equal to both mounted retained count and retained candidates, plus exactly one
+owned target. Unknown, oversized, or mismatched logical counts fail closed and
+cannot hide an unmounted duplicate. The path then rechecks the same privacy-safe
+snapshot, retained count, exact count, actionable point, document, physical
+workspace, and input state before every trusted event. Drift becomes pollable `list-changed`;
+duplicates remain fatal. Scrollable centers retain the double-scan contract.
+The sole exception is a genuinely empty center: no declared count, zero mounted
+retained rows/candidates, and no truncation is safe pollable absence until target
+insertion or the original deadline. Once any retained row exists, declared-count
+proof is mandatory.
+Pre-dispatch validation drift sends no event and remains pollable without marking
+input uncertain. Once any native event dispatch begins, later drift is fatal
+uncertainty; press-started failures also remain pending-invalid.
 Newly inserted items remain observable on the top recheck or the next live poll.
 The fallback requires one exact retained warning with one real enabled hit-tested **Yes**,
 captures the existing `before-yes` evidence while that retained warning remains

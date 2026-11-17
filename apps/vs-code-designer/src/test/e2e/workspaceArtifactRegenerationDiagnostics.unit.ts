@@ -708,6 +708,32 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   const center = domState('<div class="notifications-center"></div>');
   assert.strictEqual(center.centerMounted, true);
   assert.strictEqual(center.centerVisible, true);
+  const [actualEmptyCenterRaw, actualTargetCenterRaw] = (() => {
+    const dom = new JSDOM(
+      '<html><body><div class="notifications-center"><div class="notifications-list-container"></div></div></body></html>',
+      { runScripts: 'outside-only' }
+    );
+    try {
+      dom.window.eval(
+        'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20})'
+      );
+      dom.window.eval("document.elementFromPoint = () => document.querySelector('button') || document.body");
+      const empty = JSON.parse(JSON.stringify(dom.window.eval(regenerationDiagnosticDomScript))) as RawWorkbenchState;
+      const targetMarkup = `<div class="monaco-list-row" role="dialog" data-index="0" aria-setsize="1"><div class="notification-list-item">${prompt(
+        appDir
+      )}<button>Yes</button></div></div>`;
+      dom.window.eval(`document.querySelector('.notifications-list-container').innerHTML = ${JSON.stringify(targetMarkup)}`);
+      const target = JSON.parse(JSON.stringify(dom.window.eval(regenerationDiagnosticDomScript))) as RawWorkbenchState;
+      return [empty, target] as const;
+    } finally {
+      dom.window.close();
+    }
+  })();
+  assert.strictEqual(actualEmptyCenterRaw.declaredLogicalCount, null);
+  assert.strictEqual(actualEmptyCenterRaw.retainedCount, 0);
+  assert.strictEqual(actualEmptyCenterRaw.candidates.length, 0);
+  assert.strictEqual(actualTargetCenterRaw.declaredLogicalCount, 1);
+  assert.strictEqual(actualTargetCenterRaw.retainedCount, 1);
   const retainedYes = `
     <div class="notifications-center"><div class="notifications-list-container"><div class="monaco-list" role="list">
       <div class="monaco-list-row" role="dialog"><div class="notification-list-item">${prompt(appDir)}<button>Yes</button></div></div>
@@ -1204,6 +1230,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       centerMounted: centerVisible,
       centerVisible,
       retainedCount: candidates.filter((entry) => entry.retained).length,
+      declaredLogicalCount: candidates.filter((entry) => entry.retained).length,
       listSnapshot: 'stable-list',
       candidates,
     };
@@ -1394,6 +1421,281 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     activated.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
     1,
     'The retained warning Yes must be pressed exactly once'
+  );
+
+  let actualEmptyNow = 0;
+  let actualEmptyTargetVisible = false;
+  const actualEmptyEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const actualEmptyThenTarget = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(actualEmptyEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 300,
+    now: () => actualEmptyNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({
+      before: owner,
+      owner,
+      raw: {
+        ...(actualEmptyTargetVisible ? actualTargetCenterRaw : actualEmptyCenterRaw),
+        timeOrigin: 42,
+        documentVisible: true,
+        documentFocused: true,
+      },
+    }),
+    poll: async (remainingMs) => {
+      actualEmptyNow += Math.min(100, remainingMs);
+      actualEmptyTargetVisible = true;
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(actualEmptyThenTarget.timeOrigin, 42);
+  assert.strictEqual(actualEmptyNow, 100, 'A real empty center must remain pollable until the target is inserted');
+  assert.strictEqual(
+    actualEmptyEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 10 && event.params.y === 10).length,
+    1,
+    'The later DOM-backed exact target must be clicked once'
+  );
+
+  let persistentEmptyNow = 0;
+  const persistentEmptyEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(persistentEmptyEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 300,
+      now: () => persistentEmptyNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({
+        before: owner,
+        owner,
+        raw: { ...actualEmptyCenterRaw, timeOrigin: 42, documentVisible: true, documentFocused: true },
+      }),
+      poll: async (remainingMs) => {
+        persistentEmptyNow += Math.min(100, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('Persistent empty center must never capture or click a target');
+      },
+    }),
+    /absent from Notification Center before the original deadline/
+  );
+  assert.strictEqual(persistentEmptyNow, 300, 'Persistent real empty center must consume the original deadline');
+  assert.strictEqual(persistentEmptyEvents.length, 0, 'Persistent real empty center must send no input');
+
+  const nonScrollableRaw = (version: number, targetCount = 1): RawWorkbenchState => {
+    const target = {
+      ...activationRaw(true, 'target').candidates[0],
+      semanticIdentity: `data-index:${version}`,
+      yesPoint: { x: version === 1 ? 8 : 18, y: 9 },
+    };
+    const clutter = Array.from({ length: 5 - targetCount }, (_value, index) => ({
+      ...target,
+      semanticIdentity: `data-index:clutter-${version}-${index}`,
+      text: `Unrelated retained notification ${index}`,
+      yesPoint: { x: 30 + index, y: 9 },
+    }));
+    const targets = Array.from({ length: targetCount }, (_value, index) => ({
+      ...target,
+      semanticIdentity: `data-index:target-${version}-${index}`,
+      yesPoint: { x: (version === 1 ? 8 : 18) + index, y: 9 },
+    }));
+    return {
+      ...activationRaw(true, 'absent'),
+      retainedCount: clutter.length + targets.length,
+      declaredLogicalCount: clutter.length + targets.length,
+      listSnapshot: `5:0:non-scrollable-${version}-${targetCount}`,
+      candidates: [...clutter, ...targets],
+    };
+  };
+  const nonScrollableEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const nonScrollable = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(nonScrollableEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({ before: owner, owner, raw: nonScrollableRaw(1) }),
+    capture: async () => undefined,
+  });
+  assert.strictEqual(nonScrollable.timeOrigin, 42);
+  assert.strictEqual(nonScrollable.inspection.bottomVerified, true);
+  assert.strictEqual(nonScrollable.inspection.retainedCount, 5);
+  assert.strictEqual(
+    nonScrollableEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
+    1,
+    'A bounded non-scrollable five-row list with one exact target must click once'
+  );
+  assert.strictEqual(
+    nonScrollableEvents.filter((event) => event.params?.type === 'mouseWheel').length,
+    0,
+    'Non-scrollable full-list coverage must not enter the positional scan path'
+  );
+
+  let nonScrollableVersion = 1;
+  let nonScrollableNow = 0;
+  let nonScrollableCaptures = 0;
+  const nonScrollableDriftInput = new RegenerationInputTracker();
+  const nonScrollableDriftEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const nonScrollableDrift = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(nonScrollableDriftEvents),
+    input: nonScrollableDriftInput,
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 300,
+    now: () => nonScrollableNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => ({ before: owner, owner, raw: nonScrollableRaw(nonScrollableVersion) }),
+    poll: async (remainingMs) => {
+      nonScrollableNow += Math.min(100, remainingMs);
+    },
+    capture: async () => {
+      nonScrollableCaptures++;
+      if (nonScrollableCaptures === 1) {
+        nonScrollableVersion = 2;
+      }
+    },
+  });
+  assert.strictEqual(nonScrollableDrift.timeOrigin, 42);
+  assert.strictEqual(nonScrollableCaptures, 2, 'List drift after evidence must force a fresh bounded rescan');
+  assert.strictEqual(
+    nonScrollableDriftEvents.filter((event) => event.method === 'Input.dispatchMouseEvent' && event.params?.x === 8).length,
+    0,
+    'Pre-move list drift must not dispatch any native event to the stale point'
+  );
+  assert.strictEqual(
+    nonScrollableDriftEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 18).length,
+    1,
+    'The fresh non-scrollable snapshot must click the exact target once'
+  );
+  assert.strictEqual(nonScrollableDriftInput.uncertain, false, 'Pre-dispatch drift must remain safely pollable');
+  assert.strictEqual(nonScrollableDriftInput.pendingInvalid, false);
+
+  let postMoveVersion = 1;
+  const postMoveInput = new RegenerationInputTracker();
+  const postMoveEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(postMoveEvents, () => {
+        const event = postMoveEvents.at(-1);
+        if (event?.params?.type === 'mouseMoved' && event.params.x === 8) {
+          postMoveVersion = 2;
+        }
+      }),
+      input: postMoveInput,
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({ before: owner, owner, raw: nonScrollableRaw(postMoveVersion) }),
+      capture: async () => undefined,
+    }),
+    /could not be activated safely: uncertain-input/
+  );
+  assert.strictEqual(
+    postMoveEvents.filter((event) => event.params?.type === 'mouseMoved' && event.params.x === 8).length,
+    1,
+    'The first native move may be sent before subsequent drift is observed'
+  );
+  assert.strictEqual(
+    postMoveEvents.filter((event) => event.params?.type === 'mousePressed' || event.params?.type === 'mouseReleased').length,
+    0,
+    'Post-move drift must prevent press and release'
+  );
+  assert.strictEqual(postMoveInput.uncertain, true, 'Any post-dispatch drift must remain fatal uncertain input');
+  assert.strictEqual(postMoveInput.pendingInvalid, false, 'Move-only uncertainty has no pressed button to invalidate');
+
+  let nonScrollableDuplicatePolls = 0;
+  const nonScrollableDuplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(nonScrollableDuplicateEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => ({ before: owner, owner, raw: nonScrollableRaw(1, 2) }),
+      poll: async () => {
+        nonScrollableDuplicatePolls++;
+      },
+      capture: async () => {
+        throw new Error('Duplicate non-scrollable targets must fail before capture');
+      },
+    }),
+    /could not be activated safely: target-ambiguous/
+  );
+  assert.strictEqual(nonScrollableDuplicatePolls, 0);
+  assert.strictEqual(
+    nonScrollableDuplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Duplicate exact targets in a fully mounted non-scrollable list must fail immediately'
+  );
+
+  let hiddenDuplicatePolls = 0;
+  const hiddenDuplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: activationCdp(hiddenDuplicateEvents),
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: Date.now() + 5000,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const mounted = nonScrollableRaw(1);
+        const target = mounted.candidates.find((entry) => entry.text.includes('Detected an Azure Logic App project'));
+        assert.ok(target);
+        return {
+          before: owner,
+          owner,
+          raw: {
+            ...mounted,
+            retainedCount: 1,
+            declaredLogicalCount: 2,
+            candidates: [target],
+          },
+        };
+      },
+      poll: async () => {
+        hiddenDuplicatePolls++;
+      },
+      capture: async () => {
+        throw new Error('A partially mounted logical list must never use the non-scrollable fast path');
+      },
+    }),
+    /could not be activated safely: target-ambiguous/
+  );
+  assert.strictEqual(hiddenDuplicatePolls, 0);
+  assert.strictEqual(
+    hiddenDuplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Declared logical rows missing from the mounted list must fail closed before input'
   );
 
   const runCenterTransition = (options: { targetInitiallyVisible: boolean; persistent: boolean }) => {

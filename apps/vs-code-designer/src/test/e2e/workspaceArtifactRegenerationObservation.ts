@@ -58,6 +58,7 @@ export interface RawWorkbenchState {
   centerVisible: boolean;
   toastCount: number;
   retainedCount: number;
+  declaredLogicalCount?: number | null;
   listSnapshot?: string | null;
   dnd: 'on' | 'off' | 'unknown';
   truncated: boolean;
@@ -306,9 +307,9 @@ export const regenerationDiagnosticDomScript = `(() => {
       .join('|');
     return [hash(opaqueId), hash(text), hash(actions)].join('.');
   }).join(';'));
-  const declaredTotal = listSizes.length > 0 ? Math.max(...listSizes) : -1;
+  const declaredLogicalCount = listSizes.length > 0 ? Math.max(...listSizes) : null;
   const listSnapshot = centers.length === 1 && scrollHeights.length <= 1
-    ? [declaredTotal, scrollHeights[0] ?? 0, orderFingerprint].join(':')
+    ? [declaredLogicalCount ?? -1, scrollHeights[0] ?? 0, orderFingerprint].join(':')
     : null;
   const labeled = Array.from(document.querySelectorAll('[aria-label], [title]'));
   const dndControls = labeled.slice(0, 2000).filter(element =>
@@ -325,6 +326,7 @@ export const regenerationDiagnosticDomScript = `(() => {
     centerVisible: centers.some(visible),
     toastCount: Math.min(document.querySelectorAll('.notification-toast').length, 64),
     retainedCount: Math.min(retainedItems.length, 64),
+    declaredLogicalCount,
     listSnapshot,
     dnd: labeled.length <= 2000 && dndStates.length === 1 ? (dndStates[0] === 'true' ? 'on' : 'off') : 'unknown',
     truncated: rawContainers.length > 128 || found.length > 128 || distinct.length > 64 || candidates.some(candidate => candidate.truncated),
@@ -726,7 +728,8 @@ export async function inspectRegenerationNotificationCenter(options: {
   const dispatchAffordanceEvent = async (
     type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
     buttons: number,
-    button: 'none' | 'left'
+    button: 'none' | 'left',
+    beforeDispatch?: () => void
   ): Promise<void> => {
     await read();
     const affordance = await readAffordance();
@@ -738,6 +741,7 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
     await read();
     assertSafe();
+    beforeDispatch?.();
     await bounded.send('Input.dispatchMouseEvent', {
       type,
       x: affordance.point.x,
@@ -759,9 +763,17 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
     return targets;
   };
-  const retainedInitializationPoint = (raw: RawWorkbenchState, semanticIdentity?: string, expectedListSnapshot?: string): Point => {
+  const retainedInitializationPoint = (
+    raw: RawWorkbenchState,
+    semanticIdentity?: string,
+    expectedListSnapshot?: string,
+    expectedRetainedCount?: number
+  ): Point => {
     const target = retainedInitializationTargets(raw)[0];
     if (expectedListSnapshot !== undefined && raw.listSnapshot !== expectedListSnapshot) {
+      throw new NotificationCenterInspectionUnavailable('list-changed');
+    }
+    if (expectedRetainedCount !== undefined && raw.retainedCount !== expectedRetainedCount) {
       throw new NotificationCenterInspectionUnavailable('list-changed');
     }
     if (semanticIdentity !== undefined && target.semanticIdentity !== semanticIdentity) {
@@ -789,12 +801,15 @@ export async function inspectRegenerationNotificationCenter(options: {
     type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
     buttons: number,
     button: 'none' | 'left',
-    semanticIdentity: string,
-    listSnapshot: string
+    semanticIdentity: string | undefined,
+    listSnapshot: string,
+    retainedCount?: number,
+    beforeDispatch?: () => void
   ): Promise<void> => {
     const state = await read();
-    const point = retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot);
+    const point = retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot, retainedCount);
     assertSafe();
+    beforeDispatch?.();
     await bounded.send('Input.dispatchMouseEvent', {
       type,
       x: point.x,
@@ -806,19 +821,30 @@ export async function inspectRegenerationNotificationCenter(options: {
   };
   const activateRetainedTarget = async (
     state: Awaited<ReturnType<typeof read>>,
-    semanticIdentity: string,
-    listSnapshot: string
+    semanticIdentity: string | undefined,
+    listSnapshot: string,
+    retainedCount?: number
   ): Promise<void> => {
-    retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot);
+    retainedInitializationPoint(state.raw, semanticIdentity, listSnapshot, retainedCount);
     await options.targetActivation?.capture();
     const current = await read();
-    retainedInitializationPoint(current.raw, semanticIdentity, listSnapshot);
+    retainedInitializationPoint(current.raw, semanticIdentity, listSnapshot, retainedCount);
     const click = options.input.beginLogicalInput();
     try {
-      await dispatchRetainedTargetEvent('mouseMoved', 0, 'none', semanticIdentity, listSnapshot);
-      await dispatchRetainedTargetEvent('mousePressed', 1, 'left', semanticIdentity, listSnapshot);
-      click.markPressed();
-      await dispatchRetainedTargetEvent('mouseReleased', 0, 'left', semanticIdentity, listSnapshot);
+      await dispatchRetainedTargetEvent('mouseMoved', 0, 'none', semanticIdentity, listSnapshot, retainedCount, click.markDispatchStarted);
+      await dispatchRetainedTargetEvent('mousePressed', 1, 'left', semanticIdentity, listSnapshot, retainedCount, () => {
+        click.markDispatchStarted();
+        click.markPressed();
+      });
+      await dispatchRetainedTargetEvent(
+        'mouseReleased',
+        0,
+        'left',
+        semanticIdentity,
+        listSnapshot,
+        retainedCount,
+        click.markDispatchStarted
+      );
       click.complete();
       if (options.targetActivation) {
         options.targetActivation.activated = true;
@@ -1045,10 +1071,12 @@ export async function inspectRegenerationNotificationCenter(options: {
           }
           const click = options.input.beginLogicalInput();
           try {
-            await dispatchAffordanceEvent('mouseMoved', 0, 'none');
-            await dispatchAffordanceEvent('mousePressed', 1, 'left');
-            click.markPressed();
-            await dispatchAffordanceEvent('mouseReleased', 0, 'left');
+            await dispatchAffordanceEvent('mouseMoved', 0, 'none', click.markDispatchStarted);
+            await dispatchAffordanceEvent('mousePressed', 1, 'left', () => {
+              click.markDispatchStarted();
+              click.markPressed();
+            });
+            await dispatchAffordanceEvent('mouseReleased', 0, 'left', click.markDispatchStarted);
             click.complete();
           } catch (error) {
             click.fail();
@@ -1069,6 +1097,63 @@ export async function inspectRegenerationNotificationCenter(options: {
     }
 
     if (options.targetActivation) {
+      const initialScroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
+        timeoutMs: remaining(750),
+      });
+      assertSafe();
+      if (initialScroll.centerCount !== 1 || initialScroll.scrollableCount > 1) {
+        throw new NotificationCenterInspectionUnavailable('center-transitioning');
+      }
+      if (initialScroll.scrollableCount === 0) {
+        if (!initialScroll.atStart || !initialScroll.atEnd) {
+          throw new NotificationCenterInspectionUnavailable('center-transitioning');
+        }
+        state = await read();
+        const confirmedScroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
+          timeoutMs: remaining(750),
+        });
+        assertSafe();
+        if (
+          confirmedScroll.centerCount !== 1 ||
+          confirmedScroll.scrollableCount !== 0 ||
+          !confirmedScroll.atStart ||
+          !confirmedScroll.atEnd
+        ) {
+          throw new NotificationCenterInspectionUnavailable('center-transitioning');
+        }
+        const retained = state.raw.candidates.filter((candidate) => candidate.retained);
+        const declaredLogicalCount = state.raw.declaredLogicalCount;
+        if (declaredLogicalCount == null && !state.raw.truncated && state.raw.retainedCount === 0 && retained.length === 0) {
+          result.bottomVerified = true;
+          result.targetInitializationCount = 0;
+          return { ...result, availability: 'available', target: 'absent', reason: 'inspected' };
+        }
+        if (
+          state.raw.truncated ||
+          typeof declaredLogicalCount !== 'number' ||
+          !Number.isSafeInteger(declaredLogicalCount) ||
+          declaredLogicalCount < 0 ||
+          declaredLogicalCount > 64 ||
+          declaredLogicalCount !== state.raw.retainedCount ||
+          declaredLogicalCount !== retained.length
+        ) {
+          throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+        }
+        const targets = retained.filter((candidate) => category(candidate.text, options.appDir, candidate.kind) === 'initialization');
+        if (targets.length > 1) {
+          throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+        }
+        result.bottomVerified = true;
+        result.targetInitializationCount = targets.length;
+        if (targets.length === 0) {
+          return { ...result, availability: 'available', target: 'absent', reason: 'inspected' };
+        }
+        if (!state.raw.listSnapshot) {
+          throw new NotificationCenterInspectionUnavailable('center-transitioning');
+        }
+        await activateRetainedTarget(state, undefined, state.raw.listSnapshot, state.raw.retainedCount);
+        return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
+      }
       let scan = await fullActivationScan();
       result.bottomVerified = scan.bottomVerified;
       result.targetInitializationCount = scan.identities.size;
@@ -1338,6 +1423,7 @@ export class RegenerationInputTracker {
   }
 
   beginLogicalInput(): {
+    markDispatchStarted(): void;
     markPressed(): void;
     complete(): void;
     fail(): void;
@@ -1346,6 +1432,7 @@ export class RegenerationInputTracker {
       throw new Error('diagnostic input state unavailable');
     }
     this.logicalInputPending = true;
+    let dispatchStarted = false;
     let pressed = false;
     let settled = false;
     const settle = () => {
@@ -1355,6 +1442,9 @@ export class RegenerationInputTracker {
       }
     };
     return {
+      markDispatchStarted: () => {
+        dispatchStarted = true;
+      },
       markPressed: () => {
         pressed = true;
       },
@@ -1363,8 +1453,10 @@ export class RegenerationInputTracker {
         if (settled) {
           return;
         }
-        this.uncertain = true;
-        this.pendingInvalid ||= pressed;
+        if (dispatchStarted || this.uncertain) {
+          this.uncertain = true;
+          this.pendingInvalid ||= pressed;
+        }
         settle();
       },
     };
