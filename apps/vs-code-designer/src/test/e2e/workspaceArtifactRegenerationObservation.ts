@@ -181,6 +181,54 @@ export function isValidNotificationCenterInspection(value: NotificationCenterIns
   return value.targetInitializationCount === 0 && value.truncated;
 }
 
+export const regenerationForegroundPromptDomScript = `(() => {
+  const visible = element => {
+    if (!(element instanceof HTMLElement)) return false;
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' &&
+      rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+  };
+  const normalize = text => (text || '').replace(/\\s+/g, ' ').trim();
+  const pointFor = element => {
+    const rect = element.getBoundingClientRect();
+    const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const hit = document.elementFromPoint(point.x, point.y);
+    return element.getAttribute('aria-disabled') !== 'true' && !element.hasAttribute('disabled') &&
+      !!hit && (hit === element || element.contains(hit)) ? point : undefined;
+  };
+  const containers = Array.from(document.querySelectorAll(
+    '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
+  )).filter(container => {
+    if (!visible(container) ||
+      (container.classList.contains('quick-input-widget') &&
+        (container.inert || container.classList.contains('quick-input-widget-closing')))) return false;
+    const center = container.closest('.notifications-center');
+    return !center || !(
+      container.classList.contains('notification-list-item') ||
+      container.closest('.notifications-list-container') ||
+      container.querySelector('.notification-list-item')
+    );
+  });
+  return containers.filter(container => !containers.some(other => other !== container && other.contains(container)))
+    .map(container => {
+      const quickInput = container.classList.contains('quick-input-widget');
+      const notification = container.classList.contains('notification-toast');
+      const input = Array.from(container.querySelectorAll('input')).find(visible);
+      const text = normalize((container.innerText || container.textContent || '') + ' ' +
+        Array.from(container.querySelectorAll('input')).map(input => (input.value || '') + ' ' + (input.placeholder || '')).join(' '));
+      const options = selector => Array.from(container.querySelectorAll(selector)).filter(visible).map(element => ({
+        text: normalize(element.querySelector('.label-name')?.textContent || element.textContent),
+        point: pointFor(element),
+      }));
+      return {
+        kind: quickInput ? 'quickInput' : notification ? 'notification' : 'dialog',
+        text,
+        rows: options('.monaco-list-row, [role="option"]'),
+        buttons: options('a.monaco-button, button, .monaco-text-button'),
+      };
+    });
+})()`;
+
 /**
  * Raw text crosses only the in-memory CDP response so it can be matched with the
  * exact production selector. It is never put into a structured observation.

@@ -271,7 +271,7 @@ export function getMissingRegenerationInitializationFiles(before: RegenerationSn
 export function selectRegenerationYes(containers: WorkbenchPromptContainer[], appDir: string): WorkbenchPromptSelection {
   const matches = containers.filter((container) => {
     const promptProjectPath = initializationPromptProjectPath(container.text);
-    return !container.retained && promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
+    return promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
   });
   assert.ok(matches.length <= 1, 'Ambiguous initialization prompts cannot be credited');
   return selectWorkbenchPromptOption([{ matchText: 'Initialize for optimal use with VS Code?', optionText: 'Yes' }], matches);

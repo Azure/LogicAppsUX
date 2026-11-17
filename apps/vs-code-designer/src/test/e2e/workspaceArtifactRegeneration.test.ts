@@ -15,7 +15,7 @@ import { type CdpConnection, type CdpMainDocumentIdentity, waitForDevToolsActive
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
 import { pinPhysicalWorkspacePaths, type PhysicalPathIdentity } from './physicalWorkspaceIdentity';
 import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
-import { readWorkbenchPrompts, revealWorkbenchPromptOption } from './workbenchPrompts';
+import { revealWorkbenchPromptOption } from './workbenchPrompts';
 import {
   captureCdpScreenshot,
   ScreenshotCaptureCleanupError,
@@ -34,6 +34,7 @@ import {
   inspectRegenerationNotificationCenter,
   RegenerationInputTracker,
   RegenerationObservation,
+  regenerationForegroundPromptDomScript,
   regenerationPromptObservationForLog,
 } from './workspaceArtifactRegenerationObservation';
 import {
@@ -367,7 +368,10 @@ export async function captureRegenerationFailureDiagnostics(
 
 async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: string, appDir: string): Promise<RegenerationPromptObservation> {
   const expectation = { workspaceFilePath: workspaceFile, rootPaths: [appDir] };
-  const [containers, ownership] = await Promise.all([readWorkbenchPrompts(cdp), readRegularWorkbenchOwnership(cdp, expectation)]);
+  const [containers, ownership] = await Promise.all([
+    cdp.evaluate<RegenerationPromptObservation['containers']>(undefined, regenerationForegroundPromptDomScript, { timeoutMs: 3000 }),
+    readRegularWorkbenchOwnership(cdp, expectation),
+  ]);
   const failure = containers.some((container) => /DialogService:.*refused to show dialog/i.test(container.text))
     ? 'Stock Code refused a required regeneration dialog'
     : undefined;

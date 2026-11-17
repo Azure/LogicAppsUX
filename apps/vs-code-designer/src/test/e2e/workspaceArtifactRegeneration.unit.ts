@@ -132,11 +132,6 @@ async function main(): Promise<void> {
       rows: [],
     };
     assert.strictEqual(selectRegenerationOverwriteYes([prompt]).visible, false);
-    assert.strictEqual(
-      selectRegenerationYes([{ ...prompt, kind: 'notification', retained: true }], appDir).visible,
-      false,
-      'A retained center item is not the foreground-primary prompt path'
-    );
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, kind: 'notification' }]).visible, false);
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, text: 'Overwrite unrelated files?' }]).visible, false);
     assert.throws(() => selectRegenerationOverwriteYes([overwrite, overwrite]), /Ambiguous/);
@@ -1348,12 +1343,14 @@ async function main(): Promise<void> {
         nativeHostSource.includes('const admittedDocument = await admittedDocumentPromise') &&
         nativeHostSource.includes('pinPhysicalWorkspacePaths({ workspaceFilePath, rootPaths: [appDir] })') &&
         nativeHostSource.includes('captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-before-yes`)') &&
-        nativeHostSource.includes('readWorkbenchPrompts(cdp)') &&
+        nativeHostSource.includes('regenerationForegroundPromptDomScript') &&
         nativeHostSource.includes('readRegularWorkbenchOwnership(cdp, expectation)') &&
         nativeHostSource.includes('ready: ownership.shellOwned') &&
         nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
         sharedPromptSource.includes('Array.from(new Set(containers.flatMap(container =>') &&
         sharedPromptSource.includes("options[0].scrollIntoView({ block: 'center', inline: 'center' })") &&
+        !sharedPromptSource.includes('semanticContainer') &&
+        !sharedPromptSource.includes('retained:') &&
         nativeHostSource.includes('revealBlocked: () =>') &&
         nativeHostSource.includes('promptObservation !== previousPromptObservation') &&
         sharedWorkbenchSource.includes('waitForRegularWorkbenchShell(') &&

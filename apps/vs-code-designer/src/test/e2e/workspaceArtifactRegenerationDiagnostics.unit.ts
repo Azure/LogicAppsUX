@@ -23,6 +23,7 @@ import {
   isValidNotificationCenterInspection,
   notificationCenterAffordanceScript,
   notificationCenterScrollStateScript,
+  regenerationForegroundPromptDomScript,
   retainedNotificationRevealScript,
   regenerationPromptObservationForLog,
   regenerationDiagnosticDomScript,
@@ -816,6 +817,20 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       <div class="monaco-list-row" role="dialog"><div class="notification-list-item">Another notification</div></div>
     </div></div></div>`;
   const retainedState = sanitizeRegenerationDiagnosticState(domState(retainedYes), true, undefined, appDir);
+  const foregroundDom = new JSDOM(`<html><body>${retainedYes}</body></html>`, { runScripts: 'outside-only' });
+  try {
+    foregroundDom.window.eval(
+      'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20})'
+    );
+    foregroundDom.window.eval("document.elementFromPoint = () => document.querySelector('button')");
+    assert.deepStrictEqual(
+      JSON.parse(JSON.stringify(foregroundDom.window.eval(regenerationForegroundPromptDomScript))),
+      [],
+      'Nested retained Notification Center rows must stay out of regeneration foreground selection'
+    );
+  } finally {
+    foregroundDom.window.close();
+  }
   assert.strictEqual(domState(retainedYes).candidates[0]?.retained, true);
   assert.strictEqual(retainedState.centerVisible, true);
   assert.strictEqual(retainedState.retainedCount, 2);

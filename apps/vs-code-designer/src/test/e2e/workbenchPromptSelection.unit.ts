@@ -7,8 +7,11 @@ import {
   type WorkbenchPromptContainer,
 } from './workbenchPromptSelection';
 import type { CdpEvaluator } from './cdpFormHelpers';
-import { revealRetainedWorkbenchNotifications, workbenchPromptDomScript } from './workbenchPrompts';
-import { selectRegenerationYes } from './workspaceArtifactRegeneration';
+import {
+  handleAffirmativeConnectorWorkbenchPrompt,
+  revealRetainedWorkbenchNotifications,
+  workbenchPromptDomScript,
+} from './workbenchPrompts';
 
 const dotnetPrompts: WorkbenchPrompt[] = [
   { matchText: 'Failed to run .NET runtime', optionText: 'Install', postClickDelayMs: 15000 },
@@ -29,12 +32,27 @@ async function run(): Promise<void> {
   preservesAzureQuickPickRows();
   selectsOnlyAffirmativeAzureOptions();
   selectsRealCancelWithoutNoOrEscapeFallback();
-  classifiesNestedRetainedRowsOutsideForegroundPath();
+  preservesOriginalSharedPromptOutput();
+  await ignoresNestedOrdinaryToastsForConnectorSetup();
+  await selectsConnectorQuickInputAmidNestedToasts();
   await revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership();
   console.log('[workbenchPromptSelection.unit] all tests passed');
 }
 
-function classifiesNestedRetainedRowsOutsideForegroundPath(): void {
+function nestedToastMarkup(): string {
+  return `
+    <div class="notification-toast" data-y="10"><div class="notification-list-item">
+      Git repository detected <button data-y="15">No</button>
+    </div></div>
+    <div class="notification-toast" data-y="40"><div class="notification-list-item">
+      Activating Extensions... <button data-y="45">Yes</button>
+    </div></div>
+    <div class="notification-toast" data-y="70"><div class="notification-list-item">
+      Unrelated notification <button data-y="75">Dismiss</button>
+    </div></div>`;
+}
+
+function evaluateSharedPrompts(body: string): WorkbenchPromptContainer[] {
   const { JSDOM } = require('jsdom') as {
     JSDOM: new (
       html: string,
@@ -43,40 +61,127 @@ function classifiesNestedRetainedRowsOutsideForegroundPath(): void {
       window: { eval: (script: string) => unknown; close: () => void };
     };
   };
-  const appDir = path.resolve('unit', 'retained-app');
-  const message = `Detected an Azure Logic App project "${appDir}" that may be missing files. Initialize for optimal use with VS Code?`;
-  const read = (body: string): WorkbenchPromptContainer[] => {
-    const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
-    try {
-      dom.window.eval(
-        'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20})'
-      );
-      dom.window.eval("document.elementFromPoint = () => document.querySelector('button')");
-      return JSON.parse(JSON.stringify(dom.window.eval(workbenchPromptDomScript))) as WorkbenchPromptContainer[];
-    } finally {
-      dom.window.close();
-    }
-  };
-  const retained = read(`
-    <div class="notifications-center"><div class="notifications-list-container">
-      <div class="monaco-list-row" role="dialog">
-        <div class="notification-list-item">${message}<button>Yes</button></div>
-      </div>
-    </div></div>
-  `);
-  assert.strictEqual(retained.length, 1);
-  assert.deepStrictEqual(
-    { kind: retained[0].kind, retained: retained[0].retained },
-    { kind: 'notification', retained: true },
-    'The semantic Notification Center item must survive its outer dialog row'
-  );
-  assert.strictEqual(selectRegenerationYes(retained, appDir).visible, false);
-  assert.strictEqual(selectRegenerationYes(retained, appDir).point, undefined, 'Foreground prompt handling must not click a retained row');
+  const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
+  try {
+    dom.window.eval(`
+      HTMLElement.prototype.getBoundingClientRect = function() {
+        const top = Number(this.getAttribute('data-y') || 0);
+        return {left: 0, top, right: 20, bottom: top + 20, width: 20, height: 20};
+      };
+      document.elementFromPoint = (_x, y) => Array.from(document.querySelectorAll('[data-y]'))
+        .find(element => {
+          const rect = element.getBoundingClientRect();
+          return y >= rect.top && y <= rect.bottom;
+        }) || document.body;
+    `);
+    return JSON.parse(JSON.stringify(dom.window.eval(workbenchPromptDomScript))) as WorkbenchPromptContainer[];
+  } finally {
+    dom.window.close();
+  }
+}
 
-  const toast = read(`<div class="notification-toast">${message}<button>Yes</button></div>`);
-  assert.strictEqual(toast.length, 1);
-  assert.strictEqual(toast[0].retained, false, 'A real foreground toast must not be classified as retained');
-  assert.deepStrictEqual(selectRegenerationYes(toast, appDir).point, { x: 10, y: 10 });
+async function ignoresNestedOrdinaryToastsForConnectorSetup(): Promise<void> {
+  const prompts = evaluateSharedPrompts(nestedToastMarkup());
+  assert.strictEqual(prompts.length, 3);
+  assert.ok(
+    prompts.every((prompt) => prompt.kind === 'notification'),
+    'Nested ordinary toasts must never become dialogs'
+  );
+  const sent: string[] = [];
+  const selected = await handleAffirmativeConnectorWorkbenchPrompt(
+    {
+      evaluate: async <T>() => prompts as T,
+      send: async (method) => {
+        sent.push(method);
+        return {};
+      },
+    },
+    'unit-app',
+    Date.now() + 1000
+  );
+  assert.strictEqual(selected, false, 'Notification-only clutter must not become an affirmative connector blocker');
+  assert.deepStrictEqual(sent, []);
+}
+
+async function selectsConnectorQuickInputAmidNestedToasts(): Promise<void> {
+  const allPrompts = evaluateSharedPrompts(`
+    ${nestedToastMarkup()}
+    <div class="quick-input-widget">
+      <input placeholder="Enable connectors in Azure for Logic App unit-app" />
+      <div class="monaco-list-row" role="option" data-y="110">
+        <span class="label-name">Use connectors from Azure</span>
+      </div>
+      <div class="monaco-list-row" role="option" data-y="140">
+        <span class="label-name">Skip for now</span>
+      </div>
+    </div>
+  `);
+  const blocking = allPrompts.filter((prompt) => prompt.kind !== 'notification');
+  assert.strictEqual(blocking.length, 1, 'Only the connector QuickInput may block affirmative setup');
+  const affirmative = selectWorkbenchPromptOption(azurePrompts, blocking);
+  assert.strictEqual(affirmative.targetText, 'Use connectors from Azure');
+  assert.deepStrictEqual(affirmative.point, { x: 10, y: 120 });
+
+  let clicked = false;
+  const sent: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const selected = await handleAffirmativeConnectorWorkbenchPrompt(
+    {
+      evaluate: async <T>() => (clicked ? allPrompts.filter((prompt) => prompt.kind === 'notification') : allPrompts) as T,
+      send: async (method, params) => {
+        sent.push({ method, params });
+        if (method === 'Input.dispatchMouseEvent' && params?.type === 'mouseReleased') {
+          clicked = true;
+        }
+        return {};
+      },
+    },
+    'unit-app',
+    Date.now() + 2000
+  );
+  assert.strictEqual(selected, true);
+  const nativeClicks = sent.filter((event) => event.method === 'Input.dispatchMouseEvent');
+  assert.deepStrictEqual(
+    nativeClicks.map((event) => event.params?.y),
+    [120, 120, 120],
+    'Skip, No, and unrelated toast actions must never receive connector setup input'
+  );
+}
+
+function preservesOriginalSharedPromptOutput(): void {
+  const { JSDOM } = require('jsdom') as {
+    JSDOM: new (
+      html: string,
+      options: Record<string, unknown>
+    ) => {
+      window: { eval: (script: string) => unknown; close: () => void };
+    };
+  };
+  const dom = new JSDOM(
+    `<html><body><div class="quick-input-widget">
+      <input placeholder="Enable connectors in Azure for Logic App unit-app" />
+      <div class="monaco-list-row" role="option"><span class="label-name">Use connectors from Azure</span></div>
+      <div class="monaco-list-row" role="option"><span class="label-name">Skip for now</span></div>
+    </div></body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  try {
+    dom.window.eval(
+      'HTMLElement.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20})'
+    );
+    dom.window.eval('document.elementFromPoint = () => document.querySelector(\'[role="option"]\')');
+    const prompts = JSON.parse(JSON.stringify(dom.window.eval(workbenchPromptDomScript))) as WorkbenchPromptContainer[];
+    assert.strictEqual(prompts.length, 1, 'The affirmative connector fixture must remain one unambiguous shared prompt');
+    assert.strictEqual('retained' in prompts[0], false, 'Shared prompt output must retain its pre-fallback schema');
+    assert.strictEqual(prompts[0].kind, 'quickInput');
+    assert.deepStrictEqual(
+      prompts[0].rows.map((row) => row.text),
+      ['Use connectors from Azure', 'Skip for now']
+    );
+    assert.deepStrictEqual(selectWorkbenchPromptOption(azurePrompts, prompts).point, { x: 10, y: 10 });
+    assert.ok(!workbenchPromptDomScript.includes('semanticContainer') && !workbenchPromptDomScript.includes('retained:'));
+  } finally {
+    dom.window.close();
+  }
 }
 
 async function revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership(): Promise<void> {
