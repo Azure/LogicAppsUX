@@ -1,6 +1,4 @@
 {
   "serverArchive": "LSPServer.zip",
-  "serverSha256": "534801b229d432adc70265855a87582c6fab88647f94efc4edc4b62629b438b9",
-  "sdkPackage": "Microsoft.Azure.Workflows.Sdk.1.0.0-preview.3.nupkg",
-  "sdkSha256": "bcddb73d37360f61b586d4a57d61276ec6ee8f141ab9ebe6daad30aa18f5bb8a"
+  "serverSha256": "534801b229d432adc70265855a87582c6fab88647f94efc4edc4b62629b438b9"
 }

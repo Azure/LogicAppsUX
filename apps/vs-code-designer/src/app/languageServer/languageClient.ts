@@ -1,11 +1,9 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
-  assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
   extensionCommand,
-  languageServerSdkDirectoryName,
   onStartLanguageClient,
   workflowAppApiVersion,
 } from '../../constants';
@@ -24,7 +22,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
-import { readLspAssetsManifest } from '../utils/languageServerAssets';
+import { resolveSdkFromProject } from '../utils/sdkResolution';
 
 const trustedHoverCommands = [extensionCommand.sdkLspApplyEdits];
 
@@ -62,7 +60,7 @@ export default class LogicAppsLanguageClientManager {
     }
 
     if (!this.sdkNupkgPath) {
-      window.showWarningMessage('Install or repair Logic Apps language server SDK dependencies before starting C# workflow authoring.');
+      window.showWarningMessage('Restore the Logic App project SDK package before starting C# workflow authoring.');
       return;
     }
 
@@ -198,17 +196,7 @@ export default class LogicAppsLanguageClientManager {
       }
     }
 
-    const sdkDirectoryPath = path.join(dependenciesPath, languageServerSdkDirectoryName);
-    if (!(await fse.pathExists(sdkDirectoryPath))) {
-      return { lspServerPath, sdkNupkgPath: undefined };
-    }
-
-    const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
-    const assetManifest = await readLspAssetsManifest(assetDirectory);
-    const sdkNupkgPath = path.join(sdkDirectoryPath, assetManifest.sdkPackage);
-    if (!(await fse.pathExists(sdkNupkgPath))) {
-      return { lspServerPath, sdkNupkgPath: undefined };
-    }
+    const sdkNupkgPath = this.projectPath ? (await resolveSdkFromProject(this.projectPath))?.sdkNupkgPath : undefined;
 
     return { lspServerPath, sdkNupkgPath };
   }

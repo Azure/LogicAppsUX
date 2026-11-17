@@ -1,20 +1,7 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  CodefulSdk,
-  CodefulSdkVersion,
-  defaultDependencyPathValue,
-  localSettingsFileName,
-  languageServerSdkDirectoryName,
-  workflowCodefulEnabledKey,
-} from '../../constants';
-import { ext } from '../../extensionVariables';
-import { getGlobalSetting } from './vsCodeConfig/settings';
-import { lspSdkRevisionMarkerName } from './languageServerAssetConstants';
-
-const codefulSdkProjectRevisionMarkerName = '.logicapps-lspsdk-revision';
+import { CodefulSdk, localSettingsFileName, workflowCodefulEnabledKey } from '../../constants';
 
 /**
  * Checks whether any workspace folder contains a codeful Logic Apps project.
@@ -76,105 +63,6 @@ export const hasCodefulSdkReference = async (folderPath: string): Promise<boolea
   return isCodefulNet8Csproj(csprojContent);
 };
 
-/**
- * Invalidates only the project-local cache entry for the extension-shipped codeful SDK
- * when the VSIX ships changed nupkg bits with the same package ID/version.
- */
-export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Promise<boolean> => {
-  if (!(await hasCodefulWorkflowSetting(projectPath))) {
-    return false;
-  }
-
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
-  const languageServerSdkDirectoryPath = path.join(targetDirectory, languageServerSdkDirectoryName);
-  const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkRevisionMarkerPath = path.join(targetDirectory, lspSdkRevisionMarkerName);
-
-  if (
-    !(await fse.pathExists(installedSdkRevisionMarkerPath)) ||
-    !(await fse.pathExists(nugetConfigPath)) ||
-    !(await codefulNugetConfigUsesExtensionSdkCache(nugetConfigPath, projectPath, languageServerSdkDirectoryPath))
-  ) {
-    return false;
-  }
-
-  const installedSdkRevision = (await fse.readFile(installedSdkRevisionMarkerPath, 'utf-8')).trim();
-  if (!installedSdkRevision) {
-    return false;
-  }
-
-  const projectNugetFolder = path.join(projectPath, '.nuget');
-  const projectSdkRevisionMarkerPath = path.join(projectNugetFolder, codefulSdkProjectRevisionMarkerName);
-  const projectSdkPackagePath = path.join(
-    projectNugetFolder,
-    'packages',
-    CodefulSdk.WorkflowsSDK.toLowerCase(),
-    CodefulSdkVersion.WorkflowsSDK
-  );
-  const restoreNoOpCachePaths = [
-    path.join(projectPath, 'obj', 'project.assets.json'),
-    path.join(projectPath, 'obj', 'project.nuget.cache'),
-  ];
-
-  if ((await readTrimmedFileIfExists(projectSdkRevisionMarkerPath)) === installedSdkRevision) {
-    return false;
-  }
-
-  if (await fse.pathExists(projectSdkPackagePath)) {
-    await fse.remove(projectSdkPackagePath);
-    ext.outputChannel.appendLog(
-      `Removed stale ${CodefulSdk.WorkflowsSDK} ${CodefulSdkVersion.WorkflowsSDK} from project-local NuGet cache at ${projectSdkPackagePath}.`
-    );
-  }
-
-  await Promise.all(restoreNoOpCachePaths.map((cachePath) => removeIfExists(cachePath)));
-  await fse.ensureDir(projectNugetFolder);
-  await fse.writeFile(projectSdkRevisionMarkerPath, installedSdkRevision);
-  await fse.remove(path.join(projectNugetFolder, '.logicapps-lspsdk-hash'));
-  return true;
-};
-
-async function removeIfExists(filePath: string): Promise<void> {
-  if (await fse.pathExists(filePath)) {
-    await fse.remove(filePath);
-  }
-}
-
-async function readTrimmedFileIfExists(filePath: string): Promise<string | undefined> {
-  if (!(await fse.pathExists(filePath))) {
-    return undefined;
-  }
-
-  try {
-    return (await fse.readFile(filePath, 'utf-8')).trim();
-  } catch {
-    return undefined;
-  }
-}
-
-async function codefulNugetConfigUsesExtensionSdkCache(
-  nugetConfigPath: string,
-  projectPath: string,
-  languageServerSdkDirectoryPath: string
-): Promise<boolean> {
-  const nugetConfig = await fse.readFile(nugetConfigPath, 'utf-8');
-  const globalPackagesFolder = getXmlAddValue(nugetConfig, 'config', 'globalPackagesFolder');
-  const currentSource = getXmlAddValue(nugetConfig, 'packageSources', 'current');
-
-  return (
-    globalPackagesFolder !== undefined &&
-    normalizeNugetPath(projectPath, globalPackagesFolder) === normalizeNugetPath(projectPath, '.nuget\\packages') &&
-    currentSource !== undefined &&
-    normalizeNugetPath(projectPath, currentSource) === normalizeNugetPath(projectPath, languageServerSdkDirectoryPath)
-  );
-}
-
-function getXmlAddValue(xml: string, sectionName: string, key: string): string | undefined {
-  const sectionMatch = stripXmlComments(xml).match(new RegExp(`<${sectionName}\\b[^>]*>([\\s\\S]*?)<\\/${sectionName}>`, 'i'));
-  const addElement = sectionMatch?.[1].match(new RegExp(`<add\\b(?=[^>]*\\bkey=["']${escapeRegExp(key)}["'])[^>]*>`, 'i'))?.[0];
-  return addElement?.match(/\bvalue=["']([^"']*)["']/i)?.[1];
-}
-
 function stripXmlComments(xml: string): string {
   // This skips XML comments in local project files before regex parsing; it is not HTML output sanitization.
   let result = '';
@@ -196,16 +84,6 @@ function stripXmlComments(xml: string): string {
   }
 
   return result;
-}
-
-function normalizeNugetPath(projectPath: string, nugetPath: string): string {
-  const unquotedPath = nugetPath.trim().replace(/^["']|["']$/g, '');
-  const resolvedPath = path.isAbsolute(unquotedPath) ? unquotedPath : path.resolve(projectPath, unquotedPath);
-  return path.normalize(resolvedPath).toLowerCase();
-}
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**

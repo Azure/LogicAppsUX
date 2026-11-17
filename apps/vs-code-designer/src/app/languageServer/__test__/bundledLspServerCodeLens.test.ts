@@ -1,14 +1,32 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
+import { existsSync } from 'fs';
 import { mkdtemp, readFile, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from 'path';
 import { PassThrough } from 'stream';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { CodefulSdk, CodefulSdkVersion } from '../../../constants';
 
 const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
 const processShutdownTimeoutMs = 5_000;
+const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
+const nugetCacheRoot =
+  process.env.NUGET_PACKAGES ||
+  (process.env.USERPROFILE || process.env.HOME
+    ? path.join((process.env.USERPROFILE || process.env.HOME) as string, '.nuget', 'packages')
+    : undefined);
+const sdkPackagePath =
+  process.env.SDK_NUPKG_PATH ??
+  (nugetCacheRoot
+    ? path.join(
+        nugetCacheRoot,
+        sdkPackageIdLower,
+        CodefulSdkVersion.WorkflowsSDK,
+        `${sdkPackageIdLower}.${CodefulSdkVersion.WorkflowsSDK}.nupkg`
+      )
+    : undefined);
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -269,7 +287,7 @@ describe('LspProcess disposal', () => {
   });
 });
 
-describe('bundled LSP server CodeLens', () => {
+describe.skipIf(!sdkPackagePath || (!process.env.SDK_NUPKG_PATH && !existsSync(sdkPackagePath)))('bundled LSP server CodeLens', () => {
   let tempDirectories: string[] = [];
   let lspProcess: LspProcess | undefined;
 
@@ -364,15 +382,13 @@ describe('bundled LSP server CodeLens', () => {
     const extractDirectory = await createTempDirectory();
     const assetManifest = JSON.parse(await readFile(path.join(lspServerAssetsDirectory, 'lsp-assets.json'), 'utf8')) as {
       serverArchive: string;
-      sdkPackage: string;
     };
     const zipPath = path.join(lspServerAssetsDirectory, assetManifest.serverArchive);
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'LSPServer', 'LogicAppsLanguageServer.dll');
-    const sdkPackagePath = path.join(lspServerAssetsDirectory, assetManifest.sdkPackage);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
-    const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
+    const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath as string], {
       stdio: ['pipe', 'pipe', 'pipe'],
       windowsHide: true,
     });

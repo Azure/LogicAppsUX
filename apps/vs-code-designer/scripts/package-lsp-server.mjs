@@ -2,7 +2,7 @@
 import AdmZip from 'adm-zip';
 import { createHash } from 'crypto';
 import { execFileSync } from 'child_process';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -71,32 +71,18 @@ if (!verificationArchive.getEntry('LSPServer/LogicAppsLanguageServer.dll')) {
 }
 validateArchivePermissions(verificationArchive);
 
-const sdkPackageName = path.basename(sdkPackagePath);
 mkdirSync(assetDirectory, { recursive: true });
-const sdkDestinationPath = path.join(assetDirectory, sdkPackageName);
-if (path.resolve(sdkPackagePath) !== path.resolve(sdkDestinationPath)) {
-  copyFileSync(sdkPackagePath, sdkDestinationPath);
-}
-
-for (const fileName of readdirSync(assetDirectory)) {
-  if (fileName.startsWith('Microsoft.Azure.Workflows.Sdk.') && fileName.endsWith('.nupkg') && fileName !== sdkPackageName) {
-    rmSync(path.join(assetDirectory, fileName), { force: true });
-  }
-}
-
 copyFileSync(stagedServerArchivePath, serverArchivePath);
 
 const manifest = {
   serverArchive: path.basename(serverArchivePath),
   serverSha256: sha256(serverArchivePath),
-  sdkPackage: sdkPackageName,
-  sdkSha256: sha256(sdkDestinationPath),
 };
 writeFileSync(stagedManifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 renameSync(stagedManifestPath, manifestPath);
 
 console.log(`Created '${serverArchivePath}'.`);
-console.log(`Bundled SDK '${sdkPackageName}'.`);
+console.log(`Validated server against SDK '${path.basename(sdkPackagePath)}' without bundling it.`);
 console.log(`Updated '${manifestPath}'.`);
 
 function resolveSdkPackagePath(argumentsList) {
@@ -110,18 +96,11 @@ function resolveSdkPackagePath(argumentsList) {
     return requireExistingSdkPackage(optionValue);
   }
 
-  const existingPackages = existsSync(assetDirectory)
-    ? readdirSync(assetDirectory)
-        .filter((fileName) => fileName.startsWith('Microsoft.Azure.Workflows.Sdk.') && fileName.endsWith('.nupkg'))
-        .map((fileName) => path.join(assetDirectory, fileName))
-    : [];
-  if (existingPackages.length !== 1) {
-    throw new Error(
-      `Expected one existing SDK package in '${assetDirectory}', or pass '--sdk-package <path>'. Found '${existingPackages.length}'.`
-    );
+  if (process.env.SDK_NUPKG_PATH) {
+    return requireExistingSdkPackage(process.env.SDK_NUPKG_PATH);
   }
 
-  return requireExistingSdkPackage(existingPackages[0]);
+  throw new Error("Pass '--sdk-package <path>' or set SDK_NUPKG_PATH to run managed LSP tests during packaging.");
 }
 
 function requireExistingSdkPackage(packagePath) {

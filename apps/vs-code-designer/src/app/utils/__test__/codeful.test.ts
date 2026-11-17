@@ -1,25 +1,13 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CodefulSdk, CodefulSdkVersion, languageServerSdkDirectoryName } from '../../../constants';
-import { lspSdkRevisionMarkerName } from '../languageServerAssetConstants';
-import {
-  codefulProjectsExist,
-  detectAgentCodefulWorkflow,
-  detectCodefulWorkflow,
-  invalidateCodefulSdkCacheIfNeeded,
-  parseCsprojCopyToCodefulInfo,
-} from '../codeful';
+import { codefulProjectsExist, detectAgentCodefulWorkflow, detectCodefulWorkflow, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
-  ensureDir: vi.fn(),
-  getGlobalSetting: vi.fn(),
   pathExists: vi.fn(),
   readdir: vi.fn(),
   readFile: vi.fn(),
-  remove: vi.fn(),
   statSync: vi.fn(),
   workspaceFolders: undefined as { uri: { fsPath: string } }[] | undefined,
-  writeFile: vi.fn(),
 }));
 
 vi.mock('vscode', () => ({
@@ -31,153 +19,11 @@ vi.mock('vscode', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
-  ensureDir: mocks.ensureDir,
   pathExists: mocks.pathExists,
   readdir: mocks.readdir,
   readFile: mocks.readFile,
-  remove: mocks.remove,
   statSync: mocks.statSync,
-  writeFile: mocks.writeFile,
 }));
-
-vi.mock('../vsCodeConfig/settings', () => ({
-  getGlobalSetting: mocks.getGlobalSetting,
-}));
-
-vi.mock('../../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
-}));
-
-describe('invalidateCodefulSdkCacheIfNeeded', () => {
-  const projectPath = 'D:\\workspace\\CodefulLogicApp';
-  const runtimeDependenciesPath = 'D:\\runtime-dependencies';
-  const languageServerSdkDirectoryPath = path.join(runtimeDependenciesPath, languageServerSdkDirectoryName);
-  const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkRevisionMarkerPath = path.join(runtimeDependenciesPath, lspSdkRevisionMarkerName);
-  const projectSdkRevisionMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-revision');
-  const projectSdkPackagePath = path.join(
-    projectPath,
-    '.nuget',
-    'packages',
-    CodefulSdk.WorkflowsSDK.toLowerCase(),
-    CodefulSdkVersion.WorkflowsSDK
-  );
-  const projectAssetsPath = path.join(projectPath, 'obj', 'project.assets.json');
-  const projectNugetCachePath = path.join(projectPath, 'obj', 'project.nuget.cache');
-  const localSettingsPath = path.join(projectPath, 'local.settings.json');
-  const codefulLocalSettings = JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
-  const currentSdkRevision = 'current-sdk-hash';
-  const codefulNugetConfig = `
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <config>
-    <add key="globalPackagesFolder" value=".nuget\\packages" />
-  </config>
-  <packageSources>
-    <add key="current" value="${languageServerSdkDirectoryPath}" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-  </packageSources>
-</configuration>`;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.getGlobalSetting.mockReturnValue(runtimeDependenciesPath);
-    mocks.ensureDir.mockResolvedValue(undefined);
-    mocks.remove.mockResolvedValue(undefined);
-    mocks.writeFile.mockResolvedValue(undefined);
-    mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj']);
-    mocks.statSync.mockReturnValue({ isDirectory: () => true });
-    setExistingPaths([
-      localSettingsPath,
-      nugetConfigPath,
-      installedSdkRevisionMarkerPath,
-      projectSdkPackagePath,
-      projectAssetsPath,
-      projectNugetCachePath,
-    ]);
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig;
-      }
-      if (filePath === installedSdkRevisionMarkerPath) {
-        return currentSdkRevision;
-      }
-      return '';
-    });
-  });
-
-  function setExistingPaths(paths: string[]): void {
-    const existingPaths = new Set(paths);
-    mocks.pathExists.mockImplementation(async (filePath: string) => existingPaths.has(filePath));
-  }
-
-  it('removes only the stale project-local SDK package when the installed VSIX SDK revision changes', async () => {
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(true);
-    expect(mocks.remove).toHaveBeenCalledWith(projectSdkPackagePath);
-    expect(mocks.remove).toHaveBeenCalledWith(projectAssetsPath);
-    expect(mocks.remove).toHaveBeenCalledWith(projectNugetCachePath);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(path.join(projectPath, '.nuget'));
-    expect(mocks.writeFile).toHaveBeenCalledWith(projectSdkRevisionMarkerPath, currentSdkRevision);
-  });
-
-  it('keeps the project cache when its marker already matches the installed SDK revision', async () => {
-    setExistingPaths([
-      localSettingsPath,
-      nugetConfigPath,
-      installedSdkRevisionMarkerPath,
-      projectSdkRevisionMarkerPath,
-      projectSdkPackagePath,
-    ]);
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig;
-      }
-      if (filePath === installedSdkRevisionMarkerPath || filePath === projectSdkRevisionMarkerPath) {
-        return currentSdkRevision;
-      }
-      return '';
-    });
-
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(false);
-    expect(mocks.remove).not.toHaveBeenCalled();
-    expect(mocks.writeFile).not.toHaveBeenCalled();
-  });
-
-  it('does not touch caches for projects that do not use the extension local SDK source and project-local packages folder', async () => {
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig.replace(languageServerSdkDirectoryPath, 'https://api.nuget.org/v3/index.json');
-      }
-      if (filePath === installedSdkRevisionMarkerPath) {
-        return currentSdkRevision;
-      }
-      return '';
-    });
-
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(false);
-    expect(mocks.remove).not.toHaveBeenCalled();
-    expect(mocks.writeFile).not.toHaveBeenCalled();
-  });
-});
 
 describe('parseCsprojCopyToCodefulInfo', () => {
   it('detects modern codeful targets that run on Build and Publish', () => {
