@@ -12,6 +12,7 @@ const flow = vi.hoisted(() => ({
   fitBounds: vi.fn(),
   getNodes: vi.fn(() => [{ id: 'culled', position: { x: 0, y: 0 }, data: {}, initialWidth: 200, initialHeight: 44 }]),
   getNodesBounds: vi.fn(() => ({ x: 0, y: 0, width: 200, height: 44 })),
+  setViewport: vi.fn(),
   zoomIn: vi.fn(),
   zoomOut: vi.fn(),
 }));
@@ -176,6 +177,27 @@ describe('CustomControls', () => {
     expect(flow.fitView).not.toHaveBeenCalled();
     expect(flow.getNodesBounds).toHaveBeenCalledWith(flow.getNodes());
     expect(flow.fitBounds).toHaveBeenCalledWith({ x: 0, y: 0, width: 200, height: 44 });
+  });
+
+  it('uses the canvas viewport when fitting from the toolbar', () => {
+    const canvas = document.createElement('div');
+    canvas.getBoundingClientRect = () => ({
+      x: 0,
+      y: 0,
+      width: 1280,
+      height: 720,
+      left: 0,
+      top: 0,
+      right: 1280,
+      bottom: 720,
+      toJSON: () => ({}),
+    });
+
+    render(<CustomControls canvasRef={{ current: canvas }} />);
+    fireEvent.click(screen.getByTestId('control-zoom-fit-button'));
+
+    expect(flow.setViewport).toHaveBeenCalledOnce();
+    expect(flow.fitBounds).not.toHaveBeenCalled();
   });
 
   it('does not fit an empty workflow', () => {
