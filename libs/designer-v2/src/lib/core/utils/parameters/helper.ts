@@ -407,6 +407,7 @@ export function createParameterInfo(
     parameterKey: parameter.key,
     parameterName: parameter.name,
     placeholder: parameter.description,
+    helpText: parameter.schema?.['x-ms-help-text'],
     preservedValue: getPreservedValue(parameter),
     required: isRequired,
     schema,
