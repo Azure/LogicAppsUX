@@ -586,6 +586,87 @@ export const notificationCenterScrollStateScript = `(() => {
   };
 })()`;
 
+export const retainedNotificationRevealScript = (appDir: string, semanticIdentity: string, listSnapshot: string): string => `(() => {
+  const normalize = value => (value || '').replace(/\\s+/g, ' ').trim();
+  const expected = ${JSON.stringify(appDir)};
+  const expectedIdentity = ${JSON.stringify(semanticIdentity)};
+  const expectedSnapshot = ${JSON.stringify(listSnapshot)};
+  const windowsPath = value => /^[a-z]:[\\\\/]/i.test(value) || /^\\\\\\\\/.test(value);
+  const comparable = value => windowsPath(value)
+    ? value.replace(/\\//g, '\\\\').replace(/\\\\+$/g, '').toLowerCase()
+    : value.replace(/\\/+/g, '/').replace(/\\/+$/g, '');
+  const visible = element => {
+    if (!(element instanceof HTMLElement)) return false;
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' &&
+      rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+  };
+  const centers = Array.from(document.querySelectorAll('.notifications-center')).filter(visible);
+  if (centers.length !== 1) return { marker: 'retained-target-reveal-v1', centerCount: centers.length, visibleTargetCount: 0, matchingTargetCount: 0, yesCount: 0, snapshotMatch: false, scrolled: false };
+  const retainedItems = Array.from(centers[0].querySelectorAll('.notification-list-item'));
+  const listSizes = Array.from(centers[0].querySelectorAll('[aria-setsize]'))
+    .map(element => Number(element.getAttribute('aria-setsize')))
+    .filter(value => Number.isSafeInteger(value) && value >= 0);
+  const scrollHeights = Array.from(centers[0].querySelectorAll(
+    '.notifications-list-container .monaco-scrollable-element'
+  )).filter(visible).map(element => element.scrollHeight);
+  const hash = value => {
+    let first = 2166136261, second = 2246822519;
+    for (let index = 0; index < value.length; index++) {
+      const code = value.charCodeAt(index);
+      first = Math.imul(first ^ code, 16777619);
+      second = Math.imul(second ^ code, 3266489917);
+    }
+    return [first >>> 0, second >>> 0].map(value => value.toString(16).padStart(8, '0')).join('');
+  };
+  const fingerprint = hash(retainedItems.slice(0, 64).map(item => {
+    const row = item.closest('.monaco-list-row') || item;
+    const opaqueId = row.id || row.getAttribute('data-id') || '';
+    const text = normalize(item.innerText || item.textContent || '').slice(0, 8192);
+    const actions = Array.from(item.querySelectorAll('a.monaco-button, button, .monaco-text-button'))
+      .slice(0, 64)
+      .map(action => normalize(action.querySelector('.label-name')?.textContent || action.textContent))
+      .join('|');
+    return [hash(opaqueId), hash(text), hash(actions)].join('.');
+  }).join(';'));
+  const declared = listSizes.length > 0 ? Math.max(...listSizes) : -1;
+  const currentSnapshot = scrollHeights.length <= 1 ? [declared, scrollHeights[0] ?? 0, fingerprint].join(':') : null;
+  const visibleTargets = retainedItems.filter(item => {
+    const project = /Detected an Azure Logic App project "([^"]+)"[\\s\\S]*Initialize for optimal use with VS Code\\?/i
+      .exec(normalize(item.innerText || item.textContent || ''))?.[1];
+    return visible(item) && !!project && windowsPath(project) === windowsPath(expected) && comparable(project) === comparable(expected);
+  });
+  const identity = item => {
+    const row = item.closest('.monaco-list-row') || item;
+    const values = {
+      id: row.id,
+      'data-id': row.getAttribute('data-id'),
+      'data-index': row.getAttribute('data-index'),
+      'aria-posinset': row.getAttribute('aria-posinset'),
+      'aria-rowindex': row.getAttribute('aria-rowindex'),
+    };
+    const separator = expectedIdentity.indexOf(':');
+    const kind = separator < 0 ? '' : expectedIdentity.slice(0, separator);
+    const value = separator < 0 ? '' : expectedIdentity.slice(separator + 1);
+    return values[kind] === value;
+  };
+  const targets = visibleTargets.filter(identity);
+  if (visibleTargets.length !== 1 || targets.length !== 1 || currentSnapshot !== expectedSnapshot) {
+    return { marker: 'retained-target-reveal-v1', centerCount: 1, visibleTargetCount: visibleTargets.length, matchingTargetCount: targets.length, yesCount: 0, snapshotMatch: currentSnapshot === expectedSnapshot, scrolled: false };
+  }
+  const yes = Array.from(targets[0].querySelectorAll('a.monaco-button, button, .monaco-text-button'))
+    .filter(option => /^yes$/i.test(normalize(option.querySelector('.label-name')?.textContent || option.textContent)));
+  if (yes.length > 1) {
+    return { marker: 'retained-target-reveal-v1', centerCount: 1, visibleTargetCount: 1, matchingTargetCount: 1, yesCount: yes.length, snapshotMatch: true, scrolled: false };
+  }
+  const target = yes[0] || targets[0].closest('.monaco-list-row') || targets[0];
+  if (!(target instanceof HTMLElement)) {
+    return { marker: 'retained-target-reveal-v1', centerCount: 1, visibleTargetCount: 1, matchingTargetCount: 1, yesCount: yes.length, snapshotMatch: true, scrolled: false };
+  }
+  target.scrollIntoView({ block: 'center', inline: 'nearest' });
+  return { marker: 'retained-target-reveal-v1', centerCount: 1, visibleTargetCount: 1, matchingTargetCount: 1, yesCount: yes.length, snapshotMatch: true, scrolled: true };
+})()`;
+
 class NotificationCenterInspectionUnavailable extends Error {
   constructor(readonly reason: NotificationCenterInspectionReason) {
     super(reason);
@@ -608,6 +689,7 @@ export async function inspectRegenerationNotificationCenter(options: {
   allowReveal?: boolean;
   wait?: (remainingMs: number) => Promise<void>;
   revealState?: { attempted: boolean };
+  targetRevealState?: { attemptedKeys: Set<string> };
   targetActivation?: {
     capture: () => Promise<void>;
     activated: boolean;
@@ -837,6 +919,73 @@ export async function inspectRegenerationNotificationCenter(options: {
       throw error;
     }
   };
+  const revealRetainedTargetAction = async (
+    state: Awaited<ReturnType<typeof read>>,
+    listSnapshot: string
+  ): Promise<Awaited<ReturnType<typeof read>>> => {
+    const targets = visibleRetainedInitializationTargets(state.raw);
+    if (targets.length !== 1) {
+      throw new NotificationCenterInspectionUnavailable(targets.length > 1 ? 'target-ambiguous' : 'target-unactionable');
+    }
+    if (targets[0].yesCount > 1) {
+      throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+    }
+    if (targets[0].yesCount !== 1) {
+      throw new NotificationCenterInspectionUnavailable('target-unactionable');
+    }
+    if (!targets[0].semanticIdentity) {
+      throw new NotificationCenterInspectionUnavailable('target-unactionable');
+    }
+    if (state.raw.listSnapshot !== listSnapshot) {
+      throw new NotificationCenterInspectionUnavailable('list-changed');
+    }
+    const revealKey = `${listSnapshot}|${targets[0].semanticIdentity}`;
+    if (options.targetRevealState) {
+      if (options.targetRevealState.attemptedKeys.has(revealKey)) {
+        throw new NotificationCenterInspectionUnavailable('target-unactionable');
+      }
+      if (options.targetRevealState.attemptedKeys.size >= maxCandidates) {
+        throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+      }
+      options.targetRevealState.attemptedKeys.add(revealKey);
+    }
+    assertSafe();
+    const revealed = await bounded.evaluate<{
+      marker: string;
+      centerCount: number;
+      visibleTargetCount: number;
+      matchingTargetCount: number;
+      yesCount: number;
+      snapshotMatch: boolean;
+      scrolled: boolean;
+    }>(undefined, retainedNotificationRevealScript(options.appDir, targets[0].semanticIdentity, listSnapshot), {
+      timeoutMs: remaining(750),
+    });
+    assertSafe();
+    if (revealed?.marker !== 'retained-target-reveal-v1' || revealed.centerCount !== 1) {
+      throw new NotificationCenterInspectionUnavailable('center-transitioning');
+    }
+    if (revealed.visibleTargetCount > 1 || revealed.matchingTargetCount > 1 || revealed.yesCount > 1) {
+      throw new NotificationCenterInspectionUnavailable('target-ambiguous');
+    }
+    if (!revealed.snapshotMatch || revealed.visibleTargetCount !== 1 || revealed.matchingTargetCount !== 1) {
+      throw new NotificationCenterInspectionUnavailable('list-changed');
+    }
+    if (revealed.yesCount !== 1 || !revealed.scrolled) {
+      throw new NotificationCenterInspectionUnavailable('target-unactionable');
+    }
+    await wait(remaining(750));
+    const current = await read();
+    if (current.raw.listSnapshot !== listSnapshot) {
+      throw new NotificationCenterInspectionUnavailable('list-changed');
+    }
+    const currentTargets = visibleRetainedInitializationTargets(current.raw);
+    if (currentTargets.length !== 1) {
+      throw new NotificationCenterInspectionUnavailable(currentTargets.length > 1 ? 'target-ambiguous' : 'list-changed');
+    }
+    retainedInitializationPoint(current.raw, listSnapshot);
+    return current;
+  };
   const dispatchScroll = async (direction: 1 | -1): Promise<NotificationCenterScrollState> => {
     await read();
     const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
@@ -949,7 +1098,17 @@ export async function inspectRegenerationNotificationCenter(options: {
             throw new NotificationCenterInspectionUnavailable('center-transitioning');
           }
           result.targetInitializationCount = 1;
-          await activateRetainedTarget(state, state.raw.listSnapshot);
+          const listSnapshot = state.raw.listSnapshot;
+          let actionable = state;
+          try {
+            retainedInitializationPoint(state.raw, listSnapshot);
+          } catch (error) {
+            if (!(error instanceof NotificationCenterInspectionUnavailable) || error.reason !== 'target-unactionable') {
+              throw error;
+            }
+            actionable = await revealRetainedTargetAction(state, listSnapshot);
+          }
+          await activateRetainedTarget(actionable, listSnapshot);
           return { ...result, availability: 'available', target: 'retained', reason: 'inspected' };
         }
         const scroll = await bounded.evaluate<NotificationCenterScrollState>(undefined, notificationCenterScrollStateScript, {
@@ -1060,6 +1219,7 @@ export async function activateRetainedRegenerationInitialization(
   let lastPollableReason: 'temporarily-blocked' | 'target-unactionable' | 'center-transitioning' | 'list-changed' | undefined;
   let centerNotVisibleAfterReveal = false;
   const revealState = { attempted: false };
+  const targetRevealState = { attemptedKeys: new Set<string>() };
   while (now() < options.deadline) {
     const activation = { capture: options.capture, activated: false, timeOrigin: undefined as number | undefined };
     const inspection = await inspectRegenerationNotificationCenter({
@@ -1068,6 +1228,7 @@ export async function activateRetainedRegenerationInitialization(
       allowReveal,
       wait: poll,
       revealState,
+      targetRevealState,
       targetActivation: activation,
     });
     openedByFallback ||= inspection.openedByDiagnostic;

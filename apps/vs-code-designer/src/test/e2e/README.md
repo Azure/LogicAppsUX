@@ -627,6 +627,17 @@ clicked. Each acceptance attempt normalizes to the top and bounded-scrolls the
 current mounted pages. A page with zero exact targets continues; more than one
 visible exact owned-project target or truncated raw state fails closed. Exactly
 one visible, enabled, hit-tested target may be captured and clicked immediately.
+If the one exact mounted target is visible but its sole **Yes** is clipped or not
+hit-testable, the harness may call `scrollIntoView({ block: 'center',
+inline: 'nearest' })` on that exact row/action through CDP. This is reveal-only:
+no DOM click or action invocation. It then yields and revalidates the exact
+project, snapshot, point, physical workspace, document, and input state before
+trusted input. Drift is `list-changed`; persistent unactionable state expires at
+the original deadline. Reveal is one-shot per privacy-safe target-row/list-snapshot
+key, tracked in a bounded in-memory set for the activation phase. Polling the same
+clipped target never repeats `scrollIntoView`, including A→B→A list churn. A
+changed snapshot/row must first pass a fresh safe scan before its single reveal;
+key-set overflow fails closed as `target-ambiguous`. The keys are never serialized.
 Before capture and every trusted event, the same exact project match, privacy-safe
 list snapshot, actionable point, document, physical workspace, and input state
 are revalidated. Snapshot drift is pollable `list-changed`. Hidden off-page

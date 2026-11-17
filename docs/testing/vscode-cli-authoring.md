@@ -931,6 +931,18 @@ and no-repeat assertions remain authoritative. Declared logical counts, opaque
 row identities, and one-way order fingerprints remain private diagnostic metadata,
 not acceptance gates. Do not retry either logical click, reset the clock,
 synthesize a dialog result, or select unrelated actions.
+When the sole exact mounted target row is visible but its one **Yes** is clipped
+or not hit-testable, a bounded CDP `scrollIntoView({ block: 'center',
+inline: 'nearest' })` on that exact row/action is permitted as reveal-only prior
+art. Never call DOM click. Yield, then revalidate project, snapshot, point,
+physical/document ownership, and input before trusted input. List drift is
+pollable; persistent unactionable state expires at the original deadline.
+Track reveal attempts by privacy-safe target-row identity plus list snapshot:
+the same clipped target may be revealed once only. Retain a bounded in-memory set
+for the activation phase so A→B→A churn cannot reveal A twice. A changed
+row/snapshot must complete another safe scan before receiving its own one-shot
+reveal. Overflow fails `target-ambiguous`; never serialize reveal keys. Mounted
+off-page exact duplicates remain non-blocking; visible duplicates remain fatal.
 Visible duplicate exact targets and truncation are fatal `target-ambiguous`;
 transient center/scroll geometry remains pollable `center-transitioning`.
 Blocking modal/QuickInput state and an exact target action that is temporarily

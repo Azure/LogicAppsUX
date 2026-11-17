@@ -23,6 +23,7 @@ import {
   isValidNotificationCenterInspection,
   notificationCenterAffordanceScript,
   notificationCenterScrollStateScript,
+  retainedNotificationRevealScript,
   regenerationPromptObservationForLog,
   regenerationDiagnosticDomScript,
   regenerationDiagnosticSampleExpression,
@@ -734,6 +735,81 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
   assert.strictEqual(actualEmptyCenterRaw.candidates.length, 0);
   assert.strictEqual(actualTargetCenterRaw.declaredLogicalCount, 1);
   assert.strictEqual(actualTargetCenterRaw.retainedCount, 1);
+  const revealDom = new JSDOM(
+    `<html><body><div class="notifications-center"><div class="notifications-list-container">
+      <div class="monaco-list-row" role="dialog" data-index="0"><div class="notification-list-item">${prompt(
+        appDir
+      )}<button>Yes</button></div></div>
+      <div class="monaco-list-row offpage" role="dialog" data-index="1"><div class="notification-list-item offpage">${prompt(
+        appDir
+      )}<button>Yes</button></div></div>
+    </div></div></body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  try {
+    revealDom.window.eval(`
+      globalThis.revealScrollCount = 0;
+      globalThis.revealClickCount = 0;
+      globalThis.revealScrolled = false;
+      HTMLElement.prototype.getBoundingClientRect = function() {
+        if (this.classList.contains('offpage') || this.closest('.offpage')) {
+          return {left: 0, top: 2000, right: 20, bottom: 2020, width: 20, height: 20};
+        }
+        if (this.tagName === 'BUTTON' && !globalThis.revealScrolled) {
+          return {left: 0, top: 1000, right: 20, bottom: 1020, width: 20, height: 20};
+        }
+        return {left: 0, top: 0, right: 20, bottom: 20, width: 20, height: 20};
+      };
+      HTMLElement.prototype.scrollIntoView = function() {
+        globalThis.revealScrollCount++;
+        globalThis.revealScrolled = true;
+      };
+      HTMLElement.prototype.click = function() { globalThis.revealClickCount++; };
+      document.elementFromPoint = () => document.querySelector('button');
+    `);
+    const revealRaw = revealDom.window.eval(regenerationDiagnosticDomScript) as RawWorkbenchState;
+    const revealTarget = revealRaw.candidates.find(
+      (entry) => entry.retained && entry.inViewport && entry.text.includes('Detected an Azure Logic App project')
+    );
+    assert.ok(revealTarget?.semanticIdentity);
+    assert.ok(revealRaw.listSnapshot);
+    const revealResult = revealDom.window.eval(
+      retainedNotificationRevealScript(appDir, revealTarget.semanticIdentity, revealRaw.listSnapshot)
+    ) as {
+      visibleTargetCount: number;
+      matchingTargetCount: number;
+      yesCount: number;
+      scrolled: boolean;
+    };
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(revealResult)), {
+      marker: 'retained-target-reveal-v1',
+      centerCount: 1,
+      visibleTargetCount: 1,
+      matchingTargetCount: 1,
+      yesCount: 1,
+      snapshotMatch: true,
+      scrolled: true,
+    });
+    assert.strictEqual(revealDom.window.eval('globalThis.revealScrollCount'), 1);
+    assert.strictEqual(revealDom.window.eval('globalThis.revealClickCount'), 0, 'Reveal-only DOM logic must never invoke the action');
+
+    revealDom.window.eval(`
+      globalThis.revealScrollCount = 0;
+      document.querySelector('.notification-list-item').firstChild.textContent =
+        ${JSON.stringify(prompt(path.join(root, 'private-other-project')))};
+    `);
+    const wrongProjectReveal = revealDom.window.eval(
+      retainedNotificationRevealScript(appDir, revealTarget.semanticIdentity, revealRaw.listSnapshot)
+    ) as {
+      visibleTargetCount: number;
+      scrolled: boolean;
+    };
+    assert.strictEqual(wrongProjectReveal.visibleTargetCount, 0);
+    assert.strictEqual(wrongProjectReveal.scrolled, false);
+    assert.strictEqual(revealDom.window.eval('globalThis.revealScrollCount'), 0, 'Wrong-project notifications must never be scrolled');
+  } finally {
+    revealDom.window.close();
+  }
   const retainedYes = `
     <div class="notifications-center"><div class="notifications-list-container"><div class="monaco-list" role="list">
       <div class="monaco-list-row" role="dialog"><div class="notification-list-item">${prompt(appDir)}<button>Yes</button></div></div>
@@ -1246,6 +1322,17 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
         if (expression === notificationCenterScrollStateScript) {
           return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
         }
+        if (expression.includes('retained-target-reveal-v1')) {
+          return {
+            marker: 'retained-target-reveal-v1',
+            centerCount: 1,
+            visibleTargetCount: 1,
+            matchingTargetCount: 1,
+            yesCount: 1,
+            snapshotMatch: true,
+            scrolled: true,
+          };
+        }
         throw new Error('unexpected retained activation expression');
       },
       send: async (method: string, params?: Record<string, unknown>) => {
@@ -1421,6 +1508,347 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     activated.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
     1,
     'The retained warning Yes must be pressed exactly once'
+  );
+
+  let clippedActionable = false;
+  let clippedRevealCalls = 0;
+  const clippedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const clipped = await activateRetainedRegenerationInitialization({
+    cdp: {
+      ...activationCdp(clippedEvents),
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterScrollStateScript) {
+          return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
+        }
+        if (expression.includes('retained-target-reveal-v1')) {
+          clippedRevealCalls++;
+          clippedActionable = true;
+          return {
+            marker: 'retained-target-reveal-v1',
+            centerCount: 1,
+            visibleTargetCount: 1,
+            matchingTargetCount: 1,
+            yesCount: 1,
+            snapshotMatch: true,
+            scrolled: true,
+          };
+        }
+        throw new Error('unexpected clipped-target expression');
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => {
+      const raw = activationRaw(true, 'target');
+      const visibleTarget = clippedActionable
+        ? raw.candidates[0]
+        : { ...raw.candidates[0], visibleYesCount: 0, obstructedYesCount: 0, yesPoint: null };
+      const hiddenDuplicate = {
+        ...raw.candidates[0],
+        semanticIdentity: 'data-index:hidden-clipped-duplicate',
+        inViewport: false,
+        visibleYesCount: 0,
+        yesPoint: null,
+      };
+      return {
+        before: owner,
+        owner,
+        raw: {
+          ...raw,
+          retainedCount: 2,
+          listSnapshot: 'clipped-with-hidden-duplicate',
+          candidates: [visibleTarget, hiddenDuplicate],
+        },
+      };
+    },
+    poll: async () => undefined,
+    capture: async () => undefined,
+  });
+  assert.strictEqual(clipped.timeOrigin, 42);
+  assert.strictEqual(clippedRevealCalls, 1, 'A partially clipped exact target should receive one reveal-only scroll');
+  assert.strictEqual(
+    clippedEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9).length,
+    1
+  );
+
+  let revealDriftVersion = 1;
+  let revealDriftTargetVisible = true;
+  let revealDriftCalls = 0;
+  let revealDriftNow = 0;
+  const revealDriftEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const revealDrift = await activateRetainedRegenerationInitialization({
+    cdp: {
+      ...activationCdp(revealDriftEvents),
+      evaluate: async (_contextId: number | undefined, expression: string) => {
+        if (expression === notificationCenterScrollStateScript) {
+          return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
+        }
+        if (expression.includes('retained-target-reveal-v1')) {
+          revealDriftCalls++;
+          if (revealDriftCalls === 1) {
+            revealDriftVersion = 2;
+            revealDriftTargetVisible = false;
+          }
+          return {
+            marker: 'retained-target-reveal-v1',
+            centerCount: 1,
+            visibleTargetCount: 1,
+            matchingTargetCount: 1,
+            yesCount: 1,
+            snapshotMatch: true,
+            scrolled: true,
+          };
+        }
+        throw new Error('unexpected reveal-drift expression');
+      },
+    } as unknown as CdpConnection,
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: 300,
+    now: () => revealDriftNow,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => {
+      const base = activationRaw(true, 'target');
+      const raw = {
+        ...base,
+        listSnapshot: `reveal-drift-${revealDriftVersion}`,
+        candidates: base.candidates.map((entry) => ({
+          ...entry,
+          yesPoint: { x: revealDriftVersion === 1 ? 8 : 18, y: 9 },
+        })),
+      };
+      return {
+        before: owner,
+        owner,
+        raw: revealDriftTargetVisible
+          ? revealDriftVersion === 1
+            ? {
+                ...raw,
+                candidates: raw.candidates.map((entry) =>
+                  entry.text.includes('Detected an Azure Logic App project') ? { ...entry, visibleYesCount: 0, yesPoint: null } : entry
+                ),
+              }
+            : raw
+          : { ...raw, candidates: raw.candidates.filter((entry) => !entry.text.includes('Detected an Azure Logic App project')) },
+      };
+    },
+    poll: async (remainingMs) => {
+      revealDriftNow += Math.min(100, remainingMs);
+      revealDriftTargetVisible = true;
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(revealDrift.timeOrigin, 42);
+  assert.strictEqual(revealDriftCalls, 1, 'The stale target/list snapshot must receive exactly one reveal before rescan');
+  assert.strictEqual(
+    revealDriftEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
+    0,
+    'Reveal-time list drift must not click the stale target point'
+  );
+  assert.strictEqual(
+    revealDriftEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 18).length,
+    1,
+    'After poll/rescan the current exact target must be clicked once'
+  );
+
+  let revealCycleSnapshot = 'A';
+  let revealCycleNow = 0;
+  const revealCycleCalls: string[] = [];
+  const revealCycleEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: {
+        ...activationCdp(revealCycleEvents),
+        evaluate: async (_contextId: number | undefined, expression: string) => {
+          if (expression === notificationCenterScrollStateScript) {
+            return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
+          }
+          if (expression.includes('retained-target-reveal-v1')) {
+            revealCycleCalls.push(revealCycleSnapshot);
+            revealCycleSnapshot = revealCycleSnapshot === 'A' ? 'B' : 'A';
+            return {
+              marker: 'retained-target-reveal-v1',
+              centerCount: 1,
+              visibleTargetCount: 1,
+              matchingTargetCount: 1,
+              yesCount: 1,
+              snapshotMatch: true,
+              scrolled: true,
+            };
+          }
+          throw new Error('unexpected reveal-cycle expression');
+        },
+      } as unknown as CdpConnection,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 500,
+      now: () => revealCycleNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const raw = activationRaw(true, 'target');
+        return {
+          before: owner,
+          owner,
+          raw: {
+            ...raw,
+            listSnapshot: `reveal-cycle-${revealCycleSnapshot}`,
+            candidates: raw.candidates.map((entry) => ({ ...entry, visibleYesCount: 0, yesPoint: null })),
+          },
+        };
+      },
+      poll: async (remainingMs) => {
+        revealCycleNow += Math.min(100, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('A/B/A clipped cycle must never reach capture');
+      },
+    }),
+    /remained target-unactionable until the original Notification Center deadline/
+  );
+  assert.deepStrictEqual(revealCycleCalls, ['A', 'B'], 'Returning to snapshot A must not reveal A a second time');
+  assert.strictEqual(
+    revealCycleEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'A/B/A reveal cycling must not send target input'
+  );
+
+  let revealOverflowVersion = 0;
+  let revealOverflowNow = 0;
+  let revealOverflowCalls = 0;
+  const revealOverflowEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: {
+        ...activationCdp(revealOverflowEvents),
+        evaluate: async (_contextId: number | undefined, expression: string) => {
+          if (expression === notificationCenterScrollStateScript) {
+            return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
+          }
+          if (expression.includes('retained-target-reveal-v1')) {
+            revealOverflowCalls++;
+            revealOverflowVersion++;
+            return {
+              marker: 'retained-target-reveal-v1',
+              centerCount: 1,
+              visibleTargetCount: 1,
+              matchingTargetCount: 1,
+              yesCount: 1,
+              snapshotMatch: true,
+              scrolled: true,
+            };
+          }
+          throw new Error('unexpected reveal-overflow expression');
+        },
+      } as unknown as CdpConnection,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 10000,
+      now: () => revealOverflowNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const raw = activationRaw(true, 'target');
+        return {
+          before: owner,
+          owner,
+          raw: {
+            ...raw,
+            listSnapshot: `reveal-overflow-${revealOverflowVersion}`,
+            candidates: raw.candidates.map((entry) => ({ ...entry, visibleYesCount: 0, yesPoint: null })),
+          },
+        };
+      },
+      poll: async (remainingMs) => {
+        revealOverflowNow += Math.min(10, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('Reveal-key overflow must never reach capture');
+      },
+    }),
+    /could not be activated safely: target-ambiguous/
+  );
+  assert.strictEqual(revealOverflowCalls, 16, 'Reveal-key storage must stop at the bounded candidate limit');
+  assert.ok(revealOverflowNow < 10000, 'Reveal-key overflow must fail closed before the phase deadline');
+  assert.strictEqual(revealOverflowEvents.filter((event) => event.params?.type === 'mousePressed').length, 0);
+
+  let persistentClippedNow = 0;
+  let persistentClippedRevealCalls = 0;
+  const persistentClippedEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  await assert.rejects(
+    activateRetainedRegenerationInitialization({
+      cdp: {
+        ...activationCdp(persistentClippedEvents),
+        evaluate: async (_contextId: number | undefined, expression: string) => {
+          if (expression === notificationCenterScrollStateScript) {
+            return { centerCount: 1, scrollableCount: 0, atStart: true, atEnd: true, point: null, deltaY: 0 };
+          }
+          if (expression.includes('retained-target-reveal-v1')) {
+            persistentClippedRevealCalls++;
+            return {
+              marker: 'retained-target-reveal-v1',
+              centerCount: 1,
+              visibleTargetCount: 1,
+              matchingTargetCount: 1,
+              yesCount: 1,
+              snapshotMatch: true,
+              scrolled: true,
+            };
+          }
+          throw new Error('unexpected persistent-clipped expression');
+        },
+      } as unknown as CdpConnection,
+      input: new RegenerationInputTracker(),
+      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+      appDir,
+      deadline: 300,
+      now: () => persistentClippedNow,
+      expectedTargetId: 'owned-target',
+      expectedTimeOrigin: 42,
+      expectedContextGeneration: 1,
+      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+      sampler: async () => {
+        const raw = activationRaw(true, 'target');
+        return {
+          before: owner,
+          owner,
+          raw: {
+            ...raw,
+            candidates: raw.candidates.map((entry) => ({ ...entry, visibleYesCount: 0, yesPoint: null })),
+          },
+        };
+      },
+      poll: async (remainingMs) => {
+        persistentClippedNow += Math.min(100, remainingMs);
+      },
+      capture: async () => {
+        throw new Error('Persistent clipped target must never reach capture');
+      },
+    }),
+    /remained target-unactionable until the original Notification Center deadline/
+  );
+  assert.strictEqual(persistentClippedNow, 300);
+  assert.strictEqual(persistentClippedRevealCalls, 1, 'Persistent clipping for one target snapshot must reveal only once');
+  assert.strictEqual(
+    persistentClippedEvents.filter((event) => event.params?.type === 'mousePressed').length,
+    0,
+    'Persistent clipped target must expire without input'
   );
 
   let actualEmptyNow = 0;
