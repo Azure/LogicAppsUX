@@ -1309,7 +1309,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
         expectedTimeOrigin: 42,
         expectedContextGeneration: 1,
         admittedDocument,
-        sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'target') }),
+        sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'absent') }),
         capture: async () => {
           noDocumentCaptureCount++;
         },
@@ -1532,7 +1532,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     capture: async () => undefined,
   });
   assert.strictEqual(nonScrollable.timeOrigin, 42);
-  assert.strictEqual(nonScrollable.inspection.bottomVerified, true);
+  assert.strictEqual(nonScrollable.inspection.bottomVerified, false, 'Acceptance clicks the current exact target without global coverage');
   assert.strictEqual(nonScrollable.inspection.retainedCount, 5);
   assert.strictEqual(
     nonScrollableEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
@@ -1654,48 +1654,39 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     'Duplicate exact targets in a fully mounted non-scrollable list must fail immediately'
   );
 
-  let hiddenDuplicatePolls = 0;
   const hiddenDuplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
-  await assert.rejects(
-    activateRetainedRegenerationInitialization({
-      cdp: activationCdp(hiddenDuplicateEvents),
-      input: new RegenerationInputTracker(),
-      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
-      appDir,
-      deadline: Date.now() + 5000,
-      expectedTargetId: 'owned-target',
-      expectedTimeOrigin: 42,
-      expectedContextGeneration: 1,
-      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
-      sampler: async () => {
-        const mounted = nonScrollableRaw(1);
-        const target = mounted.candidates.find((entry) => entry.text.includes('Detected an Azure Logic App project'));
-        assert.ok(target);
-        return {
-          before: owner,
-          owner,
-          raw: {
-            ...mounted,
-            retainedCount: 1,
-            declaredLogicalCount: 2,
-            candidates: [target],
-          },
-        };
-      },
-      poll: async () => {
-        hiddenDuplicatePolls++;
-      },
-      capture: async () => {
-        throw new Error('A partially mounted logical list must never use the non-scrollable fast path');
-      },
-    }),
-    /could not be activated safely: target-ambiguous/
-  );
-  assert.strictEqual(hiddenDuplicatePolls, 0);
+  const hiddenDuplicate = await activateRetainedRegenerationInitialization({
+    cdp: activationCdp(hiddenDuplicateEvents),
+    input: new RegenerationInputTracker(),
+    expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
+    appDir,
+    deadline: Date.now() + 5000,
+    expectedTargetId: 'owned-target',
+    expectedTimeOrigin: 42,
+    expectedContextGeneration: 1,
+    admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
+    sampler: async () => {
+      const mounted = nonScrollableRaw(1);
+      const target = mounted.candidates.find((entry) => entry.text.includes('Detected an Azure Logic App project'));
+      assert.ok(target);
+      return {
+        before: owner,
+        owner,
+        raw: {
+          ...mounted,
+          retainedCount: 1,
+          declaredLogicalCount: 2,
+          candidates: [target],
+        },
+      };
+    },
+    capture: async () => undefined,
+  });
+  assert.strictEqual(hiddenDuplicate.timeOrigin, 42);
   assert.strictEqual(
-    hiddenDuplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
-    0,
-    'Declared logical rows missing from the mounted list must fail closed before input'
+    hiddenDuplicateEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
+    1,
+    'An off-page duplicate must not block the one currently visible exact same-project target'
   );
 
   const runCenterTransition = (options: { targetInitiallyVisible: boolean; persistent: boolean }) => {
@@ -1809,7 +1800,7 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       expectedTimeOrigin: 42,
       expectedContextGeneration: 1,
       admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
-      sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'target') }),
+      sampler: async () => ({ before: owner, owner, raw: activationRaw(true, 'absent') }),
       poll: async () => {
         oversizedPolls++;
       },
@@ -1902,143 +1893,27 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
       .length,
     1
   );
-  const bottomProofIndex = initiallyBottom.events.lastIndexOf('scroll-state:1');
   const targetPressIndex = initiallyBottom.events.indexOf('press:8:9');
   assert.ok(
-    bottomProofIndex >= 0 && targetPressIndex > bottomProofIndex,
-    'Retained Yes cannot be pressed before verified-bottom uniqueness'
+    initiallyBottom.events.indexOf('wheel:-1:0') >= 0 && targetPressIndex > initiallyBottom.events.indexOf('wheel:-1:0'),
+    'Acceptance must normalize to the top before clicking the current exact target'
   );
-  assert.ok(
-    initiallyBottom.events.indexOf('wheel:-1:0') < initiallyBottom.events.indexOf('wheel:1:1'),
-    'Every full scan must normalize to the top before scanning toward the bottom'
-  );
-  assert.ok(
-    initiallyBottom.events.lastIndexOf('wheel:-1:0') > bottomProofIndex,
-    'The unique target must be restored and reacquired after the completed full scan'
-  );
+  assert.strictEqual(initiallyBottom.events.includes('wheel:1:1'), false, 'A visible top-page target must not require global scanning');
 
-  const runReorderingActivation = (mode: 'single-shift' | 'duplicate-after-shift' | 'persistent-shift') => {
-    let page = 0;
-    let version = 1;
-    let completedBottom = false;
-    let shiftCount = 0;
-    let now = 0;
-    let captureCount = 0;
-    const sentEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
-    const baseTarget = activationRaw(true, 'target').candidates[0];
-    const currentCandidates = () => {
-      if (page !== 0) {
-        return [];
-      }
-      const target = {
-        ...baseTarget,
-        semanticIdentity: `data-index:${version}`,
-        yesPoint: { x: version === 1 ? 8 : 18, y: 9 },
-      };
-      const unrelated = {
-        ...baseTarget,
-        semanticIdentity: `data-index:${version === 1 ? 2 : 1}`,
-        text: 'Unrelated retained notification',
-        yesPoint: { x: 38, y: 9 },
-      };
-      const ordered = version === 1 ? [target, unrelated] : [unrelated, target];
-      return mode === 'duplicate-after-shift' && version > 1
-        ? [...ordered, { ...target, semanticIdentity: `data-index:${version + 1}`, yesPoint: { x: 28, y: 9 } }]
-        : ordered;
-    };
-    const cdp = {
-      targetId: 'owned-target',
-      contextGeneration: 1,
-      evaluate: async (_contextId: number | undefined, expression: string) => {
-        if (expression === notificationCenterScrollStateScript) {
-          if (page === 1) {
-            completedBottom = true;
-          }
-          return {
-            centerCount: 1,
-            scrollableCount: 1,
-            atStart: page === 0,
-            atEnd: page === 1,
-            point: { x: 6, y: 7 },
-            deltaY: 200,
-          };
-        }
-        throw new Error('unexpected list-reorder expression');
-      },
-      send: async (method: string, params?: Record<string, unknown>) => {
-        sentEvents.push({ method, params });
-        if (params?.type === 'mouseWheel') {
-          const direction = Number(params.deltaY) > 0 ? 1 : -1;
-          page = direction > 0 ? 1 : 0;
-          if (direction < 0 && completedBottom && (mode === 'persistent-shift' || shiftCount === 0)) {
-            version++;
-            shiftCount++;
-            completedBottom = false;
-          }
-        }
-        return {};
-      },
-    } as unknown as CdpConnection;
-    const promise = activateRetainedRegenerationInitialization({
-      cdp,
-      input: new RegenerationInputTracker(),
-      expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
-      appDir,
-      deadline: 300,
-      now: () => now,
-      expectedTargetId: 'owned-target',
-      expectedTimeOrigin: 42,
-      expectedContextGeneration: 1,
-      admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
-      sampler: async () => {
-        const candidates = currentCandidates();
-        return {
-          before: owner,
-          owner,
-          raw: {
-            ...activationRaw(true, 'absent'),
-            retainedCount: candidates.length,
-            listSnapshot: `${mode === 'duplicate-after-shift' && version > 1 ? 3 : 2}:400:order-fingerprint-${version}`,
-            candidates,
-          },
-        };
-      },
-      poll: async (remainingMs) => {
-        now += Math.min(100, remainingMs);
-      },
-      capture: async () => {
-        captureCount++;
-      },
-    });
-    return { promise, sentEvents, getCaptureCount: () => captureCount, getNow: () => now, getShiftCount: () => shiftCount };
-  };
-  const shifted = runReorderingActivation('single-shift');
-  const shiftedResult = await shifted.promise;
-  assert.strictEqual(shiftedResult.timeOrigin, 42);
-  assert.strictEqual(shifted.getShiftCount(), 1);
-  assert.strictEqual(shifted.getCaptureCount(), 1, 'Stale pre-shift target geometry must not be captured');
+  const laterPageTarget = await runPagedActivation([[], ['data-index:1']], 0);
+  assert.strictEqual(laterPageTarget.captureCount, 1);
+  assert.ok(laterPageTarget.events.includes('wheel:1:1'), 'Zero exact targets on the first page must scroll within the bound');
   assert.strictEqual(
-    shifted.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
-    0,
-    'The stale pre-insertion target point must never receive input'
-  );
-  assert.strictEqual(
-    shifted.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 18).length,
+    laterPageTarget.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8 && event.params.y === 9)
+      .length,
     1,
-    'A fresh stable scan must reacquire and click the shifted exact target once'
-  );
-  assert.strictEqual(
-    shifted.sentEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 38).length,
-    0,
-    'Same-size reorder must never click the unrelated retained row'
+    'The exact target on a later page must be clicked once'
   );
 
-  let traversalPage = 0;
-  let traversalStable = false;
-  let traversalPolls = 0;
-  const traversalEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
-  const traversalBaseTarget = activationRaw(true, 'target').candidates[0];
-  const traversalResult = await activateRetainedRegenerationInitialization({
+  const duplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  let duplicatePage = 0;
+  const duplicateBaseTarget = activationRaw(true, 'target').candidates[0];
+  const hiddenOffPageDuplicate = await activateRetainedRegenerationInitialization({
     cdp: {
       targetId: 'owned-target',
       contextGeneration: 1,
@@ -2047,21 +1922,18 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
           return {
             centerCount: 1,
             scrollableCount: 1,
-            atStart: traversalPage === 0,
-            atEnd: traversalPage === 1,
+            atStart: duplicatePage === 0,
+            atEnd: duplicatePage === 1,
             point: { x: 6, y: 7 },
             deltaY: 200,
           };
         }
-        throw new Error('unexpected traversal-reorder expression');
+        throw new Error('unexpected off-page duplicate expression');
       },
       send: async (method: string, params?: Record<string, unknown>) => {
-        traversalEvents.push({ method, params });
+        duplicateEvents.push({ method, params });
         if (params?.type === 'mouseWheel') {
-          traversalPage = Number(params.deltaY) > 0 ? 1 : 0;
-          if (traversalPage === 0 && !traversalStable) {
-            traversalStable = true;
-          }
+          duplicatePage = Number(params.deltaY) > 0 ? 1 : 0;
         }
         return {};
       },
@@ -2075,119 +1947,29 @@ async function testSafeDetectorAndInput(root: string, invocation: string, identi
     expectedContextGeneration: 1,
     admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
     sampler: async () => {
-      const firstTraversalTarget =
-        traversalPage === 0
-          ? [{ ...traversalBaseTarget, semanticIdentity: 'data-index:0', yesPoint: { x: 8, y: 9 } }]
-          : [{ ...traversalBaseTarget, semanticIdentity: 'data-index:1', yesPoint: { x: 18, y: 9 } }];
-      const stableTarget =
-        traversalPage === 0 ? [{ ...traversalBaseTarget, semanticIdentity: 'data-index:1', yesPoint: { x: 18, y: 9 } }] : [];
-      const candidates = traversalStable ? stableTarget : firstTraversalTarget;
+      if (duplicatePage === 0) {
+        return { before: owner, owner, raw: nonScrollableRaw(1) };
+      }
       return {
         before: owner,
         owner,
         raw: {
           ...activationRaw(true, 'absent'),
-          retainedCount: candidates.length,
-          listSnapshot: `2:400:${traversalStable ? `stable-page-${traversalPage}` : `moving-page-${traversalPage}`}`,
-          candidates,
+          retainedCount: 1,
+          candidates: [{ ...duplicateBaseTarget, semanticIdentity: 'data-index:hidden-duplicate' }],
         },
       };
     },
-    poll: async () => {
-      traversalPolls++;
-    },
     capture: async () => undefined,
   });
-  assert.strictEqual(traversalResult.timeOrigin, 42);
-  assert.strictEqual(traversalPolls, 1, 'An unstable first traversal must restart exactly one fresh scan in this control');
-  assert.strictEqual(
-    traversalEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 8).length,
-    0,
-    'A positional identity seen before the traversal reorder must never be clicked'
-  );
-  assert.strictEqual(
-    traversalEvents.filter((event) => event.params?.type === 'mousePressed' && event.params.x === 18).length,
-    1,
-    'The later stable scan must click the sole exact target once'
-  );
-
-  const duplicateAfterShift = runReorderingActivation('duplicate-after-shift');
-  await assert.rejects(duplicateAfterShift.promise, /could not be activated safely: target-ambiguous/);
-  assert.strictEqual(
-    duplicateAfterShift.sentEvents.filter((event) => event.params?.type === 'mousePressed').length,
-    0,
-    'A stable post-reorder duplicate scan must fail before every target click'
-  );
-
-  const persistentShift = runReorderingActivation('persistent-shift');
-  await assert.rejects(persistentShift.promise, /remained list-changed until the original Notification Center deadline/);
-  assert.strictEqual(persistentShift.getNow(), 300, 'Persistent list reordering must consume only the original deadline');
-  assert.ok(persistentShift.getShiftCount() >= 2);
-  assert.strictEqual(
-    persistentShift.sentEvents.filter((event) => event.params?.type === 'mousePressed').length,
-    0,
-    'Persistent list reordering must never authorize a stale or replayed Yes click'
-  );
-
-  const duplicateEvents: Array<{ method: string; params?: Record<string, unknown> }> = [];
-  await assert.rejects(
-    (async () => {
-      let page = 0;
-      const baseTarget = activationRaw(true, 'target').candidates[0];
-      await activateRetainedRegenerationInitialization({
-        cdp: {
-          targetId: 'owned-target',
-          contextGeneration: 1,
-          evaluate: async (_contextId: number | undefined, expression: string) => {
-            if (expression === notificationCenterScrollStateScript) {
-              return {
-                centerCount: 1,
-                scrollableCount: 1,
-                atStart: page === 0,
-                atEnd: page === 1,
-                point: { x: 6, y: 7 },
-                deltaY: 200,
-              };
-            }
-            throw new Error('unexpected duplicate-page expression');
-          },
-          send: async (method: string, params?: Record<string, unknown>) => {
-            duplicateEvents.push({ method, params });
-            if (params?.type === 'mouseWheel') {
-              page = Number(params.deltaY) > 0 ? 1 : 0;
-            }
-            return {};
-          },
-        } as unknown as CdpConnection,
-        input: new RegenerationInputTracker(),
-        expectation: { workspaceFilePath: path.join(root, 'unit.code-workspace'), rootPaths: [appDir] },
-        appDir,
-        deadline: Date.now() + 5000,
-        expectedTargetId: 'owned-target',
-        expectedTimeOrigin: 42,
-        expectedContextGeneration: 1,
-        admittedDocument: { targetId: 'owned-target', invalidated: false, dispose: () => undefined },
-        sampler: async () => ({
-          before: owner,
-          owner,
-          raw: {
-            ...activationRaw(true, 'absent'),
-            retainedCount: 1,
-            candidates: [{ ...baseTarget, semanticIdentity: `data-index:${page}` }],
-          },
-        }),
-        capture: async () => {
-          throw new Error('Duplicate targets must fail before capture');
-        },
-      });
-    })(),
-    /could not be activated safely: target-ambiguous/
-  );
+  assert.strictEqual(hiddenOffPageDuplicate.timeOrigin, 42);
+  assert.strictEqual(hiddenOffPageDuplicate.inspection.retainedCount, 5);
   assert.strictEqual(
     duplicateEvents.filter((event) => event.params?.type === 'mousePressed').length,
-    0,
-    'Duplicate exact targets on separate virtualized pages must fail before retained Yes'
+    1,
+    'An exact same-project warning on another page must not block clicking the current visible target'
   );
+  assert.strictEqual(duplicateEvents.filter((event) => event.params?.type === 'mouseWheel').length, 0);
 
   let delayedNow = 0;
   let delayedTargetVisible = false;

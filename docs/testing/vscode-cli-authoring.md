@@ -915,48 +915,24 @@ the retained warning visibly open, then click that real retained **Yes** once an
 continue to the unchanged separate overwrite modal. Keep the revealed center open
 and re-sample its live list through the same original deadline. Initial emptiness
 and wrong-project items are non-matches; never click them. Retained progress rows
-and unrelated notification actions are likewise non-target clutter. Empty scans remain at
-the top. Every retained-center scan must first normalize and verify the top,
-traverse bounded virtualized pages through verified bottom, accumulate stable
-semantic identities for exact owned-project targets, and prove exactly one before
-input. Restore and reacquire that same identity for fresh action validation;
-duplicates on any page fail ambiguous. Recheck the top before polling again so
-later insertions are observable. Bind an in-memory-only list snapshot containing
-declared count, scroll extent, and a deterministic bounded one-way order
-fingerprint computed in the renderer from opaque row identity and normalized
-text/action shape. Never serialize the raw inputs or fingerprint. Position,
-row-identity, or fingerprint drift from unrelated insertion/reorder must
-invalidate the stale point as pollable `list-changed`, then restart a complete
-scan under the original deadline; it must not authorize input or become fatal
-ambiguity by itself. Treat first-traversal positional identities as provisional:
-a second bounded traversal must reproduce page fingerprints and target occurrence
-sets before multiple exact targets can be classified as stable duplicate
-ambiguity. Do not retry either logical
-click, reset the clock, synthesize a dialog result, or select an unrelated
-notification. Identity changes and uncertain input fail immediately. Use fixed classifications:
-`target-ambiguous` only for stable duplicate exact owned-project targets or
-truncation that prevents uniqueness proof; `center-transitioning` for temporary
-center-count, scroll-container, hit-geometry, or list-layout ambiguity. The
-latter is pollable without input until the original deadline, while
-`target-ambiguous` is immediately fatal. Stable exhaustion of the fixed
-top-to-bottom scan bound is fatal truncated/`target-ambiguous`; never restart
-another wheel cycle. Expected page-count, premature-end, and snapshot mismatch
-remain pollable `list-changed`.
-An admitted non-scrollable fast path is allowed only when one center has zero
-scrollable containers, reports both top and bottom, is not truncated, and every
-bounded retained item is mounted. Require a known bounded declared logical count
-from `aria-setsize`/the list model that exactly equals mounted retained and
-candidate counts; unavailable, oversized, or mismatched counts cannot use the
-fast path. Require one exact target and revalidate the same safe list snapshot,
-retained count, exact count, actionable point, document, physical workspace, and
-input state before each event. Snapshot/count drift before any dispatch is
-pollable `list-changed` without input uncertainty. After move/press/release
-dispatch begins, later drift is fatal uncertainty; pressed failures remain
-pending-invalid. Exact duplicates are fatal. Keep double scans for scrollable lists.
-A visible, non-truncated center with no declared count and exactly zero mounted
-retained rows/candidates is the only safe exception: treat it as pollable empty
-absence until insertion or the original deadline. Any retained row restores the
-mandatory declared-count equality gate.
+and unrelated notification actions are likewise non-target clutter. Normalize
+to the top, then bounded-scroll current mounted pages. Zero exact targets means
+continue; more than one visible exact target or truncated raw state fails closed.
+One visible, enabled, hit-tested exact owned-project target may be captured and
+clicked immediately without global virtual-list uniqueness. Before capture and
+each native event, revalidate the exact project match, privacy-safe list snapshot,
+actionable point, document, physical workspace, and input state. Pre-dispatch
+snapshot drift is pollable `list-changed`; after any event dispatch begins, drift
+is fatal uncertainty and press failures remain pending-invalid. At bottom with no
+target, restore top and poll for live insertion. Hidden off-page duplicates do not
+block acceptance because either same-project warning has identical semantics;
+overwrite confirmation, exact regeneration, non-target immutability, fresh reopen,
+and no-repeat assertions remain authoritative. Declared logical counts, opaque
+row identities, and one-way order fingerprints remain private diagnostic metadata,
+not acceptance gates. Do not retry either logical click, reset the clock,
+synthesize a dialog result, or select unrelated actions.
+Visible duplicate exact targets and truncation are fatal `target-ambiguous`;
+transient center/scroll geometry remains pollable `center-transitioning`.
 Blocking modal/QuickInput state and an exact target action that is temporarily
 disabled, covered, or not hit-testable prevent input but may be polled until the
 unchanged deadline. Persistent target absence or unactionable state fails only at

@@ -623,36 +623,21 @@ bounded-scrolls only the center, and keeps re-sampling its live list until the
 original phase deadline. An initially empty center or wrong-project item is a
 non-match, not terminal absence. Retained activation/progress items and unrelated
 notifications, including their actions, are also non-target clutter and are never
-clicked. Empty scans remain at the top; scans that scroll
-first normalize to the top, traverse through verified bottom, accumulate stable
-semantic target identities across virtualized pages, then restore and recheck
-the top. Exactly one owned-project target must exist across the full scan before
-the same identity is reacquired for input; duplicates anywhere fail ambiguous.
-The scan also binds an in-memory-only list snapshot containing declared count,
-scroll extent, and a bounded one-way order fingerprint derived inside the
-renderer from opaque row identity plus normalized text/action shape. Raw values
-and the fingerprint are never serialized. If unrelated insertion or reordering
-changes the snapshot or list position before reacquisition, no stale point is
-used: the attempt becomes pollable `list-changed` and restarts a fresh
-top-to-bottom uniqueness scan under the same deadline.
-Positional target identities from the first traversal are provisional: a second
-bounded traversal must reproduce every page fingerprint and target occurrence
-set. More than one exact target becomes fatal duplicate ambiguity only after both
-traversals agree.
-When the center proves exactly one container, zero scrollable lists, top and
-bottom simultaneously, no truncation, and every bounded retained row mounted, a
-non-scrollable fast path treats full-list coverage as complete. It requires
-an explicit bounded declared logical count from the list model/`aria-setsize`,
-equal to both mounted retained count and retained candidates, plus exactly one
-owned target. Unknown, oversized, or mismatched logical counts fail closed and
-cannot hide an unmounted duplicate. The path then rechecks the same privacy-safe
-snapshot, retained count, exact count, actionable point, document, physical
-workspace, and input state before every trusted event. Drift becomes pollable `list-changed`;
-duplicates remain fatal. Scrollable centers retain the double-scan contract.
-The sole exception is a genuinely empty center: no declared count, zero mounted
-retained rows/candidates, and no truncation is safe pollable absence until target
-insertion or the original deadline. Once any retained row exists, declared-count
-proof is mandatory.
+clicked. Each acceptance attempt normalizes to the top and bounded-scrolls the
+current mounted pages. A page with zero exact targets continues; more than one
+visible exact owned-project target or truncated raw state fails closed. Exactly
+one visible, enabled, hit-tested target may be captured and clicked immediately.
+Before capture and every trusted event, the same exact project match, privacy-safe
+list snapshot, actionable point, document, physical workspace, and input state
+are revalidated. Snapshot drift is pollable `list-changed`. Hidden off-page
+duplicates are not an acceptance blocker because either exact same-project
+warning has identical product semantics; the distinct overwrite confirmation,
+exact regenerated files, non-target immutability, fresh reopen, and no-repeat
+assertions remain authoritative. At bottom with no target, the scan returns to
+the top and polls for live insertion under the same deadline.
+Declared logical counts, opaque row identities, and one-way order fingerprints
+remain in-memory diagnostic metadata only; they are not global acceptance gates
+and are never serialized.
 Pre-dispatch validation drift sends no event and remains pollable without marking
 input uncertain. Once any native event dispatch begins, later drift is fatal
 uncertainty; press-started failures also remain pending-invalid.
