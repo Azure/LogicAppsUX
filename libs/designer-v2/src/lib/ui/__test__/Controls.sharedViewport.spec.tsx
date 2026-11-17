@@ -24,6 +24,11 @@ const controls = vi.hoisted(() => ({
   },
 }));
 vi.mock('react-redux', () => ({ useDispatch: () => controls.dispatch }));
+vi.mock('../../core', () => ({ openPanel: (payload: unknown) => ({ type: 'panel/openPanel', payload }) }));
+vi.mock('../../core/state/panel/panelSlice', () => ({ openPanel: (payload: unknown) => ({ type: 'panel/openPanel', payload }) }));
+vi.mock('../../core/state/designerView/designerViewSlice', () => ({
+  toggleMinimap: () => ({ type: 'designerView/toggleMinimap' }),
+}));
 vi.mock('../../core/state/designerOptions/designerOptionsSelectors', () => ({ useSharedNodeUi: () => controls.shared }));
 vi.mock('../../core/state/designerView/designerViewSelectors', () => ({ useShowMinimap: () => false }));
 vi.mock('../../core/graphlayout', () => ({
@@ -55,7 +60,7 @@ describe('shared fit command wiring', () => {
   it('fits all accepted native bounds rather than limiting the command to DOM-measured nodes', () => {
     controls.shared = true;
     controls.accepted = false;
-    render(<CustomControls canvasRef={{ current: document.createElement('div') }} />);
+    render(<CustomControls />);
     fireEvent.click(screen.getByRole('button', { name: 'Zoom view to fit' }));
     expect(controls.flow.fitView).not.toHaveBeenCalled();
     expect(controls.flow.getNodesBounds).toHaveBeenCalledWith([expect.objectContaining({ id: 'visible' })]);

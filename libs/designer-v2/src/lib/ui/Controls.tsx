@@ -9,7 +9,7 @@ import CollapseExpandControl from './common/controls/collapseExpandControl';
 import { ZoomInRegular, ZoomOutRegular, MapFilled, MapRegular, SearchRegular, ZoomFitRegular } from '@fluentui/react-icons';
 import type { RefObject } from 'react';
 import { useLayout } from '../core/graphlayout';
-import { fitSharedDesignerViewport } from './designerViewport';
+import { fitNativeDesignerViewport, fitSharedDesignerViewport } from './designerViewport';
 import { useSharedNodeUi } from '../core/state/designerOptions/designerOptionsSelectors';
 
 export const searchControlId = 'control-search-button';
@@ -83,6 +83,8 @@ const CustomControls = ({ canvasRef }: { canvasRef?: RefObject<HTMLDivElement> }
     const shared = nodes.length ? nodes.some((node) => (node.data.presentation as { shared?: boolean } | undefined)?.shared) : sharedOption;
     if (canvasRef?.current && shared) {
       fitSharedDesignerViewport(flow, canvasRef.current, flowSize);
+    } else if (canvasRef?.current) {
+      fitNativeDesignerViewport(flow, canvasRef.current);
     } else {
       // fitView ignores unmeasured, culled nodes; public bounds also include their initial dimensions.
       const visibleNodes = flow.getNodes().filter((node) => !node.hidden);

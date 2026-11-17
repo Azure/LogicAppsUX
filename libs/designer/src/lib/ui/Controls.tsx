@@ -8,7 +8,8 @@ import { ControlButton, Controls, useReactFlow, useStore } from '@xyflow/react';
 import type { ReactFlowState } from '@xyflow/react';
 import CollapseExpandControl from './common/controls/collapseExpandControl';
 import { AddRegular, MapFilled, MapRegular, SearchRegular, SubtractRegular, ZoomFitRegular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useMemo, type RefObject } from 'react';
+import { fitDesignerViewport } from './designerViewport';
 
 export const searchControlId = 'control-search-button';
 export const minimapControlId = 'control-minimap-button';
@@ -16,13 +17,14 @@ export const zoomFitControlId = 'control-zoom-fit-button';
 export const zoomInControlId = 'control-zoom-in-button';
 export const zoomOutControlId = 'control-zoom-out-button';
 
-const CustomControls = () => {
+const CustomControls = ({ canvasRef }: { canvasRef?: RefObject<HTMLDivElement> }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const showMinimap = useShowMinimap();
   const searchId = 'control-search-button';
 
-  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  const flow = useReactFlow();
+  const { zoomIn, zoomOut } = flow;
 
   // Select only node/edge counts to avoid re-renders on every node/edge update (e.g., drag/move)
   const nodeCount = useStore((state: ReactFlowState) => state.nodes.length);
@@ -87,7 +89,14 @@ const CustomControls = () => {
       level: LogEntryLevel.Verbose,
       message: 'Canvas control clicked.',
     });
-    fitView();
+    if (canvasRef?.current) {
+      fitDesignerViewport(flow, canvasRef.current);
+    } else {
+      const nodes = flow.getNodes().filter((node) => !node.hidden);
+      if (nodes.length) {
+        flow.fitBounds(flow.getNodesBounds(nodes));
+      }
+    }
   };
 
   const zoomInClick = () => {

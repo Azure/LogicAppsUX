@@ -312,12 +312,33 @@ export async function expectOpaqueForegroundNegative(page: Page, testInfo: TestI
   const decoration = page.locator(`[data-agent-tools-decoration="${agentId}"]`);
   const original = await panel.getAttribute('style');
   const background = await decoration.evaluate((element) => getComputedStyle(element).backgroundColor);
+  const overlay = await panel.evaluateHandle((element, background) => {
+    // XYFlow elevates edges connected to nested nodes above their parent's stacking context.
+    // Put the synthetic foreground in the document plane, not underneath those elevated SVGs.
+    const rect = element.getBoundingClientRect();
+    const overlay = document.createElement('div');
+    overlay.dataset.paintNegativeControl = 'opaque-foreground';
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      left: `${rect.left}px`,
+      top: `${rect.top}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      backgroundColor: background,
+      zIndex: '2147483647',
+      pointerEvents: 'none',
+    });
+    document.body.append(overlay);
+    return overlay;
+  }, background);
   try {
-    // Controlled original-condition negative, not execution of an old-source build.
+    // Controlled opaque-occlusion negative with fixed panel geometry/color, not historical CSS or an old-source build.
     await panel.evaluate((element, background) => element.style.setProperty('background-color', background, 'important'), background);
     const result = await captureEdgePaint(page, testInfo, agentId, edgeId, 'controlled-opaque-foreground-negative');
-    expect(result.contributes, 'The same probe must reject the previous opaque-foreground condition.').toBe(false);
+    expect(result.contributes, 'The same probe must reject a deliberately opaque document-plane occluder.').toBe(false);
   } finally {
+    await overlay.evaluate((element) => element.remove());
+    await overlay.dispose();
     await panel.evaluate((element, original) => {
       if (original === null) {
         element.removeAttribute('style');

@@ -1,4 +1,4 @@
-import { getViewportForBounds, type ReactFlowInstance } from '@xyflow/react';
+import { getViewportForBounds, type ReactFlowInstance, type Rect } from '@xyflow/react';
 
 export const DESIGNER_MIN_ZOOM = 0.05;
 
@@ -17,6 +17,23 @@ export const fitSharedDesignerViewport = (instance: ReactFlowInstance, canvas: H
     width: Math.max(flowSize[0] ?? 0, nodeBounds.x + nodeBounds.width) - x,
     height: Math.max(flowSize[1] ?? 0, nodeBounds.y + nodeBounds.height) - y,
   };
+  return fitBoundsInUsableViewport(instance, canvas, bounds);
+};
+
+/** Native fitting must include culled nodes and avoid the same registered host overlays as shared fitting. */
+export const fitNativeDesignerViewport = (instance: ReactFlowInstance, canvas: HTMLElement) => {
+  const nodes = instance.getNodes().filter((node) => !node.hidden);
+  if (!nodes.length) {
+    return;
+  }
+  return fitBoundsInUsableViewport(instance, canvas, instance.getNodesBounds(nodes));
+};
+
+const fitBoundsInUsableViewport = (instance: ReactFlowInstance, canvas: HTMLElement, bounds: Rect) => {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) {
+    return;
+  }
   let usableHeight = rect.height;
   // Hosts opt in their real overlay elements; do not couple the designer to host class names or offsets.
   for (const overlay of Array.from(canvas.ownerDocument.querySelectorAll<HTMLElement>('[data-designer-viewport-inset="bottom"]'))) {
