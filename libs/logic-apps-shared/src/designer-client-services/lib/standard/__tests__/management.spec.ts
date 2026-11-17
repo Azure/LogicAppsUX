@@ -14,6 +14,7 @@ const armOrigin = 'https://management.azure.com';
 const runtimeOrigin = 'https://app.azurewebsites.net';
 const armBase = `${armOrigin}${resourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
 const endpoint = `${runtimeOrigin}/api/v1`;
+const armLink = `${armBase}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
 const context = { resourceId, armOrigin, runtimeOrigin, tenantId: 'tenant', principalId: 'user', authContextKey: 'sign-in-1' };
 const paths = [
   ['POST', '/workflows/Order/triggers/manual/listCallbackUrl', 'contributor', 'getCallbackUrl'],
@@ -166,30 +167,93 @@ describe('Standard direct management through existing services', () => {
     expect(direct.post).not.toHaveBeenCalled();
   });
 
-  it('does not send a direct continuation URL to the legacy transport after disablement', async () => {
-    isFeatureEnabled.mockResolvedValue(false);
-    const named = vi.spyOn(client, 'listRuns');
-    await expect(runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`)).rejects.toThrow(
-      'Refresh run history'
-    );
-    expect(named).not.toHaveBeenCalled();
+  it.each(['/api/v1', '/custom/v1', '/v1'])(
+    'does not send a %s direct continuation URL to the legacy transport after disablement',
+    async (path) => {
+      const issuedEndpoint = `${runtimeOrigin}${path}`;
+      const nextLink = `${issuedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+      vi.mocked(arm.get).mockResolvedValueOnce({ ...envelope(), endpoint: issuedEndpoint });
+      await runService.getRuns();
+      isFeatureEnabled.mockResolvedValue(false);
+      await client.refreshEnablement();
+      const named = vi.spyOn(client, 'listRuns');
+      await expect(runService.getMoreRuns(nextLink)).rejects.toThrow('Refresh run history');
+      expect(named).not.toHaveBeenCalled();
+      expect(arm.get).toHaveBeenCalledOnce();
+      expect(direct.get).toHaveBeenCalledOnce();
+    }
+  );
+
+  it.each(['disabled', 'enabled'] as const)(
+    'rejects a stale direct continuation when the replacement client is %s',
+    async (replacementState) => {
+      const issuedEndpoint = `${runtimeOrigin}/subscriptions/team/api/v1`;
+      const nextLink = `${issuedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+      vi.mocked(arm.get).mockResolvedValueOnce({ ...envelope(), endpoint: issuedEndpoint });
+      vi.mocked(direct.get).mockResolvedValueOnce({ value: [], nextLink });
+      expect((await runService.getRuns()).nextLink).toBe(nextLink);
+
+      const replacement =
+        replacementState === 'disabled'
+          ? StandardManagementHttpClient.createArmOnly(arm)
+          : new StandardManagementHttpClient({
+              armClient: arm,
+              directClient: direct,
+              experimentationService: { isFeatureEnabled, getFeatureValue: vi.fn() },
+              issuerFailureBackoffMs: 10_000,
+            });
+      if (replacementState === 'enabled') {
+        replacement.setContext(context);
+      }
+      const replacedRunService = new StandardRunService({ ...runService.options, standardManagement: replacement });
+
+      await expect(replacedRunService.getMoreRuns(nextLink)).rejects.toMatchObject({
+        error: { code: 'InvalidManagementContinuation' },
+      });
+      expect(arm.get).toHaveBeenCalledOnce();
+      expect(direct.get).toHaveBeenCalledOnce();
+      replacement.dispose();
+    }
+  );
+
+  it.each([armLink, `${resourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/Order/runs?$skiptoken=next`])(
+    'continues to send ARM continuation %s to the legacy transport when the client is replaced',
+    async (uri) => {
+      const replacement = StandardManagementHttpClient.createArmOnly(arm);
+      const replacedRunService = new StandardRunService({ ...runService.options, standardManagement: replacement });
+      vi.mocked(arm.get).mockResolvedValueOnce({ value: [] });
+
+      await expect(replacedRunService.getMoreRuns(uri)).resolves.toEqual({ runs: [], nextLink: undefined });
+      expect(arm.get).toHaveBeenCalledExactlyOnceWith({ uri });
+      replacement.dispose();
+    }
+  );
+
+  it.each(['//other.example.invalid/subscriptions/sub/runs', 'http://[invalid', 'data:text/plain,continuation'])(
+    'rejects an unrecognized foreign or invalid continuation %s before either transport',
+    async (uri) => {
+      await expect(runService.getMoreRuns(uri)).rejects.toMatchObject({ error: { code: 'InvalidManagementContinuation' } });
+      expect(arm.get).not.toHaveBeenCalled();
+      expect(direct.get).not.toHaveBeenCalled();
+    }
+  );
+
+  it('rejects an unrecognized continuation when the ARM base URL is not absolute', async () => {
+    const service = new StandardRunService({ ...runService.options, baseUrl: resourceId });
+    await expect(service.getMoreRuns(`${resourceId}/runs?$skiptoken=next`)).rejects.toMatchObject({
+      error: { code: 'InvalidManagementContinuation' },
+    });
     expect(arm.get).not.toHaveBeenCalled();
     expect(direct.get).not.toHaveBeenCalled();
   });
 
-  it('maps a direct continuation back to ARM after confirmed runtime disablement', async () => {
-    vi.mocked(direct.get).mockRejectedValueOnce(failure(503, 'DirectAccessDisabled'));
-    vi.mocked(arm.get).mockResolvedValueOnce(envelope()).mockResolvedValueOnce({ value: [] });
-    await expect(runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`)).resolves.toEqual({
-      runs: [],
-      nextLink: undefined,
-    });
-    expect(arm.get).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        uri: `${armBase}/workflows/Order/runs`,
-        queryParameters: { 'api-version': '2018-11-01', $skiptoken: 'next' },
-      })
-    );
+  it('preserves legacy continuation handling when no management client is supplied', async () => {
+    const legacyService = new StandardRunService({ ...runService.options, standardManagement: undefined });
+    const uri = 'https://other.example.invalid/legacy/runs';
+    vi.mocked(arm.get).mockResolvedValueOnce({ value: [] });
+
+    await expect(legacyService.getMoreRuns(uri)).resolves.toEqual({ runs: [], nextLink: undefined });
+    expect(arm.get).toHaveBeenCalledExactlyOnceWith({ uri });
   });
 
   it.each(paths)('dispatches catalog %s %s using the fixed %s profile', async (method, path, profile, entry) => {
@@ -450,9 +514,8 @@ describe('Standard direct management through existing services', () => {
     expect(diagnostics).not.toContain(session.endpoint);
   });
 
-  it('rejects direct URLs without trusted context and work after ARM-only disposal', async () => {
+  it('rejects work after ARM-only disposal', async () => {
     const armOnly = StandardManagementHttpClient.createArmOnly(arm);
-    await expect(armOnly.listRuns({ uri: `${endpoint}/workflows/Order/runs?api-version=2018-11-01` })).rejects.toThrow();
     armOnly.dispose();
     await expect(armOnly.listRuns({ uri: `${armBase}/workflows/Order/runs` })).rejects.toThrow();
     expect(arm.get).not.toHaveBeenCalled();
@@ -590,7 +653,7 @@ describe('Standard direct management through existing services', () => {
     const runTrigger = vi.spyOn(client, 'runTrigger');
     await runService.getRun('run');
     await runService.getRuns();
-    await runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`);
+    await runService.getMoreRuns(armLink);
     await runService.cancelRun('/workflows/Order/runs/run');
     await runService.resubmitRun('history', 'manual');
     await runService.runTrigger({ method: 'POST', value: `${armBase}/workflows/Order/triggers/manual/run` });
@@ -754,12 +817,15 @@ describe('Standard direct management through existing services', () => {
   it.each(['list', 'more', 'get', 'cancel', 'resubmit', 'trigger'] as const)(
     'preserves direct errors through the %s run service method',
     async (operation) => {
+      if (operation === 'more') {
+        await runService.getRuns();
+      }
       const error = failure(400, 'WorkflowValidationFailed');
       vi.mocked(direct.get).mockRejectedValueOnce(error);
       vi.mocked(direct.post).mockRejectedValueOnce(error);
       const requests = {
         list: () => runService.getRuns(),
-        more: () => runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`),
+        more: () => runService.getMoreRuns(armLink),
         get: () => runService.getRun('run'),
         cancel: () => runService.cancelRun('/workflows/Order/runs/run'),
         resubmit: () => runService.resubmitRun('history', 'manual'),
@@ -987,12 +1053,19 @@ describe('Standard direct management through existing services', () => {
   });
 
   it.each([
-    { endpoint: `${runtimeOrigin}/runtime/webhooks/workflow/api/management/v1` },
+    { endpoint: `${runtimeOrigin}/runtime/webhooks/workflow/api/management/v11` },
     { endpoint: 'https://attacker.example/runtime/webhooks/workflow/api/management/v1' },
     { endpoint: `${endpoint}?code=secret` },
     { endpoint: `${endpoint}#fragment` },
     { endpoint: endpoint.replace('https:', 'http:') },
     { endpoint: endpoint.replace('https://', 'https://user:password@') },
+    { endpoint: `${runtimeOrigin}/custom/api/v1/` },
+    { endpoint: `${runtimeOrigin}/custom/api/v2` },
+    { endpoint: `${runtimeOrigin}//api/v1` },
+    { endpoint: `${runtimeOrigin}/custom/../api/v1` },
+    { endpoint: `${runtimeOrigin}/custom%2Fother/api/v1` },
+    { endpoint: `${runtimeOrigin}/custom/v1/` },
+    { endpoint: `${runtimeOrigin}/custom%2Fother/v1` },
     { expiresOn: 'not-a-date' },
     { expiresOn: '2026-10-21T18:05:00.000Z' },
     { expiresOn: '2026-10-21T17:59:59Z' },
@@ -1093,6 +1166,124 @@ describe('Standard direct management through existing services', () => {
   });
 
   it.each([
+    '/v1',
+    '/api/v1',
+    '/myteam/v1',
+    '/custom/nested/v1',
+    '/v1/custom/v1',
+    '/caf%C3%A9%20x/v1',
+    '/runtime/webhooks/workflow/api/management/v1',
+    '/hostruntime/runtime/webhooks/workflow/api/management/v1',
+    '/custom/api/v1',
+    '/api/api/v1',
+  ])('uses the issued endpoint for route prefix %s and sends its continuation only to that endpoint', async (prefixedPath) => {
+    const prefixedEndpoint = `${runtimeOrigin}${prefixedPath}`;
+    const nextLink = `${prefixedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=opaque`;
+    vi.mocked(arm.get).mockResolvedValue({ ...envelope(), endpoint: prefixedEndpoint });
+    vi.mocked(direct.get)
+      .mockResolvedValueOnce({ nextLink, value: [{ name: 'run' }] })
+      .mockResolvedValueOnce({ value: [] });
+    expect(await runService.getRuns()).toEqual({ nextLink, runs: [{ name: 'run' }] });
+    expect(vi.mocked(direct.get).mock.calls[0][0].uri).toBe(`${prefixedEndpoint}/workflows/Order/runs`);
+    await runService.getMoreRuns(nextLink);
+    expect(direct.get).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        uri: `${prefixedEndpoint}/workflows/Order/runs`,
+        queryParameters: { 'api-version': '2018-11-01', $skiptoken: 'opaque' },
+        noAuth: true,
+        includeAuth: false,
+      })
+    );
+    expect(arm.get).toHaveBeenCalledOnce();
+    expect(direct.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('never dispatches a direct request when the token response omits endpoint', async () => {
+    const { endpoint: _omitted, ...withoutEndpoint } = envelope();
+    vi.mocked(arm.get).mockResolvedValueOnce(withoutEndpoint).mockResolvedValue({ value: [] });
+    await expect(runService.getRuns()).resolves.toEqual({ nextLink: undefined, runs: [] });
+    expect(arm.get).toHaveBeenCalledTimes(2);
+    expect(direct.get).not.toHaveBeenCalled();
+  });
+
+  it('rejects a paging link outside the issued custom-prefix endpoint', async () => {
+    vi.mocked(arm.get).mockResolvedValue({ ...envelope(), endpoint: `${runtimeOrigin}/custom/v1` });
+    vi.mocked(direct.get).mockResolvedValue({ nextLink: `${endpoint}/workflows/Order/runs?api-version=2018-11-01`, value: [] });
+    await expect(runService.getRuns()).rejects.toThrow(/paging/i);
+  });
+
+  it('does not replay a custom-prefix direct continuation through ARM after runtime disablement', async () => {
+    const prefixedEndpoint = `${runtimeOrigin}/custom/v1`;
+    const nextLink = `${prefixedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+    vi.mocked(arm.get).mockResolvedValue({ ...envelope(), endpoint: prefixedEndpoint });
+    vi.mocked(direct.get).mockResolvedValueOnce({ nextLink, value: [] }).mockRejectedValueOnce(failure(503, 'DirectAccessDisabled'));
+    expect((await runService.getRuns()).nextLink).toBe(nextLink);
+    await expect(runService.getMoreRuns(nextLink)).rejects.toThrow('no longer available');
+    await expect(runService.getMoreRuns(nextLink)).rejects.toThrow('no longer available');
+    expect(arm.get).toHaveBeenCalledOnce();
+    expect(direct.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps the ARM fallback for ARM continuations when no direct session can be acquired', async () => {
+    vi.mocked(arm.get).mockRejectedValueOnce(failure(403, 'AuthorizationFailed')).mockResolvedValue({ value: [] });
+    await expect(runService.getMoreRuns(armLink)).resolves.toEqual({ nextLink: undefined, runs: [] });
+    expect(arm.get).toHaveBeenLastCalledWith(expect.objectContaining({ uri: armLink }));
+    expect(direct.get).not.toHaveBeenCalled();
+  });
+
+  it('does not send a direct continuation to a renewed session with a different endpoint', async () => {
+    const oldEndpoint = `${runtimeOrigin}/foo/v1`;
+    const nextLink = `${oldEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+    vi.mocked(arm.get).mockResolvedValueOnce({ ...envelope(), endpoint: oldEndpoint, apiKey: 'old-key' });
+    vi.mocked(direct.get).mockResolvedValueOnce({ nextLink, value: [] });
+    await runService.getRuns();
+    vi.setSystemTime(Date.now() + 240_000);
+    vi.mocked(arm.get).mockResolvedValue({ ...envelope(), endpoint: `${runtimeOrigin}/bar/v1`, apiKey: 'new-key' });
+    await runService.getRuns();
+    await vi.waitFor(() => expect(arm.get).toHaveBeenCalledTimes(2));
+    await expect(runService.getMoreRuns(nextLink)).rejects.toThrow('no longer available');
+    expect(arm.get).toHaveBeenCalledTimes(2);
+    expect(direct.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('renews an expired session on the same endpoint for a direct continuation', async () => {
+    const issuedEndpoint = `${runtimeOrigin}/foo/v1`;
+    const nextLink = `${issuedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+    vi.mocked(arm.get)
+      .mockResolvedValueOnce({ ...envelope(), endpoint: issuedEndpoint, apiKey: 'old-key' })
+      .mockImplementationOnce(async () => ({ ...envelope(), endpoint: issuedEndpoint, apiKey: 'new-key' }) as any);
+    vi.mocked(direct.get).mockResolvedValueOnce({ nextLink, value: [] });
+    await runService.getRuns();
+    vi.setSystemTime(Date.now() + 301_000);
+    await runService.getMoreRuns(nextLink);
+    expect(direct.get).toHaveBeenLastCalledWith(
+      expect.objectContaining({ uri: `${issuedEndpoint}/workflows/Order/runs`, headers: { 'X-API-Key': 'new-key' } })
+    );
+    expect(arm.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('uses the renewed session for expiry retries and validates its paging links', async () => {
+    const issuedEndpoint = `${runtimeOrigin}/foo/v1`;
+    vi.mocked(arm.get)
+      .mockResolvedValueOnce({ ...envelope(), endpoint: issuedEndpoint, apiKey: 'old-key' })
+      .mockResolvedValueOnce({ ...envelope(), endpoint: issuedEndpoint, apiKey: 'new-key' });
+    const nextLink = `${issuedEndpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`;
+    vi.mocked(direct.get).mockRejectedValueOnce(failure(401, 'SessionTokenExpired')).mockResolvedValueOnce({ nextLink, value: [] });
+    await expect(runService.getRuns()).resolves.toEqual({ nextLink, runs: [] });
+    expect(direct.get).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ uri: `${issuedEndpoint}/workflows/Order/runs`, headers: { 'X-API-Key': 'old-key' } })
+    );
+    expect(direct.get).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ uri: `${issuedEndpoint}/workflows/Order/runs`, headers: { 'X-API-Key': 'new-key' } })
+    );
+    await runService.getMoreRuns(nextLink);
+    expect(direct.get).toHaveBeenLastCalledWith(expect.objectContaining({ headers: { 'X-API-Key': 'new-key' } }));
+    expect(arm.get).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
     'https://attacker.example/page',
     `${endpoint}/workflows/Order/runs?api-version=2018-11-01&code=secret`,
     `${endpoint}/workflows/Order/runs?api-version=2018-11-01&api-version=2018-11-01`,
@@ -1121,12 +1312,13 @@ describe('Standard direct management through existing services', () => {
 
   it('rejects old direct paging URLs after context discard or app/environment change', async () => {
     const uri = `${endpoint}/workflows/Order/runs?api-version=2018-11-01`;
+    await runService.getRuns();
     client.setContext(undefined);
     await expect(client.listRuns({ uri })).rejects.toThrow(/context/i);
     client.setContext({ ...context, resourceId: resourceId.replace('/app', '/other'), runtimeOrigin: 'https://other.azurewebsites.net' });
     await expect(client.listRuns({ uri })).rejects.toThrow(/context/i);
-    expect(arm.get).not.toHaveBeenCalled();
-    expect(direct.get).not.toHaveBeenCalled();
+    expect(arm.get).toHaveBeenCalledOnce();
+    expect(direct.get).toHaveBeenCalledOnce();
   });
 
   it('rejects late enablement results after the context changes', async () => {
