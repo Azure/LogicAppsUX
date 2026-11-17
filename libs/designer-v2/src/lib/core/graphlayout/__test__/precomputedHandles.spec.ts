@@ -27,13 +27,22 @@ describe('provisional public XYFlow handles', () => {
     expect(getPrecomputedHandles({ ...header, id: 'scope-#footer' }, 200, 44)?.[1]).toMatchObject({ y: 39, width: 10 });
   });
 
-  it('positions subgraph card handles at the header edge, not the full node including its DropZone', () => {
+  it('precomputes subgraph handles only for explicitly fixed-height adders', () => {
     const branch = { ...operation, type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, id: 'case-#subgraph' };
-    expect(getPrecomputedHandles(branch, 200, 68, false, SUBGRAPH_TYPES.SWITCH_CASE)).toBeUndefined();
-    expect(getPrecomputedHandles(branch, 200, 68, false, SUBGRAPH_TYPES.AGENT_CONDITION)).toBeUndefined();
-    expect(getPrecomputedHandles(branch, 120, 56, false, SUBGRAPH_TYPES.CONDITIONAL_TRUE)?.[1]).toMatchObject({ y: 26 });
-    expect(getPrecomputedHandles(branch, 20, 44, false, SUBGRAPH_TYPES.SWITCH_ADD_CASE)?.[1]).toMatchObject({ y: 38 });
-    expect(getPrecomputedHandles(branch, 20, 44, true, SUBGRAPH_TYPES.SWITCH_ADD_CASE)).toBeUndefined();
+    for (const subgraphType of [
+      SUBGRAPH_TYPES.SWITCH_CASE,
+      SUBGRAPH_TYPES.AGENT_CONDITION,
+      SUBGRAPH_TYPES.UNTIL_DO,
+      SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+      SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+      SUBGRAPH_TYPES.SWITCH_DEFAULT,
+    ]) {
+      expect(getPrecomputedHandles(branch, 120, 56, false, subgraphType)).toBeUndefined();
+    }
+    for (const subgraphType of [SUBGRAPH_TYPES.SWITCH_ADD_CASE, SUBGRAPH_TYPES.AGENT_ADD_CONDITON]) {
+      expect(getPrecomputedHandles(branch, 20, 44, false, subgraphType)?.[1]).toMatchObject({ y: 38 });
+      expect(getPrecomputedHandles(branch, 20, 44, true, subgraphType)).toBeUndefined();
+    }
     expect(getPrecomputedHandles(branch, 200, 68)).toBeUndefined();
   });
 
