@@ -60,3 +60,17 @@ Curated patterns for PR comments, reviewer feedback, and final summaries. Add en
 - Source: Azure/LogicAppsUX#9164 collapsed head `4b68281a`; final status comment `#issuecomment-4489982690`; side PR close comments.
 - Applies to: `pr-orchestrator`, `release-scribe`, `chief-engineer`.
 - Status: verified.
+
+### Provisional rendering geometry needs transition and consumer evidence
+
+- Learning: When adding initial node dimensions or handles, test a measured node being recreated by selection, not just its initial coordinates. Also exercise full-graph fit with culled nodes; an API accepting initial dimensions does not prove its fit command includes them.
+- Pattern: Use the installed XYFlow adoption path for variable-height headers, retain fixed-height counterexamples, and verify native fit excludes hidden nodes and preserves an empty canvas. When a new hook is mocked by consumer tests, cover its real scheduling and subscription lifetime at the owning hook.
+- Evidence: [PR #9713 validation and commands](https://github.com/Azure/LogicAppsUX/pull/9713#test-plan). Original rendering revision: `46dabf39a4cc8bdc9bf143e3194741ce67e3bb84`; behavioral and test fix: `50eef61afd60f95f83ec8122d10c5ae851dd1b7c`.
+
+| Finding and original inputs | Observed gap | Fix, prevention and replay | Status and owner |
+| --- | --- | --- | --- |
+| [Wrapping-header review](https://github.com/Azure/LogicAppsUX/pull/9713#discussion_r4603833207); native Switch-case and agent-condition nodes, XYFlow system 0.0.69 | Coordinate-only tests missed measured bounds being replaced after selection recreated the node. | DOM-measured fallback; both actual `adoptUserNodes` transition cases failed before the fix and pass afterward. Fixed-height, horizontal and unsupported-family cases remain covered. | Prevention validated locally; published in #9713, owner @rllyy97. |
+| [Zero-coverage report](https://github.com/Azure/LogicAppsUX/pull/9713#issuecomment-6957271051); new idle-deferral hook | Operation-card tests mocked `useInitialMountSettled`, so passing consumer tests left the hook itself unexecuted. | Real shared idle-callback, unmount/remount and timer-fallback tests; 100% local line and branch coverage. Final rendering cohort: 227 passed, 1 intentionally skipped. | Local prevention validated; published-head coverage must still be checked in #9713, owner @rllyy97. |
+
+- Applies to: `test`, `senior-swe-reviewer`, `pr-orchestrator`, `chief-engineer`.
+- Status: locally verified; use the PR's current CI for publication readiness, not these historical results.
