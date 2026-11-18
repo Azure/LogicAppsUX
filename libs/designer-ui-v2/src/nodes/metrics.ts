@@ -31,6 +31,25 @@ export const nodeMetrics = {
   lineArrowSize: 3.18,
 } as const;
 
+/**
+ * Opt-in "Standard compact" preset for dense hosts. Defaults in nodeMetrics stay unchanged.
+ * Text width = card width - 2px border - 2 * paddingInline - tile - gap; titles wrap to at most two lines.
+ */
+export const compactNodeMetrics = {
+  card: { width: 208, height: 52, wrappedHeight: 68 },
+  paddingInline: 12,
+  tile: 32,
+  icon: 20,
+  gap: 8,
+  textWidth: 142,
+  titleFont: { size: 14, weight: 600, lineHeight: 20 },
+} as const;
+
+export type CompactTitleLines = 1 | 2;
+
+export const getCompactNodeHeight = (titleLines: CompactTitleLines = 1) =>
+  titleLines === 2 ? compactNodeMetrics.card.wrappedHeight : compactNodeMetrics.card.height;
+
 /** Tight Switch output margins cancel body padding; the card still reserves both borders. */
 export const getSwitchNodeSize = (caseCount = 1, axis: 'horizontal' | 'vertical' = 'vertical') => {
   const count = Number.isFinite(caseCount) ? Math.max(1, Math.floor(caseCount)) : 1;

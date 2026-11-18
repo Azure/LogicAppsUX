@@ -93,6 +93,12 @@ describe('shared family interaction adapters', () => {
     expect(screen.getByRole('button', { name: 'Collapse' })).toHaveAttribute('id', 'real-id-collapse-toggle');
   });
 
+  it('reserves the compact Scope title column for the collapse chevron', () => {
+    render(<SharedScopeCard {...props()} family="scope" operationType="Scope" title="Update order info" />);
+    const card = screen.getByTestId('card-Update order info');
+    expect(card.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe('20px');
+  });
+
   it('keeps Standard condition cards in multi-output mode and agent cards with below tools placement', () => {
     const switchView = render(<SharedScopeCard {...props()} family="switch" />);
     expect(switchView.container.querySelector('[data-node-card="switch"]')).not.toBeNull();

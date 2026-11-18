@@ -29,9 +29,12 @@
     "children": [
       {
         "id": "Recurrence",
-        "height": 74,
-        "width": 232,
-        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+        "height": 52,
+        "width": 208,
+        "layoutOptions": {
+          "nodeType": "OPERATION_NODE",
+          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
+        }
       }
     ],
     "edges": [],

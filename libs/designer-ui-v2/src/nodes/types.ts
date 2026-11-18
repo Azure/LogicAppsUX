@@ -1,6 +1,8 @@
 export type NodeCategory = 'trigger' | 'action' | 'control' | 'agent';
 export type NodeRunStatus = 'pending' | 'running' | 'succeeded' | 'skipped' | 'failed' | 'error' | 'warning' | 'cancelled' | 'mock';
-export type NodeCardWidth = 'compact' | 'standard' | 'wide' | 'fill';
+export type NodeCardWidth = 'compact' | 'standardCompact' | 'standard' | 'wide' | 'fill';
+/** Opt-in dense card preset; 'default' keeps the canonical nodeMetrics geometry. */
+export type NodeCardDensity = 'default' | 'compact';
 export type NodeCardShape = 'rounded' | 'pill';
 export type NodeHandleVariant = 'neutral' | 'success' | 'danger';
 export type NodeLabeledHandleBranch = 'true' | 'false';

@@ -29,9 +29,12 @@
     "children": [
       {
         "id": "Recurrence",
-        "height": 74,
-        "width": 232,
-        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+        "height": 52,
+        "width": 208,
+        "layoutOptions": {
+          "nodeType": "OPERATION_NODE",
+          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
+        }
       },
       {
         "id": "Switch",
@@ -153,20 +156,20 @@
                       },
                       {
                         "id": "Terminate",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       },
                       {
                         "id": "Increment_variable_4",
-                        "height": 74,
-                        "width": 232,
+                        "height": 68,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":2,\"size\":{\"width\":208,\"height\":68}}"
                         }
                       }
                     ],
@@ -210,11 +213,11 @@
                       },
                       {
                         "id": "Terminate_2",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       }
                     ],
@@ -320,11 +323,11 @@
                   },
                   {
                     "id": "ForEach_Action_1",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "OPERATION_NODE",
-                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
@@ -343,20 +346,20 @@
                       },
                       {
                         "id": "ForEach_Action_2",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       },
                       {
                         "id": "ForEach_Action_3",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       }
                     ],
@@ -484,29 +487,29 @@
                 "children": [
                   {
                     "id": "Scope-#scope",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "SCOPE_CARD_NODE",
-                      "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"family\":\"scope\",\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
                     "id": "Scope_Action_1",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "OPERATION_NODE",
-                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
                     "id": "Scope_Action_2",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "OPERATION_NODE",
-                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
@@ -516,20 +519,20 @@
                     "children": [
                       {
                         "id": "Scope_nested-#scope",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "SCOPE_CARD_NODE",
-                          "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"family\":\"scope\",\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       },
                       {
                         "id": "Scope_Action_3",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       }
                     ],
@@ -559,11 +562,11 @@
                     "children": [
                       {
                         "id": "Scope_empty-#scope",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "SCOPE_CARD_NODE",
-                          "presentation": "{\"shared\":true,\"family\":\"scope\",\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"family\":\"scope\",\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       }
                     ],
@@ -667,20 +670,20 @@
                   },
                   {
                     "id": "Until_Action_1",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "OPERATION_NODE",
-                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
                     "id": "Until_Action_2",
-                    "height": 74,
-                    "width": 232,
+                    "height": 52,
+                    "width": 208,
                     "layoutOptions": {
                       "nodeType": "OPERATION_NODE",
-                      "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                     }
                   },
                   {
@@ -700,11 +703,11 @@
                       },
                       {
                         "id": "Until_Action_3",
-                        "height": 74,
-                        "width": 232,
+                        "height": 52,
+                        "width": 208,
                         "layoutOptions": {
                           "nodeType": "OPERATION_NODE",
-                          "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                         }
                       },
                       {
@@ -844,11 +847,11 @@
               },
               {
                 "id": "Default-Compose",
-                "height": 74,
-                "width": 232,
+                "height": 52,
+                "width": 208,
                 "layoutOptions": {
                   "nodeType": "OPERATION_NODE",
-                  "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}"
+                  "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
                 }
               }
             ],
@@ -927,9 +930,12 @@
       },
       {
         "id": "Initialize_owner",
-        "height": 74,
-        "width": 232,
-        "layoutOptions": { "nodeType": "OPERATION_NODE", "presentation": "{\"shared\":true,\"size\":{\"width\":232,\"height\":74}}" }
+        "height": 52,
+        "width": 208,
+        "layoutOptions": {
+          "nodeType": "OPERATION_NODE",
+          "presentation": "{\"shared\":true,\"titleLines\":1,\"size\":{\"width\":208,\"height\":52}}"
+        }
       }
     ],
     "edges": [

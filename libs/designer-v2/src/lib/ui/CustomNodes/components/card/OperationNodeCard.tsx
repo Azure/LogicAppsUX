@@ -9,10 +9,10 @@ interface OperationNodeCardProps extends SharedActionCardProps {
   sharedPresentation?: boolean;
 }
 
-export const OperationNodeCard = ({ sharedPresentation, ...props }: OperationNodeCardProps) => {
+export const OperationNodeCard = ({ sharedPresentation, titleLines, ...props }: OperationNodeCardProps) => {
   const sharedOption = useSharedNodeUi();
   return (sharedPresentation ?? getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, sharedOption).shared) ? (
-    <SharedActionCard {...props} />
+    <SharedActionCard {...props} titleLines={titleLines} />
   ) : (
     <ActionCard {...props} />
   );

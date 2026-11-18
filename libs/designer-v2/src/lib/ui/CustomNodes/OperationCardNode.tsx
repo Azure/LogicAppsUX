@@ -392,6 +392,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
         <OperationNodeCard
           id={id}
           sharedPresentation={data?.presentation?.shared}
+          titleLines={data?.presentation?.titleLines}
           active={isCardActive}
           title={label}
           icon={iconUri}

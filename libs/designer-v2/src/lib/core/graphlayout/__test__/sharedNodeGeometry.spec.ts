@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { compactNodeMetrics, getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import Constants from '../../../common/constants';
 import { exportForTesting } from '../elklayout';
 import { AGENT_TOOL_CONNECTOR_HEIGHT, createWorkflowNode, getNodePresentation, SHARED_COLLAPSED_CARD_HEIGHT } from '../../utils/graph';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { getWorkflowNodePresentationContext } from '../helpers';
+
+const compactCardSize = { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.height };
+const wrappingTitle = 'Send an email notification to the on-call engineer';
 
 const expectedTerminalPadding = nodeMetrics.actionAdd.buttonHeight + nodeMetrics.terminalConnectionLength;
 const expectedTerminalCenterOffset = nodeMetrics.actionAdd.buttonHeight / 2 + nodeMetrics.terminalConnectionLength;
@@ -30,10 +34,33 @@ describe('shared node geometry contracts', () => {
     expect(rfAction).not.toHaveProperty('height');
   });
 
+  it('grows compact action and scope headers only when the title needs a second line', () => {
+    const wrapped = { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight };
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: wrappingTitle })).toEqual({
+      shared: true,
+      titleLines: 2,
+      size: wrapped,
+    });
+    expect(
+      getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: Constants.NODE.TYPE.SCOPE, title: wrappingTitle })
+    ).toEqual({ shared: true, family: 'scope', titleLines: 2, size: wrapped });
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: 'Compose' })).toMatchObject({
+      titleLines: 1,
+      size: compactCardSize,
+    });
+  });
+
+  it('sizes compact titles from the renamed caption the card renders', () => {
+    const node = createWorkflowNode('Send_email');
+    expect(getWorkflowNodePresentationContext(node).title).toBe('Send email');
+    expect(getWorkflowNodePresentationContext(node, { idReplacements: { Send_email: wrappingTitle } }).title).toBe(wrappingTitle);
+  });
+
   it('derives shared node family sizes from nodeMetrics without hard-coded host dimensions', () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true)).toEqual({
       shared: true,
-      size: nodeMetrics.cards.action,
+      titleLines: 1,
+      size: compactCardSize,
     });
 
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE, true)).toEqual({
@@ -45,7 +72,7 @@ describe('shared node geometry contracts', () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.COLLAPSED_NODE, true)).toEqual({
       shared: true,
       family: 'collapsed',
-      size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT },
+      size: { width: compactNodeMetrics.card.width, height: SHARED_COLLAPSED_CARD_HEIGHT },
     });
 
     expect(
@@ -55,7 +82,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'scope',
-      size: nodeMetrics.cards.action,
+      titleLines: 1,
+      size: compactCardSize,
     });
 
     expect(
@@ -243,6 +271,10 @@ describe('shared node geometry contracts', () => {
     const laidOut = await exportForTesting.elkLayout(horizontal);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(laidOut, true);
     expect(nodes.map((node) => node.data.handleAxis)).toEqual(['horizontal', 'horizontal']);
-    expect(nodes.every((node) => node.data.presentation?.shared === true && node.width === 232 && node.height === 74)).toBe(true);
+    expect(
+      nodes.every(
+        (node) => node.data.presentation?.shared === true && node.width === compactCardSize.width && node.height === compactCardSize.height
+      )
+    ).toBe(true);
   });
 });

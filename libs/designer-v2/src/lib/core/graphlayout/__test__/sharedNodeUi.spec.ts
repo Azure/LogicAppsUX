@@ -56,10 +56,10 @@ describe('shared node renderer geometry option', () => {
 
   it('sizes adopted operations and placeholders without guessing a scope family absent its definition', () => {
     const result = exportForTesting.convertWorkflowGraphToElkGraph(graph, true);
-    expect(result.children?.[0]).toMatchObject({ width: 232, height: 74 });
+    expect(result.children?.[0]).toMatchObject({ width: 208, height: 52 });
     expect(result.children?.[1]).toMatchObject({ width: 200, height: 44 });
     expect(result.children?.[2]).toMatchObject({ width: 232, height: 74 });
-    expect(result.children?.[3].children?.[0]).toMatchObject({ width: 232, height: 74 });
+    expect(result.children?.[3].children?.[0]).toMatchObject({ width: 208, height: 52 });
     expect(graph.children?.[0]).toMatchObject({ width: 200, height: 44 });
   });
 
@@ -67,7 +67,7 @@ describe('shared node renderer geometry option', () => {
     const elkGraph = exportForTesting.convertWorkflowGraphToElkGraph(graph, true);
     const layout = await exportForTesting.elkLayout(elkGraph);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
-    expect(nodes.find(({ id }) => id === 'action')).toMatchObject({ width: 232, height: 74 });
+    expect(nodes.find(({ id }) => id === 'action')).toMatchObject({ width: 208, height: 52 });
     expect(nodes.find(({ id }) => id === 'scope')).not.toHaveProperty('width');
     const [accepted] = exportForTesting.convertElkGraphToReactFlow(layout);
     expect(accepted.find(({ id }) => id === 'action')?.data.presentation).toMatchObject({ shared: true });
@@ -85,13 +85,13 @@ describe('shared node renderer geometry option', () => {
       ])
     );
     const enabled = exportForTesting.convertWorkflowGraphToElkGraph(measured.graph!, true);
-    expect(enabled.children?.[0]).toMatchObject({ width: 232, height: 74 });
+    expect(enabled.children?.[0]).toMatchObject({ width: 208, height: 52 });
     expect(measured.graph?.children?.[0]).toMatchObject({ width: 200, height: 64 });
     const rollback = exportForTesting.convertWorkflowGraphToElkGraph(measured.graph!, false);
     expect(rollback.children?.[0]).toMatchObject({ width: 200, height: 64 });
     expect(rollback.children?.[1]).toMatchObject({ width: 321, height: 123 });
     const enabledAgain = exportForTesting.convertWorkflowGraphToElkGraph(measured.graph!, true);
-    expect(enabledAgain.children?.[0]).toMatchObject({ width: 232, height: 74 });
+    expect(enabledAgain.children?.[0]).toMatchObject({ width: 208, height: 52 });
     expect(enabledAgain.children?.[1]).toMatchObject({ width: 321, height: 123 });
     expect(measured.graph?.children?.[0]).toMatchObject({ width: 200, height: 64 });
   });

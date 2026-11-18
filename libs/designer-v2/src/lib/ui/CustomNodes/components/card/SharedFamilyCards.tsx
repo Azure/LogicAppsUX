@@ -8,11 +8,13 @@ import {
   NodeLabeledHandle,
   NodeText,
   ToolItemCard,
+  getCompactTitleLines,
 } from '@microsoft/designer-ui-v2';
+import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore, SUBGRAPH_TYPES, type SubgraphType } from '@microsoft/logic-apps-shared';
-import { useContext, useEffect, useRef, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import type { ActionCardProps } from './actionCard';
 import { useKeyboardInteraction } from './keyboardInteraction';
@@ -29,7 +31,7 @@ import {
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { scopeNodeIcon } from './operationNodeGlyphs';
-import type { NodePresentation } from '../../../../core/utils/graph';
+import { SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
 
@@ -95,6 +97,8 @@ interface SharedScopeCardProps extends ActionCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolsPanel?: { width: number; height: number; bottomPadding: number; collapsed?: boolean; items: { id: string }[] };
+  /** Title clamp ELK sized the scope header for. */
+  titleLines?: CompactTitleLines;
 }
 
 export const SharedAgentScopeCard = (props: SharedScopeCardProps) => {
@@ -275,7 +279,17 @@ export const SharedScopeCard = ({
       />
     );
   }
-  return withHover(<ActionNodeCard {...common} strings={actionStrings} handles={false} icon={scopeNodeIcon} />);
+  return withHover(
+    <ActionNodeCard
+      {...common}
+      strings={actionStrings}
+      handles={false}
+      icon={scopeNodeIcon}
+      density="compact"
+      style={{ ...common.style, '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties}
+      titleLines={props.titleLines ?? getCompactTitleLines(props.title ?? '', SHARED_SCOPE_TITLE_RESERVE)}
+    />
+  );
 };
 
 interface SharedBranchCardProps {

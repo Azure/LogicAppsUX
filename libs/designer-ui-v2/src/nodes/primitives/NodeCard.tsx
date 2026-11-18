@@ -2,7 +2,7 @@ import { forwardRef, useContext } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { designerUiTokens as ui, nodeCardVars } from '../../theme/tokens';
-import { nodeMetrics } from '../metrics';
+import { compactNodeMetrics, nodeMetrics } from '../metrics';
 import type { ActionNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import type { NodeCardShape, NodeCardWidth, NodeRunStatus } from '../types';
@@ -15,6 +15,7 @@ const footerBg = nodeCardVars.footerBackground;
 const useStyles = makeStyles({
   root: { position: 'relative', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', fontFamily: 'inherit' },
   compact: { width: `${nodeMetrics.cards.condition.width}px` },
+  standardCompact: { width: `${compactNodeMetrics.card.width}px` },
   standard: { width: `${nodeMetrics.cards.action.width}px` },
   wide: { width: `${nodeMetrics.cards.agent.width}px` },
   fill: { width: '100%' },
@@ -37,9 +38,20 @@ const useStyles = makeStyles({
   medium: { minHeight: `${nodeMetrics.cards.action.height}px` },
   small: { minHeight: `${nodeMetrics.cards.tool.smallHeight}px` },
   switch: { minHeight: `${nodeMetrics.cards.switch.height}px`, ...shorthands.borderWidth(`${nodeMetrics.cards.switch.borderWidth}px`) },
+  compactHeight: { minHeight: `${compactNodeMetrics.card.height}px` },
+  compactWrappedHeight: { minHeight: `${compactNodeMetrics.card.wrappedHeight}px` },
   pill: {
     borderTopLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
     borderBottomLeftRadius: `${nodeMetrics.cards.trigger.height / 2}px`,
+  },
+  // Compact pills keep a half-height radius so the left edge stays a true semicircle.
+  pillCompact: {
+    borderTopLeftRadius: `${compactNodeMetrics.card.height / 2}px`,
+    borderBottomLeftRadius: `${compactNodeMetrics.card.height / 2}px`,
+  },
+  pillCompactWrapped: {
+    borderTopLeftRadius: `${compactNodeMetrics.card.wrappedHeight / 2}px`,
+    borderBottomLeftRadius: `${compactNodeMetrics.card.wrappedHeight / 2}px`,
   },
   neutral: { [bg]: ui.nodeSurface, ':hover': { [bg]: ui.nodeSurfaceHover } },
   neutralSelected: { [bg]: ui.nodeSurfaceSelected, ':hover': { [bg]: ui.nodeSurfaceSelected } },
@@ -76,7 +88,7 @@ const useStyles = makeStyles({
 });
 export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   width?: NodeCardWidth;
-  size?: 'medium' | 'small' | 'switch';
+  size?: 'medium' | 'small' | 'switch' | 'compact' | 'compactWrapped';
   bodyHeight?: number;
   shape?: NodeCardShape;
   surface?: 'neutral' | 'agent';
@@ -146,10 +158,11 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
         style={bodyHeight === undefined ? undefined : { minHeight: bodyHeight }}
         className={mergeClasses(
           styles.card,
-          styles[size],
+          size === 'compact' ? styles.compactHeight : size === 'compactWrapped' ? styles.compactWrappedHeight : styles[size],
           styles[surface],
           selected && (surface === 'agent' ? styles.agentSelected : styles.neutralSelected),
-          shape === 'pill' && styles.pill,
+          shape === 'pill' &&
+            (size === 'compact' ? styles.pillCompact : size === 'compactWrapped' ? styles.pillCompactWrapped : styles.pill),
           appearance === 'placeholder' && styles.placeholder,
           selected && styles.selected
         )}

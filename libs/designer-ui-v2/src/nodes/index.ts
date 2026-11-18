@@ -1,7 +1,9 @@
 export * from './types';
 export * from './strings';
 export * from './glyphs';
-export { nodeMetrics, nodeHoverCardTiming } from './metrics';
+export { nodeMetrics, nodeHoverCardTiming, compactNodeMetrics, getCompactNodeHeight } from './metrics';
+export { getCompactTitleLines } from './compactTitle';
+export type { CompactTitleLines } from './metrics';
 export * from './primitives/NodeCard';
 export * from './primitives/NodeCardBody';
 export * from './primitives/NodeHandle';

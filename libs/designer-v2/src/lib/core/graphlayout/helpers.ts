@@ -1,4 +1,11 @@
-import { removeIdTag, SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  getRecordEntry,
+  labelCase,
+  removeIdTag,
+  SUBGRAPH_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  WORKFLOW_NODE_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import type { NodePresentationContext } from '../utils/graph';
@@ -8,6 +15,8 @@ export const footerMarker = '#footer';
 export interface GraphPresentationContext {
   operations?: Operations;
   nodesMetadata?: NodesMetadata;
+  /** Renamed node captions; titles feed compact card height, matching useNodeDisplayName. */
+  idReplacements?: Record<string, string>;
 }
 
 export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: GraphPresentationContext = {}): NodePresentationContext => {
@@ -29,6 +38,7 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
       : definition;
   return {
     operationType: operation?.type,
+    title: labelCase(getRecordEntry(context.idReplacements, id) ?? id),
     subgraphType: metadata?.subgraphType,
     caseCount: operation && 'cases' in operation ? Object.keys(operation.cases ?? {}).length + 1 : undefined,
     ...(toolRow && {

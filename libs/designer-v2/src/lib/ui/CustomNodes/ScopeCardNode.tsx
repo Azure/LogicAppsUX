@@ -497,6 +497,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
               description: opQuery.data?.properties?.description,
               isMonitoringView,
               toolsPanel: data?.toolsPanel as ComponentProps<typeof SharedScopeCard>['toolsPanel'],
+              titleLines: presentation.titleLines,
             })}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}

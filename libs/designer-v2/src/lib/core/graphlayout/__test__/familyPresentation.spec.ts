@@ -20,7 +20,7 @@ import Constants from '../../../common/constants';
 
 describe('family admission and matching geometry', () => {
   it.each([
-    ['Scope', 'scope', 232, 74],
+    ['Scope', 'scope', 208, 52],
     ['If', 'if', 160, 74],
     ['Switch', 'switch', 160, 74],
     ['Foreach', 'loop', 160, 74],
@@ -66,7 +66,7 @@ describe('family admission and matching geometry', () => {
       });
     }
     const nested = getWorkflowNodePresentationContext({ id: 'descendant', type: 'OPERATION_NODE' }, context);
-    expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 232, height: 74 } });
+    expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 208, height: 52 } });
   });
 
   it('reserves the canonical small-tool status badge clearance when actual tool run data appears', () => {
@@ -110,7 +110,7 @@ describe('family admission and matching geometry', () => {
     for (const id of ['CallWorkflow', 'InnerCompose']) {
       const bodyAction = nodes.find((node) => node.id === id)!;
       expect(bodyAction.parentId).toBe('NamedTool');
-      expect(bodyAction.data.presentation).toMatchObject({ shared: true, size: { width: 232, height: 74 } });
+      expect(bodyAction.data.presentation).toMatchObject({ shared: true, titleLines: 1, size: { width: 208, height: 52 } });
       expect(bodyAction.data.presentation).not.toHaveProperty('toolKind');
     }
     expect(

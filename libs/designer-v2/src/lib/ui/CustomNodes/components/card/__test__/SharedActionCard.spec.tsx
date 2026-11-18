@@ -380,6 +380,8 @@ describe('shared host action adapter', () => {
     expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-comment')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();
+    // Indicators sit below compact cards, so the title column keeps the full width ELK measured.
+    expect(card.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe('');
     expect(screen.getAllByRole('progressbar', { name: 'Loading operation' })).toHaveLength(2);
     expect(screen.getAllByRole('progressbar', { hidden: true })).toHaveLength(2);
     expect(card.querySelector('[data-handle]')).toBeNull();

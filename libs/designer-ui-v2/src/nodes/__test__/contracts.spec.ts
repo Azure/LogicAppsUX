@@ -19,7 +19,14 @@ describe('public metrics entrypoint', () => {
     const actionWidth: number = metricsEntry.nodeMetrics.cards.action.width;
     const openDelay: number = metricsEntry.nodeHoverCardTiming.openDelay;
 
-    expect(Object.keys(metricsEntry).sort()).toEqual(['getNodeLineArrowPath', 'getSwitchNodeSize', 'nodeHoverCardTiming', 'nodeMetrics']);
+    expect(Object.keys(metricsEntry).sort()).toEqual([
+      'compactNodeMetrics',
+      'getCompactNodeHeight',
+      'getNodeLineArrowPath',
+      'getSwitchNodeSize',
+      'nodeHoverCardTiming',
+      'nodeMetrics',
+    ]);
     expect(Object.is(metricsEntry.getSwitchNodeSize, getSwitchNodeSize)).toBe(true);
     expectTypeOf<typeof metricsEntry.getSwitchNodeSize>().toEqualTypeOf<typeof getSwitchNodeSize>();
     expect(Object.is(metricsEntry.nodeMetrics, nodeMetrics)).toBe(true);

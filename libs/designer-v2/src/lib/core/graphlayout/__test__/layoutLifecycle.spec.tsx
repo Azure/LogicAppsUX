@@ -86,7 +86,7 @@ describe('layout request lifecycle', () => {
     tick();
     expect(current()).toEqual(accepted);
     await resolve(1);
-    expect(current().nodes[0]).toMatchObject({ width: 232, height: 74 });
+    expect(current().nodes[0]).toMatchObject({ width: 208, height: 52 });
   });
 
   it('rejects pre-toggle results before the throttled replacement can start', async () => {
@@ -98,9 +98,9 @@ describe('layout request lifecycle', () => {
     await resolve(0);
     expect(current().nodes).toEqual([]);
     tick();
-    expect(requests[1].graph.children?.[0]).toMatchObject({ width: 232, height: 74 });
+    expect(requests[1].graph.children?.[0]).toMatchObject({ width: 208, height: 52 });
     await resolve(1);
-    expect(current().nodes[0]).toMatchObject({ width: 232, height: 74 });
+    expect(current().nodes[0]).toMatchObject({ width: 208, height: 52 });
   });
 
   it('rejects results for a replaced graph during the throttle window', async () => {
@@ -174,7 +174,7 @@ describe('layout request lifecycle', () => {
     tick();
     expect(requests).toHaveLength(2);
     await resolve(1);
-    expect(current().nodes[0]).toMatchObject({ width: 232, height: 74 });
+    expect(current().nodes[0]).toMatchObject({ width: 208, height: 52 });
   });
 
   it('reuses observed native sizes only after a same-renderer acceptance, never on first mount or renderer return', async () => {
@@ -193,7 +193,7 @@ describe('layout request lifecycle', () => {
     view.rerender(tree());
     tick();
     await resolve(2);
-    expect(current().nodes[0]).toMatchObject({ width: 232, height: 74 });
+    expect(current().nodes[0]).toMatchObject({ width: 208, height: 52 });
     expect(current().nodes[0]).not.toHaveProperty('measured');
     controls.shared = false;
     view.rerender(tree());

@@ -2,6 +2,7 @@ import {
   ActionNodeCard,
   ToolItemCard,
   TriggerNodeCard,
+  getCompactTitleLines,
   NODE_HOVER_CARD_IGNORE_ATTRIBUTE,
   type NodeToolKind,
 } from '@microsoft/designer-ui-v2';
@@ -10,6 +11,7 @@ import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import type { ActionCardProps } from './actionCard';
 import { useKeyboardInteraction } from './keyboardInteraction';
 import { CardIndicatorBadges } from './cardIndicatorBadges';
@@ -51,6 +53,8 @@ export interface SharedActionCardProps extends ActionCardProps {
   isMonitoringView?: boolean;
   toolKind?: NodeToolKind;
   handleAxis?: 'vertical' | 'horizontal';
+  /** Title clamp ELK sized this card for; non-tool cards render the Standard compact preset. */
+  titleLines?: CompactTitleLines;
 }
 
 /** Host-only adapter: no graph/store/service/localization contracts leak into the presentation package. */
@@ -68,6 +72,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     isMonitoringView,
     toolKind,
     handleAxis = 'vertical',
+    titleLines,
     drag,
     dragPreview,
     rootRef,
@@ -190,7 +195,9 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       statusDetail={runData?.duration}
       strings={cardStrings}
       inactive={!active}
-      {...(toolKind ? { kind: toolKind, size: 'small' as const } : { handles: false })}
+      {...(toolKind
+        ? { kind: toolKind, size: 'small' as const }
+        : { handles: false, density: 'compact' as const, titleLines: titleLines ?? getCompactTitleLines(title ?? '') })}
       handleAxis={handleAxis}
       role="button"
       tabIndex={nodeIndex}
@@ -219,7 +226,9 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
           keyboard.keyUp(event);
         }
       }}
-      style={{ '--designer-ui-v2-node-text-end-reserve': `${indicatorCount * 20}px` } as CSSProperties}
+      // Compact cards render indicator badges below the card, outside the title column, so only tool cards reserve
+      // space for them; reserving here would narrow the column ELK measured and truncate instead of wrapping.
+      style={toolKind ? ({ '--designer-ui-v2-node-text-end-reserve': `${indicatorCount * 20}px` } as CSSProperties) : undefined}
       after={
         // A layout-neutral boundary excludes badges from rich hover while preserving their own tooltips.
         <span className={styles.after} {...{ [NODE_HOVER_CARD_IGNORE_ATTRIBUTE]: true }}>

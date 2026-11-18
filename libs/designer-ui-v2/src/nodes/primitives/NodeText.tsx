@@ -15,6 +15,14 @@ const useStyles = makeStyles({
     lineHeight: tokens.lineHeightBase300,
     color: tokens.colorNeutralForeground1,
   },
+  // Opt-in two-line clamp; hosts size the card for the same line count so layout and DOM agree.
+  titleTwoLines: {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 2,
+    whiteSpace: 'normal',
+    overflowWrap: 'anywhere',
+  },
   subtitle: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -29,14 +37,19 @@ const useStyles = makeStyles({
 export interface NodeTextProps extends HTMLAttributes<HTMLSpanElement> {
   title: string;
   subtitle?: string;
+  /** Maximum title lines; defaults to a single ellipsized line. */
+  titleLines?: 1 | 2;
 }
 export const NodeHoverCardActiveContext = createContext(false);
-export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function NodeText({ title, subtitle, className, ...rest }, ref) {
+export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function NodeText(
+  { title, subtitle, titleLines = 1, className, ...rest },
+  ref
+) {
   const styles = useStyles();
   const hover = useContext(NodeHoverCardActiveContext);
   return (
     <span {...rest} ref={ref} className={mergeClasses(styles.root, className)}>
-      <span className={styles.title} title={hover ? undefined : title}>
+      <span className={mergeClasses(styles.title, titleLines === 2 && styles.titleTwoLines)} title={hover ? undefined : title}>
         {title}
       </span>
       {subtitle ? (

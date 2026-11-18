@@ -14,7 +14,14 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
-import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import {
+  compactNodeMetrics,
+  getCompactNodeHeight,
+  getSwitchNodeSize,
+  nodeMetrics,
+  type CompactTitleLines,
+} from '@microsoft/designer-ui-v2/metrics';
+import { getCompactTitleLines } from '@microsoft/designer-ui-v2';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -66,6 +73,8 @@ export interface NodePresentationContext {
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
   hasToolStatus?: boolean;
+  /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
+  title?: string;
 }
 
 export interface NodePresentation {
@@ -73,7 +82,22 @@ export interface NodePresentation {
   size?: { width: number; height: number };
   family?: 'scope' | 'if' | 'switch' | 'loop' | 'agent' | 'branch' | 'tool' | 'add' | 'frame' | 'placeholder' | 'collapsed';
   toolKind?: NodePresentationContext['toolKind'];
+  /** Standard compact title clamp; the renderer must apply the same count ELK sized for. */
+  titleLines?: CompactTitleLines;
 }
+
+// Single-row action, trigger and scope headers use the Standard compact preset; the title line count is decided
+// once here so ELK geometry and the rendered clamp never disagree.
+/**
+ * Compact scope headers host the collapse chevron in their top-end corner (inside the text column), so the title
+ * column gives up this much width. Layout and the renderer must use the same value or ELK and the clamp disagree.
+ */
+export const SHARED_SCOPE_TITLE_RESERVE = 20;
+
+const getCompactCardPresentation = (title: string | undefined, textEndReserve = 0) => {
+  const titleLines = getCompactTitleLines(title ?? '', textEndReserve);
+  return { titleLines, size: { width: compactNodeMetrics.card.width, height: getCompactNodeHeight(titleLines) } };
+};
 
 /** One admission decision for the renderer AND ELK. Raw identity is resolved by the host, never from a caption. */
 export const getNodePresentation = (
@@ -98,7 +122,7 @@ export const getNodePresentation = (
         size: toolSize,
       };
     }
-    return { shared: true, size: nodeMetrics.cards.action };
+    return { shared: true, ...getCompactCardPresentation(context.title) };
   }
   const { operationType, subgraphType } = context;
   if (type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE) {
@@ -124,7 +148,7 @@ export const getNodePresentation = (
           },
         };
       case 'scope':
-        return { shared: true, family: 'scope', size: nodeMetrics.cards.action };
+        return { shared: true, family: 'scope', ...getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE) };
       default:
         return { shared: false };
     }
@@ -154,7 +178,7 @@ export const getNodePresentation = (
     return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
   }
   if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
-    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
+    return { shared: true, family: 'collapsed', size: { width: compactNodeMetrics.card.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
   }
   // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
   return { shared: false };
