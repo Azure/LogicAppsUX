@@ -10,12 +10,8 @@ export async function readLspAssetsManifest(assetDirectory: string): Promise<Lsp
   if (
     !manifest.serverArchive ||
     path.basename(manifest.serverArchive) !== manifest.serverArchive ||
-    !manifest.sdkPackage ||
-    path.basename(manifest.sdkPackage) !== manifest.sdkPackage ||
     !manifest.serverSha256 ||
-    !hashPattern.test(manifest.serverSha256) ||
-    !manifest.sdkSha256 ||
-    !hashPattern.test(manifest.sdkSha256)
+    !hashPattern.test(manifest.serverSha256)
   ) {
     throw new Error(`Logic Apps language server asset manifest '${manifestPath}' is invalid.`);
   }

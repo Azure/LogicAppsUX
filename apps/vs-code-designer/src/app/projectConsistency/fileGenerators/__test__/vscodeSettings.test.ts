@@ -51,7 +51,7 @@ describe('generateSettingsJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: TargetFramework.Net8,
+        targetFramework: TargetFramework.Net10,
       };
       const result = generateSettingsJson(config);
 

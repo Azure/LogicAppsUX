@@ -142,18 +142,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
     });
   });
 
-  describe('nuget template content', () => {
-    it('should use a project-local package cache for the codeful SDK package', () => {
-      const templateContent = actualFs.readFileSync(
-        new URL('../../../../../assets/CodefulProjectTemplate/nuget', import.meta.url),
-        'utf-8'
-      );
-
-      expect(templateContent).toContain('<add key="globalPackagesFolder" value=".nuget\\packages" />');
-      expect(templateContent).toContain('<add key="current" value=<%= lspDirectory %> />');
-    });
-  });
-
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
@@ -188,7 +176,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('ProgramFile')) {
           return Promise.resolve(programTemplate);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -235,7 +223,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('ProgramFile')) {
           return Promise.resolve(programTemplate);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -275,7 +263,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('ProgramFile')) {
           return Promise.resolve(programTemplate);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -340,7 +328,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('ProgramFile')) {
           return Promise.resolve(programTemplate);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -356,8 +344,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       if (createAgentCodefulWorkflowFile) {
         await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
 
-        // Verify all 4 files were created for first workflow
-        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(4);
+        // Verify all 3 files were created for first workflow
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(3);
 
         const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
 
@@ -369,9 +357,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
         // Verify .csproj was created
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining(`${testProjectName}.csproj`)]));
-
-        // Verify nuget.config was created
-        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
 
         // Verify workflow file has correct namespace
         const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
@@ -402,7 +387,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('Program.cs')) {
           return Promise.resolve(existingProgramContent);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -430,7 +415,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }
     });
 
-    it('should NOT create .csproj or nuget.config when adding second workflow', async () => {
+    it('should NOT create .csproj when adding second workflow', async () => {
       const agentCodefulTemplate = 'public static class <%= flowNameClass %> { }';
       const existingProgramContent = `class Program {
         // Build all workflows
@@ -464,9 +449,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('SecondWorkflow.cs')]));
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('Program.cs')]));
 
-        // Verify .csproj and nuget.config were NOT written
+        // Verify .csproj was NOT written
         expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('.csproj')]));
-        expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
       }
     });
 
@@ -481,7 +465,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         if (filePath.includes('ProgramFile')) {
           return Promise.resolve(programTemplate);
         }
-        if (filePath.includes('CodefulProj') || filePath.includes('nuget')) {
+        if (filePath.includes('CodefulProj')) {
           return Promise.resolve('mock content');
         }
         return Promise.reject(new Error('Unexpected file read'));
@@ -511,11 +495,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }
     });
 
-    it('should create .csproj and nuget.config files', async () => {
+    it('should create the .csproj file', async () => {
       const agentCodefulTemplate = 'public static class <%= flowName %> { }';
       const programTemplate = 'class Program { }';
       const projTemplate = '<Project>test proj</Project>';
-      const nugetTemplate = '<configuration><%= lspDirectory %></configuration>';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('AgentCodefulWorkflow')) {
@@ -526,9 +509,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         }
         if (filePath.includes('CodefulProj')) {
           return Promise.resolve(projTemplate);
-        }
-        if (filePath.includes('nuget')) {
-          return Promise.resolve(nugetTemplate);
         }
         return Promise.reject(new Error('Unexpected file read'));
       });
@@ -546,11 +526,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
           expect.stringContaining(`${testProjectName}.csproj`),
           expect.stringContaining('test proj')
         );
-
-        // Verify nuget.config was created
-        const nugetCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('nuget.config'));
-        expect(nugetCall).toBeDefined();
-        expect(nugetCall[0]).toContain('nuget.config');
       }
     });
   });

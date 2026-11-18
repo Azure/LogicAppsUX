@@ -20,7 +20,7 @@ import { hasCodefulSdkReference } from './codeful';
  * A Logic Apps project is identified by a workflow signal — either of:
  *   - a codeless `workflow.json` one level down whose `definition.$schema` is a
  *     `Microsoft.Logic` workflow-definition schema, or
- *   - a codeful project: a .NET 8 `.csproj` at the project root that references the Logic Apps
+ *   - a codeful project: a `.csproj` at the project root that references the Logic Apps
  *     SDK (`Microsoft.Azure.Workflows.Sdk`), detected structurally via {@link hasCodefulSdkReference}.
  *     Detection is based on the project structure, not a fixed file name — the workflow C# file can be
  *     named anything, so a literal `workflow.cs` is not a reliable marker.
@@ -55,7 +55,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   );
   const hasValidCodelessWorkflow = validCodelessWorkflowChecks.some(Boolean);
 
-  // Codeful projects are .NET 8 projects that reference the Logic Apps SDK. Detect them
+  // Codeful projects reference the Logic Apps SDK. Detect them
   // structurally from the .csproj so the workflow C# file can be named anything.
   const hasCodefulProject = await hasCodefulSdkReference(folderPath);
   if (hasCodefulProject) {
@@ -138,7 +138,7 @@ export async function tryGetLogicAppProjectRoot(
 
   const configuredSubpath: string | undefined = getWorkspaceSetting(projectSubpathSetting, workspaceFolder);
   const configuredProjectPath = configuredSubpath ? path.join(folderPath, configuredSubpath) : undefined;
-  if (configuredProjectPath && await isLogicAppProject(configuredProjectPath)) {
+  if (configuredProjectPath && (await isLogicAppProject(configuredProjectPath))) {
     return configuredProjectPath;
   }
 
@@ -154,11 +154,12 @@ export async function tryGetLogicAppProjectRoot(
 
   if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
     return path.join(folderPath, matchingSubpaths[0]);
-  } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
+  }
+  if (matchingSubpaths.length !== 0 && !suppressPrompt) {
     const subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
     return path.join(folderPath, subpath);
   }
-  
+
   return undefined;
 }
 
