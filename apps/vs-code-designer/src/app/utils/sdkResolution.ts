@@ -8,7 +8,7 @@ import { CodefulSdk } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getDotNetCommand } from './dotnet/dotnet';
-import { executeCommand } from './funcCoreTools/cpUtils';
+import { executeCommand, wrapArgInQuotes } from './funcCoreTools/cpUtils';
 
 const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
 
@@ -100,7 +100,14 @@ export async function restoreSdkForProject(projectPath: string): Promise<void> {
     throw new Error(localize('csprojFileNotFound', 'No .csproj file found in "{0}".', projectPath));
   }
 
-  await executeCommand(ext.outputChannel, projectPath, getDotNetCommand(), 'restore', csprojPath, '--interactive');
+  await executeCommand(
+    ext.outputChannel,
+    projectPath,
+    wrapArgInQuotes(getDotNetCommand()),
+    'restore',
+    wrapArgInQuotes(csprojPath),
+    '--interactive'
+  );
 }
 
 async function findCsprojFile(folderPath: string): Promise<string | undefined> {
@@ -117,9 +124,9 @@ async function getResolvedSdkVersion(projectPath: string, csprojPath: string): P
   const output = await executeCommand(
     ext.outputChannel,
     projectPath,
-    getDotNetCommand(),
+    wrapArgInQuotes(getDotNetCommand()),
     'list',
-    csprojPath,
+    wrapArgInQuotes(csprojPath),
     'package',
     '--format',
     'json',
@@ -161,9 +168,9 @@ async function getProjectAssetsFilePath(projectPath: string, csprojPath: string)
   const output = await executeCommand(
     ext.outputChannel,
     projectPath,
-    getDotNetCommand(),
+    wrapArgInQuotes(getDotNetCommand()),
     'msbuild',
-    csprojPath,
+    wrapArgInQuotes(csprojPath),
     '-getProperty:ProjectAssetsFile',
     '-nologo'
   );

@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   pathExists: vi.fn(),
   readJson: vi.fn(),
   readdir: vi.fn(),
+  wrapArgInQuotes: vi.fn(),
 }));
 
 vi.mock('fs-extra', () => ({
@@ -24,6 +25,7 @@ vi.mock('../dotnet/dotnet', () => ({
 
 vi.mock('../funcCoreTools/cpUtils', () => ({
   executeCommand: mocks.executeCommand,
+  wrapArgInQuotes: mocks.wrapArgInQuotes,
 }));
 
 vi.mock('../../../extensionVariables', () => ({
@@ -32,13 +34,17 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-const projectPath = 'D:\\workspace\\MyLogicApp';
+const projectPath = path.resolve('workspace with spaces', 'My Logic App');
 const csprojPath = path.join(projectPath, 'MyLogicApp.csproj');
 const assetsFilePath = path.join(projectPath, 'artifacts', 'obj', 'project.assets.json');
-const packageFolder = 'D:\\shared-packages';
+const packageFolder = path.resolve('shared packages');
+const dotnetCommand = path.resolve('dotnet sdk', process.platform === 'win32' ? 'dotnet.exe' : 'dotnet');
 const sdkVersion = '1.0.0-preview.3';
 const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
 const sdkNupkgPath = path.join(packageFolder, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
+const quote = (value: string): string => `${process.platform === 'win32' ? '"' : "'"}${value}${process.platform === 'win32' ? '"' : "'"}`;
+const quotedCsprojPath = quote(csprojPath);
+const quotedDotnetCommand = quote(dotnetCommand);
 
 function packageListReport(versions: string[] = [sdkVersion]): string {
   return JSON.stringify({
@@ -69,9 +75,10 @@ function setExistingPaths(paths: string[]): void {
 describe('resolveSdkFromProject', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
+    mocks.getDotNetCommand.mockReturnValue(dotnetCommand);
+    mocks.wrapArgInQuotes.mockImplementation(quote);
     mocks.readdir.mockResolvedValue(['MyLogicApp.csproj']);
-    mocks.readJson.mockResolvedValue({ packageFolders: { [`${packageFolder}\\`]: {} } });
+    mocks.readJson.mockResolvedValue({ packageFolders: { [`${packageFolder}${path.sep}`]: {} } });
     mocks.executeCommand.mockImplementation(async (_output, _workingDirectory, _command, ...args: string[]) => {
       if (args[0] === 'list') {
         return packageListReport();
@@ -98,9 +105,9 @@ describe('resolveSdkFromProject', () => {
     expect(mocks.executeCommand).toHaveBeenCalledWith(
       expect.anything(),
       projectPath,
-      'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+      quotedDotnetCommand,
       'list',
-      csprojPath,
+      quotedCsprojPath,
       'package',
       '--format',
       'json',
@@ -116,18 +123,18 @@ describe('resolveSdkFromProject', () => {
     expect(mocks.executeCommand).toHaveBeenCalledWith(
       expect.anything(),
       projectPath,
-      'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+      quotedDotnetCommand,
       'msbuild',
-      csprojPath,
+      quotedCsprojPath,
       '-getProperty:ProjectAssetsFile',
       '-nologo'
     );
   });
 
   it('supports custom NuGet package folders from project.assets.json', async () => {
-    const customFolder = 'E:\\nuget-cache';
+    const customFolder = path.resolve('custom nuget cache');
     const customNupkgPath = path.join(customFolder, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
-    mocks.readJson.mockResolvedValue({ packageFolders: { [`${customFolder}\\`]: {} } });
+    mocks.readJson.mockResolvedValue({ packageFolders: { [`${customFolder}${path.sep}`]: {} } });
     setExistingPaths([assetsFilePath, customNupkgPath]);
 
     await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
@@ -181,7 +188,8 @@ describe('resolveSdkFromProject', () => {
 describe('restoreSdkForProject', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getDotNetCommand.mockReturnValue('dotnet');
+    mocks.getDotNetCommand.mockReturnValue(dotnetCommand);
+    mocks.wrapArgInQuotes.mockImplementation(quote);
     mocks.readdir.mockResolvedValue(['MyLogicApp.csproj']);
     mocks.executeCommand.mockResolvedValue('Restore succeeded');
   });
@@ -189,7 +197,14 @@ describe('restoreSdkForProject', () => {
   it('restores the project interactively from its directory', async () => {
     await restoreSdkForProject(projectPath);
 
-    expect(mocks.executeCommand).toHaveBeenCalledWith(expect.anything(), projectPath, 'dotnet', 'restore', csprojPath, '--interactive');
+    expect(mocks.executeCommand).toHaveBeenCalledWith(
+      expect.anything(),
+      projectPath,
+      quotedDotnetCommand,
+      'restore',
+      quotedCsprojPath,
+      '--interactive'
+    );
   });
 
   it('fails when no project file exists', async () => {
