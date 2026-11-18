@@ -50,7 +50,8 @@ describe('local designer commandbar versions', () => {
     ['v1', PseudoCommandBar, mocks.v1, mocks.v2],
     ['v2', PseudoCommandBarV2, mocks.v2, mocks.v1],
   ] as const)('uses %s history actions and serializer exclusively', async (version, Component, selected, other) => {
-    render(<Component />);
+    const { container } = render(<Component />);
+    expect(container.querySelector('.pseudo-command-bar')?.getAttribute('data-designer-viewport-inset')).toBe('bottom');
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
     fireEvent.click(screen.getByRole('button', { name: 'Redo' }));
     expect(mocks.dispatch).toHaveBeenNthCalledWith(1, { type: `${version}/undo` });

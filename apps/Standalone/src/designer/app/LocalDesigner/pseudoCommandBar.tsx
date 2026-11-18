@@ -26,7 +26,6 @@ const modalStyles: Partial<IModalStyles> = {
 };
 
 interface CommandBarBindings {
-  reserveViewport?: boolean;
   isDarkMode: boolean;
   isDirty: boolean;
   numErrors: number;
@@ -61,7 +60,6 @@ export const PseudoCommandBarV2 = () => {
   const state = useSelector((state: DesignerV2.RootState) => state);
   const dispatch = useDispatch<DesignerV2.AppDispatch>();
   const bindings: CommandBarBindings = {
-    reserveViewport: state.designerOptions.useSharedNodeUi === true,
     isDarkMode: state.designerOptions.isDarkMode ?? false,
     isDirty: DesignerV2.useIsDesignerDirty(),
     numErrors: DesignerV2.useTotalNumErrors(),
@@ -77,7 +75,6 @@ export const PseudoCommandBarV2 = () => {
 };
 
 const CommandBar = ({
-  reserveViewport,
   isDarkMode,
   isDirty,
   numErrors,
@@ -99,7 +96,7 @@ const CommandBar = ({
   const haveErrors = useMemo(() => numErrors > 0, [numErrors]);
 
   return (
-    <div className="pseudo-command-bar" data-designer-viewport-inset={reserveViewport ? 'bottom' : undefined}>
+    <div className="pseudo-command-bar" data-designer-viewport-inset="bottom">
       <ActionButton
         iconProps={{ iconName: 'Save' }}
         text="Save"

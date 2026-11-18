@@ -23,7 +23,7 @@
     "@vitejs/plugin-react": "^4.4.6",
     "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/ui": "^3.2.4",
-    "@xyflow/system": "^0.0.37",
+    "@xyflow/system": "^0.0.69",
     "D": "^1.0.0",
     "archiver": "^7.0.1",
     "child_process": "^1.0.2",
