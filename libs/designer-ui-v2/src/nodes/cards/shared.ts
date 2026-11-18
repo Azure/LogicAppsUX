@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { NodeHandleAxis } from '../primitives/NodeHandle';
 import type { NodeRunStatus } from '../types';
-import type { ActionNodeCardStrings } from '../strings';
+import type { ActionNodeCardStrings, NodeFrameCountLabel } from '../strings';
 
 export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title: string;
@@ -18,6 +18,8 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   strings?: ActionNodeCardStrings;
   handleAxis?: NodeHandleAxis;
   after?: ReactNode;
+  /** Unit-aware count for a collapsed container card; `strings.frame` owns wording and plurals. */
+  countLabel?: NodeFrameCountLabel;
 }
 export const resolveNodeIcons = (
   props: Pick<BaseNodeCardProps, 'icon' | 'selectedIcon'>,

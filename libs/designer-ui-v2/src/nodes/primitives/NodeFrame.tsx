@@ -1,12 +1,14 @@
-import { forwardRef, useContext, useLayoutEffect, useRef } from 'react';
+import { forwardRef, useContext, useId, useLayoutEffect, useRef } from 'react';
 import type { FocusEventHandler, ForwardedRef, HTMLAttributes, MutableRefObject, ReactNode } from 'react';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { ArrowRepeatAllRegular, ArrowTurnRightRegular, BoxMultipleRegular } from '@fluentui/react-icons';
 import { designerUiTokens } from '../../theme/tokens';
 import { nodeMetrics } from '../metrics';
+import { verticalBadgeLeft } from './badgePlacement';
 import type { NodeRunStatus, NodeHandleVariant } from '../types';
-import type { ActionNodeCardStrings, NodeFrameCountUnit, NodeFrameStrings } from '../strings';
-import { defaultNodeFrameCountStrings, defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
+import type { ActionNodeCardStrings, NodeFrameCountLabel, NodeFrameStrings } from '../strings';
+import { defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
+import { formatNodeFrameCount } from '../countLabel';
 import { useCollapseReveal } from './collapseReveal';
 import { NodeStatusBadge } from './NodeStatusBadge';
 import { NodeHandle, NodeInactiveContext } from './NodeHandle';
@@ -107,7 +109,8 @@ const useStyles = makeStyles({
   inputHandleVertical: { position: 'absolute', top: `${nodeMetrics.handle.edgeOffset}px`, left: '50%', transform: 'translateX(-50%)' },
   outputHandleVertical: { position: 'absolute', bottom: `${nodeMetrics.handle.edgeOffset}px`, left: '50%', transform: 'translateX(-50%)' },
   badge: { position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1 },
-  badgeVertical: { left: 'auto', right: tokens.spacingHorizontalL, transform: 'translateY(-50%)' },
+  // Same handle clearance as NodeCard: the frame's input handle is top-centred on the vertical axis.
+  badgeVertical: { left: verticalBadgeLeft, transform: 'translateY(-50%)', whiteSpace: 'nowrap' },
   focus: { ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' } },
   inactive: { opacity: nodeMetrics.inactiveOpacity },
 });
@@ -179,20 +182,6 @@ export interface NodeFrameProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ti
   motion?: 'none' | 'reveal';
   strings?: ActionNodeCardStrings & { frame?: NodeFrameStrings };
 }
-
-export interface NodeFrameCountLabel {
-  count: number;
-  unit: NodeFrameCountUnit;
-}
-
-/**
- * Resolves the inline count text. Unit formatters come first; for `actions`, a host's legacy `actionCount`
- * formatter is honored before English defaults so dictionaries localized before `counts` existed keep their wording.
- */
-const formatFrameCount = (frameStrings: NodeFrameStrings, { count, unit }: NodeFrameCountLabel): string => {
-  const formatter = frameStrings.counts?.[unit] ?? (unit === 'actions' ? frameStrings.actionCount : defaultNodeFrameCountStrings[unit]);
-  return formatter(count);
-};
 
 /** Canonical translucent scope/loop/branch frame; host computes bounds and topology. */
 export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function NodeFrame(
@@ -307,10 +296,14 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
   const frameStrings = strings.frame ?? defaultNodeFrameStrings;
   const actionCountLabel =
     countLabel !== undefined
-      ? formatFrameCount(frameStrings, countLabel)
+      ? formatNodeFrameCount(frameStrings, countLabel)
       : actionCount === undefined
         ? undefined
         : frameStrings.actionCount(actionCount);
+  const countId = useId();
+  // Hosts usually aria-label the frame, which would hide the visible count from assistive tech; describe it instead.
+  const describedBy =
+    actionCountLabel === undefined ? rest['aria-describedby'] : [rest['aria-describedby'], countId].filter(Boolean).join(' ');
   const reveal = useCollapseReveal({
     enabled: motion === 'reveal',
     expanded: !collapsed,
@@ -370,7 +363,9 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
         <span className={styles.actionCountDot} aria-hidden="true">
           ·
         </span>
-        <span className={styles.actionCount}>{actionCountLabel}</span>
+        <span id={countId} className={styles.actionCount}>
+          {actionCountLabel}
+        </span>
       </span>
     );
 
@@ -389,6 +384,7 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
   return (
     <div
       {...rest}
+      aria-describedby={describedBy}
       ref={(node) => {
         rootRef.current = node;
         setForwardedRef(ref, node);

@@ -8,6 +8,7 @@ import { defaultNodeStrings } from '../strings';
 import type { NodeHandleVariant } from '../types';
 import { categoryNodeIcons } from './categoryIcons';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 
 export interface ActionNodeCardProps extends BaseNodeCardProps {
@@ -21,6 +22,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
   {
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -34,9 +36,11 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
   ref
 ) {
   const testData = status === 'mock';
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width="standard"
       selected={selected}
@@ -53,7 +57,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
-        <NodeText title={title} subtitle={subtitle} />
+        <NodeText title={title} subtitle={subtitle} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

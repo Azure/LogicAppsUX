@@ -16,6 +16,7 @@ import { defaultNodeStrings } from '../strings';
 import { getSwitchNodeSize, nodeMetrics } from '../metrics';
 import { categoryNodeIcons } from './categoryIcons';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 const IF_BRANCHES = ['true', 'false'] as const;
 const ICONS = {
@@ -123,6 +124,7 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
     kind,
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -161,9 +163,11 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
     hasAction && testData
       ? ({ [nodeCardVars.textEndReserve]: `max(${tokens.spacingHorizontalXL}, ${nodeMetrics.testData.textReserve}px)` } as CSSProperties)
       : undefined;
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width="compact"
       size={kind === 'switch' && axis !== 'vertical' && !trunkMode ? 'switch' : 'medium'}
@@ -185,7 +189,7 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
-        <NodeText title={title} subtitle={subtitle ?? strings.condition[kind]} />
+        <NodeText title={title} subtitle={subtitle ?? strings.condition[kind]} {...nodeCount.textProps} />
         {handles ? (
           kind === 'if' ? (
             <NodeBranchOutputs

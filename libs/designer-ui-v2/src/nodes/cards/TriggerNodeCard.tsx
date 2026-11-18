@@ -8,7 +8,7 @@ import { defaultNodeStrings } from '../strings';
 import { categoryNodeIcons } from './categoryIcons';
 import { resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps } from './shared';
-export interface TriggerNodeCardProps extends BaseNodeCardProps {
+export interface TriggerNodeCardProps extends Omit<BaseNodeCardProps, 'countLabel'> {
   handles?: boolean;
 }
 const OUTPUTS = ['neutral'] as const;
