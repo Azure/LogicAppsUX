@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-
-/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { getLegacyConnectionReferenceKey } from '../../actions/bjsworkflow/connections';
