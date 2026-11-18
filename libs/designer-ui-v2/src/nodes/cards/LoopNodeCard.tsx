@@ -42,6 +42,8 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -83,6 +85,8 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
           category="control"
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, DEFAULT_ICONS)}
         />
         <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} />

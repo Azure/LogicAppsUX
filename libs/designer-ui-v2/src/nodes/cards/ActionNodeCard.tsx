@@ -23,6 +23,8 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -51,6 +53,8 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
           category="action"
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
         <NodeText title={title} subtitle={subtitle} />

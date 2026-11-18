@@ -114,7 +114,7 @@ function DashedOutline() {
 
 export type PlaceholderTriggerCardProps = Omit<
   BaseNodeCardProps,
-  'title' | 'subtitle' | 'icon' | 'selectedIcon' | 'status' | 'statusDetail' | 'strings'
+  'title' | 'subtitle' | 'icon' | 'selectedIcon' | 'iconTone' | 'iconArtwork' | 'status' | 'statusDetail' | 'strings'
 > & {
   title?: string;
   strings?: PlaceholderTriggerStrings;

@@ -13,7 +13,20 @@ export interface TriggerNodeCardProps extends BaseNodeCardProps {
 }
 const OUTPUTS = ['neutral'] as const;
 export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(function TriggerNodeCard(
-  { title, subtitle, icon, selectedIcon, selected, status, statusDetail, strings = defaultNodeStrings, handles = true, ...rest },
+  {
+    title,
+    subtitle,
+    icon,
+    selectedIcon,
+    iconTone,
+    iconArtwork,
+    selected,
+    status,
+    statusDetail,
+    strings = defaultNodeStrings,
+    handles = true,
+    ...rest
+  },
   ref
 ) {
   // Triggers consume saved sample *input*; they never substitute output, so `mock` is forwarded for status-union
@@ -31,7 +44,13 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
       data-node-card="trigger"
     >
       <NodeCardBody>
-        <NodeIconTile category="trigger" selected={selected} {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)} />
+        <NodeIconTile
+          category="trigger"
+          selected={selected}
+          tone={iconTone}
+          artwork={iconArtwork}
+          {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)}
+        />
         <NodeText title={title} subtitle={subtitle} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>

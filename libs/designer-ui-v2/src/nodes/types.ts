@@ -8,6 +8,11 @@ export type NodeToolItemSize = 'medium' | 'small';
 export type NodeToolKind = 'action' | 'mcp' | 'subWorkflow';
 export type NodeLineVariant = 'solid' | 'solidSuccess' | 'solidDanger' | 'dashedNeutral' | 'dashedSuccess' | 'dashedDanger';
 export type ConditionNodeKind = 'if' | 'switch';
+/**
+ * Opt-in family color for a host-chosen fallback glyph. Omitted tones keep the category color, so existing
+ * consumers render unchanged; `neutral` marks an identity the host could not resolve.
+ */
+export type NodeIconTone = 'teal' | 'green' | 'purple' | 'violet' | 'red' | 'blue' | 'pink' | 'neutral';
 
 /** Visual groups only. Hosts normalize their own operation vocabulary before selecting a glyph. */
 export type NodeVisualKind =

@@ -125,6 +125,8 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -183,6 +185,8 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
           category="control"
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
         <NodeText title={title} subtitle={subtitle ?? strings.condition[kind]} />
