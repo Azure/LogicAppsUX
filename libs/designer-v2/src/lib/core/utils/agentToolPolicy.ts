@@ -174,7 +174,6 @@ export const AgentToolPolicyRuleId = {
   TOOL_GRAPH_CYCLE_DETECTED: 'tool-graph-cycle-detected',
   TOOL_HANDOFF_MULTIPLE_NOT_ALLOWED: 'tool-handoff-multiple-not-allowed',
   TOOL_HANDOFF_MUST_BE_TERMINAL: 'tool-handoff-must-be-terminal',
-  TOOL_HANDOFF_NOT_ALLOWED_FOR_WORKFLOW_KIND: 'tool-handoff-not-allowed-for-workflow-kind',
   TOOL_PARAMETER_SCHEMA_ROOT_OBJECT_REQUIRED: 'tool-parameter-schema-root-object-required',
   TOOL_PARAMETER_SCHEMA_PATTERN_NOT_ALLOWED: 'tool-parameter-schema-pattern-not-allowed',
   TOOL_PARAMETER_SCHEMA_PROPERTY_NULL: 'tool-parameter-schema-property-null',
@@ -248,7 +247,8 @@ export const validateAgentToolPolicy = (input: AgentToolPolicyValidationInput): 
       if (isAgentWorkflow) {
         validateMcpTool(toolName, tool, addViolation);
 
-        if (Object.keys(tool.actions ?? {}).length > 0) {
+        const mcpActions = (tool as unknown as { actions?: Record<string, unknown> }).actions;
+        if (mcpActions && Object.keys(mcpActions).length > 0) {
           addViolation({
             ruleId: AgentToolPolicyRuleId.MCP_TOOL_ACTIONS_NOT_ALLOWED,
             message: `McpClientTool '${toolName}' cannot define actions.`,
@@ -361,10 +361,10 @@ const validateToolName = (toolName: string, addViolation: (violation: AgentToolP
 
 const validateToolDescription = (
   toolName: string,
-  tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient,
+  tool: LogicAppsV2.AgentCondition,
   addViolation: (violation: AgentToolPolicyViolation) => void
 ): void => {
-  const description = (tool as LogicAppsV2.AgentCondition).description;
+  const description = tool.description;
   if (!description || description.length === 0) {
     addViolation({
       ruleId: AgentToolPolicyRuleId.TOOL_DESCRIPTION_REQUIRED,
@@ -785,7 +785,7 @@ const normalizeActionType = (actionType: string | undefined): string | undefined
   return [...AGENT_TOOL_SUPPORTED_ACTION_TYPES].find((supportedType) => supportedType.toLowerCase() === value.toLowerCase());
 };
 
-const isMcpClientTool = (tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): boolean => {
+const isMcpClientTool = (tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): tool is LogicAppsV2.McpClient => {
   return typeof tool.type === 'string' && tool.type.trim().toLowerCase() === 'mcpclienttool';
 };
 
@@ -932,7 +932,7 @@ const containsRegexSchemaKeyword = (node: unknown, parentIsSchemaMap = false): b
 
 const validateMcpTool = (
   toolName: string,
-  tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient,
+  tool: LogicAppsV2.McpClient,
   addViolation: (violation: AgentToolPolicyViolation) => void
 ): void => {
   const rawKind = typeof tool.kind === 'string' ? tool.kind.trim() : '';

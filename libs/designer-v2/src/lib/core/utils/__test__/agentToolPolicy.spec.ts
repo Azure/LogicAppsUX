@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   AGENT_TOOL_POLICY_MAX_TOOLS_LIMIT,
@@ -27,7 +28,13 @@ type FixtureCorpus = {
 };
 
 const fixtureCorpus = JSON.parse(
-  readFileSync(new URL('./fixtures/agent-tool-policy.v1.runtime-3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9.json', import.meta.url), 'utf-8')
+  readFileSync(
+    resolve(
+      process.cwd(),
+      'src/lib/core/utils/__test__/fixtures/agent-tool-policy.v1.runtime-3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9.json'
+    ),
+    'utf-8'
+  )
 ) as FixtureCorpus;
 
 describe('agentToolPolicy fixtures', () => {
@@ -836,7 +843,7 @@ describe('agentToolPolicy additional rule checks', () => {
     });
 
     expect(
-      result.violations.some((candidate) => candidate.ruleId === AgentToolPolicyRuleId.TOOL_HANDOFF_NOT_ALLOWED_FOR_WORKFLOW_KIND)
+      result.violations.some((candidate) => candidate.ruleId === AgentToolPolicyRuleId.ACTION_TYPE_NOT_ALLOWED_FOR_WORKFLOW_KIND)
     ).toBe(false);
   });
 
