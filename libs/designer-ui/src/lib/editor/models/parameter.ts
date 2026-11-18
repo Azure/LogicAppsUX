@@ -27,6 +27,7 @@ export interface ParameterInfo {
   editor?: string;
   editorOptions?: Record<string, any>;
   editorViewModel?: any;
+  helpText?: string;
   info: ParameterDetails;
   hideInUI?: boolean;
   id: string;

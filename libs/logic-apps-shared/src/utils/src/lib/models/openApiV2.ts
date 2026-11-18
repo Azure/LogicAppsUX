@@ -189,6 +189,8 @@ export interface DefinitionsObject {
 
 export interface SchemaObject extends IJsonSchema {
   [index: string]: any;
+  /** Optional help displayed beside the parameter label, independently of its placeholder. */
+  'x-ms-help-text'?: string;
   discriminator?: string;
   readOnly?: boolean;
   xml?: XMLObject;

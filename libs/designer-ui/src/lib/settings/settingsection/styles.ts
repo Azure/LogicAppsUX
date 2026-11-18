@@ -1,6 +1,11 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useSettingTokenStyles = makeStyles({
+  labelWithHelp: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalXS,
+  },
   subComponentContainer: {
     position: 'relative',
   },
