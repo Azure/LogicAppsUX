@@ -480,6 +480,89 @@ describe('NodeFrame branch presentation', () => {
     expect(screen.queryByText('Actions: 0')).toBeNull();
   });
 
+  it.each([
+    ['actions', 0, '0 actions'],
+    ['actions', 1, '1 action'],
+    ['cases', 1, '1 case'],
+    ['cases', 4, '4 cases'],
+    ['tools', 1, '1 tool'],
+    ['tools', 2, '2 tools'],
+    ['hiddenItems', 1, '1 hidden item'],
+    ['hiddenItems', 5, '5 hidden items'],
+  ] as const)('formats countLabel %s=%i as "%s" with the default dictionary', (unit, count, label) => {
+    render(
+      <ui.NodeFrame kind="scope" title="Scope" countLabel={{ count, unit }}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  it('prefers countLabel over actionCount and falls back to actionCount unchanged', () => {
+    const { rerender } = render(
+      <ui.NodeFrame kind="scope" title="Switch" actionCount={7} countLabel={{ count: 3, unit: 'cases' }}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('3 cases')).toBeInTheDocument();
+    expect(screen.queryByText('7 actions')).toBeNull();
+    rerender(
+      <ui.NodeFrame kind="scope" title="Switch" actionCount={7}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('7 actions')).toBeInTheDocument();
+  });
+
+  it('localizes countLabel through custom unit strings and legacy actionCount-only dictionaries', () => {
+    const localized = {
+      ...ui.defaultNodeStrings,
+      frame: {
+        actionCount: (count: number) => `${count} Aktionen`,
+        counts: { tools: (count: number) => (count === 1 ? '1 Werkzeug' : `${count} Werkzeuge`) },
+      },
+    };
+    const { rerender } = render(
+      <ui.NodeFrame kind="scope" title="Agent" countLabel={{ count: 2, unit: 'tools' }} strings={localized}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('2 Werkzeuge')).toBeInTheDocument();
+    // A dictionary without an `actions` unit still owns action wording through its legacy formatter.
+    rerender(
+      <ui.NodeFrame kind="scope" title="Scope" countLabel={{ count: 2, unit: 'actions' }} strings={localized}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('2 Aktionen')).toBeInTheDocument();
+    // Units the dictionary does not cover fall back to the English defaults instead of rendering nothing.
+    rerender(
+      <ui.NodeFrame kind="scope" title="Switch" countLabel={{ count: 1, unit: 'cases' }} strings={localized}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('1 case')).toBeInTheDocument();
+  });
+
+  it('keeps the ref and header slots while rendering countLabel', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <ui.NodeFrame
+        ref={ref}
+        kind="scope"
+        title="Scope"
+        countLabel={{ count: 1, unit: 'hiddenItems' }}
+        action={<button type="button">Collapse</button>}
+        data-testid="counted-frame"
+      >
+        Body
+      </ui.NodeFrame>
+    );
+    expect(ref.current).toBe(screen.getByTestId('counted-frame'));
+    expect(screen.getByText('1 hidden item')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Collapse' })).toBeInTheDocument();
+  });
+
   it('hides only the input handle when showInputHandle is false', () => {
     const { container } = render(
       <ui.NodeFrame
@@ -548,6 +631,38 @@ describe('NodeLine branch variants', () => {
     expect(svg.querySelector('path')).toHaveAttribute('d', `${orientation === 'vertical' ? 'M10 0 V37' : 'M0 10 H37'} ${arrow}`);
     expect(svg).toHaveAttribute('width', orientation === 'vertical' ? '20' : '37');
     expect(svg).toHaveAttribute('height', orientation === 'vertical' ? '37' : '20');
+  });
+
+  it.each(axes)('draws a bare solid continuity stroke on the %s axis when arrow is false', (orientation) => {
+    const ref = createRef<SVGSVGElement>();
+    render(<ui.NodeLine ref={ref} orientation={orientation} length={40} arrow={false} data-testid="bare-line" />);
+    const svg = screen.getByTestId('bare-line');
+    expect(ref.current).toBe(svg);
+    expect(svg.querySelector('path')).toHaveAttribute('d', orientation === 'vertical' ? 'M10 0 V40' : 'M0 10 H40');
+    expect(svg).toHaveAttribute('data-line', 'solid');
+    expect(svg).toHaveAttribute('data-arrow', 'false');
+  });
+
+  it('keeps the arrow by default and when arrow is true', () => {
+    const arrow = ui.getNodeLineArrowPath(40, 10, 'right');
+    const { rerender } = render(<ui.NodeLine length={40} data-testid="line" />);
+    expect(screen.getByTestId('line').querySelector('path')).toHaveAttribute('d', `M0 10 H40 ${arrow}`);
+    expect(screen.getByTestId('line')).not.toHaveAttribute('data-arrow');
+    rerender(<ui.NodeLine length={40} arrow data-testid="line" />);
+    expect(screen.getByTestId('line').querySelector('path')).toHaveAttribute('d', `M0 10 H40 ${arrow}`);
+  });
+
+  it('keeps run-state emphasis on an arrowless line', () => {
+    render(<ui.NodeLine length={40} arrow={false} state="highlighted" data-testid="bare-highlight" />);
+    const svg = screen.getByTestId('bare-highlight');
+    expect(svg).toHaveAttribute('data-state', 'highlighted');
+    expect(svg.querySelector('path')).toHaveAttribute('d', 'M0 10 H40');
+  });
+
+  it('does not mark non-solid variants arrowless since they never draw arrows', () => {
+    render(<ui.NodeLine variant="dashedNeutral" length={40} arrow={false} data-testid="dashed-bare" />);
+    expect(screen.getByTestId('dashed-bare')).not.toHaveAttribute('data-arrow');
+    expect(screen.getByTestId('dashed-bare').querySelector('path')).toHaveAttribute('d', 'M0 10 H40');
   });
 
   it.each(
