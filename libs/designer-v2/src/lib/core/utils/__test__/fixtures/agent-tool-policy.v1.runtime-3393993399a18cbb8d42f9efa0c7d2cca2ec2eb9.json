@@ -1,0 +1,374 @@
+{
+  "fixtureVersion": "1.0.0",
+  "runtimeProvenance": {
+    "repo": "project-otto",
+    "commit": "3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9",
+    "sources": [
+      "TemplateValidationEngine.cs:40",
+      "TemplateValidationEngine.cs:45-100",
+      "TemplateValidationEngine.cs:1211-1360",
+      "FlowTemplateValidation.cs:387-390",
+      "FlowTemplateValidation.cs:3039-3044",
+      "FlowTemplateValidation.cs:1588-1643"
+    ]
+  },
+  "cases": [
+    {
+      "id": "legal-shuffled-a-b-c-chain",
+      "workflowKind": "agent",
+      "tools": {
+        "LinearTool": {
+          "description": "A valid linear chain in shuffled declaration order.",
+          "actions": {
+            "StepC": {
+              "type": "Compose",
+              "runAfter": {
+                "StepB": ["Succeeded"]
+              }
+            },
+            "StepA": {
+              "type": "Compose",
+              "runAfter": {}
+            },
+            "StepB": {
+              "type": "Compose",
+              "runAfter": {
+                "StepA": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": true,
+      "expectedRuleIds": []
+    },
+    {
+      "id": "fork-shared-predecessor",
+      "workflowKind": "agent",
+      "tools": {
+        "ForkTool": {
+          "description": "Two actions branch from the same predecessor.",
+          "actions": {
+            "Start": {
+              "type": "Compose",
+              "runAfter": {}
+            },
+            "BranchA": {
+              "type": "Compose",
+              "runAfter": {
+                "Start": ["Succeeded"]
+              }
+            },
+            "BranchB": {
+              "type": "Compose",
+              "runAfter": {
+                "Start": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-shared-predecessor-not-allowed"]
+    },
+    {
+      "id": "join-multiple-predecessors",
+      "workflowKind": "agent",
+      "tools": {
+        "JoinTool": {
+          "description": "A join action depends on two predecessors.",
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            },
+            "B": {
+              "type": "Compose",
+              "runAfter": {
+                "A": ["Succeeded"]
+              }
+            },
+            "C": {
+              "type": "Compose",
+              "runAfter": {
+                "A": ["Succeeded"]
+              }
+            },
+            "Join": {
+              "type": "Compose",
+              "runAfter": {
+                "B": ["Succeeded"],
+                "C": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-multiple-predecessors-not-allowed"]
+    },
+    {
+      "id": "disconnected-multiple-starts",
+      "workflowKind": "agent",
+      "tools": {
+        "DisconnectedTool": {
+          "description": "Two independent starts are disconnected.",
+          "actions": {
+            "StartA": {
+              "type": "Compose",
+              "runAfter": {}
+            },
+            "NextA": {
+              "type": "Compose",
+              "runAfter": {
+                "StartA": ["Succeeded"]
+              }
+            },
+            "StartB": {
+              "type": "Compose",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-start-node-count-invalid", "tool-graph-disconnected"]
+    },
+    {
+      "id": "cycle",
+      "workflowKind": "agent",
+      "tools": {
+        "CycleTool": {
+          "description": "Two actions create a cycle.",
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {
+                "B": ["Succeeded"]
+              }
+            },
+            "B": {
+              "type": "Compose",
+              "runAfter": {
+                "A": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-graph-cycle-detected"]
+    },
+    {
+      "id": "unsupported-action-type-if",
+      "workflowKind": "agent",
+      "tools": {
+        "UnsupportedTypeTool": {
+          "description": "If is not supported inside a tool.",
+          "actions": {
+            "A": {
+              "type": "If",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["action-type-not-supported"]
+    },
+    {
+      "id": "non-succeeded-runafter-status",
+      "workflowKind": "agent",
+      "tools": {
+        "StatusTool": {
+          "description": "Only Succeeded is allowed in runAfter.",
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            },
+            "B": {
+              "type": "Compose",
+              "runAfter": {
+                "A": ["Failed"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-run-after-status-not-supported"]
+    },
+    {
+      "id": "invalid-name-with-dash",
+      "workflowKind": "agent",
+      "tools": {
+        "bad-tool": {
+          "description": "Dash is forbidden by runtime tool-name validation.",
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-name-invalid-characters"]
+    },
+    {
+      "id": "empty-action-tool-invalid",
+      "workflowKind": "agent",
+      "tools": {
+        "EmptyActionTool": {
+          "description": "Action tools require at least one action.",
+          "actions": {}
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-actions-required"]
+    },
+    {
+      "id": "mcp-tool-without-actions-valid",
+      "workflowKind": "agent",
+      "tools": {
+        "McpTool": {
+          "type": "McpClientTool",
+          "kind": "Managed",
+          "inputs": {
+            "connectionReference": {
+              "connectionName": "mcpConnection"
+            },
+            "parameters": {
+              "mcpServerPath": "/servers/filesystem"
+            }
+          }
+        }
+      },
+      "expectedValid": true,
+      "expectedRuleIds": []
+    },
+    {
+      "id": "mcp-tool-with-actions-invalid",
+      "workflowKind": "agent",
+      "tools": {
+        "McpToolWithActions": {
+          "type": "McpClientTool",
+          "kind": "Managed",
+          "description": "MCP tool cannot define actions.",
+          "inputs": {
+            "connectionReference": {
+              "connectionName": "mcpConnection"
+            },
+            "parameters": {
+              "mcpServerPath": "/servers/filesystem"
+            }
+          },
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["mcp-tool-actions-not-allowed"]
+    },
+    {
+      "id": "handoff-not-terminal",
+      "workflowKind": "agent",
+      "tools": {
+        "HandoffTool": {
+          "description": "No action can run after AgentHandOff.",
+          "actions": {
+            "Transfer": {
+              "type": "AgentHandOff",
+              "runAfter": {}
+            },
+            "AfterTransfer": {
+              "type": "Compose",
+              "runAfter": {
+                "Transfer": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-handoff-must-be-terminal"]
+    },
+    {
+      "id": "multiple-handoff-actions",
+      "workflowKind": "agent",
+      "tools": {
+        "MultipleHandoffTool": {
+          "description": "A tool can contain at most one AgentHandOff.",
+          "actions": {
+            "TransferA": {
+              "type": "AgentHandOff",
+              "runAfter": {}
+            },
+            "TransferB": {
+              "type": "AgentHandOff",
+              "runAfter": {
+                "TransferA": ["Succeeded"]
+              }
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-handoff-multiple-not-allowed"]
+    },
+    {
+      "id": "parameter-schema-pattern-not-allowed",
+      "workflowKind": "agent",
+      "tools": {
+        "SchemaPatternTool": {
+          "description": "Pattern keyword is forbidden in agent parameter schema.",
+          "agentParameterSchema": {
+            "type": "object",
+            "properties": {
+              "ticketId": {
+                "type": "string",
+                "pattern": "^[A-Z]+-[0-9]+$"
+              }
+            }
+          },
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-parameter-schema-pattern-not-allowed"]
+    },
+    {
+      "id": "parameter-schema-root-must-be-object",
+      "workflowKind": "agent",
+      "tools": {
+        "SchemaRootTool": {
+          "description": "Schema root type must be object.",
+          "agentParameterSchema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "actions": {
+            "A": {
+              "type": "Compose",
+              "runAfter": {}
+            }
+          }
+        }
+      },
+      "expectedValid": false,
+      "expectedRuleIds": ["tool-parameter-schema-root-object-required"]
+    }
+  ]
+}

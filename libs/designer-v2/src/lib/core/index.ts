@@ -102,6 +102,15 @@ export { updateParameterValidation } from './state/operation/operationMetadataSl
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
 export { convertVariableTypeToSwaggerType } from './utils/variables';
 export {
+  validateAgentToolPolicy,
+  AgentToolPolicyRuleId,
+  AGENT_TOOL_POLICY_MAX_TOOLS_LIMIT,
+  AGENT_TOOL_POLICY_TOOL_NAME_MAX_LENGTH,
+  AGENT_TOOL_POLICY_TOOL_DESCRIPTION_MAX_LENGTH,
+  AGENT_TOOL_POLICY_RUNTIME_PROVENANCE,
+} from './utils/agentToolPolicy';
+export type { AgentToolPolicyValidationInput, AgentToolPolicyResult, AgentToolPolicyViolation } from './utils/agentToolPolicy';
+export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
 } from './utils/card';
