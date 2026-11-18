@@ -3,6 +3,7 @@ import {
   joinNodeSubtitle,
   type ActionNodeCardStrings,
   type NodeRunStatus,
+  type NodeFrameStrings,
   type NodeStatusStrings,
   type ToolItemCardProps,
 } from '@microsoft/designer-ui-v2';
@@ -50,8 +51,58 @@ export function getOperationNodeDetail(intl: IntlShape, type: string, kind: stri
   return builtIn ? (message ? intl.formatMessage(message) : detail) : (connectorName ?? type);
 }
 
+/**
+ * Unit-aware counts for collapsed container cards. Reuses the legacy collapsed-scope message IDs so the shared
+ * path shows the same localized wording the host `<p>` used to render below the card.
+ */
+export function mapNodeFrameStrings(intl: IntlShape): NodeFrameStrings {
+  const actions = (actionCount: number) =>
+    intl.formatMessage(
+      {
+        defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+        id: 'B/JzwK',
+        description: 'This is the number of actions to be completed in a group',
+      },
+      { actionCount }
+    );
+  return {
+    actionCount: actions,
+    counts: {
+      actions,
+      cases: (actionCount) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+            id: 'KX1poC',
+            description: 'This is the number of cases or options the program can take',
+          },
+          { actionCount }
+        ),
+      tools: (actionCount) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{actionCount, plural, one {# Tool} =0 {0 Tools} other {# Tools}}',
+            id: 'Fmt/E7',
+            description: 'This is the number of tools to be completed in a group',
+          },
+          { actionCount }
+        ),
+      hiddenItems: (count) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{count, plural, one {# hidden item} other {# hidden items}}',
+            id: 'v1764Q',
+            description: 'Number of collapsed items hidden inside a shared node frame',
+          },
+          { count }
+        ),
+    },
+  };
+}
+
 export function mapActionNodeStrings(intl: IntlShape): ActionNodeCardStrings {
   return {
+    frame: mapNodeFrameStrings(intl),
     status: {
       pending: intl.formatMessage({ defaultMessage: 'Pending', id: 'qaoC92', description: 'Pending shared node status' }),
       running: intl.formatMessage({ defaultMessage: 'Running', id: 'QHq/Rc', description: 'Running shared node status' }),

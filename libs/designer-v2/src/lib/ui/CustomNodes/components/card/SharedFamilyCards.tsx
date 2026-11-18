@@ -8,6 +8,7 @@ import {
   NodeLabeledHandle,
   NodeText,
   ToolItemCard,
+  type NodeFrameCountLabel,
 } from '@microsoft/designer-ui-v2';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
@@ -95,6 +96,8 @@ interface SharedScopeCardProps extends ActionCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolsPanel?: { width: number; height: number; bottomPadding: number; collapsed?: boolean; items: { id: string }[] };
+  /** Collapsed-container count rendered by the shared card text (unit picks the localized noun). */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedAgentScopeCard = (props: SharedScopeCardProps) => {
@@ -116,6 +119,7 @@ export const SharedScopeCard = ({
   description,
   isMonitoringView,
   toolsPanel,
+  countLabel,
   ...props
 }: SharedScopeCardProps) => {
   const intl = useIntl();
@@ -153,6 +157,7 @@ export const SharedScopeCard = ({
     statusDetail: props.runData?.duration,
     inactive: props.active === false,
     handleAxis,
+    countLabel,
     id: `msla-node-${props.id}`,
     role: 'button',
     tabIndex: props.nodeIndex,
@@ -299,6 +304,8 @@ interface SharedBranchCardProps {
   handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlot?: ReactNode;
+  /** Collapsed count for tool rows; fixed-height branch headers have no second text line and ignore it. */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedBranchCard = (props: SharedBranchCardProps) => {
@@ -391,6 +398,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           statusDetail={props.runData?.duration}
           inactive={props.active === false}
           kind={toolKind}
+          countLabel={props.countLabel}
           size="small"
           strings={toolStrings}
           after={

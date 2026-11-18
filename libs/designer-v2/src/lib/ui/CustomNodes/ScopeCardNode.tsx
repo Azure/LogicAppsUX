@@ -67,6 +67,7 @@ import { ActionCard } from './components/card';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import { SharedAgentScopeCard, SharedScopeCard } from './components/card/SharedFamilyCards';
 import type { ComponentProps } from 'react';
+import type { NodeFrameCountLabel } from '@microsoft/designer-ui-v2';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { getScopeModel } from './components/card/scopeNodePresentation';
 
@@ -83,6 +84,9 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   const isMonitoringView = useMonitoringView();
 
   const metadata = useNodeMetadata(scopeId);
+  // If metadata always reports 2 (its branches); the shared collapsed count states the branches' actions instead.
+  const trueBranchMetadata = useNodeMetadata(`${scopeId}-actions`);
+  const falseBranchMetadata = useNodeMetadata(`${scopeId}-elseActions`);
   const operationInfo = useOperationInfo(scopeId);
   const sharedOption = useSharedNodeUi();
   const presentation =
@@ -437,6 +441,13 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
         : intlText.actionString;
 
   const isFooter = id.endsWith('#footer');
+  // Shared cards own the collapsed count; the Agent tools panel heading already states the tool count.
+  const sharedCountLabel: NodeFrameCountLabel | undefined =
+    shared && graphCollapsed && !isFooter && !(isAgent && data?.toolsPanel)
+      ? isConditional
+        ? { count: (trueBranchMetadata?.actionCount ?? 0) + (falseBranchMetadata?.actionCount ?? 0), unit: 'actions' }
+        : { count: actionCount, unit: isAgent ? 'tools' : isSwitch ? 'cases' : 'actions' }
+      : undefined;
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
 
   const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
@@ -497,6 +508,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
               description: opQuery.data?.properties?.description,
               isMonitoringView,
               toolsPanel: data?.toolsPanel as ComponentProps<typeof SharedScopeCard>['toolsPanel'],
+              countLabel: sharedCountLabel,
             })}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
@@ -510,7 +522,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
           ) : null}
         </div>
       </div>
-      {graphCollapsed && !isFooter && !(shared && isAgent && data?.toolsPanel) ? (
+      {graphCollapsed && !isFooter && !shared ? (
         <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
           {collapsedText}
         </p>
