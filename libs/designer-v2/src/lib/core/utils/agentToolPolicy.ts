@@ -707,8 +707,9 @@ const flattenNestedActions = (actions: LogicAppsV2.Actions | undefined): Flatten
         }
       }
 
+      const actionType = typeof action.type === 'string' ? action.type.trim().toLowerCase() : '';
       const nestedTools = (action as LogicAppsV2.AgentAction).tools;
-      if (nestedTools) {
+      if (actionType === 'agent' && nestedTools) {
         for (const nestedTool of Object.values(nestedTools)) {
           visitActions((nestedTool as LogicAppsV2.AgentCondition).actions);
         }
@@ -785,7 +786,7 @@ const normalizeActionType = (actionType: string | undefined): string | undefined
 };
 
 const isMcpClientTool = (tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): boolean => {
-  return typeof tool.type === 'string' && tool.type.toLowerCase() === 'mcpclienttool';
+  return typeof tool.type === 'string' && tool.type.trim().toLowerCase() === 'mcpclienttool';
 };
 
 const isObjectLike = (value: unknown): value is Record<string, unknown> => {

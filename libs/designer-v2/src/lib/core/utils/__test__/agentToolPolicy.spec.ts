@@ -956,6 +956,37 @@ describe('agentToolPolicy additional rule checks', () => {
     expect(result.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_GRAPH_CYCLE_DETECTED)).toBe(true);
   });
 
+  it('does not flatten stray tools attached to NestedAgent actions into parent tool topology', () => {
+    const result = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        NestedAgentToolShape: {
+          description: 'topology',
+          actions: {
+            Root: {
+              type: 'NestedAgent',
+              runAfter: {},
+              tools: {
+                InnerTool: {
+                  type: 'FlowTemplateActionTool',
+                  actions: {
+                    InnerAction: {
+                      type: 'Compose',
+                      runAfter: {},
+                    },
+                  },
+                },
+              },
+            } as unknown as any,
+          },
+        },
+      },
+    });
+
+    expect(result.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_GRAPH_DISCONNECTED)).toBe(false);
+    expect(result.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_START_NODE_COUNT_INVALID)).toBe(false);
+  });
+
   it('rejects empty and duplicate runAfter status arrays', () => {
     const emptyStatuses = validateAgentToolPolicy({
       workflowKind: 'agent',
