@@ -7,6 +7,7 @@ import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 const state = vi.hoisted(() => ({
   shared: true,
   readOnly: false,
+  monitoring: false,
   dragging: false,
   a2a: false,
   upstreamAgent: false,
@@ -26,6 +27,7 @@ vi.mock('react-hotkeys-hook', () => ({
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useSharedNodeUi: () => state.shared,
   useReadOnly: () => state.readOnly,
+  useMonitoringView: () => state.monitoring,
   useIsDarkMode: () => false,
 }));
 vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({ useIsA2AWorkflow: () => state.a2a }));
@@ -56,6 +58,7 @@ vi.mock('../dropTarget', () => ({
 describe('shared insertion uses the real host menu and DnD boundary', () => {
   beforeEach(() => {
     state.shared = true;
+    state.monitoring = false;
     state.readOnly = false;
     state.dragging = false;
     state.a2a = false;
@@ -215,6 +218,17 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     });
   });
 
+  it.each([
+    { boundary: 'editable', readOnly: false, monitoring: false, expected: 'visible' },
+    { boundary: 'read-only', readOnly: true, monitoring: false, expected: 'hidden' },
+    { boundary: 'monitoring', readOnly: false, monitoring: true, expected: 'hidden' },
+  ])('shows the resting edge pill only on an $boundary canvas that can accept the edit', ({ readOnly, monitoring, expected }) => {
+    state.readOnly = readOnly;
+    state.monitoring = monitoring;
+    render(<DropZone {...props} isRevealed={false} />);
+    expect(screen.getByRole('button')).toHaveAttribute('data-resting-visibility', expected);
+  });
+
   it('retains a terminal NodeAdd surface rather than an invisible edge pill', () => {
     const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf />);
     expect(container.querySelector('[data-edge-control]')).toHaveAttribute('data-edge-control', 'terminal');
@@ -251,8 +265,12 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     expect(container.querySelector('[data-edge-control]')).toBeNull();
   });
 
-  it('disables the real accepted horizontal terminal control in read-only mode', () => {
-    state.readOnly = true;
+  it.each([
+    { boundary: 'read-only', readOnly: true, monitoring: false },
+    { boundary: 'monitoring', readOnly: false, monitoring: true },
+  ])('disables the real accepted horizontal terminal control on a $boundary canvas', ({ readOnly, monitoring }) => {
+    state.readOnly = readOnly;
+    state.monitoring = monitoring;
     const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf axis="horizontal" sharedPresentation />);
     expect(container.querySelector('[data-line="dashedNeutral"] path')).toHaveAttribute('d', 'M0 10 H8');
     expect(screen.getByRole('button')).toBeDisabled();
@@ -260,8 +278,12 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     expect(state.dispatch).not.toHaveBeenCalled();
   });
 
-  it('disables the flagged mutation surface when read-only and never dispatches', () => {
-    state.readOnly = true;
+  it.each([
+    { boundary: 'read-only', readOnly: true, monitoring: false },
+    { boundary: 'monitoring', readOnly: false, monitoring: true },
+  ])('disables the flagged mutation surface on a $boundary canvas and never dispatches', ({ readOnly, monitoring }) => {
+    state.readOnly = readOnly;
+    state.monitoring = monitoring;
     render(<DropZone {...props} />);
     expect(screen.getByRole('button')).toBeDisabled();
     fireEvent.click(screen.getByRole('button'));

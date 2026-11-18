@@ -1006,3 +1006,37 @@ describe('NodeHoverCard cleanup and wiring (H11-H14)', () => {
     expect(isOpen('Status')).toBe(true);
   });
 });
+
+describe('NodeHoverCard placement', () => {
+  const placementOf = async (label: string) => {
+    // Positioning resolves asynchronously after open, so wait for the floating layer to commit its placement.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    let element: HTMLElement | null = screen.getByText(`${label} details`);
+    while (element && !element.getAttribute('data-popper-placement')) {
+      element = element.parentElement;
+    }
+    return element?.getAttribute('data-popper-placement');
+  };
+
+  it('keeps the above default and anchors beside the card when placement is side', async () => {
+    vi.useFakeTimers();
+    render(
+      <DesignerUiScope>
+        <Hover label="A" />
+        <Hover label="S" placement="side" />
+      </DesignerUiScope>
+    );
+    hover('A');
+    advance(600);
+    vi.useRealTimers();
+    expect(await placementOf('A')).toMatch(/^top/);
+    vi.useFakeTimers();
+    hover('S');
+    advance(600);
+    vi.useRealTimers();
+    // Side placement keeps the card off the upstream node and edge above the trigger.
+    expect(await placementOf('S')).toBe('right-start');
+  });
+});

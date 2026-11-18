@@ -77,6 +77,18 @@ describe('real shared canvas handles', () => {
     expect(getByTestId('handle-target')).toHaveAttribute('data-port-hit-surface', 'card');
   });
 
+  it.each([
+    { label: 'an editable shared', shared: true, readOnly: false, contained: false, interactive: true },
+    { label: 'a read-only shared', shared: true, readOnly: true, contained: false, interactive: false },
+    { label: 'a contained shared', shared: true, readOnly: false, contained: true, interactive: false },
+    { label: 'a legacy', shared: false, readOnly: false, contained: false, interactive: false },
+  ])('marks hover feedback only on $label source that can start a connection', ({ shared, readOnly, contained, interactive }) => {
+    state.shared = shared;
+    state.readOnly = readOnly;
+    const { getByTestId } = render(<EdgeDrawSourceHandle contained={contained} />);
+    expect(getByTestId('handle-source').getAttribute('data-port-interactive')).toBe(interactive ? 'true' : null);
+  });
+
   it('keeps structural default ports invisible and nonconnectable', () => {
     state.shared = true;
     const { container, getByTestId } = render(<DefaultHandle type="source" />);

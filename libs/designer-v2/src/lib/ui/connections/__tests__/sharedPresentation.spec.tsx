@@ -10,6 +10,7 @@ import ButtonEdge from '../edge';
 import { DropZone } from '../dropzone';
 import { OnlyEdge } from '../onlyEdge';
 import { DraftEdge } from '../draftEdge';
+import { getSharedTargetInset, SHARED_EDGE_ARROW_SIZE } from '../sharedEdgeArrowCap';
 import { getOperationNodeGlyph, getOperationNodeVisualKind } from '../../CustomNodes/components/card/operationNodeGlyphs';
 import { getOperationNodeSubtitle } from '../../CustomNodes/components/card/nodeUiStrings';
 
@@ -51,6 +52,7 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => state.readOnly,
   useSharedNodeUi: () => state.shared,
   useIsDarkMode: () => false,
+  useMonitoringView: () => false,
 }));
 vi.mock('react-redux', () => ({ useDispatch: () => dispatch }));
 vi.mock('react-hotkeys-hook', () => ({ useHotkeys: () => ({ current: null }) }));
@@ -224,14 +226,21 @@ describe('shared presentation contracts', () => {
   });
 
   it('renders getNodeLineArrowPath on OnlyEdge and DraftEdge only when accepted shared presentation admits it', () => {
-    const expectedArrow = getNodeLineArrowPath(defaultProps.targetX, defaultProps.targetY, 'down');
+    // OnlyEdge stops short of the 'top' target handle; DraftEdge follows the pointer, so its tip stays on it.
+    const expectedOnlyArrow = getNodeLineArrowPath(
+      defaultProps.targetX,
+      defaultProps.targetY - getSharedTargetInset(),
+      'down',
+      SHARED_EDGE_ARROW_SIZE
+    );
+    const expectedArrow = getNodeLineArrowPath(defaultProps.targetX, defaultProps.targetY, 'down', SHARED_EDGE_ARROW_SIZE);
     const sharedOnly = renderWithIntl(
       <svg>
         <OnlyEdge {...defaultProps} />
       </svg>
     );
     expect(sharedOnly.container.querySelectorAll('.msla-shared-edge-path')).toHaveLength(1);
-    expect(sharedOnly.container.querySelector('.msla-shared-edge-cap')).toHaveAttribute('d', expectedArrow);
+    expect(sharedOnly.container.querySelector('.msla-shared-edge-cap')).toHaveAttribute('d', expectedOnlyArrow);
     const onlyCapMarker = sharedOnly.container.querySelector('.msla-shared-edge-cap')!.closest('marker')!;
     expect(sharedOnly.container.querySelector('.msla-shared-edge-path')).toHaveAttribute('marker-end', `url(#${onlyCapMarker.id})`);
     sharedOnly.unmount();
@@ -439,7 +448,7 @@ describe('shared presentation contracts', () => {
         })[0]
       );
       expect(paths[0].getAttribute('d')).toMatch(/300,200$/);
-      expect(paths[1]).toHaveAttribute('d', getNodeLineArrowPath(300, 200, direction));
+      expect(paths[1]).toHaveAttribute('d', getNodeLineArrowPath(300, 200, direction, SHARED_EDGE_ARROW_SIZE));
       expect(paths[1].getAttribute('d')).toContain('L 300 200 L');
       // Shared mode owns the cap as its own marker; the legacy arrow marker is not rendered.
       expect(container.querySelectorAll('marker')).toHaveLength(1);

@@ -25,7 +25,7 @@ import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import { SharedCollapsedRunAfterIndicator, SharedRunAfterIndicator } from './runAfterIndicator/SharedRunAfterIndicator';
 import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
-import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
+import { getSharedTargetButtonDistance, getSharedTargetInset, offsetFromPort, SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -77,11 +77,6 @@ export interface LogicAppsEdgeProps {
 
 const edgeContentHeight = 24;
 const edgeContentWidth = 92;
-
-const offsetFromPort = (x: number, y: number, position: Position, distance: number) => ({
-  x: x + (position === Position.Left ? -distance : position === Position.Right ? distance : 0),
-  y: y + (position === Position.Top ? -distance : position === Position.Bottom ? distance : 0),
-});
 
 const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
@@ -176,10 +171,21 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const runAfterX = indicatorCenter.x - runAfterWidth / 2 + (horizontalTarget ? 0 : indicatorSpread);
   const runAfterY = indicatorCenter.y - runAfterHeight / 2 + (horizontalTarget ? indicatorSpread : 0);
   const sourceButton = offsetFromPort(sourceX, sourceY, sourcePosition, 28);
-  const targetButton = offsetFromPort(targetX, targetY, targetPosition, 32 + (numRunAfters !== 0 ? 4 : 0));
+  const targetButton = offsetFromPort(
+    targetX,
+    targetY,
+    targetPosition,
+    shared ? getSharedTargetButtonDistance(numRunAfters !== 0 ? indicatorExtent : 0) : 32 + (numRunAfters !== 0 ? 4 : 0)
+  );
 
   const { d, endpoint } = useMemo(() => {
-    const endpoint = offsetFromPort(targetX, targetY, targetPosition, (numRunAfters !== 0 ? indicatorExtent : 0) + (shared ? 0 : 2));
+    // Shared caps stop short of the target handle so the arrow reads as direction, not as part of the input dot.
+    const endpoint = offsetFromPort(
+      targetX,
+      targetY,
+      targetPosition,
+      shared ? getSharedTargetInset(numRunAfters !== 0 ? indicatorExtent : 0) : (numRunAfters !== 0 ? indicatorExtent : 0) + 2
+    );
     const endpoints = {
       sourceX,
       sourceY,
