@@ -196,8 +196,46 @@ export interface AgentToolPolicyResult {
   readonly violations: readonly AgentToolPolicyViolation[];
 }
 
+/**
+ * Runtime-aligned policy input for action tools.
+ * Kept separate from shared models because the runtime validation surface accepts
+ * data that is broader than the strict shared TypeScript model contracts.
+ */
+type AgentToolPolicyActionTool = {
+  readonly description?: string;
+  readonly agentParameterSchema?: unknown;
+  readonly actions?: LogicAppsV2.Actions;
+  readonly [key: string]: unknown;
+};
+
+/**
+ * Runtime-aligned policy input for MCP tools.
+ * Includes `connectionName` because runtime payloads use that shape.
+ */
+type AgentToolPolicyMcpTool = {
+  readonly type?: string;
+  readonly kind?: string;
+  readonly inputs?: {
+    readonly connectionReference?: {
+      readonly connectionName?: string;
+      readonly connectionReferenceName?: string;
+      readonly [key: string]: unknown;
+    };
+    readonly parameters?: {
+      readonly mcpServerPath?: unknown;
+      readonly allowedTools?: unknown;
+      readonly [key: string]: unknown;
+    };
+    readonly [key: string]: unknown;
+  };
+  readonly actions?: LogicAppsV2.Actions;
+  readonly [key: string]: unknown;
+};
+
+type AgentToolPolicyTool = AgentToolPolicyActionTool | AgentToolPolicyMcpTool;
+
 export interface AgentToolPolicyValidationInput {
-  readonly tools?: Record<string, LogicAppsV2.AgentCondition | LogicAppsV2.McpClient | undefined>;
+  readonly tools?: Record<string, AgentToolPolicyTool | undefined>;
   readonly workflowKind?: string;
   readonly maxToolsLimit?: number;
 }
@@ -205,6 +243,7 @@ export interface AgentToolPolicyValidationInput {
 type FlattenedAction = {
   readonly name: string;
   readonly action: LogicAppsV2.Action;
+  readonly path: string;
 };
 
 export const validateAgentToolPolicy = (input: AgentToolPolicyValidationInput): AgentToolPolicyResult => {
@@ -261,15 +300,17 @@ export const validateAgentToolPolicy = (input: AgentToolPolicyValidationInput): 
       continue;
     }
 
+    const actionTool = tool as AgentToolPolicyActionTool;
+
     // Runtime source: TemplateValidationEngine.cs:1211-1232.
     validateToolName(toolName, addViolation);
 
     // Runtime source: TemplateValidationEngine.cs:1235-1248.
-    validateToolDescription(toolName, tool, addViolation);
+    validateToolDescription(toolName, actionTool, addViolation);
     // Runtime source: TemplateValidationEngine.cs:1311-1355.
-    validateAgentParameterSchema(toolName, tool.agentParameterSchema, addViolation);
+    validateAgentParameterSchema(toolName, actionTool.agentParameterSchema, addViolation);
 
-    const actions = tool.actions ?? {};
+    const actions = actionTool.actions ?? {};
     if (Object.keys(actions).length === 0) {
       // Runtime source: TemplateValidationEngine.cs:1255-1260.
       addViolation({
@@ -284,14 +325,14 @@ export const validateAgentToolPolicy = (input: AgentToolPolicyValidationInput): 
     const flattenedActions = flattenNestedActions(actions);
     const allowedActionTypes = getSupportedActionTypesForWorkflowKind(input.workflowKind);
 
-    for (const { name: actionName, action } of flattenedActions) {
+    for (const { name: actionName, action, path: actionPath } of flattenedActions) {
       const actionType = normalizeActionType(action.type);
       // Runtime source: TemplateValidationEngine.cs:45-100,1262-1270.
       if (!actionType || !AGENT_TOOL_SUPPORTED_ACTION_TYPES.has(actionType)) {
         addViolation({
           ruleId: AgentToolPolicyRuleId.ACTION_TYPE_NOT_SUPPORTED,
           message: `Action '${actionName}' in tool '${toolName}' uses unsupported type '${action.type ?? 'unknown'}'.`,
-          path: `tools.${toolName}.actions.${actionName}.type`,
+          path: `tools.${toolName}.${actionPath}.type`,
           toolName,
           actionName,
         });
@@ -299,7 +340,7 @@ export const validateAgentToolPolicy = (input: AgentToolPolicyValidationInput): 
         addViolation({
           ruleId: AgentToolPolicyRuleId.ACTION_TYPE_NOT_ALLOWED_FOR_WORKFLOW_KIND,
           message: `Action '${actionName}' in tool '${toolName}' is not allowed for workflow kind '${input.workflowKind ?? 'unknown'}'.`,
-          path: `tools.${toolName}.actions.${actionName}.type`,
+          path: `tools.${toolName}.${actionPath}.type`,
           toolName,
           actionName,
         });
@@ -361,7 +402,7 @@ const validateToolName = (toolName: string, addViolation: (violation: AgentToolP
 
 const validateToolDescription = (
   toolName: string,
-  tool: LogicAppsV2.AgentCondition,
+  tool: AgentToolPolicyActionTool,
   addViolation: (violation: AgentToolPolicyViolation) => void
 ): void => {
   const description = tool.description;
@@ -413,7 +454,19 @@ const validateAgentParameterSchema = (
     return;
   }
 
-  const rootType = normalizeSchemaTypes((schema as Record<string, unknown>).type);
+  const resolvedRootSchema = resolveLocalSchemaReference(schema, schema);
+  if (resolvedRootSchema.unresolvedRef || hasUnresolvedLocalSchemaReference(schema, resolvedRootSchema.schema)) {
+    addViolation({
+      ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID,
+      message: `Tool '${toolName}' parameter schema contains unresolved local references.`,
+      path: `tools.${toolName}.agentParameterSchema`,
+      toolName,
+    });
+  }
+
+  const effectiveSchema = resolvedRootSchema.schema;
+
+  const rootType = normalizeSchemaTypes(effectiveSchema.type);
   if (rootType.isMalformed || rootType.types.length !== 1 || rootType.types[0] !== 'object') {
     addViolation({
       ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_ROOT_OBJECT_REQUIRED,
@@ -423,7 +476,7 @@ const validateAgentParameterSchema = (
     });
   }
 
-  if (containsMalformedSchemaTypeDeclaration(schema)) {
+  if (containsMalformedSchemaTypeDeclaration(effectiveSchema)) {
     addViolation({
       ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID,
       message: `Tool '${toolName}' parameter schema contains malformed schema keyword values.`,
@@ -432,8 +485,8 @@ const validateAgentParameterSchema = (
     });
   }
 
-  const propertiesCandidate = (schema as Record<string, unknown>).properties;
-  if ('properties' in (schema as Record<string, unknown>) && (!isObjectLike(propertiesCandidate) || Array.isArray(propertiesCandidate))) {
+  const propertiesCandidate = effectiveSchema.properties;
+  if ('properties' in effectiveSchema && (!isObjectLike(propertiesCandidate) || Array.isArray(propertiesCandidate))) {
     addViolation({
       ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_NULL,
       message: `Tool '${toolName}' parameter schema 'properties' must be an object.`,
@@ -456,7 +509,11 @@ const validateAgentParameterSchema = (
       }
 
       const resolvedPropertySchema = resolveLocalSchemaReference(schema, propertySchema);
-      if (resolvedPropertySchema.unresolvedRef || containsMalformedSchemaTypeDeclaration(resolvedPropertySchema.schema)) {
+      if (
+        resolvedPropertySchema.unresolvedRef ||
+        hasUnresolvedLocalSchemaReference(schema, resolvedPropertySchema.schema) ||
+        containsMalformedSchemaTypeDeclaration(resolvedPropertySchema.schema)
+      ) {
         addViolation({
           ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID,
           message: `Tool '${toolName}' parameter schema property '${propertyName}' has an invalid type declaration.`,
@@ -498,8 +555,8 @@ const validateAgentParameterSchema = (
     }
   }
 
-  const required = (schema as Record<string, unknown>).required;
-  if ('required' in (schema as Record<string, unknown>) && !Array.isArray(required)) {
+  const required = effectiveSchema.required;
+  if ('required' in effectiveSchema && !Array.isArray(required)) {
     addViolation({
       ruleId: AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_REQUIRED_INVALID,
       message: `Tool '${toolName}' parameter schema required list must be an array of property names.`,
@@ -536,7 +593,7 @@ const validateToolTopology = (
   const predecessorsByAction = new Map<string, string[]>();
   const startNodes: string[] = [];
 
-  for (const { name: actionName, action } of flattenedActions) {
+  for (const { name: actionName, action, path: actionPath } of flattenedActions) {
     const runAfter = action.runAfter ?? {};
     const predecessors = Object.keys(runAfter);
     const resolvedPredecessors: string[] = [];
@@ -550,7 +607,7 @@ const validateToolTopology = (
       addViolation({
         ruleId: AgentToolPolicyRuleId.TOOL_MULTIPLE_PREDECESSORS_NOT_ALLOWED,
         message: `Action '${actionName}' in tool '${toolName}' cannot depend on multiple predecessors.`,
-        path: `tools.${toolName}.actions.${actionName}.runAfter`,
+        path: `tools.${toolName}.${actionPath}.runAfter`,
         toolName,
         actionName,
       });
@@ -569,7 +626,7 @@ const validateToolTopology = (
         addViolation({
           ruleId: AgentToolPolicyRuleId.TOOL_MISSING_PREDECESSOR,
           message: `Action '${actionName}' in tool '${toolName}' references missing predecessor '${predecessor}'.`,
-          path: `tools.${toolName}.actions.${actionName}.runAfter.${predecessor}`,
+          path: `tools.${toolName}.${actionPath}.runAfter.${predecessor}`,
           toolName,
           actionName,
         });
@@ -582,7 +639,7 @@ const validateToolTopology = (
         addViolation({
           ruleId: AgentToolPolicyRuleId.TOOL_RUN_AFTER_STATUS_NOT_SUPPORTED,
           message: `Action '${actionName}' in tool '${toolName}' must use '${SUCCEEDED_RUN_AFTER_STATUS}' in runAfter.`,
-          path: `tools.${toolName}.actions.${actionName}.runAfter.${predecessor}`,
+          path: `tools.${toolName}.${actionPath}.runAfter.${predecessor}`,
           toolName,
           actionName,
         });
@@ -668,13 +725,13 @@ const validateAgentHandoffRules = (
   }
 
   const handoffNamesByNormalizedName = new Set(handoffActions.map(({ name }) => name.toLowerCase()));
-  for (const { name: actionName, action } of flattenedActions) {
+  for (const { name: actionName, action, path: actionPath } of flattenedActions) {
     const predecessorNames = Object.keys(action.runAfter ?? {});
     if (predecessorNames.some((predecessorName) => handoffNamesByNormalizedName.has(predecessorName.toLowerCase()))) {
       addViolation({
         ruleId: AgentToolPolicyRuleId.TOOL_HANDOFF_MUST_BE_TERMINAL,
         message: `Tool '${toolName}' cannot run action '${actionName}' after AgentHandOff.`,
-        path: `tools.${toolName}.actions.${actionName}.runAfter`,
+        path: `tools.${toolName}.${actionPath}.runAfter`,
         toolName,
         actionName,
       });
@@ -688,36 +745,37 @@ const flattenNestedActions = (actions: LogicAppsV2.Actions | undefined): Flatten
   }
 
   const flattened: FlattenedAction[] = [];
-  const visitActions = (actionMap: LogicAppsV2.Actions | undefined): void => {
+  const visitActions = (actionMap: LogicAppsV2.Actions | undefined, parentPath: string): void => {
     if (!actionMap) {
       return;
     }
 
     for (const [actionName, action] of Object.entries(actionMap)) {
-      flattened.push({ name: actionName, action });
+      const actionPath = `${parentPath}.${actionName}`;
+      flattened.push({ name: actionName, action, path: actionPath });
 
-      visitActions((action as LogicAppsV2.ScopeAction).actions);
-      visitActions((action as LogicAppsV2.IfAction).else?.actions);
-      visitActions((action as LogicAppsV2.SwitchAction).default?.actions);
+      visitActions((action as LogicAppsV2.ScopeAction).actions, `${actionPath}.actions`);
+      visitActions((action as LogicAppsV2.IfAction).else?.actions, `${actionPath}.else.actions`);
+      visitActions((action as LogicAppsV2.SwitchAction).default?.actions, `${actionPath}.default.actions`);
 
       const cases = (action as LogicAppsV2.SwitchAction).cases;
       if (cases) {
-        for (const caseAction of Object.values(cases)) {
-          visitActions(caseAction.actions);
+        for (const [caseName, caseAction] of Object.entries(cases)) {
+          visitActions(caseAction.actions, `${actionPath}.cases.${caseName}.actions`);
         }
       }
 
       const actionType = typeof action.type === 'string' ? action.type.trim().toLowerCase() : '';
       const nestedTools = (action as LogicAppsV2.AgentAction).tools;
       if (actionType === 'agent' && nestedTools) {
-        for (const nestedTool of Object.values(nestedTools)) {
-          visitActions((nestedTool as LogicAppsV2.AgentCondition).actions);
+        for (const [nestedToolName, nestedTool] of Object.entries(nestedTools)) {
+          visitActions((nestedTool as LogicAppsV2.AgentCondition).actions, `${actionPath}.tools.${nestedToolName}.actions`);
         }
       }
     }
   };
 
-  visitActions(actions);
+  visitActions(actions, 'actions');
   return flattened;
 };
 
@@ -785,7 +843,7 @@ const normalizeActionType = (actionType: string | undefined): string | undefined
   return [...AGENT_TOOL_SUPPORTED_ACTION_TYPES].find((supportedType) => supportedType.toLowerCase() === value.toLowerCase());
 };
 
-const isMcpClientTool = (tool: LogicAppsV2.AgentCondition | LogicAppsV2.McpClient): tool is LogicAppsV2.McpClient => {
+const isMcpClientTool = (tool: AgentToolPolicyTool): tool is AgentToolPolicyMcpTool => {
   return typeof tool.type === 'string' && tool.type.trim().toLowerCase() === 'mcpclienttool';
 };
 
@@ -879,7 +937,8 @@ const containsMalformedSchemaTypeDeclaration = (node: unknown, parentIsSchemaMap
 
     if (!parentIsSchemaMap && normalizedKey === 'items') {
       const isValidItemsSchema =
-        isObjectLike(value) || (Array.isArray(value) && value.every((item) => isObjectLike(item) && !Array.isArray(item)));
+        (isObjectLike(value) && !Array.isArray(value)) ||
+        (Array.isArray(value) && value.every((item) => isObjectLike(item) && !Array.isArray(item)));
       if (!isValidItemsSchema) {
         return true;
       }
@@ -932,7 +991,7 @@ const containsRegexSchemaKeyword = (node: unknown, parentIsSchemaMap = false): b
 
 const validateMcpTool = (
   toolName: string,
-  tool: LogicAppsV2.McpClient,
+  tool: AgentToolPolicyMcpTool,
   addViolation: (violation: AgentToolPolicyViolation) => void
 ): void => {
   const rawKind = typeof tool.kind === 'string' ? tool.kind.trim() : '';
@@ -1049,6 +1108,50 @@ const resolveLocalSchemaReference = (
   return { schema: resolvedNode, unresolvedRef: false };
 };
 
+const hasUnresolvedLocalSchemaReference = (rootSchema: unknown, schemaNode: unknown, visitedRefs = new Set<string>()): boolean => {
+  if (Array.isArray(schemaNode)) {
+    return schemaNode.some((item) => hasUnresolvedLocalSchemaReference(rootSchema, item, visitedRefs));
+  }
+
+  if (!isObjectLike(schemaNode) || Array.isArray(schemaNode)) {
+    return false;
+  }
+
+  const refValue = schemaNode.$ref;
+  if (typeof refValue === 'string') {
+    if (!refValue.startsWith('#/') || visitedRefs.has(refValue)) {
+      return true;
+    }
+
+    const referencedNode = getSchemaNodeByJsonPointer(rootSchema, refValue);
+    if (!isObjectLike(referencedNode) || Array.isArray(referencedNode)) {
+      return true;
+    }
+
+    const nextVisitedRefs = new Set(visitedRefs);
+    nextVisitedRefs.add(refValue);
+
+    const localNode = { ...schemaNode };
+    delete localNode.$ref;
+    const mergedNode = { ...(referencedNode as Record<string, unknown>), ...localNode };
+    if (hasUnresolvedLocalSchemaReference(rootSchema, mergedNode, nextVisitedRefs)) {
+      return true;
+    }
+  }
+
+  for (const [key, value] of Object.entries(schemaNode)) {
+    if (key === '$ref') {
+      continue;
+    }
+
+    if (hasUnresolvedLocalSchemaReference(rootSchema, value, visitedRefs)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 const getSchemaNodeByJsonPointer = (rootSchema: unknown, jsonPointer: string): unknown => {
   if (!jsonPointer.startsWith('#/')) {
     return undefined;
@@ -1061,7 +1164,21 @@ const getSchemaNodeByJsonPointer = (rootSchema: unknown, jsonPointer: string): u
 
   let current: unknown = rootSchema;
   for (const part of parts) {
-    if (!isObjectLike(current) || Array.isArray(current) || !(part in current)) {
+    if (Array.isArray(current)) {
+      if (!/^(0|[1-9]\d*)$/.test(part)) {
+        return undefined;
+      }
+
+      const index = Number.parseInt(part, 10);
+      if (index < 0 || index >= current.length) {
+        return undefined;
+      }
+
+      current = current[index];
+      continue;
+    }
+
+    if (!isObjectLike(current) || Array.isArray(current) || !Object.prototype.hasOwnProperty.call(current, part)) {
       return undefined;
     }
 

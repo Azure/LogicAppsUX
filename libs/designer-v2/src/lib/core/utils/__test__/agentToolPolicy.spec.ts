@@ -664,6 +664,136 @@ describe('agentToolPolicy additional rule checks', () => {
     ).toBe(true);
   });
 
+  it('accepts root schemas resolved through local $ref and flags unresolved nested refs', () => {
+    const rootRefResult = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        RootRefSchemaTool: {
+          description: 'schema',
+          agentParameterSchema: {
+            $ref: '#/definitions/rootSchema',
+            definitions: {
+              rootSchema: {
+                type: 'object',
+                properties: {
+                  payload: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          actions: {
+            A: {
+              type: 'Compose',
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      rootRefResult.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_ROOT_OBJECT_REQUIRED)
+    ).toBe(false);
+
+    const nestedRefResult = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        NestedMissingRefSchemaTool: {
+          description: 'schema',
+          agentParameterSchema: {
+            type: 'object',
+            properties: {
+              payload: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/missingNestedSchema',
+                },
+              },
+            },
+          },
+          actions: {
+            A: {
+              type: 'Compose',
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      nestedRefResult.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID)
+    ).toBe(true);
+  });
+
+  it('resolves array-index JSON pointer refs and rejects inherited pseudo-properties', () => {
+    const arrayPointerResult = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        ArrayPointerSchemaTool: {
+          description: 'schema',
+          agentParameterSchema: {
+            type: 'object',
+            definitions: {
+              scalar: {
+                anyOf: [{ type: 'string' }, { type: 'number' }],
+              },
+            },
+            properties: {
+              payload: {
+                $ref: '#/definitions/scalar/anyOf/0',
+              },
+            },
+          },
+          actions: {
+            A: {
+              type: 'Compose',
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      arrayPointerResult.violations.some(
+        (violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID
+      )
+    ).toBe(false);
+
+    const inheritedPointerResult = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        InheritedPointerSchemaTool: {
+          description: 'schema',
+          agentParameterSchema: {
+            type: 'object',
+            definitions: {},
+            properties: {
+              payload: {
+                $ref: '#/definitions/__proto__',
+              },
+            },
+          },
+          actions: {
+            A: {
+              type: 'Compose',
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      inheritedPointerResult.violations.some(
+        (violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID
+      )
+    ).toBe(true);
+  });
+
   it('fails malformed nested schema keyword values', () => {
     const result = validateAgentToolPolicy({
       workflowKind: 'agent',
@@ -691,6 +821,36 @@ describe('agentToolPolicy additional rule checks', () => {
 
     expect(
       result.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID)
+    ).toBe(true);
+
+    const tupleItemsResult = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        TupleItemsSchemaTool: {
+          description: 'schema',
+          agentParameterSchema: {
+            type: 'object',
+            properties: {
+              payload: {
+                type: 'array',
+                items: [42],
+              },
+            },
+          },
+          actions: {
+            A: {
+              type: 'Compose',
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      tupleItemsResult.violations.some(
+        (violation) => violation.ruleId === AgentToolPolicyRuleId.TOOL_PARAMETER_SCHEMA_PROPERTY_TYPE_INVALID
+      )
     ).toBe(true);
   });
 
@@ -871,6 +1031,37 @@ describe('agentToolPolicy additional rule checks', () => {
 
     expect(
       result.violations.some((violation) => violation.ruleId === AgentToolPolicyRuleId.ACTION_TYPE_NOT_ALLOWED_FOR_WORKFLOW_KIND)
+    ).toBe(true);
+  });
+
+  it('reports nested action violations with full nested action paths', () => {
+    const result = validateAgentToolPolicy({
+      workflowKind: 'agent',
+      tools: {
+        NestedPathTool: {
+          description: 'nested',
+          actions: {
+            Parent: {
+              type: 'Scope',
+              actions: {
+                Child: {
+                  type: 'Wait',
+                  runAfter: {},
+                },
+              },
+              runAfter: {},
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      result.violations.some(
+        (violation) =>
+          violation.ruleId === AgentToolPolicyRuleId.ACTION_TYPE_NOT_ALLOWED_FOR_WORKFLOW_KIND &&
+          violation.path === 'tools.NestedPathTool.actions.Parent.actions.Child.type'
+      )
     ).toBe(true);
   });
 
