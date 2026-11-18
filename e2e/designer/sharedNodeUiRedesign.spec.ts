@@ -106,7 +106,8 @@ for (const flag of ['false', 'true'] as const) {
     test('draws a visible arrowhead at the target end of every edge', async ({ page }) => {
       await openSharedWorkflow(page, 'General Run After', flag);
       const pathSelector = shared ? '.msla-shared-edge-path' : '.react-flow__edge-path';
-      await expect(page.locator(pathSelector).first()).toBeVisible();
+      // Straight vertical paths have a zero-width box, so wait for attachment rather than visibility.
+      await expect(page.locator(pathSelector).first()).toBeAttached();
       // Resolve each edge's marker-end to the drawn cap and read the paint the browser actually applies,
       // so a transparent stroke or a faded cap fails even though the marker element exists.
       const caps = await page.locator(pathSelector).evaluateAll((paths) =>
@@ -138,14 +139,19 @@ for (const flag of ['false', 'true'] as const) {
           const dots = Array.from(document.querySelectorAll('.react-flow__handle.target span[data-handle]'), (dot) =>
             dot.getBoundingClientRect()
           ).filter((rect) => rect.width > 0);
+          // Fit view scales the canvas, so convert screen distances back to flow units.
+          const viewport = document.querySelector('.react-flow__viewport');
+          const zoom = viewport ? new DOMMatrixReadOnly(getComputedStyle(viewport).transform).a : 1;
           return paths.map((path) => {
             const svgPath = path as SVGPathElement;
             const end = svgPath.getPointAtLength(svgPath.getTotalLength());
             const tip = new DOMPoint(end.x, end.y).matrixTransform(svgPath.getScreenCTM()!);
-            return Math.min(
-              ...dots.map((rect) =>
-                Math.hypot(Math.max(rect.left - tip.x, 0, tip.x - rect.right), Math.max(rect.top - tip.y, 0, tip.y - rect.bottom))
-              )
+            return (
+              Math.min(
+                ...dots.map((rect) =>
+                  Math.hypot(Math.max(rect.left - tip.x, 0, tip.x - rect.right), Math.max(rect.top - tip.y, 0, tip.y - rect.bottom))
+                )
+              ) / zoom
             );
           });
         });
