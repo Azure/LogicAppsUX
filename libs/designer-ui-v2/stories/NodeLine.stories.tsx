@@ -65,3 +65,26 @@ export const VariantsAndArrows: Story = {
     </div>
   ),
 };
+export const ArrowToggle: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Solid lines draw an arrowhead by default. `arrow={false}` draws a bare continuity stroke, for example a loop card joining its body.',
+      },
+    },
+  },
+  render: (args) => (
+    <div className="sb-grid">
+      {(['horizontal', 'vertical'] as const).flatMap((orientation) =>
+        (['default', 'highlighted'] as const).flatMap((state) =>
+          [true, false].map((arrow) => (
+            <Example key={`${orientation}-${state}-${arrow}`} label={`${orientation}; ${state}; arrow=${arrow}`}>
+              <NodeLine {...args} variant="solid" orientation={orientation} state={state} arrow={arrow} />
+            </Example>
+          ))
+        )
+      )}
+    </div>
+  ),
+};

@@ -5,8 +5,8 @@ import { ArrowRepeatAllRegular, ArrowTurnRightRegular, BoxMultipleRegular } from
 import { designerUiTokens } from '../../theme/tokens';
 import { nodeMetrics } from '../metrics';
 import type { NodeRunStatus, NodeHandleVariant } from '../types';
-import type { ActionNodeCardStrings, NodeFrameStrings } from '../strings';
-import { defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
+import type { ActionNodeCardStrings, NodeFrameCountUnit, NodeFrameStrings } from '../strings';
+import { defaultNodeFrameCountStrings, defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
 import { useCollapseReveal } from './collapseReveal';
 import { NodeStatusBadge } from './NodeStatusBadge';
 import { NodeHandle, NodeInactiveContext } from './NodeHandle';
@@ -149,8 +149,10 @@ export interface NodeFrameProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ti
   /** Omit or leave empty for a headerless body. */
   title?: string;
   subtitle?: string;
-  /** Count shown inline with the title, independently of subtitle placement. */
+  /** Count shown inline with the title, independently of subtitle placement. `countLabel` wins when both are set. */
   actionCount?: number;
+  /** Unit-aware inline count (actions, cases, tools, hidden items); the frame dictionary formats and pluralizes it. */
+  countLabel?: NodeFrameCountLabel;
   /** Inline by default; below stacks a caption under the title. */
   subtitlePlacement?: 'inline' | 'below';
   selected?: boolean;
@@ -178,6 +180,20 @@ export interface NodeFrameProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ti
   strings?: ActionNodeCardStrings & { frame?: NodeFrameStrings };
 }
 
+export interface NodeFrameCountLabel {
+  count: number;
+  unit: NodeFrameCountUnit;
+}
+
+/**
+ * Resolves the inline count text. Unit formatters come first; for `actions`, a host's legacy `actionCount`
+ * formatter is honored before English defaults so dictionaries localized before `counts` existed keep their wording.
+ */
+const formatFrameCount = (frameStrings: NodeFrameStrings, { count, unit }: NodeFrameCountLabel): string => {
+  const formatter = frameStrings.counts?.[unit] ?? (unit === 'actions' ? frameStrings.actionCount : defaultNodeFrameCountStrings[unit]);
+  return formatter(count);
+};
+
 /** Canonical translucent scope/loop/branch frame; host computes bounds and topology. */
 export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function NodeFrame(
   {
@@ -187,6 +203,7 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
     title,
     subtitle,
     actionCount,
+    countLabel,
     subtitlePlacement = 'inline',
     selected = false,
     status,
@@ -288,7 +305,12 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
       ? undefined
       : { top: compensatedTop };
   const frameStrings = strings.frame ?? defaultNodeFrameStrings;
-  const actionCountLabel = actionCount === undefined ? undefined : frameStrings.actionCount(actionCount);
+  const actionCountLabel =
+    countLabel !== undefined
+      ? formatFrameCount(frameStrings, countLabel)
+      : actionCount === undefined
+        ? undefined
+        : frameStrings.actionCount(actionCount);
   const reveal = useCollapseReveal({
     enabled: motion === 'reveal',
     expanded: !collapsed,

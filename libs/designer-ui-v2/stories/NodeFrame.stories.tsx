@@ -188,3 +188,30 @@ export const BranchSubtitlePlacement: Story = {
     </div>
   ),
 };
+export const CountLabels: Story = {
+  args: { handles: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Hosts pass `countLabel={{ count, unit }}` and the library formats the localized, pluralized label. Legacy `actionCount` renders exactly as before.',
+      },
+    },
+  },
+  render: (args) => (
+    <div className="sb-grid">
+      {(['actions', 'cases', 'tools', 'hiddenItems'] as const).flatMap((unit) =>
+        [0, 1, 5].map((count) => (
+          <Example key={`${unit}-${count}`} label={`countLabel: ${count} ${unit}`}>
+            <NodeFrame {...args} countLabel={{ count, unit }} />
+          </Example>
+        ))
+      )}
+      {[0, 1, 5].map((actionCount) => (
+        <Example key={`legacy-${actionCount}`} label={`Legacy actionCount: ${actionCount}`}>
+          <NodeFrame {...args} actionCount={actionCount} />
+        </Example>
+      ))}
+    </div>
+  ),
+};

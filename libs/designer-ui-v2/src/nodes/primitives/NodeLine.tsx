@@ -97,9 +97,14 @@ export interface NodeLineProps extends SVGAttributes<SVGSVGElement> {
   orientation?: 'horizontal' | 'vertical';
   /** Optional run emphasis; omitted renders the unchanged variant. */
   state?: NodeLineState;
+  /**
+   * Solid lines draw an arrowhead by default. Pass false when an edge continues the line (for example a loop
+   * card joining its body) so the link reads as one unbroken stroke instead of ending at an arrow.
+   */
+  arrow?: boolean;
 }
 export const NodeLine = forwardRef<SVGSVGElement, NodeLineProps>(function NodeLine(
-  { variant = 'solid', length = 85, orientation = 'horizontal', state = 'default', className, ...rest },
+  { variant = 'solid', length = 85, orientation = 'horizontal', state = 'default', arrow: showArrow = true, className, ...rest },
   ref
 ) {
   const vertical = orientation === 'vertical';
@@ -107,9 +112,10 @@ export const NodeLine = forwardRef<SVGSVGElement, NodeLineProps>(function NodeLi
   const lineState = useNodeLineStateStyles();
   const styles = useStyles();
   const shaft = vertical ? `M10 0 V${length}` : `M0 10 H${length}`;
-  // Only the canonical solid connector owns an arrow; branch-tone and dashed lines keep their joins bare.
-  const arrow =
-    variant === 'solid' ? ` ${getNodeLineArrowPath(vertical ? 10 : length, vertical ? length : 10, vertical ? 'down' : 'right')}` : '';
+  // Only the canonical solid connector owns an arrow; branch-tone and dashed lines keep their joins bare,
+  // and `arrow={false}` lets a host draw a bare continuity stroke without changing variant colors.
+  const hasArrow = showArrow && variant === 'solid';
+  const arrow = hasArrow ? ` ${getNodeLineArrowPath(vertical ? 10 : length, vertical ? length : 10, vertical ? 'down' : 'right')}` : '';
   return (
     <svg
       {...rest}
@@ -121,6 +127,7 @@ export const NodeLine = forwardRef<SVGSVGElement, NodeLineProps>(function NodeLi
       aria-hidden="true"
       data-line={variant}
       data-state={state === 'default' ? undefined : state}
+      data-arrow={variant === 'solid' && !showArrow ? 'false' : undefined}
     >
       <path className={mergeClasses(line.base, line[variant], lineState[state])} d={`${shaft}${arrow}`} />
     </svg>

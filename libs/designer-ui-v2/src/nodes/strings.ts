@@ -27,8 +27,13 @@ export interface NodeBranchStrings {
   /** Spoken suffix for the branch that ran; optional for older dictionaries. */
   taken?: (label: string) => string;
 }
+/** What a frame count measures; the host supplies meaning, the dictionary owns wording and plurals. */
+export type NodeFrameCountUnit = 'actions' | 'cases' | 'tools' | 'hiddenItems';
+export type NodeFrameCountStrings = Record<NodeFrameCountUnit, (count: number) => string>;
 export interface NodeFrameStrings {
   actionCount: (count: number) => string;
+  /** Optional so dictionaries written before unit-aware counts still compile; missing units use the defaults. */
+  counts?: Partial<NodeFrameCountStrings>;
 }
 /** Zero-based indices are an API detail; every string receives one-based display values. */
 export interface NodeIterationPagerStrings {
@@ -79,8 +84,15 @@ export interface NodeStrings extends ActionNodeCardStrings {
   runAfter?: NodeRunAfterStrings;
 }
 
+export const defaultNodeFrameCountStrings: NodeFrameCountStrings = {
+  actions: (count) => (count === 1 ? '1 action' : `${count} actions`),
+  cases: (count) => (count === 1 ? '1 case' : `${count} cases`),
+  tools: (count) => (count === 1 ? '1 tool' : `${count} tools`),
+  hiddenItems: (count) => (count === 1 ? '1 hidden item' : `${count} hidden items`),
+};
 export const defaultNodeFrameStrings: NodeFrameStrings = {
-  actionCount: (count) => (count === 1 ? '1 action' : `${count} actions`),
+  actionCount: defaultNodeFrameCountStrings.actions,
+  counts: defaultNodeFrameCountStrings,
 };
 export const defaultNodeIterationPagerStrings: NodeIterationPagerStrings = {
   label: 'Iterations',
