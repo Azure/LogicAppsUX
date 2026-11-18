@@ -6,9 +6,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
-import { devContainerFolderName, devContainerFileName } from '../../../../../constants';
+import { CodefulSdkVersion, devContainerFolderName, devContainerFileName } from '../../../../../constants';
 
 // Use real disk operations; resolve codeful templates from source rather than beside the compiled bundle.
 vi.mock('fs-extra', async (importOriginal) => {
@@ -424,6 +424,17 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(settings.Values.FUNCTIONS_INPROC_NET8_ENABLED).toBe('1');
       expect(settings.Values.AzureWebJobsStorage).toBe('UseDevelopmentStorage=true');
       expect(settings.IsEncrypted).toBe(false);
+
+      if (logicAppType === ProjectType.codeful) {
+        const csproj = await fse.readFile(path.join(appPath, `${options.logicAppName}.csproj`), 'utf8');
+        expect(options.targetFramework).toBe(TargetFramework.Net10);
+        expect(csproj).toContain('<TargetFramework>net10.0</TargetFramework>');
+        expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />');
+        expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />');
+        expect(csproj).not.toContain('Microsoft.Azure.Functions.Worker.Core');
+        expect(csproj).toContain(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="${CodefulSdkVersion.WorkflowsSDK}"/>`);
+        expect(csproj).not.toContain('<%= codefulSdkPackageVersion %>');
+      }
     });
 
     it('defaults a new regular workspace without a framework selection to .NET 10 custom code', async () => {

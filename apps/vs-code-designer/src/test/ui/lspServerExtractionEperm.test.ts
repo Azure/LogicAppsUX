@@ -9,7 +9,7 @@ import { sleep, waitForQuickInputReady } from './helpers';
 
 const validateDependenciesCommand = 'Azure Logic Apps: Validate and install dependency binaries';
 
-describe('LSP SDK extraction EPERM repro', function () {
+describe('LSP server extraction EPERM repro', function () {
   this.timeout(180000);
 
   let workbench: Workbench;
