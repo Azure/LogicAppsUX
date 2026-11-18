@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import { CodefulSdkVersion, devContainerFolderName, devContainerFileName } from '../../../../../constants';
 
@@ -427,6 +427,11 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
 
       if (logicAppType === ProjectType.codeful) {
         const csproj = await fse.readFile(path.join(appPath, `${options.logicAppName}.csproj`), 'utf8');
+        expect(options.targetFramework).toBe(TargetFramework.Net10);
+        expect(csproj).toContain('<TargetFramework>net10.0</TargetFramework>');
+        expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />');
+        expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />');
+        expect(csproj).not.toContain('Microsoft.Azure.Functions.Worker.Core');
         expect(csproj).toContain(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="${CodefulSdkVersion.WorkflowsSDK}"/>`);
         expect(csproj).not.toContain('<%= codefulSdkPackageVersion %>');
       }
