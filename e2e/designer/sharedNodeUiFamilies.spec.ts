@@ -3,6 +3,8 @@ import { getSerializedWorkflowFromStateV2 } from './utils/designerFunctions';
 import { openSharedWorkflow, setContextSetting, waitForViewport } from './utils/sharedNodeUi';
 import { expectEdgePaint } from './utils/sharedNodePaint';
 
+const toolEdgeId = 'Regular_Tool%2D#subgraph-Compose';
+
 test.describe('Shared node UI additional Local family acceptance', { tag: ['@mock', '@shared-node-ui'] }, () => {
   for (const isDark of [false, true]) {
     test(`retains actual Agent tools and selected-footer hover in ${isDark ? 'dark' : 'light'} mode`, async ({ page }, testInfo) => {
@@ -41,7 +43,7 @@ test.describe('Shared node UI additional Local family acceptance', { tag: ['@moc
       await expect(page.locator('#msla-node-Compose')).toHaveAttribute('data-node-card', 'action');
       await expect(page.locator('[data-node-card="tool"]')).toHaveCount(toolIds.length);
       await page.mouse.move(0, 0);
-      await expectEdgePaint(page, testInfo, 'WorkflowAgent', 'Regular_Tool-#subgraph-Compose');
+      await expectEdgePaint(page, testInfo, 'WorkflowAgent', toolEdgeId);
       await testInfo.attach('agent-expanded', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
 
       const agent = page.locator('#msla-node-WorkflowAgent');
@@ -72,7 +74,7 @@ test.describe('Shared node UI additional Local family acceptance', { tag: ['@moc
       await expect(page.locator('[data-node-card="tool"]')).toHaveCount(0);
       await expect(page.locator('#msla-node-Compose')).toHaveCount(0);
       await expect(decoration).toBeVisible();
-      await expect(page.locator('.react-flow__edge[data-id="Regular_Tool-#subgraph-Compose"]')).toHaveCount(0);
+      await expect(page.locator(`.react-flow__edge[data-id="${toolEdgeId}"]`)).toHaveCount(0);
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
       await testInfo.attach('agent-collapsed', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
 
@@ -83,21 +85,21 @@ test.describe('Shared node UI additional Local family acceptance', { tag: ['@moc
       await expect(page.locator('#msla-node-Compose')).toHaveAttribute('data-node-card', 'action');
       await page.mouse.move(0, 0);
       await waitForViewport(page);
-      await expectEdgePaint(page, testInfo, 'WorkflowAgent', 'Regular_Tool-#subgraph-Compose');
+      await expectEdgePaint(page, testInfo, 'WorkflowAgent', toolEdgeId);
       const child = page.locator('#msla-node-Compose');
       await child.focus();
       await expect(child).toBeFocused();
       await child.press('Enter');
       await expect(child).toHaveAttribute('data-selected', 'true');
       await page.mouse.move(0, 0);
-      await expectEdgePaint(page, testInfo, 'WorkflowAgent', 'Regular_Tool-#subgraph-Compose');
+      await expectEdgePaint(page, testInfo, 'WorkflowAgent', toolEdgeId);
       const viewport = page.locator('.react-flow__viewport');
       const fitted = await viewport.getAttribute('style');
       await page.getByRole('button', { name: 'Zoom out', exact: true }).click();
       await waitForViewport(page);
       await expect(viewport).not.toHaveAttribute('style', fitted!);
       await page.mouse.move(0, 0);
-      await expectEdgePaint(page, testInfo, 'WorkflowAgent', 'Regular_Tool-#subgraph-Compose');
+      await expectEdgePaint(page, testInfo, 'WorkflowAgent', toolEdgeId);
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
     });
   }

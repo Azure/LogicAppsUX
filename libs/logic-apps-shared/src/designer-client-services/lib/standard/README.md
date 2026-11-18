@@ -1,8 +1,8 @@
 # Standard direct management
 
 The ARM-protected Reader and Contributor issuers return exactly
-`{ endpoint, apiKey, expiresOn }`. The endpoint is the trusted app origin plus
-`/api/v1`. Direct requests send only `X-API-Key: <apiKey>`, not an ARM bearer
+`{ endpoint, apiKey, expiresOn }`. The endpoint is the trusted app origin plus the
+configured route prefix and `/v1` (for example `/api/v1`, `/myteam/v1` or `/v1`). Direct requests send only `X-API-Key: <apiKey>`, not an ARM bearer
 credential or `x-functions-key`. The runtime verifies all management claims
 and the app-specific signature; clients treat the credential as opaque.
 The former `{ extensionCode, accessToken }` response is not supported.
@@ -191,8 +191,8 @@ versions/options when selected. Issuance is bodyless GET
 bodyless POST `.../getContributorToken`. Neither call executes business work.
 
 The response is exactly `{endpoint, apiKey, expiresOn}`.
-The endpoint must equal the trusted runtime origin plus
-`/api/v1`, without query, fragment or userinfo.
+The endpoint must use the trusted runtime origin and a path ending in `/v1`,
+without query, fragment or userinfo.
 The signed credential uses Base64URL transport encoding (1 to 16,384 characters,
 matching the runtime's size limit). The client does not decode its claims or
 infer role or expiry from it. Caller-supplied `X-API-Key`, bearer and extension-key
@@ -217,7 +217,12 @@ Unknown/duplicate legacy query parameters retain the ARM path; direct paging
 queries must satisfy the fixed contract. Existing bodies and business headers are
 passed through, except authentication/host/cookie headers are replaced or removed.
 The response shape is unchanged; direct `nextLink` must stay on the same collection
-under the trusted endpoint with the exact version and no credential parameters.
+under the trusted endpoint with the exact version and no credential parameters,
+and is returned unchanged. A URL under an endpoint this client was issued is sent
+only to that endpoint; it is never replayed through ARM, and fails if no session
+for the same endpoint is available. If a replacement management client no longer
+recognizes the link, run-history continuations outside the configured ARM origin
+are rejected rather than sent to the legacy transport.
 Content/callback links do not gain session authority.
 
 ## Backend configuration
