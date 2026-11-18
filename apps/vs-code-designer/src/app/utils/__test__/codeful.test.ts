@@ -1,6 +1,13 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { codefulProjectsExist, detectAgentCodefulWorkflow, detectCodefulWorkflow, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { CodefulSdk } from '../../../constants';
+import {
+  codefulProjectsExist,
+  detectAgentCodefulWorkflow,
+  detectCodefulWorkflow,
+  hasCodefulSdkReference,
+  parseCsprojCopyToCodefulInfo,
+} from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   pathExists: vi.fn(),
@@ -24,6 +31,42 @@ vi.mock('fs-extra', () => ({
   readFile: mocks.readFile,
   statSync: mocks.statSync,
 }));
+
+describe('hasCodefulSdkReference', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.statSync.mockReturnValue({ isDirectory: () => true });
+    mocks.readdir.mockResolvedValue(['LogicApp.csproj']);
+  });
+
+  it.each(['net8', 'net10.0', 'net12.0'])('detects the codeful SDK independently of target framework %s', async (targetFramework) => {
+    mocks.readFile.mockResolvedValue(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>${targetFramework}</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Version="1.0.0" Include="${CodefulSdk.WorkflowsSDK.toLowerCase()}" />
+  </ItemGroup>
+</Project>`);
+
+    await expect(hasCodefulSdkReference('codeful-project')).resolves.toBe(true);
+  });
+
+  it('returns false when the project does not reference the codeful SDK package ID', async () => {
+    mocks.readFile.mockResolvedValue(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
+  </ItemGroup>
+</Project>`);
+
+    await expect(hasCodefulSdkReference('regular-project')).resolves.toBe(false);
+  });
+});
 
 describe('parseCsprojCopyToCodefulInfo', () => {
   it('detects modern codeful targets that run on Build and Publish', () => {

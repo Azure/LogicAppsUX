@@ -71,7 +71,7 @@ describe('isLogicAppProject', () => {
 
   it('detects a codeful project via its .csproj SDK reference regardless of the workflow .cs file name', async () => {
     const csprojPath = path.join(projectPath, 'MyLogicApp.csproj');
-    // A codeful project is a .NET 8 project referencing the Logic Apps SDK; the workflow C# file
+    // A codeful project references the Logic Apps SDK; the workflow C# file
     // can be named anything (here, MyCustomWorkflow.cs — not workflow.cs). Detection is structural
     // (via the .csproj), so a literal workflow.cs is never required.
     vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as unknown as fse.Stats);
@@ -83,7 +83,7 @@ describe('isLogicAppProject', () => {
       if (String(p) === csprojPath) {
         return [
           '<Project Sdk="Microsoft.NET.Sdk">',
-          '  <PropertyGroup><TargetFramework>net8</TargetFramework></PropertyGroup>',
+          '  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>',
           `  <ItemGroup><PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="${CodefulSdkVersion.WorkflowsSDK}" /></ItemGroup>`,
           '</Project>',
         ].join('\n');

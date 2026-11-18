@@ -41,9 +41,9 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
 };
 
 /**
- * Checks if the folder contains a .NET 8 project with a reference to the codeful SDK.
+ * Checks if the folder contains a project with a reference to the codeful SDK.
  * @param {string} folderPath - The folder path.
- * @returns {Promise<boolean>} Returns true if the folder contains a .NET 8 project with a reference to the codeful SDK, otherwise false.
+ * @returns {Promise<boolean>} Returns true if the folder contains a reference to the codeful SDK, otherwise false.
  */
 export const hasCodefulSdkReference = async (folderPath: string): Promise<boolean> => {
   try {
@@ -60,7 +60,7 @@ export const hasCodefulSdkReference = async (folderPath: string): Promise<boolea
   }
 
   const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return isCodefulNet8Csproj(csprojContent);
+  return csprojContent.toLowerCase().includes(CodefulSdk.WorkflowsSDK.toLowerCase());
 };
 
 function stripXmlComments(xml: string): string {
@@ -85,16 +85,6 @@ function stripXmlComments(xml: string): string {
 
   return result;
 }
-
-/**
- * Checks if a C# project file (.csproj) is configured for a codeful .NET 8 Azure Logic Apps workflow.
- *
- * @param csprojContent - The content of the .csproj file as a string
- * @returns `true` if the project targets .NET 8 and includes the Microsoft.Azure.Workflows.Sdk package, `false` otherwise
- */
-const isCodefulNet8Csproj = (csprojContent: string): boolean => {
-  return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes(CodefulSdk.WorkflowsSDK);
-};
 
 /**
  * Information about the AfterTargets hooks on the codeful project's
