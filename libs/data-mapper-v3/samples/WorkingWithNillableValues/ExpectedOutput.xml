@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns0:OutputSchema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:ns0="http://WorkingWithNillableValues.OutputSchema">
+  <NilValueOutput>Ola</NilValueOutput>
+  <AnotherNilValueOutput xsi:nil="true"/>
+</ns0:OutputSchema>

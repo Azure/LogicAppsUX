@@ -1,4 +1,5 @@
 import { teamsHighContrastTheme, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures/mapperHost';
 import type { MapperPage } from './pages/mapperPage';
 import { createInitPayload, createMap, createMapFunctoid, createSchemaLink, paths } from './fixtures/testData';
@@ -31,6 +32,194 @@ function linkedFunctoidMap() {
 }
 
 test.describe('additional UI interactions', () => {
+  test('Grid Properties is separated, disabled before init, and Cancel leaves the map untouched', async ({ mapper }) => {
+    await mapper.loadWithoutInit();
+    const { ui, host } = mapper;
+    await ui.page.locator('.canvas-workspace').click({ button: 'right', position: { x: 20, y: 70 } });
+    await expect(ui.page.getByRole('menuitem', { name: 'Properties', exact: true })).toBeDisabled();
+    await ui.page.locator('.mapper-container').click({ position: { x: 1, y: 1 } });
+    await host.send({ type: 'init', data: createInitPayload() });
+    await ui.waitUntilReady();
+    await openContextMenu(ui);
+    const properties = ui.page.getByRole('menuitem', { name: 'Properties', exact: true });
+    await expect(properties).toBeEnabled();
+    expect(
+      await properties.evaluate((element) => {
+        const separator = element.previousElementSibling;
+        return separator?.classList.contains('fui-MenuDivider') && Number.parseFloat(getComputedStyle(separator).borderBottomWidth) > 0;
+      })
+    ).toBe(true);
+    await properties.click();
+    const dialog = ui.page.getByRole('dialog', { name: 'Grid Properties' });
+    await expect(dialog.getByRole('tab', { name: 'General', exact: true })).toHaveAttribute('aria-selected', 'true');
+    for (const [label, value] of [
+      ['Source Schema', 'Schemas/Order.xsd'],
+      ['Target Schema', 'Schemas/Invoice.xsd'],
+    ]) {
+      const field = dialog.getByRole('textbox', { name: label, exact: true });
+      await expect(field).toHaveValue(value);
+      await expect(field).toHaveAttribute('readonly', '');
+    }
+    await dialog.getByRole('checkbox', { name: 'Ignore Namespaces for Links' }).check();
+    await dialog.getByRole('tab', { name: 'Custom Header', exact: true }).click();
+    await dialog.getByRole('textbox', { name: 'Media-Type', exact: true }).fill('text/plain');
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await dialog.getByRole('textbox', { name: 'Custom XSLT Path', exact: true }).fill('../cancelled.xslt');
+    await expect(dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true })).toBeDisabled();
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    expect(host.messages('update')).toHaveLength(0);
+    await openContextMenu(ui);
+    await properties.click();
+    await expect(dialog.getByRole('checkbox', { name: 'Ignore Namespaces for Links' })).not.toBeChecked();
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Custom XSLT Path', exact: true })).toHaveValue('');
+    await ui.page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    expect(host.messages('update')).toHaveLength(0);
+  });
+
+  test('Grid Properties applies all categories once, reopens, and accepts a host undo', async ({ mapper }) => {
+    const map = linkedFunctoidMap();
+    map.pages.push({ id: 'other', name: 'Other page', links: [], functoids: [] });
+    map.options = { ...map.options, ...{ futureOption: 'preserved' } };
+    map.customXsltPath = 'old.xslt';
+    map.customExtensionXmlPath = 'old.xml';
+    map.customXslt = '<old-stylesheet />';
+    map.customExtensionXml = '<old-extension />';
+    map.scriptTypePrecedence = [
+      { type: 'inlineCSharp', enabled: true },
+      { type: 'externalAssembly', enabled: false },
+    ];
+    await mapper.open({ map });
+    const { ui, host } = mapper;
+    await openContextMenu(ui);
+    await ui.page.getByRole('menuitem', { name: 'Properties', exact: true }).click();
+    const dialog = ui.page.getByRole('dialog', { name: 'Grid Properties' });
+    await dialog.getByRole('checkbox', { name: 'Ignore Namespaces for Links' }).check();
+    await dialog.getByRole('checkbox', { name: 'External Assembly', exact: true }).check();
+    await dialog.getByRole('button', { name: 'Move External Assembly up', exact: true }).click();
+    await dialog.getByRole('tab', { name: 'Custom Header', exact: true }).click();
+    for (const [label, value] of [
+      ['XsltEncoding', 'UTF-16'],
+      ['Method', 'html'],
+      ['Version', '2.0'],
+      ['Standalone', 'yes'],
+      ['Indent', 'no'],
+    ]) {
+      await dialog.getByRole('combobox', { name: label, exact: true }).selectOption(value);
+    }
+    await dialog.getByRole('checkbox', { name: 'Copy PIs', exact: true }).check();
+    await dialog.getByRole('checkbox', { name: 'Omit XML Declaration', exact: true }).check();
+    for (const [label, value] of [
+      ['Doctype public', '-//Example//DTD Invoice//EN'],
+      ['Doctype system', 'invoice.dtd'],
+      ['CDATA section elements', 'Description Notes'],
+      ['Media-Type', 'text/html'],
+    ]) {
+      await dialog.getByRole('textbox', { name: label, exact: true }).fill(value);
+    }
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await dialog.getByRole('textbox', { name: 'Custom XSLT Path', exact: true }).fill('../Transforms/custom.xslt');
+    await dialog.getByRole('textbox', { name: 'Custom Extension XML path', exact: true }).fill('C:\\Maps\\extension.xml');
+    await dialog.getByRole('combobox', { name: 'XSLT transform engine', exact: true }).selectOption('.Net Framework');
+    await expect(dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true })).toBeEnabled();
+    await dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true }).selectOption('Yes');
+    await dialog.getByRole('tab', { name: 'General', exact: true }).click();
+    await expect(dialog.getByRole('checkbox', { name: 'Ignore Namespaces for Links' })).toBeChecked();
+    await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect.poll(() => host.messages('update').length).toBe(1);
+    const updated = host.lastUpdatedMap()!;
+    expect(updated.options).toEqual({
+      ...map.options,
+      ignoreNamespacesForLinks: true,
+      xsltEncoding: 'UTF-16',
+      outputMethod: 'html',
+      xsltVersion: '2.0',
+      standalone: 'yes',
+      indent: 'no',
+      copyProcessingInstructions: true,
+      omitXmlDeclaration: true,
+      doctypePublic: '-//Example//DTD Invoice//EN',
+      doctypeSystem: 'invoice.dtd',
+      cdataSectionElements: 'Description Notes',
+      mediaType: 'text/html',
+      xsltEngine: '.Net Framework',
+      useXslTransform: 'Yes',
+    });
+    expect(updated.pages).toEqual(map.pages);
+    expect(updated.sourceSchema).toEqual(map.sourceSchema);
+    expect(updated.targetSchema).toEqual(map.targetSchema);
+    expect(updated.customXsltPath).toBe('../Transforms/custom.xslt');
+    expect(updated.customExtensionXmlPath).toBe('C:\\Maps\\extension.xml');
+    expect(updated.customXslt).toBeUndefined();
+    expect(updated.customExtensionXml).toBeUndefined();
+    expect(updated.scriptTypePrecedence).toEqual([
+      { type: 'externalAssembly', enabled: true },
+      { type: 'inlineCSharp', enabled: true },
+    ]);
+    await openContextMenu(ui);
+    await ui.page.getByRole('menuitem', { name: 'Properties', exact: true }).click();
+    await dialog.getByRole('tab', { name: 'Custom Header', exact: true }).click();
+    await expect(dialog.getByRole('combobox', { name: 'XsltEncoding', exact: true })).toHaveValue('UTF-16');
+    await expect(dialog.getByRole('textbox', { name: 'Media-Type', exact: true })).toHaveValue('text/html');
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Custom XSLT Path', exact: true })).toHaveValue('../Transforms/custom.xslt');
+    await expect(dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true })).toHaveValue('Yes');
+    await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    expect(host.messages('update')).toHaveLength(1);
+    await host.send({ type: 'init', data: createInitPayload({ map }) });
+    await openContextMenu(ui);
+    await ui.page.getByRole('menuitem', { name: 'Properties', exact: true }).click();
+    await expect(dialog.getByRole('checkbox', { name: 'Ignore Namespaces for Links' })).not.toBeChecked();
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Custom XSLT Path', exact: true })).toHaveValue('old.xslt');
+    await expect(dialog.getByRole('combobox', { name: 'XSLT transform engine', exact: true })).toHaveValue('');
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    expect(host.messages('update')).toHaveLength(1);
+  });
+
+  test('Grid Properties preserves imported engines and cached content while fitting a narrow viewport', async ({ mapper }) => {
+    const map = createMap();
+    map.options = { ...map.options, ...{ xsltEngine: 'Imported engine', useXslTransform: 'No' } };
+    map.customXsltPath = 'custom.xslt';
+    map.customXslt = '<stylesheet />';
+    map.customExtensionXmlPath = 'extension.xml';
+    map.customExtensionXml = '<extension />';
+    await mapper.open({ map });
+    const { ui, host } = mapper;
+    await openContextMenu(ui);
+    await ui.page.getByRole('menuitem', { name: 'Properties', exact: true }).click();
+    const dialog = ui.page.getByRole('dialog', { name: 'Grid Properties' });
+    await ui.page.setViewportSize({ width: 480, height: 480 });
+    await dialog.getByRole('tab', { name: 'Compiler', exact: true }).click();
+    await expect(dialog.getByRole('combobox', { name: 'XSLT transform engine', exact: true })).toHaveValue('Imported engine');
+    await expect(dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true })).toBeDisabled();
+    await expect(dialog.getByRole('combobox', { name: 'Use XSL Transform', exact: true })).toHaveValue('No');
+    await dialog.getByRole('tab', { name: 'Custom Header', exact: true }).click();
+    await expect(dialog.locator('.fui-DialogContent')).toHaveCSS('overflow-y', 'auto');
+    expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+    expect(await dialog.locator('.fui-DialogContent').evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+    await dialog.getByRole('combobox', { name: 'XsltEncoding', exact: true }).selectOption('custom');
+    await dialog.getByRole('textbox', { name: 'Custom encoding', exact: true }).fill('windows-1252');
+    await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeInViewport();
+    await expect(dialog.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
+    await dialog.screenshot({ path: test.info().outputPath('grid-properties-narrow.png') });
+    await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    await expect.poll(() => host.messages('update').length).toBe(1);
+    expect(host.lastUpdatedMap()).toEqual({ ...map, options: { ...map.options, xsltEncoding: 'windows-1252' } });
+    await ui.page.setViewportSize({ width: 1600, height: 900 });
+    await openContextMenu(ui);
+    await ui.page.getByRole('menuitem', { name: 'Properties', exact: true }).click();
+    await dialog.getByRole('tab', { name: 'Custom Header', exact: true }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Custom encoding', exact: true })).toHaveValue('windows-1252');
+    await dialog.getByRole('combobox', { name: 'XsltEncoding', exact: true }).selectOption('');
+    await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    await expect.poll(() => host.messages('update').length).toBe(2);
+    expect(host.lastUpdatedMap()!.options.xsltEncoding).toBe('');
+  });
+
   for (const { name, className, theme } of [
     { name: 'light', className: 'vscode-light', theme: webLightTheme },
     { name: 'dark', className: 'vscode-dark', theme: webDarkTheme },
@@ -238,6 +427,208 @@ test.describe('additional UI interactions', () => {
     await mapper.open();
     await expect(mapper.ui.page.getByRole('button', { name: 'Fit', exact: true })).toBeDisabled();
     expect(mapper.host.messages('update')).toHaveLength(0);
+  });
+
+  test.describe('anchored guidance', () => {
+    function overlappingMap() {
+      const map = createMap();
+      map.pages[0].functoids.push(createMapFunctoid('guidance-first'), createMapFunctoid('guidance-second'));
+      return map;
+    }
+
+    async function preserveWebviewState(page: Page): Promise<void> {
+      await page.addInitScript(() => {
+        const hostWindow = window as unknown as {
+          acquireVsCodeApi: () => Record<string, unknown>;
+          __guidanceState: () => unknown;
+        };
+        let acquire = hostWindow.acquireVsCodeApi;
+        let state: unknown = { unrelatedPreference: 'preserved', mapperGuidanceDismissed: ['unrelated'] };
+        hostWindow.__guidanceState = () => state;
+        Object.defineProperty(window, 'acquireVsCodeApi', {
+          configurable: true,
+          get: () => () => ({
+            ...acquire(),
+            getState: () => state,
+            setState: (next: unknown) => {
+              state = next;
+            },
+          }),
+          set: (next: typeof acquire) => {
+            acquire = next;
+          },
+        });
+      });
+    }
+
+    async function expectAnchored(page: Page, title: string, anchor: Locator): Promise<Locator> {
+      const dialog = page.getByRole('dialog', { name: title, exact: true });
+      await expect(dialog).toBeVisible();
+      await expect(anchor).toBeVisible();
+      await expect(anchor).toHaveAttribute('data-mapper-guidance-active', 'true');
+      await expect(page.locator('[data-mapper-guidance-active="true"]')).toHaveCount(1);
+      await expect
+        .poll(() =>
+          anchor.evaluate((element) => {
+            const style = getComputedStyle(element);
+            return style.outlineStyle !== 'none' && Number.parseFloat(style.outlineWidth) > 0;
+          })
+        )
+        .toBe(true);
+      const star = page.locator('body [data-mapper-guidance-star]');
+      await expect(star).toHaveCount(1);
+      await expect(star).toBeVisible();
+      await expect(star).toHaveAttribute('aria-hidden', 'true');
+      await expect(page.getByRole('button', { name: /Imported layout tip|Map setup guide/ })).toHaveCount(0);
+      await expect
+        .poll(async () => {
+          const anchorBounds = await anchor.boundingBox();
+          const dialogBounds = await dialog.boundingBox();
+          const starBounds = await star.boundingBox();
+          const viewport = page.viewportSize()!;
+          if (!anchorBounds || !dialogBounds || !starBounds) {
+            return false;
+          }
+          const horizontalGap = Math.max(
+            anchorBounds.x - starBounds.x - starBounds.width,
+            starBounds.x - anchorBounds.x - anchorBounds.width,
+            0
+          );
+          const verticalGap = Math.max(
+            anchorBounds.y - starBounds.y - starBounds.height,
+            starBounds.y - anchorBounds.y - anchorBounds.height,
+            0
+          );
+          return (
+            dialogBounds.y >= anchorBounds.y + anchorBounds.height &&
+            dialogBounds.x >= 0 &&
+            dialogBounds.x + dialogBounds.width <= viewport.width &&
+            dialogBounds.y + dialogBounds.height <= viewport.height &&
+            horizontalGap <= 24 &&
+            verticalGap <= 24
+          );
+        })
+        .toBe(true);
+      return dialog;
+    }
+
+    async function expectGuidanceClosed(page: Page): Promise<void> {
+      await expect(page.locator('[data-mapper-guidance-active="true"]')).toHaveCount(0);
+      await expect(page.locator('[data-mapper-guidance-star]')).toHaveCount(0);
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+    }
+
+    for (const action of ['Got it', 'Dismiss map guidance']) {
+      test(`layout ${action} clears the Fit highlight and preserves persisted state`, async ({ mapper }) => {
+        const { ui, host } = mapper;
+        await preserveWebviewState(ui.page);
+        const map = overlappingMap();
+        await mapper.open({ map });
+        const fit = ui.page.locator('button[data-mapper-guidance="fit"]');
+        const dialog = await expectAnchored(ui.page, 'Bring functoids into view', fit);
+        await dialog.getByRole('button', { name: action, exact: true }).click();
+        await expectGuidanceClosed(ui.page);
+        expect(await ui.page.evaluate(() => (window as unknown as { __guidanceState: () => unknown }).__guidanceState())).toEqual({
+          unrelatedPreference: 'preserved',
+          mapperGuidanceDismissed: ['unrelated', 'layout'],
+        });
+        await host.send({ type: 'init', data: createInitPayload({ map }) });
+        await expectGuidanceClosed(ui.page);
+        expect(host.messages('update')).toHaveLength(0);
+      });
+    }
+
+    test('clicking the actual Fit anchor lays out functoids and closes its callout', async ({ mapper }) => {
+      const map = overlappingMap();
+      await mapper.open({ map });
+      const { ui, host } = mapper;
+      const fit = ui.page.locator('button[data-mapper-guidance="fit"]');
+      await expectAnchored(ui.page, 'Bring functoids into view', fit);
+      const update = host.waitForNext('update');
+      await fit.click();
+      const saved = (await update).data;
+      await expectGuidanceClosed(ui.page);
+      const [first, second] = saved.pages[0].functoids;
+      expect(Math.abs(first.x - second.x) >= 40 || Math.abs(first.y - second.y) >= 30).toBe(true);
+      expect(saved.pages[0].links).toEqual(map.pages[0].links);
+      expect(saved.pages[0].functoids.map(({ x: _x, y: _y, ...configuration }) => configuration)).toEqual(
+        map.pages[0].functoids.map(({ x: _x, y: _y, ...configuration }) => configuration)
+      );
+      await expect(ui.functoidNodes).toHaveCount(2);
+      expect(host.messages('update')).toHaveLength(1);
+    });
+
+    test('setup Next and Back move the highlight and star between actual features without editing the map', async ({ mapper }) => {
+      const { ui, host } = mapper;
+      await preserveWebviewState(ui.page);
+      const map = createMap({ sourceSchema: { location: '' }, targetSchema: { location: '' } });
+      await mapper.open({ map, sourceSchema: null, targetSchema: null });
+      const steps = [
+        { title: 'Choose your schemas', anchor: ui.page.locator('[data-mapper-guidance="schemas"]') },
+        { title: 'Connect and transform', anchor: ui.page.locator('[data-mapper-guidance="functions"]') },
+        { title: 'Try your map', anchor: ui.page.locator('#btn-test-map') },
+        { title: 'Publish your artifacts', anchor: ui.page.locator('#btn-deploy-logicapp') },
+      ];
+      let previousStar: { x: number; y: number; width: number; height: number } | null = null;
+      for (let index = 0; index < steps.length; index++) {
+        const { title, anchor } = steps[index];
+        const dialog = await expectAnchored(ui.page, title, anchor);
+        await expect(dialog).toContainText(`Step ${index + 1} of 4`);
+        if (index === 1) {
+          await expect(anchor).toHaveAttribute('draggable', 'true');
+        }
+        const star = await ui.page.locator('[data-mapper-guidance-star]').boundingBox();
+        if (previousStar) {
+          expect(star).not.toEqual(previousStar);
+          await expect(steps[index - 1].anchor).not.toHaveAttribute('data-mapper-guidance-active', 'true');
+        }
+        previousStar = star;
+        if (index < steps.length - 1) {
+          await dialog.getByRole('button', { name: 'Next', exact: true }).click();
+        }
+      }
+      for (let index = steps.length - 1; index > 0; index--) {
+        await ui.page
+          .getByRole('dialog', { name: steps[index].title, exact: true })
+          .getByRole('button', { name: 'Back', exact: true })
+          .click();
+        await expectAnchored(ui.page, steps[index - 1].title, steps[index - 1].anchor);
+        await expect(steps[index].anchor).not.toHaveAttribute('data-mapper-guidance-active', 'true');
+      }
+      for (let index = 0; index < steps.length - 1; index++) {
+        await ui.page
+          .getByRole('dialog', { name: steps[index].title, exact: true })
+          .getByRole('button', { name: 'Next', exact: true })
+          .click();
+      }
+      await ui.page.getByRole('dialog', { name: steps[3].title, exact: true }).getByRole('button', { name: 'Done', exact: true }).click();
+      await expectGuidanceClosed(ui.page);
+      expect(await ui.page.evaluate(() => (window as unknown as { __guidanceState: () => unknown }).__guidanceState())).toEqual({
+        unrelatedPreference: 'preserved',
+        mapperGuidanceDismissed: ['unrelated', 'setup'],
+      });
+      expect(host.messages('update')).toHaveLength(0);
+      expect(host.messages('loadSchema')).toHaveLength(0);
+      expect(host.messages('compile')).toHaveLength(0);
+      expect(host.messages('testMapWithInput')).toHaveLength(0);
+      expect(host.messages('deployToLogicApps')).toHaveLength(0);
+      await expect(ui.functoidNodes).toHaveCount(0);
+      await expect(ui.links).toHaveCount(0);
+    });
+
+    test('layout callout remains below Fit and clamps inside a narrow viewport after resize', async ({ mapper }) => {
+      await mapper.open({ map: overlappingMap() });
+      const { ui } = mapper;
+      const fit = ui.page.locator('button[data-mapper-guidance="fit"]');
+      await expectAnchored(ui.page, 'Bring functoids into view', fit);
+      await ui.page.setViewportSize({ width: 640, height: 600 });
+      await expectAnchored(ui.page, 'Bring functoids into view', fit);
+      await ui.page
+        .getByRole('dialog', { name: 'Bring functoids into view', exact: true })
+        .screenshot({ path: test.info().outputPath('anchored-guidance-narrow.png') });
+      await ui.page.setViewportSize({ width: 1200, height: 800 });
+      await expectAnchored(ui.page, 'Bring functoids into view', fit);
+    });
   });
 
   test('Fit separates overlapping functoids and persists their positions without losing links', async ({ mapper }) => {

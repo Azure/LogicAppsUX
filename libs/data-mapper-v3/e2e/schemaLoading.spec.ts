@@ -1,6 +1,14 @@
 import { SchemaParser } from '../src/schema/schemaParser';
 import { expect, test } from './fixtures/mapperHost';
-import { createMap, createSchemaLink, loadSampleMap, paths } from './fixtures/testData';
+import {
+  createMap,
+  createSchemaLink,
+  createSourceSchema,
+  createTargetSchema,
+  loadSampleMap,
+  paths,
+  type TestSchemaNode,
+} from './fixtures/testData';
 
 const schemaCases = [
   {
@@ -72,6 +80,176 @@ const schemaCases = [
 test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
 
 test.describe('XSD structures and schema interactions @p0', () => {
+  for (const side of ['source', 'target'] as const) {
+    test(`node properties parity shows unqualified elements and attributes on the ${side} side`, async ({ mapper }) => {
+      const schema = side === 'source' ? createSourceSchema() : createTargetSchema();
+      const node = schema.rootElement.children[0];
+      node.namespace = '';
+      node.attributes.push({ name: 'code', type: 'xs:string', required: false, namespace: '' });
+      await mapper.open(side === 'source' ? { sourceSchema: schema } : { targetSchema: schema });
+      const { ui, host } = mapper;
+
+      for (const nodePath of [node.path, `${node.path}/@code`]) {
+        await ui.treeNode(side, nodePath).dblclick();
+        const dialog = ui.page.getByRole('dialog');
+        await expect(dialog).toContainText(nodePath);
+        await expect.soft(dialog.getByText('Namespace', { exact: true }).locator('..').locator('dd')).toHaveText('(none)');
+        await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+        await expect(dialog).toHaveCount(0);
+      }
+      expect(schema.targetNamespace).toBeTruthy();
+      expect(host.messages('update')).toHaveLength(0);
+    });
+
+    test(`node properties parity preserves empty defaults and extended metadata on the ${side} side`, async ({ mapper }) => {
+      const schema = side === 'source' ? createSourceSchema() : createTargetSchema();
+      const node: TestSchemaNode = schema.rootElement.children[0];
+      Object.assign(node, {
+        namespace: 'urn:e2e:qualified',
+        declaredDataType: 'tns:DeclaredCode',
+        defaultValue: '',
+        fixedValue: '',
+        wildcard: { namespaceConstraint: '##other', processContents: 'lax' },
+        substitutionGroup: 'tns:AbstractCode',
+      } satisfies Partial<TestSchemaNode>);
+      await mapper.open(side === 'source' ? { sourceSchema: schema } : { targetSchema: schema });
+      const { ui, host } = mapper;
+      await ui.treeNode(side, node.path).dblclick();
+      const dialog = ui.page.getByRole('dialog');
+      await expect(dialog).toContainText(node.path);
+      for (const [label, value] of [
+        ['Namespace', 'urn:e2e:qualified'],
+        ['Declared type', 'tns:DeclaredCode'],
+        ['Default value', '(empty)'],
+        ['Fixed value', '(empty)'],
+        ['Wildcard namespace', '##other'],
+        ['Wildcard processing', 'lax'],
+        ['Substitution group', 'tns:AbstractCode'],
+      ]) {
+        await expect.soft(dialog.getByText(label, { exact: true }).locator('..').locator('dd')).toHaveText(value, { timeout: 1_000 });
+      }
+      await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+      await ui.treeNode(side, schema.rootElement.path).dblclick();
+      for (const label of [
+        'Default value',
+        'Fixed value',
+        'Declared type',
+        'Wildcard namespace',
+        'Wildcard processing',
+        'Substitution group',
+      ]) {
+        await expect(dialog.getByText(label, { exact: true })).toHaveCount(0);
+      }
+      await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      expect(host.messages('update')).toHaveLength(0);
+    });
+
+    test(`node properties parity edits a ${side} leaf and round-trips an explicit empty value`, async ({ mapper }) => {
+      const nodePath = side === 'source' ? paths.source.orderId : paths.target.invoiceId;
+      const field = side === 'source' ? 'testValues' : 'targetValues';
+      const label = side === 'source' ? 'Test value' : 'Constant value';
+      await mapper.open();
+      const { ui, host } = mapper;
+      await ui.treeNode(side, nodePath).dblclick();
+      const dialog = ui.page.getByRole('dialog');
+      await expect(dialog.getByRole('checkbox', { name: `Use ${label.toLowerCase()}`, exact: true })).not.toBeChecked();
+      await expect(dialog.getByRole('textbox', { name: label, exact: true })).toBeDisabled();
+      await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeDisabled();
+      expect(host.messages('update')).toHaveLength(0);
+
+      for (const value of ['stored leaf value', '']) {
+        const checkbox = dialog.getByRole('checkbox', { name: `Use ${label.toLowerCase()}`, exact: true });
+        await checkbox.check();
+        const editor = dialog.getByRole('textbox', { name: label, exact: true });
+        await expect(editor).toBeEnabled();
+        await editor.fill(value);
+        const updated = host.waitForNext('update');
+        await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+        expect((await updated).data[field]).toEqual({ [nodePath]: value || '<empty>' });
+        await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+        await expect(dialog).toHaveCount(0);
+        await ui.treeNode(side, nodePath).dblclick();
+        await expect(dialog.getByRole('checkbox', { name: `Use ${label.toLowerCase()}`, exact: true })).toBeChecked();
+        await expect(dialog.getByRole('textbox', { name: label, exact: true })).toHaveValue(value);
+        await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeDisabled();
+      }
+      await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+      expect(host.messages('update')).toHaveLength(2);
+    });
+  }
+
+  for (const scenario of [
+    {
+      name: 'incoming-linked target',
+      side: 'target',
+      nodePath: paths.target.invoiceId,
+      value: 'stored linked constant',
+      reason: 'This target already has an incoming link. Remove it before assigning a constant.',
+      linked: true,
+    },
+    {
+      name: 'source record',
+      side: 'source',
+      nodePath: paths.source.customer,
+      value: 'stored record test value',
+      reason: 'Values can only be assigned to leaf elements and attributes.',
+      linked: false,
+    },
+    {
+      name: 'target record',
+      side: 'target',
+      nodePath: paths.target.billTo,
+      value: '<empty>',
+      reason: 'Values can only be assigned to leaf elements and attributes.',
+      linked: false,
+    },
+  ] as const) {
+    test(`node properties parity keeps the stored value read-only for a ${scenario.name}`, async ({ mapper }) => {
+      const field = scenario.side === 'source' ? 'testValues' : 'targetValues';
+      const label = scenario.side === 'source' ? 'Test value' : 'Constant value';
+      const map = createMap({ [field]: { [scenario.nodePath]: scenario.value } });
+      if (scenario.linked) {
+        map.pages[0].links.push(createSchemaLink('readonly-link', paths.source.orderId, scenario.nodePath));
+      }
+      await mapper.open({ map });
+      const { ui, host } = mapper;
+      await ui.treeNode(scenario.side, scenario.nodePath).dblclick();
+      const dialog = ui.page.getByRole('dialog');
+      await expect(dialog).toContainText(scenario.nodePath);
+      for (const width of [1600, 390]) {
+        await ui.page.setViewportSize({ width, height: 700 });
+        const checkbox = dialog.getByRole('checkbox', { name: `Use ${label.toLowerCase()}`, exact: true });
+        const editor = dialog.getByRole('textbox', { name: label, exact: true });
+        await expect.soft(checkbox).toBeChecked({ timeout: 1_000 });
+        await expect.soft(checkbox).toBeDisabled({ timeout: 1_000 });
+        await expect.soft(editor).toHaveValue(scenario.value === '<empty>' ? '' : scenario.value, { timeout: 1_000 });
+        await expect.soft(editor).toBeDisabled({ timeout: 1_000 });
+        await expect.soft(dialog.getByText(scenario.reason, { exact: true })).toBeVisible({ timeout: 1_000 });
+        await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toHaveCount(0);
+        expect(
+          await dialog
+            .locator('input, textarea, select')
+            .evaluateAll((controls) => controls.every((control) => control.matches(':disabled')))
+        ).toBe(true);
+        const close = dialog.getByRole('button', { name: 'Close', exact: true });
+        await expect(close).toBeInViewport({ ratio: 1 });
+        const bounds = await close.boundingBox();
+        expect(bounds).not.toBeNull();
+        expect(bounds!.x).toBeGreaterThanOrEqual(0);
+        expect(bounds!.y).toBeGreaterThanOrEqual(0);
+        expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+        expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(700);
+        await ui.page.screenshot({ path: test.info().outputPath(`node-properties-${scenario.side}-${width}.png`) });
+        expect(host.messages('update')).toHaveLength(0);
+      }
+      await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(ui.links).toHaveCount(scenario.linked ? 1 : 0);
+      expect(host.messages('update')).toHaveLength(0);
+    });
+  }
+
   for (const width of [1600, 1000]) {
     test(`only scrolls schema names horizontally when expanded rows need it at ${width}px`, async ({ mapper }) => {
       await mapper.ui.page.setViewportSize({ width, height: 700 });

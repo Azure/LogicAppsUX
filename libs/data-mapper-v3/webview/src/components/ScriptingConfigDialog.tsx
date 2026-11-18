@@ -9,7 +9,6 @@ import {
   Divider,
   Dropdown,
   Field,
-  FluentProvider,
   Input,
   Option,
   Radio,
@@ -24,7 +23,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { AssemblyClassInfo } from '../../../src/protocol/mapEditorProtocol';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 
 export type ScriptingConfigType =
   | 'inlineCSharp'
@@ -170,7 +169,7 @@ function ScriptingConfigDialogView({
   };
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <Dialog
         open
         modalType="modal"

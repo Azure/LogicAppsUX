@@ -1,8 +1,8 @@
-import { FluentProvider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, makeStyles, tokens } from '@fluentui/react-components';
+import { Menu, MenuDivider, MenuItem, MenuList, MenuPopover, MenuTrigger, makeStyles, tokens } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 
 export interface ContextMenuItem {
   label: string;
@@ -20,16 +20,20 @@ export interface ContextMenuCallbacks {
 const useStyles = makeStyles({
   surface: {
     minWidth: '200px',
+    maxWidth: 'calc(100vw - 16px)',
+    boxSizing: 'border-box',
     backgroundColor: tokens.colorNeutralBackground1,
     border: `1px solid ${tokens.colorNeutralStroke1}`,
     borderRadius: tokens.borderRadiusMedium,
     boxShadow: tokens.shadow16,
     padding: tokens.spacingVerticalXS,
     maxHeight: 'calc(100vh - 16px)',
+    overflowX: 'hidden',
     overflowY: 'auto',
   },
-  item: { display: 'flex', justifyContent: 'space-between', gap: tokens.spacingHorizontalL },
-  shortcut: { color: tokens.colorNeutralForeground3 },
+  item: { display: 'flex', justifyContent: 'space-between', gap: tokens.spacingHorizontalL, minWidth: 0, width: '100%' },
+  label: { minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' },
+  shortcut: { color: tokens.colorNeutralForeground3, flexShrink: 0, whiteSpace: 'nowrap' },
 });
 
 function ContextMenuView({ items, onClose }: { items: ContextMenuItem[] } & ContextMenuCallbacks): React.ReactElement {
@@ -38,7 +42,7 @@ function ContextMenuView({ items, onClose }: { items: ContextMenuItem[] } & Cont
   const renderItems = (entries: ContextMenuItem[]): React.ReactNode =>
     entries.map((item, index) =>
       item.divider ? (
-        <div key={`divider-${index}`} role="separator" />
+        <MenuDivider key={`divider-${index}`} />
       ) : item.children ? (
         <Menu key={item.label} positioning="after-top">
           <MenuTrigger disableButtonEnhancement>
@@ -58,14 +62,14 @@ function ContextMenuView({ items, onClose }: { items: ContextMenuItem[] } & Cont
           }}
         >
           <span className={styles.item}>
-            <span>{item.label}</span>
+            <span className={styles.label}>{item.label}</span>
             {item.shortcut ? <span className={styles.shortcut}>{item.shortcut}</span> : null}
           </span>
         </MenuItem>
       )
     );
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <MenuList className={`${styles.surface} ${typographyStyles.base}`}>{renderItems(items)}</MenuList>
     </FluentProvider>
   );

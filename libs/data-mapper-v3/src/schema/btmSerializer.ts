@@ -215,6 +215,21 @@ export class BtmSerializer {
       .att('GenerateDebuggingInformation', map.options.generateDebuggingInformation ? 'Yes' : 'No')
       .att('xmlVersion', map.options.xsltVersion);
 
+    for (const [attribute, value] of Object.entries({
+      standalone: map.options.standalone,
+      'doctype-public': map.options.doctypePublic,
+      'doctype-system': map.options.doctypeSystem,
+      'cdata-section-elements': map.options.cdataSectionElements,
+      indent: map.options.indent,
+      'media-type': map.options.mediaType,
+      XsltEngine: map.options.xsltEngine,
+      UseXSLTransform: map.options.useXslTransform,
+    })) {
+      if (value) {
+        doc.att(attribute, value);
+      }
+    }
+
     // Source schema
     const srcTree = doc.ele('SrcTree');
     if (!map.sourceSchema.location && map.sourceSchema.inlineSchemaXml) {
@@ -416,7 +431,21 @@ export class BtmSerializer {
       outputMethod: (root['@_method'] || root['@_OutputMethod'] || 'xml') as 'xml' | 'html' | 'text',
       copyProcessingInstructions: root['@_CopyPIs']?.toLowerCase() === 'yes',
       generateDebuggingInformation: root['@_GenerateDebuggingInformation']?.toLowerCase() === 'yes',
+      standalone: this.parseOptionalYesNo(root['@_standalone']),
+      doctypePublic: root['@_doctype-public'] || undefined,
+      doctypeSystem: root['@_doctype-system'] || undefined,
+      cdataSectionElements: root['@_cdata-section-elements'] || undefined,
+      indent: this.parseOptionalYesNo(root['@_indent']),
+      mediaType: root['@_media-type'] || undefined,
+      xsltEngine: root['@_XsltEngine'] || undefined,
+      useXslTransform:
+        root['@_UseXSLTransform']?.toLowerCase() === 'yes' ? 'Yes' : root['@_UseXSLTransform']?.toLowerCase() === 'no' ? 'No' : undefined,
     };
+  }
+
+  private parseOptionalYesNo(value: unknown): 'yes' | 'no' | undefined {
+    const normalized = String(value ?? '').toLowerCase();
+    return normalized === 'yes' || normalized === 'no' ? normalized : undefined;
   }
 
   private parseTreeValues(treeValues: any): Record<string, string> {

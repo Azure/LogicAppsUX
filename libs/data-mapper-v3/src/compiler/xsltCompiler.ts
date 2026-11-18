@@ -215,6 +215,29 @@ export class XsltCompiler {
     }
   }
 
+  private resolveScriptPrecedence(functoid: MapFunctoid, map: MapDocument): MapFunctoid {
+    if (!map.scriptTypePrecedence || !functoid.scriptImplementations?.length) {
+      return functoid;
+    }
+    const implementation = map.scriptTypePrecedence
+      .filter((preference) => preference.enabled)
+      .map((preference) => functoid.scriptImplementations!.find((candidate) => candidate.type === preference.type))
+      .find((candidate) => candidate !== undefined);
+    if (!implementation) {
+      this.errors.push({ message: 'No enabled script implementation is available for this functoid.', elementId: functoid.id });
+      return functoid;
+    }
+    const parameters = functoid.parameters.filter(
+      (parameter) => !['scriptType', 'scriptBody', 'assemblyPath', 'className', 'methodName'].includes(parameter.type)
+    );
+    for (const type of ['assemblyPath', 'className', 'methodName'] as const) {
+      if (implementation[type]) {
+        parameters.push({ index: parameters.length, type, value: implementation[type]! });
+      }
+    }
+    return { ...functoid, parameters, scriptType: implementation.type, scriptContent: implementation.content };
+  }
+
   private resolveMapPaths(map: MapDocument, source?: SchemaTree, target?: SchemaTree): MapDocument {
     return {
       ...map,
@@ -222,6 +245,7 @@ export class XsltCompiler {
       testValues: source ? this.sourcePaths.resolveValues(map.testValues) : map.testValues,
       pages: map.pages.map((page) => ({
         ...page,
+        functoids: page.functoids.map((functoid) => this.resolveScriptPrecedence(functoid, map)),
         links: page.links.map((link) => {
           const resolved = { ...link };
           for (const side of ['source', 'target'] as const) {
@@ -339,9 +363,20 @@ export class XsltCompiler {
     const version = map.options.xsltVersion || '1.0';
     let xslt = `<?xml version="1.0" encoding="${encoding}"?>\n`;
     xslt += `<xsl:stylesheet ${nsDecls.join('\n    ')} exclude-result-prefixes="${excludePrefixes.join(' ')}" version="${version}">\n`;
+    const headerAttributes = Object.entries({
+      standalone: map.options.standalone,
+      'doctype-public': map.options.doctypePublic,
+      'doctype-system': map.options.doctypeSystem,
+      'cdata-section-elements': map.options.cdataSectionElements,
+      indent: map.options.indent,
+      'media-type': map.options.mediaType,
+    })
+      .filter(([, value]) => !!value)
+      .map(([attribute, value]) => ` ${attribute}="${this.escapeXmlAttribute(value!)}"`)
+      .join('');
     xslt +=
       `  <xsl:output omit-xml-declaration="${map.options.omitXmlDeclaration ? 'yes' : 'no'}" ` +
-      `method="${map.options.outputMethod}" version="${version}" encoding="${encoding}" />\n\n`;
+      `method="${map.options.outputMethod}" version="${version}" encoding="${encoding}"${headerAttributes} />\n\n`;
 
     // Root template
     xslt += `  <xsl:template match="/">\n`;
@@ -2080,7 +2115,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       (l) => l.targetType === LinkEndpointType.SchemaNode && l.targetPath === node.path && this.linkAllowedInActiveLoop(l, page)
     );
     // Determine element name with namespace prefix
-    const elemName = this.targetQualifiedName(node.name, node.namespace || this.targetNamespace);
+    const elemName = this.targetQualifiedName(node.name, node.namespace);
 
     // Check if any descendant has a mapping
     const hasMappedDescendants = this.hasAnyMapping(node, page);
@@ -2187,7 +2222,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       return result;
     }
 
-    const replacementLinks = directLinks.filter((link) => this.callTemplateEmitsTarget(link, node, page));
+    const replacementLinks = directLinks.filter((link) => this.rawXsltEmitsTarget(link, node, page));
     if (
       replacementLinks.length > 0 &&
       directLinks.every(
@@ -2408,8 +2443,13 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     // For leaf nodes with a direct link, emit value-of directly (BizTalk style)
-    if (directLinks.length > 0 && this.isEffectiveLeaf(node) && node.attributes.length === 0) {
-      const elemName = this.targetQualifiedName(node.name, node.namespace || this.targetNamespace);
+    if (
+      directLinks.length > 0 &&
+      this.isEffectiveLeaf(node) &&
+      node.attributes.length === 0 &&
+      !directLinks.some((link) => this.rawXsltEmitsTarget(link, node, page))
+    ) {
+      const elemName = this.targetQualifiedName(node.name, node.namespace);
       let result = '';
       const valueLinks = directLinks.filter((link) => !this.isFunctoidSource(link, page, 376));
       result += this.compileVariablesForLinks(directLinks, page, linkGraph, contextPath, indent);
@@ -2512,40 +2552,50 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     return functoid?.functoidId === 260 && (functoid.scriptType === 'inlineXslt' || functoid.scriptType === 'inlineXsltCallTemplate');
   }
 
-  private callTemplateEmitsTarget(link: MapLink, node: SchemaNode, page: MapPage): boolean {
+  private rawXsltEmitsTarget(link: MapLink, node: SchemaNode, page: MapPage): boolean {
     if (!this.isRawXsltSource(link, page)) {
       return false;
     }
     const functoid = page.functoids.find((candidate) => candidate.id === link.sourceId)!;
-    if (functoid.scriptType !== 'inlineXsltCallTemplate') {
-      return false;
-    }
     const body = functoid.parameters.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
     try {
-      const document = create(`<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform">${body}</root>`).root().node.ownerDocument!;
+      const document = create(
+        `<root xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${body}</root>`
+      ).root().node.ownerDocument!;
       const xsltNamespace = 'http://www.w3.org/1999/XSL/Transform';
       const template = Array.from(document.getElementsByTagNameNS(xsltNamespace, 'template')).find(
         (element) => element?.parentNode === document.documentElement && element?.hasAttribute('name')
       );
-      const outputs = Array.from(template?.childNodes || [])
-        .filter((element): element is NonNullable<typeof template> => element?.nodeType === 1)
-        .filter((element) => element.namespaceURI !== xsltNamespace || !['param', 'variable'].includes(element.localName));
-      return (
-        outputs.length > 0 &&
-        outputs.every((element) => {
-          if (element.namespaceURI !== xsltNamespace) {
-            return element.localName === node.name && (element.namespaceURI || '') === (node.namespace || '');
-          }
-          if (element.localName !== 'element') {
-            return false;
-          }
-          const name = element.getAttribute('name') || '';
-          const namespace = element.hasAttribute('namespace')
-            ? element.getAttribute('namespace')
-            : element.lookupNamespaceURI(name.includes(':') ? name.split(':')[0] : null);
-          return !/[{}]/.test(name) && name.split(':').pop() === node.name && (namespace || '') === (node.namespace || '');
-        })
-      );
+      const emitsTarget = (parent: NonNullable<typeof template>): boolean => {
+        const children = Array.from(parent.childNodes);
+        if (children.some((child) => (child?.nodeType === 3 || child?.nodeType === 4) && child.textContent?.trim())) {
+          return false;
+        }
+        const outputs = children
+          .filter((element): element is NonNullable<typeof template> => element?.nodeType === 1)
+          .filter((element) => element.namespaceURI !== xsltNamespace || !['param', 'variable'].includes(element.localName));
+        return (
+          outputs.length > 0 &&
+          outputs.every((element) => {
+            if (element.namespaceURI !== xsltNamespace) {
+              return element.localName === node.name && (element.namespaceURI || '') === (node.namespace || '');
+            }
+            if (['choose', 'when', 'otherwise', 'if', 'for-each'].includes(element.localName)) {
+              return emitsTarget(element);
+            }
+            if (element.localName !== 'element') {
+              return false;
+            }
+            const name = element.getAttribute('name') || '';
+            const namespace = element.hasAttribute('namespace')
+              ? element.getAttribute('namespace')
+              : element.lookupNamespaceURI(name.includes(':') ? name.split(':')[0] : null);
+            return !/[{}]/.test(name) && name.split(':').pop() === node.name && (namespace || '') === (node.namespace || '');
+          })
+        );
+      };
+      const outputRoot = functoid.scriptType === 'inlineXslt' ? document.documentElement : template;
+      return !!outputRoot && emitsTarget(outputRoot);
     } catch {
       return false;
     }

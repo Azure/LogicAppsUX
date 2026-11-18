@@ -1,9 +1,8 @@
-import { Dropdown, FluentProvider, Link, makeStyles, Option, Spinner, tokens } from '@fluentui/react-components';
-// biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
+import { Dropdown, Link, makeStyles, Option, Spinner, tokens } from '@fluentui/react-components';
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { SchemaLoadError } from '../../../src/protocol/mapEditorProtocol';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 export type SchemaSide = 'source' | 'target';
 
@@ -16,8 +15,7 @@ const addNewSchemaValue = '__add_new_schema__';
 const useStyles = makeStyles({
   root: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '20px' },
   content: { width: '100%', minWidth: 0, textAlign: 'center' },
-  icon: { fontSize: '40px', marginBottom: '8px' },
-  text: { marginBottom: '12px', color: 'var(--vscode-descriptionForeground)', fontSize: '12px' },
+  icon: { fontSize: '40px', lineHeight: '1', marginBottom: tokens.spacingVerticalXXL },
   error: {
     marginBottom: '12px',
     color: 'var(--vscode-errorForeground)',
@@ -37,14 +35,21 @@ function EmptySchemaPlaceholderView({
   availableSchemas,
   loading,
   error,
+  tutorialMode,
   onSelect,
-}: { side: SchemaSide; availableSchemas: string[]; loading: boolean; error?: SchemaLoadError } & EmptySchemaCallbacks): React.ReactElement {
+}: {
+  side: SchemaSide;
+  availableSchemas: string[];
+  loading: boolean;
+  error?: SchemaLoadError;
+  tutorialMode: boolean;
+} & EmptySchemaCallbacks): React.ReactElement {
   const styles = useStyles();
   const [selectedSchema, setSelectedSchema] = React.useState<string>();
   const pickerPlaceholder = `Choose ${side} schema`;
   if (loading) {
     return (
-      <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+      <FluentProvider style={{ display: 'contents' }}>
         <div className={styles.root}>
           <Spinner size="small" label={`Loading ${side} schema...`} labelPosition="below" />
         </div>
@@ -52,21 +57,22 @@ function EmptySchemaPlaceholderView({
     );
   }
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div className={styles.root}>
         <div className={styles.content}>
           <div className={styles.icon}>📄</div>
-          {error ? (
+          {error && (
             <div className={styles.error} role="alert">
               {error.message}
-              <Link as="button" className={styles.errorLink} onClick={() => onSelect(undefined)}>
-                Load your schema file
-              </Link>
+              {!tutorialMode && (
+                <Link as="button" className={styles.errorLink} onClick={() => onSelect(undefined)}>
+                  Load your schema file
+                </Link>
+              )}
             </div>
-          ) : (
-            <p className={styles.text}>No {side} schema</p>
           )}
           <Dropdown
+            listbox={{ className: `mapper-tutorial-${side}-schemas` }}
             aria-label={`Choose ${side} schema`}
             className={styles.picker}
             button={{
@@ -86,9 +92,11 @@ function EmptySchemaPlaceholderView({
                 {schemaName}
               </Option>
             ))}
-            <Option value={addNewSchemaValue} className={styles.option}>
-              Add new schema...
-            </Option>
+            {!tutorialMode && (
+              <Option value={addNewSchemaValue} className={styles.option}>
+                Add new schema...
+              </Option>
+            )}
           </Dropdown>
         </div>
       </div>
@@ -101,6 +109,7 @@ export class EmptySchemaPlaceholder extends HTMLElement {
   private side: SchemaSide = 'source';
   private availableSchemas: string[] = [];
   private loading = false;
+  private tutorialMode = false;
   private error: SchemaLoadError | undefined;
   private onSelect: (path?: string) => void = () => {};
 
@@ -109,9 +118,11 @@ export class EmptySchemaPlaceholder extends HTMLElement {
     availableSchemas: string[],
     onSelect: (path?: string) => void,
     loading = false,
-    error?: SchemaLoadError
+    error?: SchemaLoadError,
+    tutorialMode = false
   ): void {
     this.side = side;
+    this.tutorialMode = tutorialMode;
     this.error = error;
     this.availableSchemas = availableSchemas;
     this.onSelect = onSelect;
@@ -139,6 +150,7 @@ export class EmptySchemaPlaceholder extends HTMLElement {
         availableSchemas={this.availableSchemas}
         loading={this.loading}
         error={this.error}
+        tutorialMode={this.tutorialMode}
         onSelect={this.onSelect}
       />
     );

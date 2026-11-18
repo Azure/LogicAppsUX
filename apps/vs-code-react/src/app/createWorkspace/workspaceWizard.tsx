@@ -50,8 +50,14 @@ export const WorkspaceWizard = () => {
   const { workspaceName, workspaceProjectPath, separator, platform, pathValidationResults, workspaceExistenceResults, isLoading, error } =
     state;
   const currentWorkspace = state.currentWorkspace;
-  const [selected, setSelected] = useState({ logicApp: true, customCode: false, dataMap: false });
-  const [step, setStep] = useState<Step>('workspace');
+  const projectCreationMode = state.projectCreationMode;
+  const [selected, setSelected] = useState({
+    logicApp:
+      !projectCreationMode || projectCreationMode === 'logicApp' || (projectCreationMode === 'customCode' && !state.hasExistingLogicApp),
+    customCode: projectCreationMode === 'customCode',
+    dataMap: projectCreationMode === 'dataMap',
+  });
+  const [step, setStep] = useState<Step>(projectCreationMode && currentWorkspace ? projectCreationMode : 'workspace');
   const [openNewWindow, setOpenNewWindow] = useState(true);
   const [touched, setTouched] = useState<string[]>([]);
   const targetFrameworkHintId = useId();
@@ -75,9 +81,14 @@ export const WorkspaceWizard = () => {
     dataMapName: 'DataMap',
     dataMapFolderName: 'data-map',
   });
-  const projectKeys: ProjectKey[] = ['logicApp', 'customCode', 'dataMap'];
+  const projectKeys: ProjectKey[] =
+    projectCreationMode === 'customCode' ? ['customCode', 'logicApp', 'dataMap'] : ['logicApp', 'customCode', 'dataMap'];
   const isRulesEngine = form.customCodeType === ProjectType.rulesEngine;
-  const steps: Step[] = ['workspace', ...projectKeys.filter((key) => selected[key]), 'review'];
+  const steps: Step[] = [
+    ...(!projectCreationMode || !currentWorkspace ? ['workspace' as const] : []),
+    ...projectKeys.filter((key) => selected[key]),
+    'review',
+  ];
   const labels: Record<Step, string> = {
     workspace: currentWorkspace ? text.PROJECTS : text.WORKSPACE,
     logicApp: text.LOGIC_APP,
@@ -469,39 +480,43 @@ export const WorkspaceWizard = () => {
                 </div>
               </>
             )}
-            <h3>{text.PROJECTS}</h3>
-            <p className={styles.wizardMuted}>{text.PROJECTS_DESCRIPTION}</p>
-            <div className={styles.wizardChoices}>
-              {projectKeys.map((key) => (
-                <label key={key}>
-                  <input
-                    type="checkbox"
-                    aria-label={labels[key]}
-                    checked={selected[key]}
-                    disabled={isLoading}
-                    onChange={(event) => {
-                      const checked = event.target.checked;
-                      setSelected((previous) => ({
-                        ...previous,
-                        [key]: checked,
-                        ...(!currentWorkspace && key === 'customCode' && checked ? { logicApp: true } : {}),
-                        ...(!currentWorkspace && key === 'logicApp' && !checked ? { customCode: false } : {}),
-                      }));
-                    }}
-                  />
-                  <span>
-                    <strong>{labels[key]}</strong>
-                    <small>{projectDescriptions[key]}</small>
-                  </span>
-                </label>
-              ))}
-            </div>
-            {!projectKeys.some((key) => selected[key]) && (
-              <div role="alert" className={styles.errorMessage}>
-                {text.AT_LEAST_ONE}
-              </div>
+            {!projectCreationMode && (
+              <>
+                <h3>{text.PROJECTS}</h3>
+                <p className={styles.wizardMuted}>{text.PROJECTS_DESCRIPTION}</p>
+                <div className={styles.wizardChoices}>
+                  {projectKeys.map((key) => (
+                    <label key={key}>
+                      <input
+                        type="checkbox"
+                        aria-label={labels[key]}
+                        checked={selected[key]}
+                        disabled={isLoading}
+                        onChange={(event) => {
+                          const checked = event.target.checked;
+                          setSelected((previous) => ({
+                            ...previous,
+                            [key]: checked,
+                            ...(!currentWorkspace && key === 'customCode' && checked ? { logicApp: true } : {}),
+                            ...(!currentWorkspace && key === 'logicApp' && !checked ? { customCode: false } : {}),
+                          }));
+                        }}
+                      />
+                      <span>
+                        <strong>{labels[key]}</strong>
+                        <small>{projectDescriptions[key]}</small>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {!projectKeys.some((key) => selected[key]) && (
+                  <div role="alert" className={styles.errorMessage}>
+                    {text.AT_LEAST_ONE}
+                  </div>
+                )}
+              </>
             )}
-            {!currentWorkspace && notice(text.PROJECTS_INFO)}
+            {!projectCreationMode && !currentWorkspace && notice(text.PROJECTS_INFO)}
             {!currentWorkspace && parentPath && workspaceName && !workspaceNameError && !workspaceValid && notice(text.CHECKING)}
             {!currentWorkspace && (
               <div className={`${styles.wizardPath} ${styles.wizardMuted}`}>

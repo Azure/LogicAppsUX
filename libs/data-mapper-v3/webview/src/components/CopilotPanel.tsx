@@ -1,28 +1,28 @@
-import { Button, FluentProvider, makeStyles } from '@fluentui/react-components';
+import { Button, makeStyles } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 const useStyles = makeStyles({
   panel: {
     padding: '10px 12px',
-    backgroundColor: 'var(--vscode-sideBar-background, #252526)',
-    borderBottom: '1px solid var(--vscode-panel-border, #444)',
+    backgroundColor: 'var(--vscode-sideBar-background, var(--vscode-editor-background))',
+    borderBottom: '1px solid var(--vscode-panel-border, transparent)',
     flexShrink: 0,
   },
   heading: { display: 'flex', gap: '10px', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '8px' },
   headingTitle: { display: 'block', marginBottom: '2px' },
-  muted: { color: 'var(--vscode-descriptionForeground, #aaa)', fontSize: '11px' },
+  muted: { color: 'var(--vscode-descriptionForeground, var(--vscode-foreground))', fontSize: '11px' },
   controls: { display: 'flex', gap: '10px' },
   prompt: {
     flex: 1,
     minHeight: '66px',
     padding: '6px 8px',
-    border: '1px solid var(--vscode-input-border, #3c3c3c)',
-    color: 'var(--vscode-input-foreground, #ccc)',
-    backgroundColor: 'var(--vscode-input-background, #3c3c3c)',
+    border: '1px solid var(--vscode-input-border, var(--vscode-panel-border, transparent))',
+    color: 'var(--vscode-input-foreground, var(--vscode-foreground))',
+    backgroundColor: 'var(--vscode-input-background, var(--vscode-editor-background))',
     resize: 'vertical',
     fontFamily: 'inherit',
     fontSize: '12px',
@@ -35,15 +35,15 @@ const useStyles = makeStyles({
     gap: '4px',
     maxWidth: '240px',
     padding: '2px 5px 2px 8px',
-    backgroundColor: 'var(--vscode-badge-background, #4d4d4d)',
-    color: 'var(--vscode-badge-foreground, #fff)',
+    backgroundColor: 'var(--vscode-badge-background, var(--vscode-editor-background))',
+    color: 'var(--vscode-badge-foreground, var(--vscode-foreground))',
     borderRadius: '10px',
     fontSize: '11px',
   },
   contextFileName: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   removeContext: { padding: '0 2px', border: 0, color: 'inherit', backgroundColor: 'transparent', cursor: 'pointer' },
-  result: { marginTop: '7px', color: 'var(--vscode-foreground, #ccc)', fontSize: '12px' },
-  hint: { marginTop: '5px', color: 'var(--vscode-descriptionForeground, #aaa)', fontSize: '11px' },
+  result: { marginTop: '7px', color: 'var(--vscode-foreground)', fontSize: '12px' },
+  hint: { marginTop: '5px', color: 'var(--vscode-descriptionForeground, var(--vscode-foreground))', fontSize: '11px' },
 });
 
 export interface CopilotContextFile {
@@ -102,22 +102,16 @@ function CopilotPanelView({
   };
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <section className={styles.panel}>
         <div className={styles.heading}>
           <div>
-            <strong className={styles.headingTitle}>Data Mapper Assistant</strong>
+            <strong className={styles.headingTitle}>Assistant</strong>
             <span className={styles.muted}>
               Describe links, functoids, constants, or page changes. Review is required before the BTM is updated.
             </span>
           </div>
-          <Button
-            appearance="transparent"
-            icon={<DismissRegular />}
-            title="Close"
-            aria-label="Close Data Mapper Assistant"
-            onClick={onClose}
-          />
+          <Button appearance="transparent" icon={<DismissRegular />} title="Close" aria-label="Close Assistant" onClick={onClose} />
         </div>
         <div className={styles.controls}>
           <textarea

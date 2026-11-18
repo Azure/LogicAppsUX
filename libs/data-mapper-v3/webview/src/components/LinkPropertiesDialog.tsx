@@ -7,7 +7,6 @@ import {
   DialogSurface,
   DialogTitle,
   Field,
-  FluentProvider,
   Input,
   Select,
   makeStyles,
@@ -17,7 +16,7 @@ import {
 import React, { useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SourceLinkOption, TargetLinkOption } from '../../../src/model/mapModel';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 
 export interface LinkPropertiesResult {
   label?: string;
@@ -69,7 +68,7 @@ function LinkPropertiesDialogView({
   const bulk = (model.selectionCount ?? 1) > 1;
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <Dialog
         open
         modalType="modal"

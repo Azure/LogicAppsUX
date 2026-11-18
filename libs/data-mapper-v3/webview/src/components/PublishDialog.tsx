@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Badge,
   Button,
   Combobox,
   Dialog,
@@ -9,7 +10,6 @@ import {
   DialogSurface,
   DialogTitle,
   Field,
-  FluentProvider,
   makeStyles,
   MessageBar,
   MessageBarBody,
@@ -22,7 +22,7 @@ import {
 } from '@fluentui/react-components';
 import { Checkmark20Regular, CloudArrowUp20Regular, Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import type { AzurePublishQuery, PublishContext, PublishDestination, PublishTarget } from '../../../src/protocol/publishProtocol';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 interface PublishDialogProps {
   open: boolean;
@@ -331,7 +331,7 @@ export function PublishDialog({ open, onClose, loadContext, loadAzureResources, 
   };
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <Dialog open={open} onOpenChange={(_event, data) => !data.open && !publishing && onClose()}>
         <DialogSurface className={styles.surface}>
           <DialogBody className={styles.body}>
@@ -565,6 +565,9 @@ export function PublishDialog({ open, onClose, loadContext, loadAzureResources, 
                   onClick={publish}
                 >
                   {publishing ? 'Publishing...' : 'Publish'}
+                  <Badge appearance="tint" color="success" size="small">
+                    New
+                  </Badge>
                 </Button>
               </DialogActions>
             </div>

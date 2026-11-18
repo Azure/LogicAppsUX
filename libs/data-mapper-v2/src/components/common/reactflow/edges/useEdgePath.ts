@@ -40,6 +40,7 @@ const getCoordinatesForHandle = (
   ) {
     let x: number | undefined = undefined;
     let y: number | undefined = undefined;
+    let resolvedHandle: Handle | undefined;
     let scenario: 'direct' | 'collapsed' | 'scroll' | undefined;
     let currentHandle = handleBounds.find((handle) => equals(handleId, handle.id ?? ''));
     let showEdge = false; // This is true only if the current node is visible (i.e. either in the search result or not collapsed) or one of the parent is visible
@@ -58,6 +59,7 @@ const getCoordinatesForHandle = (
           // If the handle is present in the current view, return the x and y coordinates
           x = currentHandle.x;
           y = currentHandle.y;
+          resolvedHandle = currentHandle;
           scenario = 'direct';
         }
       }
@@ -81,6 +83,7 @@ const getCoordinatesForHandle = (
                 if (currentHandle) {
                   x = currentHandle.x;
                   y = currentHandle.y;
+                  resolvedHandle = currentHandle;
                   scenario = 'collapsed';
                   break;
                 }
@@ -102,6 +105,7 @@ const getCoordinatesForHandle = (
             if (reactflowHandle) {
               x = reactflowHandle.x;
               y = reactflowHandle.y;
+              resolvedHandle = reactflowHandle;
               scenario = 'scroll';
             }
           } else {
@@ -109,6 +113,7 @@ const getCoordinatesForHandle = (
             if (reactflowHandle) {
               x = reactflowHandle.x;
               y = reactflowHandle.y;
+              resolvedHandle = reactflowHandle;
               scenario = 'scroll';
             }
           }
@@ -116,8 +121,8 @@ const getCoordinatesForHandle = (
       }
     }
 
-    if (x !== undefined && y !== undefined && scenario !== undefined) {
-      return [x + nodeX + 8, y + nodeY + 8, scenario];
+    if (x !== undefined && y !== undefined && scenario !== undefined && resolvedHandle) {
+      return [x + nodeX + resolvedHandle.width / 2, y + nodeY + resolvedHandle.height / 2, scenario];
     }
   }
   return [undefined, undefined, undefined];

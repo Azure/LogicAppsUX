@@ -2,6 +2,30 @@
 
 In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to quickly create, debug, manage, and deploy logic apps directly to Azure. For requirements and more information, see [Create a Standard logic app workflow using Visual Studio Code](https://go.microsoft.com/fwlink/?linkid=2222287).
 
+## What's New
+
+### Workspace
+
+The new workspace creation wizard provides a single experience for configuring Logic App, custom-code, and Data Mapper projects. Choose the projects to include, configure each project, and review your selections before creating the workspace.
+
+You can also add projects to an existing workspace by using dedicated project wizards. In the Azure **Workspace** view, open the **Azure Logic Apps** menu and select **Create Project**, then choose **Add Logic App**, **Add custom code**, or **Add mapper**. Each option opens the configuration steps for that project type without showing the project-selection page. Select **Open wizard** to choose a combination of projects instead.
+
+### Data Mapper
+
+Data Mapper is now a separate project in your workspace, alongside your Logic App and optional custom-code projects. The mapper editor is included in the Azure Logic Apps (Standard) extension.
+
+New maps use the **BTM (`.btm`) format** and open in the integrated visual mapper. You can continue to open and edit existing **LML (`.lml`) maps** in the LML editor. Creating new `.lml` maps is no longer supported.
+
+Use the integrated BTM Data Map editor to create new maps or import existing BizTalk `.btm` maps for editing. The [BTM Data Map UI reference](/apps/vs-code-designer/src/assets/readmes/btm-data-map.md) covers schema selection and navigation, node properties, canvas controls and Fit, links and link properties, selection and clipboard actions, pages, Grid Properties, Assistant, validation, Test Map, and local or Azure publishing. It describes the editor controls rather than individual functoids.
+
+When you open a trusted local Logic App project that contains legacy mapper files, including a project that you imported, the extension displays a **Project update** prompt. After you confirm, the extension separates the Logic App and mapper content into two projects in the same workspace: the existing Logic App project and a new Data Mapper project. This update changes file locations and workspace configuration; it does not convert `.lml` maps to `.btm`.
+
+Before updating an existing project, commit your changes or create a backup. After the update, review any build or deployment scripts that reference the previous mapper file locations.
+
+You can also **publish mapper artifacts to a local project or directly to Azure**. Open any map and select **Publish** to publish its compiled map, schemas, and required custom assemblies. Choose **Local Workspace** to copy artifacts into a Logic App project without changing Azure, or **Logic Apps Standard in Azure** to publish to an existing Azure resource. For destination selection, artifact locations, and overwrite behavior, see [Publish mapper artifacts](/apps/vs-code-designer/src/assets/readmes/workspace-and-mapper-upgrade.md#publish-mapper-artifacts).
+
+See the [workspace and Data Mapper upgrade guide](/apps/vs-code-designer/src/assets/readmes/workspace-and-mapper-upgrade.md) for the new layout, conversion steps, and changes to Test Map and canvas navigation.
+
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
 ## Azure Logic Apps - Create unit tests from Standard workflows
@@ -40,7 +64,7 @@ Starting with version 2.81.5, the Azure Logic Apps (Standard) extension for Visu
 
 The Create Workspace wizard can generate a Data Map project with a native `.btm` map, `Schemas`, and `__generated` folders. When the workspace opens, the new map opens in the Data Mapper v3 visual editor bundled with this extension. No separate Data Mapper extension installation or activation is required. Choosing not to open the workspace only creates the files.
 
-In Visual Studio Code, you can graphically describe transformations by mapping relationships between data types in a source schema and a target schema. After you install the Azure Logic Apps - Data Mapper, you can create direct basic relationships and more complex transformations using functions, handling any translation between supported schema types in the backend. For more information, see [Create maps to transform data in Azure Logic Apps with Visual Studio Code (preview)](https://go.microsoft.com/fwlink/?linkid=2234193).
+In Visual Studio Code, you can graphically describe transformations by mapping relationships between data types in a source schema and a target schema. Use the bundled mapper to create direct relationships and more complex transformations using functoids. Existing `.lml` maps continue to use the LML editor; new maps created by the workspace wizard use `.btm`. For the current BTM editor, its controls, tutorial, and BizTalk import steps, see the [BTM Data Map UI reference](/apps/vs-code-designer/src/assets/readmes/btm-data-map.md). The earlier [Data Mapper documentation](https://go.microsoft.com/fwlink/?linkid=2234193) describes the previous experience and can show different menus or file locations.
 
 ## Azure Logic Apps (Standard) moves to the Resources tab
 

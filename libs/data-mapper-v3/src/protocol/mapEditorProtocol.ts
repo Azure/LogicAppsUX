@@ -85,12 +85,15 @@ export function createInitialMapperViewState(): MapperViewState {
 
 export const WEBVIEW_TO_HOST_MESSAGE_TYPES = [
   'ready',
+  'startTutorial',
+  'openMapperDocumentation',
   'copyText',
   'update',
   'compile',
   'loadSchema',
   'selectSchemaRoot',
   'testMap',
+  'uploadTestInput',
   'generateInstance',
   'testMapWithInput',
   'browseAssembly',
@@ -105,6 +108,8 @@ export const WEBVIEW_TO_HOST_MESSAGE_TYPES = [
 
 export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
   'init',
+  'tutorialPrepared',
+  'tutorialPreparationFailed',
   'executeCompile',
   'executeTestMap',
   'documentChanged',
@@ -113,6 +118,7 @@ export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
   'compileResult',
   'assemblySelected',
   'instanceGenerated',
+  'testInputLoaded',
   'testMapResult',
   'copilotResult',
   'copilotContextChanged',
@@ -121,12 +127,15 @@ export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
 
 export type WebviewToHostMessage =
   | { type: 'ready' }
+  | { type: 'startTutorial' }
+  | { type: 'openMapperDocumentation' }
   | { type: 'copyText'; data: { text: string } }
   | { type: 'update'; data: MapDocument }
   | { type: 'compile'; data: MapDocument }
   | { type: 'loadSchema'; side: SchemaSide; path?: string; browse?: boolean }
   | { type: 'selectSchemaRoot'; side: SchemaSide; rootName: string }
   | { type: 'testMap' }
+  | { type: 'uploadTestInput' }
   | { type: 'generateInstance'; side: SchemaSide }
   | { type: 'testMapWithInput'; data: { inputXml: string; map: MapDocument } }
   | { type: 'browseAssembly' }
@@ -140,6 +149,8 @@ export type WebviewToHostMessage =
 
 export type HostToWebviewMessage =
   | PublishResponse
+  | { type: 'tutorialPrepared'; data: { sourceSchemaPath: string; targetSchemaPath: string; availableSchemas: string[] } }
+  | { type: 'tutorialPreparationFailed'; data: { message: string } }
   | {
       type: 'init';
       data: {
@@ -177,6 +188,7 @@ export type HostToWebviewMessage =
       type: 'instanceGenerated';
       data: { side: SchemaSide; xml: string; error?: string };
     }
+  | { type: 'testInputLoaded'; data: { xml: string } }
   | {
       type: 'testMapResult';
       data: { output: string; error?: string };
@@ -225,7 +237,10 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
           (value.method === 'publish' && hasObjectData(value)))
       );
     case 'ready':
+    case 'startTutorial':
+    case 'openMapperDocumentation':
     case 'testMap':
+    case 'uploadTestInput':
     case 'browseAssembly':
     case 'browseCopilotContext':
     case 'clearCopilotContext':
@@ -277,6 +292,15 @@ export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMe
   const data = value.data;
 
   switch (value.type) {
+    case 'tutorialPrepared':
+      return (
+        typeof data.sourceSchemaPath === 'string' &&
+        typeof data.targetSchemaPath === 'string' &&
+        Array.isArray(data.availableSchemas) &&
+        data.availableSchemas.every((schema) => typeof schema === 'string')
+      );
+    case 'tutorialPreparationFailed':
+      return typeof data.message === 'string';
     case 'executeCompile':
     case 'executeTestMap':
       return true;
@@ -305,6 +329,8 @@ export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMe
       return typeof data.path === 'string' && Array.isArray(data.classes);
     case 'instanceGenerated':
       return isSchemaSide(data.side) && typeof data.xml === 'string';
+    case 'testInputLoaded':
+      return typeof data.xml === 'string';
     case 'testMapResult':
       return typeof data.output === 'string';
     case 'copilotResult':

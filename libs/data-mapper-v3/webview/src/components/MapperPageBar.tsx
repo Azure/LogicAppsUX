@@ -1,8 +1,8 @@
-import { FluentProvider, makeStyles } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 const useStyles = makeStyles({
   bar: {
@@ -15,42 +15,42 @@ const useStyles = makeStyles({
     alignItems: 'stretch',
     paddingLeft: '8px',
     overflowX: 'auto',
-    backgroundColor: 'var(--vscode-panel-background, var(--vscode-editor-background, #1e1e1e))',
-    borderTop: '1px solid var(--vscode-panel-border, #444)',
+    backgroundColor: 'var(--vscode-panel-background, var(--vscode-editor-background))',
+    borderTop: '1px solid var(--vscode-panel-border, transparent)',
   },
   tabs: { display: 'flex', alignItems: 'stretch' },
   tab: {
     height: '30px',
     padding: '4px 14px',
     backgroundColor: 'var(--vscode-tab-inactiveBackground, transparent)',
-    color: 'var(--vscode-foreground, #ccc)',
+    color: 'var(--vscode-foreground)',
     border: 0,
-    borderRight: '1px solid var(--vscode-panel-border, #444)',
+    borderRight: '1px solid var(--vscode-panel-border, transparent)',
     borderBottom: '2px solid transparent',
     cursor: 'pointer',
     fontSize: '12px',
-    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, #2a2d2e)' },
+    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, transparent)' },
   },
   tabActive: {
-    color: 'var(--vscode-tab-activeForeground, var(--vscode-foreground, #fff))',
-    backgroundColor: 'var(--vscode-tab-activeBackground, var(--vscode-editor-background, #1e1e1e))',
-    borderBottomColor: 'var(--vscode-focusBorder, #007fd4)',
+    color: 'var(--vscode-tab-activeForeground, var(--vscode-foreground))',
+    backgroundColor: 'var(--vscode-tab-activeBackground, var(--vscode-editor-background))',
+    borderBottomColor: 'var(--vscode-focusBorder)',
     fontWeight: 600,
   },
-  group: { display: 'inline-flex', alignItems: 'center', borderLeft: '1px solid var(--vscode-panel-border, #444)' },
+  group: { display: 'inline-flex', alignItems: 'center', borderLeft: '1px solid var(--vscode-panel-border, transparent)' },
   deleteBtn: {
     width: '20px',
     height: '22px',
     padding: 0,
-    color: 'var(--vscode-descriptionForeground, #999)',
+    color: 'var(--vscode-descriptionForeground, var(--vscode-foreground))',
     backgroundColor: 'transparent',
     border: 0,
     borderRadius: '2px',
     cursor: 'pointer',
     fontSize: '14px',
     ':hover:not(:disabled)': {
-      color: 'var(--vscode-errorForeground, #f48771)',
-      backgroundColor: 'var(--vscode-toolbar-hoverBackground, #2a2d2e)',
+      color: 'var(--vscode-errorForeground, var(--vscode-foreground))',
+      backgroundColor: 'var(--vscode-toolbar-hoverBackground, transparent)',
     },
     ':disabled': { opacity: 0.35, cursor: 'default' },
   },
@@ -59,20 +59,20 @@ const useStyles = makeStyles({
     minWidth: '30px',
     height: '30px',
     padding: 0,
-    color: 'var(--vscode-foreground, #ccc)',
+    color: 'var(--vscode-foreground)',
     backgroundColor: 'transparent',
     border: 0,
-    borderRight: '1px solid var(--vscode-panel-border, #444)',
+    borderRight: '1px solid var(--vscode-panel-border, transparent)',
     cursor: 'pointer',
     fontSize: '18px',
-    ':hover': { backgroundColor: 'var(--vscode-toolbar-hoverBackground, #2a2d2e)' },
+    ':hover': { backgroundColor: 'var(--vscode-toolbar-hoverBackground, transparent)' },
   },
   nameInput: {
     width: '120px',
     padding: '4px 8px',
-    color: 'var(--vscode-input-foreground, #ccc)',
-    backgroundColor: 'var(--vscode-input-background, #3c3c3c)',
-    border: '1px solid var(--vscode-focusBorder, #007fd4)',
+    color: 'var(--vscode-input-foreground, var(--vscode-foreground))',
+    backgroundColor: 'var(--vscode-input-background, var(--vscode-editor-background))',
+    border: '1px solid var(--vscode-focusBorder)',
     borderRadius: '2px',
     fontFamily: 'inherit',
     fontSize: '12px',
@@ -127,7 +127,7 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
 
   const styles = useStyles();
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <nav className={styles.bar} aria-label="Map pages">
         <div className={styles.tabs}>
           {pages.map((page, index) =>

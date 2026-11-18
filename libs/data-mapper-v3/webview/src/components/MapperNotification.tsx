@@ -1,17 +1,9 @@
-import {
-  Button,
-  FluentProvider,
-  MessageBar,
-  MessageBarActions,
-  MessageBarBody,
-  MessageBarTitle,
-  makeStyles,
-} from '@fluentui/react-components';
+import { Button, MessageBar, MessageBarActions, MessageBarBody, MessageBarTitle, makeStyles, tokens } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 export type NotificationType = 'success' | 'warning' | 'error';
 
@@ -27,7 +19,7 @@ const useStyles = makeStyles({
     maxWidth: '400px',
     zIndex: 100,
     borderRadius: '6px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+    boxShadow: tokens.shadow16,
   },
   details: {
     marginTop: '6px',
@@ -48,7 +40,7 @@ function NotificationView({
   const styles = useStyles();
   const intent = type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'error';
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div className={styles.root}>
         <MessageBar intent={intent} layout="multiline">
           <MessageBarBody>

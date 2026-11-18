@@ -1,7 +1,11 @@
 import { describe, test, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { XMLValidator } from 'fast-xml-parser';
+import { JSDOM } from 'jsdom';
+import { XmlParser, Xslt } from 'xslt-processor';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import {
@@ -15,10 +19,16 @@ import {
   TargetLinkOption,
 } from '../src/model';
 import { SchemaParser } from '../src/schema/schemaParser';
+import { BtmSerializer } from '../src/schema/btmSerializer';
 
 const fixtures = path.join(__dirname, 'fixtures', 'functoids');
 const sourceSchema = new SchemaParser().parse(fs.readFileSync(path.join(fixtures, 'FunctoidSource.xsd'), 'utf8'), 'src');
 const targetSchema = new SchemaParser().parse(fs.readFileSync(path.join(fixtures, 'FunctoidDest.xsd'), 'utf8'), 'dest');
+const transformHelper = path.join(
+  __dirname,
+  '..',
+  'tools/compiler-worker/runtime/win-x64/framework-transform/BizTalk.DataMapper.FrameworkTransform.exe'
+);
 
 const nodeInputFunctoids = new Set([322, 323, 324, 325, 326, 327, 328, 424, 474, 701, 706, 703, 704, 801, 802]);
 const invalidStandaloneFunctoids = new Set([574, 575, 703, 704]);
@@ -898,7 +908,7 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.errors).toEqual([]);
     expect(result.success).toBe(true);
     expect(xslt).toContain('<xsl:for-each select="Items">');
-    expect(xslt.match(/<ns0:Line>/g)).toHaveLength(3);
+    expect(xslt.match(/<Line>/g)).toHaveLength(3);
     expect(xslt).toContain('select="Value/text()"');
     expect(xslt).toContain('select="\'fixed\'"');
     expect(xslt).toContain('select="\'Value\'"');
@@ -1074,8 +1084,141 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.success).toBe(true);
     expect(XMLValidator.validate(result.xslt as string)).toBe(true);
     expect(result.xslt).toContain('<xsl:text>raw-output</xsl:text>');
-    expect(result.xslt).toContain('<ns0:Total>');
+    expect(result.xslt).toContain('<Total>');
     expect(result.xslt).toContain('xsl:copy-of select="$var:');
+  });
+
+  test.each(['inlineXslt', 'inlineXsltCallTemplate'] as const)(
+    'does not wrap %s conditional output that creates the mapped element',
+    (scriptType) => {
+      const definition = FunctoidRegistry.getInstance().getFunctoid(260)!;
+      const body = [
+        '<xsl:choose>',
+        '  <xsl:when test="AnotherNilValue/@xsi:nil"><AnotherNilValueOutput xsi:nil="true"/></xsl:when>',
+        '  <xsl:otherwise><AnotherNilValueOutput><xsl:value-of select="AnotherNilValue/text()"/></AnotherNilValueOutput></xsl:otherwise>',
+        '</xsl:choose>',
+      ].join('\n');
+      const map = createMap({
+        id: 'nil-script',
+        functoidId: definition.id,
+        category: definition.category,
+        name: definition.name,
+        x: 0,
+        y: 0,
+        inputLinks: [],
+        outputLinks: [],
+        parameters: [],
+        scriptType: scriptType as ScriptType,
+        scriptContent: scriptType === 'inlineXslt' ? body : `<xsl:template name="emit-nil">${body}</xsl:template>`,
+      });
+      map.pages[0].functoids[0].parameters = [];
+      map.targetSchema.location = 'OutputSchema.xsd';
+      map.pages[0].links[0].targetId = '/OutputSchema/AnotherNilValueOutput';
+      map.pages[0].links[0].targetPath = '/OutputSchema/AnotherNilValueOutput';
+      const target = new SchemaParser().parse(
+        '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:output" elementFormDefault="unqualified">' +
+          '<xs:element name="OutputSchema"><xs:complexType><xs:sequence>' +
+          '<xs:element name="AnotherNilValueOutput" type="xs:string" nillable="true"/>' +
+          '</xs:sequence></xs:complexType></xs:element></xs:schema>',
+        'OutputSchema.xsd'
+      );
+
+      const result = new XsltCompiler().compile(map, sourceSchema, target);
+
+      expect(result.errors).toEqual([]);
+      expect(result.success).toBe(true);
+      expect(XMLValidator.validate(result.xslt as string)).toBe(true);
+      expect(result.xslt).not.toContain('<ns0:AnotherNilValueOutput>');
+      expect(result.xslt?.match(/<AnotherNilValueOutput[\s>]/g)).toHaveLength(2);
+      expect(result.xslt).not.toContain('xsl:copy-of select="$var:');
+
+      for (const incompatibleBody of [
+        `<![CDATA[stray]]>${body}`,
+        body.replaceAll('<AnotherNilValueOutput', '<AnotherNilValueOutput xmlns="urn:other"'),
+        body.replace(
+          '<AnotherNilValueOutput><xsl:value-of select="AnotherNilValue/text()"/></AnotherNilValueOutput>',
+          '<xsl:value-of select="AnotherNilValue/text()"/>'
+        ),
+      ]) {
+        map.pages[0].functoids[0].scriptContent =
+          scriptType === 'inlineXslt' ? incompatibleBody : `<xsl:template name="emit-nil">${incompatibleBody}</xsl:template>`;
+        const wrapped = new XsltCompiler().compile(map, sourceSchema, target);
+        expect(wrapped.errors).toEqual([]);
+        expect(wrapped.xslt).toContain('<AnotherNilValueOutput>');
+        expect(wrapped.xslt).toContain('xsl:copy-of select="$var:');
+      }
+    }
+  );
+
+  test.each([false, true])('nillable sample matches legacy XML after BTM round trip: %s', async (roundTrip) => {
+    const directory = path.join(__dirname, '..', 'samples', 'WorkingWithNillableValues');
+    const serializer = new BtmSerializer();
+    const original = serializer.deserialize(
+      fs.readFileSync(path.join(directory, 'MapNilValuesWithInlineCustomXSLTWorkaround.btm'), 'utf8')
+    );
+    const map = roundTrip ? serializer.deserialize(serializer.serialize(original)) : original;
+    const parser = new SchemaParser();
+    const source = parser.parse(fs.readFileSync(path.join(directory, 'InputSchema.xsd'), 'utf8'), 'InputSchema.xsd');
+    const target = parser.parse(fs.readFileSync(path.join(directory, 'OutputSchema.xsd'), 'utf8'), 'OutputSchema.xsd');
+    const script = map.pages[0].functoids[0];
+    expect(script.scriptType).toBe(ScriptType.InlineXslt);
+    expect(script.inputLinks).toEqual([]);
+    expect(script.scriptContent).toBe(original.pages[0].functoids[0].scriptContent);
+    const result = new XsltCompiler().compile(map, source, target);
+    expect(result.errors).toEqual([]);
+    expect(result.success).toBe(true);
+    const input = fs.readFileSync(path.join(directory, 'Input.xml'), 'utf8');
+    const expected = fs.readFileSync(path.join(directory, 'ExpectedOutput.xml'), 'utf8');
+    for (const nil of [true, false]) {
+      const inputXml = nil ? input : input.replace('<AnotherNilValue xsi:nil="true"/>', '<AnotherNilValue>Hello</AnotherNilValue>');
+      const expectedXml = nil
+        ? expected
+        : expected.replace('<AnotherNilValueOutput xsi:nil="true"/>', '<AnotherNilValueOutput>Hello</AnotherNilValueOutput>');
+      const xmlParser = new XmlParser();
+      const outputs = [await new Xslt().xsltProcess(xmlParser.xmlParse(inputXml), xmlParser.xmlParse(result.xslt!))];
+      if (process.platform === 'win32' && fs.existsSync(transformHelper)) {
+        const temporaryDirectory = fs.mkdtempSync(path.join(tmpdir(), 'mapper-nil-sample-'));
+        try {
+          const xsltPath = path.join(temporaryDirectory, 'map.xslt');
+          const inputPath = path.join(temporaryDirectory, 'input.xml');
+          const outputPath = path.join(temporaryDirectory, 'output.xml');
+          fs.writeFileSync(xsltPath, result.xslt!);
+          fs.writeFileSync(inputPath, inputXml);
+          const transformed = spawnSync(transformHelper, [xsltPath, inputPath, outputPath], {
+            encoding: 'utf8',
+            timeout: 15000,
+            windowsHide: true,
+          });
+          expect(transformed.error).toBeUndefined();
+          expect(transformed.stderr).toBe('');
+          expect(transformed.status).toBe(0);
+          outputs.push(fs.readFileSync(outputPath, 'utf8'));
+        } finally {
+          fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+        }
+      }
+      for (const output of outputs) {
+        const actualDom = new JSDOM(output, { contentType: 'text/xml' });
+        const expectedDom = new JSDOM(expectedXml, { contentType: 'text/xml' });
+        try {
+          const summarize = (element: Element): unknown => ({
+            name: element.localName,
+            namespace: element.namespaceURI,
+            nil: element.getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'nil'),
+            text: Array.from(element.childNodes)
+              .filter((child) => child.nodeType === 3 || child.nodeType === 4)
+              .map((child) => child.textContent)
+              .join('')
+              .trim(),
+            children: Array.from(element.children, summarize),
+          });
+          expect(summarize(actualDom.window.document.documentElement)).toEqual(summarize(expectedDom.window.document.documentElement));
+        } finally {
+          actualDom.window.close();
+          expectedDom.window.close();
+        }
+      }
+    }
   });
 
   test('evaluates cumulative functoids once at their common parent context', () => {
@@ -1403,7 +1546,7 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.success).toBe(true);
     expect(xslt).toContain(`select="*[local-name()='A' and namespace-uri()='']"`);
     expect(xslt).toContain(`select="*[local-name()='B' and namespace-uri()='']"`);
-    expect(xslt.match(/<ns0:Line>/g)).toHaveLength(2);
+    expect(xslt.match(/<Line>/g)).toHaveLength(2);
     expect(xslt).not.toContain('../B');
     expect(xslt).not.toContain('../A');
   });

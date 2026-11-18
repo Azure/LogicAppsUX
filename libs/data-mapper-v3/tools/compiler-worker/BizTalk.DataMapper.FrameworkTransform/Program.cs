@@ -15,13 +15,20 @@ namespace BizTalk.DataMapper.FrameworkTransform
             if (args.Length < 3)
             {
                 Console.Error.WriteLine(
-                    "Usage: FrameworkTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath] [stylesheetBaseUri]");
+                    "Usage: FrameworkTransform <xsltPath> <inputXmlPath> <outputXmlPath> [extensionObjectXmlPath] [stylesheetBaseUri] [useXslTransform]");
                 return 1;
             }
 
             try
             {
                 bool useSaxon = RequiresSaxon(args[0]);
+                bool useLegacyTransform = args.Length > 5 &&
+                    string.Equals(args[5], "Yes", StringComparison.OrdinalIgnoreCase);
+                if (useSaxon && useLegacyTransform)
+                {
+                    throw new NotSupportedException(
+                        "UseXslTransform='Yes' selects System.Xml.Xsl.XslTransform, which supports only XSLT 1.0. Set UseXslTransform to 'No' or 'Undefined' to run XSLT 2.0 or later.");
+                }
                 if (useSaxon && ContainsScriptBlock(args[0]))
                 {
                     throw new NotSupportedException(
@@ -39,6 +46,13 @@ namespace BizTalk.DataMapper.FrameworkTransform
                 if (args.Length > 3 && !string.IsNullOrWhiteSpace(args[3]))
                 {
                     AddExtensionObjects(arguments, args[3], GetScriptNamespaces(args[0]));
+                }
+
+                if (useLegacyTransform)
+                {
+                    TransformWithLegacyProcessor(args, arguments);
+                    Console.WriteLine("OK: " + args[2]);
+                    return 0;
                 }
 
                 var transform = new XslCompiledTransform();
@@ -85,6 +99,23 @@ namespace BizTalk.DataMapper.FrameworkTransform
                 Console.Error.WriteLine("Error: " + exception.Message);
                 WriteInnerException(exception);
                 return 4;
+            }
+        }
+
+        private static void TransformWithLegacyProcessor(string[] args, XsltArgumentList arguments)
+        {
+            var transform = new XslTransform();
+            var resolver = new XmlUrlResolver();
+            using (FileStream stylesheetStream = File.OpenRead(args[0]))
+            using (XmlReader stylesheet = XmlReader.Create(stylesheetStream, new XmlReaderSettings(), GetStylesheetBaseUri(args).AbsoluteUri))
+            {
+                transform.Load(stylesheet, resolver);
+            }
+
+            using (XmlReader input = XmlReader.Create(args[1]))
+            using (FileStream output = File.Create(args[2]))
+            {
+                transform.Transform(new System.Xml.XPath.XPathDocument(input), arguments, output, resolver);
             }
         }
 

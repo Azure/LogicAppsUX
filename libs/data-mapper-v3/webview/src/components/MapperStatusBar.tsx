@@ -1,8 +1,8 @@
-import { FluentProvider, makeStyles } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 export interface MapperStatusBarViewModel {
   links: number;
@@ -17,8 +17,8 @@ const useStyles = makeStyles({
     alignItems: 'center',
     gap: '12px',
     padding: '3px 12px',
-    backgroundColor: 'var(--vscode-statusBar-background, #007acc)',
-    color: 'var(--vscode-statusBar-foreground, white)',
+    backgroundColor: 'var(--vscode-statusBar-background, var(--vscode-editor-background))',
+    color: 'var(--vscode-statusBar-foreground, var(--vscode-foreground))',
     fontSize: '11px',
     flexShrink: 0,
   },
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 function MapperStatusBarView({ links, functoids, sourceName, targetName }: MapperStatusBarViewModel): React.ReactElement {
   const styles = useStyles();
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div className={styles.root}>
         <span className={styles.item}>
           Links: <strong>{links}</strong>

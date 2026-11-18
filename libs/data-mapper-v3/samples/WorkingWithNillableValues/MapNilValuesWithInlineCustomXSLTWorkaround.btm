@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="MapNilValuesWithInlineCustomXSLTWorkaround" Version="2"
+           OmitXmlDeclaration="No" PreserveSequenceOrder="Yes"
+           TreatElementsAsRecords="No">
+  <SrcTree RootNode_Name="InputSchema">
+    <Reference Location=".\InputSchema.xsd"/>
+  </SrcTree>
+  <TrgTree RootNode_Name="OutputSchema">
+    <Reference Location=".\OutputSchema.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Workaround MapNilValues">
+      <Links>
+        <Link LinkID="1" SourceID="/InputSchema/NilValue"
+              SourcePath="/InputSchema/NilValue" TargetID="/OutputSchema/NilValueOutput"
+              TargetPath="/OutputSchema/NilValueOutput"
+              SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="2" SourceID="3" TargetID="/OutputSchema/AnotherNilValueOutput"
+              TargetPath="/OutputSchema/AnotherNilValueOutput"
+              SourceType="functoid" TargetType="schemaNode"/>
+      </Links>
+      <Functoids>
+        <Functoid FunctoidID="3" TypeID="260" Category="Advanced"
+                  Name="Scripting" X="320" Y="180">
+          <ScripterCode>
+            <Script Language="Xslt"><![CDATA[<xsl:choose>
+  <xsl:when test="AnotherNilValue/@xsi:nil">
+    <AnotherNilValueOutput>
+      <xsl:attribute name="xsi:nil">
+        <xsl:value-of select="'true'"/>
+      </xsl:attribute>
+    </AnotherNilValueOutput>
+  </xsl:when>
+  <xsl:otherwise>
+    <AnotherNilValueOutput>
+      <xsl:value-of select="AnotherNilValue/text()"/>
+    </AnotherNilValueOutput>
+  </xsl:otherwise>
+</xsl:choose>]]></Script>
+          </ScripterCode>
+        </Functoid>
+      </Functoids>
+    </Page>
+  </Pages>
+</mapsource>

@@ -1,10 +1,12 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { HostToWebviewMessage, MapEditorVsCodeApi } from '../../../src/protocol/mapEditorProtocol';
+import { MapperGuidance, type MapperGuidanceContext } from './MapperGuidance';
 import './CopilotPanel';
 import './EmptySchemaPlaceholder';
 import './FunctoidConfigDialog';
 import './FunctoidPalette';
 import './LinkPropertiesDialog';
+import './GridPropertiesDialog';
 import './MapperBottomPanel';
 import './MapperContextMenu';
 import './MapperNotification';
@@ -30,6 +32,7 @@ import type { MappingCanvas } from './MappingCanvas';
 import type { SchemaTreeRenderer } from './SchemaTreeRenderer';
 import type { SchemaNodePropertiesDialog } from './SchemaNodePropertiesDialog';
 import type { LinkPropertiesDialog } from './LinkPropertiesDialog';
+import type { GridPropertiesDialog } from './GridPropertiesDialog';
 import type { ScriptingConfigDialog } from './ScriptingConfigDialog';
 import './MapperApp.css';
 
@@ -58,6 +61,7 @@ interface MapperAppElementRefs {
   statusBar: React.RefObject<MapperStatusBar>;
   schemaDialog: React.RefObject<SchemaNodePropertiesDialog>;
   linkDialog: React.RefObject<LinkPropertiesDialog>;
+  gridDialog: React.RefObject<GridPropertiesDialog>;
   scriptingDialog: React.RefObject<ScriptingConfigDialog>;
   functoidDialog: React.RefObject<FunctoidConfigDialog>;
   contextMenu: React.RefObject<MapperContextMenu>;
@@ -67,8 +71,10 @@ interface MapperAppElementRefs {
 function useMapperAppController(
   vscode: MapEditorVsCodeApi,
   onReady: (app: MapperAppHandle | null) => void,
-  refs: MapperAppElementRefs
-): void {
+  refs: MapperAppElementRefs,
+  onGuidanceChange: (context: MapperGuidanceContext) => void
+): React.MutableRefObject<MapperAppController | null> {
+  const controllerRef = useRef<MapperAppController | null>(null);
   useLayoutEffect(() => {
     const {
       container,
@@ -86,6 +92,7 @@ function useMapperAppController(
       statusBar,
       schemaDialog,
       linkDialog,
+      gridDialog,
       scriptingDialog,
       functoidDialog,
       contextMenu,
@@ -107,6 +114,7 @@ function useMapperAppController(
       !statusBar.current ||
       !schemaDialog.current ||
       !linkDialog.current ||
+      !gridDialog.current ||
       !scriptingDialog.current ||
       !functoidDialog.current ||
       !contextMenu.current ||
@@ -131,13 +139,15 @@ function useMapperAppController(
       statusBar: statusBar.current,
       schemaDialog: schemaDialog.current,
       linkDialog: linkDialog.current,
+      gridDialog: gridDialog.current,
       scriptingDialog: scriptingDialog.current,
       functoidDialog: functoidDialog.current,
       contextMenu: contextMenu.current,
       notification: notification.current,
     };
 
-    const controller = new MapperAppController(elements, vscode);
+    const controller = new MapperAppController(elements, vscode, onGuidanceChange);
+    controllerRef.current = controller;
     controller.mount();
     onReady({
       handleMessage(message): void {
@@ -148,8 +158,10 @@ function useMapperAppController(
     return () => {
       onReady(null);
       controller.dispose();
+      controllerRef.current = null;
     };
-  }, [onReady, refs, vscode]);
+  }, [onReady, refs, vscode, onGuidanceChange]);
+  return controllerRef;
 }
 
 function SchemaPaneDivider({ side }: { side: 'source' | 'target' }): React.ReactElement {
@@ -225,6 +237,7 @@ function SchemaPaneDivider({ side }: { side: 'source' | 'target' }): React.React
 }
 
 export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactElement {
+  const [guidance, setGuidance] = useState<MapperGuidanceContext | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const copilotRef = useRef<CopilotPanel>(null);
   const toolbarRef = useRef<MapperToolbar>(null);
@@ -240,6 +253,7 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
   const statusBarRef = useRef<MapperStatusBar>(null);
   const schemaDialogRef = useRef<SchemaNodePropertiesDialog>(null);
   const linkDialogRef = useRef<LinkPropertiesDialog>(null);
+  const gridDialogRef = useRef<GridPropertiesDialog>(null);
   const scriptingDialogRef = useRef<ScriptingConfigDialog>(null);
   const functoidDialogRef = useRef<FunctoidConfigDialog>(null);
   const contextMenuRef = useRef<MapperContextMenu>(null);
@@ -260,13 +274,14 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
     statusBar: statusBarRef,
     schemaDialog: schemaDialogRef,
     linkDialog: linkDialogRef,
+    gridDialog: gridDialogRef,
     scriptingDialog: scriptingDialogRef,
     functoidDialog: functoidDialogRef,
     contextMenu: contextMenuRef,
     notification: notificationRef,
   }).current;
 
-  useMapperAppController(vscode, onReady, refs);
+  const controller = useMapperAppController(vscode, onReady, refs, setGuidance);
 
   return (
     <div ref={containerRef} className="mapper-container" data-component="mapper-app">
@@ -288,9 +303,17 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
               })}
             </div>
             <SchemaPaneDivider side="source" />
-            <div className="canvas-workspace">
+            <div className="canvas-workspace" style={{ position: 'relative' }}>
               {React.createElement('biztalk-mapping-canvas', { ref: canvasRef, class: 'canvas-container' })}
               {React.createElement('biztalk-mapper-page-bar', { ref: pageBarRef, class: 'page-sheet-bar' })}
+              {guidance && (
+                <MapperGuidance
+                  context={guidance}
+                  vscode={vscode}
+                  onStartTutorial={() => controller.current?.startTutorial()}
+                  onDismissTutorial={() => controller.current?.dismissTutorial()}
+                />
+              )}
             </div>
             <SchemaPaneDivider side="target" />
             <div className="schema-tree-container target-tree">
@@ -311,6 +334,7 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
       {React.createElement('biztalk-mapper-statusbar', { ref: statusBarRef })}
       {React.createElement('biztalk-schema-node-properties-dialog', { ref: schemaDialogRef, hidden: true })}
       {React.createElement('biztalk-link-properties-dialog', { ref: linkDialogRef, hidden: true })}
+      {React.createElement('biztalk-grid-properties-dialog', { ref: gridDialogRef, hidden: true })}
       {React.createElement('biztalk-scripting-config-dialog', { ref: scriptingDialogRef, hidden: true })}
       {React.createElement('biztalk-functoid-config-dialog', { ref: functoidDialogRef, hidden: true })}
       {React.createElement('biztalk-mapper-context-menu', { ref: contextMenuRef, class: 'context-menu', hidden: true })}

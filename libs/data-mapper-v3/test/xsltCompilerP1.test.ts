@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { XMLValidator } from 'fast-xml-parser';
+import { XMLValidator, XMLParser } from 'fast-xml-parser';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import { DEFAULT_MAP_OPTIONS, FunctoidCategory, LinkEndpointType, type MapDocument, ParameterType, ScriptType } from '../src/model';
@@ -19,6 +19,51 @@ function mapWith(links: MapDocument['pages'][number]['links'], functoids: MapDoc
 }
 
 describe('XsltCompiler P1 compatibility', () => {
+  test('applies edited script precedence without reloading the map', () => {
+    const map = mapWith(
+      [
+        {
+          id: 'output',
+          sourceId: 'script',
+          targetId: '/Root/Out',
+          targetPath: '/Root/Out',
+          sourceType: LinkEndpointType.Functoid,
+          targetType: LinkEndpointType.SchemaNode,
+        },
+      ],
+      [
+        {
+          id: 'script',
+          functoidId: 260,
+          category: FunctoidCategory.Advanced,
+          name: 'Scripting',
+          x: 0,
+          y: 0,
+          inputLinks: [],
+          outputLinks: ['output'],
+          parameters: [],
+          scriptType: ScriptType.InlineCSharp,
+          scriptContent: 'public string Value() { return "csharp"; }',
+          scriptImplementations: [
+            { type: ScriptType.InlineCSharp, content: 'public string Value() { return "csharp"; }' },
+            { type: ScriptType.InlineVbNet, content: 'Public Function Value() As String\nReturn "vb"\nEnd Function' },
+          ],
+        },
+      ]
+    );
+    map.scriptTypePrecedence = [
+      { type: ScriptType.InlineVbNet, enabled: true },
+      { type: ScriptType.InlineCSharp, enabled: true },
+    ];
+
+    const result = new XsltCompiler().compile(map);
+
+    expect(result.errors).toEqual([]);
+    expect(result.xslt).toContain('userVB:Value()');
+    expect(result.xslt).not.toContain('return "csharp"');
+    expect(map.pages[0].functoids[0].scriptType).toBe(ScriptType.InlineCSharp);
+  });
+
   test('preserves full legacy script function declarations for all inline languages', () => {
     const scripts = [
       {
@@ -125,6 +170,31 @@ describe('XsltCompiler P1 compatibility', () => {
     expect(result.xslt).toContain('encoding="utf-16"');
     expect(result.xslt).toContain('<xsl:apply-templates select="processing-instruction()" />');
     expect(result.xslt).toContain('<xsl:template match="processing-instruction()">');
+  });
+
+  test('emits all legacy grid custom-header output settings safely', () => {
+    const map = mapWith([]);
+    Object.assign(map.options, {
+      standalone: 'no',
+      doctypePublic: 'public "identifier"',
+      doctypeSystem: 'output.dtd',
+      cdataSectionElements: 'Notes Details',
+      indent: 'yes',
+      mediaType: 'application/example+xml',
+    });
+
+    const result = new XsltCompiler().compile(map);
+
+    expect(result.errors).toEqual([]);
+    const document = new XMLParser({ ignoreAttributes: false }).parse(result.xslt!);
+    expect(document['xsl:stylesheet']['xsl:output']).toMatchObject({
+      '@_standalone': 'no',
+      '@_doctype-public': 'public "identifier"',
+      '@_doctype-system': 'output.dtd',
+      '@_cdata-section-elements': 'Notes Details',
+      '@_indent': 'yes',
+      '@_media-type': 'application/example+xml',
+    });
   });
 
   test('generates schema defaults, target constants, qualified attributes, and nil propagation', () => {

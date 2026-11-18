@@ -16,11 +16,8 @@
 	min-height: 36px;
 	gap: 8px;
 	padding: 2px 8px;
-	background: var(
-		--vscode-panel-background,
-		var(--vscode-editor-background, #1e1e1e)
-	);
-	border-bottom: 1px solid var(--vscode-panel-border, #444);
+	background: var(--vscode-panel-background, var(--vscode-editor-background));
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 	flex-shrink: 0;
 	overflow-x: auto;
 }
@@ -36,7 +33,7 @@
 	min-height: 30px;
 	padding: 5px 0;
 	background: transparent;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	border: 0;
 	border-radius: 2px;
 	cursor: pointer;
@@ -48,24 +45,27 @@
 	transition: background 0.15s;
 }
 .toolbar-btn:hover:not(:disabled) {
-	background: var(--vscode-toolbar-hoverBackground, #2a2d2e);
+	background: var(--vscode-toolbar-hoverBackground, transparent);
 }
 .toolbar-btn:disabled {
 	opacity: 0.4;
 	cursor: default;
 }
 .toolbar-btn.primary {
-	color: var(--vscode-textLink-foreground, #4fc1ff);
+	color: var(--vscode-textLink-foreground, var(--vscode-foreground));
 }
 .toolbar-btn.primary:hover:not(:disabled) {
-	background: var(--vscode-toolbar-hoverBackground, #2a2d2e);
+	background: var(--vscode-toolbar-hoverBackground, transparent);
 }
 .toolbar-btn.copilot {
-	color: var(--vscode-textLink-foreground, #4fc1ff);
+	color: var(--vscode-textLink-foreground, var(--vscode-foreground));
 }
 .toolbar-btn.danger:hover:not(:disabled) {
-	background: #a1260d;
-	color: #fff;
+	background: var(
+		--vscode-inputValidation-errorBackground,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-errorForeground, var(--vscode-foreground));
 }
 .toolbar-btn.small {
 	min-width: 28px;
@@ -84,11 +84,8 @@
 	align-items: stretch;
 	padding-left: 8px;
 	overflow-x: auto;
-	background: var(
-		--vscode-panel-background,
-		var(--vscode-editor-background, #1e1e1e)
-	);
-	border-top: 1px solid var(--vscode-panel-border, #444);
+	background: var(--vscode-panel-background, var(--vscode-editor-background));
+	border-top: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .page-tabs {
@@ -100,37 +97,37 @@
 	height: 30px;
 	padding: 4px 14px;
 	background: var(--vscode-tab-inactiveBackground, transparent);
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	border: 0;
-	border-right: 1px solid var(--vscode-panel-border, #444);
+	border-right: 1px solid var(--vscode-panel-border, transparent);
 	border-bottom: 2px solid transparent;
 	cursor: pointer;
 	font-size: 12px;
 }
 .page-tab.active {
-	color: var(--vscode-tab-activeForeground, var(--vscode-foreground, #fff));
+	color: var(--vscode-tab-activeForeground, var(--vscode-foreground));
 	background: var(
 		--vscode-tab-activeBackground,
-		var(--vscode-editor-background, #1e1e1e)
+		var(--vscode-editor-background)
 	);
-	border-bottom-color: var(--vscode-focusBorder, #007fd4);
+	border-bottom-color: var(--vscode-focusBorder);
 	font-weight: 600;
 }
 .page-tab:hover {
-	background: var(--vscode-list-hoverBackground, #2a2d2e);
+	background: var(--vscode-list-hoverBackground, transparent);
 }
 
 .page-tab-group {
 	display: inline-flex;
 	align-items: center;
-	border-left: 1px solid var(--vscode-panel-border, #444);
+	border-left: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .page-delete-btn {
 	width: 20px;
 	height: 22px;
 	padding: 0;
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	background: transparent;
 	border: 0;
 	border-radius: 2px;
@@ -143,21 +140,21 @@
 	min-width: 30px;
 	height: 30px;
 	padding: 0;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	background: transparent;
 	border: 0;
-	border-right: 1px solid var(--vscode-panel-border, #444);
+	border-right: 1px solid var(--vscode-panel-border, transparent);
 	cursor: pointer;
 	font-size: 18px;
 }
 
 .page-add-btn:hover {
-	background: var(--vscode-toolbar-hoverBackground, #2a2d2e);
+	background: var(--vscode-toolbar-hoverBackground, transparent);
 }
 
 .page-delete-btn:hover:not(:disabled) {
-	color: var(--vscode-errorForeground, #f48771);
-	background: var(--vscode-toolbar-hoverBackground, #2a2d2e);
+	color: var(--vscode-errorForeground, var(--vscode-foreground));
+	background: var(--vscode-toolbar-hoverBackground, transparent);
 }
 
 .page-delete-btn:disabled {
@@ -168,9 +165,9 @@
 .page-name-input {
 	width: 120px;
 	padding: 4px 8px;
-	color: var(--vscode-input-foreground, #ccc);
-	background: var(--vscode-input-background, #3c3c3c);
-	border: 1px solid var(--vscode-focusBorder, #007fd4);
+	color: var(--vscode-input-foreground, var(--vscode-foreground));
+	background: var(--vscode-input-background, var(--vscode-editor-background));
+	border: 1px solid var(--vscode-focusBorder);
 	border-radius: 2px;
 	font: inherit;
 	outline: none;
@@ -178,8 +175,8 @@
 
 .copilot-prompt-panel {
 	padding: 10px 12px;
-	background: var(--vscode-sideBar-background, #252526);
-	border-bottom: 1px solid var(--vscode-panel-border, #444);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 	flex-shrink: 0;
 }
 
@@ -202,13 +199,13 @@
 
 .copilot-prompt-heading span,
 .copilot-hint {
-	color: var(--vscode-descriptionForeground, #aaa);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	font-size: 11px;
 }
 
 .copilot-close {
 	border: 0;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	background: transparent;
 	cursor: pointer;
 	font-size: 18px;
@@ -219,15 +216,16 @@
 	resize: vertical;
 	min-height: 52px;
 	padding: 7px;
-	color: var(--vscode-input-foreground, #ccc);
-	background: var(--vscode-input-background, #3c3c3c);
-	border: 1px solid var(--vscode-input-border, #555);
+	color: var(--vscode-input-foreground, var(--vscode-foreground));
+	background: var(--vscode-input-background, var(--vscode-editor-background));
+	border: 1px solid
+		var(--vscode-input-border, var(--vscode-panel-border, transparent));
 	border-radius: 3px;
 	font: inherit;
 }
 
 .copilot-prompt-controls textarea:focus {
-	border-color: var(--vscode-focusBorder, #007fd4);
+	border-color: var(--vscode-focusBorder);
 	outline: none;
 }
 
@@ -237,7 +235,7 @@
 
 .copilot-result {
 	margin-top: 7px;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 }
 
@@ -259,7 +257,7 @@
 
 .copilot-context-empty,
 .copilot-clear-context {
-	color: var(--vscode-descriptionForeground, #aaa);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	font-size: 11px;
 }
 
@@ -276,8 +274,8 @@
 	gap: 4px;
 	max-width: 240px;
 	padding: 2px 5px 2px 8px;
-	background: var(--vscode-badge-background, #4d4d4d);
-	color: var(--vscode-badge-foreground, #fff);
+	background: var(--vscode-badge-background, var(--vscode-editor-background));
+	color: var(--vscode-badge-foreground, var(--vscode-foreground));
 	border-radius: 10px;
 	font-size: 11px;
 }
@@ -320,12 +318,9 @@
 	min-width: 240px;
 	max-width: 240px;
 	height: 100%;
-	border-right: 1px solid var(--vscode-panel-border, #444);
+	border-right: 1px solid var(--vscode-panel-border, transparent);
 	overflow-y: auto;
-	background: var(
-		--vscode-sideBar-background,
-		var(--vscode-editor-background, #252526)
-	);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
 	flex: 0 0 240px;
 	position: relative;
 	z-index: 6;
@@ -347,7 +342,7 @@
 	letter-spacing: 0.5px;
 	color: var(--vscode-sideBarSectionHeader-foreground);
 	background: var(--vscode-sideBarSectionHeader-background);
-	border-bottom: 1px solid var(--vscode-panel-border, #333);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .palette-search {
@@ -378,7 +373,7 @@
 	text-align: left;
 }
 .category-header:hover {
-	background: var(--vscode-list-hoverBackground, #2a2d2e);
+	background: var(--vscode-list-hoverBackground, transparent);
 }
 .category-icon {
 	font-size: 8px;
@@ -421,7 +416,7 @@
 	cursor: grabbing;
 }
 .palette-item:hover {
-	background: var(--vscode-list-hoverBackground, #2a2d2e);
+	background: var(--vscode-list-hoverBackground, transparent);
 }
 .item-name {
 	min-width: 0;
@@ -475,10 +470,10 @@
 	display: none;
 }
 .schema-tree-container.source-tree {
-	border-right: 1px solid var(--vscode-panel-border, #333);
+	border-right: 1px solid var(--vscode-panel-border, transparent);
 }
 .schema-tree-container.target-tree {
-	border-left: 1px solid var(--vscode-panel-border, #333);
+	border-left: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .canvas-workspace {
@@ -507,8 +502,11 @@
 }
 .schema-header {
 	padding: 8px 10px 6px;
-	background: var(--vscode-sideBarSectionHeader-background, #252526);
-	border-bottom: 1px solid var(--vscode-panel-border, #333);
+	background: var(
+		--vscode-sideBarSectionHeader-background,
+		var(--vscode-editor-background)
+	);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 .schema-header-row {
 	display: flex;
@@ -546,7 +544,7 @@
 	border-radius: 3px;
 }
 .schema-btn:hover {
-	background: var(--vscode-toolbar-hoverBackground, #333);
+	background: var(--vscode-toolbar-hoverBackground, transparent);
 }
 .schema-tree {
 	padding: 4px 0;
@@ -577,7 +575,7 @@
 	padding-left: 6px;
 }
 .tree-node:hover {
-	background: var(--vscode-list-hoverBackground, #2a2d2e);
+	background: var(--vscode-list-hoverBackground, transparent);
 }
 
 .tree-indent {
@@ -635,7 +633,7 @@
 	color: var(--vscode-foreground);
 }
 .node-badge.repeating {
-	color: #c586c0;
+	color: var(--vscode-symbolIcon-arrayForeground, var(--vscode-foreground));
 }
 
 .node-connector {
@@ -643,8 +641,8 @@
 	width: 14px;
 	height: 14px;
 	flex: 0 0 14px;
-	background: var(--vscode-editor-background, #1e1e1e);
-	border: 1px solid var(--vscode-panel-border, #797979);
+	background: var(--vscode-editor-background);
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 50%;
 	cursor: crosshair;
 	transition: border-color 0.12s, border-width 0.12s, background 0.12s;
@@ -672,15 +670,18 @@
 }
 .tree-node:hover .node-connector,
 .node-connector:hover {
-	border: 2px solid var(--vscode-focusBorder, #007fd4);
+	border: 2px solid var(--vscode-focusBorder);
 }
 .node-connector.active {
-	background: var(--vscode-focusBorder, #007fd4);
-	border: 2px solid var(--vscode-focusBorder, #007fd4);
+	background: var(--vscode-focusBorder);
+	border: 2px solid var(--vscode-focusBorder);
 }
 .node-connector.connected {
-	background: var(--vscode-button-secondaryHoverBackground, #38445a);
-	border: 2px solid var(--vscode-focusBorder, #007fd4);
+	background: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-editor-background)
+	);
+	border: 2px solid var(--vscode-focusBorder);
 }
 
 /* Canvas */
@@ -692,15 +693,15 @@
 	overflow: auto;
 	background: radial-gradient(
 		circle,
-		var(--vscode-panel-border, #333) 0.5px,
+		var(--vscode-panel-border, transparent) 0.5px,
 		transparent 0.5px
 	);
 	background-size: 10px 10px;
 }
 
 .canvas-container.drop-active {
-	background-color: rgba(79, 193, 255, 0.08);
-	outline: 2px dashed #4fc1ff;
+	background-color: var(--vscode-editor-dropBackground, transparent);
+	outline: 2px dashed var(--vscode-focusBorder);
 	outline-offset: -2px;
 }
 
@@ -748,10 +749,15 @@
 	width: max-content;
 	gap: 3px;
 	padding: 3px;
-	border: 1px solid var(--vscode-panel-border, #444);
+	border: 1px solid
+		var(--vscode-widget-border, var(--vscode-panel-border, transparent));
 	border-radius: 4px;
-	background: var(--vscode-editorWidget-background, #252526);
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	color: var(--vscode-foreground);
+	background: var(
+		--vscode-editorWidget-background,
+		var(--vscode-editor-background)
+	);
+	box-shadow: 0 2px 6px var(--vscode-widget-shadow, transparent);
 }
 
 .canvas-zoom-controls button {
@@ -760,9 +766,24 @@
 	padding: 0 5px;
 	border: none;
 	border-radius: 3px;
-	color: var(--vscode-button-secondaryForeground, #ccc);
-	background: var(--vscode-button-secondaryBackground, #3a3d41);
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+	background: var(
+		--vscode-button-secondaryBackground,
+		var(--vscode-editor-background)
+	);
 	cursor: pointer;
+}
+
+.canvas-zoom-controls button:hover:not(:disabled) {
+	background: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-toolbar-hoverBackground, transparent)
+	);
+}
+
+.canvas-zoom-controls button:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder);
+	outline-offset: 1px;
 }
 
 .canvas-zoom-controls button:disabled {
@@ -780,22 +801,28 @@
 	outline: none;
 }
 .tree-node[data-link-source] {
-	background: var(--vscode-list-activeSelectionBackground, #094771);
-	color: var(--vscode-list-activeSelectionForeground, #fff);
+	background: var(
+		--vscode-list-activeSelectionBackground,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-list-activeSelectionForeground, var(--vscode-foreground));
 }
 .tree-node {
 	scroll-margin-top: 140px;
 }
 
 .tree-node.selected {
-	background: var(--vscode-list-inactiveSelectionBackground, #37373d);
-	outline: 1px solid var(--vscode-focusBorder, #007fd4);
+	background: var(
+		--vscode-list-inactiveSelectionBackground,
+		var(--vscode-editor-background)
+	);
+	outline: 1px solid var(--vscode-focusBorder);
 	outline-offset: -1px;
 }
 
 .tree-node.link-traced {
-	background: var(--vscode-editor-findMatchHighlightBackground, #5a4c16);
-	box-shadow: inset 3px 0 var(--vscode-charts-yellow, #cca700);
+	background: var(--vscode-editor-findMatchHighlightBackground, transparent);
+	box-shadow: inset 3px 0 var(--vscode-charts-yellow, var(--vscode-foreground));
 }
 .mapping-links-overlay [data-link-id]:focus-visible .mapping-link {
 	stroke-width: 3;
@@ -819,18 +846,21 @@
 }
 .functoid-connector {
 	cursor: pointer;
-	fill: var(--vscode-editor-background, #1e1e1e);
-	stroke: var(--vscode-foreground, #ccc);
+	fill: var(--vscode-editor-background);
+	stroke: var(--vscode-foreground);
 	stroke-width: 1;
 }
 .functoid-connector.connected {
-	fill: var(--vscode-button-secondaryHoverBackground, #38445a);
-	stroke: var(--vscode-focusBorder, #007fd4);
+	fill: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-editor-background)
+	);
+	stroke: var(--vscode-focusBorder);
 	stroke-width: 2;
 }
 .functoid-node:hover .functoid-connector,
 .functoid-node.dragging .functoid-connector {
-	stroke: var(--vscode-focusBorder, #007fd4);
+	stroke: var(--vscode-focusBorder);
 	stroke-width: 2;
 }
 .connector {
@@ -863,15 +893,18 @@
 
 .load-schema-btn {
 	padding: 8px 16px;
-	background: var(--vscode-button-background, #0e639c);
-	color: var(--vscode-button-foreground, white);
+	background: var(--vscode-button-background, var(--vscode-editor-background));
+	color: var(--vscode-button-foreground, var(--vscode-foreground));
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 12px;
 }
 .load-schema-btn:hover {
-	background: var(--vscode-button-hoverBackground, #1177bb);
+	background: var(
+		--vscode-button-hoverBackground,
+		var(--vscode-button-background, var(--vscode-editor-background))
+	);
 }
 
 /* Status Bar */
@@ -880,8 +913,11 @@
 	align-items: center;
 	gap: 12px;
 	padding: 3px 12px;
-	background: var(--vscode-statusBar-background, #007acc);
-	color: var(--vscode-statusBar-foreground, white);
+	background: var(
+		--vscode-statusBar-background,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-statusBar-foreground, var(--vscode-foreground));
 	font-size: 11px;
 	flex-shrink: 0;
 }
@@ -905,7 +941,7 @@ biztalk-mapper-notification[hidden] {
 	border-radius: 6px;
 	font-size: 12px;
 	max-width: 400px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 12px var(--vscode-widget-shadow, transparent);
 	z-index: 100;
 	animation: slideIn 0.2s ease-out;
 }
@@ -920,16 +956,30 @@ biztalk-mapper-notification[hidden] {
 	}
 }
 .notification-success {
-	background: #1b5e20;
-	color: #fff;
+	background: var(
+		--vscode-notifications-background,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-notifications-foreground, var(--vscode-foreground));
+	border-left: 3px solid
+		var(--vscode-testing-iconPassed, var(--vscode-foreground));
 }
 .notification-warning {
-	background: #e65100;
-	color: #fff;
+	background: var(
+		--vscode-notifications-background,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-notifications-foreground, var(--vscode-foreground));
+	border-left: 3px solid
+		var(--vscode-editorWarning-foreground, var(--vscode-foreground));
 }
 .notification-error {
-	background: #b71c1c;
-	color: #fff;
+	background: var(
+		--vscode-notifications-background,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-notifications-foreground, var(--vscode-foreground));
+	border-left: 3px solid var(--vscode-errorForeground, var(--vscode-foreground));
 }
 .notif-header {
 	display: flex;
@@ -958,11 +1008,12 @@ biztalk-mapper-notification[hidden] {
 	position: fixed;
 	z-index: 10000;
 	min-width: 200px;
-	background: var(--vscode-menu-background, #252526);
-	border: 1px solid var(--vscode-menu-border, #454545);
+	background: var(--vscode-menu-background, var(--vscode-editor-background));
+	border: 1px solid
+		var(--vscode-menu-border, var(--vscode-panel-border, transparent));
 	border-radius: 4px;
 	padding: 4px 0;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 16px var(--vscode-widget-shadow, transparent);
 	font-size: 12px;
 }
 .context-menu-item {
@@ -971,11 +1022,11 @@ biztalk-mapper-notification[hidden] {
 	align-items: center;
 	padding: 6px 16px;
 	cursor: pointer;
-	color: var(--vscode-menu-foreground, #ccc);
+	color: var(--vscode-menu-foreground, var(--vscode-foreground));
 }
 .context-menu-item:hover:not(.disabled) {
-	background: var(--vscode-menu-selectionBackground, #094771);
-	color: var(--vscode-menu-selectionForeground, #fff);
+	background: var(--vscode-menu-selectionBackground, transparent);
+	color: var(--vscode-menu-selectionForeground, var(--vscode-foreground));
 }
 .context-menu-item.disabled {
 	opacity: 0.4;
@@ -984,7 +1035,10 @@ biztalk-mapper-notification[hidden] {
 .context-menu-separator {
 	height: 1px;
 	margin: 4px 8px;
-	background: var(--vscode-menu-separatorBackground, #454545);
+	background: var(
+		--vscode-menu-separatorBackground,
+		var(--vscode-panel-border, transparent)
+	);
 }
 .menu-shortcut {
 	margin-left: 24px;
@@ -1004,7 +1058,7 @@ biztalk-mapper-notification[hidden] {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0.6);
+	background: var(--vscode-widget-shadow, transparent);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1012,15 +1066,15 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-config-panel {
-	background: var(--vscode-editor-background, #1e1e1e);
-	border: 1px solid var(--vscode-panel-border, #454545);
+	background: var(--vscode-editor-background);
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 6px;
 	padding: 20px;
 	min-width: 500px;
 	max-width: 700px;
 	max-height: 80vh;
 	overflow-y: auto;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 8px 32px var(--vscode-widget-shadow, transparent);
 }
 
 .functoid-properties-panel {
@@ -1033,7 +1087,7 @@ biztalk-mapper-notification[hidden] {
 .functoid-properties-panel > .config-actions {
 	margin-top: 0;
 	padding: 12px 20px 18px;
-	border-top: 1px solid var(--vscode-panel-border, #454545);
+	border-top: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .functoid-dialog-header {
@@ -1041,7 +1095,7 @@ biztalk-mapper-notification[hidden] {
 	align-items: center;
 	min-height: 58px;
 	padding: 0 20px;
-	border-bottom: 1px solid var(--vscode-panel-border, #454545);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .functoid-dialog-header .config-title {
@@ -1053,13 +1107,13 @@ biztalk-mapper-notification[hidden] {
 	display: flex;
 	min-height: 38px;
 	padding: 0 16px;
-	border-bottom: 1px solid var(--vscode-panel-border, #454545);
-	background: var(--vscode-sideBar-background, #252526);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
 }
 
 .functoid-dialog-tab {
 	padding: 0 12px;
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	background: transparent;
 	border: 0;
 	border-bottom: 2px solid transparent;
@@ -1068,16 +1122,16 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-dialog-tab:hover {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 }
 
 .functoid-dialog-tab.active {
-	color: var(--vscode-foreground, #fff);
-	border-bottom-color: var(--vscode-focusBorder, #007fd4);
+	color: var(--vscode-foreground);
+	border-bottom-color: var(--vscode-focusBorder);
 }
 
 .functoid-dialog-tab:focus-visible {
-	outline: 1px solid var(--vscode-focusBorder, #007fd4);
+	outline: 1px solid var(--vscode-focusBorder);
 	outline-offset: -2px;
 }
 
@@ -1118,27 +1172,30 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-input-validation.valid {
-	color: var(--vscode-testing-iconPassed, #73c991);
-	border-left-color: var(--vscode-testing-iconPassed, #73c991);
+	color: var(--vscode-testing-iconPassed, var(--vscode-foreground));
+	border-left-color: var(--vscode-testing-iconPassed, var(--vscode-foreground));
 	background: color-mix(
 		in srgb,
-		var(--vscode-testing-iconPassed, #73c991) 10%,
+		var(--vscode-testing-iconPassed, var(--vscode-foreground)) 10%,
 		transparent
 	);
 }
 
 .functoid-input-validation.invalid {
-	color: var(--vscode-editorWarning-foreground, #cca700);
-	border-left-color: var(--vscode-editorWarning-foreground, #cca700);
+	color: var(--vscode-editorWarning-foreground, var(--vscode-foreground));
+	border-left-color: var(
+		--vscode-editorWarning-foreground,
+		var(--vscode-foreground)
+	);
 	background: color-mix(
 		in srgb,
-		var(--vscode-editorWarning-foreground, #cca700) 10%,
+		var(--vscode-editorWarning-foreground, var(--vscode-foreground)) 10%,
 		transparent
 	);
 }
 
 .functoid-input-table {
-	border: 1px solid var(--vscode-panel-border, #454545);
+	border: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .functoid-input-table-header,
@@ -1152,9 +1209,9 @@ biztalk-mapper-notification[hidden] {
 .functoid-input-table-header {
 	min-height: 30px;
 	padding: 0 10px;
-	color: var(--vscode-descriptionForeground, #999);
-	background: var(--vscode-sideBar-background, #252526);
-	border-bottom: 1px solid var(--vscode-panel-border, #454545);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 	font-size: 11px;
 	font-weight: 600;
 }
@@ -1168,7 +1225,7 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-dialog-description-value {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 	line-height: 1.5;
 }
@@ -1188,9 +1245,9 @@ biztalk-mapper-notification[hidden] {
 
 .schema-property-name {
 	padding: 10px 12px;
-	color: var(--vscode-foreground, #ccc);
-	background: var(--vscode-sideBar-background, #252526);
-	border: 1px solid var(--vscode-panel-border, #454545);
+	color: var(--vscode-foreground);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 4px;
 	font-size: 16px;
 	font-weight: 600;
@@ -1198,14 +1255,14 @@ biztalk-mapper-notification[hidden] {
 
 .schema-property-list {
 	margin: 12px 0;
-	border: 1px solid var(--vscode-panel-border, #454545);
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 4px;
 }
 
 .schema-property-row {
 	display: grid;
 	grid-template-columns: 130px minmax(0, 1fr);
-	border-bottom: 1px solid var(--vscode-panel-border, #454545);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .schema-property-row:last-child {
@@ -1220,18 +1277,18 @@ biztalk-mapper-notification[hidden] {
 }
 
 .schema-property-row dt {
-	color: var(--vscode-descriptionForeground, #999);
-	background: var(--vscode-sideBar-background, #252526);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
 	font-weight: 600;
 }
 
 .schema-property-row dd {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	overflow-wrap: anywhere;
 }
 
 .schema-property-xpath {
-	color: var(--vscode-textPreformat-foreground, #d7ba7d) !important;
+	color: var(--vscode-textPreformat-foreground, var(--vscode-foreground)) !important;
 	font-family: var(--vscode-editor-font-family, monospace);
 }
 
@@ -1240,13 +1297,13 @@ biztalk-mapper-notification[hidden] {
 	justify-content: space-between;
 	padding: 12px;
 	margin-bottom: 12px;
-	background: var(--vscode-sideBar-background, #252526);
-	border: 1px solid var(--vscode-panel-border, #454545);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 4px;
 }
 
 .functoid-property-name {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 16px;
 	font-weight: 600;
 }
@@ -1254,7 +1311,7 @@ biztalk-mapper-notification[hidden] {
 .functoid-property-meta,
 .functoid-property-requirement,
 .functoid-property-empty {
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	font-size: 11px;
 }
 
@@ -1265,13 +1322,13 @@ biztalk-mapper-notification[hidden] {
 .functoid-property-section {
 	padding: 10px 12px;
 	margin-bottom: 12px;
-	border: 1px solid var(--vscode-panel-border, #454545);
+	border: 1px solid var(--vscode-panel-border, transparent);
 	border-radius: 4px;
 }
 
 .functoid-property-heading {
 	margin-bottom: 6px;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -1279,7 +1336,7 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-property-description {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 	line-height: 1.5;
 }
@@ -1305,20 +1362,20 @@ biztalk-mapper-notification[hidden] {
 	gap: 8px;
 	align-items: baseline;
 	padding: 5px 0;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 	overflow-wrap: anywhere;
 }
 
 .property-port {
 	min-width: 52px;
-	color: var(--vscode-symbolIcon-functionForeground, #b180d7);
+	color: var(--vscode-symbolIcon-functionForeground, var(--vscode-foreground));
 	font-size: 11px;
 	font-weight: 600;
 }
 
 .functoid-property-list code {
-	color: var(--vscode-textPreformat-foreground, #d7ba7d);
+	color: var(--vscode-textPreformat-foreground, var(--vscode-foreground));
 }
 
 .functoid-input-editor {
@@ -1330,7 +1387,7 @@ biztalk-mapper-notification[hidden] {
 .functoid-input-row {
 	min-height: 48px;
 	padding: 6px 10px;
-	border-bottom: 1px solid var(--vscode-panel-border, #454545);
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 
 .functoid-input-row:last-child {
@@ -1338,7 +1395,7 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-input-name {
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 	font-weight: 600;
 }
@@ -1346,7 +1403,7 @@ biztalk-mapper-notification[hidden] {
 .functoid-input-content {
 	flex: 1;
 	min-width: 0;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	font-size: 12px;
 }
 
@@ -1355,7 +1412,7 @@ biztalk-mapper-notification[hidden] {
 	align-items: center;
 	gap: 8px;
 	margin-top: 5px;
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	font-size: 11px;
 }
 
@@ -1372,7 +1429,7 @@ biztalk-mapper-notification[hidden] {
 }
 
 .functoid-input-kind {
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	font-size: 11px;
 }
 
@@ -1385,15 +1442,21 @@ biztalk-mapper-notification[hidden] {
 .functoid-input-actions button {
 	min-width: 26px;
 	height: 26px;
-	color: var(--vscode-button-secondaryForeground, #fff);
-	background: var(--vscode-button-secondaryBackground, #3a3d41);
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+	background: var(
+		--vscode-button-secondaryBackground,
+		var(--vscode-editor-background)
+	);
 	border: 0;
 	border-radius: 2px;
 	cursor: pointer;
 }
 
 .functoid-input-actions button:hover:not(:disabled) {
-	background: var(--vscode-button-secondaryHoverBackground, #45494e);
+	background: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-toolbar-hoverBackground, transparent)
+	);
 }
 
 .functoid-input-actions button:disabled {
@@ -1454,7 +1517,7 @@ biztalk-mapper-notification[hidden] {
 	font-size: 14px;
 	font-weight: bold;
 	margin-bottom: 16px;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 }
 
 .config-section {
@@ -1464,7 +1527,7 @@ biztalk-mapper-notification[hidden] {
 .config-label {
 	display: block;
 	font-size: 11px;
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	margin-bottom: 4px;
 }
 
@@ -1486,9 +1549,10 @@ biztalk-mapper-notification[hidden] {
 .config-textarea {
 	width: 100%;
 	min-height: 200px;
-	background: var(--vscode-input-background, #3c3c3c);
-	color: var(--vscode-input-foreground, #ccc);
-	border: 1px solid var(--vscode-input-border, #555);
+	background: var(--vscode-input-background, var(--vscode-editor-background));
+	color: var(--vscode-input-foreground, var(--vscode-foreground));
+	border: 1px solid
+		var(--vscode-input-border, var(--vscode-panel-border, transparent));
 	border-radius: 3px;
 	padding: 8px;
 	font-family: "Consolas", "Courier New", monospace;
@@ -1499,9 +1563,10 @@ biztalk-mapper-notification[hidden] {
 .config-input,
 .config-select {
 	width: 100%;
-	background: var(--vscode-input-background, #3c3c3c);
-	color: var(--vscode-input-foreground, #ccc);
-	border: 1px solid var(--vscode-input-border, #555);
+	background: var(--vscode-input-background, var(--vscode-editor-background));
+	color: var(--vscode-input-foreground, var(--vscode-foreground));
+	border: 1px solid
+		var(--vscode-input-border, var(--vscode-panel-border, transparent));
 	border-radius: 3px;
 	padding: 6px 8px;
 	font-size: 12px;
@@ -1518,8 +1583,8 @@ biztalk-mapper-notification[hidden] {
 .bottom-panel {
 	display: flex;
 	flex-direction: column;
-	border-top: 1px solid var(--vscode-panel-border, #444);
-	background: var(--vscode-editor-background, #1e1e1e);
+	border-top: 1px solid var(--vscode-panel-border, transparent);
+	background: var(--vscode-editor-background);
 	min-height: 36px;
 	max-height: 350px;
 	transition: max-height 0.2s ease;
@@ -1535,8 +1600,8 @@ biztalk-mapper-notification[hidden] {
 	justify-content: space-between;
 	align-items: center;
 	padding: 4px 8px;
-	background: var(--vscode-sideBar-background, #252526);
-	border-bottom: 1px solid var(--vscode-panel-border, #444);
+	background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+	border-bottom: 1px solid var(--vscode-panel-border, transparent);
 	flex-shrink: 0;
 }
 
@@ -1548,7 +1613,7 @@ biztalk-mapper-notification[hidden] {
 .bottom-tab {
 	background: transparent;
 	border: none;
-	color: var(--vscode-foreground, #ccc);
+	color: var(--vscode-foreground);
 	padding: 4px 12px;
 	cursor: pointer;
 	font-size: 12px;
@@ -1562,8 +1627,8 @@ biztalk-mapper-notification[hidden] {
 
 .bottom-tab.active {
 	opacity: 1;
-	border-bottom-color: var(--vscode-focusBorder, #007fd4);
-	color: var(--vscode-foreground, #fff);
+	border-bottom-color: var(--vscode-focusBorder);
+	color: var(--vscode-foreground);
 }
 
 .bottom-panel-actions {
@@ -1591,8 +1656,8 @@ biztalk-mapper-notification[hidden] {
 .xml-editor {
 	width: 100%;
 	height: 100%;
-	background: var(--vscode-editor-background, #1e1e1e);
-	color: var(--vscode-editor-foreground, #d4d4d4);
+	background: var(--vscode-editor-background);
+	color: var(--vscode-editor-foreground, var(--vscode-foreground));
 	border: none;
 	padding: 8px 12px;
 	font-family: var(
@@ -1613,8 +1678,8 @@ biztalk-mapper-notification[hidden] {
 .xml-output {
 	width: 100%;
 	height: 100%;
-	background: var(--vscode-editor-background, #1e1e1e);
-	color: var(--vscode-editor-foreground, #d4d4d4);
+	background: var(--vscode-editor-background);
+	color: var(--vscode-editor-foreground, var(--vscode-foreground));
 	border: none;
 	padding: 8px 12px;
 	margin: 0;
@@ -1631,7 +1696,7 @@ biztalk-mapper-notification[hidden] {
 }
 
 .xml-output.error {
-	color: var(--vscode-errorForeground, #f48771);
+	color: var(--vscode-errorForeground, var(--vscode-foreground));
 }
 
 .config-row .config-input,
@@ -1641,8 +1706,11 @@ biztalk-mapper-notification[hidden] {
 
 .config-browse-btn {
 	padding: 6px 12px;
-	background: var(--vscode-button-secondaryBackground, #3a3d41);
-	color: var(--vscode-button-secondaryForeground, #ccc);
+	background: var(
+		--vscode-button-secondaryBackground,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
 	border: none;
 	border-radius: 3px;
 	cursor: pointer;
@@ -1650,13 +1718,16 @@ biztalk-mapper-notification[hidden] {
 }
 
 .config-browse-btn:hover {
-	background: var(--vscode-button-secondaryHoverBackground, #45494e);
+	background: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-toolbar-hoverBackground, transparent)
+	);
 }
 
 .config-helper {
 	margin-top: 4px;
 	font-size: 11px;
-	color: var(--vscode-descriptionForeground, #999);
+	color: var(--vscode-descriptionForeground, var(--vscode-foreground));
 	white-space: pre-wrap;
 }
 
@@ -1676,21 +1747,30 @@ biztalk-mapper-notification[hidden] {
 }
 
 .config-btn-primary {
-	background: var(--vscode-button-background, #0e639c);
-	color: var(--vscode-button-foreground, #fff);
+	background: var(--vscode-button-background, var(--vscode-editor-background));
+	color: var(--vscode-button-foreground, var(--vscode-foreground));
 }
 
 .config-btn-primary:hover {
-	background: var(--vscode-button-hoverBackground, #1177bb);
+	background: var(
+		--vscode-button-hoverBackground,
+		var(--vscode-button-background, var(--vscode-editor-background))
+	);
 }
 
 .config-btn-secondary {
-	color: var(--vscode-button-secondaryForeground, #fff);
-	background: var(--vscode-button-secondaryBackground, #3a3d41);
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+	background: var(
+		--vscode-button-secondaryBackground,
+		var(--vscode-editor-background)
+	);
 }
 
 .config-btn-secondary:hover:not(:disabled) {
-	background: var(--vscode-button-secondaryHoverBackground, #45494e);
+	background: var(
+		--vscode-button-secondaryHoverBackground,
+		var(--vscode-toolbar-hoverBackground, transparent)
+	);
 }
 
 .config-btn:disabled {
@@ -1699,6 +1779,9 @@ biztalk-mapper-notification[hidden] {
 }
 
 .config-btn-cancel {
-	background: var(--vscode-button-secondaryBackground, #3a3d41);
-	color: var(--vscode-button-secondaryForeground, #ccc);
+	background: var(
+		--vscode-button-secondaryBackground,
+		var(--vscode-editor-background)
+	);
+	color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
 }

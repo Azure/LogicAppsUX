@@ -9,9 +9,19 @@ import { localize } from '../../../localize';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 
-export async function createWorkspace(_context: IActionContext): Promise<void> {
+export type ProjectCreationMode = 'logicApp' | 'customCode' | 'dataMap';
+
+export const projectCreationTitles: Record<ProjectCreationMode, string> = {
+  logicApp: localize('addLogicAppProject', 'Add Logic App'),
+  customCode: localize('addCustomCodeProjectTitle', 'Add custom code'),
+  dataMap: localize('addMapperProjectTitle', 'Add mapper'),
+};
+
+export async function createWorkspace(_context: IActionContext, projectCreationMode?: ProjectCreationMode): Promise<void> {
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createWorkspace', 'Create Logic Apps Workspace'),
+    panelName: projectCreationMode
+      ? localize('createProjectWorkspace', '{0} - Create workspace', projectCreationTitles[projectCreationMode])
+      : localize('createWorkspace', 'Create Logic Apps Workspace'),
     panelGroupKey: ext.webViewKey.createWorkspace,
     projectName: ProjectName.createWorkspace,
     createCommand: ExtensionCommand.createWorkspace,
@@ -22,5 +32,6 @@ export async function createWorkspace(_context: IActionContext): Promise<void> {
         await createLogicAppWorkspace(actionContext, data, false);
       });
     },
+    extraInitializeData: { projectCreationMode },
   });
 }

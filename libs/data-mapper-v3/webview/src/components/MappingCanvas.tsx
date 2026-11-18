@@ -1,14 +1,4 @@
-import {
-  Button,
-  FluentProvider,
-  Menu,
-  MenuItemRadio,
-  MenuList,
-  MenuPopover,
-  MenuTrigger,
-  ToggleButton,
-  makeStyles,
-} from '@fluentui/react-components';
+import { Button, Menu, MenuItemRadio, MenuList, MenuPopover, MenuTrigger, ToggleButton, makeStyles } from '@fluentui/react-components';
 import {
   ArrowRouting20Regular,
   Code20Regular,
@@ -23,11 +13,11 @@ import React, { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, use
 import { createRoot, type Root } from 'react-dom/client';
 import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
 import { getFunctoidShortName } from './functoidDisplayName';
-import { layoutFunctoids } from './functoidAutoLayout';
+import { functoidHeight, functoidWidth, layoutFunctoids } from './functoidAutoLayout';
 import { createPortal } from 'react-dom';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 export interface CanvasCallbacks {
   onLinkViewChange?: (view: NonNullable<MapperViewState['linkView']>) => void;
@@ -110,7 +100,7 @@ const LinkPreview = forwardRef<LinkPreviewHandle>(function LinkPreview(_props, r
       d={path}
       fill="none"
       markerEnd="url(#arrowhead)"
-      stroke="var(--vscode-charts-blue, #4fc1ff)"
+      stroke="var(--vscode-charts-blue, var(--vscode-foreground))"
       strokeWidth="2"
       strokeDasharray="6 4"
       strokeLinecap="round"
@@ -119,8 +109,6 @@ const LinkPreview = forwardRef<LinkPreviewHandle>(function LinkPreview(_props, r
   );
 });
 
-const functoidWidth = 72;
-const functoidHeight = 26;
 const iconSize = 18;
 const functoidHalfWidth = functoidWidth / 2;
 const gridSize = 10;
@@ -358,6 +346,9 @@ function LinkPath({
       aria-pressed={selected}
       style={{ outline: 'none' }}
       onKeyDown={(event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+          return;
+        }
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           event.stopPropagation();
@@ -396,12 +387,12 @@ function LinkPath({
         fill="none"
         stroke={
           selected
-            ? '#007fd4'
+            ? 'var(--vscode-focusBorder)'
             : highlighted
-              ? 'var(--vscode-charts-yellow, #cca700)'
+              ? 'var(--vscode-charts-yellow, var(--vscode-foreground))'
               : partial
-                ? 'var(--vscode-descriptionForeground, #999)'
-                : '#4fc1ff'
+                ? 'var(--vscode-descriptionForeground, var(--vscode-foreground))'
+                : 'var(--vscode-charts-blue, var(--vscode-foreground))'
         }
         strokeWidth={selected || hovered || highlighted ? 3 : 2}
         strokeLinecap="round"
@@ -417,8 +408,12 @@ function LinkPath({
             cx={point.x}
             cy={point.y}
             r={selected ? 6 : 4}
-            fill={end === 'source' ? '#89d185' : '#cca700'}
-            stroke={selected ? 'var(--vscode-foreground, #ccc)' : 'none'}
+            fill={
+              end === 'source'
+                ? 'var(--vscode-charts-green, var(--vscode-foreground))'
+                : 'var(--vscode-charts-yellow, var(--vscode-foreground))'
+            }
+            stroke={selected ? 'var(--vscode-foreground)' : 'none'}
             strokeWidth="1"
             style={{ pointerEvents: selected ? 'all' : 'none', cursor: 'grab' }}
             onPointerDown={(event) => {
@@ -469,7 +464,7 @@ const MappingLinksOverlay = forwardRef<
     <svg className="mapping-links-overlay">
       <defs>
         <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#4fc1ff" />
+          <polygon points="0 0, 8 3, 0 6" fill="var(--vscode-charts-blue, var(--vscode-foreground))" />
         </marker>
       </defs>
       <LinkPreview ref={previewRef} />
@@ -546,7 +541,7 @@ const MappingLinksOverlay = forwardRef<
               <path
                 d={`M ${source.x} ${source.y} C ${source.x + control} ${source.y}, ${target.x - control} ${target.y}, ${target.x} ${target.y}`}
                 fill="none"
-                stroke="var(--vscode-charts-orange, #d18616)"
+                stroke="var(--vscode-charts-orange, var(--vscode-foreground))"
                 strokeWidth="2"
                 strokeDasharray="3 5"
                 opacity="0.8"
@@ -601,7 +596,7 @@ function FunctoidNode({
   const connectorPointerStarted = useRef<'input' | 'output' | null>(null);
   const FunctoidIcon = getFunctoidIcon(functoid.name, functoid.category);
   const brand = getFunctoidBrand(functoid.category);
-  const errorColor = 'var(--vscode-errorForeground, #f48771)';
+  const errorColor = 'var(--vscode-errorForeground, var(--vscode-foreground))';
   const tooltip = missing ? `Functoid not found (FID ${functoid.functoidId})` : functoid.name;
 
   return (
@@ -679,7 +674,7 @@ function FunctoidNode({
         width={functoidWidth}
         height={functoidHeight}
         rx={functoidHalfHeight}
-        fill="var(--vscode-editor-background, #1e1e1e)"
+        fill="var(--vscode-editor-background)"
       />
       <rect
         className="functoid-body"
@@ -690,7 +685,15 @@ function FunctoidNode({
         rx={functoidHalfHeight}
         fill={missing ? errorColor : brand.color}
         fillOpacity={0.2}
-        stroke={selected ? '#007fd4' : highlighted ? 'var(--vscode-charts-yellow, #cca700)' : missing ? errorColor : brand.color}
+        stroke={
+          selected
+            ? 'var(--vscode-focusBorder)'
+            : highlighted
+              ? 'var(--vscode-charts-yellow, var(--vscode-foreground))'
+              : missing
+                ? errorColor
+                : brand.color
+        }
         strokeWidth={selected || highlighted || missing ? 2 : 1}
       />
       <foreignObject x={-functoidHalfWidth + 9} y={-iconSize / 2} width={iconSize} height={iconSize} style={{ pointerEvents: 'none' }}>
@@ -710,7 +713,7 @@ function FunctoidNode({
           <FunctoidIcon />
         </div>
       </foreignObject>
-      <text x={-functoidHalfWidth + 32} textAnchor="start" dominantBaseline="middle" fill="var(--vscode-foreground, #fff)" fontSize="10">
+      <text x={-functoidHalfWidth + 32} textAnchor="start" dominantBaseline="middle" fill="var(--vscode-foreground)" fontSize="10">
         {getFunctoidShortName(functoid.name)}
       </text>
       {missing && (
@@ -725,7 +728,7 @@ function FunctoidNode({
               height: 18,
               borderRadius: '50%',
               color: errorColor,
-              backgroundColor: 'var(--vscode-editor-background, #1e1e1e)',
+              backgroundColor: 'var(--vscode-editor-background)',
             }}
           >
             <ErrorCircle16Filled />
@@ -737,6 +740,16 @@ function FunctoidNode({
         cy="0"
         r="7"
         className={`functoid-connector input-connector${inputConnected ? ' connected' : ''}`}
+        role="button"
+        tabIndex={0}
+        aria-label={`Connect ${functoid.name} input`}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            callbacks.onFunctoidInputClick?.(functoid.id);
+          }
+        }}
         onMouseDown={(event) => event.stopPropagation()}
         onPointerDown={(event) => {
           event.preventDefault();
@@ -765,6 +778,16 @@ function FunctoidNode({
         cy="0"
         r="7"
         className={`functoid-connector output-connector${outputConnected ? ' connected' : ''}`}
+        role="button"
+        tabIndex={0}
+        aria-label={`Connect ${functoid.name} output`}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            callbacks.onFunctoidOutputClick?.(functoid.id);
+          }
+        }}
         onMouseDown={(event) => event.stopPropagation()}
         onPointerDown={(event) => {
           event.preventDefault();
@@ -813,7 +836,13 @@ function MappingCanvasView({
   const dragTarget = useRef<DragTarget | null>(null);
   const [currentDrag, setCurrentDrag] = useState<DragTarget | null>(null);
   const lastPointer = useRef<Point | null>(null);
-  const panState = useRef<{ clientX: number; clientY: number; scrollLeft: number; scrollTop: number; moved: boolean } | null>(null);
+  const panState = useRef<{
+    clientX: number;
+    clientY: number;
+    scrollLeft: number;
+    scrollTop: number;
+    moved: boolean;
+  } | null>(null);
   const suppressClick = useRef(false);
   const spacePressed = useRef(false);
   const areaDrag = useRef<{ start: Point; end: Point; additive: boolean; pointerId: number } | null>(null);
@@ -1078,7 +1107,7 @@ function MappingCanvasView({
           }
           event.preventDefault();
           svgRef.current?.focus({ preventScroll: true });
-          if (event.button === 0 && !spacePressed.current && !event.altKey) {
+          if (event.button === 0 && !spacePressed.current && !event.altKey && (event.ctrlKey || event.metaKey || event.shiftKey)) {
             const start = areaPoint(event.clientX, event.clientY);
             areaDrag.current = {
               start,
@@ -1259,9 +1288,9 @@ function MappingCanvasView({
             y={selectionRect.y - host.getLinkRenderData().offsetY + host.scrollTop}
             width={selectionRect.width}
             height={selectionRect.height}
-            fill="var(--vscode-editor-selectionBackground, #264f78)"
+            fill="var(--vscode-editor-selectionBackground, transparent)"
             fillOpacity="0.25"
-            stroke="var(--vscode-focusBorder, #007fd4)"
+            stroke="var(--vscode-focusBorder)"
             strokeDasharray="4 3"
             pointerEvents="none"
           />
@@ -1278,7 +1307,13 @@ function MappingCanvasView({
         <button type="button" title="Reset Zoom" onClick={() => onZoomChange(1)}>
           1:1
         </button>
-        <button type="button" title="Rearrange functoids in the current view without overlaps" disabled={!hasFunctoids} onClick={fitToView}>
+        <button
+          type="button"
+          title="Rearrange functoids in the current view without overlaps"
+          data-mapper-guidance="fit"
+          disabled={!hasFunctoids}
+          onClick={fitToView}
+        >
           Fit
         </button>
       </div>
@@ -1286,7 +1321,6 @@ function MappingCanvasView({
         createPortal(
           <FluentProvider
             ref={toolsRef}
-            theme={getVsCodeFluentTheme()}
             className={styles.tools}
             role="group"
             aria-label="Links toolbar"

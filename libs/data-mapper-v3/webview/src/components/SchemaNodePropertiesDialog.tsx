@@ -8,7 +8,6 @@ import {
   DialogSurface,
   DialogTitle,
   Field,
-  FluentProvider,
   makeStyles,
   tokens,
   Textarea,
@@ -16,7 +15,7 @@ import {
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 
 export interface SchemaNodePropertyRow {
   label: string;
@@ -114,19 +113,19 @@ export function SchemaNodePropertiesContent({
           <div className={styles.description}>{model.description}</div>
         </Field>
       ) : null}
-      {model.value && onSave && !model.value.disabledReason ? (
+      {model.value && onSave ? (
         <div className={styles.editor}>
           <Checkbox
             indicator={{ className: styles.checkboxIndicator }}
             label={`Use ${model.value.label.toLowerCase()}`}
             checked={enabled}
-            disabled={!!model.value.disabledReason && !enabled}
+            disabled={!!model.value.disabledReason}
             onChange={(_event, data) => setEnabled(data.checked === true)}
           />
           <Field label={model.value.label} validationMessage={model.value.disabledReason} validationState="none">
             <Textarea value={value} disabled={!enabled || !!model.value.disabledReason} onChange={(_event, data) => setValue(data.value)} />
           </Field>
-          {!renderLayout && (
+          {!renderLayout && !model.value.disabledReason && (
             <div className={styles.actions}>
               {applyButton}
               <Button
@@ -155,7 +154,7 @@ function SchemaNodePropertiesDialogView({ model, onClose, onSave }: SchemaNodePr
   const styles = useStyles();
   const typographyStyles = useTypographyStyles();
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <Dialog
         open
         modalType="modal"

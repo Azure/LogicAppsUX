@@ -1,7 +1,6 @@
 import {
   Button,
   Dropdown,
-  FluentProvider,
   Input,
   Link,
   makeStyles,
@@ -24,6 +23,7 @@ import {
   ChevronRight16Regular,
   Dismiss16Regular,
   Filter16Regular,
+  Link16Regular,
   MoreHorizontal16Regular,
   Search16Regular,
   Tag16Regular,
@@ -31,8 +31,9 @@ import {
 } from '@fluentui/react-icons';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import type { SchemaWildcard } from '../../../src/model/schemaModel';
 import { SchemaPathResolver } from '../../../src/schema/schemaPathResolver';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 export interface SchemaNodeView {
   name: string;
@@ -42,6 +43,7 @@ export interface SchemaNodeView {
   instancePath?: string;
   type?: string;
   dataType?: string;
+  declaredDataType?: string;
   dataTypeNamespace?: string;
   namespace?: string;
   nillable?: boolean;
@@ -52,6 +54,8 @@ export interface SchemaNodeView {
   isOptional?: boolean;
   maxOccurs?: number | 'unbounded';
   annotation?: string;
+  wildcard?: SchemaWildcard;
+  substitutionGroup?: string;
   restrictions?: {
     baseType?: string;
     minLength?: number;
@@ -77,6 +81,7 @@ export interface SchemaNodeView {
     defaultValue?: string;
     fixedValue?: string;
     namespace?: string;
+    wildcard?: SchemaWildcard;
   }>;
 }
 
@@ -136,6 +141,7 @@ const useStyles = makeStyles({
   match: { backgroundColor: tokens.colorPaletteYellowBackground2 },
   activeMatch: { outline: `1px solid ${tokens.colorStrokeFocus2}`, outlineOffset: '-1px' },
   suggestion: { backgroundColor: tokens.colorBrandBackground2 },
+  linkedIcon: { color: tokens.colorBrandForeground1, marginLeft: '4px', verticalAlign: 'middle' },
   hiddenGroup: { display: 'flex', alignItems: 'center', minHeight: '24px' },
 });
 
@@ -147,6 +153,7 @@ function nodeChildren(node: SchemaNodeView): SchemaNodeView[] {
       type: 'attribute',
       dataType: attribute.type,
       namespace: attribute.namespace,
+      wildcard: attribute.wildcard,
       defaultValue: attribute.defaultValue,
       fixedValue: attribute.fixedValue,
       minOccurs: attribute.required ? 1 : 0,
@@ -192,6 +199,7 @@ function SchemaTreeView({
   onRootSelect,
 }: SchemaTreeViewProps): React.ReactElement {
   const styles = useStyles();
+  const tutorialNamePath = new SchemaPathResolver(schema).resolve(side === 'source' ? '/TutorialInput/Name' : '/TutorialOutput/Name')?.path;
   const [expandedPaths, setExpandedPaths] = useState(() => new Set(initialExpanded));
   const [query, setQuery] = useState('');
   const [activeMatchPath, setActiveMatchPath] = useState<string>();
@@ -425,6 +433,16 @@ function SchemaTreeView({
         className={`node-connector${connectedPaths.has(node.path) ? ' connected' : ''}`}
         data-path={node.path}
         data-side={side}
+        data-mapper-tutorial={node.name === 'Name' && node.path === tutorialNamePath ? `${side}-name` : undefined}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            onNodeClick(node.path);
+          }
+        }}
         title="Click or drag to create/complete link"
         onPointerDown={(event) => {
           event.preventDefault();
@@ -493,6 +511,11 @@ function SchemaTreeView({
             {isAttribute ? <Tag16Regular /> : hasChildren ? '📁' : '📄'}
           </span>
           <span className="node-name">{node.name}</span>
+          {connectedPaths.has(node.path) && (
+            <span role="img" aria-label="Linked on one or more map pages" title="Linked on one or more map pages">
+              <Link16Regular className={styles.linkedIcon} />
+            </span>
+          )}
           {!node.isOptional && (
             <span className="node-badge required" title="Required">
               *
@@ -582,7 +605,7 @@ function SchemaTreeView({
 
   const filePath = schema.filePath || '';
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div className="schema-panel" ref={panelRef}>
         <div className="schema-sticky">
           <div className="schema-header">

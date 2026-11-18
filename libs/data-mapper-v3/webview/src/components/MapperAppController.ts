@@ -9,7 +9,9 @@ import type { FunctoidConfigDialog, FunctoidConfigInput, FunctoidConfigResult } 
 import type { ScriptingConfigDialog, ScriptingConfigResult, ScriptingConfigType, ScriptingFunctoidSummary } from './ScriptingConfigDialog';
 import type { SchemaNodePropertiesDialog, SchemaNodePropertiesViewModel, SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
 import { SchemaPathResolver } from '../../../src/schema/schemaPathResolver';
+import { functoidHeight, functoidWidth } from './functoidAutoLayout';
 import type { LinkPropertiesDialog } from './LinkPropertiesDialog';
+import type { GridPropertiesDialog } from './GridPropertiesDialog';
 import type { EmptySchemaPlaceholder } from './EmptySchemaPlaceholder';
 import type { MapperStatusBar } from './MapperStatusBar';
 import type { MapperPageBar } from './MapperPageBar';
@@ -18,6 +20,7 @@ import type { BottomPanelTab, MapperBottomPanel } from './MapperBottomPanel';
 import type { MapperContextMenu, ContextMenuItem } from './MapperContextMenu';
 import type { MapperNotification, NotificationType } from './MapperNotification';
 import type { MapperToolbar } from './MapperToolbar';
+import { getMapperGuidanceContext, type MapperGuidanceContext, type MapperTutorialStep } from './MapperGuidance';
 import type {
   AzurePublishQuery,
   PublishContext,
@@ -40,6 +43,7 @@ import {
   TargetLinkOption,
   type MapFunctoid,
   type MapLink,
+  type MapPage,
 } from '../../../src/model/mapModel';
 import {
   copyMappingSelection,
@@ -97,6 +101,7 @@ export interface MapperAppElements {
   statusBar: MapperStatusBar;
   schemaDialog: SchemaNodePropertiesDialog;
   linkDialog: LinkPropertiesDialog;
+  gridDialog: GridPropertiesDialog;
   scriptingDialog: ScriptingConfigDialog;
   functoidDialog: FunctoidConfigDialog;
   contextMenu: MapperContextMenu;
@@ -104,6 +109,18 @@ export interface MapperAppElements {
 }
 
 export class MapperAppController {
+  private tutorialStep?: MapperTutorialStep;
+  private tutorialError?: string;
+  private tutorialSourceSchema?: string;
+  private tutorialTargetSchema?: string;
+  private tutorialPreparationPending = false;
+  private tutorialSchemaRequest?: 'source' | 'target';
+  private tutorialTestPending = false;
+  private tutorialInputPending = false;
+  private guidanceTimer: ReturnType<typeof setTimeout> | null = null;
+  private guidanceSnapshot = '';
+  private guidanceLayoutKey = '';
+  private guidanceLayoutPages: string[] = [];
   private state: MapperViewState;
   private initialized = false;
   private sourceTree: SchemaTreeRenderer | null = null;
@@ -123,6 +140,7 @@ export class MapperAppController {
   private functoidCommentsDraft = '';
   private schemaNodeProperties: SchemaNodeProperties | null = null;
   private linkProperties: { pageId: string; linkIds: string[] } | null = null;
+  private gridPropertiesOpen = false;
   private copilotPanelOpen = false;
   private copilotBusy = false;
   private copilotDraft = 'Take the XSLT file and generate the map.';
@@ -150,7 +168,7 @@ export class MapperAppController {
   private readonly publishMap = (target: PublishTarget) => this.requestPublishing<boolean>('publish', target);
 
   private requestPublishing<Result>(method: PublishMethod, target?: PublishTarget, query?: AzurePublishQuery): Promise<Result> {
-    if (this.disposed || !this.state.map) {
+    if (this.disposed || !this.state.map || this.tutorialLocked) {
       return Promise.reject(new Error('The mapper is not ready to publish.'));
     }
     return new Promise<Result>((resolve, reject) => {
@@ -186,7 +204,8 @@ export class MapperAppController {
 
   constructor(
     private readonly elements: MapperAppElements,
-    private readonly vscode: MapEditorVsCodeApi
+    private readonly vscode: MapEditorVsCodeApi,
+    private readonly onGuidanceChange: (context: MapperGuidanceContext) => void = () => {}
   ) {
     this.state = createInitialMapperViewState();
     this.toolbarEl = elements.toolbar;
@@ -195,6 +214,245 @@ export class MapperAppController {
     this.pageBarEl = elements.pageBar;
     this.bottomPanel = elements.bottomPanel;
     this.statusBarEl = elements.statusBar;
+  }
+
+  private get tutorialLocked(): boolean {
+    return !!this.tutorialStep && this.tutorialStep !== 'publish';
+  }
+
+  public startTutorial(): void {
+    if (this.disposed || this.tutorialStep || !this.state.map || !this.isEmptyMap()) {
+      return;
+    }
+    if (this.tutorialPreparationPending) {
+      this.tutorialError = 'The previous sample request is still finishing. Try Start Tutorial again when it completes.';
+      this.emitGuidance();
+      return;
+    }
+    this.hideContextMenu();
+    this.setSelection([], []);
+    this.finishLinkPointer();
+    this.pendingLink = null;
+    this.replacingLink = null;
+    this.pendingTestAfterGenerate = false;
+    this.tutorialTestPending = false;
+    this.tutorialInputPending = false;
+    this.tutorialSchemaRequest = undefined;
+    this.tutorialSourceSchema = undefined;
+    this.tutorialTargetSchema = undefined;
+    this.tutorialError = undefined;
+    this.copilotPanelOpen = false;
+    this.gridPropertiesOpen = false;
+    this.linkProperties = null;
+    this.schemaNodeProperties = null;
+    this.scriptingConfigDraft = null;
+    this.functoidPropertiesId = null;
+    this.functoidInputsDraft = null;
+    this.state.activePage = 0;
+    this.state.linkView = undefined;
+    this.tutorialPreparationPending = true;
+    this.setTutorialStep('preparing');
+    try {
+      this.vscode.postMessage({ type: 'startTutorial' });
+    } catch {
+      this.tutorialPreparationPending = false;
+      this.tutorialError = 'Could not prepare the sample. Check workspace trust and try Start Tutorial again.';
+      this.setTutorialStep(undefined);
+    }
+  }
+
+  public dismissTutorial(): void {
+    this.tutorialSchemaRequest = undefined;
+    this.tutorialTestPending = false;
+    this.tutorialInputPending = false;
+    this.pendingTestAfterGenerate = false;
+    this.pendingLink = null;
+    this.replacingLink = null;
+    this.finishLinkPointer();
+    this.tutorialError = undefined;
+    this.setTutorialStep(undefined);
+  }
+
+  private isEmptyMap(): boolean {
+    const map = this.state.map;
+    return (
+      !!map &&
+      !map.sourceSchema.location &&
+      !map.sourceSchema.inlineSchemaXml &&
+      !map.targetSchema.location &&
+      !map.targetSchema.inlineSchemaXml &&
+      map.pages.every((page) => !page.functoids.length && !page.links.length)
+    );
+  }
+
+  private setTutorialStep(step: MapperTutorialStep | undefined): void {
+    this.tutorialStep = step;
+    for (const type of ['pointerdown', 'mousedown', 'click', 'dblclick', 'contextmenu', 'keydown', 'dragstart', 'drop']) {
+      document.removeEventListener(type, this.guardTutorialInteraction, true);
+      if (this.tutorialLocked && !this.disposed) {
+        document.addEventListener(type, this.guardTutorialInteraction, true);
+      }
+    }
+    if (step === 'testInput') {
+      this.bottomPanelActiveTab = 'instance';
+      this.bottomPanelCollapsed = false;
+      this.bottomPanel?.setInputXml('');
+    }
+    if (!this.disposed) {
+      this.renderView();
+    }
+  }
+
+  private tutorialNodePath(side: 'source' | 'target'): string | undefined {
+    const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    return new SchemaPathResolver(schema ?? undefined).resolve(side === 'source' ? '/TutorialInput/Name' : '/TutorialOutput/Name')?.path;
+  }
+
+  private tutorialConnectorAllowed(kind: 'source' | 'target' | 'input' | 'output', id: string): boolean {
+    if (!this.tutorialLocked) {
+      return true;
+    }
+    const functoid = this.state.map?.pages[this.state.activePage]?.functoids[0];
+    return this.tutorialStep === 'sourceLink'
+      ? (kind === 'source' && id === this.tutorialNodePath('source')) ||
+          (kind === 'input' && id === functoid?.id && functoid.functoidId === 103)
+      : this.tutorialStep === 'targetLink' &&
+          ((kind === 'target' && id === this.tutorialNodePath('target')) ||
+            (kind === 'output' && id === functoid?.id && functoid.functoidId === 103));
+  }
+
+  private readonly guardTutorialInteraction = (event: Event): void => {
+    if (!this.tutorialLocked || !(event.target instanceof Element)) {
+      return;
+    }
+    const target = event.target;
+    const dialog = target.closest('[role="dialog"]');
+    if (dialog?.querySelector('[aria-label="Dismiss map guidance"]')) {
+      return;
+    }
+    const inEditor = this.elements.container.contains(target);
+    const inPicker = !!target.closest('.mapper-tutorial-source-schemas, .mapper-tutorial-target-schemas');
+    const inInputMenu = !!target.closest('[data-mapper-tutorial="test-input-menu"]');
+    if (!inEditor && !inPicker && !inInputMenu) {
+      return;
+    }
+    if (
+      event instanceof KeyboardEvent &&
+      (event.key === 'Tab' || event.key === 'Escape' || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's'))
+    ) {
+      return;
+    }
+    let allowed = false;
+    const inputStep = this.tutorialStep === 'testInput' || this.tutorialStep === 'testMap';
+    if (event.type !== 'dblclick' && event.type !== 'contextmenu' && event.type !== 'dragstart' && event.type !== 'drop') {
+      if (this.tutorialStep === 'source' || this.tutorialStep === 'target') {
+        const side = this.tutorialStep;
+        allowed = !!target.closest(`biztalk-empty-schema.${side}-tree [role="combobox"], .mapper-tutorial-${side}-schemas`);
+      } else if (this.tutorialStep === 'functoid') {
+        allowed = !!target.closest('[data-mapper-tutorial="lowercase"]');
+      } else if (this.tutorialStep === 'sourceLink' || this.tutorialStep === 'targetLink') {
+        const connector = target.closest('.node-connector, .functoid-connector');
+        if (connector) {
+          const side = connector.getAttribute('data-side');
+          const kind = side === 'source' || side === 'target' ? side : connector.classList.contains('input-connector') ? 'input' : 'output';
+          const id = connector.getAttribute('data-path') ?? connector.closest('.functoid-node')?.getAttribute('data-id');
+          allowed = !!id && this.tutorialConnectorAllowed(kind, id);
+        }
+      }
+      if (inputStep) {
+        allowed =
+          !!target.closest(
+            '#mapper-test-input, [data-mapper-tutorial="test-input-menu"], [data-mapper-tutorial="input-xml"], [data-mapper-tutorial="input-tab"], [data-mapper-tutorial="output-tab"]'
+          ) ||
+          (this.tutorialStep === 'testMap' && !!target.closest('#btn-test-map'));
+      }
+      if (
+        event instanceof KeyboardEvent &&
+        !target.closest(
+          '[role="combobox"], [role="listbox"], [data-mapper-tutorial="input-xml"], [data-mapper-tutorial="test-input-menu"]'
+        ) &&
+        event.key !== 'Enter' &&
+        event.key !== ' '
+      ) {
+        allowed = false;
+      }
+      const canvasBackground = target.closest('.mapping-svg') && !target.closest('.functoid-node, [data-link-id]');
+      if (
+        canvasBackground &&
+        !(event instanceof KeyboardEvent) &&
+        !(event instanceof MouseEvent && (event.ctrlKey || event.metaKey || event.shiftKey))
+      ) {
+        allowed = true;
+      }
+    }
+    if (inputStep && target.closest('[data-mapper-tutorial="input-xml"]') && event.type === 'contextmenu') {
+      return;
+    }
+    if (!allowed) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  };
+
+  private emitGuidance(): void {
+    const map = this.state.map;
+    if (!map || this.disposed) {
+      return;
+    }
+    const key = JSON.stringify(
+      map.pages.map((page) => [page.name, page.functoids.map((functoid) => [functoid.id, functoid.x, functoid.y])])
+    );
+    if (key !== this.guidanceLayoutKey) {
+      this.guidanceLayoutKey = key;
+      this.guidanceLayoutPages = getMapperGuidanceContext(map).layoutIssuePages;
+    }
+    const context: MapperGuidanceContext = {
+      isEmptyMap: this.isEmptyMap(),
+      layoutIssuePages: this.guidanceLayoutPages,
+      tutorialStep: this.tutorialStep,
+      tutorialSourceSchema: this.tutorialSourceSchema,
+      tutorialTargetSchema: this.tutorialTargetSchema,
+      tutorialError: this.tutorialError,
+    };
+    const snapshot = JSON.stringify(context);
+    if (snapshot !== this.guidanceSnapshot) {
+      this.guidanceSnapshot = snapshot;
+      this.onGuidanceChange(context);
+    }
+  }
+
+  private selectSchema(side: 'source' | 'target', path?: string): void {
+    if (this.tutorialLocked) {
+      const expected = side === 'source' ? this.tutorialSourceSchema : this.tutorialTargetSchema;
+      if (this.tutorialStep !== side || !path || path !== expected) {
+        return;
+      }
+      this.tutorialSchemaRequest = side;
+    }
+    this.vscode.postMessage({ type: 'loadSchema', side, path, browse: path === undefined });
+  }
+
+  private advanceTutorialSchema(): void {
+    const side = this.tutorialSchemaRequest;
+    if (!side || this.tutorialStep !== side) {
+      return;
+    }
+    if (this.state.schemaErrors?.[side]) {
+      this.tutorialSchemaRequest = undefined;
+      return;
+    }
+    const expected = side === 'source' ? this.tutorialSourceSchema : this.tutorialTargetSchema;
+    const location = this.state.map?.[side === 'source' ? 'sourceSchema' : 'targetSchema'].location?.replace(/\\/g, '/');
+    if (expected && location && (location === expected || location.endsWith(`/${expected}`)) && this.tutorialNodePath(side)) {
+      this.tutorialSchemaRequest = undefined;
+      this.setTutorialStep(side === 'source' ? 'target' : 'functoid');
+    }
+  }
+
+  private tutorialInputChanged(value: string): void {
+    if (this.tutorialStep === 'testInput' && value.trim()) {
+      this.setTutorialStep('testMap');
+    }
   }
 
   public mount(): void {
@@ -212,6 +470,12 @@ export class MapperAppController {
 
   public dispose(): void {
     this.disposed = true;
+    this.dismissTutorial();
+    this.palette?.setTutorialMode(false);
+    if (this.guidanceTimer !== null) {
+      clearTimeout(this.guidanceTimer);
+      this.guidanceTimer = null;
+    }
     for (const request of this.publishingRequests.values()) {
       clearTimeout(request.timer);
       request.reject(new Error('The mapper editor was closed.'));
@@ -251,6 +515,9 @@ export class MapperAppController {
   }
 
   private readonly handleEndpointPointerDown = (event: PointerEvent): void => {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (event.button !== 0 || !(event.target instanceof Element) || !event.target.matches('.node-connector, .functoid-connector')) {
       return;
     }
@@ -357,6 +624,9 @@ export class MapperAppController {
   }
 
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (this.linkProperties) {
       if (event.key === 'Escape') {
         this.closeLinkProperties();
@@ -416,6 +686,9 @@ export class MapperAppController {
   };
 
   private readonly handleContextMenu = (event: MouseEvent): void => {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (this.linkProperties) {
       return;
     }
@@ -453,6 +726,9 @@ export class MapperAppController {
   }
 
   private setSelection(links: string[], functoids: string[]): void {
+    if (this.tutorialLocked && (links.length || functoids.length)) {
+      return;
+    }
     this.state.selectedSchemaNode = undefined;
     this.sourceTree?.setSelectedPath?.(undefined);
     this.targetTree?.setSelectedPath?.(undefined);
@@ -471,16 +747,8 @@ export class MapperAppController {
     const functoids = new Set(selection.functoids);
     const nodeSelection = this.state.selectedSchemaNode;
     if (page && nodeSelection) {
-      const schema = nodeSelection.side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
-      const resolver = new SchemaPathResolver(schema ?? undefined, this.state.map?.options.ignoreNamespacesForLinks);
-      for (const link of page.links) {
-        const path =
-          link[`${nodeSelection.side}Type`] === 'schemaNode'
-            ? resolver.resolve(link[`${nodeSelection.side}Path`] || link[`${nodeSelection.side}Id`])?.path
-            : undefined;
-        if (path && (path === nodeSelection.path || path.startsWith(`${nodeSelection.path}/`))) {
-          links.add(link.id);
-        }
+      for (const link of this.getSchemaNodeLinks(page, nodeSelection.path, nodeSelection.side)) {
+        links.add(link.id);
       }
     }
     if (page && (this.state.linkView?.trace || this.state.linkView?.selectionOnly)) {
@@ -575,6 +843,9 @@ export class MapperAppController {
   }
 
   private pasteClipboard(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.clipboard || !this.state.map) {
       return;
     }
@@ -590,6 +861,9 @@ export class MapperAppController {
   }
 
   private showContextMenu(x: number, y: number, customItems?: ContextMenuItem[]): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     this.hideContextMenu();
     const hasSelection = !!(this.state.selectedLink || this.state.selectedFunctoid);
     const items: ContextMenuItem[] = customItems ?? [
@@ -659,6 +933,8 @@ export class MapperAppController {
       { label: '', divider: true, action: () => {} },
       { label: '🔗 Auto-Link by Name', disabled: !this.state.map, action: () => this.autoLinkByName() },
       { label: '✓ Validate Map', disabled: !this.state.map, action: () => this.validateMap() },
+      { label: '', divider: true, action: () => {} },
+      { label: 'Properties', disabled: !this.state.map, action: () => this.openGridProperties() },
     ];
 
     const menu = this.elements.contextMenu;
@@ -689,6 +965,9 @@ export class MapperAppController {
   }
 
   private showSchemaLinkMenu(side: 'source' | 'target', path: string, x: number, y: number): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
     const node = schema && findLinkingNode(schema.rootElement, path);
     const tree = side === 'source' ? this.sourceTree : this.targetTree;
@@ -871,6 +1150,9 @@ export class MapperAppController {
   }
 
   private moveSelectionToPage(index?: number): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const map = this.state.map;
     if (!map) {
       return;
@@ -914,6 +1196,9 @@ export class MapperAppController {
   }
 
   public handleMessage(message: HostToWebviewMessage): void {
+    if (this.disposed) {
+      return;
+    }
     if (message.type === 'publishResponse') {
       const request = this.publishingRequests.get(message.id);
       if (request) {
@@ -928,6 +1213,29 @@ export class MapperAppController {
       return;
     }
     switch (message.type) {
+      case 'tutorialPrepared': {
+        this.tutorialPreparationPending = false;
+        if (this.tutorialStep !== 'preparing') {
+          break;
+        }
+        if (!this.isEmptyMap()) {
+          this.dismissTutorial();
+          break;
+        }
+        this.tutorialSourceSchema = message.data.sourceSchemaPath;
+        this.tutorialTargetSchema = message.data.targetSchemaPath;
+        this.state.availableSchemas = message.data.availableSchemas;
+        this.setTutorialStep('source');
+        break;
+      }
+      case 'tutorialPreparationFailed': {
+        this.tutorialPreparationPending = false;
+        if (this.tutorialStep === 'preparing') {
+          this.tutorialError = `${message.data.message} Check workspace trust and try Start Tutorial again.`;
+          this.setTutorialStep(undefined);
+        }
+        break;
+      }
       case 'executeCompile':
         this.validateAndCompile();
         break;
@@ -935,6 +1243,9 @@ export class MapperAppController {
         this.runTestMap();
         break;
       case 'init': {
+        if (this.tutorialStep) {
+          this.dismissTutorial();
+        }
         this.initialized = true;
         this.clearSchemaNodeSelection();
         this.state.compilerLinks = undefined;
@@ -968,11 +1279,19 @@ export class MapperAppController {
         this.state.schemaErrors = message.data.schemaErrors;
         this.lastSourceSchema = undefined;
         this.lastTargetSchema = undefined;
+        this.advanceTutorialSchema();
         this.renderView();
         setTimeout(() => this.redrawLinks(), 150);
         break;
       }
       case 'schemaLoaded': {
+        if (
+          this.tutorialLocked &&
+          (this.tutorialSchemaRequest !== message.data.side ||
+            message.data.path !== (message.data.side === 'source' ? this.tutorialSourceSchema : this.tutorialTargetSchema))
+        ) {
+          return;
+        }
         this.clearSchemaNodeSelection();
         if (this.state.map) {
           for (const page of this.state.map.pages) {
@@ -994,6 +1313,7 @@ export class MapperAppController {
         }
 
         this.updateMap(this.state.map);
+        this.advanceTutorialSchema();
         this.renderView();
         setTimeout(() => this.redrawLinks(), 150);
         break;
@@ -1022,13 +1342,30 @@ export class MapperAppController {
         }
         break;
       }
-      case 'instanceGenerated':
+      case 'instanceGenerated': {
+        if (this.tutorialLocked && (!this.tutorialInputPending || message.data.side !== 'source')) {
+          break;
+        }
+        this.tutorialInputPending = false;
         this.showInstanceResult(message.data);
         break;
+      }
+      case 'testInputLoaded': {
+        if (this.tutorialLocked && !this.tutorialInputPending) {
+          break;
+        }
+        this.tutorialInputPending = false;
+        this.pendingTestAfterGenerate = false;
+        this.showInstanceResult(message.data);
+        break;
+      }
       case 'testMapResult':
         this.showTestMapResult(message.data);
         break;
       case 'copilotResult': {
+        if (this.tutorialLocked) {
+          break;
+        }
         this.copilotBusy = false;
         this.copilotMessage = message.data.message;
         if (message.data.applied && message.data.map) {
@@ -1062,6 +1399,7 @@ export class MapperAppController {
     this.syncStatus();
     this.syncModal();
     this.redrawLinks();
+    this.emitGuidance();
   }
 
   private syncToolbar(): void {
@@ -1074,6 +1412,9 @@ export class MapperAppController {
       loadAzureResources: this.loadAzureResources,
       onPublish: this.publishMap,
       onCopilot: () => {
+        if (this.tutorialLocked) {
+          return;
+        }
         this.copilotPanelOpen = !this.copilotPanelOpen;
         this.syncCopilot();
       },
@@ -1108,6 +1449,7 @@ export class MapperAppController {
   }
 
   private syncPalette(): void {
+    this.palette?.setTutorialMode(this.tutorialLocked);
     if (this.lastFunctoidsRef !== this.state.functoids) {
       this.lastFunctoidsRef = this.state.functoids;
       this.palette?.configure(this.state.functoids, (functoid) => this.addFunctoidToCanvas(functoid));
@@ -1115,7 +1457,12 @@ export class MapperAppController {
   }
 
   private syncSource(): void {
-    const signature = `${this.state.activePage}:${this.state.availableSchemas.join('|')}`;
+    const schemas = this.tutorialLocked
+      ? this.tutorialStep === 'source' && this.tutorialSourceSchema
+        ? [this.tutorialSourceSchema]
+        : []
+      : this.state.availableSchemas;
+    const signature = `${this.state.activePage}:${this.tutorialStep ?? ''}:${schemas.join('|')}`;
     if (this.state.sourceSchema) {
       this.elements.sourceTree.hidden = false;
       this.elements.sourceEmpty.hidden = true;
@@ -1132,10 +1479,14 @@ export class MapperAppController {
         this.getLinkedPaths('source'),
         (node) => this.openSchemaNodeProperties(node, 'source'),
         () => this.redrawLinks(),
-        this.state.availableSchemas,
-        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
+        schemas,
+        (path) => this.selectSchema('source', path),
         this.getConnectedPaths('source'),
-        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'source', rootName }),
+        (rootName) => {
+          if (!this.tutorialLocked) {
+            this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'source', rootName });
+          }
+        },
         (node) => this.selectSchemaNode(node, 'source')
       );
       this.sourceTree = tree;
@@ -1146,10 +1497,11 @@ export class MapperAppController {
       this.elements.sourceEmpty.hidden = false;
       this.elements.sourceEmpty.configure(
         'source',
-        this.state.availableSchemas,
-        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
+        schemas,
+        (path) => this.selectSchema('source', path),
         !this.initialized,
-        this.state.schemaErrors?.source
+        this.state.schemaErrors?.source,
+        this.tutorialLocked
       );
       this.sourceTree = null;
       this.lastSourceSchema = undefined;
@@ -1158,7 +1510,12 @@ export class MapperAppController {
   }
 
   private syncTarget(): void {
-    const signature = `${this.state.activePage}:${this.state.availableSchemas.join('|')}`;
+    const schemas = this.tutorialLocked
+      ? this.tutorialStep === 'target' && this.tutorialTargetSchema
+        ? [this.tutorialTargetSchema]
+        : []
+      : this.state.availableSchemas;
+    const signature = `${this.state.activePage}:${this.tutorialStep ?? ''}:${schemas.join('|')}`;
     if (this.state.targetSchema) {
       this.elements.targetTree.hidden = false;
       this.elements.targetEmpty.hidden = true;
@@ -1175,10 +1532,14 @@ export class MapperAppController {
         this.getLinkedPaths('target'),
         (node) => this.openSchemaNodeProperties(node, 'target'),
         () => this.redrawLinks(),
-        this.state.availableSchemas,
-        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
+        schemas,
+        (path) => this.selectSchema('target', path),
         this.getConnectedPaths('target'),
-        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'target', rootName }),
+        (rootName) => {
+          if (!this.tutorialLocked) {
+            this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'target', rootName });
+          }
+        },
         (node) => this.selectSchemaNode(node, 'target')
       );
       this.targetTree = tree;
@@ -1189,10 +1550,11 @@ export class MapperAppController {
       this.elements.targetEmpty.hidden = false;
       this.elements.targetEmpty.configure(
         'target',
-        this.state.availableSchemas,
-        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
+        schemas,
+        (path) => this.selectSchema('target', path),
         !this.initialized,
-        this.state.schemaErrors?.target
+        this.state.schemaErrors?.target,
+        this.tutorialLocked
       );
       this.targetTree = null;
       this.lastTargetSchema = undefined;
@@ -1203,6 +1565,9 @@ export class MapperAppController {
   private configureCanvas(): void {
     this.canvas.configure(this.state, {
       onLinkViewChange: (view) => {
+        if (this.tutorialLocked) {
+          return;
+        }
         this.state.linkView = view;
         this.updateLinkTrace();
         this.redrawLinks();
@@ -1211,6 +1576,9 @@ export class MapperAppController {
         }
       },
       onAreaSelect: (links, functoids, additive) => {
+        if (this.tutorialLocked) {
+          return;
+        }
         const previous = this.getSelection();
         this.setSelection(
           additive ? [...new Set([...previous.links, ...links])] : links,
@@ -1251,6 +1619,9 @@ export class MapperAppController {
         this.addFunctoidAtPosition(functoid, x, y);
       },
       onFunctoidMove: (fId, x, y) => {
+        if (this.tutorialLocked) {
+          return;
+        }
         const page = this.state.map?.pages[this.state.activePage];
         const f = page?.functoids.find((fn: any) => fn.id === fId);
         if (f) {
@@ -1260,6 +1631,9 @@ export class MapperAppController {
         }
       },
       onFunctoidsMove: (moves) => {
+        if (this.tutorialLocked) {
+          return;
+        }
         const page = this.state.map?.pages[this.state.activePage];
         if (!page) {
           return;
@@ -1305,6 +1679,9 @@ export class MapperAppController {
       this.state.activePage,
       {
         onSelect: (index) => {
+          if (this.tutorialLocked) {
+            return;
+          }
           this.state.activePage = index;
           this.setSelection([], []);
           this.pendingLink = null;
@@ -1313,6 +1690,9 @@ export class MapperAppController {
           this.renderView();
         },
         onRename: (index, name) => {
+          if (this.tutorialLocked) {
+            return;
+          }
           const page = this.state.map?.pages[index];
           if (page && page.name !== name) {
             page.name = name;
@@ -1328,7 +1708,20 @@ export class MapperAppController {
 
   private syncBottom(): void {
     this.bottomPanel?.configure(!!this.state.map, this.bottomPanelActiveTab, this.bottomPanelCollapsed, {
+      onUploadInput: () => {
+        if (this.tutorialLocked && this.tutorialStep !== 'testInput' && this.tutorialStep !== 'testMap') {
+          return;
+        }
+        this.pendingTestAfterGenerate = false;
+        this.tutorialInputPending = this.tutorialLocked;
+        this.vscode.postMessage({ type: 'uploadTestInput' });
+      },
       onGenerateInstance: () => {
+        if (this.tutorialLocked && this.tutorialStep !== 'testInput' && this.tutorialStep !== 'testMap') {
+          return;
+        }
+        this.pendingTestAfterGenerate = false;
+        this.tutorialInputPending = this.tutorialLocked;
         this.bottomPanelCollapsed = false;
         this.bottomPanelActiveTab = 'instance';
         this.bottomPanel?.setCollapsed(false);
@@ -1336,7 +1729,11 @@ export class MapperAppController {
         this.vscode.postMessage({ type: 'generateInstance', side: 'source' });
       },
       onRunTest: () => this.runTestMap(),
+      onInputChange: (value) => this.tutorialInputChanged(value),
       onViewStateChange: (tab, collapsed) => {
+        if (this.tutorialLocked && ((this.tutorialStep !== 'testInput' && this.tutorialStep !== 'testMap') || collapsed)) {
+          return;
+        }
         this.bottomPanelActiveTab = tab;
         this.bottomPanelCollapsed = collapsed;
       },
@@ -1354,15 +1751,17 @@ export class MapperAppController {
   }
 
   private syncModal(): void {
-    const key = this.linkProperties
-      ? 'link'
-      : this.schemaNodeProperties
-        ? 'schemaNode'
-        : this.scriptingConfigDraft
-          ? 'scripting'
-          : this.functoidPropertiesId
-            ? 'functoid'
-            : '';
+    const key = this.gridPropertiesOpen
+      ? 'grid'
+      : this.linkProperties
+        ? 'link'
+        : this.schemaNodeProperties
+          ? 'schemaNode'
+          : this.scriptingConfigDraft
+            ? 'scripting'
+            : this.functoidPropertiesId
+              ? 'functoid'
+              : '';
     if (key === this.lastModalKey) {
       return;
     }
@@ -1370,13 +1769,18 @@ export class MapperAppController {
     this.scriptingDialog = null;
     this.elements.schemaDialog.clear();
     this.elements.linkDialog.clear();
+    this.elements.gridDialog.clear();
     this.elements.scriptingDialog.clear();
     this.elements.functoidDialog.clear();
     this.elements.schemaDialog.hidden = true;
     this.elements.linkDialog.hidden = true;
+    this.elements.gridDialog.hidden = true;
     this.elements.scriptingDialog.hidden = true;
     this.elements.functoidDialog.hidden = true;
-    if (key === 'link') {
+    if (key === 'grid') {
+      this.elements.gridDialog.hidden = false;
+      this.configureGridPropertiesModal();
+    } else if (key === 'link') {
       this.elements.linkDialog.hidden = false;
       this.configureLinkPropertiesModal();
     } else if (key === 'schemaNode') {
@@ -1395,6 +1799,9 @@ export class MapperAppController {
    * Source schema node connector clicked
    */
   private onSourceNodeClick(nodePath: string): void {
+    if (!this.tutorialConnectorAllowed('source', nodePath)) {
+      return;
+    }
     if (this.replacingLink?.end === 'target') {
       return;
     }
@@ -1423,6 +1830,9 @@ export class MapperAppController {
    * Target schema node connector clicked
    */
   private onTargetNodeClick(nodePath: string): void {
+    if (!this.tutorialConnectorAllowed('target', nodePath)) {
+      return;
+    }
     if (this.replacingLink?.end === 'source') {
       return;
     }
@@ -1443,7 +1853,53 @@ export class MapperAppController {
     this.finishLinkPointer();
   }
 
+  private openGridProperties(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
+    if (!this.state.map) {
+      return;
+    }
+    this.hideContextMenu();
+    this.pendingLink = null;
+    this.gridPropertiesOpen = true;
+    this.renderView();
+  }
+
+  private configureGridPropertiesModal(): void {
+    const map = this.state.map;
+    if (!map) {
+      return;
+    }
+    const close = (): void => {
+      this.gridPropertiesOpen = false;
+      this.renderView();
+    };
+    this.elements.gridDialog.configure(map, {
+      onCancel: close,
+      onSave: (result) => {
+        const current = this.state.map;
+        if (current) {
+          const updated = { ...current, ...result };
+          if (current.customXsltPath !== result.customXsltPath) {
+            delete updated.customXslt;
+          }
+          if (current.customExtensionXmlPath !== result.customExtensionXmlPath) {
+            delete updated.customExtensionXml;
+          }
+          if (JSON.stringify(current) !== JSON.stringify(updated)) {
+            this.updateMap(updated);
+          }
+        }
+        close();
+      },
+    });
+  }
+
   private openLinkProperties(linkId: string | string[]): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const page = this.state.map?.pages[this.state.activePage];
     const linkIds = typeof linkId === 'string' ? [linkId] : linkId;
     if (!linkIds.length || !page || linkIds.some((id) => !page.links.some((link) => link.id === id))) {
@@ -1538,12 +1994,14 @@ export class MapperAppController {
   }
 
   private openSchemaNodeProperties(node: SchemaNodeView, side: 'source' | 'target'): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     this.selectSchemaNode(node, side);
-    const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
     this.schemaNodeProperties = {
       node,
       side,
-      schemaNamespace: node.namespace || schema?.targetNamespace,
+      schemaNamespace: node.namespace ?? '',
     };
     this.renderView();
     setTimeout(() => this.redrawLinks(), 0);
@@ -1564,6 +2022,31 @@ export class MapperAppController {
   }
 
   private selectSchemaNode(node: SchemaNodeView, side: 'source' | 'target'): void {
+    if (this.tutorialLocked) {
+      return;
+    }
+    const pages = this.state.map?.pages ?? [];
+    const currentPage = pages[this.state.activePage];
+    const pageIndex =
+      currentPage && this.getSchemaNodeLinks(currentPage, node.path, side).length
+        ? this.state.activePage
+        : pages.findIndex((page) => this.getSchemaNodeLinks(page, node.path, side).length > 0);
+    if (pageIndex >= 0) {
+      if (pageIndex !== this.state.activePage) {
+        this.state.activePage = pageIndex;
+        this.pendingLink = null;
+        this.replacingLink = null;
+        this.canvas.clearLinkPreview();
+      }
+      this.state.linkView = {
+        scope: 'all',
+        colorPartial: true,
+        autoReveal: true,
+        compiler: false,
+        ...this.state.linkView,
+        trace: true,
+      };
+    }
     this.state.selectedSchemaNode = { side, path: node.path };
     this.state.selectedLinks = [];
     this.state.selectedFunctoids = [];
@@ -1572,6 +2055,7 @@ export class MapperAppController {
     this.sourceTree?.setSelectedPath?.(side === 'source' ? node.path : undefined);
     this.targetTree?.setSelectedPath?.(side === 'target' ? node.path : undefined);
     this.updateLinkTrace();
+    this.renderView();
     this.redrawLinks();
   }
 
@@ -1605,14 +2089,18 @@ export class MapperAppController {
       ['XPath', node.path],
       ['Node kind', node.type || 'element'],
       ['Data type', node.dataType],
+      ['Declared type', node.declaredDataType],
       ['Base type', node.baseType || node.restrictions?.baseType],
-      ['Namespace', properties.schemaNamespace],
+      ['Namespace', properties.schemaNamespace || '(none)'],
       ['Type namespace', node.dataTypeNamespace],
       ['Occurrence', occurrence],
       ['Optional', node.isOptional],
       ['Nillable', node.nillable],
-      ['Default value', node.defaultValue],
-      ['Fixed value', node.fixedValue],
+      ['Default value', node.defaultValue === '' ? '(empty)' : node.defaultValue],
+      ['Fixed value', node.fixedValue === '' ? '(empty)' : node.fixedValue],
+      ['Wildcard namespace', node.wildcard?.namespaceConstraint],
+      ['Wildcard processing', node.wildcard?.processContents],
+      ['Substitution group', node.substitutionGroup],
     ];
     const rows: SchemaNodePropertyRow[] = rawRows
       .filter(([, value]) => value !== undefined && value !== '')
@@ -1661,6 +2149,9 @@ export class MapperAppController {
   }
 
   private saveSchemaNodeValue(properties: SchemaNodeProperties, value: string | undefined): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const map = this.state.map;
     if (!map) {
       return;
@@ -1696,6 +2187,9 @@ export class MapperAppController {
    * Functoid connector clicked (input = left/target side, output = right/source side)
    */
   private onFunctoidConnectorClick(functoidId: string, connector: 'input' | 'output'): void {
+    if (!this.tutorialConnectorAllowed(connector, functoidId)) {
+      return;
+    }
     if (this.replacingLink && (this.replacingLink.end === 'source') !== (connector === 'output')) {
       return;
     }
@@ -1734,6 +2228,9 @@ export class MapperAppController {
    * Creates a link between source and target endpoints
    */
   private beginLinkRetarget(linkId: string, end: 'source' | 'target', clientX?: number, clientY?: number): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const page = this.state.map?.pages[this.state.activePage];
     const link = page?.links.find((candidate) => candidate.id === linkId);
     if (!page || !link) {
@@ -1761,6 +2258,39 @@ export class MapperAppController {
       return;
     }
     const page = this.state.map.pages[this.state.activePage];
+
+    if (this.tutorialLocked) {
+      const functoid = page.functoids[0];
+      const inputLink =
+        source.type === 'schemaNode' &&
+        source.id === this.tutorialNodePath('source') &&
+        target.type === 'functoid' &&
+        target.id === functoid?.id;
+      const outputLink =
+        source.type === 'functoid' &&
+        source.id === functoid?.id &&
+        target.type === 'schemaNode' &&
+        target.id === this.tutorialNodePath('target');
+      const hasInput = page.links.some(
+        (link) =>
+          link.sourceType === LinkEndpointType.SchemaNode &&
+          link.sourcePath === this.tutorialNodePath('source') &&
+          link.targetType === LinkEndpointType.Functoid &&
+          link.targetId === functoid?.id
+      );
+      if (
+        this.replacingLink ||
+        page.functoids.length !== 1 ||
+        functoid?.functoidId !== 103 ||
+        !(
+          (this.tutorialStep === 'sourceLink' && inputLink && page.links.length === 0) ||
+          (this.tutorialStep === 'targetLink' && outputLink && page.links.length === 1 && hasInput)
+        )
+      ) {
+        this.pendingLink = null;
+        return;
+      }
+    }
 
     if (this.replacingLink) {
       const replacement = this.replacingLink;
@@ -1809,6 +2339,11 @@ export class MapperAppController {
     }
     page.links.push(candidate);
     synchronizeFunctoidLinks(page);
+    if (this.tutorialStep === 'sourceLink') {
+      this.setTutorialStep('targetLink');
+    } else if (this.tutorialStep === 'targetLink') {
+      this.setTutorialStep('testInput');
+    }
 
     this.pendingLink = null;
     this.updateStatusMessage('Link created ✓');
@@ -1895,13 +2430,16 @@ export class MapperAppController {
   }
 
   private submitCopilotPrompt(prompt: string): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const trimmed = prompt.trim();
     if (!trimmed || !this.state.map || this.copilotBusy) {
       return;
     }
     this.copilotDraft = trimmed;
     this.copilotBusy = true;
-    this.copilotMessage = 'Data Mapper Assistant is preparing a validated map edit…';
+    this.copilotMessage = 'Assistant is preparing a validated map edit…';
     this.renderView();
     this.vscode.postMessage({
       type: 'copilotPrompt',
@@ -1922,30 +2460,42 @@ export class MapperAppController {
     this.state.map = map;
     this.updateLinkTrace();
     this.vscode.postMessage({ type: 'update', data: map });
+    if (this.guidanceTimer !== null) {
+      clearTimeout(this.guidanceTimer);
+    }
+    this.guidanceTimer = setTimeout(() => {
+      this.guidanceTimer = null;
+      this.emitGuidance();
+    }, 120);
+  }
+
+  private canAddTutorialFunctoid(functoid: { id: number }): boolean {
+    return (
+      !this.tutorialLocked ||
+      (this.tutorialStep === 'functoid' &&
+        functoid.id === 103 &&
+        !!this.state.map?.pages.every((page) => page.functoids.length === 0 && page.links.length === 0))
+    );
   }
 
   private addFunctoidToCanvas(functoid: any): void {
-    if (!this.state.map) {
+    if (!this.state.map || !this.canAddTutorialFunctoid(functoid)) {
       return;
     }
     const page = this.state.map.pages[this.state.activePage];
-    page.functoids.push({
-      id: `f_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-      functoidId: functoid.id,
-      category: functoid.category,
-      name: functoid.name,
-      x: 200,
-      y: 80 + page.functoids.length * 60,
-      inputLinks: [],
-      outputLinks: [],
-      parameters: [],
-    });
-    this.updateMap(this.state.map);
-    this.redrawLinks();
+    const { zoom } = this.canvas.getLinkRenderData();
+    const x = Math.max(functoidWidth / 2, (this.canvas.scrollLeft + this.canvas.clientWidth / 2) / zoom);
+    let y = Math.max(functoidHeight / 2, (this.canvas.scrollTop + this.canvas.clientHeight / 2) / zoom);
+    while (
+      page.functoids.some((existing) => Math.abs(existing.x - x) < functoidWidth + 16 && Math.abs(existing.y - y) < functoidHeight + 16)
+    ) {
+      y += functoidHeight + 16;
+    }
+    this.addFunctoidAtPosition(functoid, x, y);
   }
 
   private addFunctoidAtPosition(functoid: any, x: number, y: number): void {
-    if (!this.state.map) {
+    if (!this.state.map || !this.canAddTutorialFunctoid(functoid)) {
       return;
     }
     const page = this.state.map.pages[this.state.activePage];
@@ -1961,10 +2511,16 @@ export class MapperAppController {
       parameters: [],
     });
     this.updateMap(this.state.map);
+    if (this.tutorialStep === 'functoid') {
+      this.setTutorialStep('sourceLink');
+    }
     this.redrawLinks();
   }
 
   private addPage(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.map) {
       return;
     }
@@ -1976,6 +2532,9 @@ export class MapperAppController {
   }
 
   private deletePage(pageIndex: number): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.map || this.state.map.pages.length <= 1) {
       return;
     }
@@ -1997,6 +2556,9 @@ export class MapperAppController {
   }
 
   private deleteSelected(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.map) {
       return;
     }
@@ -2018,6 +2580,9 @@ export class MapperAppController {
   }
 
   private autoLinkByName(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.sourceSchema || !this.state.targetSchema || !this.state.map) {
       return;
     }
@@ -2052,6 +2617,9 @@ export class MapperAppController {
   }
 
   private validateAndCompile(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.map) {
       return;
     }
@@ -2124,6 +2692,12 @@ export class MapperAppController {
     if (!this.state.map) {
       return;
     }
+    if (
+      this.tutorialLocked &&
+      (this.tutorialStep !== 'testMap' || this.tutorialTestPending || this.tutorialInputPending || !this.bottomPanel?.getInputXml())
+    ) {
+      return;
+    }
     // Combined flow: generate instance (if needed) → run XSLT transform
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'instance';
@@ -2133,6 +2707,7 @@ export class MapperAppController {
     const existingInput = this.bottomPanel?.getInputXml() || '';
 
     if (existingInput) {
+      this.tutorialTestPending = this.tutorialStep === 'testMap';
       // Already have input — go straight to transform
       this.bottomPanelActiveTab = 'output';
       this.bottomPanel?.setActiveTab('output');
@@ -2147,6 +2722,9 @@ export class MapperAppController {
   private pendingTestAfterGenerate = false;
 
   private validateMap(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.state.map) {
       return;
     }
@@ -2212,11 +2790,33 @@ export class MapperAppController {
     return paths;
   }
 
+  private getSchemaNodeLinks(page: MapPage, nodePath: string, side: 'source' | 'target'): MapLink[] {
+    const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    const resolver = new SchemaPathResolver(schema ?? undefined, this.state.map?.options.ignoreNamespacesForLinks);
+    return page.links.filter((link) => {
+      if (link[`${side}Type`] !== LinkEndpointType.SchemaNode) {
+        return false;
+      }
+      const path = resolver.resolve(link[`${side}Path`] || link[`${side}Id`])?.path;
+      return path === nodePath;
+    });
+  }
+
   private getConnectedPaths(side: 'source' | 'target'): Set<string> {
-    const page = this.state.map?.pages[this.state.activePage];
-    return new Set(
-      page?.links.map((link) => (side === 'source' ? link.sourcePath : link.targetPath)).filter((path): path is string => !!path)
-    );
+    const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    const resolver = new SchemaPathResolver(schema ?? undefined, this.state.map?.options.ignoreNamespacesForLinks);
+    const paths = new Set<string>();
+    for (const page of this.state.map?.pages ?? []) {
+      for (const link of page.links) {
+        if (link[`${side}Type`] === LinkEndpointType.SchemaNode) {
+          const path = resolver.resolve(link[`${side}Path`] || link[`${side}Id`])?.path;
+          if (path) {
+            paths.add(path);
+          }
+        }
+      }
+    }
+    return paths;
   }
 
   private flattenLeafNodes(node: any, result: any[] = []): any[] {
@@ -2251,6 +2851,9 @@ export class MapperAppController {
   }
 
   private onFunctoidDoubleClick(functoidId: string): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const functoid = this.getCurrentPageFunctoid(functoidId);
     if (!functoid) {
       return;
@@ -2329,6 +2932,9 @@ export class MapperAppController {
   }
 
   private saveScriptingConfig(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     if (!this.scriptingConfigDraft) {
       return;
     }
@@ -2556,6 +3162,9 @@ export class MapperAppController {
   }
 
   private saveFunctoidProperties(): void {
+    if (this.tutorialLocked) {
+      return;
+    }
     const functoid = this.getCurrentPageFunctoid(this.functoidPropertiesId!);
     if (!functoid || !this.functoidInputsDraft) {
       this.closeFunctoidDialog();
@@ -2637,6 +3246,25 @@ export class MapperAppController {
   private bottomPanelCollapsed = true;
 
   private showInstanceResult(data: any): void {
+    if (this.tutorialLocked) {
+      this.pendingTestAfterGenerate = false;
+      if (this.tutorialStep !== 'testInput' && this.tutorialStep !== 'testMap') {
+        return;
+      }
+      this.bottomPanelCollapsed = false;
+      this.bottomPanelActiveTab = 'instance';
+      this.bottomPanel?.setCollapsed(false);
+      this.bottomPanel?.setActiveTab('instance');
+      if (data.error || data.success === false || !data.xml?.trim()) {
+        const error = data.error || 'No XML was returned. Upload an input file or enter XML in Input Instance.';
+        this.bottomPanel?.setOutput(`Error: ${error}`, true);
+        this.showNotification('Could not load test input', 'error', error);
+        return;
+      }
+      this.bottomPanel?.setInputXml(data.xml);
+      this.tutorialInputChanged(data.xml);
+      return;
+    }
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'instance';
     this.bottomPanel?.setCollapsed(false);
@@ -2655,6 +3283,11 @@ export class MapperAppController {
   }
 
   private showTestMapResult(data: any): void {
+    const tutorialTest = this.tutorialTestPending && this.tutorialStep === 'testMap';
+    if (this.tutorialLocked && !tutorialTest) {
+      return;
+    }
+    this.tutorialTestPending = false;
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'output';
     this.bottomPanel?.setCollapsed(false);
@@ -2663,6 +3296,9 @@ export class MapperAppController {
       this.bottomPanel?.setOutput(`Error: ${data.error}`, true);
     } else {
       this.bottomPanel?.setOutput(data.output || data.xslt || '', false);
+    }
+    if (tutorialTest && !data.error && data.success !== false && data.output?.trim()) {
+      this.setTutorialStep('publish');
     }
   }
 }

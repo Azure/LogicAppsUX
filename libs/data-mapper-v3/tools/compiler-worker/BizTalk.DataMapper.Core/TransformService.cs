@@ -9,7 +9,9 @@ public sealed record TransformRequest(
     string InputXml,
     string? ExtensionObjectXml,
     string? WorkingDirectory,
-    string? StylesheetPath = null);
+    string? StylesheetPath = null,
+    string? XsltEngine = null,
+    string? UseXslTransform = null);
 
 public sealed record TransformResult(
     bool Success,
@@ -35,33 +37,36 @@ public sealed class TransformService
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Xslt);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.InputXml);
 
+        if (!string.IsNullOrEmpty(request.XsltEngine) && request.XsltEngine != ".Net Framework")
+        {
+            string message = $"Unsupported XSLT engine '{request.XsltEngine}'. Custom XSLT engine types are not supported. Select '.Net Framework' or clear XsltEngine to use automatic selection.";
+            return new TransformResult(false, null, message, message);
+        }
+
+        bool useLegacyTransform = string.Equals(request.UseXslTransform, "Yes", StringComparison.OrdinalIgnoreCase);
+        bool requiresXslt20 = RequiresXslt20Processor(request.Xslt);
+        if (useLegacyTransform && requiresXslt20)
+        {
+            const string message = "UseXslTransform='Yes' selects the legacy System.Xml.Xsl.XslTransform processor, which supports only XSLT 1.0. Set UseXslTransform to 'No' or 'Undefined' to run XSLT 2.0 or later.";
+            return new TransformResult(false, null, message, message);
+        }
+
         string workingDirectory = string.IsNullOrWhiteSpace(request.WorkingDirectory)
             ? Path.GetTempPath()
             : Path.GetFullPath(request.WorkingDirectory);
         Directory.CreateDirectory(workingDirectory);
 
         string operationDirectory = Path.Combine(
-            workingDirectory,
+            Path.GetTempPath(),
             $".biztalk-mapper-{Guid.NewGuid():N}");
         Directory.CreateDirectory(operationDirectory);
 
         string xsltPath = Path.Combine(operationDirectory, "map.xslt");
-        string stylesheetBaseUri = new Uri(Path.GetFullPath(
-            string.IsNullOrWhiteSpace(request.StylesheetPath)
-                ? xsltPath
-                : Path.Combine(workingDirectory, request.StylesheetPath))).AbsoluteUri;
         string inputPath = Path.Combine(operationDirectory, "input.xml");
         string outputPath = Path.Combine(operationDirectory, "output.xml");
         string? extensionPath = request.ExtensionObjectXml is null
             ? null
             : Path.Combine(operationDirectory, "extension.xml");
-
-        WriteXmlText(xsltPath, request.Xslt);
-        WriteXmlText(inputPath, request.InputXml);
-        if (extensionPath is not null)
-        {
-            WriteXmlText(extensionPath, request.ExtensionObjectXml!);
-        }
 
         var standardOutput = new StringWriter();
         var standardError = new StringWriter();
@@ -71,17 +76,29 @@ public sealed class TransformService
 
         try
         {
+            string stylesheetBaseUri = new Uri(Path.GetFullPath(Path.Combine(
+                workingDirectory,
+                string.IsNullOrWhiteSpace(request.StylesheetPath) ? "map.xslt" : request.StylesheetPath))).AbsoluteUri;
+            WriteXmlText(xsltPath, request.Xslt);
+            WriteXmlText(inputPath, request.InputXml);
+            if (extensionPath is not null)
+            {
+                WriteXmlText(extensionPath, request.ExtensionObjectXml!);
+            }
+
             string? frameworkHost = FindFrameworkTransformHost();
             bool requiresFrameworkHost =
+                request.XsltEngine == ".Net Framework" ||
+                useLegacyTransform ||
                 ContainsScriptBlock(request.Xslt) ||
-                RequiresXslt20Processor(request.Xslt) ||
+                requiresXslt20 ||
                 ContainsExtensionObjects(request.ExtensionObjectXml);
             if (requiresFrameworkHost)
             {
                 if (frameworkHost is null)
                 {
                     const string message =
-                        "The packaged .NET Framework transform host required for scripts, extension objects, and XSLT 2.0 or later was not found.";
+                        "The packaged .NET Framework transform host required for the selected engine, legacy XslTransform, scripts, extension objects, or XSLT 2.0 or later was not found.";
                     return new TransformResult(false, null, message, message);
                 }
 
@@ -91,7 +108,9 @@ public sealed class TransformService
                     inputPath,
                     outputPath,
                     extensionPath,
-                    stylesheetBaseUri);
+                    stylesheetBaseUri,
+                    workingDirectory,
+                    request.UseXslTransform);
             }
 
             Console.SetOut(standardOutput);
@@ -202,7 +221,9 @@ public sealed class TransformService
         string inputPath,
         string outputPath,
         string? extensionPath,
-        string stylesheetBaseUri)
+        string stylesheetBaseUri,
+        string workingDirectory,
+        string? useXslTransform)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -211,13 +232,14 @@ public sealed class TransformService
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             CreateNoWindow = true,
-            WorkingDirectory = Path.GetDirectoryName(xsltPath)!
+            WorkingDirectory = workingDirectory
         };
         startInfo.ArgumentList.Add(xsltPath);
         startInfo.ArgumentList.Add(inputPath);
         startInfo.ArgumentList.Add(outputPath);
         startInfo.ArgumentList.Add(extensionPath ?? "");
         startInfo.ArgumentList.Add(stylesheetBaseUri);
+        startInfo.ArgumentList.Add(useXslTransform ?? "");
 
         using var process = Process.Start(startInfo)
             ?? throw new InvalidOperationException("Failed to start the .NET Framework transform host.");

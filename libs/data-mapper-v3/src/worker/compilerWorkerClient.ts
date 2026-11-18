@@ -32,6 +32,8 @@ export interface WorkerTestMapRequest {
   extensionObjectXml?: string;
   workingDirectory?: string;
   stylesheetPath?: string;
+  xsltEngine?: string;
+  useXslTransform?: 'Undefined' | 'Yes' | 'No';
 }
 
 export interface WorkerTestMapResult {

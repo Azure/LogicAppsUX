@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.110.2",
+  "version": "5.110.5",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -85,12 +85,27 @@
       },
       {
         "command": "azureLogicAppsStandard.createProject",
-        "title": "Add new project...",
+        "title": "Open wizard",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/CreateNewProject.svg",
           "dark": "assets/dark/CreateNewProject.svg"
         }
+      },
+      {
+        "command": "azureLogicAppsStandard.createMapperProject",
+        "title": "Add mapper",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.createCustomCodeProject",
+        "title": "Add custom code",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.createLogicAppProject",
+        "title": "Add Logic App",
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.addCustomCode",
@@ -421,35 +436,57 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
+      },
+      {
+        "id": "azureLogicAppsStandard.submenus.createProject",
+        "label": "Create Project (New)"
       }
     ],
     "menus": {
+      "azureLogicAppsStandard.submenus.createProject": [
+        {
+          "command": "azureLogicAppsStandard.createMapperProject",
+          "group": "1_projects@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCustomCodeProject",
+          "group": "1_projects@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createLogicAppProject",
+          "group": "1_projects@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.createProject",
+          "group": "2_wizard@1"
+        }
+      ],
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
           "command": "azureLogicAppsStandard.createWorkspace",
           "group": "1_create@1"
         },
         {
-          "command": "azureLogicAppsStandard.createProject",
-          "group": "1_create@2"
+          "submenu": "azureLogicAppsStandard.submenus.createProject",
+          "group": "2_createProject@1"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "group": "2_deploy@1",
+          "group": "3_deploy@1",
           "when": "azureLogicAppsStandard.hasProject"
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "group": "2_deploy@2",
+          "group": "3_deploy@2",
           "when": "azureLogicAppsStandard.hasProject"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "group": "3_export@1"
+          "group": "4_export@1"
         },
         {
           "command": "azureLogicAppsStandard.cloudToLocal",
-          "group": "4_create@3"
+          "group": "5_create@3"
         }
       ],
       "view/title": [
@@ -688,9 +725,9 @@
           "group": "navigation@1"
         },
         {
-          "command": "azureLogicAppsStandard.createProject",
+          "submenu": "azureLogicAppsStandard.submenus.createProject",
           "when": "(!explorerResourceIsFolder && !resourceFilename) || (explorerResourceIsFolder && explorerResourceIsRoot)",
-          "group": "zzz_LogicAppsProject@99"
+          "group": "zzz_LogicAppsProjectCreation@1"
         },
         {
           "command": "azureLogicAppsStandard.dataMap.addDataMap",

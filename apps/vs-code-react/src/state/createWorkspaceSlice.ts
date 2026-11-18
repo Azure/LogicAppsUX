@@ -50,6 +50,8 @@ export interface CreateWorkspaceState {
   workspaceRootFolder: string;
   currentFolderPath: string;
   currentWorkspace: boolean;
+  projectCreationMode?: 'logicApp' | 'customCode' | 'dataMap';
+  hasExistingLogicApp: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -92,6 +94,8 @@ const initialState: CreateWorkspaceState = {
   workspaceRootFolder: '',
   currentFolderPath: '',
   currentWorkspace: false,
+  projectCreationMode: undefined,
+  hasExistingLogicApp: false,
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -138,6 +142,8 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.separator = separator;
       state.platform = platform;
       state.currentWorkspace = action.payload.currentWorkspace === true;
+      state.projectCreationMode = action.payload.projectCreationMode;
+      state.hasExistingLogicApp = action.payload.hasExistingLogicApp === true;
       state.workspaceRootFolder = action.payload.workspaceRootFolder || '';
       if (state.currentWorkspace) {
         state.workspaceName = action.payload.workspaceName || '';
@@ -263,6 +269,8 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
         currentFolderPath: state.currentFolderPath,
         currentWorkspace: state.currentWorkspace,
         workspaceRootFolder: state.workspaceRootFolder,
+        projectCreationMode: state.projectCreationMode,
+        hasExistingLogicApp: state.hasExistingLogicApp,
         ...(state.currentWorkspace ? { workspaceName: state.workspaceName } : {}),
         ...(preserveLogicAppData
           ? {

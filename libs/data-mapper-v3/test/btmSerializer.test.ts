@@ -146,6 +146,48 @@ describe('BtmSerializer', () => {
     expect(roundTrip.match(/<Script Language=/g)).toHaveLength(2);
   });
 
+  test('round-trips legacy grid header and engine properties', () => {
+    const map = serializer.deserialize(`
+      <mapsource Name="Grid properties" Version="1" standalone="no" indent="yes"
+        doctype-public="public-id" doctype-system="output.dtd" cdata-section-elements="Notes Details"
+        media-type="application/example+xml" XsltEngine=".Net Framework" UseXSLTransform="No">
+        <SrcTree/><TrgTree/><Pages/>
+      </mapsource>`);
+
+    const expected = {
+      standalone: 'no',
+      indent: 'yes',
+      doctypePublic: 'public-id',
+      doctypeSystem: 'output.dtd',
+      cdataSectionElements: 'Notes Details',
+      mediaType: 'application/example+xml',
+      xsltEngine: '.Net Framework',
+      useXslTransform: 'No',
+    };
+    expect(map.options).toMatchObject(expected);
+    const saved = serializer.serialize(map);
+    expect(saved).toContain('standalone="no"');
+    expect(saved).toContain('doctype-public="public-id"');
+    expect(saved).toContain('UseXSLTransform="No"');
+    expect(serializer.deserialize(saved).options).toMatchObject(expected);
+  });
+
+  test('omits unset optional grid header and engine attributes', () => {
+    const saved = serializer.serialize(serializer.createNew('', '', 'Defaults'));
+    for (const attribute of [
+      'standalone',
+      'indent',
+      'doctype-public',
+      'doctype-system',
+      'cdata-section-elements',
+      'media-type',
+      'XsltEngine',
+      'UseXSLTransform',
+    ]) {
+      expect(saved).not.toContain(`${attribute}=`);
+    }
+  });
+
   test('should create a new map', () => {
     const map = serializer.createNew('source.xsd', 'target.xsd', 'TestMap');
 

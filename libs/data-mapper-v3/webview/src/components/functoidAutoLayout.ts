@@ -5,6 +5,40 @@ interface Point {
   y: number;
 }
 
+export const functoidWidth = 72;
+export const functoidHeight = 26;
+
+export function needsFunctoidLayout(functoids: readonly Point[]): boolean {
+  const cells = new Map<string, Point[]>();
+  for (const functoid of functoids) {
+    if (functoid.x < 0 || functoid.y < 0) {
+      return true;
+    }
+    const column = Math.floor(functoid.x / functoidWidth);
+    const row = Math.floor(functoid.y / functoidHeight);
+    for (const columnOffset of [-1, 0, 1]) {
+      for (const rowOffset of [-1, 0, 1]) {
+        const neighbors = cells.get(`${column + columnOffset}:${row + rowOffset}`);
+        if (
+          neighbors?.some(
+            (neighbor) => Math.abs(neighbor.x - functoid.x) < functoidWidth && Math.abs(neighbor.y - functoid.y) < functoidHeight
+          )
+        ) {
+          return true;
+        }
+      }
+    }
+    const key = `${column}:${row}`;
+    const cell = cells.get(key);
+    if (cell) {
+      cell.push(functoid);
+    } else {
+      cells.set(key, [functoid]);
+    }
+  }
+  return false;
+}
+
 export interface FunctoidLayoutInput {
   functoids: MapFunctoid[];
   links: MapLink[];

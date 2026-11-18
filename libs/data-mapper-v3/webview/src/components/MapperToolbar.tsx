@@ -1,8 +1,8 @@
-import { FluentProvider, makeStyles, Toolbar, ToolbarButton, ToolbarGroup, tokens } from '@fluentui/react-components';
+import { Badge, makeStyles, Toolbar, ToolbarButton, ToolbarGroup, tokens } from '@fluentui/react-components';
 import { Beaker20Regular, Bot20Regular, CloudArrowUp20Regular, PlayCircle20Regular } from '@fluentui/react-icons';
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 import { PublishDialog } from './PublishDialog';
 import type { AzurePublishQuery, PublishContext, PublishDestination, PublishTarget } from '../../../src/protocol/publishProtocol';
 
@@ -42,6 +42,10 @@ const useStyles = makeStyles({
   command: {
     color: 'var(--vscode-foreground)',
   },
+  newBadge: {
+    marginLeft: tokens.spacingHorizontalXS,
+    flexShrink: 0,
+  },
   primaryCommand: {
     color: 'var(--vscode-textLink-foreground)',
   },
@@ -50,7 +54,7 @@ const useStyles = makeStyles({
     color: 'var(--vscode-descriptionForeground)',
   },
   statusActive: {
-    color: '#4fc1ff',
+    color: 'var(--vscode-textLink-foreground, var(--vscode-foreground))',
   },
 });
 
@@ -69,7 +73,7 @@ function MapperToolbarView({
   const [publishOpen, setPublishOpen] = React.useState(false);
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} className={styles.provider}>
+    <FluentProvider className={styles.provider}>
       <Toolbar className={`mapper-toolbar ${styles.toolbar} ${typographyStyles.base}`} aria-label="Map commands">
         <ToolbarGroup className={styles.group}>
           <ToolbarButton
@@ -92,9 +96,15 @@ function MapperToolbarView({
             onClick={() => setPublishOpen(true)}
           >
             Publish
+            <Badge appearance="tint" color="success" size="small" className={styles.newBadge}>
+              New
+            </Badge>
           </ToolbarButton>
           <ToolbarButton id="btn-copilot" className={styles.primaryCommand} icon={<Bot20Regular />} disabled={disabled} onClick={onCopilot}>
-            Data Mapper Assistant
+            Assistant
+            <Badge appearance="tint" color="success" size="small" className={styles.newBadge}>
+              New
+            </Badge>
           </ToolbarButton>
         </ToolbarGroup>
         <span className={`${styles.status} ${status ? styles.statusActive : ''}`} id="toolbar-status" role="status">

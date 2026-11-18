@@ -7,7 +7,6 @@ import {
   DialogSurface,
   DialogTitle,
   Field,
-  FluentProvider,
   Input,
   MessageBar,
   MessageBarBody,
@@ -23,7 +22,7 @@ import { Add16Regular, ArrowDown16Regular, ArrowUp16Regular, Dismiss16Regular } 
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider, useTypographyStyles } from '../fluentTheme';
 
 export interface FunctoidConfigInput {
   isConstant: boolean;
@@ -246,7 +245,7 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
   };
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <Dialog
         open
         onOpenChange={(_event, data) => {

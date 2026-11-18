@@ -12,7 +12,7 @@ let app: MapperAppHandle | null = null;
 function renderStartupError(container: HTMLElement, error: unknown): void {
   const message = error instanceof Error ? `${error.message}\n${error.stack || ''}` : String(error);
   createRoot(container).render(
-    <div style={{ padding: '20px', color: '#f48771' }}>
+    <div style={{ padding: '20px', color: 'var(--vscode-errorForeground, var(--vscode-foreground))' }}>
       <h3>Logic App Data Mapper - Error</h3>
       <pre style={{ marginTop: '10px', whiteSpace: 'pre-wrap' }}>{message}</pre>
     </div>

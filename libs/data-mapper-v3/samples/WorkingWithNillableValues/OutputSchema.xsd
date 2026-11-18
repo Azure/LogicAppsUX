@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://WorkingWithNillableValues.OutputSchema"
+           elementFormDefault="unqualified">
+  <xs:element name="OutputSchema">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="NilValueOutput" type="xs:string" nillable="true"/>
+        <xs:element name="AnotherNilValueOutput" type="xs:string" nillable="true"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

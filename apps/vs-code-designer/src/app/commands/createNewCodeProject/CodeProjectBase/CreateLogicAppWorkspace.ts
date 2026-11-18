@@ -423,7 +423,8 @@ export async function addProjectsToWorkspace(
   context: IActionContext,
   options: IWebviewProjectContext,
   workspaceRoot: string,
-  workspaceFile?: vscode.Uri
+  workspaceFile?: vscode.Uri,
+  existingLogicAppPath?: string
 ): Promise<void> {
   const assertCurrentWorkspace = () => {
     const activeFile = vscode.workspace.workspaceFile;
@@ -441,14 +442,14 @@ export async function addProjectsToWorkspace(
       workspaceName: path.basename(workspaceRoot),
       openBehavior: OpenBehavior.dontOpen,
     },
-    { root: workspaceRoot, assertCurrentWorkspace }
+    { root: workspaceRoot, assertCurrentWorkspace, existingLogicAppPath }
   );
 }
 
 const createSelectedProjectsWorkspace = async (
   context: IActionContext,
   options: IWebviewProjectContext,
-  currentWorkspace?: { root: string; assertCurrentWorkspace: () => void }
+  currentWorkspace?: { root: string; assertCurrentWorkspace: () => void; existingLogicAppPath?: string }
 ): Promise<void> => {
   const normalized = await validateSelectedProjects(options, currentWorkspace?.root);
   const workspaceFolder = currentWorkspace?.root ?? path.join(normalized.workspaceProjectPath.fsPath, normalized.workspaceName);
@@ -521,8 +522,14 @@ const createSelectedProjectsWorkspace = async (
     const functionContext = {
       ...context,
       workspacePath: workspaceFolder,
-      projectPath: normalized.selectedProjects.logicApp ? logicAppFolderPath : path.join(workspaceFolder, normalized.functionFolderName),
-      logicAppName: normalized.selectedProjects.logicApp ? normalized.logicAppFolderName : normalized.functionFolderName,
+      projectPath:
+        currentWorkspace?.existingLogicAppPath ??
+        (normalized.selectedProjects.logicApp ? logicAppFolderPath : path.join(workspaceFolder, normalized.functionFolderName)),
+      logicAppName: currentWorkspace?.existingLogicAppPath
+        ? path.relative(workspaceFolder, currentWorkspace.existingLogicAppPath) || '.'
+        : normalized.selectedProjects.logicApp
+          ? normalized.logicAppFolderName
+          : normalized.functionFolderName,
       projectType: normalized.customCodeType,
       functionFolderName: normalized.functionFolderName,
       functionAppName: normalized.functionName,
@@ -552,6 +559,14 @@ const createSelectedProjectsWorkspace = async (
 
     if (normalized.selectedProjects.customCode) {
       await new CreateFunctionAppFiles().setup(functionContext);
+      if (currentWorkspace?.existingLogicAppPath) {
+        await addCustomCodeDotNetVersionSetting(
+          context,
+          currentWorkspace.existingLogicAppPath,
+          normalized.customCodeType,
+          normalized.targetFramework
+        );
+      }
     }
 
     if (normalized.selectedProjects.dataMap) {

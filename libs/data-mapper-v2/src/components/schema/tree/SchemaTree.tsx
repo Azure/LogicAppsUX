@@ -121,8 +121,23 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   }, [updateVisibleNodes]);
 
   useEffect(() => {
+    let disposed = false;
     const frame = requestAnimationFrame(() => updateNodeInternals(panelNodeId));
-    return () => cancelAnimationFrame(frame);
+    const animations: Animation[] = [];
+    for (let element: HTMLElement | null = ref.current; element; element = element.parentElement) {
+      animations.push(...(element.getAnimations?.() ?? []));
+    }
+    if (animations.length > 0) {
+      Promise.allSettled(animations.map((animation) => animation.finished)).then(() => {
+        if (!disposed) {
+          updateNodeInternals(panelNodeId);
+        }
+      });
+    }
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+    };
   }, [
     panelNodeId,
     schemaTreeRoot,

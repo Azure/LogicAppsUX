@@ -510,7 +510,7 @@ importers:
         version: 4.6.0(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       '@vitest/coverage-v8':
         specifier: ^2.1.8
-        version: 2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
+        version: 2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
       jsdom:
         specifier: ^26.0.0
         version: 26.1.0
@@ -525,7 +525,7 @@ importers:
         version: 1.2.3
       vitest:
         specifier: ^3.2.6
-        version: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+        version: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
 
   apps/vs-code-designer:
     devDependencies:
@@ -899,7 +899,7 @@ importers:
         version: 6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
       vitest:
         specifier: ^3.2.6
-        version: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+        version: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
 
   libs/chatbot:
     dependencies:
@@ -1206,6 +1206,9 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
+      xml-formatter:
+        specifier: ^3.7.0
+        version: 3.7.0
       xmlbuilder2:
         specifier: ^3.1.1
         version: 3.1.1
@@ -1958,7 +1961,7 @@ packages:
     resolution: {integrity: sha1-NcbYM8v0HoU6Tza6N8blhkkgv+k=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@algolia/logger-common/-/logger-common-4.23.3.tgz}
 
   '@algolia/logger-console@4.23.2':
-    resolution: {integrity: sha512-oo+lnxxEmlhTBTFZ3fGz1O8PJ+G+8FiAoMY2Qo3Q4w23xocQev6KqDTA1JQAGPDxAewNA2VBwWOsVXeXFjrI/Q==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@algolia/logger-console/-/logger-console-4.23.2.tgz}
+    resolution: {integrity: sha1-/aQlK7At98UqksY/HjV79zcMyNs=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@algolia/logger-console/-/logger-console-4.23.2.tgz}
 
   '@algolia/recommend@4.23.2':
     resolution: {integrity: sha1-Ar9X+DbO0shQYzI51JOgQUvnan8=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@algolia/recommend/-/recommend-4.23.2.tgz}
@@ -2193,7 +2196,7 @@ packages:
     engines: {node: '>=20.0.0'}
 
   '@azure/storage-file-share@12.25.0':
-    resolution: {integrity: sha512-nEYY8/cnCXU0fIRwlyUpzoQpA9ZtHmpZZSTbWsWTTziSmzX9fINTs6rOnZklejJ1wdrJvTsxlJAlaXzrBsdEfw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/storage-file-share/-/storage-file-share-12.25.0.tgz}
+    resolution: {integrity: sha1-fLOYQIav124uweQEIpd9PnbSurw=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/storage-file-share/-/storage-file-share-12.25.0.tgz}
     engines: {node: '>=18.0.0'}
 
   '@babel/code-frame@7.24.2':
@@ -3598,7 +3601,7 @@ packages:
       react-dom: 18.3.1
 
   '@docusaurus/plugin-google-gtag@3.6.1':
-    resolution: {integrity: sha512-u/E9vXUsZxYaV6Brvfee8NiH/iR0cMml9P/ifz4EpH/Jfxdbw8rbCT0Nm/h7EFgEY48Uqkl5huSbIvFB9n8aTQ==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-3.6.1.tgz}
+    resolution: {integrity: sha1-2wi/zvMZxJTllpwNltYr2PQ0ads=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-3.6.1.tgz}
     engines: {node: '>=18.0'}
     peerDependencies:
       react: 18.3.1
@@ -3664,7 +3667,7 @@ packages:
     engines: {node: '>=18.0'}
 
   '@docusaurus/tsconfig@3.6.1':
-    resolution: {integrity: sha512-RvjMG9M9YK8N/I5oudqJed8jjfWGI7csr4XCkGXBToNkkoi2QgkTz2DxH+obKdfLejQaASdIMynYaE5Lv7Qw9Q==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@docusaurus/tsconfig/-/tsconfig-3.6.1.tgz}
+    resolution: {integrity: sha1-zVDmOellc0qJlSBTn30cfb08+xk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@docusaurus/tsconfig/-/tsconfig-3.6.1.tgz}
 
   '@docusaurus/types@3.6.1':
     resolution: {integrity: sha1-DlWgpRo+VWWLCEWvg9X+F8SVl44=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@docusaurus/types/-/types-3.6.1.tgz}
@@ -4263,10 +4266,10 @@ packages:
     resolution: {integrity: sha1-AsjrYZGoL1nglTameo6MFfQdOnk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/dom-utilities/-/dom-utilities-2.3.0.tgz}
 
   '@fluentui/fluent2-theme@8.107.68':
-    resolution: {integrity: sha512-AwE1vDOm3IzVvG0pnL2DyOS1mLLGzktOlZIC2Q5BoNkYDbn91eFDN6jE11PuARvCPSRjEqumjkQU0egvF48Dsw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/fluent2-theme/-/fluent2-theme-8.107.68.tgz}
+    resolution: {integrity: sha1-8ONl1SBp2PmRGjnGVYZFbK9jZsA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/fluent2-theme/-/fluent2-theme-8.107.68.tgz}
 
   '@fluentui/fluent2-theme@8.107.74':
-    resolution: {integrity: sha512-mqGz1QgE8VbBXlTRaLyfby8WD7Vg/8XWvp0zOMPHWGN5S9an0G/DUL5yUABOBDNk5pkr2uwoyNL8QcFWCbd2DA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/fluent2-theme/-/fluent2-theme-8.107.74.tgz}
+    resolution: {integrity: sha1-nQGgxTRJ26l3iGoYjDdWX0xLmZY=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/fluent2-theme/-/fluent2-theme-8.107.74.tgz}
 
   '@fluentui/font-icons-mdl2@8.5.13':
     resolution: {integrity: sha1-NLHckerlwSgUVEENfJUOwRtBtaA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/font-icons-mdl2/-/font-icons-mdl2-8.5.13.tgz}
@@ -4947,7 +4950,7 @@ packages:
         optional: true
 
   '@fluentui/react-migration-v8-v9@9.2.16':
-    resolution: {integrity: sha512-TTS4FY1hCG447m5EzGwITQCCeueUmrj8hOa9clDJDim4QR4BT1QhuQa/pZZKGUGjkdNJnDkEeJms+tCLiSvTjw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/react-migration-v8-v9/-/react-migration-v8-v9-9.2.16.tgz}
+    resolution: {integrity: sha1-zT4ZmdP7HQ6gsibIx6Op53L8SIE=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@fluentui/react-migration-v8-v9/-/react-migration-v8-v9-9.2.16.tgz}
     peerDependencies:
       '@types/react': 18.3.0
       '@types/react-dom': 18.3.0
@@ -5849,7 +5852,7 @@ packages:
         optional: true
 
   '@formatjs/intl@2.6.7':
-    resolution: {integrity: sha512-9FvEJfUMzlmP5ZBK3EE0928kVsZmD5aeWXg+faP8+mKIvG3c0hkLEXQ2MiUrXQt4rsEzOPbYVtBdthzSM0e2fw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@formatjs/intl/-/intl-2.6.7.tgz}
+    resolution: {integrity: sha1-pkzzfQHD0JzhjPk5CYJTRlXK4Us=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@formatjs/intl/-/intl-2.6.7.tgz}
     peerDependencies:
       typescript: ^4.7
     peerDependenciesMeta:
@@ -6020,7 +6023,7 @@ packages:
       react-dom: 18.3.1
 
   '@lexical/dragon@0.33.1':
-    resolution: {integrity: sha512-UQ6DLkcDAr83wA1vz3sUgtcpYcMifC4sF0MieZAoMzFrna6Ekqj7OJ7g8Lo7m7AeuT4NETRVDsjIEDdrQMKLLA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/dragon/-/dragon-0.33.1.tgz}
+    resolution: {integrity: sha1-KGueqQvs00ir+WbWTZ8eTENHuzk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/dragon/-/dragon-0.33.1.tgz}
 
   '@lexical/hashtag@0.33.1':
     resolution: {integrity: sha1-E9Ode/hK8s9qpAHC3Wmu294Lnr0=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/hashtag/-/hashtag-0.33.1.tgz}
@@ -6038,7 +6041,7 @@ packages:
     resolution: {integrity: sha1-CROvfB9XO2Bv2kR0cEpfGuu293U=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/list/-/list-0.33.1.tgz}
 
   '@lexical/mark@0.33.1':
-    resolution: {integrity: sha512-tGdOf1e694lnm/HyWUKEkEWjDyfhCBFG7u8iRKNpsYTpB3M1FsJUXbphE2bb8MyWfhHbaNxnklupSSaSPzO88A==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/mark/-/mark-0.33.1.tgz}
+    resolution: {integrity: sha1-P/8+aiIgpgFc7424CBsNxhqTeiQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/mark/-/mark-0.33.1.tgz}
 
   '@lexical/markdown@0.33.1':
     resolution: {integrity: sha1-XjOh66N16qvuDpXp+hUersrTqkc=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@lexical/markdown/-/markdown-0.33.1.tgz}
@@ -6436,7 +6439,7 @@ packages:
       selenium-webdriver: '>=4.6.1'
 
   '@redhat-developer/page-objects@1.19.1':
-    resolution: {integrity: sha512-PFyPV2GITbqd3IrnadiUawTZiTirVVakS63DeJvxhbpxRGQ5ZmpzQnEec7xLOUiA59ipeu85HhZNybtV+Ve0wQ==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@redhat-developer/page-objects/-/page-objects-1.19.1.tgz}
+    resolution: {integrity: sha1-c4Ka2sfXHILoFxtFRGLiWa93kx0=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@redhat-developer/page-objects/-/page-objects-1.19.1.tgz}
     peerDependencies:
       selenium-webdriver: '>=4.6.1'
       typescript: '>=4.6.2'
@@ -6730,7 +6733,7 @@ packages:
     libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.27.3':
-    resolution: {integrity: sha512-/6bn6pp1fsCGEY5n3yajmzZQAh+mW4QPItbiWxs69zskBzJuheb3tNynEjL+mKOsUSFK11X4LYF2BwwXnzWleA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.27.3.tgz}
+    resolution: {integrity: sha1-8T7/zc0cwUsmQn5r7Ixsnk3jdz4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.27.3.tgz}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
@@ -15920,7 +15923,7 @@ packages:
       vite: '>=5.4.19'
 
   vite-plugin-node-polyfills@0.21.0:
-    resolution: {integrity: sha512-Sk4DiKnmxN8E0vhgEhzLudfJQfaT8k4/gJ25xvUPG54KjLJ6HAmDKbr4rzDD/QWEY+Lwg80KE85fGYBQihEPQA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/vite-plugin-node-polyfills/-/vite-plugin-node-polyfills-0.21.0.tgz}
+    resolution: {integrity: sha1-VWazpyXUu8dfT3lLBGfkBHwUpYw=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/vite-plugin-node-polyfills/-/vite-plugin-node-polyfills-0.21.0.tgz}
     peerDependencies:
       vite: '>=5.4.19'
 
@@ -16281,6 +16284,10 @@ packages:
     resolution: {integrity: sha1-HvuhlCXnO+G8byps61Kj0siEwMk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xdg-basedir/-/xdg-basedir-5.1.0.tgz}
     engines: {node: '>=12'}
 
+  xml-formatter@3.7.0:
+    resolution: {integrity: sha1-rG+MAuI4h1llLp0MiktbPfwGlOU=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xml-formatter/-/xml-formatter-3.7.0.tgz}
+    engines: {node: '>= 16'}
+
   xml-js@1.6.11:
     resolution: {integrity: sha1-kn0vaUf38cGaMW3Y7qNhTosY+Ok=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xml-js/-/xml-js-1.6.11.tgz}
     hasBin: true
@@ -16288,6 +16295,10 @@ packages:
   xml-name-validator@5.0.0:
     resolution: {integrity: sha1-gr6blX96/az5YeWYDxvyJ8C/dnM=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xml-name-validator/-/xml-name-validator-5.0.0.tgz}
     engines: {node: '>=18'}
+
+  xml-parser-xo@4.1.6:
+    resolution: {integrity: sha1-IrstDh9lH5LeBMe3lDOp328UkPI=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xml-parser-xo/-/xml-parser-xo-4.1.6.tgz}
+    engines: {node: '>= 20'}
 
   xml2js@0.5.0:
     resolution: {integrity: sha1-2UQGMfuy7YACA/rRBvJyT2LEk7c=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xml2js/-/xml2js-0.5.0.tgz}
@@ -25456,11 +25467,11 @@ snapshots:
       magicast: 0.3.5
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
+  '@vitest/coverage-v8@2.1.9(vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -25474,7 +25485,7 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -25550,7 +25561,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      vitest: 3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
 
   '@vitest/utils@2.0.5':
     dependencies:
@@ -35330,6 +35341,51 @@ snapshots:
       terser: 5.30.2
       yaml: 2.8.3
 
+  vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4(vitest@3.2.6))(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3):
+    dependencies:
+      '@types/chai': 5.2.3
+      '@vitest/expect': 3.2.6
+      '@vitest/mocker': 3.2.6(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
+      '@vitest/pretty-format': 3.2.7
+      '@vitest/runner': 3.2.6
+      '@vitest/snapshot': 3.2.6
+      '@vitest/spy': 3.2.6
+      '@vitest/utils': 3.2.6
+      chai: 5.3.3
+      debug: 4.4.3(supports-color@8.1.1)
+      expect-type: 1.4.0
+      magic-string: 0.30.21
+      pathe: 2.0.3
+      picomatch: 4.0.5
+      std-env: 3.10.0
+      tinybench: 2.9.0
+      tinyexec: 0.3.2
+      tinyglobby: 0.2.17
+      tinypool: 1.1.1
+      tinyrainbow: 2.0.0
+      vite: 6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      vite-node: 3.2.4(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/debug': 4.1.12
+      '@types/node': 24.7.2
+      '@vitest/ui': 3.2.4(vitest@3.2.6)
+      happy-dom: 20.9.0
+      jsdom: 26.1.0
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+
   vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@24.0.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3):
     dependencies:
       '@types/chai': 5.2.3
@@ -35361,51 +35417,6 @@ snapshots:
       '@vitest/ui': 3.2.4(vitest@3.2.6)
       happy-dom: 20.9.0
       jsdom: 24.0.0
-    transitivePeerDependencies:
-      - jiti
-      - less
-      - lightningcss
-      - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
-  vitest@3.2.6(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(jiti@1.21.0)(jsdom@26.1.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3):
-    dependencies:
-      '@types/chai': 5.2.3
-      '@vitest/expect': 3.2.6
-      '@vitest/mocker': 3.2.6(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3))
-      '@vitest/pretty-format': 3.2.7
-      '@vitest/runner': 3.2.6
-      '@vitest/snapshot': 3.2.6
-      '@vitest/spy': 3.2.6
-      '@vitest/utils': 3.2.6
-      chai: 5.3.3
-      debug: 4.4.3(supports-color@8.1.1)
-      expect-type: 1.4.0
-      magic-string: 0.30.21
-      pathe: 2.0.3
-      picomatch: 4.0.5
-      std-env: 3.10.0
-      tinybench: 2.9.0
-      tinyexec: 0.3.2
-      tinyglobby: 0.2.17
-      tinypool: 1.1.1
-      tinyrainbow: 2.0.0
-      vite: 6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
-      vite-node: 3.2.4(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/debug': 4.1.12
-      '@types/node': 24.7.2
-      '@vitest/ui': 3.2.4(vitest@3.2.6)
-      happy-dom: 20.9.0
-      jsdom: 26.1.0
     transitivePeerDependencies:
       - jiti
       - less
@@ -35823,11 +35834,17 @@ snapshots:
 
   xdg-basedir@5.1.0: {}
 
+  xml-formatter@3.7.0:
+    dependencies:
+      xml-parser-xo: 4.1.6
+
   xml-js@1.6.11:
     dependencies:
       sax: 1.3.0
 
   xml-name-validator@5.0.0: {}
+
+  xml-parser-xo@4.1.6: {}
 
   xml2js@0.5.0:
     dependencies:

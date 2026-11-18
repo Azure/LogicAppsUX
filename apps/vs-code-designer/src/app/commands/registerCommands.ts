@@ -86,8 +86,11 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, openFile);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
-  registerCommand(extensionCommand.createProject, createProject);
-  registerCommand(extensionCommand.createWorkspace, createWorkspace);
+  registerCommand(extensionCommand.createProject, (context: IActionContext) => createProject(context));
+  registerCommand(extensionCommand.createMapperProject, (context: IActionContext) => createProject(context, 'dataMap'));
+  registerCommand(extensionCommand.createCustomCodeProject, (context: IActionContext) => createProject(context, 'customCode'));
+  registerCommand(extensionCommand.createLogicAppProject, (context: IActionContext) => createProject(context, 'logicApp'));
+  registerCommand(extensionCommand.createWorkspace, (context: IActionContext) => createWorkspace(context));
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
   registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);

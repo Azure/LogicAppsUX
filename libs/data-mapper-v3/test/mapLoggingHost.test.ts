@@ -9,14 +9,14 @@ import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
 // ESM namespace exports can't be spied on, so the two fs functions the provider writes/reads are wrapped here and default to the real ones.
 vi.mock('fs', async () => {
-  const actual = await vi.importActual<typeof import('fs')>('fs');
+  const actual = await vi.importActual<typeof fs>('fs');
   return { ...actual, default: actual, writeFileSync: vi.fn(actual.writeFileSync), readFileSync: vi.fn(actual.readFileSync) };
 });
 vi.mock('../src/worker/compilerWorkerClient', () => ({
   CompilerWorkerClient: vi.fn(() => ({ compileMap: vi.fn(), testMap: vi.fn() })),
 }));
 vi.mock('vscode', async () => {
-  const base = await vi.importActual<typeof import('vscode')>('vscode');
+  const base = await vi.importActual<typeof vscode>('vscode');
   return {
     ...base,
     ViewColumn: { Beside: 2 },
@@ -127,6 +127,25 @@ describe('map compilation and Test Map logging', () => {
     expect(outputChannel.warn).toHaveBeenCalledTimes(warnings.length + (success ? 1 : 0));
     expect(logs()).not.toContain('private-error');
     expect(host.postMessage).toHaveBeenLastCalledWith({ type: 'compileResult', data: result });
+  });
+
+  test('forwards grid transform-engine options to Test Map', async () => {
+    const host = await setup();
+    host.map.options.xsltEngine = '.Net Framework';
+    host.map.options.useXslTransform = 'Yes';
+    host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt: '<stylesheet/>' });
+    host.worker.testMap.mockResolvedValue({ outputXml: '<Root/>', diagnostics: [] });
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue('<stylesheet/>');
+
+    await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });
+
+    expect(host.worker.testMap).toHaveBeenCalledWith(
+      expect.objectContaining({
+        xsltEngine: '.Net Framework',
+        useXslTransform: 'Yes',
+      })
+    );
   });
 
   test('logs transformation, saves and completion without XML or XSLT contents', async () => {

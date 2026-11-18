@@ -1,4 +1,4 @@
-import { Button, FluentProvider, Input, makeStyles } from '@fluentui/react-components';
+import { Button, Input, makeStyles } from '@fluentui/react-components';
 import {
   ChevronDoubleLeft20Regular,
   ChevronDoubleRight20Regular,
@@ -9,7 +9,7 @@ import {
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useMemo, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
 import { getFunctoidDisplayName } from './functoidDisplayName';
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     letterSpacing: '0.5px',
     color: 'var(--vscode-sideBarSectionHeader-foreground)',
     backgroundColor: 'var(--vscode-sideBarSectionHeader-background)',
-    borderBottom: '1px solid var(--vscode-panel-border, #333)',
+    borderBottom: '1px solid var(--vscode-panel-border, transparent)',
   },
   collapsedStrip: {
     display: 'flex',
@@ -45,7 +45,7 @@ const useStyles = makeStyles({
     fontSize: '14px',
     fontWeight: 600,
     color: 'var(--vscode-foreground)',
-    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, #2a2d2e)' },
+    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, transparent)' },
     '& .fui-Button__content': {
       display: 'flex',
       flex: 1,
@@ -70,7 +70,7 @@ const useStyles = makeStyles({
     borderRadius: '3px',
     textAlign: 'left',
     ':active': { cursor: 'grabbing' },
-    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, #2a2d2e)' },
+    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, transparent)' },
   },
   itemContent: {
     display: 'flex',
@@ -106,22 +106,29 @@ export interface FunctoidPaletteItem {
 interface FunctoidPaletteViewProps {
   functoids: FunctoidPaletteItem[];
   collapsed: boolean;
+  tutorialMode: boolean;
   onSelect(functoid: FunctoidPaletteItem): void;
   onCollapsedChange(collapsed: boolean): void;
 }
 
-function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange }: FunctoidPaletteViewProps): React.ReactElement {
+function FunctoidPaletteView({
+  functoids,
+  collapsed,
+  tutorialMode,
+  onSelect,
+  onCollapsedChange,
+}: FunctoidPaletteViewProps): React.ReactElement {
   const styles = useStyles();
   const [expandedCategories, setExpandedCategories] = useState(() => new Set(['String', 'Math', 'Logical']));
   const [searchTerm, setSearchTerm] = useState('');
   const groups = useMemo(() => {
     const grouped = new Map<string, FunctoidPaletteItem[]>();
     for (const functoid of functoids) {
-      const category = functoid.category || 'Custom';
+      const category = tutorialMode && functoid.id === 103 ? 'String' : functoid.category || 'Custom';
       grouped.set(category, [...(grouped.get(category) || []), functoid]);
     }
     return grouped;
-  }, [functoids]);
+  }, [functoids, tutorialMode]);
 
   const toggleCategory = (category: string): void => {
     setExpandedCategories((current) => {
@@ -135,9 +142,9 @@ function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange
     });
   };
 
-  if (collapsed) {
+  if (collapsed && !tutorialMode) {
     return (
-      <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+      <FluentProvider style={{ display: 'contents' }}>
         <div className={styles.collapsedStrip}>
           <Button
             appearance="subtle"
@@ -153,7 +160,7 @@ function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange
   }
 
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div className={styles.header}>
         <span>Functoids</span>
         <Button
@@ -174,12 +181,16 @@ function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange
         onChange={(_event, data) => setSearchTerm(data.value)}
       />
       {Array.from(groups, ([category, items]) => {
-        const filteredItems = searchTerm ? items.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase())) : items;
+        const filteredItems = tutorialMode
+          ? items.filter((item) => item.id === 103)
+          : searchTerm
+            ? items.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            : items;
         if (filteredItems.length === 0) {
           return null;
         }
 
-        const isExpanded = expandedCategories.has(category) || searchTerm.length > 0;
+        const isExpanded = tutorialMode || expandedCategories.has(category) || searchTerm.length > 0;
         const brand = getFunctoidBrand(category);
         return (
           <div className="palette-category" key={category}>
@@ -200,8 +211,9 @@ function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange
                     <Button
                       appearance="transparent"
                       className={`palette-item ${styles.item}`}
+                      data-mapper-tutorial={item.id === 103 ? 'lowercase' : undefined}
                       title={item.tooltip || item.description || ''}
-                      draggable
+                      draggable={!tutorialMode}
                       key={item.id}
                       onClick={() => onSelect(item)}
                       onDragStart={(event) => {
@@ -232,6 +244,14 @@ export class FunctoidPalette extends HTMLElement {
   private onSelect: (functoid: FunctoidPaletteItem) => void = () => {};
   private renderVersion = 0;
   private collapsed = false;
+  private tutorialMode = false;
+
+  public setTutorialMode(active: boolean): void {
+    if (this.tutorialMode !== active) {
+      this.tutorialMode = active;
+      this.renderReact();
+    }
+  }
 
   public configure(functoids: FunctoidPaletteItem[], onSelect: (functoid: FunctoidPaletteItem) => void): void {
     this.functoids = functoids;
@@ -254,12 +274,13 @@ export class FunctoidPalette extends HTMLElement {
       return;
     }
     this.reactRoot ??= createRoot(this);
-    this.toggleAttribute('collapsed', this.collapsed);
+    this.toggleAttribute('collapsed', this.collapsed && !this.tutorialMode);
     this.reactRoot.render(
       <FunctoidPaletteView
         key={this.renderVersion}
         functoids={this.functoids}
         collapsed={this.collapsed}
+        tutorialMode={this.tutorialMode}
         onSelect={this.onSelect}
         onCollapsedChange={(collapsed) => {
           this.collapsed = collapsed;

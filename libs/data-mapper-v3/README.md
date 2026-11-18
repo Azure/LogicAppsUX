@@ -80,6 +80,42 @@ code --install-extension biztalk-data-mapper-1.0.0.vsix
 6. **Compile**: Click the "Compile" button to generate XSLT
 7. **Test**: Click "Test" and select an input XML file
 
+### Grid Properties
+
+Right-click the mapping canvas and choose **Properties** in its separate menu
+section. The dialog exposes the legacy Grid Properties categories:
+
+- **General**: namespace handling, enabled script types and their precedence,
+  and read-only source/target schema locations.
+- **Custom Header**: encoding, output method/version, processing instructions,
+  standalone, doctype public/system, CDATA elements, indentation, media type,
+  and XML declaration omission.
+- **Compiler**: custom XSLT and extension XML paths, transform engine, and
+  Use XSL Transform.
+
+Apply saves one undoable map edit; Cancel discards changes. Settings persist in
+the BTM file, and generated XSLT includes the selected output header attributes.
+Script precedence changes take effect on the next compilation without reopening
+the map. Custom XSLT supplies its own output declaration.
+
+An unset engine preserves automatic processor selection. **.Net Framework**
+uses the native .NET host; **Use XSL Transform = Yes** selects the legacy
+`XslTransform` processor for XSLT 1.0. Imported custom engine names are preserved,
+but Test Map reports an unsupported-engine error rather than executing them or
+silently switching processors. The legacy processor cannot execute XSLT 2.0.
+
+### Schema Node Properties
+
+Double-click a source or target node to inspect its schema properties. The
+dialog includes declared types, wildcard namespace/processing rules, and
+substitution groups when available. Namespace **(none)** identifies unqualified
+nodes; default/fixed value **(empty)** distinguishes an explicit empty value
+from an absent schema default.
+
+Source test values and target constants remain visible when editing is blocked,
+with disabled controls and the reason shown. Leaf elements and attributes can
+still be edited normally, including intentionally empty values.
+
 ### Replace a source or target schema
 
 Right-click anywhere in the source or target schema pane and choose **Replace

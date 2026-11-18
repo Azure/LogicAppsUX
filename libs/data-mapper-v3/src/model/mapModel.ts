@@ -43,6 +43,14 @@ export interface MapOptions {
   outputMethod: 'xml' | 'html' | 'text';
   copyProcessingInstructions?: boolean;
   generateDebuggingInformation?: boolean;
+  standalone?: 'yes' | 'no';
+  doctypePublic?: string;
+  doctypeSystem?: string;
+  cdataSectionElements?: string;
+  indent?: 'yes' | 'no';
+  mediaType?: string;
+  xsltEngine?: string;
+  useXslTransform?: 'Undefined' | 'Yes' | 'No';
 }
 
 export interface MapPage {

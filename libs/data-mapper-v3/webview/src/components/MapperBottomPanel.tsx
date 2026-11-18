@@ -1,8 +1,19 @@
-import { Button, FluentProvider, makeStyles, mergeClasses } from '@fluentui/react-components';
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  makeStyles,
+  mergeClasses,
+} from '@fluentui/react-components';
+import { ArrowUpload16Regular, DocumentAdd16Regular } from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 const editorFont = 'var(--vscode-editor-font-family, Consolas, "Courier New", monospace)';
 
@@ -10,8 +21,8 @@ const useStyles = makeStyles({
   panel: {
     display: 'flex',
     flexDirection: 'column',
-    borderTop: '1px solid var(--vscode-panel-border, #444)',
-    backgroundColor: 'var(--vscode-editor-background, #1e1e1e)',
+    borderTop: '1px solid var(--vscode-panel-border, transparent)',
+    backgroundColor: 'var(--vscode-editor-background)',
     minHeight: '36px',
     maxHeight: '350px',
     transition: 'max-height 0.2s ease',
@@ -23,15 +34,15 @@ const useStyles = makeStyles({
     alignItems: 'center',
     flexWrap: 'wrap',
     padding: '4px 8px',
-    backgroundColor: 'var(--vscode-sideBar-background, #252526)',
-    borderBottom: '1px solid var(--vscode-panel-border, #444)',
+    backgroundColor: 'var(--vscode-sideBar-background, var(--vscode-editor-background))',
+    borderBottom: '1px solid var(--vscode-panel-border, transparent)',
     flexShrink: 0,
   },
   tabs: { display: 'flex', gap: '2px' },
   tab: {
     backgroundColor: 'transparent',
     border: 'none',
-    color: 'var(--vscode-foreground, #ccc)',
+    color: 'var(--vscode-foreground)',
     padding: '4px 12px',
     cursor: 'pointer',
     fontSize: '12px',
@@ -39,7 +50,7 @@ const useStyles = makeStyles({
     opacity: 0.7,
     ':hover': { opacity: 1 },
   },
-  tabActive: { opacity: 1, borderBottomColor: 'var(--vscode-focusBorder, #007fd4)', color: 'var(--vscode-foreground, #fff)' },
+  tabActive: { opacity: 1, borderBottomColor: 'var(--vscode-focusBorder)', color: 'var(--vscode-foreground)' },
   actions: { display: 'flex', gap: '4px', alignItems: 'center' },
   body: { flex: 1, overflow: 'hidden', minHeight: 0 },
   content: { display: 'none', height: '100%' },
@@ -47,8 +58,8 @@ const useStyles = makeStyles({
   editor: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'var(--vscode-editor-background, #1e1e1e)',
-    color: 'var(--vscode-editor-foreground, #d4d4d4)',
+    backgroundColor: 'var(--vscode-editor-background)',
+    color: 'var(--vscode-editor-foreground, var(--vscode-foreground))',
     border: 'none',
     padding: '8px 12px',
     fontFamily: editorFont,
@@ -63,8 +74,8 @@ const useStyles = makeStyles({
   output: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'var(--vscode-editor-background, #1e1e1e)',
-    color: 'var(--vscode-editor-foreground, #d4d4d4)',
+    backgroundColor: 'var(--vscode-editor-background)',
+    color: 'var(--vscode-editor-foreground, var(--vscode-foreground))',
     border: 'none',
     padding: '8px 12px',
     margin: 0,
@@ -74,14 +85,16 @@ const useStyles = makeStyles({
     whiteSpace: 'pre-wrap',
     overflow: 'auto',
   },
-  outputError: { color: 'var(--vscode-errorForeground, #f48771)' },
+  outputError: { color: 'var(--vscode-errorForeground, var(--vscode-foreground))' },
 });
 
 export type BottomPanelTab = 'instance' | 'output';
 
 export interface BottomPanelCallbacks {
+  onUploadInput(): void;
   onGenerateInstance(): void;
   onRunTest(): void;
+  onInputChange?(value: string): void;
   onViewStateChange?(tab: BottomPanelTab, collapsed: boolean): void;
 }
 
@@ -101,7 +114,7 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
   const styles = useStyles();
   const { hasMap, activeTab, collapsed, inputXml, output, outputError } = props;
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+    <FluentProvider style={{ display: 'contents' }}>
       <div
         className={collapsed ? `bottom-panel collapsed ${mergeClasses(styles.panel, styles.collapsed)}` : `bottom-panel ${styles.panel}`}
       >
@@ -109,6 +122,7 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
           <div className={styles.tabs}>
             <button
               type="button"
+              data-mapper-tutorial="input-tab"
               className={mergeClasses(styles.tab, activeTab === 'instance' && styles.tabActive)}
               onClick={() => props.onTabChange('instance')}
             >
@@ -116,6 +130,7 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
             </button>
             <button
               type="button"
+              data-mapper-tutorial="output-tab"
               className={mergeClasses(styles.tab, activeTab === 'output' && styles.tabActive)}
               onClick={() => props.onTabChange('output')}
             >
@@ -123,9 +138,23 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
             </button>
           </div>
           <div className={styles.actions}>
-            <Button size="small" disabled={!hasMap} onClick={props.onGenerateInstance}>
-              Generate Instance
-            </Button>
+            <Menu positioning="above-end">
+              <MenuTrigger disableButtonEnhancement>
+                <MenuButton id="mapper-test-input" size="small" disabled={!hasMap}>
+                  Test Input
+                </MenuButton>
+              </MenuTrigger>
+              <MenuPopover data-mapper-tutorial="test-input-menu">
+                <MenuList>
+                  <MenuItem icon={<ArrowUpload16Regular />} onClick={props.onUploadInput}>
+                    Upload input file
+                  </MenuItem>
+                  <MenuItem icon={<DocumentAdd16Regular />} onClick={props.onGenerateInstance}>
+                    Generate instance
+                  </MenuItem>
+                </MenuList>
+              </MenuPopover>
+            </Menu>
             <Button size="small" appearance="primary" disabled={!hasMap} onClick={props.onRunTest}>
               ▶ Test Map
             </Button>
@@ -137,9 +166,10 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
         <div className={styles.body}>
           <div className={mergeClasses(styles.content, activeTab === 'instance' && styles.contentActive)}>
             <textarea
+              data-mapper-tutorial="input-xml"
               className={styles.editor}
               spellCheck={false}
-              placeholder="Paste source XML here or click 'Generate Instance' to auto-generate, then click 'Test Map'..."
+              placeholder="Source XML"
               defaultValue={inputXml}
               onChange={(event) => props.onInputChange(event.target.value)}
             />
@@ -222,6 +252,7 @@ export class MapperBottomPanel extends HTMLElement {
         inputXml={this.inputXml}
         output={this.output}
         outputError={this.outputError}
+        onUploadInput={this.callbacks.onUploadInput}
         onGenerateInstance={this.callbacks.onGenerateInstance}
         onRunTest={this.callbacks.onRunTest}
         onTabChange={(tab) => {
@@ -237,6 +268,7 @@ export class MapperBottomPanel extends HTMLElement {
         }}
         onInputChange={(value) => {
           this.inputXml = value;
+          this.callbacks?.onInputChange?.(value);
         }}
       />
     );

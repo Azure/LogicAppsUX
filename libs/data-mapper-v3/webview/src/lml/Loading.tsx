@@ -1,5 +1,5 @@
-import { FluentProvider, makeStyles, Spinner } from '@fluentui/react-components';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { makeStyles, Spinner } from '@fluentui/react-components';
+import { VsCodeFluentProvider as FluentProvider } from '../fluentTheme';
 
 const useStyles = makeStyles({
   root: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 export const Loading = () => {
   const styles = useStyles();
   return (
-    <FluentProvider theme={getVsCodeFluentTheme()} className={styles.root}>
+    <FluentProvider className={styles.root}>
       <Spinner size="large" label="Loading schemas and functions.." labelPosition="below" />
     </FluentProvider>
   );

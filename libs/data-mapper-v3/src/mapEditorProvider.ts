@@ -41,6 +41,8 @@ import { errorCategory, getDataMapperLogger } from './logger';
 import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
 import { copySchemaWithDependencies, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
 import { validateTestMapOutput } from './testMapOutput';
+import { prepareTutorialSchemas } from './tutorialProvisioning';
+import formatXml from 'xml-formatter';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
@@ -145,6 +147,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
     this.logger.info(`Target schema ${targetSchemaTree ? 'loaded' : 'unavailable'}.`);
     let disposed = false;
+    let preparingTutorial = false;
     let schemaRequest = 0;
     const schemaCache = new Map<string, SchemaTree | undefined>();
     if (sourceSchemaTree || !sourceLoad.error) {
@@ -369,6 +372,52 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               initData.data.availableSchemas = availableSchemas;
             }
             webviewPanel.webview.postMessage(initData);
+            break;
+          }
+          case 'openMapperDocumentation': {
+            const documentationUri = vscode.Uri.joinPath(this.context.extension.extensionUri, 'assets', 'readmes', 'btm-data-map.md');
+            await vscode.workspace.fs.stat(documentationUri);
+            await vscode.commands.executeCommand('markdown.showPreviewToSide', documentationUri);
+            break;
+          }
+          case 'startTutorial': {
+            if (preparingTutorial) {
+              throw new Error('Tutorial preparation is already in progress.');
+            }
+            preparingTutorial = true;
+            try {
+              const version = document.version;
+              const assertCurrent = (): void => {
+                if (!vscode.workspace.isTrusted) {
+                  throw new Error('Trust this workspace before preparing the tutorial schemas.');
+                }
+                if (disposed || document.isClosed || document.version !== version) {
+                  throw new Error('The map changed or was closed during tutorial preparation. Try again with an empty map.');
+                }
+              };
+              assertCurrent();
+              const currentMap = this.btmSerializer.deserialize(document.getText());
+              const hasSchema = (reference: MapDocument['sourceSchema']): boolean =>
+                Boolean(reference.location || reference.rootName || reference.namespace || reference.inlineSchemaXml);
+              if (
+                hasSchema(currentMap.sourceSchema) ||
+                hasSchema(currentMap.targetSchema) ||
+                currentMap.pages.some((page) => page.functoids.length > 0 || page.links.length > 0) ||
+                Object.keys(currentMap.targetValues ?? {}).length > 0 ||
+                Object.keys(currentMap.testValues ?? {}).length > 0 ||
+                currentMap.customXsltPath ||
+                currentMap.customExtensionXmlPath ||
+                currentMap.customXslt ||
+                currentMap.customExtensionXml
+              ) {
+                throw new Error('Start the tutorial from an empty map with no schemas, functoids, links, or custom mappings.');
+              }
+              const data = await prepareTutorialSchemas(document.uri, assertCurrent);
+              assertCurrent();
+              await webviewPanel.webview.postMessage({ type: 'tutorialPrepared', data } satisfies HostToWebviewMessage);
+            } finally {
+              preparingTutorial = false;
+            }
             break;
           }
           case 'browseCopilotContext': {
@@ -601,6 +650,31 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             }
             break;
           }
+          case 'uploadTestInput': {
+            try {
+              const inputFiles = await vscode.window.showOpenDialog({
+                defaultUri: this.getBrowseDefaultUri(document.uri),
+                canSelectFiles: true,
+                canSelectFolders: false,
+                canSelectMany: false,
+                filters: { 'XML Files': ['xml'] },
+                title: 'Select Test Input XML',
+              });
+              if (!inputFiles?.length) {
+                break;
+              }
+              const inputDocument = await vscode.workspace.openTextDocument(inputFiles[0]);
+              await this.rememberBrowseSelection(inputFiles[0]);
+              webviewPanel.webview.postMessage({
+                type: 'testInputLoaded',
+                data: { xml: inputDocument.getText() },
+              });
+            } catch (error) {
+              this.logger.error(`${operation}: input upload failed (${errorCategory(error)}).`);
+              vscode.window.showErrorMessage(`Failed to load input XML: ${error instanceof Error ? error.message : String(error)}`);
+            }
+            break;
+          }
           case 'generateInstance': {
             const side = message.side || 'source';
             let schemaTree = side === 'source' ? sourceSchemaTree : targetSchemaTree;
@@ -743,13 +817,16 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 inputXml,
                 btmDir,
                 fs.existsSync(extensionObjectPath) ? extensionObjectPath : undefined,
-                message.data.map.customXsltPath ? path.resolve(btmDir, message.data.map.customXsltPath) : undefined
+                message.data.map.customXsltPath ? path.resolve(btmDir, message.data.map.customXsltPath) : undefined,
+                message.data.map.options
               );
               if (dotnetResult.success) {
                 outputXml = dotnetResult.output;
                 testMessages.push('✓ Transform completed (.NET XslCompiledTransform)');
               } else {
                 const requiresClrRuntime =
+                  !!message.data.map.options.xsltEngine ||
+                  message.data.map.options.useXslTransform === 'Yes' ||
                   compileResult.xslt.includes('urn:schemas-microsoft-com:xslt') ||
                   !!compileResult.extensionObjectXml?.includes('<ExtensionObject ');
                 if (requiresClrRuntime) {
@@ -784,7 +861,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               try {
                 const outputMethod = validateTestMapOutput(compileResult.xslt, outputXml);
                 if (outputMethod === 'xml') {
-                  outputXml = this.normalizeXmlForUtf8(outputXml);
+                  outputXml = formatXml(this.normalizeXmlForUtf8(outputXml), {
+                    indentation: '  ',
+                    collapseContent: true,
+                    lineSeparator: '\n',
+                    throwOnFailure: false,
+                  });
                 }
                 this.logger.info(`${operation}: ${outputMethod} output validation completed.`);
                 testMessages.push(
@@ -800,13 +882,37 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               }
 
               // Step 5: Save output.xml
-              fs.writeFileSync(outputPath, outputXml, 'utf-8');
+              const outputUri = vscode.Uri.file(outputPath);
+              const outputDocument = vscode.workspace.textDocuments.find((candidate) => candidate.uri.toString() === outputUri.toString());
+              if (outputDocument) {
+                if (outputDocument.isDirty) {
+                  throw new Error('The output file has unsaved changes. Save or discard them before running Test Map again.');
+                }
+                if (outputDocument.getText() !== outputXml) {
+                  const edit = new vscode.WorkspaceEdit();
+                  edit.replace(outputUri, new vscode.Range(0, 0, outputDocument.lineCount, 0), outputXml);
+                  if (!(await vscode.workspace.applyEdit(edit))) {
+                    throw new Error('VS Code could not refresh the Test Map output.');
+                  }
+                  if (!(await outputDocument.save())) {
+                    throw new Error('VS Code could not save the refreshed Test Map output.');
+                  }
+                }
+              } else {
+                fs.writeFileSync(outputPath, outputXml, 'utf-8');
+              }
               this.logger.info(`${operation}: output saved (${Buffer.byteLength(outputXml)} bytes); Test Map succeeded.`);
               testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
 
               // Open the output file in VS Code
-              const outputUri = vscode.Uri.file(outputPath);
-              await vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
+              const outputGroup = vscode.window.tabGroups.all.find((group) =>
+                group.tabs.some((tab) => tab.input instanceof vscode.TabInputText && tab.input.uri.toString() === outputUri.toString())
+              );
+              await vscode.window.showTextDocument(outputUri, {
+                viewColumn: outputGroup?.viewColumn ?? vscode.ViewColumn.Beside,
+                preserveFocus: true,
+                preview: false,
+              });
 
               const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${outputXml}`;
               webviewPanel.webview.postMessage({
@@ -1090,6 +1196,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       } catch (error) {
         this.logger.error(`${operation} failed (${errorCategory(error)}); details shown in the editor.`);
         const detail = error instanceof Error ? error.message : String(error);
+        if (message.type === 'startTutorial') {
+          await webviewPanel.webview.postMessage({
+            type: 'tutorialPreparationFailed',
+            data: { message: detail },
+          } satisfies HostToWebviewMessage);
+          return;
+        }
         vscode.window.showErrorMessage(`Data Mapper ${message.type} failed: ${detail}`);
         if (message.type === 'testMapWithInput') {
           await webviewPanel.webview.postMessage({ type: 'testMapResult', data: { output: '', error: detail } });
@@ -1303,7 +1416,8 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     inputXml: string,
     btmDir: string,
     extensionObjectPath?: string,
-    stylesheetPath?: string
+    stylesheetPath?: string,
+    options?: MapDocument['options']
   ): Promise<{ success: boolean; output?: string; error?: string }> {
     const started = Date.now();
     this.logger.info('Test Map: starting .NET worker transformation.');
@@ -1315,6 +1429,8 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           extensionObjectPath && fs.existsSync(extensionObjectPath) ? fs.readFileSync(extensionObjectPath, 'utf-8') : undefined,
         workingDirectory: btmDir,
         stylesheetPath,
+        xsltEngine: options?.xsltEngine,
+        useXslTransform: options?.useXslTransform,
       });
       this.logger.info(
         `Test Map: .NET transformation completed in ${Date.now() - started}ms; ${result.diagnostics.length} diagnostics; output=${Buffer.byteLength(result.outputXml)} bytes.`
