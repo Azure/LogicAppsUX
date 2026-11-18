@@ -25,13 +25,7 @@ import {
   deriveCustomCodeDotNetLayout,
   parseCustomCodeDotNetTargets,
 } from './customCodeDotNetVersionShared';
-import { languageServerSdkDirectoryName } from '../../constants';
-import {
-  lspAssetsManifestFileName,
-  lspSdkRevisionMarkerName,
-  lspServerDirectoryName,
-  lspServerRevisionMarkerName,
-} from '../../app/utils/languageServerAssetConstants';
+import { lspServerDirectoryName, lspServerRevisionMarkerName } from '../../app/utils/languageServerAssetConstants';
 
 type ExtensionBundleState = { version: string; bundleDir: string; markerPath: string };
 type InstallResult = { dep: string; success: boolean };
@@ -160,20 +154,16 @@ const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
 /**
  * LSP-related artifact names that must be removed when preparing an isolated
  * dependency root for the EPERM repro test. This forces the extension to
- * re-extract the LSP server/SDK during the test.
+ * re-extract the LSP server during the test.
  *
  * Source of truth: languageServerInstaller.ts and constants.ts
  */
 const LSP_STALE_ARTIFACT_NAMES = [
   lspServerDirectoryName,
   lspServerRevisionMarkerName,
-  languageServerSdkDirectoryName,
-  lspSdkRevisionMarkerName,
   '.lspserver-hash',
-  '.lspsdk-hash',
   '.lspserver-version',
   '.lspserver-path',
-  '.lspsdk-version',
 ];
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
@@ -1378,7 +1368,7 @@ async function main(): Promise<void> {
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
   const phase0Files = [testFile('nonLogicAppStartup.test.js')];
-  const lspEpermFiles = [testFile('lspSdkExtractionEperm.test.js')];
+  const lspEpermFiles = [testFile('lspServerExtractionEperm.test.js')];
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
@@ -2048,7 +2038,6 @@ async function main(): Promise<void> {
   const patchGeneratedCodefulProjectForDebugGuard = (entry: CodefulWorkspaceEntry, variant: string): void => {
     const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
     const programFile = path.join(entry.appDir, 'Program.cs');
-    const nugetConfigFile = path.join(entry.appDir, 'nuget.config');
 
     for (const requiredPath of [workflowFile, programFile]) {
       if (!fs.existsSync(requiredPath)) {
@@ -2114,32 +2103,6 @@ namespace ${namespaceName}
     }
     fs.writeFileSync(programFile, patchedProgram, 'utf8');
 
-    const { depsRoot } = getRuntimeDependencyPaths();
-    const languageServerSdkDirectoryPath = path.join(depsRoot, languageServerSdkDirectoryName);
-    const lspAssetDirectory = path.join(projectDir, 'src', 'assets', 'LSPServer');
-    const lspAssetManifest = JSON.parse(fs.readFileSync(path.join(lspAssetDirectory, lspAssetsManifestFileName), 'utf8')) as {
-      sdkPackage: string;
-    };
-    const sdkPackageSource = path.join(lspAssetDirectory, lspAssetManifest.sdkPackage);
-    const sdkPackageDestination = path.join(languageServerSdkDirectoryPath, path.basename(sdkPackageSource));
-    if (!fs.existsSync(sdkPackageSource)) {
-      throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);
-    }
-    fs.mkdirSync(languageServerSdkDirectoryPath, { recursive: true });
-    fs.copyFileSync(sdkPackageSource, sdkPackageDestination);
-
-    if (fs.existsSync(nugetConfigFile)) {
-      const originalNugetConfig = fs.readFileSync(nugetConfigFile, 'utf8');
-      const patchedNugetConfig = originalNugetConfig.replace(
-        /(<add\s+key=["']current["']\s+value=)(["']).*?\2(\s*\/>)/,
-        `$1"${languageServerSdkDirectoryPath}"$3`
-      );
-      if (patchedNugetConfig === originalNugetConfig && !originalNugetConfig.includes(languageServerSdkDirectoryPath)) {
-        throw new Error(`Could not update current package source in ${nugetConfigFile}`);
-      }
-      fs.writeFileSync(nugetConfigFile, patchedNugetConfig, 'utf8');
-    }
-
     for (const connectionArtifact of ['connections.json', 'parameters.json']) {
       const artifactPath = path.join(entry.appDir, connectionArtifact);
       if (fs.existsSync(artifactPath)) {
@@ -2149,7 +2112,6 @@ namespace ${namespaceName}
     }
 
     console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
-    console.log(`  Seeded ${variant} codeful SDK package source: ${sdkPackageDestination}`);
   };
 
   const removeDesignTimeEvidence = async (entry: CodefulWorkspaceEntry, variant: string): Promise<void> => {

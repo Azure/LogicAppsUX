@@ -1,11 +1,9 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
-  assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
   extensionCommand,
-  languageServerSdkDirectoryName,
   onStartLanguageClient,
   workflowAppApiVersion,
 } from '../../constants';
@@ -24,7 +22,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
-import { readLspAssetsManifest } from '../utils/languageServerAssets';
+import { resolveSdkFromProject, restoreSdkForProject } from '../utils/sdkResolution';
 
 const trustedHoverCommands = [extensionCommand.sdkLspApplyEdits];
 
@@ -62,8 +60,36 @@ export default class LogicAppsLanguageClientManager {
     }
 
     if (!this.sdkNupkgPath) {
-      window.showWarningMessage('Install or repair Logic Apps language server SDK dependencies before starting C# workflow authoring.');
-      return;
+      const restoreAction = localize('restoreSdkAndRetry', 'Restore SDK and retry');
+      const selection = await window.showWarningMessage(
+        localize('restoreSdkBeforeAuthoring', 'Restore the Logic App project SDK package before starting C# workflow authoring.'),
+        restoreAction
+      );
+      if (selection !== restoreAction) {
+        return;
+      }
+
+      try {
+        await restoreSdkForProject(this.projectPath);
+        this.sdkNupkgPath = (await resolveSdkFromProject(this.projectPath))?.sdkNupkgPath;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        ext.outputChannel.appendLog(localize('restoreSdkFailed', '[SDK Resolution] Failed to restore project SDK: {0}', errorMessage));
+        window.showErrorMessage(
+          localize('restoreSdkFailedUser', 'Failed to restore the Logic App project SDK. Check the output window for details.')
+        );
+        return;
+      }
+
+      if (!this.sdkNupkgPath) {
+        window.showErrorMessage(
+          localize(
+            'resolveSdkAfterRestoreFailed',
+            'The Logic App project SDK could not be resolved after restore. Check the output window for details.'
+          )
+        );
+        return;
+      }
     }
 
     const projectMetadata = await this.getProjectMetadata();
@@ -198,17 +224,7 @@ export default class LogicAppsLanguageClientManager {
       }
     }
 
-    const sdkDirectoryPath = path.join(dependenciesPath, languageServerSdkDirectoryName);
-    if (!(await fse.pathExists(sdkDirectoryPath))) {
-      return { lspServerPath, sdkNupkgPath: undefined };
-    }
-
-    const assetDirectory = path.join(__dirname, assetsFolderName, 'LSPServer');
-    const assetManifest = await readLspAssetsManifest(assetDirectory);
-    const sdkNupkgPath = path.join(sdkDirectoryPath, assetManifest.sdkPackage);
-    if (!(await fse.pathExists(sdkNupkgPath))) {
-      return { lspServerPath, sdkNupkgPath: undefined };
-    }
+    const sdkNupkgPath = this.projectPath ? (await resolveSdkFromProject(this.projectPath))?.sdkNupkgPath : undefined;
 
     return { lspServerPath, sdkNupkgPath };
   }
