@@ -12,15 +12,18 @@ const schema = {
   rootElement: {
     name: 'Root',
     path: '/Root',
+    type: 'element',
     children: [
       {
         name: 'Value',
         path: '/Root/Value',
+        type: 'element',
         dataType: 'xs:string',
         children: [
           {
             name: 'Inner',
             path: '/Root/Value/Inner',
+            type: 'element',
             dataType: 'xs:string',
             children: [],
             attributes: [

@@ -29,6 +29,7 @@ export type FuncInstance = {
   isStarting?: boolean;
   startupError?: string;
   startupPromise?: Promise<void>;
+  experimentalBundleSource?: string;
 };
 
 // biome-ignore lint/style/noNamespace:

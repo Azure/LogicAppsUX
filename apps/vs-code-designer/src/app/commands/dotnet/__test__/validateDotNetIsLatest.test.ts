@@ -96,11 +96,29 @@ describe('validateDotNetIsLatest', () => {
 
   it('does not throw when majorVersion is undefined (CDN feed unavailable)', async () => {
     vi.mocked(binariesExist).mockResolvedValue(true);
-    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('8.0.318');
-    vi.mocked(getLatestDotNetVersion).mockResolvedValue('8.0.318');
+    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('10.0.403');
+    vi.mocked(getLatestDotNetVersion).mockResolvedValue('10.0.403');
 
     await expect(validateDotNetIsLatest(context, undefined)).resolves.not.toThrow();
-    expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('8');
+    expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('10');
     expect(context.telemetry.properties.dotnetVersionSource).toBe('fallback');
+  });
+
+  it('installs .NET 10 by default when the CDN feed and binaries are unavailable', async () => {
+    vi.mocked(binariesExist).mockResolvedValue(false);
+
+    await validateDotNetIsLatest(context);
+
+    expect(installDotNet).toHaveBeenCalledExactlyOnceWith(context, '10');
+  });
+
+  it('installs the default .NET 10 SDK when only older SDKs are present', async () => {
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue(null);
+
+    await validateDotNetIsLatest(context);
+
+    expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('10');
+    expect(installDotNet).toHaveBeenCalledExactlyOnceWith(context, '10');
   });
 });

@@ -3,9 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 // Drives the real webview bundle (out/webview/webview.js) in Chromium against a mock VS Code host.
 // The global setup rebuilds the bundle when it is missing or older than src/.
 export default defineConfig({
-  testDir: './e2e',
-  globalSetup: './e2e/globalSetup.ts',
-  globalTeardown: './e2e/coverage.ts',
+  testDir: './test/e2etests',
+  globalSetup: './test/e2etests/globalSetup.ts',
+  globalTeardown: './test/e2etests/coverage.ts',
   testMatch: '**/*.spec.ts',
   outputDir: './test-results',
   fullyParallel: true,
