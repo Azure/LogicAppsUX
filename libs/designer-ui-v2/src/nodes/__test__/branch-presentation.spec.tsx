@@ -544,6 +544,31 @@ describe('NodeFrame branch presentation', () => {
     expect(screen.getByText('1 case')).toBeInTheDocument();
   });
 
+  it('prefers counts.actions for countLabel while actionCount keeps the legacy formatter', () => {
+    // Distinct outputs prove precedence; with identical defaults a reversed order would go unnoticed.
+    const both = {
+      ...ui.defaultNodeStrings,
+      frame: {
+        actionCount: (count: number) => `legacy ${count}`,
+        counts: { actions: (count: number) => `unit ${count}` },
+      },
+    };
+    const { rerender } = render(
+      <ui.NodeFrame kind="scope" title="Scope" countLabel={{ count: 2, unit: 'actions' }} strings={both}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('unit 2')).toBeInTheDocument();
+    expect(screen.queryByText('legacy 2')).not.toBeInTheDocument();
+    rerender(
+      <ui.NodeFrame kind="scope" title="Scope" actionCount={2} strings={both}>
+        Body
+      </ui.NodeFrame>
+    );
+    expect(screen.getByText('legacy 2')).toBeInTheDocument();
+    expect(screen.queryByText('unit 2')).not.toBeInTheDocument();
+  });
+
   it('keeps the ref and header slots while rendering countLabel', () => {
     const ref = createRef<HTMLDivElement>();
     render(
