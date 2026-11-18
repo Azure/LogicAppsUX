@@ -109,7 +109,7 @@ function requireExistingSdkPackage(packagePath) {
     throw new Error(`SDK package '${resolvedPath}' does not exist.`);
   }
 
-  if (!path.basename(resolvedPath).match(/^Microsoft\.Azure\.Workflows\.Sdk\..+\.nupkg$/)) {
+  if (!/^Microsoft\.Azure\.Workflows\.Sdk\..+\.nupkg$/i.test(path.basename(resolvedPath))) {
     throw new Error(`SDK package '${resolvedPath}' has an unexpected file name.`);
   }
 

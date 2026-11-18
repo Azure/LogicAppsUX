@@ -15,6 +15,8 @@ const mocks = vi.hoisted(() => ({
   pathExists: vi.fn(),
   readFile: vi.fn(),
   resolveSdkFromProject: vi.fn(),
+  restoreSdkForProject: vi.fn(),
+  showErrorMessage: vi.fn(),
   showWarningMessage: vi.fn(),
   tryGetLogicAppProjectRoot: vi.fn(),
   getDotNetCommand: vi.fn(),
@@ -38,6 +40,7 @@ vi.mock('vscode', () => ({
     ) {}
   },
   window: {
+    showErrorMessage: mocks.showErrorMessage,
     showWarningMessage: mocks.showWarningMessage,
   },
   workspace: {
@@ -75,6 +78,7 @@ vi.mock('../../utils/codeless/common', () => ({}));
 
 vi.mock('../../utils/sdkResolution', () => ({
   resolveSdkFromProject: mocks.resolveSdkFromProject,
+  restoreSdkForProject: mocks.restoreSdkForProject,
 }));
 
 vi.mock('../../commands/azureConnectors/azureConnectorDetails', () => ({
@@ -113,6 +117,7 @@ describe('LogicAppsLanguageClientManager', () => {
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
     mocks.resolveSdkFromProject.mockResolvedValue({ sdkNupkgPath: sdkPackagePath, version: '1.0.0-preview.3' });
+    mocks.restoreSdkForProject.mockResolvedValue(undefined);
     mocks.tryGetLogicAppProjectRoot.mockResolvedValue(projectPath);
     mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
     (ext as any).telemetryString = 'setInGitHubBuild';
@@ -148,8 +153,55 @@ describe('LogicAppsLanguageClientManager', () => {
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
     expect(mocks.languageClient).not.toHaveBeenCalled();
     expect(mocks.showWarningMessage).toHaveBeenCalledWith(
-      'Restore the Logic App project SDK package before starting C# workflow authoring.'
+      'Restore the Logic App project SDK package before starting C# workflow authoring.',
+      'Restore SDK and retry'
     );
+    expect(mocks.restoreSdkForProject).not.toHaveBeenCalled();
+  });
+
+  it('restores the project SDK and retries language client startup when selected', async () => {
+    const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath);
+    mocks.resolveSdkFromProject
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce({ sdkNupkgPath: sdkPackagePath, version: '1.0.0-preview.3' });
+    mocks.showWarningMessage.mockResolvedValue('Restore SDK and retry');
+
+    await new LogicAppsLanguageClientManager({} as any).start();
+
+    expect(mocks.restoreSdkForProject).toHaveBeenCalledWith(projectPath);
+    expect(mocks.resolveSdkFromProject).toHaveBeenCalledTimes(2);
+    expect(languageClient.start).toHaveBeenCalledOnce();
+  });
+
+  it('reports an interactive restore failure without starting the language client', async () => {
+    mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath);
+    mocks.resolveSdkFromProject.mockResolvedValue(undefined);
+    mocks.showWarningMessage.mockResolvedValue('Restore SDK and retry');
+    mocks.restoreSdkForProject.mockRejectedValue(new Error('Private feed authentication failed'));
+
+    await new LogicAppsLanguageClientManager({} as any).start();
+
+    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
+      'Failed to restore the Logic App project SDK. Check the output window for details.'
+    );
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('Private feed authentication failed'));
+    expect(mocks.languageClient).not.toHaveBeenCalled();
+  });
+
+  it('reports when the SDK still cannot be resolved after restore', async () => {
+    mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath);
+    mocks.resolveSdkFromProject.mockResolvedValue(undefined);
+    mocks.showWarningMessage.mockResolvedValue('Restore SDK and retry');
+
+    await new LogicAppsLanguageClientManager({} as any).start();
+
+    expect(mocks.restoreSdkForProject).toHaveBeenCalledWith(projectPath);
+    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
+      'The Logic App project SDK could not be resolved after restore. Check the output window for details.'
+    );
+    expect(mocks.languageClient).not.toHaveBeenCalled();
   });
 
   it('starts the language client when project and language server dependencies are available', async () => {

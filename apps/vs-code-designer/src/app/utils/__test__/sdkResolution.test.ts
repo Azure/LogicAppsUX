@@ -1,21 +1,21 @@
 import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CodefulSdk } from '../../../constants';
-import { resolveSdkFromProject } from '../sdkResolution';
+import { resolveSdkFromProject, restoreSdkForProject } from '../sdkResolution';
 
 const mocks = vi.hoisted(() => ({
   appendLog: vi.fn(),
   executeCommand: vi.fn(),
   getDotNetCommand: vi.fn(),
   pathExists: vi.fn(),
+  readJson: vi.fn(),
   readdir: vi.fn(),
-  readFile: vi.fn(),
 }));
 
 vi.mock('fs-extra', () => ({
   pathExists: mocks.pathExists,
+  readJson: mocks.readJson,
   readdir: mocks.readdir,
-  readFile: mocks.readFile,
 }));
 
 vi.mock('../dotnet/dotnet', () => ({
@@ -33,22 +33,32 @@ vi.mock('../../../extensionVariables', () => ({
 }));
 
 const projectPath = 'D:\\workspace\\MyLogicApp';
-const csprojFileName = 'MyLogicApp.csproj';
+const csprojPath = path.join(projectPath, 'MyLogicApp.csproj');
+const assetsFilePath = path.join(projectPath, 'artifacts', 'obj', 'project.assets.json');
+const packageFolder = 'D:\\shared-packages';
 const sdkVersion = '1.0.0-preview.3';
-const nugetCacheRoot = 'C:\\Users\\user\\.nuget\\packages';
 const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
-const globalNupkgPath = path.join(nugetCacheRoot, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
+const sdkNupkgPath = path.join(packageFolder, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
 
-function makeCsproj(packageReference: string, properties = ''): string {
-  return `<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    ${properties}
-  </PropertyGroup>
-  <ItemGroup>
-    ${packageReference}
-  </ItemGroup>
-</Project>`;
+function packageListReport(versions: string[] = [sdkVersion]): string {
+  return JSON.stringify({
+    version: 1,
+    projects: [
+      {
+        path: csprojPath,
+        frameworks: versions.map((version, index) => ({
+          framework: index === 0 ? 'net8.0' : 'net10.0',
+          topLevelPackages: [
+            {
+              id: CodefulSdk.WorkflowsSDK,
+              requestedVersion: index === 0 ? `[${version}]` : '*',
+              resolvedVersion: version,
+            },
+          ],
+        })),
+      },
+    ],
+  });
 }
 
 function setExistingPaths(paths: string[]): void {
@@ -57,157 +67,135 @@ function setExistingPaths(paths: string[]): void {
 }
 
 describe('resolveSdkFromProject', () => {
-  const originalNugetPackages = process.env.NUGET_PACKAGES;
-
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getDotNetCommand.mockReturnValue('dotnet');
-    mocks.readdir.mockResolvedValue([csprojFileName]);
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="${sdkVersion}" />`)
-    );
-    mocks.executeCommand.mockResolvedValue(`global-packages: ${nugetCacheRoot}\n`);
-    setExistingPaths([nugetCacheRoot, globalNupkgPath]);
+    mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
+    mocks.readdir.mockResolvedValue(['MyLogicApp.csproj']);
+    mocks.readJson.mockResolvedValue({ packageFolders: { [`${packageFolder}\\`]: {} } });
+    mocks.executeCommand.mockImplementation(async (_output, _workingDirectory, _command, ...args: string[]) => {
+      if (args[0] === 'list') {
+        return packageListReport();
+      }
+      if (args[0] === 'msbuild') {
+        return assetsFilePath;
+      }
+      throw new Error(`Unexpected command: ${args.join(' ')}`);
+    });
+    setExistingPaths([assetsFilePath, sdkNupkgPath]);
   });
 
-  afterEach(() => {
-    if (originalNugetPackages === undefined) {
-      delete process.env.NUGET_PACKAGES;
-    } else {
-      process.env.NUGET_PACKAGES = originalNugetPackages;
-    }
-  });
-
-  it('resolves the referenced SDK from the global NuGet cache', async () => {
+  it('resolves the concrete package version and package folder from restored project data', async () => {
     await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: globalNupkgPath,
+      sdkNupkgPath,
       version: sdkVersion,
     });
+    expect(mocks.readJson).toHaveBeenCalledWith(assetsFilePath);
   });
 
-  it('uses the configured dotnet binary to query the package cache', async () => {
-    mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
-
+  it('queries package list without restoring and with project context', async () => {
     await resolveSdkFromProject(projectPath);
 
     expect(mocks.executeCommand).toHaveBeenCalledWith(
       expect.anything(),
-      undefined,
-      'D:\\dependencies\\DotNetSDK\\dotnet.exe',
-      'nuget',
-      'locals',
-      'global-packages',
-      '--list'
-    );
-  });
-
-  it('matches the SDK package ID case-insensitively', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="${CodefulSdk.WorkflowsSDK.toLowerCase()}" Version="${sdkVersion}" />`)
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: globalNupkgPath,
-      version: sdkVersion,
-    });
-  });
-
-  it('reads the version from a child element', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="${CodefulSdk.WorkflowsSDK}"><Version>${sdkVersion}</Version></PackageReference>`)
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: globalNupkgPath,
-      version: sdkVersion,
-    });
-  });
-
-  it('prefers VersionOverride when present', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(
-        `<PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="1.0.0-preview.1" VersionOverride="${sdkVersion}" />`
-      )
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: globalNupkgPath,
-      version: sdkVersion,
-    });
-  });
-
-  it('resolves a version backed by a project property', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(
-        `<PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="$(LogicAppsSdkVersion)" />`,
-        `<LogicAppsSdkVersion>${sdkVersion}</LogicAppsSdkVersion>`
-      )
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: globalNupkgPath,
-      version: sdkVersion,
-    });
-  });
-
-  it('returns undefined when a version property cannot be resolved', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="$(LogicAppsSdkVersion)" />`)
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
-    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('could not be resolved'));
-  });
-
-  it('returns undefined when the project has no SDK reference', async () => {
-    mocks.readFile.mockResolvedValue(makeCsproj('<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />'));
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
-    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('No resolvable'));
-  });
-
-  it('returns undefined for an MSBuild item version reference', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="@(LogicAppsSdkVersion)" />`)
-    );
-
-    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
-  });
-
-  it('falls back to the project-local NuGet cache', async () => {
-    const localNupkgPath = path.join(
       projectPath,
-      '.nuget',
-      'packages',
-      sdkPackageIdLower,
-      sdkVersion,
-      `${sdkPackageIdLower}.${sdkVersion}.nupkg`
+      'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+      'list',
+      csprojPath,
+      'package',
+      '--format',
+      'json',
+      '--output-version',
+      '1',
+      '--no-restore'
     );
-    setExistingPaths([nugetCacheRoot, localNupkgPath]);
+  });
+
+  it('uses the evaluated ProjectAssetsFile path', async () => {
+    await resolveSdkFromProject(projectPath);
+
+    expect(mocks.executeCommand).toHaveBeenCalledWith(
+      expect.anything(),
+      projectPath,
+      'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+      'msbuild',
+      csprojPath,
+      '-getProperty:ProjectAssetsFile',
+      '-nologo'
+    );
+  });
+
+  it('supports custom NuGet package folders from project.assets.json', async () => {
+    const customFolder = 'E:\\nuget-cache';
+    const customNupkgPath = path.join(customFolder, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
+    mocks.readJson.mockResolvedValue({ packageFolders: { [`${customFolder}\\`]: {} } });
+    setExistingPaths([assetsFilePath, customNupkgPath]);
 
     await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: localNupkgPath,
+      sdkNupkgPath: customNupkgPath,
       version: sdkVersion,
     });
   });
 
-  it('falls back to NUGET_PACKAGES when the dotnet query fails', async () => {
-    const fallbackRoot = 'D:\\custom-nuget-cache';
-    const fallbackNupkgPath = path.join(fallbackRoot, sdkPackageIdLower, sdkVersion, `${sdkPackageIdLower}.${sdkVersion}.nupkg`);
-    process.env.NUGET_PACKAGES = fallbackRoot;
-    mocks.executeCommand.mockRejectedValue(new Error('dotnet unavailable'));
-    setExistingPaths([fallbackRoot, fallbackNupkgPath]);
+  it('uses the concrete resolved version for ranges and floating references', async () => {
+    mocks.executeCommand.mockImplementation(async (_output, _workingDirectory, _command, ...args: string[]) => {
+      return args[0] === 'list' ? packageListReport() : assetsFilePath;
+    });
 
     await expect(resolveSdkFromProject(projectPath)).resolves.toEqual({
-      sdkNupkgPath: fallbackNupkgPath,
+      sdkNupkgPath,
       version: sdkVersion,
     });
   });
 
-  it('returns undefined when the referenced package has not been restored', async () => {
-    setExistingPaths([nugetCacheRoot]);
+  it('returns undefined when target frameworks resolve different SDK versions', async () => {
+    mocks.executeCommand.mockImplementation(async (_output, _workingDirectory, _command, ...args: string[]) => {
+      return args[0] === 'list' ? packageListReport([sdkVersion, '1.0.0-preview.4']) : assetsFilePath;
+    });
 
     await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
-    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('dotnet restore'));
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('multiple versions'));
+  });
+
+  it('returns undefined when the project has not been restored', async () => {
+    mocks.executeCommand.mockRejectedValue(new Error('Assets file not found'));
+
+    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('Assets file not found'));
+  });
+
+  it('returns undefined when the evaluated assets file does not exist', async () => {
+    setExistingPaths([]);
+
+    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('Project assets file was not found'));
+  });
+
+  it('returns undefined when the restored package file is missing', async () => {
+    setExistingPaths([assetsFilePath]);
+
+    await expect(resolveSdkFromProject(projectPath)).resolves.toBeUndefined();
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('SDK package was not found'));
+  });
+});
+
+describe('restoreSdkForProject', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.getDotNetCommand.mockReturnValue('dotnet');
+    mocks.readdir.mockResolvedValue(['MyLogicApp.csproj']);
+    mocks.executeCommand.mockResolvedValue('Restore succeeded');
+  });
+
+  it('restores the project interactively from its directory', async () => {
+    await restoreSdkForProject(projectPath);
+
+    expect(mocks.executeCommand).toHaveBeenCalledWith(expect.anything(), projectPath, 'dotnet', 'restore', csprojPath, '--interactive');
+  });
+
+  it('fails when no project file exists', async () => {
+    mocks.readdir.mockResolvedValue([]);
+
+    await expect(restoreSdkForProject(projectPath)).rejects.toThrow('No .csproj file found');
+    expect(mocks.executeCommand).not.toHaveBeenCalled();
   });
 });

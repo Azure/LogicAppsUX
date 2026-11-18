@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import path from 'path';
 import * as fse from 'fs-extra';
-import { parseString } from 'xml2js';
 import { CodefulSdk } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -13,15 +12,29 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 
 const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
 
+interface PackageListReport {
+  projects?: {
+    frameworks?: {
+      topLevelPackages?: {
+        id?: string;
+        resolvedVersion?: string;
+      }[];
+    }[];
+  }[];
+}
+
+interface ProjectAssets {
+  packageFolders?: Record<string, unknown>;
+}
+
 export interface SdkResolutionResult {
   sdkNupkgPath: string;
   version: string;
 }
 
 /**
- * Resolves the Logic Apps SDK package referenced by a codeful project.
- * The project must have been restored so the nupkg exists in either the
- * configured global package cache or its project-local package cache.
+ * Resolves the concrete Logic Apps SDK package selected by the latest NuGet restore.
+ * This does not restore the project or access package feeds.
  */
 export async function resolveSdkFromProject(projectPath: string): Promise<SdkResolutionResult | undefined> {
   try {
@@ -31,41 +44,63 @@ export async function resolveSdkFromProject(projectPath: string): Promise<SdkRes
       return undefined;
     }
 
-    const sdkVersion = await parseSdkVersion(csprojPath);
-    if (!sdkVersion) {
+    const resolvedVersion = await getResolvedSdkVersion(projectPath, csprojPath);
+    if (!resolvedVersion) {
       ext.outputChannel.appendLog(
-        localize('sdkVersionNotFound', '[SDK Resolution] No resolvable "{0}" PackageReference found in "{1}".', CodefulSdk.WorkflowsSDK, csprojPath)
+        localize(
+          'sdkVersionNotFound',
+          '[SDK Resolution] No restored "{0}" PackageReference was found in "{1}".',
+          CodefulSdk.WorkflowsSDK,
+          csprojPath
+        )
       );
       return undefined;
     }
 
-    const globalCacheRoot = await getNuGetGlobalPackagesPath();
-    const globalNupkgPath = globalCacheRoot ? getSdkNupkgPath(globalCacheRoot, sdkVersion) : undefined;
-    if (globalNupkgPath && (await fse.pathExists(globalNupkgPath))) {
-      ext.outputChannel.appendLog(localize('sdkNupkgFound', '[SDK Resolution] Resolved SDK nupkg: "{0}".', globalNupkgPath));
-      return { sdkNupkgPath: globalNupkgPath, version: sdkVersion };
+    const assetsFilePath = await getProjectAssetsFilePath(projectPath, csprojPath);
+    if (!assetsFilePath || !(await fse.pathExists(assetsFilePath))) {
+      ext.outputChannel.appendLog(
+        localize('projectAssetsNotFound', '[SDK Resolution] Project assets file was not found. Restore project "{0}".', csprojPath)
+      );
+      return undefined;
     }
 
-    const localNupkgPath = getSdkNupkgPath(path.join(projectPath, '.nuget', 'packages'), sdkVersion);
-    if (await fse.pathExists(localNupkgPath)) {
-      ext.outputChannel.appendLog(localize('sdkNupkgFoundLocal', '[SDK Resolution] Resolved SDK nupkg from project-local cache: "{0}".', localNupkgPath));
-      return { sdkNupkgPath: localNupkgPath, version: sdkVersion };
+    const assets = (await fse.readJson(assetsFilePath)) as ProjectAssets;
+    const packageFolders = Object.keys(assets.packageFolders ?? {});
+    const sdkNupkgPath = await findSdkNupkg(packageFolders, resolvedVersion);
+    if (sdkNupkgPath) {
+      ext.outputChannel.appendLog(localize('sdkNupkgFound', '[SDK Resolution] Resolved SDK nupkg: "{0}".', sdkNupkgPath));
+      return { sdkNupkgPath, version: resolvedVersion };
     }
 
     ext.outputChannel.appendLog(
       localize(
         'sdkNupkgNotFound',
-        '[SDK Resolution] SDK package was not found for version "{0}". Ensure \'dotnet restore\' has been run on the project.',
-        sdkVersion
+        '[SDK Resolution] SDK package was not found for resolved version "{0}". Restore project "{1}".',
+        resolvedVersion,
+        csprojPath
       )
     );
     return undefined;
   } catch (error) {
     ext.outputChannel.appendLog(
-      localize('sdkResolutionError', '[SDK Resolution] Unexpected error occurred: {0}', error instanceof Error ? error.message : String(error))
+      localize(
+        'sdkResolutionError',
+        '[SDK Resolution] Unexpected error occurred: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
     );
     return undefined;
   }
+}
+
+export async function restoreSdkForProject(projectPath: string): Promise<void> {
+  const csprojPath = await findCsprojFile(projectPath);
+  if (!csprojPath) {
+    throw new Error(localize('csprojFileNotFound', 'No .csproj file found in "{0}".', projectPath));
+  }
+
+  await executeCommand(ext.outputChannel, projectPath, getDotNetCommand(), 'restore', csprojPath, '--interactive');
 }
 
 async function findCsprojFile(folderPath: string): Promise<string | undefined> {
@@ -78,125 +113,74 @@ async function findCsprojFile(folderPath: string): Promise<string | undefined> {
   }
 }
 
-async function parseSdkVersion(csprojPath: string): Promise<string | undefined> {
-  try {
-    const content = await fse.readFile(csprojPath, 'utf-8');
-    const project = await parseCsprojXml(content);
-    if (!project) {
-      return undefined;
-    }
+async function getResolvedSdkVersion(projectPath: string, csprojPath: string): Promise<string | undefined> {
+  const output = await executeCommand(
+    ext.outputChannel,
+    projectPath,
+    getDotNetCommand(),
+    'list',
+    csprojPath,
+    'package',
+    '--format',
+    'json',
+    '--output-version',
+    '1',
+    '--no-restore'
+  );
+  const report = JSON.parse(output) as PackageListReport;
+  const versions = new Set<string>();
 
-    for (const group of project.Project?.ItemGroup ?? []) {
-      for (const reference of group.PackageReference ?? []) {
-        if (reference.$?.Include?.toLowerCase() !== sdkPackageIdLower) {
-          continue;
+  for (const project of report.projects ?? []) {
+    for (const framework of project.frameworks ?? []) {
+      for (const packageReference of framework.topLevelPackages ?? []) {
+        if (packageReference.id?.toLowerCase() === sdkPackageIdLower && packageReference.resolvedVersion) {
+          versions.add(packageReference.resolvedVersion);
         }
-
-        const version = getXmlValue(reference.$?.VersionOverride ?? reference.$?.Version ?? reference.Version?.[0]);
-        if (!version) {
-          return undefined;
-        }
-
-        const propertyMatch = /^\$\(([^)]+)\)$/.exec(version);
-        if (propertyMatch) {
-          const resolvedVersion = getProjectProperty(project, propertyMatch[1]);
-          if (!resolvedVersion) {
-            ext.outputChannel.appendLog(
-              localize('sdkVersionIsVariable', '[SDK Resolution] SDK version property "{0}" could not be resolved in the project file.', version)
-            );
-          }
-          return resolvedVersion;
-        }
-
-        if (version.startsWith('@(')) {
-          ext.outputChannel.appendLog(
-            localize('sdkVersionIsVariable', '[SDK Resolution] SDK version item reference "{0}" cannot be resolved statically.', version)
-          );
-          return undefined;
-        }
-
-        return version;
       }
     }
-
-    return undefined;
-  } catch {
-    return undefined;
   }
-}
 
-function getProjectProperty(project: any, propertyName: string): string | undefined {
-  for (const group of project.Project?.PropertyGroup ?? []) {
-    const value = getXmlValue(group[propertyName]?.[0]);
-    if (value && !value.startsWith('$(') && !value.startsWith('@(')) {
-      return value;
-    }
+  if (versions.size === 1) {
+    return [...versions][0];
   }
-  return undefined;
-}
 
-function getXmlValue(value: unknown): string | undefined {
-  if (typeof value === 'string') {
-    return value.trim() || undefined;
-  }
-  if (value && typeof value === 'object' && '_' in value && typeof value._ === 'string') {
-    return value._.trim() || undefined;
-  }
-  return undefined;
-}
-
-function parseCsprojXml(content: string): Promise<any | undefined> {
-  return new Promise((resolve) => {
-    parseString(content, (error, result) => resolve(error ? undefined : result));
-  });
-}
-
-async function getNuGetGlobalPackagesPath(): Promise<string | undefined> {
-  try {
-    const output = await executeCommand(ext.outputChannel, undefined, getDotNetCommand(), 'nuget', 'locals', 'global-packages', '--list');
-    if (!output) {
-      return undefined;
-    }
-
-    const prefix = 'global-packages:';
-    const line = output.split(/\r?\n/).find((value) => value.trim().toLowerCase().startsWith(prefix));
-    if (!line) {
-      ext.outputChannel.appendLog(localize('sdkUnexpectedNuGetOutput', '[SDK Resolution] Unexpected dotnet nuget locals output: "{0}".', output));
-      return undefined;
-    }
-
-    const cachePath = line.substring(line.indexOf(':') + 1).trim();
-    if (!cachePath || !(await fse.pathExists(cachePath))) {
-      return undefined;
-    }
-    return cachePath;
-  } catch (error) {
+  if (versions.size > 1) {
     ext.outputChannel.appendLog(
       localize(
-        'sdkResolutionError',
-        '[SDK Resolution] Failed to query NuGet cache path: "{0}".',
-        error instanceof Error ? error.message : String(error)
+        'sdkVersionAmbiguous',
+        '[SDK Resolution] Package "{0}" resolves to multiple versions across target frameworks: {1}.',
+        CodefulSdk.WorkflowsSDK,
+        [...versions].join(', ')
       )
     );
-    return getDefaultNuGetCachePath();
   }
+  return undefined;
 }
 
-async function getDefaultNuGetCachePath(): Promise<string | undefined> {
-  const configuredPath = process.env.NUGET_PACKAGES;
-  if (configuredPath && (await fse.pathExists(configuredPath))) {
-    return configuredPath;
-  }
-
-  const homeDirectory = process.env.USERPROFILE || process.env.HOME;
-  if (!homeDirectory) {
+async function getProjectAssetsFilePath(projectPath: string, csprojPath: string): Promise<string | undefined> {
+  const output = await executeCommand(
+    ext.outputChannel,
+    projectPath,
+    getDotNetCommand(),
+    'msbuild',
+    csprojPath,
+    '-getProperty:ProjectAssetsFile',
+    '-nologo'
+  );
+  const assetsFilePath = output.trim();
+  if (!assetsFilePath) {
     return undefined;
   }
-
-  const defaultPath = path.join(homeDirectory, '.nuget', 'packages');
-  return (await fse.pathExists(defaultPath)) ? defaultPath : undefined;
+  return path.isAbsolute(assetsFilePath) ? path.normalize(assetsFilePath) : path.resolve(projectPath, assetsFilePath);
 }
 
-function getSdkNupkgPath(cacheRoot: string, version: string): string {
-  return path.join(cacheRoot, sdkPackageIdLower, version, `${sdkPackageIdLower}.${version}.nupkg`);
+async function findSdkNupkg(packageFolders: string[], version: string): Promise<string | undefined> {
+  const normalizedVersion = version.toLowerCase();
+  for (const packageFolder of packageFolders) {
+    const nupkgPath = path.join(packageFolder, sdkPackageIdLower, normalizedVersion, `${sdkPackageIdLower}.${normalizedVersion}.nupkg`);
+    if (await fse.pathExists(nupkgPath)) {
+      return nupkgPath;
+    }
+  }
+  return undefined;
 }
