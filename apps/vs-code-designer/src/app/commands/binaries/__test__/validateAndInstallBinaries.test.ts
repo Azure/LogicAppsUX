@@ -179,7 +179,7 @@ describe('validateAndInstallBinaries', () => {
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
       }),
-      '8.0.100'
+      '8.0.100,10'
     );
     expect(installLSPSDK).toHaveBeenCalledWith();
     expect(setNodeJsCommand).toHaveBeenCalled();
@@ -191,6 +191,29 @@ describe('validateAndInstallBinaries', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
     );
+  });
+
+  it.each([
+    [{ dotnetVersions: '6,8' }, '6,8,10'],
+    [{ dotnet: '6,8' }, '6,8,10'],
+    [{ dotnetVersions: '8,10', dotnet: '6,8' }, '8,10'],
+    [{}, undefined],
+  ])('includes .NET 10 while preserving bundle SDK requirements: %j', async (feed, expectedVersions) => {
+    vi.mocked(getBundleDependencyFeed).mockResolvedValue(feed);
+
+    await validateAndInstallBinaries(context);
+
+    expect(validateDotNetIsLatest).toHaveBeenCalledWith(expect.anything(), expectedVersions);
+  });
+
+  it('uses the default SDK when the bundle dependency feed is unavailable', async () => {
+    vi.mocked(getBundleDependencyFeed).mockRejectedValue(new Error('Feed unavailable'));
+    const consoleError = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await validateAndInstallBinaries(context);
+
+    expect(validateDotNetIsLatest).toHaveBeenCalledWith(expect.anything(), undefined);
+    expect(consoleError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Feed unavailable' }));
   });
 
   it('logs dependency validation errors and surfaces troubleshooting guidance', async () => {

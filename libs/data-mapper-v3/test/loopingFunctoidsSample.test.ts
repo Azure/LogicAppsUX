@@ -5,9 +5,10 @@ import { XMLValidator } from 'fast-xml-parser';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { SchemaParser } from '../src/schema/schemaParser';
+import { samplesDirectory } from './e2etests/fixtures/learningPathCorpus.cjs';
 
 describe('Looping functoids sample', () => {
-  const sampleDirectory = path.join(__dirname, '..', 'e2e', 'samples', 'LoopingFunctoids');
+  const sampleDirectory = path.join(samplesDirectory, 'LoopingFunctoids');
 
   test('loads and compiles every looping scenario', () => {
     const map = new BtmSerializer().deserialize(fs.readFileSync(path.join(sampleDirectory, 'LoopingFunctoids.btm'), 'utf8'));
