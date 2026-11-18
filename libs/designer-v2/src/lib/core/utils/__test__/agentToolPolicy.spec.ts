@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   AGENT_TOOL_POLICY_MAX_TOOLS_LIMIT,
@@ -27,15 +28,20 @@ type FixtureCorpus = {
   readonly cases: readonly FixtureCase[];
 };
 
-const fixtureCorpus = JSON.parse(
-  readFileSync(
-    resolve(
-      process.cwd(),
-      'src/lib/core/utils/__test__/fixtures/agent-tool-policy.v1.runtime-3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9.json'
-    ),
-    'utf-8'
-  )
-) as FixtureCorpus;
+const fixtureUrl = new URL('./fixtures/agent-tool-policy.v1.runtime-3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9.json', import.meta.url);
+const fixturePath =
+  fixtureUrl.protocol === 'file:'
+    ? fileURLToPath(fixtureUrl)
+    : (() => {
+        const pathname = decodeURIComponent(fixtureUrl.pathname);
+        if (pathname.startsWith('/@fs/')) {
+          return pathname.slice(4);
+        }
+
+        return resolve(process.cwd(), pathname.replace(/^\/+/, ''));
+      })();
+
+const fixtureCorpus = JSON.parse(readFileSync(fixturePath, 'utf-8')) as FixtureCorpus;
 
 describe('agentToolPolicy fixtures', () => {
   it('records runtime provenance and fixture version', () => {
