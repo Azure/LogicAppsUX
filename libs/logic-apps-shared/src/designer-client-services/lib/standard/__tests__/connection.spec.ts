@@ -11,6 +11,7 @@ import type { StandardConnectionServiceOptions, ConnectionsData } from '../conne
 import { agentConnectorId, mcpclientConnectorId } from '../../base/operationmanifest';
 import { ConnectionParameterSource, ConnectionType } from '../../../../utils/src';
 import { InitLoggerService } from '../../logger';
+import agentLoopConnector from '../manifest/agentLoopConnector';
 
 describe('StandardConnectionService', () => {
   const mockHttpClient = {
@@ -424,7 +425,7 @@ describe('StandardConnectionService', () => {
     });
   });
 
-  describe('createConnection - Agent with /models suffix', () => {
+  describe('createConnection - Agent', () => {
     const mockLoggerService = {
       log: vi.fn(),
       startTrace: vi.fn().mockReturnValue('mock-trace-id'),
@@ -444,6 +445,41 @@ describe('StandardConnectionService', () => {
         description: 'Agent',
       },
     };
+
+    it.each(['@@fixture!password', 'fixture@@{text}'])('should save the client certificate password %s unchanged', async (password) => {
+      InitLoggerService([mockLoggerService]);
+      const writeConnection = vi.fn().mockResolvedValue(undefined);
+      const service = new StandardConnectionService({ ...createMockOptions({}), writeConnection });
+      const authType = 'ClientCertificate';
+
+      await service.createConnection(
+        'agent',
+        agentLoopConnector,
+        {
+          connectionParametersSet: {
+            name: authType,
+            values: {
+              endpoint: { value: 'https://agent.example.com' },
+              clientCertificatePfx: { value: 'test-pfx' },
+              clientCertificatePassword: { value: password },
+            },
+          },
+        },
+        {
+          connectionMetadata: { required: true, type: ConnectionType.Agent },
+          connectionParameterSet: agentLoopConnector.properties.connectionParameterSets?.values.find((set) => set.name === authType),
+        }
+      );
+
+      expect(writeConnection).toHaveBeenCalledWith(
+        expect.objectContaining({
+          settings: expect.objectContaining({ agent_clientCertificatePassword: password }),
+          connectionData: expect.objectContaining({
+            authentication: expect.objectContaining({ type: authType, password: "@appsetting('agent_clientCertificatePassword')" }),
+          }),
+        })
+      );
+    });
 
     it('should keep AzureOpenAI resourceId at the account scope for standard Cognitive Services connections', async () => {
       InitLoggerService([mockLoggerService]);

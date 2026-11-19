@@ -1033,7 +1033,8 @@ function convertToServiceProviderConnectionsData(
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
     connectionInfo,
-    connectionParameterMetadata
+    connectionParameterMetadata,
+    { unescapeAppSettingValues: true }
   );
 
   const connectionsData: ConnectionAndAppSetting<ServiceProviderConnectionModel> = {
@@ -1171,7 +1172,8 @@ function convertToApimConnectionsData(
 function createLocalConnectionsData(
   connectionKey: string,
   connectionInfo: ConnectionCreationInfo,
-  connectionParameterMetadata: ConnectionParametersMetadata
+  connectionParameterMetadata: ConnectionParametersMetadata,
+  options?: { unescapeAppSettingValues: boolean }
 ): {
   parameterValues: Record<string, any>;
   rawParameterValues: Record<string, any>;
@@ -1209,12 +1211,11 @@ function createLocalConnectionsData(
       const rawValue = parameterValue;
       if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
         const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
-        // The runtime doesn't evaluate app setting values, so save the unescaped literal. The raw (escaped) value is still
-        // used for the test connection call, where the runtime evaluates it.
-        result.settings[appSettingName] =
-          typeof parameterValues[parameterKey] !== 'string'
-            ? JSON.stringify(parameterValues[parameterKey])
-            : unescapeExpressionLiteral(parameterValues[parameterKey]);
+        if (typeof rawValue === 'string') {
+          result.settings[appSettingName] = options?.unescapeAppSettingValues ? unescapeExpressionLiteral(rawValue) : rawValue;
+        } else {
+          result.settings[appSettingName] = JSON.stringify(rawValue);
+        }
 
         parameterValue = `@appsetting('${appSettingName}')`;
       }
