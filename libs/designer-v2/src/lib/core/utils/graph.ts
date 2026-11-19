@@ -72,7 +72,6 @@ export interface NodePresentationContext {
   caseCount?: number;
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
-  hasToolStatus?: boolean;
   /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
   title?: string;
 }

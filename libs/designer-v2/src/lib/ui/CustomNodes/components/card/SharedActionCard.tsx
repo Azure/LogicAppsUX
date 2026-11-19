@@ -20,7 +20,6 @@ import {
   getOperationNodeDetail,
   getOperationNodeSubtitle,
   mapActionNodeStrings,
-  getSharedRunSubtitle,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
   mapSharedRunVisuals,
@@ -108,7 +107,8 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   const runPresentation = mapSharedRunPresentation(runData?.status, intl);
   const runVisuals = mapSharedRunVisuals(runData?.status);
   const { status, label: statusLabel } = runPresentation;
-  const containsStatus = !!isMonitoringView && !!status;
+  // Tool rows keep the same 56px geometry whenever they carry run evidence, even outside monitoring transitions.
+  const containsStatus = !!status && (!!isMonitoringView || !!toolKind);
   const focusRef = useRef<HTMLDivElement>(null);
   const dndRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -173,7 +173,6 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     : errorMessages;
   const Card = toolKind ? ToolItemCard : isTrigger ? TriggerNodeCard : ActionNodeCard;
   const cardStrings = useMemo(() => ({ ...strings, tool: mapToolNodeStrings(intl).tool }), [intl, strings]);
-  const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, cardStrings.status, runData?.duration) : undefined;
   const detail = getOperationNodeDetail(intl, operationType, operationKind, connectorName);
   const loadingLabel = intl.formatMessage({
     defaultMessage: 'Loading operation',
@@ -186,15 +185,15 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       ref={ref}
       title={title}
       subtitle={
-        statusSubtitle
-          ? statusSubtitle
+        containsStatus
+          ? undefined
           : toolKind === 'mcp' || toolKind === 'subWorkflow'
             ? undefined
             : toolKind && !connectorLoading
               ? detail
               : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
       }
-      subtitleKind={statusSubtitle ? 'status' : undefined}
+      subtitleKind={containsStatus ? 'status' : undefined}
       icon={cardIcon}
       selectedIcon={selectedIcon}
       selected={isSelected}

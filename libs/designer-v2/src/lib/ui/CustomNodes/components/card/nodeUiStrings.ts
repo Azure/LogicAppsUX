@@ -166,36 +166,11 @@ export function mapToolNodeStrings(intl: IntlShape): NonNullable<ToolItemCardPro
 
 /** Keep service status semantics in the host, including nonstandard runtime status labels. */
 export const mapSharedRunStatus = (status: string | undefined): NodeRunStatus | undefined => {
-  // Trim first so whitespace-only service values mean "no status" (no badge) instead of an unknown tone.
-  switch (status?.trim().toLowerCase()) {
-    case undefined:
-    case '':
-      return undefined;
-    case 'running':
-    case 'resuming':
-      return 'running';
-    case 'succeeded':
-      return 'succeeded';
-    case 'skipped':
-      return 'skipped';
-    case 'failed':
-    case 'timedout':
-      return 'failed';
-    case 'cancelled':
-    case 'aborted':
-      return 'cancelled';
-    case 'warning':
-    case 'succeededwithwarning':
-      return 'warning';
-    case 'error':
-      return 'error';
-    // Only an explicit normalized mock state (Otto) maps here; Standard static results/sample input stay
-    // unbadged and use the separate test-data indicator instead of claiming a mock run.
-    case 'mock':
-      return 'mock';
-    default:
-      return 'pending';
+  const key = status?.trim().toLowerCase();
+  if (!key) {
+    return undefined;
   }
+  return runStatusMappings.get(key)?.status ?? 'pending';
 };
 
 const runStatusMessages = defineMessages({
@@ -214,24 +189,29 @@ const runStatusMessages = defineMessages({
   },
 });
 
-const runStatusLabelKeys: Record<string, keyof typeof runStatusMessages> = {
-  timedout: 'timedOut',
-  resuming: 'resuming',
-  waiting: 'waiting',
-  aborted: 'aborted',
-  succeededwithwarning: 'succeededWithWarning',
-};
+interface RawRunStatusMapping {
+  status: NodeRunStatus;
+  statusTone: NodeStatusTone;
+  labelKey?: keyof typeof runStatusMessages;
+  failedTint?: boolean;
+}
 
-const sharedNodeRunStatuses = new Set<string>([
-  'succeeded',
-  'failed',
-  'skipped',
-  'running',
-  'pending',
-  'cancelled',
-  'warning',
-  'error',
-  'mock',
+// Raw status lookups use a Map so unknown strings never resolve through inherited object keys.
+const runStatusMappings = new Map<string, RawRunStatusMapping>([
+  ['succeeded', { status: 'succeeded', statusTone: 'success' }],
+  ['failed', { status: 'failed', statusTone: 'danger', failedTint: true }],
+  ['error', { status: 'error', statusTone: 'danger' }],
+  ['warning', { status: 'warning', statusTone: 'warning' }],
+  ['succeededwithwarning', { status: 'warning', statusTone: 'warning', labelKey: 'succeededWithWarning' }],
+  ['timedout', { status: 'failed', statusTone: 'warning', labelKey: 'timedOut' }],
+  ['cancelled', { status: 'cancelled', statusTone: 'warning' }],
+  ['aborted', { status: 'cancelled', statusTone: 'warning', labelKey: 'aborted' }],
+  ['running', { status: 'running', statusTone: 'running' }],
+  ['resuming', { status: 'running', statusTone: 'running', labelKey: 'resuming' }],
+  ['skipped', { status: 'skipped', statusTone: 'skipped' }],
+  ['pending', { status: 'pending', statusTone: 'neutral' }],
+  ['waiting', { status: 'pending', statusTone: 'neutral', labelKey: 'waiting' }],
+  ['mock', { status: 'mock', statusTone: 'neutral' }],
 ]);
 
 export interface SharedRunPresentation {
@@ -253,30 +233,18 @@ export interface SharedRunVisuals {
  */
 export const mapSharedRunPresentation = (raw: string | undefined, intl: IntlShape): SharedRunPresentation => {
   const trimmed = raw?.trim();
-  const status = mapSharedRunStatus(trimmed);
   const key = trimmed?.toLowerCase();
-  if (!key || !status || sharedNodeRunStatuses.has(key)) {
-    return { status };
+  if (!key) {
+    return { status: undefined };
   }
-  const messageKey = runStatusLabelKeys[key];
-  return { status, label: messageKey ? intl.formatMessage(runStatusMessages[messageKey]) : trimmed };
-};
-
-const runStatusToneByRaw: Record<string, NodeStatusTone> = {
-  succeeded: 'success',
-  failed: 'danger',
-  error: 'danger',
-  warning: 'warning',
-  succeededwithwarning: 'warning',
-  timedout: 'warning',
-  cancelled: 'warning',
-  aborted: 'warning',
-  running: 'running',
-  resuming: 'running',
-  skipped: 'skipped',
-  pending: 'neutral',
-  waiting: 'neutral',
-  mock: 'neutral',
+  const mapping = runStatusMappings.get(key);
+  if (!mapping) {
+    return { status: 'pending', label: trimmed };
+  }
+  return {
+    status: mapping.status,
+    ...(mapping.labelKey ? { label: intl.formatMessage(runStatusMessages[mapping.labelKey]) } : {}),
+  };
 };
 
 /** Perimeter semantics stay in the host so runtime states can keep truthful labels while sharing one visual contract. */
@@ -285,18 +253,12 @@ export const mapSharedRunVisuals = (raw: string | undefined): SharedRunVisuals =
   if (!key) {
     return {};
   }
+  const mapping = runStatusMappings.get(key);
   return {
-    statusTone: runStatusToneByRaw[key] ?? 'neutral',
-    failedTint: key === 'failed',
+    statusTone: mapping?.statusTone ?? 'neutral',
+    failedTint: mapping?.failedTint ?? false,
   };
 };
-
-export const getSharedRunSubtitle = (
-  presentation: SharedRunPresentation,
-  statusStrings: NodeStatusStrings,
-  duration?: string
-): string | undefined =>
-  presentation.status ? getNodeStatusLabel(presentation.status, statusStrings, duration, presentation.label) : undefined;
 
 /**
  * Accessible name for an interactive shared card that also carries its truthful run status and duration.

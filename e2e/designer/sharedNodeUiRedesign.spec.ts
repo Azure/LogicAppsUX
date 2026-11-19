@@ -189,41 +189,86 @@ for (const flag of ['true', 'false'] as const) {
           return;
         }
         const placements = await page.evaluate(() => {
-          const result: { node: string; subtitleTop: number; frameTop: number; handles: number; hasPerimeter: boolean }[] = [];
+          const minimumClearancePx = 4;
+          const clearanceTo = (a: DOMRect, b: DOMRect) => Math.max(a.left - b.right, b.left - a.right, a.top - b.bottom, b.top - a.bottom);
+          const inside = (inner: DOMRect, outer: DOMRect) =>
+            inner.left >= outer.left && inner.top >= outer.top && inner.right <= outer.right && inner.bottom <= outer.bottom;
+          const result: {
+            node: string;
+            axis: 'vertical' | 'horizontal';
+            handles: number;
+            subtitleContained: boolean;
+            perimeterContained: boolean;
+            subtitleClearance: number | null;
+            perimeterClearance: number | null;
+          }[] = [];
           for (const frame of document.querySelectorAll<HTMLElement>(
             '.react-flow__node [data-status-display="contained"][data-handle-axis]'
           )) {
-            if (frame.getAttribute('data-handle-axis') !== 'vertical') {
+            const axis = frame.getAttribute('data-handle-axis');
+            if (axis !== 'vertical' && axis !== 'horizontal') {
               continue;
             }
             const node = frame.closest<HTMLElement>('.react-flow__node');
             const frameRect = frame.getBoundingClientRect();
             const subtitle = frame.querySelector<HTMLElement>('[data-node-subtitle-kind="status"]');
-            if (!subtitle) {
+            const perimeter = frame.querySelector<HTMLElement>('[data-node-status-perimeter]');
+            if (!subtitle || !perimeter) {
               continue;
             }
             const subtitleRect = subtitle.getBoundingClientRect();
+            const perimeterRect = perimeter.getBoundingClientRect();
             // Visible top-edge handle dots only; React Flow's own handle is an invisible full-card hit target.
             const handles = [...(node?.querySelectorAll<HTMLElement>('[data-handle]') ?? [])]
               .map((handle) => handle.getBoundingClientRect())
-              .filter((rect) => rect.width > 0 && rect.top < frameRect.top + frameRect.height / 2);
+              .filter(
+                (rect) =>
+                  rect.width > 0 &&
+                  (axis === 'vertical' ? rect.top < frameRect.top + frameRect.height / 2 : rect.left < frameRect.left + frameRect.width / 2)
+              );
+            const subtitleClearance = handles.length ? Math.min(...handles.map((rect) => clearanceTo(subtitleRect, rect))) : null;
+            const perimeterClearance = handles.length ? Math.min(...handles.map((rect) => clearanceTo(perimeterRect, rect))) : null;
             result.push({
               node: node?.getAttribute('data-id') ?? '',
-              subtitleTop: subtitleRect.top,
-              frameTop: frameRect.top,
+              axis,
               handles: handles.length,
-              hasPerimeter: !!frame.querySelector('[data-node-status-perimeter]'),
+              subtitleContained: inside(subtitleRect, frameRect),
+              perimeterContained: inside(perimeterRect, frameRect),
+              subtitleClearance,
+              perimeterClearance,
             });
           }
-          return result;
+          return { minimumClearancePx, result };
         });
         // An empty set proves nothing, so require real contained status cards with measured vertical input handles.
-        expect(placements.length).toBeGreaterThan(0);
+        expect(placements.result.length).toBeGreaterThan(0);
         await expect(page.locator('[data-badge-status]')).toHaveCount(0);
-        for (const entry of placements) {
+        for (const entry of placements.result) {
           expect.soft(entry.handles, `${entry.node} must expose its input handle`).toBeGreaterThan(0);
-          expect.soft(entry.subtitleTop, `${entry.node} status subtitle must stay inside the card body`).toBeGreaterThan(entry.frameTop);
-          expect.soft(entry.hasPerimeter, `${entry.node} contained monitoring status must keep the inset perimeter`).toBe(true);
+          expect.soft(entry.subtitleContained, `${entry.node} status subtitle must stay inside the card body`).toBe(true);
+          expect.soft(entry.perimeterContained, `${entry.node} inset perimeter must stay inside the card body`).toBe(true);
+          expect
+            .soft(
+              entry.subtitleClearance,
+              `${entry.node} status subtitle must clear input handles by at least ${placements.minimumClearancePx}px`
+            )
+            .toBeGreaterThanOrEqual(placements.minimumClearancePx);
+          expect
+            .soft(
+              entry.perimeterClearance,
+              `${entry.node} perimeter must clear input handles by at least ${placements.minimumClearancePx}px`
+            )
+            .toBeGreaterThanOrEqual(placements.minimumClearancePx);
+        }
+        // Some fixtures include horizontal status-bearing tool rows; when present, they must satisfy the same guardrail.
+        for (const entry of placements.result.filter((item) => item.axis === 'horizontal')) {
+          expect.soft(entry.subtitleContained, `${entry.node} horizontal status subtitle must stay inside the card body`).toBe(true);
+          expect
+            .soft(
+              entry.subtitleClearance,
+              `${entry.node} horizontal status subtitle must clear handles by at least ${placements.minimumClearancePx}px`
+            )
+            .toBeGreaterThanOrEqual(placements.minimumClearancePx);
         }
       });
     }

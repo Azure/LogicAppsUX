@@ -430,7 +430,8 @@ describe('shared family interaction adapters', () => {
       />
     );
     expect(tool.container.querySelector('[data-node-card="tool"]')).toHaveAttribute('data-inactive', 'true');
-    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Waiting');
+    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Waiting');
+    expect(tool.container.querySelector('[data-badge-status]')).toBeNull();
     cleanup();
     const branch = render(
       <SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active={false} onClick={vi.fn()} />
@@ -455,7 +456,7 @@ describe('shared family interaction adapters', () => {
     expect(scopeCard).toHaveAttribute('data-status-display', 'contained');
     expect(scopeCard).toHaveAttribute('data-status-tone', 'warning');
     expect(scopeCard).not.toHaveAttribute('data-status-tint');
-    expect(scope.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Timed out 3s');
+    expect(scope.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Timed out\s*3s/);
     expect(scope.container.querySelector('[data-badge-status]')).toBeNull();
     cleanup();
     const tool = render(
@@ -472,7 +473,7 @@ describe('shared family interaction adapters', () => {
     expect(toolCard).toHaveAttribute('data-status-display', 'contained');
     expect(toolCard).toHaveAttribute('data-status-tone', 'danger');
     expect(toolCard).toHaveAttribute('data-status-tint', 'failed');
-    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Failed 1s');
+    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Failed\s*1s/);
     expect(tool.container.querySelector('[data-badge-status]')).toBeNull();
   });
 

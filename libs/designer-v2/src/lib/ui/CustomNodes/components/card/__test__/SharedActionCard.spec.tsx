@@ -484,7 +484,7 @@ describe('shared host action adapter', () => {
     expect(timedOut).toHaveAttribute('data-status-display', 'contained');
     expect(timedOut).toHaveAttribute('data-status-tone', 'warning');
     expect(timedOut).not.toHaveAttribute('data-status-tint');
-    expect(container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Timed out 2s');
+    expect(container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Timed out\s*2s/);
     expect(container.querySelector('[data-badge-status]')).toBeNull();
     rerender(<SharedActionCard {...props} isMonitoringView runData={{ status: 'Failed', duration: '1s' } as ActionCardProps['runData']} />);
     const failed = screen.getByRole('button');
@@ -499,6 +499,7 @@ describe('shared host action adapter', () => {
     ['Aborted', 'cancelled', 'Aborted'],
     ['SucceededWithWarning', 'warning', 'Succeeded with warning'],
     ['Custom runtime state', 'pending', 'Custom runtime state'],
+    ['toString', 'pending', 'toString'],
     ['Succeeded', 'succeeded', undefined],
     ['FAILED', 'failed', undefined],
     ['Pending', 'pending', undefined],
@@ -519,6 +520,7 @@ describe('shared host action adapter', () => {
     ['Failed', { statusTone: 'danger', failedTint: true }],
     ['Succeeded', { statusTone: 'success', failedTint: false }],
     ['Unknown runtime state', { statusTone: 'neutral', failedTint: false }],
+    ['toString', { statusTone: 'neutral', failedTint: false }],
     ['   ', {}],
   ])('maps %s to contained status visuals', (raw, expected) => {
     expect(mapSharedRunVisuals(raw)).toEqual(expected);

@@ -26,7 +26,6 @@ import {
   mapAgentNodeStrings,
   mapConditionNodeStrings,
   mapLoopNodeStrings,
-  getSharedRunSubtitle,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
   mapSharedRunVisuals,
@@ -147,7 +146,6 @@ export const SharedScopeCard = ({
   const runVisuals = mapSharedRunVisuals(props.runData?.status);
   const { status, label: statusLabel } = runPresentation;
   const containsStatus = !!isMonitoringView && !!status;
-  const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, actionStrings.status, props.runData?.duration) : undefined;
   const collapse = (
     <FamilyCollapseButton
       id={`${props.id}-collapse-toggle`}
@@ -223,8 +221,7 @@ export const SharedScopeCard = ({
       <ConditionNodeCard
         {...common}
         kind={family}
-        subtitle={statusSubtitle}
-        subtitleKind={statusSubtitle ? 'status' : undefined}
+        subtitleKind={containsStatus ? 'status' : undefined}
         // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
         mode="multiOutput"
         caseCount={caseCount}
@@ -239,8 +236,8 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
-        subtitle={statusSubtitle ?? strings.loop.foreach}
-        subtitleKind={statusSubtitle ? 'status' : undefined}
+        subtitle={containsStatus ? undefined : strings.loop.foreach}
+        subtitleKind={containsStatus ? 'status' : undefined}
         bodyPlacement="none"
         strings={strings}
         inputSlot={inputSlot}
@@ -254,8 +251,7 @@ export const SharedScopeCard = ({
     return withHover(
       <AgentNodeCard
         {...common}
-        subtitle={statusSubtitle}
-        subtitleKind={statusSubtitle ? 'status' : undefined}
+        subtitleKind={containsStatus ? 'status' : undefined}
         model={model}
         // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
         toolsPlacement="below"
@@ -301,8 +297,7 @@ export const SharedScopeCard = ({
     <ActionNodeCard
       {...common}
       strings={actionStrings}
-      subtitle={statusSubtitle}
-      subtitleKind={statusSubtitle ? 'status' : undefined}
+      subtitleKind={containsStatus ? 'status' : undefined}
       handles={false}
       icon={scopeNodeIcon}
       density="compact"
@@ -393,8 +388,8 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
     const runVisuals = mapSharedRunVisuals(props.runData?.status);
     const { status, label: statusLabel } = runPresentation;
     const toolStrings = mapToolNodeStrings(intl);
-    const containsStatus = !!props.isMonitoringView && !!status;
-    const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, toolStrings.status, props.runData?.duration) : undefined;
+    // Shared tool rows use contained status whenever run evidence exists to stay within their fixed 56px slot.
+    const containsStatus = !!status && (!!props.isMonitoringView || toolKind !== undefined);
     return (
       <SharedNodeHoverCard
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
@@ -424,8 +419,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           )}
           aria-pressed={props.selected ?? false}
           title={title}
-          subtitle={statusSubtitle}
-          subtitleKind={statusSubtitle ? 'status' : undefined}
+          subtitleKind={containsStatus ? 'status' : undefined}
           selected={props.selected}
           status={status}
           statusLabel={statusLabel}

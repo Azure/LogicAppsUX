@@ -1,4 +1,4 @@
-import { forwardRef, useContext } from 'react';
+import { createContext, forwardRef, useContext, useMemo } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { designerUiTokens as ui, nodeCardVars } from '../../theme/tokens';
@@ -149,6 +149,12 @@ export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   after?: ReactNode;
   handleAxis?: NodeHandleAxis;
 }
+export interface NodeCardStatusContextValue {
+  status?: NodeRunStatus;
+  statusLabel?: string;
+  statusDetail?: string;
+}
+export const NodeCardStatusContext = createContext<NodeCardStatusContextValue>({});
 export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeCard(
   {
     width = 'standard',
@@ -179,6 +185,17 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   const ancestorInactive = useContext(NodeInactiveContext);
   const dimmed = inactive || ancestorInactive;
   const containedStatus = statusDisplay === 'contained' && !!status && status !== 'mock';
+  const statusContext = useMemo<NodeCardStatusContextValue>(
+    () =>
+      containedStatus && status
+        ? {
+            status,
+            statusLabel: statusLabel ?? strings.status[status],
+            statusDetail,
+          }
+        : {},
+    [containedStatus, status, statusDetail, statusLabel, strings.status]
+  );
   const resolvedStatusTone = containedStatus ? (statusTone ?? statusToneByStatus[status]) : undefined;
   const perimeterClass =
     resolvedStatusTone === 'success'
@@ -234,15 +251,38 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
         )}
       >
         {containedStatus && perimeterClass ? (
-          <span aria-hidden="true" data-node-status-perimeter className={mergeClasses(styles.statusPerimeter, perimeterClass)} />
+          <span
+            aria-hidden="true"
+            data-node-status-perimeter
+            className={mergeClasses(styles.statusPerimeter, perimeterClass)}
+            style={{
+              borderRadius:
+                shape === 'pill'
+                  ? `${Math.max(
+                      0,
+                      (size === 'compact'
+                        ? compactNodeMetrics.card.height
+                        : size === 'compactWrapped'
+                          ? compactNodeMetrics.card.wrappedHeight
+                          : nodeMetrics.cards.trigger.height) /
+                        2 -
+                        3
+                    )}px`
+                  : `calc(${tokens.borderRadius2XLarge} - 3px)`,
+            }}
+          />
         ) : null}
-        <NodeInactiveContext.Provider value={dimmed}>
-          <NodeHandleAxisContext.Provider value={handleAxis}>{children}</NodeHandleAxisContext.Provider>
-        </NodeInactiveContext.Provider>
+        <NodeCardStatusContext.Provider value={statusContext}>
+          <NodeInactiveContext.Provider value={dimmed}>
+            <NodeHandleAxisContext.Provider value={handleAxis}>{children}</NodeHandleAxisContext.Provider>
+          </NodeInactiveContext.Provider>
+        </NodeCardStatusContext.Provider>
       </div>
-      <NodeInactiveContext.Provider value={dimmed}>
-        <NodeHandleAxisContext.Provider value={handleAxis}>{after}</NodeHandleAxisContext.Provider>
-      </NodeInactiveContext.Provider>
+      <NodeCardStatusContext.Provider value={statusContext}>
+        <NodeInactiveContext.Provider value={dimmed}>
+          <NodeHandleAxisContext.Provider value={handleAxis}>{after}</NodeHandleAxisContext.Provider>
+        </NodeInactiveContext.Provider>
+      </NodeCardStatusContext.Provider>
     </div>
   );
 });

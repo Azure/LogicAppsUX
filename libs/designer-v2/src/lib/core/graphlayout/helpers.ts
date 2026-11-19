@@ -48,7 +48,6 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
           : toolOperation?.type?.toLowerCase() === 'workflow'
             ? 'subWorkflow'
             : 'action',
-      hasToolStatus: !!(metadata?.toolRunData ?? metadata?.runData)?.status,
     }),
   };
 };

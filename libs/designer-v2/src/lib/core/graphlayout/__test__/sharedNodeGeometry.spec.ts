@@ -156,7 +156,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
-        hasToolStatus: false,
       })
     ).toEqual({
       shared: true,
@@ -171,7 +170,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
-        hasToolStatus: true,
       })
     ).toEqual({
       shared: true,

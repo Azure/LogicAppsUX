@@ -121,9 +121,9 @@ describe('vertical status badge placement', () => {
     render(
       <ActionNodeCard
         title="Compose"
-        subtitle="Failed 2s"
         subtitleKind="status"
         status="failed"
+        statusDetail="2s"
         statusDisplay="contained"
         statusTone="danger"
         statusTint="failed"
@@ -135,7 +135,10 @@ describe('vertical status badge placement', () => {
     expect(card).toHaveAttribute('data-status-tint', 'failed');
     expect(document.querySelector('[data-badge-status]')).toBeNull();
     expect(document.querySelector('[data-node-status-perimeter]')).toBeInTheDocument();
-    expect(document.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Failed 2s');
+    const statusLine = document.querySelector('[data-node-subtitle-kind="status"]')!;
+    expect(statusLine).toHaveTextContent(/Failed\s*2s/);
+    expect(statusLine.querySelector('bdi')).toHaveTextContent('2s');
+    expect(statusLine.querySelector('[data-icon-name="DismissRegular"]')).toBeInTheDocument();
   });
 
   it('removes small-tool overhang only for contained monitoring status', () => {
@@ -146,9 +149,9 @@ describe('vertical status badge placement', () => {
       <ToolItemCard
         title="Tool"
         size="small"
-        subtitle="Failed 1s"
         subtitleKind="status"
         status="failed"
+        statusDetail="1s"
         statusDisplay="contained"
         statusTone="danger"
         statusTint="failed"
@@ -156,5 +159,25 @@ describe('vertical status badge placement', () => {
     );
     expect(getComputedStyle(tool).marginTop).not.toBe(`${nodeMetrics.badge.overhang}px`);
     expect(document.querySelector('[data-badge-status]')).toBeNull();
+  });
+
+  it('keeps status+count rows in one line with durable duration and independently ellipsized count', () => {
+    render(
+      <ConditionNodeCard
+        kind="switch"
+        title="Switch"
+        subtitleKind="status"
+        status="succeeded"
+        statusDetail="10m 0s"
+        statusDisplay="contained"
+        statusTone="success"
+        countLabel={{ count: 12, unit: 'actions' }}
+      />
+    );
+    const row = document.querySelector('[data-node-subtitle-kind="status"]')!.parentElement!;
+    expect(getComputedStyle(row).flexWrap).toBe('nowrap');
+    expect(row.querySelector('bdi')).toHaveTextContent('10m 0s');
+    expect(row.querySelector('[data-node-count]')).toHaveTextContent('12 actions');
+    expect(row.querySelector('[data-icon-name="CheckmarkRegular"]')).toBeInTheDocument();
   });
 });

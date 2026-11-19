@@ -69,7 +69,6 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
     getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, sharedOption, {
       operationType: node?.type,
       subgraphType: metadata?.subgraphType,
-      hasToolStatus: !!(metadata?.toolRunData ?? metadata?.runData)?.status,
     });
   const shared = presentation.shared;
   const sharedTool = shared && presentation.family === 'tool';
@@ -80,6 +79,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const normalizedType = node?.type.toLowerCase();
   const parentNodeId = useParentNodeId(subgraphId);
   const runData = useRunData(parentNodeId ?? subgraphId);
+  const effectiveToolRunData = metadata?.toolRunData ?? metadata?.runData;
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
@@ -324,7 +324,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   outputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="source" /> : undefined}
                   selected={selected}
                   pinned={isPinned}
-                  active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+                  active={isMonitoringView ? !isNullOrUndefined((sharedTool ? effectiveToolRunData : runData)?.status) : true}
                   onClick={() =>
                     subgraphClick(
                       metadata.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ||
@@ -340,7 +340,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   onCollapse={handleGraphCollapse}
                   errorMessages={errorMessages}
                   nodeIndex={nodeIndex}
-                  runData={metadata.toolRunData ?? metadata.runData}
+                  runData={effectiveToolRunData}
                   description={opQuery.data?.properties?.description}
                   isMonitoringView={isMonitoringView}
                   countLabel={sharedOwnsCount && graphCollapsed ? { count: actionCount, unit: 'actions' } : undefined}
