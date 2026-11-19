@@ -175,7 +175,9 @@ for (const flag of ['true', 'false'] as const) {
       ['Simple Agent', 'sucessState'],
       ['Loops pager', 'SuccessRun'],
     ] as const) {
-      test(`status badges clear the input handle in monitoring: ${fixture}`, async ({ page }, testInfo) => {
+      test(`contained monitoring status stays inside cards and keeps vertical handle paths clear: ${fixture}`, async ({
+        page,
+      }, testInfo) => {
         await openSharedWorkflow(page, fixture, flag);
         await LoadRunFile(page, run);
         await waitForViewport(page);
@@ -187,40 +189,41 @@ for (const flag of ['true', 'false'] as const) {
           return;
         }
         const placements = await page.evaluate(() => {
-          const result: { node: string; badgeLeft: number; handleRight: number; handles: number; overlaps: boolean }[] = [];
-          for (const badge of document.querySelectorAll<HTMLElement>('.react-flow__node [data-badge-status]')) {
-            const frame = badge.closest<HTMLElement>('[data-handle-axis]');
-            if (frame?.getAttribute('data-handle-axis') !== 'vertical') {
+          const result: { node: string; subtitleTop: number; frameTop: number; handles: number; hasPerimeter: boolean }[] = [];
+          for (const frame of document.querySelectorAll<HTMLElement>(
+            '.react-flow__node [data-status-display="contained"][data-handle-axis]'
+          )) {
+            if (frame.getAttribute('data-handle-axis') !== 'vertical') {
               continue;
             }
-            const node = badge.closest<HTMLElement>('.react-flow__node');
-            const badgeRect = badge.getBoundingClientRect();
+            const node = frame.closest<HTMLElement>('.react-flow__node');
             const frameRect = frame.getBoundingClientRect();
+            const subtitle = frame.querySelector<HTMLElement>('[data-node-subtitle-kind="status"]');
+            if (!subtitle) {
+              continue;
+            }
+            const subtitleRect = subtitle.getBoundingClientRect();
             // Visible top-edge handle dots only; React Flow's own handle is an invisible full-card hit target.
             const handles = [...(node?.querySelectorAll<HTMLElement>('[data-handle]') ?? [])]
               .map((handle) => handle.getBoundingClientRect())
               .filter((rect) => rect.width > 0 && rect.top < frameRect.top + frameRect.height / 2);
             result.push({
               node: node?.getAttribute('data-id') ?? '',
-              badgeLeft: badgeRect.left,
-              handleRight: Math.max(...handles.map((rect) => rect.right)),
+              subtitleTop: subtitleRect.top,
+              frameTop: frameRect.top,
               handles: handles.length,
-              overlaps: handles.some(
-                (rect) =>
-                  rect.left < badgeRect.right && badgeRect.left < rect.right && rect.top < badgeRect.bottom && badgeRect.top < rect.bottom
-              ),
+              hasPerimeter: !!frame.querySelector('[data-node-status-perimeter]'),
             });
           }
           return result;
         });
-        // An empty set proves nothing, so require real vertical-axis badges with a measured input handle.
+        // An empty set proves nothing, so require real contained status cards with measured vertical input handles.
         expect(placements.length).toBeGreaterThan(0);
+        await expect(page.locator('[data-badge-status]')).toHaveCount(0);
         for (const entry of placements) {
           expect.soft(entry.handles, `${entry.node} must expose its input handle`).toBeGreaterThan(0);
-          expect.soft(entry.overlaps, `${entry.node} badge overlaps its input handle`).toBe(false);
-          expect
-            .soft(entry.badgeLeft, `${entry.node} badge must start right of its input handle`)
-            .toBeGreaterThanOrEqual(entry.handleRight);
+          expect.soft(entry.subtitleTop, `${entry.node} status subtitle must stay inside the card body`).toBeGreaterThan(entry.frameTop);
+          expect.soft(entry.hasPerimeter, `${entry.node} contained monitoring status must keep the inset perimeter`).toBe(true);
         }
       });
     }

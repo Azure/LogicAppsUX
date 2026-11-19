@@ -47,6 +47,9 @@ for (const flag of ['true', 'false'] as const) {
         const expectedStatusLabel = defaultNodeStrings.status[fixtureStatus];
         expect(expectedStatusLabel).toBeTruthy();
         await expect(agent).toHaveAccessibleName(new RegExp(`WorkflowAgent.*${expectedStatusLabel}`, 'i'));
+        await expect(agent).toHaveAttribute('data-status-display', 'contained');
+        await expect(agent.locator('[data-node-subtitle-kind="status"]')).toHaveCount(1);
+        await expect(agent.locator('[data-node-status-perimeter]')).toHaveCount(1);
         await expect(page.locator('.fui-Badge[data-badge-status][role="status"]')).toHaveCount(0);
       }
       await pager.getByLabel(previous, { exact: true }).click();
@@ -78,12 +81,14 @@ test(
     await openSharedWorkflow(page, 'Monitoring view conditional');
     const before = await getSerializedWorkflowFromStateV2(page);
     await LoadRunFile(page, 'normalState');
-    const badges = page.locator('.fui-Badge[data-badge-status]');
-    await expect(badges.first()).toBeVisible();
-    await expect(badges.locator('xpath=self::*[@role="status"]')).toHaveCount(0);
+    const contained = page.locator('[data-status-display="contained"]');
+    await expect(contained.first()).toBeVisible();
+    await expect(page.locator('.fui-Badge[data-badge-status]')).toHaveCount(0);
     // Skipped is recorded run evidence, so it must never be dimmed as inactive.
     const response = page.locator('#msla-node-Response');
     await expect(response).toHaveAccessibleName(/Response.*Skipped/i);
+    await expect(response).toHaveAttribute('data-status-display', 'contained');
+    await expect(response).toHaveAttribute('data-status-tone', 'skipped');
     await expect(response).toHaveCSS('opacity', '1');
     await expect(page.locator('[data-inactive="true"]')).toHaveCount(0);
     expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
@@ -105,11 +110,17 @@ test(
     const skipped = page.locator('#msla-node-Response');
     const unknown = page.locator('#msla-node-Select');
     await expect(failed).toHaveAccessibleName(/Delay.*Failed/i);
-    await expect(failed.locator('[data-badge-status="failed"]')).toBeVisible();
+    await expect(failed).toHaveAttribute('data-status-display', 'contained');
+    await expect(failed).toHaveAttribute('data-status-tone', 'danger');
+    await expect(failed).toHaveAttribute('data-status-tint', 'failed');
+    await expect(failed.locator('[data-node-subtitle-kind="status"]')).toHaveText(/Failed/i);
     await expect(skipped).toHaveAccessibleName(/Response.*Skipped/i);
-    await expect(skipped.locator('[data-badge-status="skipped"]')).toBeVisible();
+    await expect(skipped).toHaveAttribute('data-status-display', 'contained');
+    await expect(skipped).toHaveAttribute('data-status-tone', 'skipped');
+    await expect(skipped).not.toHaveAttribute('data-status-tint');
     await expect(unknown).not.toHaveAccessibleName(/Skipped/i);
-    await expect(unknown.locator('[data-badge-status="skipped"]')).toHaveCount(0);
+    await expect(unknown).not.toHaveAttribute('data-status-display');
+    await expect(unknown.locator('[data-node-subtitle-kind="status"]')).toHaveCount(0);
   }
 );
 
