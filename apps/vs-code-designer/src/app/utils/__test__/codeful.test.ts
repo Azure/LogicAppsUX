@@ -5,6 +5,7 @@ import {
   codefulProjectsExist,
   detectAgentCodefulWorkflow,
   detectCodefulWorkflow,
+  detectStatelessCodefulWorkflow,
   hasCodefulSdkReference,
   parseCsprojCopyToCodefulInfo,
 } from '../codeful';
@@ -175,6 +176,27 @@ namespace TestProject
 }`);
 
     expect(workflow).toEqual({ workflowName: 'MultilineWorkflow', workflowType: 'agent' });
+  });
+});
+
+describe('detectStatelessCodefulWorkflow', () => {
+  it('detects a provider-based stateless workflow', () => {
+    const source = `
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      var workflow = trigger.Then(response);
+      return new[]
+      {
+          WorkflowFactory.CreateStatelessWorkflow(
+              "StatelessWorkflow",
+              workflow)
+      };
+    `;
+
+    expect(detectStatelessCodefulWorkflow(source)).toBe('StatelessWorkflow');
+    expect(detectCodefulWorkflow(source)).toEqual({
+      workflowName: 'StatelessWorkflow',
+      workflowType: 'stateless',
+    });
   });
 });
 

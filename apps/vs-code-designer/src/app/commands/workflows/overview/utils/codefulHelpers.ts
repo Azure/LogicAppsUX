@@ -149,12 +149,11 @@ export async function getCodefulWorkflowDataList(
 
   const hasHttpTrigger = hasHttpRequestTrigger(workflowContent);
   const fallbackTriggerName = getFallbackCodefulTriggerName(workflowContent, hasHttpTrigger);
-  const workflowNames = getCodefulWorkflowNames(workflowFilePath);
-  if (workflowNames.length > 0) {
+  const sourceWorkflows = getCodefulWorkflows(workflowFilePath);
+  if (sourceWorkflows.length > 0) {
     return {
-      workflows: workflowNames.map((workflowName) => ({
-        workflowName,
-        workflowKind: 'Stateful',
+      workflows: sourceWorkflows.map((workflow) => ({
+        ...workflow,
         triggerName: fallbackTriggerName,
         triggerType: hasHttpTrigger ? 'Request' : undefined,
         triggerKind: hasHttpTrigger ? 'Http' : undefined,
@@ -169,7 +168,8 @@ export async function getCodefulWorkflowDataList(
       ? [
           {
             workflowName: workflowInfo.workflowName,
-            workflowKind: workflowInfo.workflowType === 'agent' ? 'Agent' : 'Stateful',
+            workflowKind:
+              workflowInfo.workflowType === 'agent' ? 'Agent' : workflowInfo.workflowType === 'stateless' ? 'Stateless' : 'Stateful',
             triggerName: fallbackTriggerName,
             triggerType: hasHttpTrigger ? 'Request' : undefined,
             triggerKind: hasHttpTrigger ? 'Http' : undefined,
@@ -235,8 +235,8 @@ export async function getRuntimeCodefulWorkflows(
   return [];
 }
 
-export function getCodefulWorkflowNames(filePath: string): string[] {
-  const workflowNames: string[] = [];
+export function getCodefulWorkflows(filePath: string): CodefulWorkflowData[] {
+  const workflows: CodefulWorkflowData[] = [];
   const visitedFiles = new Set<string>();
   const projectDir = dirname(filePath);
 
@@ -248,12 +248,22 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
 
     try {
       const fileContent = readFileSync(currentFilePath, 'utf8');
-      const workflowRegex = /(?:CreateConversationalAgent|CreateAgentWorkflow|CreateStatefulWorkflow)\s*\(\s*["']([^"']+)["']/g;
+      const workflowRegex =
+        /(CreateConversationalAgent|CreateAgentWorkflow|CreateStatefulWorkflow|CreateStatelessWorkflow)\s*\(\s*["']([^"']+)["']/g;
       let match: RegExpExecArray | null;
       while ((match = workflowRegex.exec(fileContent)) !== null) {
-        const workflowName = match[1];
-        if (workflowName && !workflowNames.includes(workflowName)) {
-          workflowNames.push(workflowName);
+        const factoryMethod = match[1];
+        const workflowName = match[2];
+        if (workflowName && !workflows.some((workflow) => workflow.workflowName === workflowName)) {
+          workflows.push({
+            workflowName,
+            workflowKind:
+              factoryMethod === 'CreateStatelessWorkflow'
+                ? 'Stateless'
+                : factoryMethod === 'CreateConversationalAgent' || factoryMethod === 'CreateAgentWorkflow'
+                  ? 'Agent'
+                  : 'Stateful',
+          });
         }
       }
 
@@ -276,7 +286,11 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
   };
 
   extractWorkflowsFromFile(filePath);
-  return workflowNames;
+  return workflows;
+}
+
+export function getCodefulWorkflowNames(filePath: string): string[] {
+  return getCodefulWorkflows(filePath).map((workflow) => workflow.workflowName);
 }
 
 export function getFallbackCodefulTriggerName(workflowContent: string, hasHttpTrigger: boolean): string | undefined {

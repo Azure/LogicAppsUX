@@ -101,6 +101,22 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
     });
   });
 
+  describe('StatelessCodefulWorkflow template content', () => {
+    it('should use the provider-based stateless SDK template', () => {
+      const templateContent = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/StatelessCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+
+      expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
+      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateHttpTrigger()');
+      expect(templateContent).toContain('WorkflowActions.BuiltIn.Compose(inputs: () => "hello")');
+      expect(templateContent).toContain('WorkflowFactory.CreateStatelessWorkflow(<%= flowName %>, workflow)');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory');
+      expect(templateContent).not.toContain('AddWorkflow()');
+    });
+  });
+
   describe('AgentCodefulWorkflow template content', () => {
     it('should use the provider-based conversational agent SDK template', () => {
       const templateContent = actualFs.readFileSync(
@@ -281,6 +297,44 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatefulCodefulWorkflow'), 'utf-8');
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
+    });
+
+    it('should create a stateless provider workflow from the StatelessCodeful template', async () => {
+      const statelessTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/StatelessCodefulWorkflow', import.meta.url),
+        'utf-8'
+      );
+      const programTemplate = actualFs.readFileSync(
+        new URL('../../../../../assets/CodefulProjectTemplate/ProgramFile', import.meta.url),
+        'utf-8'
+      );
+
+      vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
+        if (filePath.includes('StatelessCodefulWorkflow')) {
+          return Promise.resolve(statelessTemplate);
+        }
+        if (filePath.includes('ProgramFile')) {
+          return Promise.resolve(programTemplate);
+        }
+        if (filePath.includes('CodefulProj')) {
+          return Promise.resolve('mock content');
+        }
+        return Promise.reject(new Error('Unexpected file read'));
+      });
+      vi.mocked(fse.pathExists).mockResolvedValue(false);
+      vi.mocked(fse.writeFile).mockResolvedValue(undefined);
+
+      await CreateLogicAppWorkspaceModule.createCodefulWorkflowFile(
+        testProjectPath,
+        testProjectName,
+        testWorkflowName,
+        WorkflowType.statelessCodeful
+      );
+
+      expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('StatelessCodefulWorkflow'), 'utf-8');
+      const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
+      expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatelessWorkflow("${testWorkflowName}", workflow)`);
     });
 
     it('should not update Program.cs when adding provider-based agents to an existing project', async () => {

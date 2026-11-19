@@ -103,11 +103,14 @@ const getCodefulWorkflowTemplateFileName = (workflowType: WorkflowType): string 
   switch (workflowType) {
     case WorkflowType.statefulCodeful:
       return 'StatefulCodefulWorkflow';
+    case WorkflowType.statelessCodeful:
+      return 'StatelessCodefulWorkflow';
     case WorkflowType.agenticCodeful:
       return 'AgenticCodefulWorkflow';
     case WorkflowType.agentCodeful:
-    default:
       return 'AgentCodefulWorkflow';
+    default:
+      throw new Error(`Unsupported codeful workflow type: ${workflowType}`);
   }
 };
 
