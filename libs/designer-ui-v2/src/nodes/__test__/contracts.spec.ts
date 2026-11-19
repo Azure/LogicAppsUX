@@ -4,12 +4,13 @@ import * as metricsEntry from '../../metrics';
 import { getSwitchNodeSize, nodeHoverCardTiming, nodeMetrics } from '../metrics';
 import {
   defaultBranchTakenString,
+  defaultNodeFrameCountStrings,
   defaultNodeFrameStrings,
   defaultNodeIterationPagerStrings,
   defaultNodeRunAfterStrings,
   defaultNodeStrings,
 } from '../strings';
-import type { NodeInfoCardStrings, NodeStrings } from '../strings';
+import type { NodeFrameCountUnit, NodeFrameStrings, NodeInfoCardStrings, NodeStrings } from '../strings';
 import { NODE_HOVER_CARD_IGNORE_ATTRIBUTE } from '../..';
 import type { AgentNodeCardProps, ConditionNodeCardProps, NodeFrameProps, NodeInfoCardProps } from '../..';
 
@@ -80,6 +81,29 @@ describe('additive monitoring string contracts', () => {
     expect(defaultNodeStrings.runAfter).toBe(defaultNodeRunAfterStrings);
     expect(defaultNodeIterationPagerStrings.position(2, 5)).toBe('2 of 5');
     expect(defaultNodeRunAfterStrings.collapsed(7)).toBe('Runs after 7 actions');
+  });
+
+  it('pluralizes every frame count unit and keeps actionCount equal to the actions unit', () => {
+    const expected: Record<NodeFrameCountUnit, [string, string, string]> = {
+      actions: ['0 actions', '1 action', '3 actions'],
+      cases: ['0 cases', '1 case', '3 cases'],
+      tools: ['0 tools', '1 tool', '3 tools'],
+      hiddenItems: ['0 hidden items', '1 hidden item', '3 hidden items'],
+    };
+    for (const unit of Object.keys(expected) as NodeFrameCountUnit[]) {
+      expect([0, 1, 3].map((count) => defaultNodeFrameCountStrings[unit](count))).toEqual(expected[unit]);
+      expect(defaultNodeFrameStrings.counts?.[unit]?.(2)).toBe(defaultNodeFrameCountStrings[unit](2));
+    }
+    expect(defaultNodeFrameStrings.actionCount(1)).toBe('1 action');
+    expect(defaultNodeFrameStrings.actionCount(4)).toBe('4 actions');
+  });
+
+  it('keeps frame dictionaries without unit counts assignable', () => {
+    const legacyFrame: NodeFrameStrings = { actionCount: (count) => `${count} Aktionen` };
+    const partialFrame: NodeFrameStrings = { actionCount: (count) => `${count}`, counts: { cases: (count) => `${count} Fälle` } };
+    expect(legacyFrame.counts).toBeUndefined();
+    expect(partialFrame.counts?.tools).toBeUndefined();
+    expectTypeOf<NodeFrameProps['countLabel']>().toEqualTypeOf<{ count: number; unit: NodeFrameCountUnit } | undefined>();
   });
 
   it('keeps hand-written legacy dictionaries (without the new keys) assignable', () => {

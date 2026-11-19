@@ -4,6 +4,11 @@ import type { SettingTokenFieldProps, TokenFieldProps } from '../settingTokenFie
 import { SettingTokenField, TokenField } from '../settingTokenField';
 import { CopyInputControlWithAgent } from '../../../copyinputcontrol/CopyInputControlWithAgent';
 import constants from '../../../constants';
+import { InfoDot } from '../../../infoDot';
+import { Label } from '../../../label';
+import { render as renderDom, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { FluentProvider, webDarkTheme } from '@fluentui/react-components';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
@@ -28,9 +33,10 @@ describe('ui/settings/settingTokenField', () => {
     };
   }
 
-  it('should render label and token field', () => {
+  it.each([undefined, ''])('should render label and token field without empty help (%s)', (helpText) => {
     const props: SettingTokenFieldProps = {
       label: 'name',
+      helpText,
       value: [
         {
           value: 'test',
@@ -57,6 +63,43 @@ describe('ui/settings/settingTokenField', () => {
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
     expect(tokenField[0].type).toBe(TokenField);
     expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining(props.label) });
+    const labelGroup = React.Children.toArray(label.props.children)[0] as React.ReactElement;
+    expect(React.Children.toArray(labelGroup.props.children)).toHaveLength(1);
+  });
+
+  it('shows help on keyboard focus without changing the label or filled editor', async () => {
+    const user = userEvent.setup();
+    const props: SettingTokenFieldProps = {
+      label: 'Base time',
+      helpText: 'Normalize the timestamp to UTC and select UTC as the source time zone.',
+      required: true,
+      value: [{ id: 'value', type: ValueSegmentType.LITERAL, value: '2026-11-01T06:30:00Z' }],
+      tokenEditor: true,
+      tokenMapping: {},
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
+      editor: 'internal-custom-editor',
+      editorOptions: { EditorComponent: () => <input aria-label="Timestamp" defaultValue="2026-11-01T06:30:00Z" /> },
+    };
+    const { children } = render(SettingTokenField, props);
+    const labelContainer = children[0] as React.ReactElement;
+    const labelGroup = React.Children.toArray(labelContainer.props.children)[0] as React.ReactElement;
+    const [label, info] = React.Children.toArray(labelGroup.props.children) as React.ReactElement[];
+    expect(label.type).toBe(Label);
+    expect(label.props).toMatchObject({ text: props.label, isRequiredField: true });
+    expect(info.type).toBe(InfoDot);
+    expect(info.props).toMatchObject({ title: props.label, description: props.helpText });
+
+    renderDom(
+      <FluentProvider theme={webDarkTheme}>
+        <SettingTokenField {...props} />
+      </FluentProvider>
+    );
+    const helpIcon = screen.getByLabelText(`${props.label} ${props.helpText}`);
+    await user.tab();
+    expect(helpIcon).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(props.helpText ?? '');
+    expect(screen.getByRole('textbox', { name: 'Timestamp' })).toHaveValue('2026-11-01T06:30:00Z');
   });
 
   it('custom editor: should render label and custom token field', () => {
@@ -117,6 +160,7 @@ describe('ui/settings/settingTokenField', () => {
         editorOptions: { options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }] },
         hideLabel: true,
       },
+      helpText: 'This help must be hidden with its label.',
     };
 
     const { children } = render(SettingTokenField, props);

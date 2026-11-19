@@ -1,3 +1,4 @@
+import { getPrecomputedHandles } from '../../../../../core/graphlayout/precomputedHandles';
 import { beforeAll, afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, renderHook } from '@testing-library/react';
 import { getBezierPath, Position, ReactFlow, type EdgeTypes, type Node, type NodeProps } from '@xyflow/react';
@@ -79,6 +80,7 @@ const ActualCondition = ({ id, data }: NodeProps<AxisNode>) => (
   />
 );
 const types = {
+  [WORKFLOW_NODE_TYPES.OPERATION_NODE]: ActualCard,
   actual: ActualCard,
   branch: ActualBranch,
   tool: ActualTool,
@@ -139,6 +141,30 @@ describe('shared visuals contain actual XYFlow ports', () => {
     );
   });
   afterAll(() => vi.unstubAllGlobals());
+
+  it.each([false, true])('culls offscreen cards before ResizeObserver and supports keyboard navigation (shared=%s)', (shared) => {
+    options.shared = shared;
+    const nodes: Node[] = [0, 2000].map((x, index) => {
+      const node: Node = {
+        id: `action-${index}`,
+        type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
+        position: { x, y: 0 },
+        ...(shared ? { width: 200, height: 44 } : { initialWidth: 200, initialHeight: 44 }),
+        data: { presentation: { shared } },
+      };
+      return { ...node, handles: getPrecomputedHandles(node, 200, 44) };
+    });
+    const { container, rerender } = render(
+      <ReactFlow width={600} height={400} nodeTypes={types} nodes={nodes} onlyRenderVisibleElements />
+    );
+    expect(container.querySelectorAll('.react-flow__node')).toHaveLength(1);
+    expect(container.querySelector('[data-id="action-1"]')).toBeNull();
+    if (!shared) {
+      expect(container.querySelector<HTMLElement>('[data-id="action-0"]')?.style.height).toBe('');
+    }
+    rerender(<ReactFlow width={600} height={400} nodeTypes={types} nodes={nodes} onlyRenderVisibleElements={false} />);
+    expect(container.querySelectorAll('.react-flow__node')).toHaveLength(2);
+  });
 
   it('retains the actual source/target hit elements and connection permissions under accepted shared geometry', () => {
     const { container } = render(

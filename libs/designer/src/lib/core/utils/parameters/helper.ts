@@ -406,6 +406,7 @@ export function createParameterInfo(
     parameterKey: parameter.key,
     parameterName: parameter.name,
     placeholder: parameter.description,
+    helpText: parameter.schema?.['x-ms-help-text'],
     preservedValue: getPreservedValue(parameter),
     required: isRequired,
     schema,
@@ -969,6 +970,14 @@ export function loadParameterValue(parameter: InputParameter, shouldEncodeBasedO
     if (parameter?.required && valueObject === undefined) {
       valueObject = parameter?.default;
     }
+  }
+  if (
+    parameter.in === ParameterLocations.Path &&
+    typeof valueObject === 'string' &&
+    valueObject.startsWith('#{') &&
+    valueObject.endsWith('}')
+  ) {
+    return [createLiteralValueSegment(valueObject)];
   }
   const requiresUrlEncoding = shouldEncodeBasedOnMetadata
     ? parameter.in === ParameterLocations.Path || parameter.encode !== undefined

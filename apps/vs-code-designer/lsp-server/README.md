@@ -20,14 +20,10 @@ Run commands from the repository root:
 ```powershell
 pnpm --dir apps/vs-code-designer run lsp:build
 pnpm --dir apps/vs-code-designer run lsp:test
-pnpm --dir apps/vs-code-designer run lsp:package
-```
-
-`lsp:package` uses the SDK package currently stored in `src/assets/LSPServer`. To package a different SDK release:
-
-```powershell
 pnpm --dir apps/vs-code-designer run lsp:package -- --sdk-package <path-to-Microsoft.Azure.Workflows.Sdk.nupkg>
 ```
+
+The SDK package is used only to validate the managed server tests. It is not copied into the extension. `SDK_NUPKG_PATH` may be set instead of passing `--sdk-package`.
 
 The packaging command:
 
@@ -36,20 +32,18 @@ The packaging command:
 3. Runs all server tests against the selected SDK package.
 4. Publishes a framework-dependent server.
 5. Creates `src/assets/LSPServer/LSPServer.zip`.
-6. Copies the selected SDK package into the asset directory.
-7. Updates `src/assets/LSPServer/lsp-assets.json`.
-8. Verifies that the archive contains `LSPServer/LogicAppsLanguageServer.dll`.
+6. Updates `src/assets/LSPServer/lsp-assets.json`.
+7. Verifies that the archive contains `LSPServer/LogicAppsLanguageServer.dll`.
 
-The normal TypeScript build and pull-request validation do not rebuild the server. Commit the updated ZIP, SDK package, and manifest with source changes that affect the shipped server.
+The normal TypeScript build and pull-request validation do not rebuild the server. Commit the updated ZIP and manifest with source changes that affect the shipped server.
 
 ## Asset contract
 
 `src/assets/LSPServer/lsp-assets.json` is the source of truth for:
 
 - The server archive filename and SHA-256 revision.
-- The SDK package filename and SHA-256 revision.
 
-The extension uses these hashes as installation revision markers. Do not edit the manifest by hand.
+The extension uses this hash as the server installation revision marker. Do not edit the manifest by hand.
 
 The ZIP must preserve this layout:
 
@@ -79,4 +73,4 @@ Change both sides and their tests in the same pull request when one of these con
 
 The current SDK source is maintained in [Azure/logicapps-sdk](https://github.com/Azure/logicapps-sdk).
 
-An SDK update is complete only after `lsp:package` and the bundled-server integration tests pass with the new nupkg. SDK convention changes can affect detection of `WorkflowActions`, `WorkflowTriggers`, connector attributes, agent attributes, and dynamic metadata.
+The extension resolves the SDK package referenced by each codeful project from its restored NuGet cache. SDK convention changes can affect detection of `WorkflowActions`, `WorkflowTriggers`, connector attributes, agent attributes, and dynamic metadata, so validate the managed server with the target package before release.

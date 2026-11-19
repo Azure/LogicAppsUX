@@ -197,7 +197,7 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
 
     it.each([
       ['rulesEngine', ProjectType.rulesEngine, TargetFramework.Net8],
-      ['codeful', ProjectType.codeful, TargetFramework.Net8],
+      ['codeful', ProjectType.codeful, TargetFramework.Net10],
       ['existing logicApp (standard)', ProjectType.logicApp, TargetFramework.Net8],
     ])('does not add the setting for projectType=%s', async (_label, projectType, targetFramework) => {
       await writeExistingLocalSettings({ AzureWebJobsStorage: 'UseDevelopmentStorage=true' });

@@ -68,6 +68,7 @@ const nonvisualExports = [
   'NodeInactiveContext',
   'defaultBranchTakenString',
   'defaultNodeFrameStrings',
+  'defaultNodeFrameCountStrings',
   'defaultNodeIterationPagerStrings',
   'defaultNodeRunAfterStrings',
   'COLLAPSE_REVEAL_EXPAND_MS',

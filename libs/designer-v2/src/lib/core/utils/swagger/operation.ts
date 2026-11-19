@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-
-/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { getLegacyConnectionReferenceKey } from '../../actions/bjsworkflow/connections';
@@ -48,6 +45,7 @@ import {
   startsWith,
   unmap,
   cleanResourceId,
+  normalizeCodefulConnectorPath,
 } from '@microsoft/logic-apps-shared';
 import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -332,7 +330,8 @@ export const getOperationIdFromDefinition = (operationInputInfo: OperationInputI
     throw new Error('Invalid operationInputInfo');
   }
 
-  const path = operationInputInfo.path ?? operationInputInfo?.pathTemplate?.template ?? '';
+  const serializedPath = operationInputInfo.path ?? operationInputInfo?.pathTemplate?.template ?? '';
+  const path = normalizeCodefulConnectorPath(serializedPath) ?? serializedPath;
   return getOperationIdFromSwagger(operationInputInfo.method, path, operations);
 };
 

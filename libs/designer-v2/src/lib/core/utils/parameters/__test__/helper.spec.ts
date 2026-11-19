@@ -28,11 +28,49 @@ import {
 } from '@microsoft/designer-ui';
 import { ValueSegmentConvertor } from '../segment';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
-import { DynamicValuesType, ExpressionType, InitConnectorService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import {
+  DynamicValuesType,
+  ExpressionType,
+  InitConnectorService,
+  InitOperationManifestService,
+  SchemaProcessor,
+} from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
+import { convertTimezoneManifest } from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/datetime';
+import * as IntlModule from '../../../../../../../logic-apps-shared/src/intl/src/intl';
+import { createIntl } from 'react-intl';
 
 describe('core/utils/parameters/helper', () => {
+  it('resolves parameter help in the active locale after the manifest has been imported', () => {
+    vi.spyOn(IntlModule, 'getIntl').mockReturnValue(
+      createIntl({ locale: 'fr', messages: { fQkDaG: 'Heure UTC', '3AK7g8': 'Fuseau horaire', QbJDi7: 'Element' } })
+    );
+    const parameters = new SchemaProcessor().getSchemaProperties(convertTimezoneManifest.properties.inputs);
+    const infos = parameters.map((parameter) => Helper.createParameterInfo(parameter));
+
+    expect(infos.find((parameter) => parameter.parameterName === 'baseTime')?.helpText).toBe('Heure UTC');
+    expect(infos.find((parameter) => parameter.parameterName === 'sourceTimeZone')?.helpText).toBe('Fuseau horaire');
+  });
+
+  it('propagates optional parameter help without replacing placeholders or values', () => {
+    const parameters = new SchemaProcessor().getSchemaProperties(convertTimezoneManifest.properties.inputs);
+    const infos = parameters.map((parameter) =>
+      Helper.createParameterInfo({ ...parameter, value: parameter.name === 'baseTime' ? '2026-11-01T06:30:00Z' : parameter.default })
+    );
+    const baseTime = infos.find((parameter) => parameter.parameterName === 'baseTime');
+    const sourceTimeZone = infos.find((parameter) => parameter.parameterName === 'sourceTimeZone');
+    const destinationTimeZone = infos.find((parameter) => parameter.parameterName === 'destinationTimeZone');
+
+    expect(baseTime?.helpText).toContain('normalize the timestamp to UTC');
+    expect(baseTime?.placeholder).toBe('The time to convert.');
+    expect(baseTime?.value[0].value).toBe('2026-11-01T06:30:00Z');
+    expect(sourceTimeZone?.helpText).toContain('Eastern Standard Time');
+    expect(sourceTimeZone?.placeholder).toBe('The time zone the base time is in.');
+    expect(destinationTimeZone?.helpText).toBeUndefined();
+    expect(destinationTimeZone?.placeholder).toBe('The time zone to convert to.');
+  });
+
   describe('parameterValueToJSONString', () => {
     it('should parse user typed json containing null, array, numeric, and nested values', () => {
       const parameterValue = [

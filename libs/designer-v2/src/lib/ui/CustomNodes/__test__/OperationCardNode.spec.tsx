@@ -6,6 +6,12 @@ import type { NodeProps } from '@xyflow/react';
 // react-intl's useIntl is already mocked by test-setup.ts via mockUseIntl()
 
 const mockDispatch = vi.fn();
+const mockUseInitialMountSettled = vi.fn().mockReturnValue(true);
+const mockUseNodeRepetition = vi.fn().mockReturnValue({ isFetching: false, data: undefined });
+
+vi.mock('../../../core/hooks/useInitialMountSettled', () => ({
+  useInitialMountSettled: () => mockUseInitialMountSettled(),
+}));
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
@@ -23,7 +29,7 @@ vi.mock('react-hotkeys-hook', () => ({
 
 // Mock the core barrel to prevent loading the full module tree (undoRedoTypes, etc.)
 vi.mock('../../../core', () => ({
-  useNodeRepetition: () => ({ isFetching: false, data: undefined }),
+  useNodeRepetition: (...args: any[]) => mockUseNodeRepetition(...args),
 }));
 
 vi.mock('../../../core/actions/bjsworkflow/copypaste', () => ({
@@ -239,6 +245,8 @@ describe('OperationCardNode (v2)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseInitialMountSettled.mockReturnValue(true);
+    mockUseNodeRepetition.mockReturnValue({ isFetching: false, data: undefined });
     cleanup();
     mockUseReadOnly.mockReturnValue(false);
     mockUseSharedNodeUi.mockReturnValue(false);
@@ -533,6 +541,28 @@ describe('OperationCardNode (v2)', () => {
         type: 'designerView/setShowDeleteModalNodeId',
       })
     );
+  });
+
+  it('defers the leaf DropZone until initial mount settles without changing accepted shared geometry', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseInitialMountSettled.mockReturnValue(false);
+    const props = { ...defaultProps, data: { presentation: { shared: true }, handleAxis: 'horizontal' as const } };
+    const { rerender } = render(<DefaultNode {...props} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
+    mockUseInitialMountSettled.mockReturnValue(true);
+    // The mocked hook has no subscription; change props to re-render the memoized card.
+    rerender(<DefaultNode {...props} data={{ ...props.data }} />);
+    expect(screen.getByTestId('dropzone-root')).toHaveAttribute('data-axis', 'horizontal');
+    expect(screen.getByTestId('dropzone-root')).toHaveAttribute('data-shared', 'true');
+  });
+
+  it('only subscribes to repetition run data while monitoring', () => {
+    mockUseNodeRepetition.mockClear();
+    const { rerender } = render(<DefaultNode {...defaultProps} />);
+    expect(mockUseNodeRepetition).not.toHaveBeenCalled();
+    mockUseMonitoringView.mockReturnValue(true);
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(mockUseNodeRepetition).toHaveBeenCalled();
   });
 
   it('should show DropZone for leaf nodes', () => {

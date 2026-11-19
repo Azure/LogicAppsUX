@@ -2,8 +2,10 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import type { NodeProps } from '@xyflow/react';
-import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { Position, type Node, type NodeProps } from '@xyflow/react';
+import { adoptUserNodes, type NodeLookup, type ParentLookup } from '@xyflow/system';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { getPrecomputedHandles } from '../../../core/graphlayout/precomputedHandles';
 
 const mockDispatch = vi.fn();
 
@@ -353,6 +355,43 @@ describe('SubgraphCardNode (v2)', () => {
 
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('error-messages')).toBeInTheDocument();
+  });
+
+  it('remeasures an Until header when selection recreates its node after the monitoring pager mounts', () => {
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Until', runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'graph1',
+      subgraphType: SUBGRAPH_TYPES.UNTIL_DO,
+      actionCount: 1,
+      runData: { iterationCount: 3 },
+    });
+    const branch: Node = {
+      id: 'until-#subgraph',
+      type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+      position: { x: 0, y: 0 },
+      initialWidth: 120,
+      initialHeight: 32,
+      data: { presentation: { shared: false } },
+    };
+    branch.handles = getPrecomputedHandles(branch, 120, 32, true, SUBGRAPH_TYPES.UNTIL_DO);
+    render(<SubgraphCardNode {...defaultProps} id={branch.id} data={branch.data} />);
+    expect(screen.getByTestId('handle-source').parentElement).toContainElement(screen.getByTestId('loops-pager-until'));
+
+    const nodeLookup: NodeLookup = new Map();
+    const parentLookup: ParentLookup = new Map();
+    adoptUserNodes([branch], nodeLookup, parentLookup);
+    const measured = nodeLookup.get(branch.id)!;
+    measured.measured = { width: 120, height: 64 };
+    measured.internals.handleBounds = {
+      target: [{ nodeId: branch.id, type: 'target', position: Position.Top, x: 0, y: 0, width: 120, height: 64 }],
+      source: [{ nodeId: branch.id, type: 'source', position: Position.Bottom, x: 57, y: 58, width: 6, height: 6 }],
+    };
+
+    adoptUserNodes([{ ...branch, selected: false, selectable: false }], nodeLookup, parentLookup);
+
+    expect(nodeLookup.get(branch.id)?.internals.handleBounds).toBeUndefined();
   });
 
   it('should show LoopsPager in monitoring view when parent is agent with repetitions', () => {
