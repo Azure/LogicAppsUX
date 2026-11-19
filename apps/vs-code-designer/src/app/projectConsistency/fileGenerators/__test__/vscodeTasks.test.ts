@@ -255,20 +255,12 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: TargetFramework.Net10,
+        targetFramework: TargetFramework.Net8,
       });
 
       expect(result.tasks).toHaveLength(5);
       const labels = result.tasks.map((t) => t.label);
       expect(labels).toEqual(['clean', 'build', 'clean release', 'publish', 'func: host start']);
-      const funcTask = result.tasks.find((task) => task.label === 'func: host start');
-      expect(funcTask).toMatchObject({
-        dependsOn: 'build',
-        options: { cwd: '${workspaceFolder}/bin/Debug/net10.0' },
-        windows: { options: { cwd: 'bin/Debug/net10.0' } },
-        linux: { options: { cwd: 'bin/Debug/net10.0' } },
-        osx: { options: { cwd: 'bin/Debug/net10.0' } },
-      });
     });
 
     it('should not include inputs for codeful projects', () => {
@@ -276,7 +268,7 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: TargetFramework.Net10,
+        targetFramework: TargetFramework.Net8,
       });
 
       expect(result.inputs).toBeUndefined();

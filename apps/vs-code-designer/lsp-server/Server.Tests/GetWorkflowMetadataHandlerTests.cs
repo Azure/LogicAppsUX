@@ -1097,9 +1097,9 @@ public class TestWorkflow : Workflow
         Assert.NotNull(result);
         Assert.Equal("http-trigger-test", result.WorkflowName);
 
-        // The SDK bundled with LogicAppsUX supplies the friendly default trigger name.
+        // SDK preview.3 no longer exposes a default name parameter, so use the programmatic fallback.
         Assert.NotNull(result.DefaultName);
-        Assert.Equal("when_an_HTTP_request_is_received", result.DefaultName);
+        Assert.Equal("builtin_createHttpTrigger", result.DefaultName);
     }
 
     [Fact]
@@ -1139,7 +1139,7 @@ public class TestWorkflow : Workflow
         // TriggerName should be the custom name provided via .WithName()
         Assert.Equal("my_custom_trigger_name", result.TriggerName);
 
-        Assert.Equal("when_an_HTTP_request_is_received", result.DefaultName);
+        Assert.Equal("builtin_createHttpTrigger", result.DefaultName);
     }
 
     [Fact]
@@ -1192,7 +1192,7 @@ public class TestWorkflow : Workflow
         // WITHOUT SDK: uses programmatic fallback naming
         Assert.Equal("builtin_createHttpTrigger", resultWithoutSdk.DefaultName);
 
-        // WITH SDK: uses the friendly default supplied by SDK metadata.
-        Assert.Equal("when_an_HTTP_request_is_received", resultWithSdk.DefaultName);
+        // WITH SDK: preview.3 has no default name parameter, so it uses the same fallback.
+        Assert.Equal("builtin_createHttpTrigger", resultWithSdk.DefaultName);
     }
 }

@@ -4,7 +4,7 @@ import { act, render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux';
 import { configureStore, type AnyAction } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
-import { ExtensionCommand, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
 const { mockPostMessage } = vi.hoisted(() => {
   return { mockPostMessage: vi.fn() };
@@ -403,40 +403,6 @@ describe('CreateWorkspace', () => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           expect.objectContaining({
             command: ExtensionCommand.createLogicApp,
-          })
-        );
-      });
-    });
-
-    it.each([
-      ['createWorkspace', ExtensionCommand.createWorkspace],
-      ['createLogicApp', ExtensionCommand.createLogicApp],
-    ])('should use .NET 10 for codeful projects in the %s flow', async (flowType, command) => {
-      renderWithStore(
-        {
-          flowType,
-          currentStep: 1,
-          workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
-          pathValidationResults: { '/valid/path': true },
-          workspaceName: 'my-ws',
-          logicAppType: ProjectType.codeful,
-          logicAppName: 'my-codeful-app',
-          workflowType: 'Stateful-Codeful',
-          workflowName: 'my-codeful-wf',
-          targetFramework: '',
-        },
-        flowType === 'createLogicApp' ? <CreateLogicApp /> : <CreateWorkspace />
-      );
-
-      fireEvent.click(screen.getByRole('button', { name: /create/i }));
-
-      await waitFor(() => {
-        expect(mockPostMessage).toHaveBeenCalledWith(
-          expect.objectContaining({
-            command,
-            data: expect.objectContaining({
-              targetFramework: TargetFramework.Net10,
-            }),
           })
         );
       });

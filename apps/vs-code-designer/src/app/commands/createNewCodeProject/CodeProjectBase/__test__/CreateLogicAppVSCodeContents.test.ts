@@ -58,7 +58,7 @@ describe('CreateLogicAppVSCodeContents', () => {
   const mockContextCodeful: IWebviewProjectContext = {
     logicAppName: 'TestLogicAppCodeful',
     logicAppType: ProjectType.codeful,
-    targetFramework: TargetFramework.Net10,
+    targetFramework: TargetFramework.NetFx,
     isDevContainerProject: false,
   } as any;
 

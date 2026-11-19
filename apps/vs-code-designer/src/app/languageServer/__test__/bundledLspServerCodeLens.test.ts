@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CodefulSdk, CodefulSdkVersion } from '../../../constants';
 
 const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
+const processShutdownTimeoutMs = 5_000;
 const sdkPackageIdLower = CodefulSdk.WorkflowsSDK.toLowerCase();
 const nugetCacheRoot =
   process.env.NUGET_PACKAGES ||
@@ -54,9 +55,11 @@ class LspProcess {
     }
   >();
   private readonly stderrChunks: string[] = [];
+  private readonly closed: Promise<void>;
   private disposed = false;
 
   public constructor(private readonly child: ChildProcessWithoutNullStreams) {
+    this.closed = new Promise((resolve) => child.once('close', () => resolve()));
     child.stdout.on('data', (chunk: Buffer) => this.handleStdout(chunk));
     child.stderr.on('data', (chunk: Buffer) => this.stderrChunks.push(chunk.toString('utf8')));
     child.on('exit', (code, signal) => {
@@ -104,15 +107,37 @@ class LspProcess {
   public async dispose(): Promise<void> {
     this.disposed = true;
 
-    try {
-      await this.request('shutdown', undefined);
-      this.notify('exit', undefined);
-    } catch {
-      // The process is being torn down; a failed shutdown request should not hide the test assertion.
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
+      try {
+        await this.request('shutdown', undefined);
+        this.notify('exit', undefined);
+      } catch {
+        // The process is being torn down; a failed shutdown request should not hide the test assertion.
+      }
     }
 
-    if (!this.child.killed) {
+    if (this.child.exitCode === null && this.child.signalCode === null && !this.child.killed) {
       this.child.kill();
+    }
+
+    if (!(await this.waitForClose(processShutdownTimeoutMs))) {
+      throw new Error(`Timed out waiting for the LSP server process to exit.\n${this.stderr}`);
+    }
+  }
+
+  private async waitForClose(timeoutMs: number): Promise<boolean> {
+    let timeout: NodeJS.Timeout | undefined;
+    try {
+      return await Promise.race([
+        this.closed.then(() => true),
+        new Promise<boolean>((resolve) => {
+          timeout = setTimeout(() => resolve(false), timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     }
   }
 

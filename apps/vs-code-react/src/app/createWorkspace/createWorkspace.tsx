@@ -20,7 +20,7 @@ import {
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
-import { ExtensionCommand, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import {
   functionNameValidation,
   getValidationRequirements,
@@ -525,7 +525,6 @@ const CreateWorkspaceInternal = () => {
       isDevContainerProject,
       projectType,
     };
-    const selectedTargetFramework = logicAppType === ProjectType.codeful ? TargetFramework.Net10 : targetFramework;
 
     // Add flow-specific data
     let data: any = { ...baseData };
@@ -544,7 +543,7 @@ const CreateWorkspaceInternal = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework: selectedTargetFramework,
+        targetFramework,
         ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,
@@ -564,7 +563,7 @@ const CreateWorkspaceInternal = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework: selectedTargetFramework,
+        targetFramework,
         projectType,
         ...(logicAppType === ProjectType.customCode && {
           functionNamespace,
@@ -585,7 +584,7 @@ const CreateWorkspaceInternal = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework: selectedTargetFramework,
+        targetFramework,
         projectType,
       };
     } else {
@@ -596,7 +595,7 @@ const CreateWorkspaceInternal = () => {
         logicAppName,
         workflowType,
         workflowName,
-        targetFramework: selectedTargetFramework,
+        targetFramework: logicAppType === ProjectType.codeful ? 'net8' : targetFramework,
         ...(logicAppType === ProjectType.customCode && {
           functionFolderName,
           functionNamespace,

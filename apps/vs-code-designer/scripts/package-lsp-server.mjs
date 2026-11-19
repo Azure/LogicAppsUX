@@ -47,15 +47,15 @@ if (!existsSync(runtimeConfigPath)) {
 }
 
 const runtimeConfig = JSON.parse(readFileSync(runtimeConfigPath, 'utf8'));
-if (runtimeConfig.runtimeOptions?.tfm !== 'net10.0') {
-  throw new Error(`Published LSP server targets '${runtimeConfig.runtimeOptions?.tfm ?? 'unknown'}' instead of 'net10.0'.`);
+if (runtimeConfig.runtimeOptions?.tfm !== 'net8.0') {
+  throw new Error(`Published LSP server targets '${runtimeConfig.runtimeOptions?.tfm ?? 'unknown'}' instead of 'net8.0'.`);
 }
 
 const runtimeFrameworks = runtimeConfig.runtimeOptions.frameworks ?? [runtimeConfig.runtimeOptions.framework];
-for (const frameworkName of ['Microsoft.NETCore.App', 'Microsoft.AspNetCore.App']) {
+for (const frameworkName of ['Microsoft.NETCore.App']) {
   const framework = runtimeFrameworks.find((candidate) => candidate?.name === frameworkName);
-  if (!framework?.version?.startsWith('10.')) {
-    throw new Error(`Published LSP server requires '${frameworkName} ${framework?.version ?? 'unknown'}' instead of version 10.`);
+  if (!framework?.version?.startsWith('8.')) {
+    throw new Error(`Published LSP server requires '${frameworkName} ${framework?.version ?? 'unknown'}' instead of version 8.`);
   }
 }
 

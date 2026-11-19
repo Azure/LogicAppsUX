@@ -33,7 +33,7 @@ import { generateHostJson, generateLocalSettingsJson } from '../../../projectCon
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectType, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
@@ -139,8 +139,7 @@ export const createCodefulWorkflowFile = async (
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
-    const programContent = templateProgramContent
-      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
+    const programContent = templateProgramContent.replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)
@@ -271,9 +270,6 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   addLocalFuncTelemetry(context);
 
   const webviewProjectContext: IWebviewProjectContext = options;
-  if (webviewProjectContext.logicAppType === ProjectType.codeful) {
-    webviewProjectContext.targetFramework = TargetFramework.Net10;
-  }
 
   // Add telemetry properties for debugging
   context.telemetry.properties.fromPackage = String(fromPackage);
@@ -315,7 +311,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
-  mySubContext.targetFramework = webviewProjectContext.targetFramework;
+  mySubContext.targetFramework = options.targetFramework;
   mySubContext.workspacePath = workspaceFolder;
 
   if (fromPackage) {
