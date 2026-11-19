@@ -54,6 +54,10 @@ const useStyles = makeStyles({
     borderBottomLeftRadius: `${compactNodeMetrics.card.wrappedHeight / 2}px`,
   },
   neutral: { [bg]: ui.nodeSurface, ':hover': { [bg]: ui.nodeSurfaceHover } },
+  scopeTint: { [bg]: tokens.colorPaletteMarigoldBackground1, ':hover': { [bg]: tokens.colorPaletteMarigoldBackground2 } },
+  loopTint: { [bg]: tokens.colorPaletteBlueBackground2, ':hover': { [bg]: tokens.colorPaletteBlueBackground2 } },
+  conditionTint: { [bg]: tokens.colorPaletteLilacBackground2, ':hover': { [bg]: tokens.colorPaletteLilacBackground2 } },
+  switchTint: { [bg]: tokens.colorNeutralBackground3, ':hover': { [bg]: tokens.colorNeutralBackground3Hover } },
   neutralSelected: { [bg]: ui.nodeSurfaceSelected, ':hover': { [bg]: ui.nodeSurfaceSelected } },
   agent: {
     [bg]: ui.nodeAgentSurface,
@@ -92,6 +96,8 @@ export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   bodyHeight?: number;
   shape?: NodeCardShape;
   surface?: 'neutral' | 'agent';
+  /** Opt-in family tint for control-flow headers. Selected cards retain the selected surface. */
+  headerTint?: 'scope' | 'loop' | 'condition' | 'switch';
   appearance?: 'default' | 'placeholder';
   selected?: boolean;
   status?: NodeRunStatus;
@@ -113,6 +119,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
     bodyHeight,
     shape = 'rounded',
     surface = 'neutral',
+    headerTint,
     appearance = 'default',
     selected = false,
     status,
@@ -142,6 +149,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
       data-status={status}
       data-handle-axis={handleAxis}
       data-inactive={inactive || undefined}
+      data-node-header-tint={headerTint}
     >
       {status && status !== 'mock' ? (
         <NodeStatusBadge
@@ -160,6 +168,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
           styles.card,
           size === 'compact' ? styles.compactHeight : size === 'compactWrapped' ? styles.compactWrappedHeight : styles[size],
           styles[surface],
+          headerTint && styles[`${headerTint}Tint`],
           selected && (surface === 'agent' ? styles.agentSelected : styles.neutralSelected),
           shape === 'pill' &&
             (size === 'compact' ? styles.pillCompact : size === 'compactWrapped' ? styles.pillCompactWrapped : styles.pill),

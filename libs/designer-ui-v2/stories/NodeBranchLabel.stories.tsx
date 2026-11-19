@@ -1,4 +1,5 @@
 import { Button } from '@fluentui/react-components';
+import { CheckmarkRegular, DismissRegular } from '@fluentui/react-icons';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { NodeBranchLabel, NodeFrame } from '@microsoft/designer-ui-v2';
@@ -29,6 +30,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
+
+export const ExplicitBranches: Story = {
+  render: () => (
+    <div className="sb-stack">
+      <NodeBranchLabel label="True" tone="success" icon={<CheckmarkRegular />} />
+      <NodeBranchLabel label="False" tone="danger" icon={<DismissRegular />} />
+    </div>
+  ),
+};
 
 export const States: Story = {
   render: (args) => (

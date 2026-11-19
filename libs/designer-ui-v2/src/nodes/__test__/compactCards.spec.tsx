@@ -1,6 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { ActionNodeCard, TriggerNodeCard, compactNodeMetrics, getCompactNodeHeight, getCompactTitleLines, nodeMetrics } from '../..';
+import {
+  ActionNodeCard,
+  LoopNodeCard,
+  TriggerNodeCard,
+  compactNodeMetrics,
+  getCompactNodeHeight,
+  getCompactTitleLines,
+  nodeMetrics,
+} from '../..';
 import { resolveCardDensity } from '../cards/shared';
 
 // Without a status there is no badge, so the sized card surface is the root's first child.
@@ -68,5 +76,19 @@ describe('Standard compact preset', () => {
     const { root, surface } = surfaceOf('action');
     expect(getComputedStyle(root).width).toBe(`${nodeMetrics.cards.action.width}px`);
     expect(getComputedStyle(surface).minHeight).toBe(`${nodeMetrics.cards.action.height}px`);
+  });
+
+  it('lets compact loops wrap while preserving the default Otto loop treatment', () => {
+    const { rerender } = render(<LoopNodeCard title="Until Nested" />);
+    expect(getComputedStyle(surfaceOf('foreach').surface).minHeight).toBe(`${nodeMetrics.cards.loop.height}px`);
+    expect(getComputedStyle(screen.getByText('Until Nested')).whiteSpace).toBe('nowrap');
+    expect(surfaceOf('foreach').root).not.toHaveAttribute('data-node-header-tint');
+
+    rerender(<LoopNodeCard title="Until Nested" density="compact" titleLines={2} headerTint="loop" />);
+    const { root, surface } = surfaceOf('foreach');
+    expect(root).toHaveAttribute('data-node-header-tint', 'loop');
+    expect(getComputedStyle(root).width).toBe(`${nodeMetrics.cards.loop.width}px`);
+    expect(getComputedStyle(surface).minHeight).toBe(`${compactNodeMetrics.card.wrappedHeight}px`);
+    expect(getComputedStyle(screen.getByText('Until Nested')).whiteSpace).toBe('normal');
   });
 });

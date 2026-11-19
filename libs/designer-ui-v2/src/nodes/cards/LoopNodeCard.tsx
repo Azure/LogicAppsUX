@@ -10,8 +10,8 @@ import { NodeText } from '../primitives/NodeText';
 import type { LoopNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import type { NodeHandleVariant } from '../types';
-import { resolveNodeIcons } from './shared';
-import type { BaseNodeCardProps } from './shared';
+import { resolveCardDensity, resolveNodeIcons } from './shared';
+import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
 
 const END_OUTPUTS = ['neutral', 'neutral'] as const;
 const NEXT_OUTPUT = ['neutral'] as const;
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 
 /** end: body/done outputs; bottom: body below and next trailing; none: next only. */
 export type LoopBodyPlacement = 'end' | 'bottom' | 'none';
-export interface LoopNodeCardProps extends Omit<BaseNodeCardProps, 'strings'> {
+export interface LoopNodeCardProps extends Omit<BaseNodeCardProps, 'strings'>, CompactNodeCardProps {
   handles?: boolean;
   bodyPlacement?: LoopBodyPlacement;
   inputVariant?: NodeHandleVariant;
@@ -53,12 +53,15 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
     bodyToggle,
     strings = defaultNodeStrings,
     handles = true,
+    density,
+    titleLines,
     ...rest
   },
   ref
 ) {
   const styles = useStyles();
   const testData = status === 'mock';
+  const layout = resolveCardDensity({ density, titleLines });
   const bottom =
     bodyToggle != null ? (
       <span className={styles.bottom}>{bodyToggle}</span>
@@ -70,6 +73,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
       {...rest}
       ref={ref}
       width="compact"
+      {...(density === 'compact' && { size: layout.size })}
       selected={selected}
       status={status}
       statusDetail={statusDetail}
@@ -77,15 +81,16 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
       data-node-card="foreach"
       data-body-placement={bodyPlacement}
     >
-      <NodeCardBody testData={testData} testDataLabel={strings.status.mock}>
+      <NodeCardBody density={layout.body} testData={testData} testDataLabel={strings.status.mock}>
         {handles ? <NodeInputHandle variant={inputVariant}>{inputSlot}</NodeInputHandle> : null}
         <NodeIconTile
           category="control"
+          size={layout.tile}
           selected={selected}
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, DEFAULT_ICONS)}
         />
-        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} />
+        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} titleLines={layout.titleLines} />
         {handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null}
       </NodeCardBody>
       {handles ? bottom : null}

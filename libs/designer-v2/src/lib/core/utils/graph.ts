@@ -94,9 +94,9 @@ export interface NodePresentation {
  */
 export const SHARED_SCOPE_TITLE_RESERVE = 20;
 
-const getCompactCardPresentation = (title: string | undefined, textEndReserve = 0) => {
-  const titleLines = getCompactTitleLines(title ?? '', textEndReserve);
-  return { titleLines, size: { width: compactNodeMetrics.card.width, height: getCompactNodeHeight(titleLines) } };
+const getCompactCardPresentation = (title: string | undefined, textEndReserve = 0, width: number = compactNodeMetrics.card.width) => {
+  const titleLines = getCompactTitleLines(title ?? '', textEndReserve + compactNodeMetrics.card.width - width);
+  return { titleLines, size: { width, height: getCompactNodeHeight(titleLines) } };
 };
 
 /** One admission decision for the renderer AND ELK. Raw identity is resolved by the host, never from a caption. */
@@ -137,7 +137,11 @@ export const getNodePresentation = (
         };
       case 'foreach':
       case 'until':
-        return { shared: true, family: 'loop', size: nodeMetrics.cards.loop };
+        return {
+          shared: true,
+          family: 'loop',
+          ...getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE, nodeMetrics.cards.loop.width),
+        };
       case 'agent':
         return {
           shared: true,

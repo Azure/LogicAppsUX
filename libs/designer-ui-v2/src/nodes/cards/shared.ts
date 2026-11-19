@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import type { NodeHandleAxis } from '../primitives/NodeHandle';
 import type { NodeCardDensity, NodeRunStatus } from '../types';
 import type { ActionNodeCardStrings } from '../strings';
+import type { NodeCardProps } from '../primitives/NodeCard';
 
 export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title: string;
@@ -15,6 +16,7 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   statusLabel?: string;
   statusAriaLabel?: string;
   inactive?: boolean;
+  headerTint?: NodeCardProps['headerTint'];
   strings?: ActionNodeCardStrings;
   handleAxis?: NodeHandleAxis;
   after?: ReactNode;

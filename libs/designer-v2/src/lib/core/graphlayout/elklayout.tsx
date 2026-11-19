@@ -444,7 +444,7 @@ const convertWorkflowGraphToElkGraph = (
         'elk.nodeSize.constraints': 'MINIMUM_SIZE',
         'elk.nodeSize.minimum': `(${nodeMetrics.frame.minWidth},${
           operationType === 'foreach'
-            ? nodeMetrics.cards.loop.height + TERMINAL_ADD_PADDING + nodeMetrics.frame.minBodyHeight
+            ? (header?.height ?? 0) + TERMINAL_ADD_PADDING + nodeMetrics.frame.minBodyHeight
             : nodeMetrics.frame.minBodyHeight
         })`,
       }),

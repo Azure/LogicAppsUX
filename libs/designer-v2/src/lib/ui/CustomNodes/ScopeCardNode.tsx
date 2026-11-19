@@ -85,9 +85,10 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   const metadata = useNodeMetadata(scopeId);
   const operationInfo = useOperationInfo(scopeId);
   const sharedOption = useSharedNodeUi();
+  const label = useNodeDisplayName(scopeId);
   const presentation =
     (data?.presentation as NodePresentation | undefined) ??
-    getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, sharedOption, { operationType: node?.type });
+    getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, sharedOption, { operationType: node?.type, title: label });
   const shared = presentation.shared;
   const connectorName = useConnectorName(operationInfo);
   const parentRunIndex = useParentRunIndex(scopeId);
@@ -102,7 +103,6 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
-  const label = useNodeDisplayName(scopeId);
   const nodeComment = useNodeDescription(scopeId);
   const normalizedType = node?.type.toLowerCase();
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;

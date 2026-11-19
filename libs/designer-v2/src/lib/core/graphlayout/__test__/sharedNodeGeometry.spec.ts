@@ -103,7 +103,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'loop',
-      size: nodeMetrics.cards.loop,
+      size: { width: nodeMetrics.cards.loop.width, height: compactNodeMetrics.card.height },
+      titleLines: 1,
     });
 
     expect(
@@ -113,7 +114,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'loop',
-      size: nodeMetrics.cards.loop,
+      size: { width: nodeMetrics.cards.loop.width, height: compactNodeMetrics.card.height },
+      titleLines: 1,
     });
 
     expect(
@@ -222,7 +224,10 @@ describe('shared node geometry contracts', () => {
         'inside-action': { type: 'Compose' },
       } as any,
     });
-    expect(elkScope.layoutOptions?.['elk.nodeSize.minimum']).toBe('(232,220)');
+    const headerHeight = elkScope.children![0].height!;
+    expect(elkScope.layoutOptions?.['elk.nodeSize.minimum']).toBe(
+      `(232,${headerHeight + expectedTerminalPadding + nodeMetrics.frame.minBodyHeight})`
+    );
 
     const laidOutDirect = await exportForTesting.elkLayout(elkScope);
     const [scopeNodes] = exportForTesting.convertElkGraphToReactFlow(
@@ -235,7 +240,7 @@ describe('shared node geometry contracts', () => {
       true
     );
     const frameNode = scopeNodes.find((n) => n.id === 'foreach-scope')!;
-    const expectedHeaderOffset = nodeMetrics.cards.action.height + expectedTerminalPadding;
+    const expectedHeaderOffset = headerHeight + expectedTerminalPadding;
     expect(frameNode.data.presentation).toEqual({ shared: true, family: 'frame' });
     expect(frameNode.data.bodyFrame).toEqual({
       y: expectedHeaderOffset,

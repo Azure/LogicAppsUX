@@ -29,6 +29,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Playground: Story = {};
+export const TintedCompact: Story = {
+  args: { title: 'Until nested', density: 'compact', titleLines: 2, headerTint: 'loop', bodyPlacement: 'none', handleAxis: 'vertical' },
+};
 export const Placements: Story = {
   render: (args) => (
     <div className="sb-grid">

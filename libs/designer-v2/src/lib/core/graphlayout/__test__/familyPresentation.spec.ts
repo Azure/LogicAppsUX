@@ -23,8 +23,8 @@ describe('family admission and matching geometry', () => {
     ['Scope', 'scope', 208, 52],
     ['If', 'if', 160, 74],
     ['Switch', 'switch', 160, 74],
-    ['Foreach', 'loop', 160, 74],
-    ['Until', 'loop', 160, 74],
+    ['Foreach', 'loop', 160, 52],
+    ['Until', 'loop', 160, 52],
     ['Agent', 'agent', 280, 181],
   ])('admits renamed %s by definition, not display name', (operationType, family, width, height) => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType })).toMatchObject({
@@ -172,13 +172,13 @@ describe('family admission and matching geometry', () => {
     };
     const context = { operations: { renamed: { type: 'Foreach' } }, nodesMetadata: {} };
     const elkGraph = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, context);
-    expect(elkGraph.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 74 });
+    expect(elkGraph.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 52 });
     const layout = await exportForTesting.elkLayout(elkGraph);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
     expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.presentation).toMatchObject({
       shared: true,
       family: 'loop',
-      size: { width: 160, height: 74 },
+      size: { width: 160, height: 52 },
     });
     expect(nodes.find(({ id }) => id === 'renamed')?.width).toBeGreaterThan(232);
     expect(graph.children?.[0].children?.[0].width).toBe(200);
@@ -239,7 +239,28 @@ describe('family admission and matching geometry', () => {
     });
     const layout = await exportForTesting.elkLayout(converted);
     expect(layout.width).toBeGreaterThanOrEqual(232);
-    expect(layout.height).toBeGreaterThanOrEqual(220);
+    expect(layout.height).toBeGreaterThanOrEqual(198);
+  });
+
+  it.each([
+    ['ForEach_nested', 'Foreach', '#scope'],
+    ['ForEach_empty', 'Foreach', '#scope'],
+    ['Until_Nested', 'Until', '#footer'],
+  ] as const)('uses the same wrapped geometry for %s in ELK and React Flow', async (id, type, tag) => {
+    const headerId = `${id}-${tag}`;
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [{ id, type: 'GRAPH_NODE', children: [{ id: headerId, type: 'SCOPE_CARD_NODE' }] }],
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, { operations: { [id]: { type } } });
+    expect(converted.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 68 });
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    expect(nodes.find((node) => node.id === headerId)).toMatchObject({
+      width: 160,
+      height: 68,
+      data: { presentation: { titleLines: 2 } },
+    });
   });
 
   it('packs real Agent tool graphs vertically without leaking layout-only identities or duplicating MCP editor nodes', async () => {

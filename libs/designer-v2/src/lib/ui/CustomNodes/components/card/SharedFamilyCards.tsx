@@ -5,14 +5,21 @@ import {
   ConditionNodeCard,
   LoopNodeCard,
   NodeInactiveContext,
-  NodeLabeledHandle,
+  NodeBranchLabel,
   NodeText,
   ToolItemCard,
   getCompactTitleLines,
 } from '@microsoft/designer-ui-v2';
 import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
-import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
+import {
+  CheckmarkRegular,
+  ChevronDownRegular,
+  ChevronRightRegular,
+  DismissRegular,
+  FlowRegular,
+  PlugConnectedRegular,
+} from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore, SUBGRAPH_TYPES, type SubgraphType } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { useIntl } from 'react-intl';
@@ -31,16 +38,34 @@ import {
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { scopeNodeIcon } from './operationNodeGlyphs';
-import { SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
+import { getNodePresentation, SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 
 const useStyles = makeStyles({
   // Plain branch labels are not shared NodeCards, so mirror the card's inactive dimming from shared metrics.
   inactive: { opacity: nodeMetrics.inactiveOpacity },
   pinned: { outline: `2px solid ${tokens.colorPalettePumpkinBorderActive}`, outlineOffset: '2px' },
   collapse: { position: 'absolute', top: '4px', right: '4px', minWidth: 0 },
-  branch: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' },
+  branch: {
+    position: 'relative',
+    boxSizing: 'border-box',
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 1fr)',
+    alignItems: 'center',
+    textAlign: 'center',
+    height: '100%',
+    paddingInline: tokens.spacingHorizontalXXL,
+    borderRadius: tokens.borderRadius2XLarge,
+    color: tokens.colorNeutralForeground1,
+  },
+  trueBranch: { backgroundColor: tokens.colorStatusSuccessBackground1 },
+  falseBranch: { backgroundColor: tokens.colorStatusDangerBackground1 },
+  caseBranch: { backgroundColor: tokens.colorNeutralBackground3 },
+  loopBranch: { backgroundColor: tokens.colorPaletteBlueBackground2 },
+  branchSelected: { outline: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandStroke}`, outlineOffset: '-2px' },
+  branchLabel: { justifyContent: 'center', minWidth: 0 },
   acceptedFrame: { width: '100%' },
   pagerSlot: { display: 'inline-flex', height: '20px', alignItems: 'center' },
 });
@@ -209,6 +234,7 @@ export const SharedScopeCard = ({
     return withHover(
       <ConditionNodeCard
         {...common}
+        headerTint={family === 'if' ? 'condition' : 'switch'}
         kind={family}
         // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
         mode="multiOutput"
@@ -224,6 +250,14 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
+        headerTint="loop"
+        density="compact"
+        titleLines={
+          props.titleLines ??
+          getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: operationType ?? 'foreach', title: props.title })
+            .titleLines
+        }
+        style={{ ...common.style, '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties}
         subtitle={strings.loop.foreach}
         bodyPlacement="none"
         strings={strings}
@@ -282,6 +316,7 @@ export const SharedScopeCard = ({
   return withHover(
     <ActionNodeCard
       {...common}
+      headerTint="scope"
       strings={actionStrings}
       handles={false}
       icon={scopeNodeIcon}
@@ -424,10 +459,32 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
     <div
       {...common}
       data-automation-id={compact ? `${props.id}-collapse-toggle-small` : common['data-automation-id']}
-      className={mergeClasses(styles.branch, props.active === false && !ancestorInactive && styles.inactive, common.className)}
+      className={mergeClasses(
+        styles.branch,
+        conditional
+          ? isTrue
+            ? styles.trueBranch
+            : styles.falseBranch
+          : props.subgraphType === SUBGRAPH_TYPES.UNTIL_DO
+            ? styles.loopBranch
+            : styles.caseBranch,
+        props.selected && styles.branchSelected,
+        props.active === false && !ancestorInactive && styles.inactive,
+        common.className
+      )}
       data-inactive={props.active === false || undefined}
     >
-      {conditional ? <NodeLabeledHandle branch={isTrue ? 'true' : 'false'} label={title} lineLength={0} /> : <NodeText title={title} />}
+      {conditional ? (
+        <NodeBranchLabel
+          className={styles.branchLabel}
+          tone={isTrue ? 'success' : 'danger'}
+          icon={isTrue ? <CheckmarkRegular /> : <DismissRegular />}
+          label={title}
+          data-branch={isTrue ? 'true' : 'false'}
+        />
+      ) : (
+        <NodeText title={title} />
+      )}
       {collapse}
     </div>
   );
