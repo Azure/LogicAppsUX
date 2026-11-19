@@ -3,6 +3,15 @@ import { fireEvent, render } from '@testing-library/react';
 import type { EdgeProps } from '@xyflow/react';
 import { getBezierPath, getSmoothStepPath, Position } from '@xyflow/react';
 import type { LogicAppsEdgeProps } from '../edge';
+import {
+  getSharedTargetButtonDistance,
+  getSharedTargetInset,
+  SHARED_EDGE_ARROW_SIZE,
+  SHARED_EDGE_CAP_NEUTRAL_STROKE,
+  SHARED_EDGE_CAP_STROKE_WIDTH,
+  SHARED_EDGE_PILL_CAP_GAP,
+} from '../sharedEdgeArrowCap';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { getNodeLineStroke, nodeLineStrokes } from '@microsoft/designer-ui-v2';
 
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
@@ -389,8 +398,9 @@ describe('ButtonEdge', () => {
       expect(paths[1]).toHaveAttribute('data-line-cap', 'dashedSuccess');
       for (const path of paths) {
         expect(path.style.stroke).toBe(stroke.stroke);
-        expect(path.style.strokeWidth).toBe(stroke.strokeWidth);
       }
+      expect(paths[0].style.strokeWidth).toBe(stroke.strokeWidth);
+      expect(paths[1].style.strokeWidth).toBe(SHARED_EDGE_CAP_STROKE_WIDTH);
       expect(paths[0].style.strokeDasharray).toBe('5 5');
       expect(paths[1].style.strokeDasharray).toBe('none');
     }
@@ -422,9 +432,12 @@ describe('ButtonEdge', () => {
       const stroke = getNodeLineStroke(variant, { state: selected ? 'highlighted' : 'default' });
       expect(paths[0]).toHaveAttribute('data-line', variant);
       expect(paths[1]).toHaveAttribute('data-line-cap', variant);
+      // Neutral lines are deliberately faint; their cap switches to a readable neutral so direction stays visible.
+      expect(paths[0].style.stroke).toBe(stroke.stroke);
+      expect(paths[1].style.stroke).toBe(stroke.stroke === nodeLineStrokes.solid.stroke ? SHARED_EDGE_CAP_NEUTRAL_STROKE : stroke.stroke);
+      expect(paths[0].style.strokeWidth).toBe(stroke.strokeWidth);
+      expect(paths[1].style.strokeWidth).toBe(SHARED_EDGE_CAP_STROKE_WIDTH);
       for (const path of paths) {
-        expect(path.style.stroke).toBe(stroke.stroke);
-        expect(path.style.strokeWidth).toBe(stroke.strokeWidth);
         expect(path).not.toHaveAttribute('data-state');
       }
       // The stroke owns opacity and composites its marker cap; the cap must not repeat it.
@@ -469,10 +482,10 @@ describe('ButtonEdge', () => {
 
   it.each(
     [
-      { side: Position.Left, sourceSide: Position.Right, endpointX: 256, endpointY: 200, boxX: 256, boxY: 192 },
-      { side: Position.Right, sourceSide: Position.Left, endpointX: 344, endpointY: 200, boxX: 300, boxY: 192 },
-      { side: Position.Top, sourceSide: Position.Bottom, endpointX: 300, endpointY: 184, boxX: 278, boxY: 184 },
-      { side: Position.Bottom, sourceSide: Position.Top, endpointX: 300, endpointY: 216, boxX: 278, boxY: 200 },
+      { side: Position.Left, sourceSide: Position.Right, endpointX: 253, endpointY: 200, boxX: 256, boxY: 192 },
+      { side: Position.Right, sourceSide: Position.Left, endpointX: 347, endpointY: 200, boxX: 300, boxY: 192 },
+      { side: Position.Top, sourceSide: Position.Bottom, endpointX: 300, endpointY: 181, boxX: 278, boxY: 184 },
+      { side: Position.Bottom, sourceSide: Position.Top, endpointX: 300, endpointY: 219, boxX: 278, boxY: 200 },
     ].flatMap((geometry) => [1, 6].map((count) => ({ ...geometry, count })))
   )(
     'ends the real shared path outside the upright $side indicator ($count failed dependencies)',
@@ -569,12 +582,13 @@ describe('ButtonEdge', () => {
         <ButtonEdge {...defaultProps} targetX={300} />
       </svg>
     );
+    // Shared edges stop outside the visible input dot (port extent + clearance) above the 'top' target.
     const [path] = getBezierPath({
       sourceX: 100,
       sourceY: 50,
       sourcePosition: Position.Bottom,
       targetX: 300,
-      targetY: 200,
+      targetY: 200 - getSharedTargetInset(),
       targetPosition: Position.Top,
     });
     expect(container.querySelector('#edge-1')).toHaveAttribute('d', path);
@@ -704,6 +718,45 @@ describe('ButtonEdge', () => {
     const centers = boxes.map((box) => (axis === 'x' ? box.x + box.width / 2 : box.y + box.height / 2));
     const offsets = centers.map((center) => center - targetCoordinate).sort((a, b) => a - b);
     expect(offsets).toEqual(expectedOffsets);
+  });
+
+  it.each([
+    { side: Position.Top, statuses: ['Failed'], extent: 16 },
+    { side: Position.Left, statuses: ['Failed'], extent: 44 },
+    { side: Position.Top, statuses: ['Succeeded'], extent: 0 },
+    { side: Position.Left, statuses: ['Succeeded'], extent: 0 },
+  ])('keeps the resting target pill clear of the arrow tip on the $side face (run-after extent $extent)', ({ side, statuses, extent }) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ runAfter: { otherSource: [...statuses], sourceNode: [...statuses] } });
+    const { getAllByTestId } = render(
+      <svg>
+        <ButtonEdge {...defaultProps} targetPosition={side} targetX={300} />
+      </svg>
+    );
+    // Source and target pills both render; the target (BOTTOM) pill is last in DOM order.
+    const wrapper = getAllByTestId('dropzone-root').at(-1)!.parentElement!;
+    const half = nodeMetrics.edgeControl.hitTargetSize / 2;
+    const center = { x: Number.parseFloat(wrapper.style.left) + half, y: Number.parseFloat(wrapper.style.top) + half };
+    const distance = side === Position.Left ? 300 - center.x : 200 - center.y;
+    const tipDistance = getSharedTargetInset(extent);
+    expect(distance).toBe(getSharedTargetButtonDistance(extent));
+    // The pill's near edge must sit beyond the whole chevron, never over the direction cue.
+    expect(distance - nodeMetrics.edgeControl.pillSize / 2).toBeGreaterThanOrEqual(
+      tipDistance + SHARED_EDGE_ARROW_SIZE + SHARED_EDGE_PILL_CAP_GAP
+    );
+  });
+
+  it('keeps the legacy target pill offset when the shared flag is off', () => {
+    mockUseActionMetadata.mockReturnValue({ runAfter: { otherSource: ['Failed'], sourceNode: ['Failed'] } });
+    const { getAllByTestId } = render(
+      <svg>
+        <ButtonEdge {...defaultProps} />
+      </svg>
+    );
+    // Source and target pills both render; the target (BOTTOM) pill is last in DOM order.
+    const wrapper = getAllByTestId('dropzone-root').at(-1)!.parentElement!;
+    // Legacy pill centre stays 32 + 4 above the target; the wrapper top is that centre minus half its 24px height.
+    expect(wrapper).toHaveStyle({ top: `${200 - 36 - 24 / 2}px`, left: `${100 - 92 / 2}px` });
   });
 
   it('reveals from the real enlarged edge hit path and centers the canonical hit surface at the actual midpoint', () => {

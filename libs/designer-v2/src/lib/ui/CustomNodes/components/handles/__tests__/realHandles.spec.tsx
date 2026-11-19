@@ -22,6 +22,7 @@ import { setStateAfterUndoRedo } from '../../../../../core/state/global';
 import { useRootWorkflowGraphForLayout } from '../../../../../core/state/workflow/workflowSelectors';
 import CollapsedNode from '../../../CollapsedCardNode';
 import GraphContainerNode from '../../../GraphContainerNode';
+import { getSharedTargetInset } from '../../../../connections/sharedEdgeArrowCap';
 
 const options = vi.hoisted(() => ({ readOnly: false, shared: false }));
 vi.mock('../../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
@@ -563,7 +564,8 @@ describe('shared visuals contain actual XYFlow ports', () => {
     const [expectedPath] = getBezierPath({
       sourceX: from.position.x + from.width!,
       sourceY: from.position.y + from.height! / 2,
-      targetX: to.position.x,
+      // Shared edges stop short of the target port so the arrowhead clears the handle.
+      targetX: to.position.x - getSharedTargetInset(),
       targetY: to.position.y + to.height! / 2,
       sourcePosition: Position.Right,
       targetPosition: Position.Left,

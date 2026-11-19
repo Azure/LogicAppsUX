@@ -28,12 +28,16 @@ import { setEdgeContextMenuData } from '../../core/state/designerView/designerVi
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
 import { DropTarget } from './dropTarget';
-import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { designerUiTokens, EdgePillButton, NodeAddButton, NodeLine } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { AddFilled } from '@fluentui/react-icons';
 import { terminalConnectionLength, useConnectionStyles } from './connections.styles';
 import { mergeClasses, Tooltip } from '@fluentui/react-components';
+import type { PositioningShorthand } from '@fluentui/react-components';
+
+// Side placement keeps the label off the vertical flow axis so it does not cover the upstream card.
+const sideTooltipPositioning: PositioningShorthand = { position: 'after', fallbackPositions: ['before', 'below', 'above'] };
 
 export interface DropZoneProps {
   graphId: string;
@@ -55,6 +59,13 @@ export const DropZone: React.FC<DropZoneProps> = memo(
     const shared = sharedPresentation ?? enabled;
     const horizontal = shared && axis === 'horizontal';
     const readOnly = useReadOnly();
+    const monitoring = useMonitoringView();
+    // Shared presentation treats a monitoring canvas as locked even if a host leaves readOnly false, so the
+    // pill, terminal add, paste and drop paths can never mutate a run view. Legacy keeps its readOnly-only gate.
+    const locked = shared && (readOnly || monitoring);
+    // Editable shared edges keep the insert '+' on screen at rest, matching the legacy affordance; locked
+    // canvases keep the hidden pill so they never advertise an edit they cannot perform.
+    const restingVisibility = locked ? 'hidden' : 'visible';
     const styles = useConnectionStyles();
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
@@ -149,7 +160,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
     const hotkeyRef = useHotkeys(
       ['meta+v', 'ctrl+v'],
       async () => {
-        if (preventDropItemInA2A || (shared && readOnly)) {
+        if (preventDropItemInA2A || locked) {
           return;
         }
         const copiedNode = await retrieveClipboardData();
@@ -202,7 +213,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
           );
 
     const openMenu = useCallback(() => {
-      if (shared && readOnly) {
+      if (locked) {
         return;
       }
       const rect = buttonRef.current?.getBoundingClientRect();
@@ -218,7 +229,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
           },
         })
       );
-    }, [dispatch, graphId, parentId, childId, isLeaf, shared, readOnly]);
+    }, [dispatch, graphId, parentId, childId, isLeaf, locked]);
     const actionButtonClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -246,7 +257,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
 
     return (
       <div ref={(node) => (hotkeyRef.current = node)}>
-        {isDragging && !(shared && readOnly) ? (
+        {isDragging && !locked ? (
           <DropTarget
             graphId={graphId}
             parentId={parentId}
@@ -280,7 +291,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                     length={terminalConnectionLength}
                     orientation={horizontal ? 'horizontal' : 'vertical'}
                   />
-                  <Tooltip content={tooltipText} relationship="label">
+                  <Tooltip content={tooltipText} relationship="label" positioning={sideTooltipPositioning}>
                     <NodeAddButton
                       id={buttonId}
                       data-automation-id={automationId('plus')}
@@ -288,7 +299,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                       tabIndex={tabIndex}
                       onClick={actionButtonClick}
                       onContextMenu={actionButtonClick}
-                      disabled={readOnly}
+                      disabled={locked}
                       onMouseDown={(event) => event.stopPropagation()}
                       onKeyDown={(event) => {
                         if (event.key === 'Enter' || event.key === ' ') {
@@ -313,9 +324,11 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                   maskColor={designerUiTokens.canvasBackground}
                   tabIndex={tabIndex}
                   isRevealed={revealed}
+                  restingVisibility={restingVisibility}
+                  tooltipPlacement="side"
                   onActivate={openMenu}
                   onContextMenu={actionButtonClick}
-                  disabled={readOnly}
+                  disabled={locked}
                 />
               )}
             </div>

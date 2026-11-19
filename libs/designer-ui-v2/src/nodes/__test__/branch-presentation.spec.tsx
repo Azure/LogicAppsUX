@@ -844,6 +844,37 @@ describe('NodeLine branch variants', () => {
       expect(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
     });
 
+    it('keeps the hover-reveal default and opts into a neutral resting pill with brand emphasis that never moves', async () => {
+      const user = userEvent.setup();
+      const props = { icon: <span>+</span>, tooltip: 'Add', ariaLabel: 'Add', onActivate: vi.fn() };
+      const { rerender } = render(<ui.EdgePillButton {...props} isRevealed={false} />);
+      const button = screen.getByRole('button', { name: 'Add' });
+      expect(button).toHaveAttribute('data-resting-visibility', 'hidden');
+      expect(propertyValues(button, 'color', ':hover')).not.toContain(tokens.colorBrandForeground1);
+
+      rerender(<ui.EdgePillButton {...props} isRevealed={false} restingVisibility="visible" />);
+      expect(button).toHaveAttribute('data-resting-visibility', 'visible');
+      expect(propertyValues(button, 'opacity')).toContain('1');
+      expect(propertyValues(button, 'opacity')).not.toContain('0');
+      expect(propertyValues(button, 'pointer-events')).not.toContain('none');
+      expect(propertyValues(button, 'color')).toContain(tokens.colorNeutralForeground2);
+      expect(propertyValues(button, 'color')).not.toContain(tokens.colorBrandForeground1);
+      expect(propertyValues(button, 'color', ':hover')).toContain(tokens.colorBrandForeground1);
+      expect(propertyValues(button, 'border-top-color', ':hover')).toContain(tokens.colorBrandStroke1);
+      // Emphasis is color only: no hover/active geometry change under the pointer.
+      expect(propertyValues(button, 'transform', ':hover')).toEqual([]);
+      expect(propertyValues(button, 'transform', ':active')).toEqual([]);
+
+      await user.tab();
+      expect(button).toHaveFocus();
+      expect(propertyValues(button, 'color')).toContain(tokens.colorBrandForeground1);
+      await user.keyboard('{Enter}');
+      expect(props.onActivate).toHaveBeenCalledTimes(1);
+
+      rerender(<ui.EdgePillButton {...props} isRevealed restingVisibility="visible" />);
+      expect(propertyValues(button, 'border-top-color')).toContain(tokens.colorBrandStroke1);
+    });
+
     it('masks the line in every interaction state without overriding forced colors or host styles', () => {
       const props = { icon: <span>+</span>, tooltip: 'Add', ariaLabel: 'Add', isRevealed: true, onActivate: vi.fn() };
       const { rerender } = render(<ui.EdgePillButton {...props} style={{ marginTop: 7 }} maskColor="rgb(12, 34, 56)" />);

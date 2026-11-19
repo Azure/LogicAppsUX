@@ -26,7 +26,9 @@ export const EdgeDrawSourceHandle = ({
           ? mergeClasses(
               styles.nodeHandle,
               styles.sharedPort,
-              !contained && (horizontal ? styles.sharedSourceHorizontal : styles.sharedSource)
+              !contained && (horizontal ? styles.sharedSourceHorizontal : styles.sharedSource),
+              !contained && !readOnly && styles.sharedSourceInteractive,
+              !contained && highlighted && styles.sharedSourceHighlighted
             )
           : mergeClasses(
               styles.nodeHandle,
@@ -41,6 +43,7 @@ export const EdgeDrawSourceHandle = ({
       isConnectableStart={true}
       isConnectableEnd={false}
       data-port-contained={(shared && contained) || undefined}
+      data-port-interactive={(shared && !contained && !readOnly) || undefined}
       style={
         shared
           ? { ...(contained ? containedHandleStyle : {}), ...(readOnly ? { visibility: 'hidden' } : {}) }

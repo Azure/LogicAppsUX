@@ -1,4 +1,4 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import type { CSSProperties } from 'react';
 
@@ -100,6 +100,30 @@ export const useHandleStyles = makeStyles({
     pointerEvents: 'none',
   },
   dot: { pointerEvents: 'none' },
+  /**
+   * The visible dot is pointer-transparent so React Flow owns the drag; its own `:hover` therefore never
+   * fires. The port drives the dot's feedback instead: brand fill and a focus-style ring, with no size or
+   * position change so connection geometry is unaffected. `.connectingfrom` keeps it lit during the drag.
+   */
+  sharedSourceInteractive: {
+    cursor: 'crosshair',
+    '&:hover > *, &:focus-visible > *, &.connectingfrom > *': {
+      ...shorthands.borderColor(tokens.colorBrandStroke1),
+      backgroundColor: tokens.colorBrandBackground,
+      boxShadow: `0 0 0 3px ${tokens.colorBrandBackground2}`,
+    },
+    '@media (forced-colors: active)': {
+      '&:hover > *, &:focus-visible > *, &.connectingfrom > *': {
+        ...shorthands.borderColor('Highlight'),
+        backgroundColor: 'Highlight',
+        boxShadow: 'none',
+      },
+    },
+  },
+  /** Selected-node source port, matching legacy's selection tint without the hover ring. */
+  sharedSourceHighlighted: {
+    '& > *': { ...shorthands.borderColor(tokens.colorBrandStroke1) },
+  },
   merge: {
     position: 'absolute',
     left: '50%',

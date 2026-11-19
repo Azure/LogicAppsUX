@@ -8,7 +8,7 @@ import { useSharedNodeUi } from '../../core/state/designerOptions/designerOption
 import { useConnectionStyles } from './connections.styles';
 import { mergeClasses } from '@fluentui/react-components';
 import { getSharedEdgeArrowDirection } from './sharedEdgeRunState';
-import { SharedEdgeArrowCap } from './sharedEdgeArrowCap';
+import { getSharedTargetInset, offsetFromPort, SharedEdgeArrowCap } from './sharedEdgeArrowCap';
 
 export interface LogicAppsEdgeProps {
   id: string;
@@ -35,18 +35,20 @@ export const OnlyEdge: React.FC<EdgeProps> = (props) => {
   const capGuid = useGuid();
   const styles = useConnectionStyles();
   const { id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style = {} } = props;
-  const [d] = getBezierPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  });
 
   if (!shared) {
     return <BezierEdge {...props} />;
   }
+  // Same tip clearance as ButtonEdge so plain and button edges end identically at the input handle.
+  const endpoint = offsetFromPort(targetX, targetY, targetPosition, getSharedTargetInset());
+  const [d] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX: endpoint.x,
+    targetY: endpoint.y,
+    targetPosition,
+  });
   return (
     <>
       <path
@@ -60,8 +62,8 @@ export const OnlyEdge: React.FC<EdgeProps> = (props) => {
       {/* Distinct cap class keeps `.msla-shared-edge-path` unique to the edge stroke; the marker is painted by that stroke. */}
       <SharedEdgeArrowCap
         id={capGuid}
-        x={targetX}
-        y={targetY}
+        x={endpoint.x}
+        y={endpoint.y}
         direction={getSharedEdgeArrowDirection(targetPosition)}
         variant="solid"
         style={{ ...style, stroke: nodeLineStrokes.solid.stroke, strokeWidth: nodeLineStrokes.solid.strokeWidth }}
