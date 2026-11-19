@@ -498,6 +498,56 @@ describe('ScopeCardNode (v2)', () => {
     expect(noActionsText).toBeInTheDocument();
   });
 
+  it.each([
+    ['Scope', 'actions'],
+    ['Foreach', 'actions'],
+    ['Switch', 'cases'],
+    ['Agent', 'tools'],
+  ])('moves the collapsed %s count into the shared card as %s', (type, unit) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type, runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 3 });
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const count = container.querySelector('[data-node-count]');
+    expect(count).toHaveAttribute('data-node-count', unit);
+    expect(count).toHaveTextContent('3');
+    expect(container.querySelector('.no-actions-text')).toBeNull();
+  });
+
+  it('counts the actions in both branches of a collapsed shared If instead of its fixed branch count', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'If', runAfter: {} });
+    const branchCounts: Record<string, number> = { testScope: 2, 'testScope-actions': 3, 'testScope-elseActions': 1 };
+    mockUseNodeMetadata.mockImplementation((id: string) => ({ graphId: 'root', actionCount: branchCounts[id] }));
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const count = container.querySelector('[data-node-count]');
+    expect(count).toHaveAttribute('data-node-count', 'actions');
+    expect(count).toHaveTextContent('4');
+  });
+
+  it('keeps the host collapsed count on the legacy path', () => {
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    expect(container.querySelector('.no-actions-text')).toBeInTheDocument();
+    expect(container.querySelector('[data-node-count]')).toBeNull();
+  });
+
+  it('does not repeat the tool count on a collapsed Agent whose tools panel already states it', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{ toolsPanel: { width: 300, height: 120, bottomPadding: 0, collapsed: true, items: [{ id: 'tool1' }] } }}
+      />
+    );
+    expect(container.querySelector('[data-node-count]')).toBeNull();
+    expect(container.querySelector('.no-actions-text')).toBeNull();
+  });
+
   it('should not show collapsed text for footer nodes even when collapsed', () => {
     mockUseIsGraphCollapsed.mockReturnValue(true);
     const footerProps = { id: 'testScope-#footer' } as NodeProps;

@@ -91,6 +91,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const isAgentAddTool = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
 
   const isAddCase = isSwitchAddCase || isAgentAddTool;
+  // Shared tool rows render the collapsed count in their text; fixed-height (36px) branch headers have no
+  // second text line, so the host keeps their count below the header.
+  const sharedOwnsCount = sharedTool;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
 
@@ -340,6 +343,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   runData={metadata.toolRunData ?? metadata.runData}
                   description={opQuery.data?.properties?.description}
                   isMonitoringView={isMonitoringView}
+                  countLabel={sharedOwnsCount && graphCollapsed ? { count: actionCount, unit: 'actions' } : undefined}
                 />
               ) : (
                 <SubgraphCard
@@ -372,7 +376,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
           {sharedTool ? null : <DefaultHandle axis={handleAxis} type="source" />}
         </div>
       </div>
-      {graphCollapsed ? (
+      {graphCollapsed && !sharedOwnsCount ? (
         <p className="no-actions-text" data-automation-id={`subgraph-${id}-no-actions`}>
           {intlText.collapsedText}
         </p>

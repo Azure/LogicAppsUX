@@ -7,6 +7,7 @@ import { NodeText } from '../primitives/NodeText';
 import { defaultNodeStrings } from '../strings';
 import type { NodeHandleVariant } from '../types';
 import { categoryNodeIcons } from './categoryIcons';
+import { useNodeCount } from '../countLabel';
 import { resolveCardDensity, resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
 
@@ -21,6 +22,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
   {
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -37,9 +39,11 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
 ) {
   const testData = status === 'mock';
   const layout = resolveCardDensity({ density, titleLines });
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width={layout.width}
       size={layout.size}
@@ -58,7 +62,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
-        <NodeText title={title} subtitle={subtitle} titleLines={layout.titleLines} />
+        <NodeText title={title} subtitle={subtitle} titleLines={layout.titleLines} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

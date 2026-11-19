@@ -10,6 +10,7 @@ import type { NodeToolItemSize, NodeToolKind } from '../types';
 import type { ActionNodeCardStrings, NodeStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 const ICONS = {
   action: { icon: <FlashRegular />, selectedIcon: <FlashFilled /> },
@@ -29,6 +30,7 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
     size = 'medium',
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -42,9 +44,11 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
 ) {
   const styles = useStyles();
   const testData = status === 'mock';
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width={size === 'small' ? 'fill' : 'standard'}
       size={size}
@@ -64,7 +68,7 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
-        <NodeText title={title} subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])} />
+        <NodeText title={title} subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])} {...nodeCount.textProps} />
       </NodeCardBody>
     </NodeCard>
   );

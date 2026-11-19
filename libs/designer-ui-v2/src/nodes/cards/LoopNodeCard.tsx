@@ -11,6 +11,7 @@ import type { LoopNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import type { NodeHandleVariant } from '../types';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 
 const END_OUTPUTS = ['neutral', 'neutral'] as const;
@@ -40,6 +41,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
   {
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -65,9 +67,11 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
     ) : bodyPlacement === 'bottom' ? (
       <NodeHandle className={styles.bottom}>{bodySlot}</NodeHandle>
     ) : null;
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width="compact"
       selected={selected}
@@ -85,7 +89,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, DEFAULT_ICONS)}
         />
-        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} />
+        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null}
       </NodeCardBody>
       {handles ? bottom : null}

@@ -16,6 +16,7 @@ import { AgentToolsPanel } from './AgentToolsPanel';
 import { categoryNodeIcons } from './categoryIcons';
 import { NODE_HOVER_CARD_IGNORE_ATTRIBUTE } from './NodeHoverCard';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 
 const OUTPUTS = ['neutral'] as const;
@@ -61,6 +62,7 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
   {
     title,
     subtitle,
+    countLabel,
     icon,
     selectedIcon,
     selected,
@@ -122,9 +124,11 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
       {tools}
     </AgentToolsPanel>
   ) : null;
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width="wide"
       surface="agent"
@@ -161,7 +165,7 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.agent)}
         />
-        <NodeText title={title} subtitle={subtitle} />
+        <NodeText title={title} subtitle={subtitle} {...nodeCount.textProps} />
         {vertical ? null : outputs}
       </NodeCardBody>
       <NodeCardFooter icon={<CubeRegular />} action={footerAction}>

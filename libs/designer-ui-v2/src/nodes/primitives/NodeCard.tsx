@@ -3,6 +3,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { designerUiTokens as ui, nodeCardVars } from '../../theme/tokens';
 import { compactNodeMetrics, nodeMetrics } from '../metrics';
+import { verticalBadgeLeft } from './badgePlacement';
 import type { ActionNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import type { NodeCardShape, NodeCardWidth, NodeRunStatus } from '../types';
@@ -82,7 +83,13 @@ const useStyles = makeStyles({
   },
   focus: { ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' } },
   badge: { position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1 },
-  badgeVertical: { left: 'auto', right: tokens.spacingHorizontalL, transform: 'translateY(-50%)' },
+  // Vertical-axis cards centre their input handle on the top edge. The badge starts past that handle and grows away
+  // from it, so no label length can cover the handle (right anchoring grew labels leftward across the centreline).
+  badgeVertical: {
+    left: verticalBadgeLeft,
+    transform: 'translateY(-50%)',
+    whiteSpace: 'nowrap',
+  },
   // Dimming only: inactive nodes stay focusable, hoverable and inspectable.
   inactive: { opacity: nodeMetrics.inactiveOpacity },
 });
