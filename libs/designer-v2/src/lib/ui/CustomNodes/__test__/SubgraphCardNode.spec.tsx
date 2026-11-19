@@ -102,6 +102,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useRunInstance: (...args: any[]) => mockUseRunInstance(...args),
   useWorkflowNode: (...args: any[]) => mockUseWorkflowNode(...args),
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
+  useBranchValidationCount: () => 0,
 }));
 
 vi.mock('../../../core/state/workflow/workflowSlice', () => ({

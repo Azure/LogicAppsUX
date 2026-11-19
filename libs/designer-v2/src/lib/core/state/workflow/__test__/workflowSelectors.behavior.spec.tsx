@@ -6,7 +6,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowEdge } from '../../../parsers/models/workflowNode';
-import operationReducer, { initialState as initialOperations } from '../../operation/operationMetadataSlice';
+import operationReducer, { ErrorLevel, initialState as initialOperations } from '../../operation/operationMetadataSlice';
+import settingsReducer from '../../setting/settingSlice';
 import * as selectors from '../workflowSelectors';
 import workflowReducer, { initialWorkflowState } from '../workflowSlice';
 import type { WorkflowState } from '../workflowInterfaces';
@@ -55,13 +56,35 @@ const fixture = (): WorkflowState => {
 };
 const setup = (workflow = fixture(), operations = initialOperations) => {
   const store = configureStore({
-    reducer: { workflow: workflowReducer, operations: operationReducer },
+    reducer: { workflow: workflowReducer, operations: operationReducer, settings: settingsReducer },
     preloadedState: { workflow, operations },
   });
   return { wrapper: ({ children }: { children: ReactNode }) => <Provider store={store}>{children}</Provider>, store };
 };
 
 describe('workflow selector view models from real parsed graph state', () => {
+  it('counts unique invalid descendants even within collapsed graphs, without leaking errors to a sibling branch', () => {
+    const state = fixture();
+    const branches = Object.entries(state.nodesMetadata);
+    const trueId = branches.find(([, metadata]) => metadata.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_TRUE)![0];
+    const falseId = branches.find(([, metadata]) => metadata.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_FALSE)![0];
+    state.collapsedGraphIds = { [trueId]: true };
+    state.flowErrors = { Inner: ['unreachable'], Detached: ['outside the branch'], [`${trueId}-#subgraph`]: ['synthetic'] };
+    const { wrapper } = setup(state, {
+      ...initialOperations,
+      errors: { Inner: { ...initialOperations.errors.Inner, [ErrorLevel.Default]: { level: ErrorLevel.Default, message: 'invalid' } } },
+    });
+    const { result } = renderHook(
+      () => ({
+        parent: selectors.useBranchValidationCount('Loop'),
+        own: selectors.useBranchValidationCount(trueId),
+        sibling: selectors.useBranchValidationCount(falseId),
+        disabled: selectors.useBranchValidationCount(undefined),
+      }),
+      { wrapper }
+    );
+    expect(result.current).toEqual({ parent: 1, own: 1, sibling: 0, disabled: 0 });
+  });
   it('projects authoring identity, errors, focus and workflow changes without replacing operation IDs', () => {
     const state = fixture();
     state.idReplacements = { Inner: 'Renamed_inner' };

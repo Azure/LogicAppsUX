@@ -66,6 +66,7 @@ const useStyles = makeStyles({
   loopBranch: { backgroundColor: tokens.colorPaletteBlueBackground2 },
   branchSelected: { outline: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandStroke}`, outlineOffset: '-2px' },
   branchLabel: { justifyContent: 'center', minWidth: 0 },
+  branchError: { top: '50%', right: 'auto', insetInlineStart: tokens.spacingHorizontalS, transform: 'translateY(-50%)' },
   acceptedFrame: { width: '100%' },
   pagerSlot: { display: 'inline-flex', height: '20px', alignItems: 'center' },
 });
@@ -337,6 +338,7 @@ interface SharedBranchCardProps {
   collapsed?: boolean;
   nodeIndex?: number;
   errorMessages?: string[];
+  descendantErrorCount?: number;
   onClick: () => void;
   onContextMenu?: React.MouseEventHandler<HTMLElement>;
   onDeleteClick?: () => void;
@@ -455,9 +457,23 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
       </SharedNodeHoverCard>
     );
   }
+  const errors = [...(props.errorMessages ?? [])];
+  if (props.descendantErrorCount) {
+    errors.push(
+      intl.formatMessage(
+        {
+          defaultMessage: '{count, plural, one {# nested step has validation errors} other {# nested steps have validation errors}}',
+          id: 'qMz2QQ',
+          description: 'Validation summary on a branch when steps inside it have errors',
+        },
+        { count: props.descendantErrorCount }
+      )
+    );
+  }
   return (
     <div
       {...common}
+      aria-description={errors.length ? errors.join('\n') : undefined}
       data-automation-id={compact ? `${props.id}-collapse-toggle-small` : common['data-automation-id']}
       className={mergeClasses(
         styles.branch,
@@ -485,6 +501,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
       ) : (
         <NodeText title={title} />
       )}
+      {errors.length ? <CardErrorBadge className={styles.branchError} messages={errors} /> : null}
       {collapse}
     </div>
   );

@@ -51,6 +51,24 @@ const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
 };
 
 describe('shared family interaction adapters', () => {
+  it.each([
+    [SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'True', 'true'],
+    [SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'False', 'false'],
+    [SUBGRAPH_TYPES.SWITCH_CASE, 'Case label', undefined],
+  ] as const)('shows branch text and a descendant validation badge on %s', (subgraphType, label, branch) => {
+    const { rerender } = render(
+      <SharedBranchCard id="branch" title="Case label" subgraphType={subgraphType} onClick={vi.fn()} descendantErrorCount={2} collapsed />
+    );
+    const header = screen.getByRole('button', { name: label });
+    expect(header).toHaveAttribute('aria-description', '2 nested steps have validation errors');
+    expect(within(header).getByAltText('Errors')).toBeVisible();
+    if (branch) {
+      const icon = branch === 'true' ? 'CheckmarkRegular' : 'DismissRegular';
+      expect(header.querySelector(`[data-branch="${branch}"] [aria-hidden="true"] [data-icon-name="${icon}"]`)).not.toBeNull();
+    }
+    rerender(<SharedBranchCard id="branch" title="Case label" subgraphType={subgraphType} onClick={vi.fn()} />);
+    expect(within(header).queryByAltText('Errors')).not.toBeInTheDocument();
+  });
   it.each(['if', 'switch', 'loop', 'agent', 'scope'] as const)('keeps %s host status quiet and in the card name', (family) => {
     const { container } = render(<SharedScopeCard {...props()} family={family} runData={{ status: 'Succeeded', duration: '1 s' }} />);
     expect(screen.getByTestId('card-Renamed operation')).toHaveAccessibleName(/Succeeded/);

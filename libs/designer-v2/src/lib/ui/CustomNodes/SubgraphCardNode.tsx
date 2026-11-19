@@ -9,6 +9,7 @@ import { useIsNodeSelectedInOperationPanel, useIsNodePinnedToOperationPanel } fr
 import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
+  useBranchValidationCount,
   useFlowErrorsForNode,
   useIsGraphCollapsed,
   useIsLeafNode,
@@ -73,6 +74,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
     });
   const shared = presentation.shared;
   const sharedTool = shared && presentation.family === 'tool';
+  const descendantErrorCount = useBranchValidationCount(shared && presentation.family === 'branch' ? subgraphId : undefined);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);
   const operationInfo = useOperationInfo(graphId);
@@ -336,6 +338,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   collapsed={graphCollapsed}
                   onCollapse={handleGraphCollapse}
                   errorMessages={errorMessages}
+                  descendantErrorCount={descendantErrorCount}
                   nodeIndex={nodeIndex}
                   runData={metadata.toolRunData ?? metadata.runData}
                   description={opQuery.data?.properties?.description}

@@ -4,7 +4,7 @@ import { mergeClasses, Tooltip, Text } from '@fluentui/react-components';
 import { useCardStyles } from './card.styles';
 import ErrorIcon from './svgs/error.svg';
 
-export const CardErrorBadge = ({ messages }: any) => {
+export const CardErrorBadge = ({ messages, className }: { messages: readonly string[]; className?: string }) => {
   const styles = useCardStyles();
 
   const intl = useIntl();
@@ -19,7 +19,7 @@ export const CardErrorBadge = ({ messages }: any) => {
 
   return (
     <Tooltip relationship={'label'} content={<div className={styles.tooltipContent}>{tooltipContent}</div>} positioning={'after'} withArrow>
-      <div className={mergeClasses(styles.badge, styles.badgeFailure)}>
+      <div className={mergeClasses(styles.badge, styles.badgeFailure, className)}>
         {messages?.length > 1 ? (
           <Text className={styles.badgeText} aria-label={`${errorsText}: ${messages?.length}`}>
             {messages?.length}
