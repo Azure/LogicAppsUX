@@ -22,7 +22,8 @@ import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree, isSingleHandoffAction } from './helper';
 import { useEdges } from '@xyflow/react';
-import { ErrorLevel, type OperationMetadataState } from '../operation/operationMetadataSlice';
+import { ErrorLevel } from '../operation/errorLevel';
+import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;

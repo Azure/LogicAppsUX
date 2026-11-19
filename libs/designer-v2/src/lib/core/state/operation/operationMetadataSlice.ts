@@ -22,6 +22,9 @@ import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { delimiter } from '../../configuretemplate/utils/helper';
+import { ErrorLevel } from './errorLevel';
+
+export { ErrorLevel } from './errorLevel';
 
 export interface ParameterGroup {
   id: string;
@@ -103,15 +106,6 @@ export interface OperationMetadata {
   description?: string;
   summary?: string;
 }
-
-export const ErrorLevel = {
-  Critical: 0,
-  Connection: 1,
-  DynamicInputs: 2,
-  DynamicOutputs: 3,
-  Default: 4,
-} as const;
-export type ErrorLevel = (typeof ErrorLevel)[keyof typeof ErrorLevel];
 
 export interface ErrorInfo {
   error?: any;
