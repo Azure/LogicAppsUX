@@ -347,6 +347,24 @@ describe('shared family interaction adapters', () => {
     expect(screen.getByRole('button', { name: 'MCP tool: Renamed tool' })).toHaveAttribute('aria-pressed', 'true');
   });
 
+  it('renders host-resolved tool art untinted instead of the tool-kind default glyph', () => {
+    const { container, rerender } = render(
+      <SharedBranchCard
+        id="mcp-tool"
+        title="Managed MCP"
+        subgraphType={SUBGRAPH_TYPES.MCP_CLIENT}
+        icon={<img alt="" src="office365.svg" />}
+        iconArtwork
+        onClick={vi.fn()}
+      />
+    );
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool.querySelector('img')).toHaveAttribute('src', 'office365.svg');
+    expect(tool.querySelector('[data-artwork="true"]')).not.toBeNull();
+    rerender(<SharedBranchCard id="mcp-tool" title="Managed MCP" subgraphType={SUBGRAPH_TYPES.MCP_CLIENT} onClick={vi.fn()} />);
+    expect(container.querySelector('[data-node-card="tool"] img')).toBeNull();
+  });
+
   it.each(['Wait', 'Send_teams_message_for_PR_details', 'Post_or_Patch_Azure_DevOps_REST_API', 'Long tool label '.repeat(12)])(
     'constrains the tool hover trigger to accepted geometry without losing the full label: %s',
     (title) => {
