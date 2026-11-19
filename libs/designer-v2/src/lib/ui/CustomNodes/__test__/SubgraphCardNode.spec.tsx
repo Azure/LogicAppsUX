@@ -6,6 +6,7 @@ import { Position, type Node, type NodeProps } from '@xyflow/react';
 import { adoptUserNodes, type NodeLookup, type ParentLookup } from '@xyflow/system';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { getPrecomputedHandles } from '../../../core/graphlayout/precomputedHandles';
+import { ErrorLevel } from '../../../core/state/operation/errorLevel';
 
 const mockDispatch = vi.fn();
 
@@ -88,6 +89,7 @@ const mockUseRunIndex = vi.fn().mockReturnValue(0);
 const mockUseRunInstance = vi.fn().mockReturnValue(undefined);
 const mockUseWorkflowNode = vi.fn().mockReturnValue({ id: 'graph1', children: [] });
 const mockUseFlowErrorsForNode = vi.fn().mockReturnValue([]);
+const mockUseBranchValidationCount = vi.fn().mockReturnValue(0);
 
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
@@ -102,7 +104,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useRunInstance: (...args: any[]) => mockUseRunInstance(...args),
   useWorkflowNode: (...args: any[]) => mockUseWorkflowNode(...args),
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
-  useBranchValidationCount: () => 0,
+  useBranchValidationCount: (...args: any[]) => mockUseBranchValidationCount(...args),
 }));
 
 vi.mock('../../../core/state/workflow/workflowSlice', () => ({
@@ -200,6 +202,7 @@ describe('SubgraphCardNode (v2)', () => {
     mockUseRunInstance.mockReturnValue(undefined);
     mockUseWorkflowNode.mockReturnValue({ id: 'graph1', children: [] });
     mockUseFlowErrorsForNode.mockReturnValue([]);
+    mockUseBranchValidationCount.mockReturnValue(0);
     mockUseIconUri.mockReturnValue('test-icon-uri');
     mockUseParameterValidationErrors.mockReturnValue([]);
     mockUseOperationErrorInfo.mockReturnValue(undefined);
@@ -356,6 +359,25 @@ describe('SubgraphCardNode (v2)', () => {
 
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('error-messages')).toBeInTheDocument();
+  });
+
+  it('keeps the collapsed Until Do header’s own validation when descendants also have errors', () => {
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.UNTIL_DO, actionCount: 2 });
+    mockUseActionMetadata.mockReturnValue({ type: 'Until', runAfter: {} });
+    mockUseOperationErrorInfo.mockReturnValue({ level: ErrorLevel.Default, message: 'Invalid Until expression' });
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    const data = { presentation: { shared: true, family: 'branch' } };
+    const view = render(<SubgraphCardNode {...defaultProps} data={data} />);
+    const header = screen.getByRole('button', { name: 'Do' });
+    expect(mockUseOperationErrorInfo).toHaveBeenLastCalledWith('testNode');
+    expect(header).toHaveAttribute('aria-description', 'Invalid Until expression');
+    expect(screen.getByAltText('Errors')).toBeVisible();
+
+    mockUseBranchValidationCount.mockReturnValue(1);
+    view.rerender(<SubgraphCardNode {...defaultProps} data={{ ...data }} />);
+    expect(mockUseBranchValidationCount).toHaveBeenLastCalledWith('testNode');
+    expect(header).toHaveAttribute('aria-description', 'Invalid Until expression\n1 nested step has validation errors');
+    expect(screen.getByLabelText('Errors: 2')).toBeVisible();
   });
 
   it('remeasures an Until header when selection recreates its node after the monitoring pager mounts', () => {
