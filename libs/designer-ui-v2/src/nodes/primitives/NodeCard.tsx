@@ -149,12 +149,12 @@ export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   after?: ReactNode;
   handleAxis?: NodeHandleAxis;
 }
-export interface NodeCardStatusContextValue {
-  status?: NodeRunStatus;
-  statusLabel?: string;
+interface NodeCardStatusContextValue {
+  status: NodeRunStatus;
+  statusLabel: string;
   statusDetail?: string;
 }
-export const NodeCardStatusContext = createContext<NodeCardStatusContextValue>({});
+export const NodeCardStatusContext = createContext<NodeCardStatusContextValue | undefined>(undefined);
 export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeCard(
   {
     width = 'standard',
@@ -185,7 +185,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   const ancestorInactive = useContext(NodeInactiveContext);
   const dimmed = inactive || ancestorInactive;
   const containedStatus = statusDisplay === 'contained' && !!status && status !== 'mock';
-  const statusContext = useMemo<NodeCardStatusContextValue>(
+  const statusContext = useMemo<NodeCardStatusContextValue | undefined>(
     () =>
       containedStatus && status
         ? {
@@ -193,7 +193,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
             statusLabel: statusLabel ?? strings.status[status],
             statusDetail,
           }
-        : {},
+        : undefined,
     [containedStatus, status, statusDetail, statusLabel, strings.status]
   );
   const resolvedStatusTone = containedStatus ? (statusTone ?? statusToneByStatus[status]) : undefined;

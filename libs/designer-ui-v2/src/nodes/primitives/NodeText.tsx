@@ -72,7 +72,8 @@ const useStyles = makeStyles({
   statusGroup: { display: 'inline-flex', alignItems: 'center', minWidth: 0, flexGrow: 1, gap: tokens.spacingHorizontalXXS },
   statusIcon: { fontSize: '12px', flexShrink: 0, display: 'inline-flex', alignItems: 'center' },
   statusLabel: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-  statusDuration: { flexShrink: 0, whiteSpace: 'nowrap', unicodeBidi: 'isolate' },
+  // Keep ordinary durations intact, but bound unusually long values so they cannot escape the card.
+  statusDuration: { flexShrink: 0, maxWidth: '50%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   statusSeparator: { flexShrink: 0 },
   statusCount: { flexShrink: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   countDot: { flexShrink: 0, marginInline: tokens.spacingHorizontalXS },
@@ -100,36 +101,35 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
   const styles = useStyles();
   const hover = useContext(NodeHoverCardActiveContext);
   const statusContext = useContext(NodeCardStatusContext);
-  const statusSubtitle = subtitleKind === 'status' && statusContext.status ? statusContext : undefined;
+  const statusSubtitle = subtitleKind === 'status' ? statusContext : undefined;
   const statusTitle = statusSubtitle ? [statusSubtitle.statusLabel, statusSubtitle.statusDetail].filter(Boolean).join(' ') : undefined;
   return (
     <span {...rest} ref={ref} className={mergeClasses(styles.root, className)}>
       <span className={mergeClasses(styles.title, titleLines === 2 && styles.titleTwoLines)} title={hover ? undefined : title}>
         {title}
       </span>
-      {count && statusSubtitle ? (
+      {statusSubtitle ? (
         <span className={styles.statusRow}>
           <span className={styles.statusGroup} data-node-subtitle-kind="status" title={hover ? undefined : statusTitle}>
             <span className={styles.statusIcon}>{getNodeStatusIcon(statusSubtitle.status, styles.statusIcon)}</span>
             <span className={styles.statusLabel}>{statusSubtitle.statusLabel}</span>
             {statusSubtitle.statusDetail ? <bdi className={styles.statusDuration}>{statusSubtitle.statusDetail}</bdi> : null}
           </span>
-          <span className={styles.statusSeparator} aria-hidden="true">
-            ·
-          </span>
-          {/* The hover card repeats title/subtitle but not the count, so the count keeps its native tooltip even inside a hover card. */}
-          <span id={countId} className={styles.statusCount} data-node-count={countUnit ?? true} title={count}>
-            {count}
-          </span>
+          {count ? (
+            <>
+              <span className={styles.statusSeparator} aria-hidden="true">
+                ·
+              </span>
+              <span id={countId} className={styles.statusCount} data-node-count={countUnit ?? true} title={count}>
+                {count}
+              </span>
+            </>
+          ) : null}
         </span>
       ) : count ? (
         <span className={styles.detailRow}>
           {subtitle ? (
-            <span
-              className={styles.detailSubtitle}
-              data-node-subtitle-kind={subtitleKind === 'status' ? subtitleKind : undefined}
-              title={hover ? undefined : subtitle}
-            >
+            <span className={styles.detailSubtitle} title={hover ? undefined : subtitle}>
               <span className={styles.detailSubtitleText}>{subtitle}</span>
               <span className={styles.countDot} aria-hidden="true">
                 ·
@@ -141,20 +141,8 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
             {count}
           </span>
         </span>
-      ) : statusSubtitle ? (
-        <span className={styles.statusRow}>
-          <span className={styles.statusGroup} data-node-subtitle-kind="status" title={hover ? undefined : statusTitle}>
-            <span className={styles.statusIcon}>{getNodeStatusIcon(statusSubtitle.status, styles.statusIcon)}</span>
-            <span className={styles.statusLabel}>{statusSubtitle.statusLabel}</span>
-            {statusSubtitle.statusDetail ? <bdi className={styles.statusDuration}>{statusSubtitle.statusDetail}</bdi> : null}
-          </span>
-        </span>
       ) : subtitle ? (
-        <span
-          className={styles.subtitle}
-          data-node-subtitle-kind={subtitleKind === 'status' ? subtitleKind : undefined}
-          title={hover ? undefined : subtitle}
-        >
+        <span className={styles.subtitle} title={hover ? undefined : subtitle}>
           {subtitle}
         </span>
       ) : null}
