@@ -1,0 +1,16 @@
+# Starter for the Azure DevOps npm publishing pipeline (manual runs only).
+# Placeholder so the ADO pipeline definition can be created; the real
+# build/pack/publish steps replace this. It publishes nothing.
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+    fetchDepth: 1
+  - script: |
+      echo "Starter pipeline for LogicAppsUX npm publishing (no-op)."
+      echo "Source: $(Build.Repository.Name) @ $(Build.SourceVersion)"
+    displayName: Starter no-op
