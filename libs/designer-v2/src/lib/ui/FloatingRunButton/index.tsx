@@ -24,8 +24,10 @@ import {
   validateParameter,
   type RootState,
 } from '../../core';
+import { useOperationParameterByName } from '../../core/state/operation/operationSelector';
 import { serializeBJSWorkflow } from '../..';
 import { PayloadPopover } from './payloadPopover';
+import { applyRelativePathToCallback, getRelativePathParameterNames, readRelativePathTemplate } from './relativePath';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { ChatButton } from './chat';
 import constants from './../../common/constants';
@@ -50,6 +52,7 @@ export type PayloadData = {
   headers?: Record<string, string>;
   queries?: Record<string, string>;
   body?: string;
+  relativePathParameters?: Record<string, string>;
 };
 
 /**
@@ -171,6 +174,10 @@ export const FloatingRunButton = ({
     [isDraftMode, operationState?.operationInfo]
   );
 
+  const relativePathParameter = useOperationParameterByName(triggerId ?? '', 'relativePath');
+  const relativePathTemplate = useMemo(() => readRelativePathTemplate(relativePathParameter), [relativePathParameter]);
+  const relativePathParameterNames = useMemo(() => getRelativePathParameterNames(relativePathTemplate), [relativePathTemplate]);
+
   const runDraftWorkflow = useCallback(
     async (triggerId: string, payload?: PayloadData) => {
       const contentBody = payload?.body;
@@ -181,10 +188,14 @@ export const FloatingRunButton = ({
       try {
         const standardUrl = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/triggers/${triggerId}/${contentBody ? 'runDraftWithPayload' : 'runDraft'}`;
         const consumptionUrl = `${siteResourceId}/drafts/default/run`;
-        const callbackInfo: any = {
-          value: isConsumption ? consumptionUrl : standardUrl,
-          method: payload?.method ?? HTTP_METHODS.POST,
-        };
+        const callbackInfo = applyRelativePathToCallback(
+          {
+            value: isConsumption ? consumptionUrl : standardUrl,
+            method: payload?.method ?? HTTP_METHODS.POST,
+          },
+          relativePathTemplate,
+          payload?.relativePathParameters
+        );
 
         // Wait 0.5 seconds, running too fast after saving causes 500 error
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -201,7 +212,7 @@ export const FloatingRunButton = ({
 
       setRunStatusMessage(null);
     },
-    [runStatusMessages, siteResourceId, workflowName, onRun, isConsumption]
+    [runStatusMessages, siteResourceId, workflowName, onRun, isConsumption, relativePathTemplate]
   );
 
   const saveWorkflow = useCallback(async () => {
@@ -270,7 +281,10 @@ export const FloatingRunButton = ({
           throw new Error('Unable to get trigger callback URL. Please ensure the workflow runtime is running.');
         }
         await new Promise((resolve) => setTimeout(resolve, 500));
-        const runResponse = await RunService().runTrigger(callbackInfo, payload);
+        const runResponse = await RunService().runTrigger(
+          applyRelativePathToCallback(callbackInfo, relativePathTemplate, payload?.relativePathParameters),
+          payload
+        );
         const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
         onRun?.(runId ?? '');
         setRunStatusMessage(null);
@@ -289,10 +303,14 @@ export const FloatingRunButton = ({
         triggerId,
         isConsumption: isConsumption ?? false,
       });
-      const callbackInfo = {
-        value: runUrl,
-        method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
-      };
+      const callbackInfo = applyRelativePathToCallback(
+        {
+          value: runUrl,
+          method: payload ? payload?.method : saveResponse?.definition?.triggers?.[triggerId]?.inputs?.method || 'POST',
+        },
+        relativePathTemplate,
+        payload?.relativePathParameters
+      );
 
       // Wait 0.5 seconds, running too fast after saving causes 500 error
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -429,6 +447,7 @@ export const FloatingRunButton = ({
           setOpen={setPopoverOpen}
           buttonRef={payloadButtonRef}
           onSubmit={runMutate}
+          relativePathParameterNames={relativePathParameterNames}
         />
         <ErrorBadge />
       </div>

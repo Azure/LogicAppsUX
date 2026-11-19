@@ -19,6 +19,11 @@ export const useFloatingRunButtonStyles = makeStyles({
 });
 
 export const usePayloadPopoverStyles = makeStyles({
+  surface: {
+    boxSizing: 'border-box',
+    overflowY: 'auto',
+  },
+
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -31,6 +36,21 @@ export const usePayloadPopoverStyles = makeStyles({
       overflow: 'initial !important',
       contain: 'none !important',
     },
+  },
+
+  relativePathList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    width: '100%',
+  },
+
+  relativePathRow: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 32px',
+    gap: '8px',
+    alignItems: 'center',
+    width: '100%',
   },
 
   runButton: {

@@ -319,6 +319,51 @@ describe('PayloadPopover', () => {
     });
   });
 
+  describe('Relative path parameters', () => {
+    it('should not render a relative path field when the trigger has none', () => {
+      renderWithIntl();
+
+      expect(screen.queryByText('Relative path')).not.toBeInTheDocument();
+    });
+
+    it('should render the path parameter key and submit the entered value', () => {
+      renderWithIntl({ ...defaultProps, relativePathParameterNames: ['subscriptionId'] });
+
+      expect(screen.getByText('Relative path')).toBeInTheDocument();
+      expect(screen.getByText('Run with payload')).toBeDisabled();
+      const key = screen.getByRole('textbox', { name: 'Relative path subscriptionId key' });
+      expect(key).toHaveValue('subscriptionId');
+      expect(key).toHaveAttribute('readonly');
+
+      fireEvent.change(screen.getByRole('textbox', { name: 'Relative path subscriptionId' }), {
+        target: { value: 'abc-123' },
+      });
+      fireEvent.click(screen.getByText('Run with payload'));
+
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          relativePathParameters: { subscriptionId: 'abc-123' },
+        })
+      );
+    });
+
+    it.each(['constructor', 'toString', '__proto__'])('should render and submit a parameter named %s', (name) => {
+      renderWithIntl({ ...defaultProps, relativePathParameterNames: [name] });
+
+      const input = screen.getByRole('textbox', { name: `Relative path ${name}` });
+      expect(input).toHaveValue('');
+      expect(screen.getByText('Run with payload')).toBeDisabled();
+
+      fireEvent.change(input, { target: { value: 'abc' } });
+      expect(input).toHaveValue('abc');
+      fireEvent.click(screen.getByText('Run with payload'));
+
+      const submitted = mockOnSubmit.mock.calls[0][0].relativePathParameters;
+      expect(Object.hasOwn(submitted, name)).toBe(true);
+      expect(submitted[name]).toBe('abc');
+    });
+  });
+
   describe('Reset on Open', () => {
     it('should reset headers to default when popover is reopened', () => {
       const { rerender } = renderWithIntl({ ...defaultProps, open: false });
