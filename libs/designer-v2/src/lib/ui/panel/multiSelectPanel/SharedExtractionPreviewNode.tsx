@@ -1,10 +1,11 @@
 import { ActionNodeCard, AgentNodeCard, ConditionNodeCard, LoopNodeCard, TriggerNodeCard } from '@microsoft/designer-ui-v2';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
+import type { CSSProperties } from 'react';
 import { useIntl } from 'react-intl';
 import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 import { useConnectorName } from '../../../core/state/selectors/actionMetadataSelector';
-import { getNodePresentation } from '../../../core/utils/graph';
+import { getNodePresentation, SHARED_SCOPE_TITLE_RESERVE } from '../../../core/utils/graph';
 import {
   getOperationNodeSubtitle,
   mapActionNodeStrings,
@@ -28,7 +29,10 @@ export const PreviewOperationCard = ({
   const intl = useIntl();
   const { type, kind } = node.operation;
   const glyph = useOperationNodeIcon(type, kind, node.iconUri);
-  const { family } = getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: type });
+  const { family, titleLines } = getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, {
+    operationType: type,
+    title: node.label,
+  });
   const common = {
     id: domId,
     title: node.label,
@@ -68,6 +72,12 @@ export const PreviewOperationCard = ({
       iconArtwork={family !== 'scope' && glyph.artwork}
       strings={mapActionNodeStrings(intl)}
       subtitle={family === 'scope' ? undefined : getOperationNodeSubtitle(intl, type, kind, connectorName, false, false)}
+      density={family === 'scope' ? 'compact' : undefined}
+      titleLines={family === 'scope' ? titleLines : undefined}
+      // Keep the editor's title column width even though the preview has no collapse button.
+      style={
+        family === 'scope' ? ({ '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties) : undefined
+      }
     />
   );
 };

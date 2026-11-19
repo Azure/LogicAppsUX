@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SharedAgentScopeCard, SharedBranchCard, SharedScopeCard } from '../SharedFamilyCards';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
-import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { compactNodeMetrics, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { NodeInactiveContext } from '@microsoft/designer-ui-v2';
 import type { ActionCardProps } from '../actionCard';
 import { PreviewOperationCard } from '../../../../panel/multiSelectPanel/SharedExtractionPreviewNode';
@@ -75,8 +75,11 @@ describe('shared family interaction adapters', () => {
     expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
     expect(container.querySelector('[role="status"]')).toBeNull();
   });
-  it('keeps the extraction Scope header identical to the actual main Scope header', () => {
-    const input = props();
+  it.each([
+    ['Build message', compactNodeMetrics.card.height],
+    ['Send an email notification to the on-call engineer', compactNodeMetrics.card.wrappedHeight],
+  ] as const)('matches the editor geometry for the extraction Scope title "%s"', (title, height) => {
+    const input = { ...props(), title };
     const { container } = render(
       <>
         <SharedScopeCard {...input} family="scope" operationType="Scope" />
@@ -92,8 +95,20 @@ describe('shared family interaction adapters', () => {
         />
       </>
     );
-    const main = within(container.querySelector('#msla-node-real-id')!).getByText(input.title).parentElement!;
-    const preview = within(container.querySelector('#preview-scope')!).getByText(input.title).parentElement!;
+    const mainCard = container.querySelector<HTMLElement>('#msla-node-real-id')!;
+    const previewCard = container.querySelector<HTMLElement>('#preview-scope')!;
+    for (const card of [mainCard, previewCard]) {
+      expect(getMatchedStyleRules(card).map((rule) => rule.style.getPropertyValue('width'))).toContain(
+        `${compactNodeMetrics.card.width}px`
+      );
+      const body = card.querySelector<HTMLElement>(':scope > div')!;
+      expect(getMatchedStyleRules(body).map((rule) => rule.style.getPropertyValue('min-height'))).toContain(`${height}px`);
+    }
+    expect(previewCard.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe(
+      mainCard.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')
+    );
+    const main = within(mainCard).getByText(input.title).parentElement!;
+    const preview = within(previewCard).getByText(input.title).parentElement!;
     expect(main.textContent).toBe(input.title);
     expect(Array.from(preview.children, (line) => line.textContent)).toEqual(Array.from(main.children, (line) => line.textContent));
   });
