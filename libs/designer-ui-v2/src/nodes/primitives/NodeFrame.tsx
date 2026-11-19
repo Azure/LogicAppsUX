@@ -109,7 +109,7 @@ const useStyles = makeStyles({
   inputHandleVertical: { position: 'absolute', top: `${nodeMetrics.handle.edgeOffset}px`, left: '50%', transform: 'translateX(-50%)' },
   outputHandleVertical: { position: 'absolute', bottom: `${nodeMetrics.handle.edgeOffset}px`, left: '50%', transform: 'translateX(-50%)' },
   badge: { position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1 },
-  // Same handle clearance as NodeCard: the frame's input handle is top-centred on the vertical axis.
+  // Default to the same clearance as NodeCard when the host does not position the input port.
   badgeVertical: { left: verticalBadgeLeft, transform: 'translateY(-50%)', whiteSpace: 'nowrap' },
   focus: { ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' } },
   inactive: { opacity: nodeMetrics.inactiveOpacity },
@@ -431,6 +431,11 @@ export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function Nod
             aria-label={statusAriaLabel}
             strings={strings.status}
             className={mergeClasses(styles.badge, isVertical && styles.badgeVertical)}
+            style={
+              isVertical && showInput && compensatedLeft !== undefined
+                ? { left: compensatedLeft + nodeMetrics.handle.size / 2 + nodeMetrics.badge.handleGap }
+                : undefined
+            }
           />
         ) : null}
         {title ? (
