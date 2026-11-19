@@ -95,6 +95,25 @@ test(
 );
 
 test(
+  'mixed conditional fixture distinguishes an actual failure, an explicit skip, and missing run data',
+  { tag: ['@mock', '@shared-node-ui'] },
+  async ({ page }) => {
+    await openSharedWorkflow(page, 'Monitoring view conditional');
+    await LoadRunFile(page, 'mixedStatus');
+
+    const failed = page.locator('#msla-node-Delay');
+    const skipped = page.locator('#msla-node-Response');
+    const unknown = page.locator('#msla-node-Select');
+    await expect(failed).toHaveAccessibleName(/Delay.*Failed/i);
+    await expect(failed.locator('[data-badge-status="failed"]')).toBeVisible();
+    await expect(skipped).toHaveAccessibleName(/Response.*Skipped/i);
+    await expect(skipped.locator('[data-badge-status="skipped"]')).toBeVisible();
+    await expect(unknown).not.toHaveAccessibleName(/Skipped/i);
+    await expect(unknown.locator('[data-badge-status="skipped"]')).toHaveCount(0);
+  }
+);
+
+test(
   'in-progress conditional fixture dims actions without run evidence to 0.4 without compounding',
   { tag: ['@mock', '@shared-node-ui'] },
   async ({ page }, testInfo) => {
