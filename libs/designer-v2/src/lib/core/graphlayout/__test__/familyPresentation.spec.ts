@@ -69,12 +69,12 @@ describe('family admission and matching geometry', () => {
     expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 208, height: 52 } });
   });
 
-  it('reserves the canonical small-tool status badge clearance when actual tool run data appears', () => {
+  it('keeps canonical small-tool height when actual tool run data appears', () => {
     const node: WorkflowNode = { id: 'mcp', type: 'OPERATION_NODE' };
     const actual = getWorkflowNodePresentationContext(node, {
       nodesMetadata: { mcp: { graphId: 'agent', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, toolRunData: { status: 'Succeeded' } } },
     });
-    expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 66 });
+    expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 56 });
   });
 
   it('keeps one real named tool row and distinct ordinary inner operations from actual Agent deserialization', async () => {
