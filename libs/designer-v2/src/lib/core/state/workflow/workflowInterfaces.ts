@@ -45,6 +45,7 @@ export interface WorkflowState {
   graph: WorkflowNode | null;
   operations: Operations;
   focusedCanvasNodeId?: string;
+  focusExpandedActionId?: string;
   focusElement?: string;
   nodesMetadata: NodesMetadata;
   collapsedGraphIds: Record<string, boolean>;

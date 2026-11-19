@@ -653,9 +653,11 @@ export const workflowSlice = createSlice({
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
+      delete state.focusExpandedActionId;
     },
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
+      delete state.focusExpandedActionId;
     },
     setFocusElement: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusElement = action.payload;
@@ -772,6 +774,10 @@ export const workflowSlice = createSlice({
       } else {
         state.collapsedActionIds[action.payload] = true;
       }
+      if (state.focusExpandedActionId === action.payload) {
+        delete state.focusExpandedActionId;
+        state.focusedCanvasNodeId = undefined;
+      }
       state.focusCollapsedNodeId = action.payload;
 
       LoggerService().log({
@@ -780,6 +786,15 @@ export const workflowSlice = createSlice({
         message: action.type,
         args: [action.payload],
       });
+    },
+    expandCollapsedAction: (state: WorkflowState, { payload: id }: PayloadAction<string>) => {
+      if (getRecordEntry(state.collapsedActionIds, id) !== true) {
+        return;
+      }
+      delete state.collapsedActionIds[id];
+      state.focusCollapsedNodeId = undefined;
+      state.focusedCanvasNodeId = id;
+      state.focusExpandedActionId = id;
     },
     setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
@@ -1243,6 +1258,7 @@ export const {
   setFlowErrors,
   setRunDataInputOutputs,
   toggleCollapsedActionId,
+  expandCollapsedAction,
   clearFocusCollapsedNode,
   updateAgenticGraph,
   updateAgenticMetadata,

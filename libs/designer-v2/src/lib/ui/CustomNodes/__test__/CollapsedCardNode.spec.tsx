@@ -85,6 +85,7 @@ describe('CollapsedNode', () => {
   });
 
   it('uses the real collapsed identity count and preserves focus, context and expand commands', () => {
+    (useIsActionCollapsed as Mock).mockReturnValue(true);
     (useOperationsVisuals as Mock).mockReturnValue([
       { id: 'node-1', iconUri: '/scope.svg' },
       { id: 'node-a', iconUri: '/compose.svg' },
@@ -99,6 +100,10 @@ describe('CollapsedNode', () => {
     expect(screen.getByText('Node one')).toBeVisible();
     expect(screen.getByText('4 actions')).toBeVisible();
     expect(chip.querySelectorAll('[data-summary-thumbnail]')).toHaveLength(3);
+    const count = screen.getByText('4 actions');
+    const thumbnails = chip.querySelector('[data-summary-thumbnail]')!.parentElement!;
+    expect(count.nextElementSibling).toBe(thumbnails);
+    expect(getComputedStyle(count.parentElement!).flexDirection).toBe('column');
     expect(chip.querySelector('img[src="/scope.svg"]')).toBeInTheDocument();
     expect(chip.querySelector('img[src="/compose.svg"]')).toBeInTheDocument();
     expect(chip.parentElement?.style.height).toBe('68px');
@@ -107,7 +112,7 @@ describe('CollapsedNode', () => {
     expect(chip.id).toBe('msla-collapsed-card-node_1');
     expect(document.activeElement).toBe(chip);
     fireEvent.click(chip);
-    expect(mockDispatch).toHaveBeenCalledWith({ type: 'workflow/toggleCollapsedActionId', payload: 'node-1' });
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'workflow/expandCollapsedAction', payload: 'node-1' });
     fireEvent.contextMenu(chip, { clientX: 12, clientY: 34 });
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'designerView/setNodeContextMenuData',

@@ -23,7 +23,7 @@ import { useSharedNodeUi } from '../../core/state/designerOptions/designerOption
 import { COLLAPSED_NODE_SIZE, getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { CollapseChip, compactNodeMetrics } from '@microsoft/designer-ui-v2';
 import { BoxMultipleRegular, PlugConnectedRegular } from '@fluentui/react-icons';
-import { toggleCollapsedActionId } from '../../core/state/workflow/workflowSlice';
+import { expandCollapsedAction } from '../../core/state/workflow/workflowSlice';
 import { useIntl } from 'react-intl';
 import { useRestoreFocusTarget } from '@fluentui/react-components';
 
@@ -66,10 +66,10 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
     }
   }, [dispatch, focusNodeId, id]);
   useEffect(() => {
-    if (presentation.shared && shouldFocus) {
+    if (presentation.shared && isNodeCollapsed && shouldFocus) {
       focusRef.current?.focus({ preventScroll: true });
     }
-  }, [presentation.shared, shouldFocus]);
+  }, [presentation.shared, isNodeCollapsed, shouldFocus]);
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -123,7 +123,7 @@ const CollapsedNode = ({ id, data }: NodeProps) => {
                 ),
             },
           }}
-          onToggle={() => dispatch(toggleCollapsedActionId(id))}
+          onToggle={() => dispatch(expandCollapsedAction(id))}
           onContextMenu={onContextMenu}
           tabIndex={nodeIndex}
           disabled={isNullOrUndefined(isNodeCollapsed)}

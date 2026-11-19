@@ -56,7 +56,7 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorNeutralForeground1,
   },
-  summaryDetails: { minWidth: 0, display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalXS },
+  summaryThumbnails: { display: 'flex', gap: tokens.spacingHorizontalXS },
   summaryCount: {
     minWidth: 0,
     overflow: 'hidden',
@@ -149,16 +149,16 @@ export const CollapseChip = forwardRef<HTMLButtonElement, CollapseChipProps>(fun
           ) : null}
           <span className={styles.summaryText}>
             <span className={styles.summaryTitle}>{details.title}</span>
-            <span className={styles.summaryDetails}>
-              <span className={styles.summaryCount}>
-                {formatFrameCount(details.strings ?? defaultNodeFrameStrings, details.countLabel)}
+            <span className={styles.summaryCount}>{formatFrameCount(details.strings ?? defaultNodeFrameStrings, details.countLabel)}</span>
+            {details.thumbnails?.length ? (
+              <span className={styles.summaryThumbnails} aria-hidden="true">
+                {details.thumbnails.slice(0, 3).map(({ id, icon }) => (
+                  <span key={id} className={styles.thumbnail} data-summary-thumbnail>
+                    {icon}
+                  </span>
+                ))}
               </span>
-              {details.thumbnails?.slice(0, 3).map(({ id, icon }) => (
-                <span key={id} className={styles.thumbnail} aria-hidden="true" data-summary-thumbnail>
-                  {icon}
-                </span>
-              ))}
-            </span>
+            ) : null}
           </span>
         </>
       ) : (
