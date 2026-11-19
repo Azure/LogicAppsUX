@@ -9,8 +9,31 @@ import {
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import type { NodePresentationContext } from '../utils/graph';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 
 export const footerMarker = '#footer';
+
+export interface BranchGroupDecoration {
+  /** Body starts after the header on the layout's primary axis. */
+  start: number;
+  exits: { x: number; y: number }[];
+}
+
+export const getBranchGroupDecoration = (graph: ElkNode, horizontal: boolean): BranchGroupDecoration | undefined => {
+  const header = graph.children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
+  const branches = graph.children?.filter((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
+  if (!header || !branches?.length) {
+    return undefined;
+  }
+  // Use existing branch bounds and the parent source anchor. This is paint only: there are no extra ELK edges or ports.
+  return {
+    start: horizontal ? (header.x ?? 0) + (header.width ?? 0) : (header.y ?? 0) + (header.height ?? 0),
+    exits: branches.map(({ x = 0, y = 0, width = 0, height = 0 }) => ({
+      x: x + (horizontal ? width : width / 2),
+      y: y + (horizontal ? height / 2 : height),
+    })),
+  };
+};
 
 export interface GraphPresentationContext {
   operations?: Operations;

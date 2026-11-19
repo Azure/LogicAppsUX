@@ -215,6 +215,20 @@ describe('family admission and matching geometry', () => {
     expect(converted.children?.[0].children?.[0].ports).toHaveLength(2);
     const layout = await exportForTesting.elkLayout(converted);
     const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    const header = nodes.find(({ id }) => id === 'renamed-#scope')!;
+    const branchGroup = nodes.find(({ id }) => id === 'renamed')?.data.branchGroup;
+    expect(branchGroup).toEqual({
+      start: header.position.y + header.height!,
+      exits: expect.arrayContaining(
+        nodes
+          .filter(({ id }) => id === 'actual-true' || id === 'actual-false')
+          .map((branch) => ({
+            x: branch.position.x + branch.width! / 2,
+            y: branch.position.y + branch.height!,
+          }))
+      ),
+    });
+    expect(edges).toHaveLength(2);
     expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.branchPorts).toEqual([
       { id: 'actual-true', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
       { id: 'actual-false', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },

@@ -19,6 +19,7 @@ import type { Edge, Node } from '@xyflow/react';
 import {
   getLayoutRelevantData,
   getWorkflowNodePresentationContext,
+  getBranchGroupDecoration,
   type GraphPresentationContext,
   type LayoutRelevantData,
 } from './helpers';
@@ -250,6 +251,13 @@ const convertElkGraphToReactFlow = (
             if (header) {
               const top = (header.y ?? 0) + (header.height ?? 0) + TERMINAL_ADD_PADDING;
               nodeObject.data.bodyFrame = { y: top, height: n.height - top };
+            }
+          }
+          const type = n.layoutOptions?.operationType;
+          if (presentation.shared && (type === 'if' || type === 'switch')) {
+            const branchGroup = getBranchGroupDecoration(n, nodeObject.data.handleAxis === 'horizontal');
+            if (branchGroup) {
+              nodeObject.data.branchGroup = branchGroup;
             }
           }
         }

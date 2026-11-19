@@ -99,6 +99,24 @@ describe('GraphContainerNode', () => {
     expect(tree.root.findByProps({ className: 'msla-graph-container-wrapper' }).props.style).toMatchObject({ padding: 0 });
   });
 
+  it.each([
+    ['If', 'vertical', '74px 0 0', 'M 25 80 V 90 L 50 100'],
+    ['Switch', 'horizontal', '0 0 0 74px', 'M 25 80 H 62.5 L 100 50'],
+  ] as const)('groups expanded %s branches around the existing %s merge source', (type, handleAxis, inset, path) => {
+    (useSharedNodeUi as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type });
+    const tree = renderer.create(
+      <GraphContainerNode {...defaultProps} data={{ handleAxis, branchGroup: { start: 74, exits: [{ x: 25, y: 80 }] } }} />
+    );
+    expect(tree.root.findByType(NodeFrame).props.style).toEqual({ inset });
+    expect(tree.root.findByType('path').props.d).toBe(path);
+    expect(tree.root.findAllByType(DefaultHandle)).toHaveLength(2);
+    expect(tree.root.findAllByType(NodeMergePoint)).toHaveLength(1);
+    tree.update(<GraphContainerNode {...defaultProps} data={{ handleAxis }} />);
+    expect(tree.root.findAllByType(NodeFrame)).toHaveLength(0);
+    expect(tree.root.findAllByType(NodeMergePoint)).toHaveLength(1);
+  });
+
   it('keeps the shared Agent structural target on its top boundary rather than centering it in the compound graph', () => {
     (useSharedNodeUi as Mock).mockReturnValue(true);
     (useActionMetadata as Mock).mockReturnValue({ type: 'Agent' });
