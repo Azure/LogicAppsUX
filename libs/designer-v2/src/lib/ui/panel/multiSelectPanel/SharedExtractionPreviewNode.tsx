@@ -42,6 +42,8 @@ export const PreviewOperationCard = ({
         {...common}
         icon={glyph.icon}
         selectedIcon={glyph.selectedIcon}
+        iconTone={glyph.tone}
+        iconArtwork={glyph.artwork}
         strings={mapActionNodeStrings(intl)}
         subtitle={getOperationNodeSubtitle(intl, type, kind, connectorName, true, false)}
       />
@@ -61,7 +63,9 @@ export const PreviewOperationCard = ({
     <ActionNodeCard
       {...common}
       icon={family === 'scope' ? scopeNodeIcon : glyph.icon}
-      selectedIcon={glyph.selectedIcon}
+      selectedIcon={family === 'scope' ? undefined : glyph.selectedIcon}
+      iconTone={family === 'scope' ? undefined : glyph.tone}
+      iconArtwork={family !== 'scope' && glyph.artwork}
       strings={mapActionNodeStrings(intl)}
       subtitle={family === 'scope' ? undefined : getOperationNodeSubtitle(intl, type, kind, connectorName, false, false)}
     />

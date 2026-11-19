@@ -150,8 +150,10 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   const {
     icon: cardIcon,
     selectedIcon,
+    tone: iconTone,
+    artwork: iconArtwork,
     connectorLoading,
-  } = useOperationNodeIcon(operationType, operationKind, icon, primaryLoading, toolKind === 'mcp');
+  } = useOperationNodeIcon(operationType, operationKind, icon, primaryLoading);
   const errors = metadataUnavailable
     ? [
         ...errorMessages,
@@ -184,6 +186,8 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       }
       icon={cardIcon}
       selectedIcon={selectedIcon}
+      iconTone={iconTone}
+      iconArtwork={iconArtwork}
       selected={isSelected}
       status={status}
       statusLabel={statusLabel}

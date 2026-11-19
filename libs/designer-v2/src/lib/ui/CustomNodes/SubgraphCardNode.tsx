@@ -48,6 +48,7 @@ import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import { useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { SharedBranchCard } from './components/card/SharedFamilyCards';
+import { useOperationNodeIcon } from './components/card/useOperationNodeIcon';
 import { NodeAddButton } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
@@ -237,6 +238,11 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   );
 
   const opQuery = useOperationQuery(subgraphId);
+  // Tool subgraphs (MCP servers, agent tools) resolve their own connector art; only pass it through when it is real
+  // artwork or a family-colored built-in glyph so unmapped tools keep ToolItemCard's kind-specific default glyph.
+  const toolIconUri = useIconUri(subgraphId);
+  const toolIcon = useOperationNodeIcon(node?.type ?? '', node?.kind, toolIconUri || undefined, opQuery.isLoading);
+  const useToolIcon = sharedTool && (toolIcon.artwork || (toolIcon.tone !== undefined && toolIcon.tone !== 'neutral'));
   const errorInfo = useOperationErrorInfo(subgraphId);
   const settingValidationErrors = useSettingValidationErrors(subgraphId);
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
@@ -316,6 +322,10 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   title={title}
                   subgraphType={metadata.subgraphType}
                   toolKind={presentation.toolKind}
+                  icon={useToolIcon ? toolIcon.icon : undefined}
+                  selectedIcon={useToolIcon ? toolIcon.selectedIcon : undefined}
+                  iconTone={useToolIcon ? toolIcon.tone : undefined}
+                  iconArtwork={useToolIcon ? toolIcon.artwork : undefined}
                   handleAxis={handleAxis}
                   inputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="target" /> : undefined}
                   outputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="source" /> : undefined}

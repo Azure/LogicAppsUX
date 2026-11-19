@@ -8,6 +8,7 @@ import {
   NodeLabeledHandle,
   NodeText,
   ToolItemCard,
+  type NodeIconTone,
 } from '@microsoft/designer-ui-v2';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
@@ -296,6 +297,11 @@ interface SharedBranchCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolKind?: NodePresentation['toolKind'];
+  /** Tool identity resolved by the host (connector or MCP art, or a family glyph); omitted falls back to the tool-kind default. */
+  icon?: ReactNode;
+  selectedIcon?: ReactNode;
+  iconTone?: NodeIconTone;
+  iconArtwork?: boolean;
   handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlot?: ReactNode;
@@ -361,7 +367,7 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
         className={styles.acceptedFrame}
         category="action"
-        icon={toolKind === 'mcp' ? <PlugConnectedRegular /> : toolKind === 'subWorkflow' ? <FlowRegular /> : undefined}
+        icon={props.icon ?? (toolKind === 'mcp' ? <PlugConnectedRegular /> : toolKind === 'subWorkflow' ? <FlowRegular /> : undefined)}
         title={title}
         description={props.description}
         configured={!props.errorMessages?.length}
@@ -391,6 +397,10 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           statusDetail={props.runData?.duration}
           inactive={props.active === false}
           kind={toolKind}
+          icon={props.icon}
+          selectedIcon={props.selectedIcon}
+          iconTone={props.iconTone}
+          iconArtwork={props.iconArtwork}
           size="small"
           strings={toolStrings}
           after={
