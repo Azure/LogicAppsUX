@@ -29,7 +29,7 @@ import {
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
-import { scopeNodeIcon } from './operationNodeGlyphs';
+import { agentNodeTone, scopeNodeIcon } from './operationNodeGlyphs';
 import type { NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
@@ -235,6 +235,7 @@ export const SharedScopeCard = ({
     return withHover(
       <AgentNodeCard
         {...common}
+        iconTone={agentNodeTone}
         model={model}
         // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
         toolsPlacement="below"

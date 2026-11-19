@@ -4,6 +4,8 @@ import { isBuiltInOperation } from '@microsoft/logic-apps-shared';
 import { AgentsFilled, AgentsRegular, BoxMultipleRegular } from '@fluentui/react-icons';
 
 export const scopeNodeIcon = <BoxMultipleRegular />;
+/** Agent headers render the card's own Agent glyph, so adapters pass this family tone directly. */
+export const agentNodeTone: NodeIconTone = 'pink';
 
 export interface OperationNodeGlyph {
   icon: ReactNode;
@@ -18,7 +20,7 @@ const groups: { types: readonly string[]; visualKind: NodeVisualKind; tone: Node
   { types: ['request'], visualKind: 'http', tone: 'teal' },
   { types: ['http', 'httpwithswagger', 'httpwebhook'], visualKind: 'http', tone: 'green' },
   { types: ['response'], visualKind: 'response', tone: 'teal' },
-  { types: ['recurrence'], visualKind: 'schedule', tone: 'blue' },
+  { types: ['recurrence', 'slidingwindow'], visualKind: 'schedule', tone: 'blue' },
   { types: ['wait', 'delay', 'delayuntil'], visualKind: 'delay', tone: 'blue' },
   { types: ['compose'], visualKind: 'compose', tone: 'violet' },
   { types: ['parsejson'], visualKind: 'parseJson', tone: 'violet' },
@@ -43,7 +45,7 @@ const groups: { types: readonly string[]; visualKind: NodeVisualKind; tone: Node
     tone: 'blue',
   },
   {
-    types: ['javascriptcode', 'inlinejavascript', 'pythoncode', 'executepythoncode', 'inlinepython'],
+    types: ['javascriptcode', 'inlinejavascript', 'pythoncode', 'executepythoncode', 'inlinepython', 'powershellcode', 'csharpscriptcode'],
     visualKind: 'inlineCode',
     tone: 'blue',
   },
@@ -75,7 +77,7 @@ export function getOperationNodeGlyph(type: string, kind?: string): OperationNod
   const identity = getIdentity(type, kind);
   if (agentIdentity.has(identity)) {
     // NestedAgent intentionally reuses the canonical Agent glyph without extending the shared visual-kind union.
-    return { icon: <AgentsRegular />, selectedIcon: <AgentsFilled />, tone: 'pink' };
+    return { icon: <AgentsRegular />, selectedIcon: <AgentsFilled />, tone: agentNodeTone };
   }
   const visualKind = getOperationNodeVisualKind(type, kind);
   if (visualKind == null) {

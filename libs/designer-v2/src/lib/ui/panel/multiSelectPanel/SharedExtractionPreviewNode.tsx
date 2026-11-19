@@ -12,7 +12,7 @@ import {
   mapConditionNodeStrings,
   mapLoopNodeStrings,
 } from '../../CustomNodes/components/card/nodeUiStrings';
-import { scopeNodeIcon } from '../../CustomNodes/components/card/operationNodeGlyphs';
+import { agentNodeTone, scopeNodeIcon } from '../../CustomNodes/components/card/operationNodeGlyphs';
 import { getScopeModel } from '../../CustomNodes/components/card/scopeNodePresentation';
 import { useOperationNodeIcon } from '../../CustomNodes/components/card/useOperationNodeIcon';
 import type { SharedExtractionPreviewNode } from './workflowExtractionPreview';
@@ -57,7 +57,7 @@ export const PreviewOperationCard = ({
     return <LoopNodeCard {...common} bodyPlacement="none" strings={strings} subtitle={strings.loop.foreach} />;
   }
   if (family === 'agent') {
-    return <AgentNodeCard {...common} model={getScopeModel(node.operation)} strings={mapAgentNodeStrings(intl)} />;
+    return <AgentNodeCard {...common} iconTone={agentNodeTone} model={getScopeModel(node.operation)} strings={mapAgentNodeStrings(intl)} />;
   }
   return (
     <ActionNodeCard

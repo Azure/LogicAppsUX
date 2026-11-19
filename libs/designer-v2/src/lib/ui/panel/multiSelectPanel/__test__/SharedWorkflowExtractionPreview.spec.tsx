@@ -73,6 +73,7 @@ describe('shared extraction projection and canonical opaque families', () => {
     expect(container.querySelector('[id^="msla-node-"]')).toBeNull();
     if (card === 'agent') {
       expect(screen.getByText('actual-deployment')).toBeInTheDocument();
+      expect(container.querySelector('[data-category="agent"]')).toHaveAttribute('data-tone', 'pink');
     }
     expect(JSON.stringify(plan)).toBe(original);
   });

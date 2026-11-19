@@ -189,6 +189,7 @@ describe('shared family interaction adapters', () => {
     const agent = container.querySelector('[data-node-card="agent"]')!;
     expect(agent.querySelector('img')).toBeNull();
     expect(agent.querySelector('[data-icon-name="AgentsRegular"]')).not.toBeNull();
+    expect(agent.querySelector('[data-category="agent"]')).toHaveAttribute('data-tone', 'pink');
   });
 
   it('composes the real tools panel inside the Agent before its output without cloning tool rows', () => {

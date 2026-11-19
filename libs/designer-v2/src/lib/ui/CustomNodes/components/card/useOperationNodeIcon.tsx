@@ -24,6 +24,11 @@ export interface OperationNodeIcon {
 export const useOperationNodeIcon = (type: string, kind?: string, iconUri?: string, isLoading = false): OperationNodeIcon => {
   const glyph = getOperationNodeGlyph(type, kind);
   const [failedIconUri, setFailedIconUri] = useState<string>();
+  // A failure only describes the URI that failed: clear it when the host resolves a different URI, so returning
+  // to an earlier URI (for example after metadata reloads) retries it instead of staying on the fallback.
+  if (failedIconUri !== undefined && failedIconUri !== iconUri) {
+    setFailedIconUri(undefined);
+  }
   if (glyph) {
     return { icon: glyph.icon, selectedIcon: glyph.selectedIcon, tone: glyph.tone, artwork: false, connectorLoading: false };
   }

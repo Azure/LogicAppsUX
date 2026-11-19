@@ -74,6 +74,9 @@ describe('family tones for built-in fallback glyphs', () => {
     ['Join', undefined, 'violet'],
     ['Terminate', undefined, 'red'],
     ['Recurrence', undefined, 'blue'],
+    ['SlidingWindow', undefined, 'blue'],
+    ['PowerShellCode', undefined, 'blue'],
+    ['CSharpScriptCode', undefined, 'blue'],
     ['Expression', 'CurrentTime', 'blue'],
     ['Agent', undefined, 'pink'],
   ])('colors %s %s as %s', (type, kind, tone) => {
@@ -160,6 +163,23 @@ describe('art-first icon precedence', () => {
       fireEvent.error(container.querySelector('img')!);
     });
     expect(result.current).toMatchObject({ tone: 'neutral', artwork: false, connectorLoading: false });
+  });
+
+  it('retries a previously failed URI after the host resolves a different one', () => {
+    const { result, rerender } = renderHook(({ uri }) => useOperationNodeIcon('ApiConnection', undefined, uri), {
+      initialProps: { uri: 'a.svg' },
+    });
+    const first = render(<>{result.current.icon}</>);
+    act(() => {
+      fireEvent.error(first.container.querySelector('img')!);
+    });
+    expect(result.current.artwork).toBe(false);
+    rerender({ uri: 'b.svg' });
+    expect(result.current.artwork).toBe(true);
+    rerender({ uri: 'a.svg' });
+    expect(result.current.artwork).toBe(true);
+    const retried = render(<>{result.current.icon}</>);
+    expect(retried.container.querySelector('img')).toHaveAttribute('src', 'a.svg');
   });
 
   it('leaves unmapped built-ins without art to the card default instead of a connector mark', () => {
