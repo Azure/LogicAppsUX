@@ -53,11 +53,18 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
   const url = `${backendRuntimeBaseUrl}${designTimeInst.port}${designerStartApi}`;
+  const { getExperimentalBundleRuntime } = await import('../../utils/bundleFeed');
+  const experimentalBundle = await getExperimentalBundleRuntime(context, projectPath);
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isDesignTimeUp(url)) {
+      if (designTimeInst.experimentalBundleSource !== experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI) {
+        throw new Error(
+          "The running backend host does not match the experimental bundle selection. Stop this project's host and reopen it."
+        );
+      }
       ext.outputChannel.appendLine(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
       return;
     }
@@ -81,7 +88,8 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
         await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
-        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+        startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), ['host', 'start', portArgs], experimentalBundle?.env);
+        designTimeInst.experimentalBundleSource = experimentalBundle?.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
 
         await waitForDesignTimeStartUp(context, projectPath, url, true);
       } else {

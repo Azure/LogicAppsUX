@@ -142,15 +142,28 @@ export async function stopFuncTaskForWorkspace(
  * @returns {number} Returns true if the task is a func host start task, otherwise returns false.
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
+  if (!task.execution) {
+    return false;
+  }
+  if (task.execution instanceof vscode.ProcessExecution) {
+    const { process: executable, args } = task.execution;
+    return (
+      (/^(?:.*[\\/])?func(?:\.exe)?$/i.test(executable) || executable === '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}') &&
+      (args[0] === 'start' || (args[0] === 'host' && args[1] === 'start'))
+    );
+  }
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type === 'shell') {
-    const command = (task.execution as vscode.ShellExecution).command?.toString();
-    if (!command) {
-      return false;
-    }
-
+    const execution = task.execution as vscode.ShellExecution;
+    const command = typeof execution.command === 'string' ? execution.command : execution.command?.value;
     const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
-    return funcRegex.test(command);
+    if (command && funcRegex.test(command)) {
+      return true;
+    }
+    const args = execution.args?.map((arg) => (typeof arg === 'string' ? arg : arg.value)) ?? [];
+    if (command && /^(?:.*[\\/])?func(?:\.exe)?$/i.test(command) && (args[0] === 'start' || (args[0] === 'host' && args[1] === 'start'))) {
+      return true;
+    }
   }
   return /func (host )?start/i.test(commandLine || '');
 }

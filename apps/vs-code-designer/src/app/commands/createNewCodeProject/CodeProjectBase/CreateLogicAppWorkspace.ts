@@ -1,7 +1,6 @@
 import {
   artifactsDirectory,
   assetsFolderName,
-  autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
   builtinOperationSdksFolderName,
   funcIgnoreFileName,
@@ -10,13 +9,13 @@ import {
   jarFolderName,
   libDirectory,
   localSettingsFileName,
-  lspDirectory,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
   vscodeCommand,
   vscodeFolderName,
   workflowFileName,
+  CodefulSdkVersion,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
@@ -34,10 +33,9 @@ import { generateHostJson, generateLocalSettingsJson } from '../../../projectCon
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
-import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
@@ -120,8 +118,6 @@ export const createCodefulWorkflowFile = async (
   workflowType: WorkflowType
 ) => {
   const workflowTemplateFileName = getCodefulWorkflowTemplateFileName(workflowType);
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
   // Create the workflow-specific .cs file
   const capitalizedWorkflowName = (workflowName.charAt(0).toUpperCase() + workflowName.slice(1)).replace(/-/g, '_');
@@ -149,15 +145,12 @@ export const createCodefulWorkflowFile = async (
 
     // Create the .csproj file (only for first workflow)
     const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-    const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+    const templateProjContent = (await fse.readFile(templateProjPath, 'utf-8')).replace(
+      /<%= codefulSdkPackageVersion %>/g,
+      CodefulSdkVersion.WorkflowsSDK
+    );
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
     await fse.writeFile(csprojFilePath, templateProjContent);
-
-    // Create nuget.config file (only for first workflow)
-    const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
-    const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
-    await fse.writeFile(nugetFilePath, templateNugetContent);
   }
 };
 
@@ -278,6 +271,9 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   addLocalFuncTelemetry(context);
 
   const webviewProjectContext: IWebviewProjectContext = options;
+  if (webviewProjectContext.logicAppType === ProjectType.codeful) {
+    webviewProjectContext.targetFramework = TargetFramework.Net10;
+  }
 
   // Add telemetry properties for debugging
   context.telemetry.properties.fromPackage = String(fromPackage);
@@ -319,7 +315,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
-  mySubContext.targetFramework = options.targetFramework;
+  mySubContext.targetFramework = webviewProjectContext.targetFramework;
   mySubContext.workspacePath = workspaceFolder;
 
   if (fromPackage) {
@@ -357,10 +353,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
       await createFunctionAppFilesStep.setup(mySubContext);
     }
 
-    // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
-    // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
-    // directory. No-op for rulesEngine, codeful, standard, or NetFx.
-    await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+    await addCustomCodeDotNetVersionSetting(
+      context,
+      mySubContext.projectPath,
+      mySubContext.projectType,
+      mySubContext.targetFramework,
+      true
+    );
 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }

@@ -16,8 +16,8 @@
  * codefulDebugTasksModern/Legacy.test.ts: this file (Phase 4.15A) creates the
  * net10 workspace through the wizard in one fresh VS Code session, and
  * customCodeDotNetVersionAssert.test.ts (Phase 4.15B) validates the generated
- * workspace files in a separate phase without building the project while the
- * required Workflows SDK 1.4.0 package is pending release.
+ * workspace files in a separate phase without building the project. This pair
+ * covers workspace generation only, not the .NET 10 build/run lifecycle.
  *
  * DELIBERATELY not manifest-backed: the shared `created-workspaces.json`
  * manifest (workspaceManifest.ts / createWorkspaceShared.ts) already holds a

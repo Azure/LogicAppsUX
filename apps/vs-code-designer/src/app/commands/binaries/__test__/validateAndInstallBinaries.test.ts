@@ -7,7 +7,7 @@ import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../../
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { setDotNetCommand } from '../../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../../utils/languageServerProtocol';
+import { installLogicAppsLanguageServerAssets } from '../../../utils/languageServerInstaller';
 import { setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { shouldRequireStrictDependencyValidation } from '../../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../../utils/timeout';
@@ -45,8 +45,8 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   setFunctionsCommand: vi.fn(),
 }));
 
-vi.mock('../../../utils/languageServerProtocol', () => ({
-  installLSPSDK: vi.fn(),
+vi.mock('../../../utils/languageServerInstaller', () => ({
+  installLogicAppsLanguageServerAssets: vi.fn(),
 }));
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
@@ -117,7 +117,7 @@ describe('validateAndInstallBinaries', () => {
     (validateNodeJsIsLatest as Mock).mockResolvedValue(undefined);
     (validateFuncCoreToolsIsLatest as Mock).mockResolvedValue(undefined);
     (validateDotNetIsLatest as Mock).mockResolvedValue(undefined);
-    (installLSPSDK as Mock).mockResolvedValue(undefined);
+    (installLogicAppsLanguageServerAssets as Mock).mockResolvedValue(undefined);
     (setNodeJsCommand as Mock).mockResolvedValue(undefined);
     (setFunctionsCommand as Mock).mockResolvedValue(undefined);
     (setDotNetCommand as Mock).mockResolvedValue(undefined);
@@ -162,7 +162,7 @@ describe('validateAndInstallBinaries', () => {
       3000,
       'https://dotnet.microsoft.com/en-us/download/dotnet'
     );
-    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3000);
+    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'Logic Apps language server', 3000);
     expect(validateNodeJsIsLatest).toHaveBeenCalledWith(
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
@@ -179,9 +179,9 @@ describe('validateAndInstallBinaries', () => {
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
       }),
-      '8.0.100'
+      '8.0.100,10'
     );
-    expect(installLSPSDK).toHaveBeenCalledWith();
+    expect(installLogicAppsLanguageServerAssets).toHaveBeenCalledWith();
     expect(setNodeJsCommand).toHaveBeenCalled();
     expect(setFunctionsCommand).toHaveBeenCalled();
     expect(setDotNetCommand).toHaveBeenCalledTimes(2);
@@ -191,6 +191,29 @@ describe('validateAndInstallBinaries', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
     );
+  });
+
+  it.each([
+    [{ dotnetVersions: '6,8' }, '6,8,10'],
+    [{ dotnet: '6,8' }, '6,8,10'],
+    [{ dotnetVersions: '8,10', dotnet: '6,8' }, '8,10'],
+    [{}, undefined],
+  ])('includes .NET 10 while preserving bundle SDK requirements: %j', async (feed, expectedVersions) => {
+    vi.mocked(getBundleDependencyFeed).mockResolvedValue(feed);
+
+    await validateAndInstallBinaries(context);
+
+    expect(validateDotNetIsLatest).toHaveBeenCalledWith(expect.anything(), expectedVersions);
+  });
+
+  it('uses the default SDK when the bundle dependency feed is unavailable', async () => {
+    vi.mocked(getBundleDependencyFeed).mockRejectedValue(new Error('Feed unavailable'));
+    const consoleError = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await validateAndInstallBinaries(context);
+
+    expect(validateDotNetIsLatest).toHaveBeenCalledWith(expect.anything(), undefined);
+    expect(consoleError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Feed unavailable' }));
   });
 
   it('logs dependency validation errors and surfaces troubleshooting guidance', async () => {
