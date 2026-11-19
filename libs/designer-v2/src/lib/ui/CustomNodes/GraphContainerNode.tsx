@@ -88,6 +88,12 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   const height = nodeSize?.height ?? 0;
   const mergeX = horizontal ? width : width / 2;
   const mergeY = horizontal ? height / 2 : height;
+  const exits = branchGroup?.exits ?? [];
+  // Cross lanes only after the longest lane ends. Draw the shared crossbar and stem once.
+  const gutter = ((horizontal ? mergeX : mergeY) + Math.max(...exits.map(({ x, y }) => (horizontal ? x : y)))) / 2;
+  const crossPositions = [horizontal ? mergeY : mergeX, ...exits.map(({ x, y }) => (horizontal ? y : x))];
+  const crossStart = Math.min(...crossPositions);
+  const crossEnd = Math.max(...crossPositions);
 
   return (
     <>
@@ -122,11 +128,19 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
                   opacity={inactive ? nodeMetrics.inactiveOpacity : 1}
                   data-branch-convergence={id}
                 >
-                  {branchGroup.exits.map(({ x, y }) => {
-                    const bend = horizontal ? (x + mergeX) / 2 : (y + mergeY) / 2;
-                    const path = horizontal ? `M ${x} ${y} H ${bend} L ${mergeX} ${mergeY}` : `M ${x} ${y} V ${bend} L ${mergeX} ${mergeY}`;
-                    return <path key={`${x},${y}`} d={path} fill="none" stroke="currentColor" strokeDasharray="3 2" />;
-                  })}
+                  {exits.length > 0 && (
+                    <path
+                      d={[
+                        ...exits.map(({ x, y }) => `M ${x} ${y} ${horizontal ? 'H' : 'V'} ${gutter}`),
+                        horizontal
+                          ? `M ${gutter} ${crossStart} V ${crossEnd} M ${gutter} ${mergeY} H ${mergeX}`
+                          : `M ${crossStart} ${gutter} H ${crossEnd} M ${mergeX} ${gutter} V ${mergeY}`,
+                      ].join(' ')}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeDasharray="3 2"
+                    />
+                  )}
                 </svg>
               </>
             )
