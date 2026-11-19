@@ -92,16 +92,20 @@ export abstract class BaseConnectorService implements IConnectorService {
     );
   }
 
-  protected _getInvokeParameters(parameters: Record<string, any>, dynamicState: any): Record<string, any> {
+  protected _getInvokeParameters(parameters: Record<string, any>, dynamicState: any, workflowName?: string): Record<string, any> {
     const invokeParameters = { ...parameters };
     const additionalParameters = dynamicState.parameters;
 
     if (additionalParameters) {
       for (const parameterName of Object.keys(additionalParameters)) {
-        const { value } = additionalParameters[parameterName];
+        const { value, workflowReference } = additionalParameters[parameterName];
 
         if (value !== undefined) {
           invokeParameters[parameterName] = value;
+        }
+
+        if (workflowReference === true && workflowName) {
+          invokeParameters[parameterName] = workflowName;
         }
       }
     }
