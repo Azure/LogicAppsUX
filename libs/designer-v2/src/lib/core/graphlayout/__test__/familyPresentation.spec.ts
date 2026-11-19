@@ -9,7 +9,7 @@ import {
   expectedAgentMcpWorkflowDefinitionOutput,
 } from '../../parsers/BJSWorkflow/__test__/agentMcpWorkflowDefinition';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { getWorkflowNodePresentationContext } from '../helpers';
+import { getLayoutRelevantData, getWorkflowNodePresentationContext } from '../helpers';
 import { createElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -77,6 +77,33 @@ describe('family admission and matching geometry', () => {
     expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 56 });
   });
 
+  it('reserves the MCP pager only for a multi-iteration monitoring run, before packing the next tool', async () => {
+    const { graph, actionData: operations, nodesMetadata } = expectedAgentMcpWorkflowDefinitionOutput;
+    const mcpId = 'McpFileServer';
+    const context = {
+      operations,
+      isMonitoringView: true,
+      nodesMetadata: { ...nodesMetadata, [mcpId]: { ...nodesMetadata[mcpId], toolRunData: { repetitionCount: 1 } } },
+    };
+    const withPager = {
+      ...context,
+      nodesMetadata: { ...context.nodesMetadata, [mcpId]: { ...context.nodesMetadata[mcpId], toolRunData: { repetitionCount: 4 } } },
+    };
+    const layout = async (presentationContext: typeof context, shared = true) => {
+      const input = exportForTesting.convertWorkflowGraphToElkGraph(graph as WorkflowNode, shared, presentationContext);
+      const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(input, true), shared);
+      return nodes;
+    };
+    const pagedNodes = await layout(withPager);
+    const mcp = pagedNodes.find(({ id }) => id === mcpId)!;
+    const followingTool = pagedNodes.find((node) => node.parentId === mcp.parentId && node.position.y > mcp.position.y)!;
+    expect(mcp.height).toBe(80);
+    expect(followingTool.position.y - mcp.position.y).toBeGreaterThanOrEqual(92);
+    expect((await layout(context)).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect((await layout({ ...withPager, isMonitoringView: false })).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect(await layout(withPager, false)).toEqual(await layout(context, false));
+    expect(getLayoutRelevantData(graph as WorkflowNode, withPager)).not.toEqual(getLayoutRelevantData(graph as WorkflowNode, context));
+  });
   it('keeps one real named tool row and distinct ordinary inner operations from actual Agent deserialization', async () => {
     const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
     const parsed = Deserialize(

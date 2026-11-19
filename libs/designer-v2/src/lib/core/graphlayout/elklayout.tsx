@@ -571,16 +571,16 @@ export const LayoutProvider = ({ children }: any) => {
   const readOnly = useReadOnly();
   const useSharedNodeUiOption = useSharedNodeUi();
   const isMonitoringView = useMonitoringView();
-  const compactMonitoring = useSharedNodeUiOption && readOnly && isMonitoringView;
+  const sharedMonitoring = useSharedNodeUiOption && (isMonitoringView ?? false);
   // Titles only size shared compact cards; legacy layout must not be invalidated by renames.
   const idReplacements = useSharedNodeUiOption ? workflowIdReplacements : undefined;
   const prevLayoutRelevantDataRef = useRef<LayoutRelevantData>();
-  const previousOptions = useRef({ readOnly, useSharedNodeUi: useSharedNodeUiOption, compactMonitoring });
+  const previousOptions = useRef({ readOnly, useSharedNodeUi: useSharedNodeUiOption, sharedMonitoring });
   const lastAcceptedShared = useRef<boolean>();
   const activeRequest = useRef<{
     workflowGraph: typeof workflowGraph;
     readOnly: typeof readOnly;
-    compactMonitoring: typeof compactMonitoring;
+    sharedMonitoring: typeof sharedMonitoring;
     useSharedNodeUi: boolean;
     operations: typeof operations;
     nodesMetadata: typeof nodesMetadata;
@@ -592,7 +592,7 @@ export const LayoutProvider = ({ children }: any) => {
     activeRequest.current = {
       workflowGraph,
       readOnly,
-      compactMonitoring,
+      sharedMonitoring,
       useSharedNodeUi: useSharedNodeUiOption,
       operations,
       nodesMetadata,
@@ -608,7 +608,7 @@ export const LayoutProvider = ({ children }: any) => {
     return () => {
       activeRequest.current = undefined;
     };
-  }, [workflowGraph, readOnly, compactMonitoring, useSharedNodeUiOption, operations, nodesMetadata, idReplacements]);
+  }, [workflowGraph, readOnly, sharedMonitoring, useSharedNodeUiOption, operations, nodesMetadata, idReplacements]);
 
   useThrottledEffect(
     () => {
@@ -617,7 +617,7 @@ export const LayoutProvider = ({ children }: any) => {
         !workflowGraph ||
         request?.workflowGraph !== workflowGraph ||
         request.readOnly !== readOnly ||
-        request.compactMonitoring !== compactMonitoring ||
+        request.sharedMonitoring !== sharedMonitoring ||
         request.useSharedNodeUi !== useSharedNodeUiOption ||
         request.operations !== operations ||
         request.nodesMetadata !== nodesMetadata ||
@@ -626,10 +626,10 @@ export const LayoutProvider = ({ children }: any) => {
         return;
       }
 
-      const context = useSharedNodeUiOption ? { operations, nodesMetadata, idReplacements } : undefined;
+      const context = useSharedNodeUiOption ? { operations, nodesMetadata, idReplacements, isMonitoringView: sharedMonitoring } : undefined;
       const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph, context);
       // If layout-relevant data hasn't changed, skip elk processing
-      const currentOptions = { readOnly, useSharedNodeUi: useSharedNodeUiOption, compactMonitoring };
+      const currentOptions = { readOnly, useSharedNodeUi: useSharedNodeUiOption, sharedMonitoring };
       if (
         prevLayoutRelevantDataRef.current &&
         isEqual(previousOptions.current, currentOptions) &&
@@ -639,8 +639,8 @@ export const LayoutProvider = ({ children }: any) => {
         return;
       }
 
-      const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph, useSharedNodeUiOption, { operations, nodesMetadata, idReplacements });
-      elkLayout(elkGraph, readOnly, compactMonitoring)
+      const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph, useSharedNodeUiOption, context);
+      elkLayout(elkGraph, readOnly, readOnly && sharedMonitoring)
         .then((g) => {
           if (request !== activeRequest.current) {
             return;
@@ -673,7 +673,7 @@ export const LayoutProvider = ({ children }: any) => {
           });
         });
     },
-    [readOnly, compactMonitoring, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements],
+    [readOnly, sharedMonitoring, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements],
     200
   );
 

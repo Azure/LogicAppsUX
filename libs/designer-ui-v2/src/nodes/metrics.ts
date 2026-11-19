@@ -13,6 +13,7 @@ export const nodeMetrics = {
   handle: { size: 12, stroke: 1.5, edgeOffset: -7, labeledHeight: 20 },
   /** handleGap: clearance between a vertical-axis badge and the centred input handle it must never cover. */
   badge: { height: 20, icon: 12, overhang: 10, handleGap: 4 },
+  iterationPager: { height: 24 },
   testData: { size: 20, icon: 16, textReserve: 32 },
   toolConnector: { diamond: 12, gap: 9, line: 20, add: 20, sideRowHeight: 74 },
   toolsHeader: 20,

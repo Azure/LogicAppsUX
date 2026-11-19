@@ -1,7 +1,7 @@
 import type { IntlShape } from 'react-intl';
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
-import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
+import type { NodeMetadata, NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
 import {
   isTemplateExpression,
   hasInvalidChars,
@@ -65,12 +65,19 @@ export const AGENT_TOOL_CONNECTOR_HEIGHT =
 // ELK/ports/drop-zones all consume this accepted add-card height; derive it once from shared metrics.
 const SHARED_ADD_NODE_HEIGHT = nodeMetrics.actionAdd.containerHeight;
 
+export const hasMcpToolPager = (metadata: NodeMetadata | undefined, parentType: string | undefined, isMonitoringView = false): boolean =>
+  isMonitoringView &&
+  parentType?.toLowerCase() === 'agent' &&
+  metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT &&
+  (metadata.toolRunData?.repetitionCount ?? 0) > 1;
+
 export interface NodePresentationContext {
   operationType?: string;
   subgraphType?: SubgraphType;
   caseCount?: number;
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
+  hasToolPager?: boolean;
   /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
   title?: string;
 }
@@ -118,7 +125,8 @@ export const getNodePresentation = (
         shared: true,
         family: 'tool',
         toolKind: context.toolKind,
-        size: toolSize,
+        // The pager sits below the 56px card and must be included in the allocated row bounds.
+        size: context.hasToolPager ? { ...toolSize, height: toolSize.height + nodeMetrics.iterationPager.height } : toolSize,
       };
     }
     return { shared: true, ...getCompactCardPresentation(context.title) };

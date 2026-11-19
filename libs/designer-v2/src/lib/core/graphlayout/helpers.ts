@@ -8,7 +8,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
-import type { NodePresentationContext } from '../utils/graph';
+import { hasMcpToolPager, type NodePresentationContext } from '../utils/graph';
 import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 
 export const footerMarker = '#footer';
@@ -40,6 +40,7 @@ export interface GraphPresentationContext {
   nodesMetadata?: NodesMetadata;
   /** Renamed node captions; titles feed compact card height, matching useNodeDisplayName. */
   idReplacements?: Record<string, string>;
+  isMonitoringView?: boolean;
 }
 
 export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: GraphPresentationContext = {}): NodePresentationContext => {
@@ -64,6 +65,8 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
     title: labelCase(getRecordEntry(context.idReplacements, id) ?? id),
     subgraphType: metadata?.subgraphType,
     caseCount: operation && 'cases' in operation ? Object.keys(operation.cases ?? {}).length + 1 : undefined,
+    ...(node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE &&
+      hasMcpToolPager(metadata, parent?.type, context.isMonitoringView) && { hasToolPager: true }),
     ...(toolRow && {
       toolKind:
         metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
