@@ -1,6 +1,6 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
-import { useReadOnly, useSharedNodeUi } from '../state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../state/designerOptions/designerOptionsSelectors';
 import { getNodePresentation, type NodePresentation } from '../utils/graph';
 import { useRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { isSingleHandoffAction } from '../state/workflow/helper';
@@ -32,6 +32,7 @@ import { getPrecomputedHandles } from './precomputedHandles';
 export const spacing = {
   default: '80',
   readOnly: '40',
+  sharedMonitoring: '32',
   onlyEdge: '20',
 };
 
@@ -133,11 +134,16 @@ const flattenToolGroups = (node: ElkNode): ElkNode => {
   };
 };
 
-const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
+const elkLayout = async (graph: ElkNode, readOnly?: boolean, compactMonitoring = false) => {
   const layout = await elk.layout(JSON.parse(JSON.stringify(graph)), {
     layoutOptions: {
       ...defaultLayoutOptions,
       ...(readOnly && readOnlyOptions),
+      // Status and counts are inset, so shared monitoring can reclaim clearance between layers, not inside cards.
+      ...(compactMonitoring && {
+        'elk.layered.spacing.edgeNodeBetweenLayers': spacing.sharedMonitoring,
+        'elk.layered.spacing.nodeNodeBetweenLayers': spacing.sharedMonitoring,
+      }),
     },
   });
   return flattenToolGroups(layout);
@@ -564,14 +570,17 @@ export const LayoutProvider = ({ children }: any) => {
   const workflowIdReplacements = useSelector((state: RootState) => state.workflow.idReplacements);
   const readOnly = useReadOnly();
   const useSharedNodeUiOption = useSharedNodeUi();
+  const isMonitoringView = useMonitoringView();
+  const compactMonitoring = useSharedNodeUiOption && readOnly && isMonitoringView;
   // Titles only size shared compact cards; legacy layout must not be invalidated by renames.
   const idReplacements = useSharedNodeUiOption ? workflowIdReplacements : undefined;
   const prevLayoutRelevantDataRef = useRef<LayoutRelevantData>();
-  const previousOptions = useRef({ readOnly, useSharedNodeUi: useSharedNodeUiOption });
+  const previousOptions = useRef({ readOnly, useSharedNodeUi: useSharedNodeUiOption, compactMonitoring });
   const lastAcceptedShared = useRef<boolean>();
   const activeRequest = useRef<{
     workflowGraph: typeof workflowGraph;
     readOnly: typeof readOnly;
+    compactMonitoring: typeof compactMonitoring;
     useSharedNodeUi: boolean;
     operations: typeof operations;
     nodesMetadata: typeof nodesMetadata;
@@ -580,7 +589,15 @@ export const LayoutProvider = ({ children }: any) => {
 
   useLayoutEffect(() => {
     // Invalidate before the throttled callback: an old promise may settle in that window.
-    activeRequest.current = { workflowGraph, readOnly, useSharedNodeUi: useSharedNodeUiOption, operations, nodesMetadata, idReplacements };
+    activeRequest.current = {
+      workflowGraph,
+      readOnly,
+      compactMonitoring,
+      useSharedNodeUi: useSharedNodeUiOption,
+      operations,
+      nodesMetadata,
+      idReplacements,
+    };
     if (!workflowGraph) {
       prevLayoutRelevantDataRef.current = undefined;
       lastAcceptedShared.current = undefined;
@@ -591,7 +608,7 @@ export const LayoutProvider = ({ children }: any) => {
     return () => {
       activeRequest.current = undefined;
     };
-  }, [workflowGraph, readOnly, useSharedNodeUiOption, operations, nodesMetadata, idReplacements]);
+  }, [workflowGraph, readOnly, compactMonitoring, useSharedNodeUiOption, operations, nodesMetadata, idReplacements]);
 
   useThrottledEffect(
     () => {
@@ -600,6 +617,7 @@ export const LayoutProvider = ({ children }: any) => {
         !workflowGraph ||
         request?.workflowGraph !== workflowGraph ||
         request.readOnly !== readOnly ||
+        request.compactMonitoring !== compactMonitoring ||
         request.useSharedNodeUi !== useSharedNodeUiOption ||
         request.operations !== operations ||
         request.nodesMetadata !== nodesMetadata ||
@@ -611,7 +629,7 @@ export const LayoutProvider = ({ children }: any) => {
       const context = useSharedNodeUiOption ? { operations, nodesMetadata, idReplacements } : undefined;
       const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph, context);
       // If layout-relevant data hasn't changed, skip elk processing
-      const currentOptions = { readOnly, useSharedNodeUi: useSharedNodeUiOption };
+      const currentOptions = { readOnly, useSharedNodeUi: useSharedNodeUiOption, compactMonitoring };
       if (
         prevLayoutRelevantDataRef.current &&
         isEqual(previousOptions.current, currentOptions) &&
@@ -622,7 +640,7 @@ export const LayoutProvider = ({ children }: any) => {
       }
 
       const elkGraph = convertWorkflowGraphToElkGraph(workflowGraph, useSharedNodeUiOption, { operations, nodesMetadata, idReplacements });
-      elkLayout(elkGraph, readOnly)
+      elkLayout(elkGraph, readOnly, compactMonitoring)
         .then((g) => {
           if (request !== activeRequest.current) {
             return;
@@ -655,7 +673,7 @@ export const LayoutProvider = ({ children }: any) => {
           });
         });
     },
-    [readOnly, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements],
+    [readOnly, compactMonitoring, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements],
     200
   );
 

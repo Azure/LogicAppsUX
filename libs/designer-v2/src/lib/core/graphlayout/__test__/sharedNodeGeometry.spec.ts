@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { compactNodeMetrics, getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import Constants from '../../../common/constants';
 import { exportForTesting } from '../elklayout';
@@ -15,6 +15,27 @@ const expectedTerminalCenterOffset = nodeMetrics.actionAdd.buttonHeight / 2 + no
 const getPaddingValue = (padding: string, key: 'bottom' | 'right') => Number(padding.match(new RegExp(`${key}=(\\d+)`))?.[1] ?? Number.NaN);
 
 describe('shared node geometry contracts', () => {
+  it('tightens compact monitoring layers without resizing the cards', async () => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      children: [createWorkflowNode('first'), createWorkflowNode('second')],
+      edges: [{ id: 'edge', source: 'first', target: 'second', type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE }],
+    };
+    const layout = async (compactMonitoring: boolean) => {
+      const { children } = await exportForTesting.elkLayout(
+        exportForTesting.convertWorkflowGraphToElkGraph(graph, true),
+        true,
+        compactMonitoring
+      );
+      const [first, second] = children!;
+      return { height: first.height, gap: second.y! - first.y! - first.height! };
+    };
+
+    expect(await layout(true)).toEqual({ height: compactCardSize.height, gap: 32 });
+    expect(await layout(false)).toEqual({ height: compactCardSize.height, gap: 40 });
+  });
+
   it('keeps legacy 200x44 node sizing and omits ReactFlow width/height when shared presentation is off', async () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, false)).toEqual({ shared: false });
 

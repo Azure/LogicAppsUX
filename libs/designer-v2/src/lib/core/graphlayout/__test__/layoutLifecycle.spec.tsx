@@ -9,6 +9,7 @@ const controls = vi.hoisted(() => ({
   graph: undefined as WorkflowNode | undefined,
   shared: false,
   readOnly: false,
+  monitoring: false,
   layout: vi.fn(),
   log: vi.fn(),
   domain: { workflow: { operations: {}, nodesMetadata: {} } },
@@ -22,6 +23,7 @@ vi.mock('react-redux', () => ({
 vi.mock('../../state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => controls.readOnly,
   useSharedNodeUi: () => controls.shared,
+  useMonitoringView: () => controls.monitoring,
 }));
 vi.mock('@microsoft/logic-apps-graph-layout', () => ({
   default: class {
@@ -61,6 +63,7 @@ beforeEach(() => {
   controls.graph = graph();
   controls.shared = false;
   controls.readOnly = false;
+  controls.monitoring = false;
   requests.length = 0;
   controls.layout.mockImplementation(
     (input: ElkNode) =>
@@ -75,6 +78,30 @@ afterEach(() => {
 });
 
 describe('layout request lifecycle', () => {
+  it('uses compact monitoring spacing only with the shared flag and invalidates on entering monitoring', async () => {
+    const spacing = 'elk.layered.spacing.nodeNodeBetweenLayers';
+    const lastSpacing = () => controls.layout.mock.lastCall?.[1].layoutOptions[spacing];
+    controls.readOnly = true;
+    controls.monitoring = true;
+    const view = render(tree());
+    tick();
+    expect(lastSpacing()).toBe('40');
+    await resolve(0);
+
+    controls.shared = true;
+    controls.monitoring = false;
+    view.rerender(tree());
+    tick();
+    expect(lastSpacing()).toBe('40');
+    await resolve(1);
+
+    controls.monitoring = true;
+    view.rerender(tree());
+    tick();
+    expect(requests).toHaveLength(3);
+    expect(lastSpacing()).toBe('32');
+  });
+
   it('keeps accepted geometry visible while a flag-toggle layout is pending', async () => {
     const view = render(tree());
     tick();
