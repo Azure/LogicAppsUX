@@ -47,6 +47,9 @@ for (const flag of ['true', 'false'] as const) {
         const expectedStatusLabel = defaultNodeStrings.status[fixtureStatus];
         expect(expectedStatusLabel).toBeTruthy();
         await expect(agent).toHaveAccessibleName(new RegExp(`WorkflowAgent.*${expectedStatusLabel}`, 'i'));
+        await expect(agent).toHaveAttribute('data-status-display', 'contained');
+        await expect(agent.locator('[data-node-subtitle-kind="status"]')).toHaveCount(1);
+        await expect(agent.locator('[data-node-status-perimeter]')).toHaveCount(1);
         await expect(page.locator('.fui-Badge[data-badge-status][role="status"]')).toHaveCount(0);
       }
       await pager.getByLabel(previous, { exact: true }).click();
@@ -78,18 +81,65 @@ test(
     await openSharedWorkflow(page, 'Monitoring view conditional');
     const before = await getSerializedWorkflowFromStateV2(page);
     await LoadRunFile(page, 'normalState');
-    const badges = page.locator('.fui-Badge[data-badge-status]');
-    await expect(badges.first()).toBeVisible();
-    await expect(badges.locator('xpath=self::*[@role="status"]')).toHaveCount(0);
+    const contained = page.locator('[data-status-display="contained"]');
+    await expect(contained.first()).toBeVisible();
+    await expect(page.locator('.fui-Badge[data-badge-status]')).toHaveCount(0);
     // Skipped is recorded run evidence, so it must never be dimmed as inactive.
     const response = page.locator('#msla-node-Response');
     await expect(response).toHaveAccessibleName(/Response.*Skipped/i);
+    await expect(response).toHaveAttribute('data-status-display', 'contained');
+    await expect(response).toHaveAttribute('data-status-tone', 'skipped');
     await expect(response).toHaveCSS('opacity', '1');
     await expect(page.locator('[data-inactive="true"]')).toHaveCount(0);
     expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
     await testInfo.attach('recorded-conditional-evidence', {
       body: 'recorded fixture through the normal run loader; not a live backend run',
       contentType: 'text/plain',
+    });
+  }
+);
+
+test(
+  'mixed conditional fixture distinguishes an actual failure, an explicit skip, and missing run data',
+  { tag: ['@mock', '@shared-node-ui'] },
+  async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    await openSharedWorkflow(page, 'Monitoring view conditional');
+    await LoadRunFile(page, 'mixedStatus');
+
+    const failed = page.locator('#msla-node-Delay');
+    const skipped = page.locator('#msla-node-Response');
+    const unknown = page.locator('#msla-node-Select');
+    await expect(failed).toHaveAccessibleName(/Delay.*Failed/i);
+    await expect(failed).toHaveAttribute('data-status-display', 'contained');
+    await expect(failed).toHaveAttribute('data-status-tone', 'danger');
+    await expect(failed).toHaveAttribute('data-status-tint', 'failed');
+    await expect(failed.locator('[data-node-subtitle-kind="status"]')).toHaveText(/Failed/i);
+    await expect(skipped).toHaveAccessibleName(/Response.*Skipped/i);
+    await expect(skipped).toHaveAttribute('data-status-display', 'contained');
+    await expect(skipped).toHaveAttribute('data-status-tone', 'skipped');
+    await expect(skipped).not.toHaveAttribute('data-status-tint');
+    await expect(unknown).not.toHaveAccessibleName(/Skipped/i);
+    await expect(unknown).not.toHaveAttribute('data-status-display');
+    await expect(unknown.locator('[data-node-subtitle-kind="status"]')).toHaveCount(0);
+
+    await testInfo.attach('monitoring-mixed-status', {
+      body: await page.screenshot({ animations: 'disabled' }),
+      contentType: 'image/png',
+    });
+    const perimeter = failed.locator('[data-node-status-perimeter]');
+    await expect(perimeter).toBeVisible();
+    await testInfo.attach('monitoring-failure-tint', {
+      body: await failed.screenshot({ animations: 'disabled' }),
+      contentType: 'image/png',
+    });
+    await failed.click();
+    await expect(failed).toHaveAttribute('data-selected', 'true');
+    await expect(perimeter).toBeVisible();
+    await expect(failed).toHaveAttribute('data-status-tint', 'failed');
+    await testInfo.attach('monitoring-failure-tint-selected', {
+      body: await failed.screenshot({ animations: 'disabled' }),
+      contentType: 'image/png',
     });
   }
 );

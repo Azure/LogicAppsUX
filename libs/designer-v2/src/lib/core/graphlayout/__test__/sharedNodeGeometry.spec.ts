@@ -158,7 +158,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
-        hasToolStatus: false,
       })
     ).toEqual({
       shared: true,
@@ -173,7 +172,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
-        hasToolStatus: true,
       })
     ).toEqual({
       shared: true,
@@ -181,7 +179,7 @@ describe('shared node geometry contracts', () => {
       toolKind: 'mcp',
       size: {
         width: nodeMetrics.cards.tool.width,
-        height: nodeMetrics.cards.tool.smallHeight + nodeMetrics.badge.overhang,
+        height: nodeMetrics.cards.tool.smallHeight,
       },
     });
 

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ActionCardProps } from '../actionCard';
 import { SharedActionCard } from '../SharedActionCard';
 import { OperationNodeCard } from '../OperationNodeCard';
-import { getOperationNodeSubtitle, mapSharedRunPresentation, mapSharedRunStatus } from '../nodeUiStrings';
+import { getOperationNodeSubtitle, mapSharedRunPresentation, mapSharedRunStatus, mapSharedRunVisuals } from '../nodeUiStrings';
 import { createIntl } from 'react-intl';
 import { useCardStyles } from '../card.styles';
 import * as Intl from 'react-intl';
@@ -483,6 +483,22 @@ describe('shared host action adapter', () => {
     expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent(status);
   });
 
+  it('uses contained monitoring status rows with an inset perimeter and failed-only tint', () => {
+    const { container, rerender } = render(
+      <SharedActionCard {...props} isMonitoringView runData={{ status: 'TimedOut', duration: '2s' } as ActionCardProps['runData']} />
+    );
+    const timedOut = screen.getByRole('button');
+    expect(timedOut).toHaveAttribute('data-status-display', 'contained');
+    expect(timedOut).toHaveAttribute('data-status-tone', 'warning');
+    expect(timedOut).not.toHaveAttribute('data-status-tint');
+    expect(container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Timed out\s*2s/);
+    expect(container.querySelector('[data-badge-status]')).toBeNull();
+    rerender(<SharedActionCard {...props} isMonitoringView runData={{ status: 'Failed', duration: '1s' } as ActionCardProps['runData']} />);
+    const failed = screen.getByRole('button');
+    expect(failed).toHaveAttribute('data-status-tone', 'danger');
+    expect(failed).toHaveAttribute('data-status-tint', 'failed');
+  });
+
   it.each([
     ['TimedOut', 'failed', 'Timed out'],
     ['Resuming', 'running', 'Resuming'],
@@ -490,6 +506,7 @@ describe('shared host action adapter', () => {
     ['Aborted', 'cancelled', 'Aborted'],
     ['SucceededWithWarning', 'warning', 'Succeeded with warning'],
     ['Custom runtime state', 'pending', 'Custom runtime state'],
+    ['toString', 'pending', 'toString'],
     ['Succeeded', 'succeeded', undefined],
     ['FAILED', 'failed', undefined],
     ['Pending', 'pending', undefined],
@@ -502,6 +519,18 @@ describe('shared host action adapter', () => {
   ])('presents service status %s as tone %s with truthful label %s', (raw, status, label) => {
     const intl = createIntl({ locale: 'en', defaultLocale: 'en' });
     expect(mapSharedRunPresentation(raw, intl)).toEqual(label ? { status, label } : { status });
+  });
+
+  it.each([
+    ['TimedOut', { statusTone: 'warning', failedTint: false }],
+    ['Cancelled', { statusTone: 'warning', failedTint: false }],
+    ['Failed', { statusTone: 'danger', failedTint: true }],
+    ['Succeeded', { statusTone: 'success', failedTint: false }],
+    ['Unknown runtime state', { statusTone: 'neutral', failedTint: false }],
+    ['toString', { statusTone: 'neutral', failedTint: false }],
+    ['   ', {}],
+  ])('maps %s to contained status visuals', (raw, expected) => {
+    expect(mapSharedRunVisuals(raw)).toEqual(expected);
   });
 
   // Badges are no longer live regions, so monitoring status must reach assistive tech through the card name.

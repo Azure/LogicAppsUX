@@ -11,7 +11,8 @@ export const nodeMetrics = {
   },
   tile: { medium: 40, small: 32, mediumIcon: 24, smallIcon: 20, mediumArtwork: 30, smallArtwork: 24 },
   handle: { size: 12, stroke: 1.5, edgeOffset: -7, labeledHeight: 20 },
-  badge: { height: 20, icon: 12, overhang: 10 },
+  /** handleGap: clearance between a vertical-axis badge and the centred input handle it must never cover. */
+  badge: { height: 20, icon: 12, overhang: 10, handleGap: 4 },
   testData: { size: 20, icon: 16, textReserve: 32 },
   toolConnector: { diamond: 12, gap: 9, line: 20, add: 20, sideRowHeight: 74 },
   toolsHeader: 20,

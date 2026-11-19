@@ -22,6 +22,7 @@ import {
   mapActionNodeStrings,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { useCardStyles } from './card.styles';
@@ -104,7 +105,10 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   // One mapper yields the shared tone plus a truthful label (Waiting, Resuming, TimedOut, raw unknowns)
   // so the localized status dictionary is never cloned per card.
   const runPresentation = mapSharedRunPresentation(runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  // Tool rows keep the same 56px geometry whenever they carry run evidence, even outside monitoring transitions.
+  const containsStatus = !!status && (!!isMonitoringView || !!toolKind);
   const focusRef = useRef<HTMLDivElement>(null);
   const dndRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -183,12 +187,15 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       ref={ref}
       title={title}
       subtitle={
-        toolKind === 'mcp' || toolKind === 'subWorkflow'
+        containsStatus
           ? undefined
-          : toolKind && !connectorLoading
-            ? detail
-            : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
+          : toolKind === 'mcp' || toolKind === 'subWorkflow'
+            ? undefined
+            : toolKind && !connectorLoading
+              ? detail
+              : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
       }
+      subtitleKind={containsStatus ? 'status' : undefined}
       icon={cardIcon}
       selectedIcon={selectedIcon}
       iconTone={iconTone}
@@ -197,6 +204,9 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       status={status}
       statusLabel={statusLabel}
       statusDetail={runData?.duration}
+      statusDisplay={containsStatus ? 'contained' : 'badge'}
+      statusTone={containsStatus ? runVisuals.statusTone : undefined}
+      statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
       strings={cardStrings}
       inactive={!active}
       {...(toolKind

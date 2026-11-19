@@ -8,7 +8,7 @@ import { defaultNodeStrings } from '../strings';
 import { categoryNodeIcons } from './categoryIcons';
 import { resolveCardDensity, resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
-export interface TriggerNodeCardProps extends BaseNodeCardProps, CompactNodeCardProps {
+export interface TriggerNodeCardProps extends Omit<BaseNodeCardProps, 'countLabel'>, CompactNodeCardProps {
   handles?: boolean;
 }
 const OUTPUTS = ['neutral'] as const;
@@ -16,6 +16,7 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
   {
     title,
     subtitle,
+    subtitleKind,
     icon,
     selectedIcon,
     iconTone,
@@ -56,7 +57,7 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
           artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)}
         />
-        <NodeText title={title} subtitle={subtitle} titleLines={layout.titleLines} />
+        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} titleLines={layout.titleLines} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { NodeHandleAxis } from '../primitives/NodeHandle';
-import type { NodeCardDensity, NodeIconTone, NodeRunStatus } from '../types';
-import type { ActionNodeCardStrings } from '../strings';
+import type { NodeCardDensity, NodeIconTone, NodeRunStatus, NodeStatusDisplay, NodeStatusTint, NodeStatusTone } from '../types';
+import type { ActionNodeCardStrings, NodeFrameCountLabel } from '../strings';
 import type { NodeCardProps } from '../primitives/NodeCard';
 
 export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -16,14 +16,24 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
+  /** Defaults to the edge badge; contained uses the subtitle line and an inset perimeter. */
+  statusDisplay?: NodeStatusDisplay;
+  /** Optional perimeter tone override when status semantics do not map 1:1 to the status union. */
+  statusTone?: NodeStatusTone;
+  /** Optional failure emphasis fill for status-bearing cards. */
+  statusTint?: NodeStatusTint;
   /** Forwarded through `rest` to NodeCard; see NodeCardProps for semantics. */
   statusLabel?: string;
   statusAriaLabel?: string;
+  /** Optional subtitle semantics marker (for example contained monitoring status text). */
+  subtitleKind?: 'default' | 'status';
   inactive?: boolean;
   headerTint?: NodeCardProps['headerTint'];
   strings?: ActionNodeCardStrings;
   handleAxis?: NodeHandleAxis;
   after?: ReactNode;
+  /** Unit-aware count for a collapsed container card; `strings.frame` owns wording and plurals. */
+  countLabel?: NodeFrameCountLabel;
 }
 export const resolveNodeIcons = (
   props: Pick<BaseNodeCardProps, 'icon' | 'selectedIcon'>,

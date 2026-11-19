@@ -60,6 +60,7 @@ const nonvisualExports = [
   'nodeCardVars',
   'useDesignerUiOutlet',
   'resolveNodeIcons',
+  'resolveCardDensity',
   'NodeHandleAxisContext',
   'useNodeHandleAxis',
   'NodeHoverCardActiveContext',

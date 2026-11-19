@@ -71,7 +71,6 @@ export interface NodePresentationContext {
   caseCount?: number;
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
-  hasToolStatus?: boolean;
   /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
   title?: string;
 }
@@ -108,9 +107,10 @@ export const getNodePresentation = (
   if (!useSharedNodeUi) {
     return { shared: false };
   }
+  // Monitoring status now uses the in-card secondary line/perimeter, so tool rows keep their canonical 56px body.
   const toolSize = {
     width: nodeMetrics.cards.tool.width,
-    height: nodeMetrics.cards.tool.smallHeight + (context.hasToolStatus ? nodeMetrics.badge.overhang : 0),
+    height: nodeMetrics.cards.tool.smallHeight,
   };
   if (operation) {
     if (context.toolKind) {

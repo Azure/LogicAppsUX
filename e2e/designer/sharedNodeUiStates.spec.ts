@@ -88,8 +88,9 @@ test.describe('Shared node UI state and command journeys', { tag: ['@mock', '@sh
   test('shows real monitoring statuses and suppresses editing and rich hover', async ({ page }, testInfo) => {
     await openSharedWorkflow(page, 'Monitoring view conditional');
     await LoadRunFile(page, 'normalState');
-    await expect(page.locator('[data-badge-status="succeeded"]').first()).toBeVisible();
-    expect(await page.locator('[data-badge-status="skipped"]').count()).toBeGreaterThan(0);
+    await expect(page.locator('[data-status-display="contained"][data-status-tone="success"]').first()).toBeVisible();
+    expect(await page.locator('[data-status-display="contained"][data-status-tone="skipped"]').count()).toBeGreaterThan(0);
+    await expect(page.locator('[data-badge-status]')).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Insert a new step/ })).toHaveCount(0);
     const card = page.locator('[data-node-card="action"]').first();
     await card.hover();

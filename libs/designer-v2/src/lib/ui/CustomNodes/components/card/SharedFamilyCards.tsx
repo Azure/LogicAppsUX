@@ -10,6 +10,7 @@ import {
   ToolItemCard,
   getCompactTitleLines,
   type NodeIconTone,
+  type NodeFrameCountLabel,
 } from '@microsoft/designer-ui-v2';
 import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
@@ -35,6 +36,7 @@ import {
   mapLoopNodeStrings,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
@@ -126,6 +128,8 @@ interface SharedScopeCardProps extends ActionCardProps {
   toolsPanel?: { width: number; height: number; bottomPadding: number; collapsed?: boolean; items: { id: string }[] };
   /** Title clamp ELK sized the scope header for. */
   titleLines?: CompactTitleLines;
+  /** Collapsed-container count rendered by the shared card text (unit picks the localized noun). */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedAgentScopeCard = (props: SharedScopeCardProps) => {
@@ -147,6 +151,7 @@ export const SharedScopeCard = ({
   description,
   isMonitoringView,
   toolsPanel,
+  countLabel,
   ...props
 }: SharedScopeCardProps) => {
   const intl = useIntl();
@@ -165,7 +170,9 @@ export const SharedScopeCard = ({
   }, [props.setFocus]);
   const actionStrings = mapActionNodeStrings(intl);
   const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(props.runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  const containsStatus = !!isMonitoringView && !!status;
   const collapse = (
     <FamilyCollapseButton
       id={`${props.id}-collapse-toggle`}
@@ -182,8 +189,12 @@ export const SharedScopeCard = ({
     status,
     statusLabel,
     statusDetail: props.runData?.duration,
+    statusDisplay: containsStatus ? ('contained' as const) : ('badge' as const),
+    statusTone: containsStatus ? runVisuals.statusTone : undefined,
+    statusTint: containsStatus && runVisuals.failedTint ? ('failed' as const) : ('none' as const),
     inactive: props.active === false,
     handleAxis,
+    countLabel,
     id: `msla-node-${props.id}`,
     role: 'button',
     tabIndex: props.nodeIndex,
@@ -238,6 +249,7 @@ export const SharedScopeCard = ({
         {...common}
         headerTint={family === 'if' ? 'condition' : 'switch'}
         kind={family}
+        subtitleKind={containsStatus ? 'status' : undefined}
         // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
         mode="multiOutput"
         caseCount={caseCount}
@@ -260,7 +272,8 @@ export const SharedScopeCard = ({
             .titleLines
         }
         style={{ ...common.style, '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties}
-        subtitle={strings.loop.foreach}
+        subtitle={containsStatus ? undefined : strings.loop.foreach}
+        subtitleKind={containsStatus ? 'status' : undefined}
         bodyPlacement="none"
         strings={strings}
         inputSlot={inputSlot}
@@ -275,6 +288,7 @@ export const SharedScopeCard = ({
       <AgentNodeCard
         {...common}
         iconTone={agentNodeTone}
+        subtitleKind={containsStatus ? 'status' : undefined}
         model={model}
         // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
         toolsPlacement="below"
@@ -321,6 +335,7 @@ export const SharedScopeCard = ({
       {...common}
       headerTint="scope"
       strings={actionStrings}
+      subtitleKind={containsStatus ? 'status' : undefined}
       handles={false}
       icon={scopeNodeIcon}
       density="compact"
@@ -357,6 +372,8 @@ interface SharedBranchCardProps {
   handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlot?: ReactNode;
+  /** Collapsed count for tool rows; fixed-height branch headers have no second text line and ignore it. */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedBranchCard = (props: SharedBranchCardProps) => {
@@ -412,8 +429,11 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
   if (props.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
     const toolKind = props.toolKind ?? (props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? 'mcp' : 'action');
     const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+    const runVisuals = mapSharedRunVisuals(props.runData?.status);
     const { status, label: statusLabel } = runPresentation;
     const toolStrings = mapToolNodeStrings(intl);
+    // Shared tool rows use contained status whenever run evidence exists to stay within their fixed 56px slot.
+    const containsStatus = !!status && (!!props.isMonitoringView || toolKind !== undefined);
     return (
       <SharedNodeHoverCard
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
@@ -443,16 +463,21 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           )}
           aria-pressed={props.selected ?? false}
           title={title}
+          subtitleKind={containsStatus ? 'status' : undefined}
           selected={props.selected}
           status={status}
           statusLabel={statusLabel}
           statusDetail={props.runData?.duration}
+          statusDisplay={containsStatus ? 'contained' : 'badge'}
+          statusTone={containsStatus ? runVisuals.statusTone : undefined}
+          statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
           inactive={props.active === false}
           kind={toolKind}
           icon={props.icon}
           selectedIcon={props.selectedIcon}
           iconTone={props.iconTone}
           iconArtwork={props.iconArtwork}
+          countLabel={props.countLabel}
           size="small"
           strings={toolStrings}
           after={

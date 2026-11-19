@@ -317,6 +317,23 @@ describe('SubgraphCardNode (v2)', () => {
     );
   });
 
+  it('moves a collapsed shared tool count into the tool card', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 3 });
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    expect(container.querySelector('[data-node-count="actions"]')).toHaveTextContent('3');
+    expect(container.querySelector('.no-actions-text')).toBeNull();
+  });
+
+  it('keeps the host count below fixed-height shared case headers', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    expect(container.querySelector('.no-actions-text')).toBeInTheDocument();
+    expect(container.querySelector('[data-node-count]')).toBeNull();
+  });
+
   it('should show collapsed text when graph is collapsed', () => {
     mockUseIsGraphCollapsed.mockReturnValue(true);
     render(<SubgraphCardNode {...defaultProps} />);

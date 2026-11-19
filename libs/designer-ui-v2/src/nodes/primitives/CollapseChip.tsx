@@ -3,9 +3,9 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { Button, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import { ChevronDownRegular, ChevronRightRegular } from '@fluentui/react-icons';
 import { compactNodeMetrics, nodeMetrics } from '../metrics';
-import type { CollapseChipStrings, NodeFrameStrings } from '../strings';
+import type { CollapseChipStrings, NodeFrameStrings, NodeFrameCountLabel } from '../strings';
 import { defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
-import { formatFrameCount, type NodeFrameCountLabel } from '../frameCount';
+import { formatNodeFrameCount } from '../countLabel';
 
 const useStyles = makeStyles({
   chip: {
@@ -149,7 +149,9 @@ export const CollapseChip = forwardRef<HTMLButtonElement, CollapseChipProps>(fun
           ) : null}
           <span className={styles.summaryText}>
             <span className={styles.summaryTitle}>{details.title}</span>
-            <span className={styles.summaryCount}>{formatFrameCount(details.strings ?? defaultNodeFrameStrings, details.countLabel)}</span>
+            <span className={styles.summaryCount}>
+              {formatNodeFrameCount(details.strings ?? defaultNodeFrameStrings, details.countLabel)}
+            </span>
             {details.thumbnails?.length ? (
               <span className={styles.summaryThumbnails} aria-hidden="true">
                 {details.thumbnails.slice(0, 3).map(({ id, icon }) => (

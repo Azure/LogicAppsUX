@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { cloneElement, forwardRef } from 'react';
 import type { HTMLAttributes, ReactElement } from 'react';
 import { Badge, makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 import type { BadgeProps } from '@fluentui/react-components';
@@ -30,6 +30,12 @@ const icons: Record<NodeRunStatus, ReactElement> = {
   cancelled: <SquareRegular />,
   mock: <BeakerRegular />,
 };
+/** Shared status glyph used by badges and contained status rows. */
+export const getNodeStatusIcon = (status: NodeRunStatus, className?: string): ReactElement =>
+  cloneElement(icons[status], {
+    'aria-hidden': true,
+    className,
+  });
 const colors: Record<NodeRunStatus, NonNullable<BadgeProps['color']>> = {
   pending: 'informative',
   running: 'brand',
@@ -87,7 +93,7 @@ export const NodeStatusBadge = forwardRef<HTMLDivElement, NodeStatusBadgeProps>(
       size="medium"
       color={colors[status]}
       className={mergeClasses(styles.root, status === 'mock' && styles.mock, className)}
-      icon={{ children: icons[status], 'aria-hidden': true, className: mergeClasses(styles.icon, status === 'running' && styles.spin) }}
+      icon={{ children: getNodeStatusIcon(status), className: mergeClasses(styles.icon, status === 'running' && styles.spin) }}
       role={role ?? (live ? 'status' : undefined)}
       data-badge-status={status}
     >
