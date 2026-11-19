@@ -59,7 +59,7 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   });
 
   const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
-  const bodyLanguage = getBodyLanguage(headersValue);
+  const bodyLanguage = useMemo(() => getBodyLanguage(headersValue), [headersValue]);
   const bodyLabel = intl.formatMessage({
     defaultMessage: 'Body',
     id: 'aFZRms',
