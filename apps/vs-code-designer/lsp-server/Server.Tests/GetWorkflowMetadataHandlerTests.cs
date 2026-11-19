@@ -1063,7 +1063,7 @@ public class ManagedWorkflow
     }
 
     [Fact]
-    public async Task SdkMetadataExtraction_HttpTrigger_ShouldExtractDefaultNameFromParameter()
+    public async Task SdkMetadataExtraction_HttpTrigger_WithoutWithName_ShouldUseProgrammaticName()
     {
         // Arrange - Load the actual SDK
         string? sdkPath = FindSdkNupkg();
@@ -1093,17 +1093,16 @@ public class TestWorkflow : Workflow
         // Act
         var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkMetadataIndex);
 
-        // Assert - With SDK loaded, should extract metadata correctly
+        // Assert - Without WithName(), current SDK factory methods use the programmatic fallback.
         Assert.NotNull(result);
         Assert.Equal("http-trigger-test", result.WorkflowName);
-
-        // The SDK bundled with LogicAppsUX supplies the friendly default trigger name.
         Assert.NotNull(result.DefaultName);
-        Assert.Equal("when_an_HTTP_request_is_received", result.DefaultName);
+        Assert.Equal("builtin_createHttpTrigger", result.DefaultName);
+        Assert.Equal(result.DefaultName, result.TriggerName);
     }
 
     [Fact]
-    public async Task SdkMetadataExtraction_CustomName_ShouldPreferUserProvidedName()
+    public async Task SdkMetadataExtraction_WithName_ShouldUseCustomTriggerName()
     {
         // Arrange - Load the actual SDK
         string? sdkPath = FindSdkNupkg();
@@ -1132,14 +1131,11 @@ public class TestWorkflow : Workflow
         // Act
         var result = await AnalyzeWorkflowCodeWithSdkAsync(workflowCode, sdkMetadataIndex);
 
-        // Assert - Custom name should override SDK parameter default
+        // Assert - WithName() is the supported custom-name mechanism.
         Assert.NotNull(result);
         Assert.Equal("custom-name-test", result.WorkflowName);
-
-        // TriggerName should be the custom name provided via .WithName()
         Assert.Equal("my_custom_trigger_name", result.TriggerName);
-
-        Assert.Equal("when_an_HTTP_request_is_received", result.DefaultName);
+        Assert.Equal("builtin_createHttpTrigger", result.DefaultName);
     }
 
     [Fact]
@@ -1192,7 +1188,7 @@ public class TestWorkflow : Workflow
         // WITHOUT SDK: uses programmatic fallback naming
         Assert.Equal("builtin_createHttpTrigger", resultWithoutSdk.DefaultName);
 
-        // WITH SDK: uses the friendly default supplied by SDK metadata.
-        Assert.Equal("when_an_HTTP_request_is_received", resultWithSdk.DefaultName);
+        // WITH SDK: current factory methods have no name parameter and use the same fallback.
+        Assert.Equal("builtin_createHttpTrigger", resultWithSdk.DefaultName);
     }
 }
