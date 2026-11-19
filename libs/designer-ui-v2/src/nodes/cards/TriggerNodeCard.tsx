@@ -18,6 +18,8 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -50,6 +52,8 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
           category="trigger"
           size={layout.tile}
           selected={selected}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)}
         />
         <NodeText title={title} subtitle={subtitle} titleLines={layout.titleLines} />

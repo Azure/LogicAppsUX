@@ -8,7 +8,7 @@ import {
 } from '@microsoft/designer-ui-v2';
 import type { IntlShape } from 'react-intl';
 import { defineMessages } from 'react-intl';
-import { getOperationNodeVisualKind } from './operationNodeGlyphs';
+import { getOperationNodeVisualKind, isBuiltInOperationNode } from './operationNodeGlyphs';
 
 const typeMessages = defineMessages({
   compose: { defaultMessage: 'Compose', id: 'YbWOeB', description: 'Compose operation type on a shared node card' },
@@ -33,14 +33,27 @@ export function getOperationNodeSubtitle(
   const detail = getOperationNodeDetail(intl, type, kind, connectorName);
   const category = isTrigger
     ? intl.formatMessage({ defaultMessage: 'Trigger', id: 'MGq28G', description: 'Column name for trigger type' })
-    : /^apiconnection(?:webhook|notification)?$/i.test(type)
-      ? intl.formatMessage({
-          defaultMessage: 'Azure',
-          id: 'uVsa1i',
-          description: 'Azure connector category on a shared node card',
-        })
-      : intl.formatMessage({ defaultMessage: 'Built-in', id: '+DmIHG', description: 'Label for built-in connectors' });
+    : getOperationNodeCategoryLabel(intl, type, kind);
   return detail === category ? detail : joinNodeSubtitle(category, detail);
+}
+
+/**
+ * Category from the operation definition and connector identity, never from glyph or art availability:
+ * runtime built-ins and in-app service providers are 'Built-in', managed API connections are 'Azure', and any
+ * other connector (custom/OpenAPI, managed MCP, unknown types whose metadata failed) is a neutral 'Connector'.
+ */
+export function getOperationNodeCategoryLabel(intl: IntlShape, type: string, kind: string | undefined): string {
+  if (isBuiltInOperationNode(type, kind) || type.toLowerCase() === 'serviceprovider') {
+    return intl.formatMessage({ defaultMessage: 'Built-in', id: '+DmIHG', description: 'Label for built-in connectors' });
+  }
+  if (/^apiconnection(?:webhook|notification)?$/i.test(type)) {
+    return intl.formatMessage({ defaultMessage: 'Azure', id: 'uVsa1i', description: 'Azure connector category on a shared node card' });
+  }
+  return intl.formatMessage({
+    defaultMessage: 'Connector',
+    id: 'id+hZX',
+    description: 'Category on a shared node card for a connector that is neither built-in nor an Azure managed connection',
+  });
 }
 
 export function getOperationNodeDetail(intl: IntlShape, type: string, kind: string | undefined, connectorName: string | undefined): string {

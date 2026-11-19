@@ -2,7 +2,17 @@ import { createRef } from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { ActionNodeCard, AgentNodeCard, ConditionNodeCard, NodeInfoCard, TriggerNodeCard } from '../..';
+import {
+  ActionNodeCard,
+  AgentNodeCard,
+  ConditionNodeCard,
+  LoopNodeCard,
+  NodeIconTile,
+  NodeInfoCard,
+  PlaceholderTriggerCard,
+  ToolItemCard,
+  TriggerNodeCard,
+} from '../..';
 import type { BaseNodeCardProps, NodeInfoCardStrings } from '../..';
 
 const categories = [
@@ -297,5 +307,58 @@ describe('trigger sample input versus action output (I06)', () => {
     rerender(<TriggerNodeCard ref={ref} title="Request" handles={false} status="succeeded" statusLabel="Completed" />);
     expect(ref.current?.querySelector('[data-handle]')).toBeNull();
     expect(ref.current?.querySelector('[data-badge-status="succeeded"]')).toHaveTextContent('Completed');
+  });
+});
+
+describe('opt-in icon tone and artwork', () => {
+  const cards = [
+    ['action', (props: BaseNodeCardProps) => <ActionNodeCard {...props} />],
+    ['trigger', (props: BaseNodeCardProps) => <TriggerNodeCard {...props} />],
+    ['tool', (props: BaseNodeCardProps) => <ToolItemCard {...props} />],
+    ['agent', (props: BaseNodeCardProps) => <AgentNodeCard {...props} />],
+    ['condition', (props: BaseNodeCardProps) => <ConditionNodeCard {...props} kind="if" />],
+    ['loop', (props: BaseNodeCardProps) => <LoopNodeCard {...props} />],
+  ] as const;
+
+  it.each(cards)('%s card keeps its category color when no tone is supplied', (_name, card) => {
+    render(<div data-testid="node">{card({ title: 'Node' })}</div>);
+    const tile = screen.getByTestId('node').querySelector('[data-category]')!;
+    expect(tile).not.toHaveAttribute('data-tone');
+    expect(tile).not.toHaveAttribute('data-artwork');
+  });
+
+  it.each(cards)('%s card forwards iconTone and iconArtwork to its tile without leaking DOM props', (_name, card) => {
+    const { rerender } = render(<div data-testid="node">{card({ title: 'Node', iconTone: 'red' })}</div>);
+    const tile = () => screen.getByTestId('node').querySelector('[data-category]')!;
+    expect(tile()).toHaveAttribute('data-tone', 'red');
+    expect(screen.getByTestId('node').querySelector('[icontone], [iconartwork]')).toBeNull();
+    rerender(
+      <div data-testid="node">{card({ title: 'Node', iconTone: 'red', iconArtwork: true, icon: <img alt="" src="logo.svg" /> })}</div>
+    );
+    expect(tile()).toHaveAttribute('data-artwork', 'true');
+    expect(tile()).not.toHaveAttribute('data-tone');
+  });
+
+  it('applies distinct family colors and leaves artwork untinted', () => {
+    const { container } = render(
+      <>
+        <NodeIconTile data-testid="default" category="action" icon={null} />
+        <NodeIconTile data-testid="teal" category="action" tone="teal" icon={null} />
+        <NodeIconTile data-testid="red" category="action" tone="red" icon={null} />
+        <NodeIconTile data-testid="art" category="action" tone="red" artwork icon={<img alt="" src="logo.svg" />} />
+      </>
+    );
+    const color = (id: string) => cssValues(screen.getByTestId(id), 'color').at(-1);
+    expect(color('teal')).toBe('var(--colorPaletteTealForeground2)');
+    expect(color('red')).toBe('var(--colorPaletteRedForeground2)');
+    expect(color('default')).toBe('var(--colorPaletteBlueForeground2)');
+    expect(color('art')).toBe('inherit');
+    expect(cssValues(screen.getByTestId('art'), 'border-top-color').at(-1)).toBe('var(--colorNeutralStroke2)');
+    expect(container.querySelector('[data-testid="art"] img')).toHaveAttribute('alt', '');
+  });
+
+  it('keeps PlaceholderTriggerCard free of icon props', () => {
+    render(<PlaceholderTriggerCard data-testid="placeholder" />);
+    expect(screen.getByTestId('placeholder')).not.toHaveAttribute('icontone');
   });
 });

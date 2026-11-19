@@ -225,6 +225,14 @@ test(
       });
       expect(metadata.info).toBeNull();
       expect(metadata.visuals).toBeNull();
+      if (flag === 'true') {
+        // Unresolved connector metadata must read as a connector (neutral mark, truthful label), never a Built-in bolt or a lingering spinner.
+        await expect(card.locator('[data-tone="neutral"]')).toHaveCount(1);
+        await expect(card.locator('[data-artwork]')).toHaveCount(0);
+        await expect(card.getByText(/Built-in/)).toHaveCount(0);
+        await expect(card.getByText(/^Azure\b/)).toHaveCount(1);
+        await expect(card.getByRole('progressbar')).toHaveCount(0);
+      }
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
       observations.push({ flag, metadata });
     }

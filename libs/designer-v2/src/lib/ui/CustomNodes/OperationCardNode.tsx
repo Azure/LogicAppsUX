@@ -157,6 +157,9 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
+  // Operation info is absent when connector metadata fails to load; the workflow definition still states the operation type,
+  // so shared cards classify from it (e.g. an unresolved ApiConnection reads as 'Azure', never 'Built-in').
+  const definition = useActionMetadata(id);
   const connectorName = useConnectorName(operationInfo);
   const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
   const parentNodeId = useParentNodeId(id);
@@ -398,8 +401,8 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           icon={iconUri}
           connectorName={connectorName?.result}
           isTrigger={isTrigger}
-          operationType={operationInfo.type}
-          operationKind={operationInfo.kind}
+          operationType={operationInfo.type || definition?.type}
+          operationKind={operationInfo.type ? operationInfo.kind : definition?.kind}
           metadataUnavailable={metadataUnavailable}
           description={operationQuery.data?.properties?.description}
           isMonitoringView={isMonitoringView}

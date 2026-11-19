@@ -12,7 +12,7 @@ import {
   mapConditionNodeStrings,
   mapLoopNodeStrings,
 } from '../../CustomNodes/components/card/nodeUiStrings';
-import { scopeNodeIcon } from '../../CustomNodes/components/card/operationNodeGlyphs';
+import { agentNodeTone, scopeNodeIcon } from '../../CustomNodes/components/card/operationNodeGlyphs';
 import { getScopeModel } from '../../CustomNodes/components/card/scopeNodePresentation';
 import { useOperationNodeIcon } from '../../CustomNodes/components/card/useOperationNodeIcon';
 import type { SharedExtractionPreviewNode } from './workflowExtractionPreview';
@@ -42,6 +42,8 @@ export const PreviewOperationCard = ({
         {...common}
         icon={glyph.icon}
         selectedIcon={glyph.selectedIcon}
+        iconTone={glyph.tone}
+        iconArtwork={glyph.artwork}
         strings={mapActionNodeStrings(intl)}
         subtitle={getOperationNodeSubtitle(intl, type, kind, connectorName, true, false)}
       />
@@ -55,13 +57,15 @@ export const PreviewOperationCard = ({
     return <LoopNodeCard {...common} bodyPlacement="none" strings={strings} subtitle={strings.loop.foreach} />;
   }
   if (family === 'agent') {
-    return <AgentNodeCard {...common} model={getScopeModel(node.operation)} strings={mapAgentNodeStrings(intl)} />;
+    return <AgentNodeCard {...common} iconTone={agentNodeTone} model={getScopeModel(node.operation)} strings={mapAgentNodeStrings(intl)} />;
   }
   return (
     <ActionNodeCard
       {...common}
       icon={family === 'scope' ? scopeNodeIcon : glyph.icon}
-      selectedIcon={glyph.selectedIcon}
+      selectedIcon={family === 'scope' ? undefined : glyph.selectedIcon}
+      iconTone={family === 'scope' ? undefined : glyph.tone}
+      iconArtwork={family !== 'scope' && glyph.artwork}
       strings={mapActionNodeStrings(intl)}
       subtitle={family === 'scope' ? undefined : getOperationNodeSubtitle(intl, type, kind, connectorName, false, false)}
     />

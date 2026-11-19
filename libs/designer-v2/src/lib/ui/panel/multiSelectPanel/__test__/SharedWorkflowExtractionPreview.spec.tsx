@@ -73,6 +73,7 @@ describe('shared extraction projection and canonical opaque families', () => {
     expect(container.querySelector('[id^="msla-node-"]')).toBeNull();
     if (card === 'agent') {
       expect(screen.getByText('actual-deployment')).toBeInTheDocument();
+      expect(container.querySelector('[data-category="agent"]')).toHaveAttribute('data-tone', 'pink');
     }
     expect(JSON.stringify(plan)).toBe(original);
   });
@@ -174,12 +175,18 @@ describe('preview presentation reuses the main metadata policy', () => {
     expect(screen.getByText('HTTP looking name')).toBeInTheDocument();
   });
 
-  it('normalizes Expression kind but does not brand an unknown builtin', () => {
+  it('normalizes Expression kind and lets an unmapped builtin show its manifest art', () => {
     const { container, rerender } = renderCard(node('Expression', 'CurrentTime', 'brand.svg'));
     expect(container.querySelector('[data-icon-name="CalendarClockRegular"]')).not.toBeNull();
     rerender(
       <IntlProvider locale="en">
         <PreviewOperationCard node={node('Expression', 'UnknownExpression', 'brand.svg')} domId="preview-card" />
+      </IntlProvider>
+    );
+    expect(container.querySelector('img')).toHaveAttribute('src', 'brand.svg');
+    rerender(
+      <IntlProvider locale="en">
+        <PreviewOperationCard node={node('Expression', 'UnknownExpression')} domId="preview-card" />
       </IntlProvider>
     );
     expect(container.querySelector('img')).toBeNull();
@@ -192,7 +199,7 @@ describe('preview presentation reuses the main metadata policy', () => {
     expect(image).toHaveAttribute('src', 'actual.svg');
     fireEvent.error(image);
     expect(container.querySelector('img')).toBeNull();
-    expect(container.querySelector('[data-icon-name="FlashRegular"]')).not.toBeNull();
+    expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).not.toBeNull();
     rerender(
       <IntlProvider locale="en">
         <PreviewOperationCard node={node('ApiConnection', undefined, 'replacement.svg')} domId="preview-card" />
@@ -205,6 +212,6 @@ describe('preview presentation reuses the main metadata policy', () => {
       </IntlProvider>
     );
     expect(container.querySelector('[role="progressbar"]')).toBeNull();
-    expect(container.querySelector('[data-icon-name="FlashRegular"]')).not.toBeNull();
+    expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).not.toBeNull();
   });
 });

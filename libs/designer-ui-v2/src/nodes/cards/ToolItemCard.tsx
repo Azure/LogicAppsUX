@@ -31,6 +31,8 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -62,6 +64,8 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
           size={size}
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
         <NodeText title={title} subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])} />

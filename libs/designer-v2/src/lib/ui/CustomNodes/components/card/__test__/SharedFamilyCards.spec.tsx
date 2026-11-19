@@ -213,6 +213,7 @@ describe('shared family interaction adapters', () => {
     const agent = container.querySelector('[data-node-card="agent"]')!;
     expect(agent.querySelector('img')).toBeNull();
     expect(agent.querySelector('[data-icon-name="AgentsRegular"]')).not.toBeNull();
+    expect(agent.querySelector('[data-category="agent"]')).toHaveAttribute('data-tone', 'pink');
   });
 
   it('composes the real tools panel inside the Agent before its output without cloning tool rows', () => {
@@ -369,6 +370,24 @@ describe('shared family interaction adapters', () => {
     expect(container.querySelector('[data-tool-kind="mcp"]')).toHaveAttribute('id', 'msla-node-tool-run-identity');
     expect(container.querySelectorAll('[data-node-card="tool"]')).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'MCP tool: Renamed tool' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('renders host-resolved tool art untinted instead of the tool-kind default glyph', () => {
+    const { container, rerender } = render(
+      <SharedBranchCard
+        id="mcp-tool"
+        title="Managed MCP"
+        subgraphType={SUBGRAPH_TYPES.MCP_CLIENT}
+        icon={<img alt="" src="office365.svg" />}
+        iconArtwork
+        onClick={vi.fn()}
+      />
+    );
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool.querySelector('img')).toHaveAttribute('src', 'office365.svg');
+    expect(tool.querySelector('[data-artwork="true"]')).not.toBeNull();
+    rerender(<SharedBranchCard id="mcp-tool" title="Managed MCP" subgraphType={SUBGRAPH_TYPES.MCP_CLIENT} onClick={vi.fn()} />);
+    expect(container.querySelector('[data-node-card="tool"] img')).toBeNull();
   });
 
   it.each(['Wait', 'Send_teams_message_for_PR_details', 'Post_or_Patch_Azure_DevOps_REST_API', 'Long tool label '.repeat(12)])(

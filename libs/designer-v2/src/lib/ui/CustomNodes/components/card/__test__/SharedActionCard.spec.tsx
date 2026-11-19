@@ -224,14 +224,18 @@ describe('shared host action adapter', () => {
     expect(container.querySelector(`[data-icon-name="${glyph}Filled"]`)).toBeInTheDocument();
   });
 
-  it('uses the canonical default for unmapped built-ins and failed connector images without a false spinner', () => {
-    const { container, rerender } = render(<SharedActionCard {...props} operationType="XmlValidation" />);
+  it('uses art for unmapped built-ins, a neutral connector mark for failed connector images, and no false spinner', () => {
+    const { container, rerender } = render(<SharedActionCard {...props} operationType="XmlValidation" icon={undefined} />);
     expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeInTheDocument();
     expect(container.querySelector('img')).toBeNull();
+    rerender(<SharedActionCard {...props} operationType="XmlValidation" />);
+    expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
     rerender(<SharedActionCard {...props} operationType="ApiConnection" />);
     fireEvent.error(container.querySelector('img')!);
     expect(container.querySelector('img')).toBeNull();
-    expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeNull();
+    expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-tone="neutral"]')).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).toBeNull();
     rerender(<SharedActionCard {...props} operationType="ApiConnection" icon="new-logo.svg" />);
     expect(container.querySelector('img')).toHaveAttribute('src', 'new-logo.svg');
@@ -294,12 +298,15 @@ describe('shared host action adapter', () => {
       fireEvent.click(card);
       expect(onClick).toHaveBeenCalledOnce();
       if (toolKind === 'mcp') {
-        expect(container.querySelector('img')).toBeNull();
-        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+        // Resolved MCP server art renders untinted instead of a monochrome glyph.
+        expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
+        expect(container.querySelector('[data-artwork="true"]')).toBeInTheDocument();
         expect(screen.getByText('Type · MCP')).toBeInTheDocument();
         rerender(<SharedActionCard {...props} toolKind={toolKind} isSelected isLoading />);
-        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+        expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
+        rerender(<SharedActionCard {...props} icon={undefined} toolKind={toolKind} />);
         expect(container.querySelector('img')).toBeNull();
+        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
       } else if (toolKind === 'subWorkflow') {
         expect(screen.getByText('Sub-workflow')).toBeInTheDocument();
       }

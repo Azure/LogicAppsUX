@@ -9,7 +9,7 @@ export const nodeMetrics = {
     agent: { width: 280, headerHeight: 74, modelHeight: 42 },
     tool: { width: 232, height: 74, smallHeight: 56 },
   },
-  tile: { medium: 40, small: 32, mediumIcon: 24, smallIcon: 20 },
+  tile: { medium: 40, small: 32, mediumIcon: 24, smallIcon: 20, mediumArtwork: 30, smallArtwork: 24 },
   handle: { size: 12, stroke: 1.5, edgeOffset: -7, labeledHeight: 20 },
   badge: { height: 20, icon: 12, overhang: 10 },
   testData: { size: 20, icon: 16, textReserve: 32 },

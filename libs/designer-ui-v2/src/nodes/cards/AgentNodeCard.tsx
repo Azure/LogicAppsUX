@@ -63,6 +63,8 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
     subtitle,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
@@ -159,6 +161,8 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
           category="agent"
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.agent)}
         />
         <NodeText title={title} subtitle={subtitle} />

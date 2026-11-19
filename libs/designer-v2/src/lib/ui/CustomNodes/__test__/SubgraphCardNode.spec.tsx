@@ -238,6 +238,29 @@ describe('SubgraphCardNode (v2)', () => {
     expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
   });
 
+  it('passes resolved MCP server art to the shared tool row untinted', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'McpClientTool', kind: 'Managed', runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, actionCount: 0 });
+    mockUseIconUri.mockReturnValue('office365.svg');
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool.querySelector('img')).toHaveAttribute('src', 'office365.svg');
+    expect(tool.querySelector('[data-artwork="true"]')).not.toBeNull();
+  });
+
+  it('keeps the tool-kind default glyph when a tool has no resolved art', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'McpClientTool', kind: 'Managed', runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, actionCount: 0 });
+    mockUseIconUri.mockReturnValue('');
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool.querySelector('img')).toBeNull();
+    expect(tool.querySelector('[data-artwork="true"]')).toBeNull();
+    expect(tool.querySelector('[data-tone="neutral"]')).toBeNull();
+  });
+
   it('should render without crashing', () => {
     const { container } = render(<SubgraphCardNode {...defaultProps} />);
     expect(container).toBeTruthy();

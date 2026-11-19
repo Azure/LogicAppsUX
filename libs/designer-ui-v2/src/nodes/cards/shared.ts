@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { NodeHandleAxis } from '../primitives/NodeHandle';
-import type { NodeCardDensity, NodeRunStatus } from '../types';
+import type { NodeCardDensity, NodeIconTone, NodeRunStatus } from '../types';
 import type { ActionNodeCardStrings } from '../strings';
 import type { NodeCardProps } from '../primitives/NodeCard';
 
@@ -9,6 +9,10 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   subtitle?: string;
   icon?: ReactNode;
   selectedIcon?: ReactNode;
+  /** Opt-in family color for a host fallback glyph; omitted keeps the category color. */
+  iconTone?: NodeIconTone;
+  /** Renders `icon` as untinted host artwork such as a connector logo. */
+  iconArtwork?: boolean;
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
