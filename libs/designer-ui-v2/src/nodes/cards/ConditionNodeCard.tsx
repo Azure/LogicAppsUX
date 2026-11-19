@@ -124,6 +124,7 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
     kind,
     title,
     subtitle,
+    subtitleKind,
     countLabel,
     icon,
     selectedIcon,
@@ -189,7 +190,7 @@ export const ConditionNodeCard = forwardRef<HTMLDivElement, ConditionNodeCardPro
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
-        <NodeText title={title} subtitle={subtitle ?? strings.condition[kind]} {...nodeCount.textProps} />
+        <NodeText title={title} subtitle={subtitle ?? strings.condition[kind]} subtitleKind={subtitleKind} {...nodeCount.textProps} />
         {handles ? (
           kind === 'if' ? (
             <NodeBranchOutputs

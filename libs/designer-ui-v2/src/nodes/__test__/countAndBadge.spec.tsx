@@ -116,4 +116,45 @@ describe('vertical status badge placement', () => {
     render(<NodeFrame title="Scope" status="succeeded" handleAxis="vertical" />);
     expect(propertyValues(document.querySelector('[data-badge-status]')!, 'left')).toContain(expectedLeft);
   });
+
+  it('uses contained monitoring status rows without edge badges and keeps the failed inset perimeter', () => {
+    render(
+      <ActionNodeCard
+        title="Compose"
+        subtitle="Failed 2s"
+        subtitleKind="status"
+        status="failed"
+        statusDisplay="contained"
+        statusTone="danger"
+        statusTint="failed"
+      />
+    );
+    const card = screen.getByRole('group');
+    expect(card).toHaveAttribute('data-status-display', 'contained');
+    expect(card).toHaveAttribute('data-status-tone', 'danger');
+    expect(card).toHaveAttribute('data-status-tint', 'failed');
+    expect(document.querySelector('[data-badge-status]')).toBeNull();
+    expect(document.querySelector('[data-node-status-perimeter]')).toBeInTheDocument();
+    expect(document.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Failed 2s');
+  });
+
+  it('removes small-tool overhang only for contained monitoring status', () => {
+    const { rerender } = render(<ToolItemCard title="Tool" size="small" status="failed" />);
+    const tool = screen.getByRole('group');
+    expect(getComputedStyle(tool).marginTop).toBe(`${nodeMetrics.badge.overhang}px`);
+    rerender(
+      <ToolItemCard
+        title="Tool"
+        size="small"
+        subtitle="Failed 1s"
+        subtitleKind="status"
+        status="failed"
+        statusDisplay="contained"
+        statusTone="danger"
+        statusTint="failed"
+      />
+    );
+    expect(getComputedStyle(tool).marginTop).not.toBe(`${nodeMetrics.badge.overhang}px`);
+    expect(document.querySelector('[data-badge-status]')).toBeNull();
+  });
 });

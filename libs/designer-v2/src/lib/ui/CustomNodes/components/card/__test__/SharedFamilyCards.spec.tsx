@@ -442,6 +442,40 @@ describe('shared family interaction adapters', () => {
     expect(branch.container.querySelector('[data-inactive]')).toBeNull();
   });
 
+  it('uses contained monitoring status rows for scope and tool cards, with failed-only tint', () => {
+    const scope = render(
+      <SharedScopeCard
+        {...props()}
+        operationType="Scope"
+        isMonitoringView
+        runData={{ status: 'TimedOut', duration: '3s' } as ActionCardProps['runData']}
+      />
+    );
+    const scopeCard = scope.container.querySelector('[data-testid="card-Renamed operation"]') as HTMLElement;
+    expect(scopeCard).toHaveAttribute('data-status-display', 'contained');
+    expect(scopeCard).toHaveAttribute('data-status-tone', 'warning');
+    expect(scopeCard).not.toHaveAttribute('data-status-tint');
+    expect(scope.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Timed out 3s');
+    expect(scope.container.querySelector('[data-badge-status]')).toBeNull();
+    cleanup();
+    const tool = render(
+      <SharedBranchCard
+        id="tool"
+        title="Tool"
+        subgraphType={SUBGRAPH_TYPES.AGENT_CONDITION}
+        isMonitoringView
+        runData={{ status: 'Failed', duration: '1s' }}
+        onClick={vi.fn()}
+      />
+    );
+    const toolCard = tool.container.querySelector('[data-testid="card-Tool"]') as HTMLElement;
+    expect(toolCard).toHaveAttribute('data-status-display', 'contained');
+    expect(toolCard).toHaveAttribute('data-status-tone', 'danger');
+    expect(toolCard).toHaveAttribute('data-status-tint', 'failed');
+    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Failed 1s');
+    expect(tool.container.querySelector('[data-badge-status]')).toBeNull();
+  });
+
   // The parent Switch frame already renders at 0.4; a nested untaken case must not multiply that to 0.16.
   it('keeps the plain branch inactive marker but skips its own opacity under an inactive ancestor frame', () => {
     const { container } = render(

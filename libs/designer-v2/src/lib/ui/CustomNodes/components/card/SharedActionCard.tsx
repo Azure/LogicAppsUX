@@ -20,8 +20,10 @@ import {
   getOperationNodeDetail,
   getOperationNodeSubtitle,
   mapActionNodeStrings,
+  getSharedRunSubtitle,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { useCardStyles } from './card.styles';
@@ -104,7 +106,9 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   // One mapper yields the shared tone plus a truthful label (Waiting, Resuming, TimedOut, raw unknowns)
   // so the localized status dictionary is never cloned per card.
   const runPresentation = mapSharedRunPresentation(runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  const containsStatus = !!isMonitoringView && !!status;
   const focusRef = useRef<HTMLDivElement>(null);
   const dndRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -169,6 +173,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     : errorMessages;
   const Card = toolKind ? ToolItemCard : isTrigger ? TriggerNodeCard : ActionNodeCard;
   const cardStrings = useMemo(() => ({ ...strings, tool: mapToolNodeStrings(intl).tool }), [intl, strings]);
+  const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, cardStrings.status, runData?.duration) : undefined;
   const detail = getOperationNodeDetail(intl, operationType, operationKind, connectorName);
   const loadingLabel = intl.formatMessage({
     defaultMessage: 'Loading operation',
@@ -181,18 +186,24 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       ref={ref}
       title={title}
       subtitle={
-        toolKind === 'mcp' || toolKind === 'subWorkflow'
-          ? undefined
-          : toolKind && !connectorLoading
-            ? detail
-            : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
+        statusSubtitle
+          ? statusSubtitle
+          : toolKind === 'mcp' || toolKind === 'subWorkflow'
+            ? undefined
+            : toolKind && !connectorLoading
+              ? detail
+              : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
       }
+      subtitleKind={statusSubtitle ? 'status' : undefined}
       icon={cardIcon}
       selectedIcon={selectedIcon}
       selected={isSelected}
       status={status}
       statusLabel={statusLabel}
       statusDetail={runData?.duration}
+      statusDisplay={containsStatus ? 'contained' : 'badge'}
+      statusTone={containsStatus ? runVisuals.statusTone : undefined}
+      statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
       strings={cardStrings}
       inactive={!active}
       {...(toolKind

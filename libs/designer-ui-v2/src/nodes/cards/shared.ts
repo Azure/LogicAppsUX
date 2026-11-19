@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { NodeHandleAxis } from '../primitives/NodeHandle';
-import type { NodeCardDensity, NodeRunStatus } from '../types';
+import type { NodeCardDensity, NodeRunStatus, NodeStatusDisplay, NodeStatusTint, NodeStatusTone } from '../types';
 import type { ActionNodeCardStrings, NodeFrameCountLabel } from '../strings';
 
 export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -11,9 +11,17 @@ export interface BaseNodeCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
+  /** Defaults to the edge badge; contained uses the subtitle line and an inset perimeter. */
+  statusDisplay?: NodeStatusDisplay;
+  /** Optional perimeter tone override when status semantics do not map 1:1 to the status union. */
+  statusTone?: NodeStatusTone;
+  /** Optional failure emphasis fill for status-bearing cards. */
+  statusTint?: NodeStatusTint;
   /** Forwarded through `rest` to NodeCard; see NodeCardProps for semantics. */
   statusLabel?: string;
   statusAriaLabel?: string;
+  /** Optional subtitle semantics marker (for example contained monitoring status text). */
+  subtitleKind?: 'default' | 'status';
   inactive?: boolean;
   strings?: ActionNodeCardStrings;
   handleAxis?: NodeHandleAxis;

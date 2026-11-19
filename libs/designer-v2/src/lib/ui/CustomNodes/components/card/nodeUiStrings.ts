@@ -3,6 +3,7 @@ import {
   joinNodeSubtitle,
   type ActionNodeCardStrings,
   type NodeRunStatus,
+  type NodeStatusTone,
   type NodeFrameStrings,
   type NodeStatusStrings,
   type ToolItemCardProps,
@@ -239,6 +240,11 @@ export interface SharedRunPresentation {
   label?: string;
 }
 
+export interface SharedRunVisuals {
+  statusTone?: NodeStatusTone;
+  failedTint?: boolean;
+}
+
 /**
  * Single host mapping from a raw service status to the frozen shared tone plus a truthful label.
  * The shared lib only knows nine tones, so service states that collapse onto a tone (TimedOut -> failed,
@@ -255,6 +261,42 @@ export const mapSharedRunPresentation = (raw: string | undefined, intl: IntlShap
   const messageKey = runStatusLabelKeys[key];
   return { status, label: messageKey ? intl.formatMessage(runStatusMessages[messageKey]) : trimmed };
 };
+
+const runStatusToneByRaw: Record<string, NodeStatusTone> = {
+  succeeded: 'success',
+  failed: 'danger',
+  error: 'danger',
+  warning: 'warning',
+  succeededwithwarning: 'warning',
+  timedout: 'warning',
+  cancelled: 'warning',
+  aborted: 'warning',
+  running: 'running',
+  resuming: 'running',
+  skipped: 'skipped',
+  pending: 'neutral',
+  waiting: 'neutral',
+  mock: 'neutral',
+};
+
+/** Perimeter semantics stay in the host so runtime states can keep truthful labels while sharing one visual contract. */
+export const mapSharedRunVisuals = (raw: string | undefined): SharedRunVisuals => {
+  const key = raw?.trim().toLowerCase();
+  if (!key) {
+    return {};
+  }
+  return {
+    statusTone: runStatusToneByRaw[key] ?? 'neutral',
+    failedTint: key === 'failed',
+  };
+};
+
+export const getSharedRunSubtitle = (
+  presentation: SharedRunPresentation,
+  statusStrings: NodeStatusStrings,
+  duration?: string
+): string | undefined =>
+  presentation.status ? getNodeStatusLabel(presentation.status, statusStrings, duration, presentation.label) : undefined;
 
 /**
  * Accessible name for an interactive shared card that also carries its truthful run status and duration.

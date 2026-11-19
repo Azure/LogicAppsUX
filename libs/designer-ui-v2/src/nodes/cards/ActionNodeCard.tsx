@@ -22,6 +22,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
   {
     title,
     subtitle,
+    subtitleKind,
     countLabel,
     icon,
     selectedIcon,
@@ -62,7 +63,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
-        <NodeText title={title} subtitle={subtitle} titleLines={layout.titleLines} {...nodeCount.textProps} />
+        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} titleLines={layout.titleLines} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

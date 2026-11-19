@@ -41,6 +41,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
   {
     title,
     subtitle,
+    subtitleKind,
     countLabel,
     icon,
     selectedIcon,
@@ -89,7 +90,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, DEFAULT_ICONS)}
         />
-        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} {...nodeCount.textProps} />
+        <NodeText title={title} subtitle={subtitle ?? strings.loop.foreach} subtitleKind={subtitleKind} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null}
       </NodeCardBody>
       {handles ? bottom : null}

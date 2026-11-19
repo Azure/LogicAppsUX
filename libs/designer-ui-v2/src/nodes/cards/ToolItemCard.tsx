@@ -30,12 +30,14 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
     size = 'medium',
     title,
     subtitle,
+    subtitleKind,
     countLabel,
     icon,
     selectedIcon,
     selected,
     status,
     statusDetail,
+    statusDisplay = 'badge',
     strings = defaultNodeStrings,
     className,
     ...rest
@@ -55,8 +57,9 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
       selected={selected}
       status={status}
       statusDetail={statusDetail}
+      statusDisplay={statusDisplay}
       strings={strings}
-      className={mergeClasses(size === 'small' && status && !testData && styles.badgeClearance, className)}
+      className={mergeClasses(size === 'small' && status && !testData && statusDisplay !== 'contained' && styles.badgeClearance, className)}
       data-node-card="tool"
       data-tool-kind={kind}
     >
@@ -68,7 +71,12 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
-        <NodeText title={title} subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])} {...nodeCount.textProps} />
+        <NodeText
+          title={title}
+          subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])}
+          subtitleKind={subtitleKind}
+          {...nodeCount.textProps}
+        />
       </NodeCardBody>
     </NodeCard>
   );

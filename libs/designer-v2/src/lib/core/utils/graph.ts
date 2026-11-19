@@ -109,9 +109,10 @@ export const getNodePresentation = (
   if (!useSharedNodeUi) {
     return { shared: false };
   }
+  // Monitoring status now uses the in-card secondary line/perimeter, so tool rows keep their canonical 56px body.
   const toolSize = {
     width: nodeMetrics.cards.tool.width,
-    height: nodeMetrics.cards.tool.smallHeight + (context.hasToolStatus ? nodeMetrics.badge.overhang : 0),
+    height: nodeMetrics.cards.tool.smallHeight,
   };
   if (operation) {
     if (context.toolKind) {

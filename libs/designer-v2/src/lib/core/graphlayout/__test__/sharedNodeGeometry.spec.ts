@@ -179,7 +179,7 @@ describe('shared node geometry contracts', () => {
       toolKind: 'mcp',
       size: {
         width: nodeMetrics.cards.tool.width,
-        height: nodeMetrics.cards.tool.smallHeight + nodeMetrics.badge.overhang,
+        height: nodeMetrics.cards.tool.smallHeight,
       },
     });
 

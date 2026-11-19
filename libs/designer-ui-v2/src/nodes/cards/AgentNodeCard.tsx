@@ -62,6 +62,7 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
   {
     title,
     subtitle,
+    subtitleKind,
     countLabel,
     icon,
     selectedIcon,
@@ -165,7 +166,7 @@ export const AgentNodeCard = forwardRef<HTMLDivElement, AgentNodeCardProps>(func
           testData={testData}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.agent)}
         />
-        <NodeText title={title} subtitle={subtitle} {...nodeCount.textProps} />
+        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} {...nodeCount.textProps} />
         {vertical ? null : outputs}
       </NodeCardBody>
       <NodeCardFooter icon={<CubeRegular />} action={footerAction}>

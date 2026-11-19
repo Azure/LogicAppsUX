@@ -6,7 +6,7 @@ import { compactNodeMetrics, nodeMetrics } from '../metrics';
 import { verticalBadgeLeft } from './badgePlacement';
 import type { ActionNodeCardStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
-import type { NodeCardShape, NodeCardWidth, NodeRunStatus } from '../types';
+import type { NodeCardShape, NodeCardWidth, NodeRunStatus, NodeStatusDisplay, NodeStatusTint, NodeStatusTone } from '../types';
 import { NodeHandleAxisContext, NodeInactiveContext } from './NodeHandle';
 import type { NodeHandleAxis } from './NodeHandle';
 import { NodeStatusBadge } from './NodeStatusBadge';
@@ -90,9 +90,39 @@ const useStyles = makeStyles({
     transform: 'translateY(-50%)',
     whiteSpace: 'nowrap',
   },
+  statusPerimeter: {
+    position: 'absolute',
+    inset: '3px',
+    boxSizing: 'border-box',
+    borderRadius: 'inherit',
+    ...shorthands.border('2px', 'solid', 'transparent'),
+    pointerEvents: 'none',
+    zIndex: 1,
+    '@media (forced-colors: active)': { ...shorthands.borderColor('CanvasText') },
+  },
+  perimeterSuccess: { ...shorthands.borderColor(tokens.colorStatusSuccessBorder2) },
+  perimeterDanger: { ...shorthands.borderColor(tokens.colorStatusDangerBorder2) },
+  perimeterWarning: { ...shorthands.borderColor(tokens.colorStatusWarningBorder2) },
+  perimeterRunning: { ...shorthands.borderColor(tokens.colorBrandStroke1) },
+  perimeterSkipped: { ...shorthands.borderColor(tokens.colorNeutralStrokeAccessible) },
+  perimeterNeutral: { ...shorthands.borderColor(tokens.colorNeutralStrokeAccessible) },
+  // Real failed runs get a subtle attention tint; warning/error states keep their neutral fill.
+  statusTintFailed: { [bg]: tokens.colorStatusDangerBackground1, ':hover': { [bg]: tokens.colorStatusDangerBackground1 } },
   // Dimming only: inactive nodes stay focusable, hoverable and inspectable.
   inactive: { opacity: nodeMetrics.inactiveOpacity },
 });
+
+const statusToneByStatus: Record<NodeRunStatus, NodeStatusTone> = {
+  pending: 'neutral',
+  running: 'running',
+  succeeded: 'success',
+  skipped: 'skipped',
+  failed: 'danger',
+  error: 'danger',
+  warning: 'warning',
+  cancelled: 'warning',
+  mock: 'neutral',
+};
 export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   width?: NodeCardWidth;
   size?: 'medium' | 'small' | 'switch' | 'compact' | 'compactWrapped';
@@ -103,6 +133,12 @@ export interface NodeCardProps extends HTMLAttributes<HTMLDivElement> {
   selected?: boolean;
   status?: NodeRunStatus;
   statusDetail?: string;
+  /** Edge badge by default; contained uses the subtitle line plus inset perimeter. */
+  statusDisplay?: NodeStatusDisplay;
+  /** Optional perimeter override for host states that collapse onto a shared status tone. */
+  statusTone?: NodeStatusTone;
+  /** Optional subtle status fill. Only failed cards should opt into this. */
+  statusTint?: NodeStatusTint;
   /** Visible badge text override for service states that share a tone. */
   statusLabel?: string;
   /** Accessible name for the badge when it differs from the visible text. */
@@ -124,6 +160,9 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
     selected = false,
     status,
     statusDetail,
+    statusDisplay = 'badge',
+    statusTone,
+    statusTint = 'none',
     statusLabel,
     statusAriaLabel,
     inactive = false,
@@ -139,6 +178,22 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
   const styles = useStyles();
   const ancestorInactive = useContext(NodeInactiveContext);
   const dimmed = inactive || ancestorInactive;
+  const containedStatus = statusDisplay === 'contained' && !!status && status !== 'mock';
+  const resolvedStatusTone = containedStatus ? (statusTone ?? statusToneByStatus[status]) : undefined;
+  const perimeterClass =
+    resolvedStatusTone === 'success'
+      ? styles.perimeterSuccess
+      : resolvedStatusTone === 'danger'
+        ? styles.perimeterDanger
+        : resolvedStatusTone === 'warning'
+          ? styles.perimeterWarning
+          : resolvedStatusTone === 'running'
+            ? styles.perimeterRunning
+            : resolvedStatusTone === 'skipped'
+              ? styles.perimeterSkipped
+              : resolvedStatusTone === 'neutral'
+                ? styles.perimeterNeutral
+                : undefined;
   return (
     <div
       role="group"
@@ -147,10 +202,13 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
       className={mergeClasses(styles.root, styles[width], styles.focus, inactive && !ancestorInactive && styles.inactive, className)}
       data-selected={selected || undefined}
       data-status={status}
+      data-status-display={containedStatus ? 'contained' : status ? 'badge' : undefined}
+      data-status-tone={resolvedStatusTone}
+      data-status-tint={containedStatus && statusTint !== 'none' ? statusTint : undefined}
       data-handle-axis={handleAxis}
       data-inactive={inactive || undefined}
     >
-      {status && status !== 'mock' ? (
+      {status && status !== 'mock' && !containedStatus ? (
         <NodeStatusBadge
           live={false}
           status={status}
@@ -171,9 +229,13 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
           shape === 'pill' &&
             (size === 'compact' ? styles.pillCompact : size === 'compactWrapped' ? styles.pillCompactWrapped : styles.pill),
           appearance === 'placeholder' && styles.placeholder,
+          containedStatus && statusTint === 'failed' && styles.statusTintFailed,
           selected && styles.selected
         )}
       >
+        {containedStatus && perimeterClass ? (
+          <span aria-hidden="true" data-node-status-perimeter className={mergeClasses(styles.statusPerimeter, perimeterClass)} />
+        ) : null}
         <NodeInactiveContext.Provider value={dimmed}>
           <NodeHandleAxisContext.Provider value={handleAxis}>{children}</NodeHandleAxisContext.Provider>
         </NodeInactiveContext.Provider>

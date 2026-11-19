@@ -61,6 +61,7 @@ const useStyles = makeStyles({
 export interface NodeTextProps extends HTMLAttributes<HTMLSpanElement> {
   title: string;
   subtitle?: string;
+  subtitleKind?: 'default' | 'status';
   /** Maximum title lines; defaults to a single ellipsized line. */
   titleLines?: 1 | 2;
   /** Preformatted count (for example "3 actions") shown after the subtitle on collapsed container cards. */
@@ -71,7 +72,7 @@ export interface NodeTextProps extends HTMLAttributes<HTMLSpanElement> {
 }
 export const NodeHoverCardActiveContext = createContext(false);
 export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function NodeText(
-  { title, subtitle, titleLines = 1, count, countUnit, countId, className, ...rest },
+  { title, subtitle, subtitleKind = 'default', titleLines = 1, count, countUnit, countId, className, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -84,7 +85,11 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
       {count ? (
         <span className={styles.detailRow}>
           {subtitle ? (
-            <span className={styles.detailSubtitle} title={hover ? undefined : subtitle}>
+            <span
+              className={styles.detailSubtitle}
+              data-node-subtitle-kind={subtitleKind === 'status' ? subtitleKind : undefined}
+              title={hover ? undefined : subtitle}
+            >
               <span className={styles.detailSubtitleText}>{subtitle}</span>
               <span className={styles.countDot} aria-hidden="true">
                 ·
@@ -97,7 +102,11 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
           </span>
         </span>
       ) : subtitle ? (
-        <span className={styles.subtitle} title={hover ? undefined : subtitle}>
+        <span
+          className={styles.subtitle}
+          data-node-subtitle-kind={subtitleKind === 'status' ? subtitleKind : undefined}
+          title={hover ? undefined : subtitle}
+        >
           {subtitle}
         </span>
       ) : null}

@@ -26,8 +26,10 @@ import {
   mapAgentNodeStrings,
   mapConditionNodeStrings,
   mapLoopNodeStrings,
+  getSharedRunSubtitle,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
@@ -142,7 +144,10 @@ export const SharedScopeCard = ({
   }, [props.setFocus]);
   const actionStrings = mapActionNodeStrings(intl);
   const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(props.runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  const containsStatus = !!isMonitoringView && !!status;
+  const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, actionStrings.status, props.runData?.duration) : undefined;
   const collapse = (
     <FamilyCollapseButton
       id={`${props.id}-collapse-toggle`}
@@ -159,6 +164,9 @@ export const SharedScopeCard = ({
     status,
     statusLabel,
     statusDetail: props.runData?.duration,
+    statusDisplay: containsStatus ? ('contained' as const) : ('badge' as const),
+    statusTone: containsStatus ? runVisuals.statusTone : undefined,
+    statusTint: containsStatus && runVisuals.failedTint ? ('failed' as const) : ('none' as const),
     inactive: props.active === false,
     handleAxis,
     countLabel,
@@ -215,6 +223,8 @@ export const SharedScopeCard = ({
       <ConditionNodeCard
         {...common}
         kind={family}
+        subtitle={statusSubtitle}
+        subtitleKind={statusSubtitle ? 'status' : undefined}
         // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
         mode="multiOutput"
         caseCount={caseCount}
@@ -229,7 +239,8 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
-        subtitle={strings.loop.foreach}
+        subtitle={statusSubtitle ?? strings.loop.foreach}
+        subtitleKind={statusSubtitle ? 'status' : undefined}
         bodyPlacement="none"
         strings={strings}
         inputSlot={inputSlot}
@@ -243,6 +254,8 @@ export const SharedScopeCard = ({
     return withHover(
       <AgentNodeCard
         {...common}
+        subtitle={statusSubtitle}
+        subtitleKind={statusSubtitle ? 'status' : undefined}
         model={model}
         // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
         toolsPlacement="below"
@@ -288,6 +301,8 @@ export const SharedScopeCard = ({
     <ActionNodeCard
       {...common}
       strings={actionStrings}
+      subtitle={statusSubtitle}
+      subtitleKind={statusSubtitle ? 'status' : undefined}
       handles={false}
       icon={scopeNodeIcon}
       density="compact"
@@ -375,8 +390,11 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
   if (props.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
     const toolKind = props.toolKind ?? (props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? 'mcp' : 'action');
     const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+    const runVisuals = mapSharedRunVisuals(props.runData?.status);
     const { status, label: statusLabel } = runPresentation;
     const toolStrings = mapToolNodeStrings(intl);
+    const containsStatus = !!props.isMonitoringView && !!status;
+    const statusSubtitle = containsStatus ? getSharedRunSubtitle(runPresentation, toolStrings.status, props.runData?.duration) : undefined;
     return (
       <SharedNodeHoverCard
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
@@ -406,10 +424,15 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           )}
           aria-pressed={props.selected ?? false}
           title={title}
+          subtitle={statusSubtitle}
+          subtitleKind={statusSubtitle ? 'status' : undefined}
           selected={props.selected}
           status={status}
           statusLabel={statusLabel}
           statusDetail={props.runData?.duration}
+          statusDisplay={containsStatus ? 'contained' : 'badge'}
+          statusTone={containsStatus ? runVisuals.statusTone : undefined}
+          statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
           inactive={props.active === false}
           kind={toolKind}
           countLabel={props.countLabel}
