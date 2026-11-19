@@ -64,7 +64,6 @@ export const AGENT_TOOL_CONNECTOR_HEIGHT =
   nodeMetrics.handle.size / 2;
 // ELK/ports/drop-zones all consume this accepted add-card height; derive it once from shared metrics.
 const SHARED_ADD_NODE_HEIGHT = nodeMetrics.actionAdd.containerHeight;
-export const SHARED_COLLAPSED_CARD_HEIGHT = 50;
 
 export interface NodePresentationContext {
   operationType?: string;
@@ -182,7 +181,11 @@ export const getNodePresentation = (
     return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
   }
   if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
-    return { shared: true, family: 'collapsed', size: { width: compactNodeMetrics.card.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
+    return {
+      shared: true,
+      family: 'collapsed',
+      size: { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight },
+    };
   }
   // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
   return { shared: false };

@@ -3,7 +3,7 @@ import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-share
 import { compactNodeMetrics, getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import Constants from '../../../common/constants';
 import { exportForTesting } from '../elklayout';
-import { AGENT_TOOL_CONNECTOR_HEIGHT, createWorkflowNode, getNodePresentation, SHARED_COLLAPSED_CARD_HEIGHT } from '../../utils/graph';
+import { AGENT_TOOL_CONNECTOR_HEIGHT, createWorkflowNode, getNodePresentation } from '../../utils/graph';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getWorkflowNodePresentationContext } from '../helpers';
 
@@ -72,7 +72,7 @@ describe('shared node geometry contracts', () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.COLLAPSED_NODE, true)).toEqual({
       shared: true,
       family: 'collapsed',
-      size: { width: compactNodeMetrics.card.width, height: SHARED_COLLAPSED_CARD_HEIGHT },
+      size: { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight },
     });
 
     expect(

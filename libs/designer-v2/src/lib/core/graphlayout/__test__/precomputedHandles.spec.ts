@@ -92,11 +92,11 @@ describe('provisional public XYFlow handles', () => {
       type: WORKFLOW_NODE_TYPES.COLLAPSED_NODE,
       data: { presentation: { shared: true, family: 'collapsed' } },
     };
-    expect(getPrecomputedHandles(collapsed, 232, 50)?.[1]).toEqual({
+    expect(getPrecomputedHandles(collapsed, 208, 68)?.[1]).toEqual({
       type: 'source',
       position: Position.Bottom,
-      x: 113,
-      y: 51,
+      x: 101,
+      y: 69,
       width: 6,
       height: 6,
     });

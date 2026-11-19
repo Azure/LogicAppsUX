@@ -5,8 +5,9 @@ import { ArrowRepeatAllRegular, ArrowTurnRightRegular, BoxMultipleRegular } from
 import { designerUiTokens } from '../../theme/tokens';
 import { nodeMetrics } from '../metrics';
 import type { NodeRunStatus, NodeHandleVariant } from '../types';
-import type { ActionNodeCardStrings, NodeFrameCountUnit, NodeFrameStrings } from '../strings';
-import { defaultNodeFrameCountStrings, defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
+import type { ActionNodeCardStrings, NodeFrameStrings } from '../strings';
+import { defaultNodeFrameStrings, defaultNodeStrings } from '../strings';
+import { formatFrameCount, type NodeFrameCountLabel } from '../frameCount';
 import { useCollapseReveal } from './collapseReveal';
 import { NodeStatusBadge } from './NodeStatusBadge';
 import { NodeHandle, NodeInactiveContext } from './NodeHandle';
@@ -180,19 +181,7 @@ export interface NodeFrameProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ti
   strings?: ActionNodeCardStrings & { frame?: NodeFrameStrings };
 }
 
-export interface NodeFrameCountLabel {
-  count: number;
-  unit: NodeFrameCountUnit;
-}
-
-/**
- * Resolves the inline count text. Unit formatters come first; for `actions`, a host's legacy `actionCount`
- * formatter is honored before English defaults so dictionaries localized before `counts` existed keep their wording.
- */
-const formatFrameCount = (frameStrings: NodeFrameStrings, { count, unit }: NodeFrameCountLabel): string => {
-  const formatter = frameStrings.counts?.[unit] ?? (unit === 'actions' ? frameStrings.actionCount : defaultNodeFrameCountStrings[unit]);
-  return formatter(count);
-};
+export type { NodeFrameCountLabel } from '../frameCount';
 
 /** Canonical translucent scope/loop/branch frame; host computes bounds and topology. */
 export const NodeFrame = forwardRef<HTMLDivElement, NodeFrameProps>(function NodeFrame(

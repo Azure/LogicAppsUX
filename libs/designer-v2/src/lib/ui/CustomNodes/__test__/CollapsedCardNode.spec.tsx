@@ -25,6 +25,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useCollapsedMapping: vi.fn(),
   useIsActionCollapsed: vi.fn(),
   useShouldNodeFocus: vi.fn(),
+  useNodeDisplayName: () => 'Node one',
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -84,10 +85,24 @@ describe('CollapsedNode', () => {
   });
 
   it('uses the real collapsed identity count and preserves focus, context and expand commands', () => {
+    (useOperationsVisuals as Mock).mockReturnValue([
+      { id: 'node-1', iconUri: '/scope.svg' },
+      { id: 'node-a', iconUri: '/compose.svg' },
+      { id: 'node-b', iconUri: '' },
+      { id: 'node-c', iconUri: '/mail.svg' },
+    ]);
+    (useCollapsedMapping as Mock).mockReturnValue({ 'node-1': ['node-1', 'node-a', 'node-b', 'node-c', 'node-1-#footer'] });
     (useShouldNodeFocus as Mock).mockReturnValue(true);
     mockDispatch.mockClear();
     render(<CollapsedNode {...defaultProps} data={{ presentation: { shared: true, family: 'collapsed' } }} />);
-    const chip = screen.getByLabelText('Show 4 actions');
+    const chip = screen.getByRole('button', { name: 'Node one: show 4 actions' });
+    expect(screen.getByText('Node one')).toBeVisible();
+    expect(screen.getByText('4 actions')).toBeVisible();
+    expect(chip.querySelectorAll('[data-summary-thumbnail]')).toHaveLength(3);
+    expect(chip.querySelector('img[src="/scope.svg"]')).toBeInTheDocument();
+    expect(chip.querySelector('img[src="/compose.svg"]')).toBeInTheDocument();
+    expect(chip.parentElement?.style.height).toBe('68px');
+    expect(useOperationsVisuals).toHaveBeenLastCalledWith(['node-1', 'node-a', 'node-b', 'node-c']);
     expect(chip.getAttribute('data-automation-id')).toBe('msla-collapsed-card-node_1');
     expect(chip.id).toBe('msla-collapsed-card-node_1');
     expect(document.activeElement).toBe(chip);
