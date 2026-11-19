@@ -314,11 +314,11 @@
                 "children": [
                   {
                     "id": "ForEach-#scope",
-                    "height": 74,
+                    "height": 52,
                     "width": 160,
                     "layoutOptions": {
                       "nodeType": "SCOPE_CARD_NODE",
-                      "presentation": "{\"shared\":true,\"family\":\"loop\",\"size\":{\"width\":160,\"height\":74}}"
+                      "presentation": "{\"shared\":true,\"family\":\"loop\",\"titleLines\":1,\"size\":{\"width\":160,\"height\":52}}"
                     }
                   },
                   {
@@ -337,11 +337,11 @@
                     "children": [
                       {
                         "id": "ForEach_nested-#scope",
-                        "height": 74,
+                        "height": 68,
                         "width": 160,
                         "layoutOptions": {
                           "nodeType": "SCOPE_CARD_NODE",
-                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"size\":{\"width\":160,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"titleLines\":2,\"size\":{\"width\":160,\"height\":68}}"
                         }
                       },
                       {
@@ -384,7 +384,7 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "foreach",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,220)",
+                      "elk.nodeSize.minimum": "(232,214)",
                       "elk.direction": "DOWN"
                     }
                   },
@@ -395,11 +395,11 @@
                     "children": [
                       {
                         "id": "ForEach_empty-#scope",
-                        "height": 74,
+                        "height": 68,
                         "width": 160,
                         "layoutOptions": {
                           "nodeType": "SCOPE_CARD_NODE",
-                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"size\":{\"width\":160,\"height\":74}}"
+                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"titleLines\":2,\"size\":{\"width\":160,\"height\":68}}"
                         }
                       }
                     ],
@@ -411,7 +411,7 @@
                       "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                       "operationType": "foreach",
                       "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                      "elk.nodeSize.minimum": "(232,220)",
+                      "elk.nodeSize.minimum": "(232,214)",
                       "elk.direction": "DOWN"
                     }
                   }
@@ -443,7 +443,7 @@
                   "presentation": "{\"shared\":true,\"family\":\"frame\"}",
                   "operationType": "foreach",
                   "elk.nodeSize.constraints": "MINIMUM_SIZE",
-                  "elk.nodeSize.minimum": "(232,220)",
+                  "elk.nodeSize.minimum": "(232,198)",
                   "elk.direction": "DOWN"
                 }
               }
@@ -712,11 +712,11 @@
                       },
                       {
                         "id": "Until_Nested-#footer",
-                        "height": 74,
+                        "height": 68,
                         "width": 160,
                         "layoutOptions": {
                           "nodeType": "SCOPE_CARD_NODE",
-                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"size\":{\"width\":160,\"height\":74}}",
+                          "presentation": "{\"shared\":true,\"family\":\"loop\",\"titleLines\":2,\"size\":{\"width\":160,\"height\":68}}",
                           "subgraphType": "UNTIL_DO"
                         }
                       }
@@ -749,11 +749,11 @@
                   },
                   {
                     "id": "Until-#footer",
-                    "height": 74,
+                    "height": 52,
                     "width": 160,
                     "layoutOptions": {
                       "nodeType": "SCOPE_CARD_NODE",
-                      "presentation": "{\"shared\":true,\"family\":\"loop\",\"size\":{\"width\":160,\"height\":74}}",
+                      "presentation": "{\"shared\":true,\"family\":\"loop\",\"titleLines\":1,\"size\":{\"width\":160,\"height\":52}}",
                       "subgraphType": "UNTIL_DO"
                     }
                   }
