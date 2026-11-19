@@ -1,6 +1,7 @@
 export * from './lib/common/helpers/dereferenceJsonSchema';
 export * from './lib/common/helpers/keysutility';
 export * from './lib/common/helpers/expression';
+export * from './lib/common/helpers/codefulpath';
 export * from './lib/common/helpers/utils';
 export * from './lib/common/schemaprocessor';
 export * from './lib/expression/builder';

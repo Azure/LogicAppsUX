@@ -1,0 +1,329 @@
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  connectionsFileName,
+  extensionCommand,
+  onStartLanguageClient,
+  workflowAppApiVersion,
+} from '../../constants';
+import { workspace, window, MarkdownString } from 'vscode';
+import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
+import { LanguageClient } from 'vscode-languageclient/node';
+import { ext } from '../../extensionVariables';
+import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/switchDebugMode';
+import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
+import path from 'path';
+import * as fse from 'fs-extra';
+import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
+import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
+import { getAzureConnectorDetailsForLocalProject } from '../commands/azureConnectors/azureConnectorDetails';
+import * as vscode from 'vscode';
+import { filterCompletionResult } from './completionFilter';
+import { getDotNetCommand } from '../utils/dotnet/dotnet';
+import { localize } from '../../localize';
+import { resolveSdkFromProject, restoreSdkForProject } from '../utils/sdkResolution';
+
+const trustedHoverCommands = [extensionCommand.sdkLspApplyEdits];
+
+export default class LogicAppsLanguageClientManager {
+  protected lspServerPath: string | undefined;
+  protected sdkNupkgPath: string | undefined;
+  protected apiVersion = workflowAppApiVersion;
+  private projectPath: string | undefined;
+  protected readonly context: IActionContext;
+
+  constructor(context: IActionContext) {
+    this.context = context;
+  }
+
+  public async start(): Promise<void> {
+    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
+      return;
+    }
+
+    const workspaceFolder = await getWorkspaceFolderPath(this.context);
+    this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
+
+    if (!this.projectPath) {
+      return;
+    }
+
+    const { lspServerPath, sdkNupkgPath } = await this.resolveLanguageServerPaths();
+
+    this.lspServerPath = lspServerPath;
+    this.sdkNupkgPath = sdkNupkgPath;
+
+    if (!this.lspServerPath) {
+      window.showWarningMessage('Install or repair Logic Apps language server dependencies before starting C# workflow authoring.');
+      return;
+    }
+
+    if (!this.sdkNupkgPath) {
+      const restoreAction = localize('restoreSdkAndRetry', 'Restore SDK and retry');
+      const selection = await window.showWarningMessage(
+        localize('restoreSdkBeforeAuthoring', 'Restore the Logic App project SDK package before starting C# workflow authoring.'),
+        restoreAction
+      );
+      if (selection !== restoreAction) {
+        return;
+      }
+
+      try {
+        await restoreSdkForProject(this.projectPath);
+        this.sdkNupkgPath = (await resolveSdkFromProject(this.projectPath))?.sdkNupkgPath;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        ext.outputChannel.appendLog(localize('restoreSdkFailed', '[SDK Resolution] Failed to restore project SDK: {0}', errorMessage));
+        window.showErrorMessage(
+          localize('restoreSdkFailedUser', 'Failed to restore the Logic App project SDK. Check the output window for details.')
+        );
+        return;
+      }
+
+      if (!this.sdkNupkgPath) {
+        window.showErrorMessage(
+          localize(
+            'resolveSdkAfterRestoreFailed',
+            'The Logic App project SDK could not be resolved after restore. Check the output window for details.'
+          )
+        );
+        return;
+      }
+    }
+
+    const projectMetadata = await this.getProjectMetadata();
+
+    // Build server arguments (removed --connections)
+    const serverArgs = [this.lspServerPath, '--sdk', this.sdkNupkgPath];
+
+    // Load connections from file
+    const connections = await this.loadConnectionsFromFile(projectMetadata.connectionFilePath);
+
+    // Get initial API config from settings or defaults
+    const dynamicInvokeOptions = {
+      baseUrl: 'https://management.azure.com',
+      subscriptionId: projectMetadata.azureDetails.subscriptionId,
+      resourceGroup: projectMetadata.azureDetails.resourceGroupName,
+      bearerToken: projectMetadata.accessToken,
+    };
+
+    // Support for debugger wait mode in development
+    if (process.env.LSP_WAIT_FOR_DEBUGGER === 'true') {
+      serverArgs.push('--wait-for-debugger');
+      ext.outputChannel.appendLog(localize('lspWaitForDebugger', 'LSP Server starting in debug mode - attach a debugger to continue'));
+    }
+
+    const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.cs');
+
+    // Watch connections.json for changes
+    const connectionsWatcher = workspace.createFileSystemWatcher(projectMetadata.connectionFilePath);
+    connectionsWatcher.onDidChange(async () => {
+      const updatedConnections = await this.loadConnectionsFromFile(projectMetadata.connectionFilePath);
+      if (ext.languageClient && updatedConnections) {
+        try {
+          await ext.languageClient.sendNotification('custom/updateConnections', updatedConnections);
+        } catch (error) {
+          console.error('[LSP] Failed to send connections update:', error);
+        }
+      }
+    });
+
+    const hoverMiddleware: HoverMiddleware = {
+      provideHover: async (document, position, token, next) => {
+        const response = await next(document, position, token);
+        if (!response) {
+          return;
+        }
+
+        response.contents = response.contents.map((content) => {
+          if (content instanceof MarkdownString) {
+            content.supportHtml = true;
+            content.isTrusted = { enabledCommands: trustedHoverCommands };
+            content.supportThemeIcons = true;
+            return content;
+          }
+          const alteredContent = new MarkdownString(typeof content === 'string' ? content : content.value, true);
+
+          alteredContent.supportHtml = true;
+          alteredContent.isTrusted = { enabledCommands: trustedHoverCommands };
+          return alteredContent;
+        });
+
+        return response;
+      },
+    };
+
+    const generalMiddleware: Middleware = {
+      sendRequest: (type, param, token, next) => {
+        return next(type, param, token);
+      },
+      sendNotification: (type, next, params) => {
+        return next(type, params);
+      },
+    };
+
+    const run: Executable = {
+      command: getDotNetCommand(),
+      args: serverArgs,
+    };
+
+    const serverOptions: ServerOptions = { run, debug: run };
+
+    const telemetryConnectionString = this.getTelemetryConnectionString();
+    const clientOptions: LanguageClientOptions = {
+      documentSelector: [{ scheme: 'file', language: 'csharp' }],
+      synchronize: {
+        fileEvents: fileSystemWatcher,
+      },
+      initializationOptions: {
+        apiConfig: dynamicInvokeOptions,
+        connections: connections,
+        telemetry: {
+          connectionString: telemetryConnectionString,
+          enabled: Boolean(telemetryConnectionString) && vscode.env.isTelemetryEnabled,
+          samplingRate: 100,
+          sessionId: vscode.env.sessionId,
+        },
+      },
+      middleware: {
+        provideHover: hoverMiddleware.provideHover,
+        provideCompletionItem: async (document, position, context, token, next) => {
+          const result = await next(document, position, context, token);
+          return filterCompletionResult(result);
+        },
+        sendRequest: generalMiddleware.sendRequest,
+        sendNotification: generalMiddleware.sendNotification,
+      },
+    };
+
+    // Create the language client and start the client.
+    ext.languageClient = new LanguageClient('logicAppsLanguageServer', 'Logic Apps language server', serverOptions, clientOptions);
+    ext.context?.subscriptions.push(ext.languageClient);
+
+    await ext.languageClient.start();
+  }
+
+  private async resolveLanguageServerPaths() {
+    const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+    if (!dependenciesPath) {
+      return { lspServerPath: undefined, sdkNupkgPath: undefined };
+    }
+
+    // Support for development mode - override with environment variable
+    const devLspServerPath = process.env.LSP_SERVER_DEV_PATH;
+    let lspServerPath: string | undefined;
+
+    if (devLspServerPath && (await fse.pathExists(devLspServerPath))) {
+      lspServerPath = devLspServerPath;
+      console.log(`[LSP] Using development server: ${lspServerPath}`);
+    } else {
+      lspServerPath = path.join(dependenciesPath, 'LSPServer', 'LogicAppsLanguageServer.dll');
+      if (!(await fse.pathExists(lspServerPath))) {
+        lspServerPath = undefined;
+      }
+    }
+
+    const sdkNupkgPath = this.projectPath ? (await resolveSdkFromProject(this.projectPath))?.sdkNupkgPath : undefined;
+
+    return { lspServerPath, sdkNupkgPath };
+  }
+
+  private async getProjectMetadata() {
+    if (!this.projectPath) {
+      throw new Error('Logic Apps language server cannot start without a Logic App project path.');
+    }
+
+    const azureDetails: AzureConnectorDetails = await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath);
+    const connectionFilePath: string = path.join(this.projectPath, connectionsFileName);
+
+    return {
+      connectionFilePath,
+      azureDetails,
+      accessToken: azureDetails.accessToken,
+    };
+  }
+
+  /**
+   * Loads connections from a JSON file.
+   * Returns the parsed connections object or null if the file doesn't exist or can't be parsed.
+   */
+  private async loadConnectionsFromFile(filePath: string): Promise<any | null> {
+    try {
+      if (!(await fse.pathExists(filePath))) {
+        return null;
+      }
+
+      const fileContent = await fse.readFile(filePath, 'utf-8');
+      const connections = JSON.parse(fileContent);
+      return connections;
+    } catch (error) {
+      window.showErrorMessage(`Failed to load connections.json: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Gets the Application Insights connection string for telemetry.
+   * Priority: DEBUGTELEMETRY env variable > ext.telemetryString
+   */
+  private getTelemetryConnectionString(): string | undefined {
+    // Check if DEBUGTELEMETRY is set (for local debugging)
+    const debugTelemetry = process?.env?.DEBUGTELEMETRY;
+    if (debugTelemetry === 'v') {
+      console.log('[LSP] Debug telemetry mode enabled - telemetry will be logged locally');
+      return 'debug'; // Special value to indicate debug mode
+    }
+
+    // Use production telemetry string from extension variables
+    if (ext.telemetryString && ext.telemetryString !== 'setInGitHubBuild') {
+      console.log('[LSP] Using production telemetry connection string');
+      return ext.telemetryString;
+    }
+
+    console.log('[LSP] No telemetry connection string configured');
+    return undefined;
+  }
+}
+
+export async function startLogicAppsLanguageClient(): Promise<void> {
+  await callWithTelemetryAndErrorHandling(onStartLanguageClient, async (context: IActionContext) => {
+    const languageClientManager = new LogicAppsLanguageClientManager(context);
+    await languageClientManager.start();
+  });
+}
+
+/**
+ * Gets workflow metadata from the LSP server including trigger names.
+ * Uses a custom LSP request to query the workflow structure.
+ * @param workflowFilePath - The absolute path to the codeful workflow .cs file
+ * @param workflowName - The workflow to analyze when the file defines multiple workflows
+ * @returns Workflow metadata including workflow name and trigger name, or undefined if not available
+ */
+export async function getCodefulWorkflowMetadata(
+  workflowFilePath: string,
+  workflowName?: string
+): Promise<{ workflowName: string; triggerName: string } | undefined> {
+  if (!ext.languageClient) {
+    console.warn('[LSP] Language client not initialized');
+    return undefined;
+  }
+
+  try {
+    // Use the custom LSP request to get workflow metadata
+    const response = await ext.languageClient.sendRequest<{ workflowName: string; triggerName: string } | null>(
+      'custom/getWorkflowMetadata',
+      { uri: workflowFilePath, workflowName }
+    );
+
+    if (!response) {
+      console.warn('[LSP] No workflow metadata returned from server');
+      return undefined;
+    }
+
+    return response;
+  } catch (error) {
+    console.error('[LSP] Failed to get workflow metadata:', error);
+    return undefined;
+  }
+}

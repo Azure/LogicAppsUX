@@ -23,7 +23,6 @@ export const workflowDraftFileName = 'workflow-draft.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const powershellRequirementsFileName = 'requirements.psd1';
-export const sdkLspServer = 'SdkLspServer';
 
 // Directory names
 export const deploymentDirectory = 'deployment';
@@ -40,7 +39,6 @@ export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
-export const lspDirectory = 'LanguageServerLogicApps';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
@@ -311,7 +309,7 @@ export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensi
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServer = 'onStartLanguageServer';
+export const onStartLanguageClient = 'onStartLanguageClient';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -469,20 +467,16 @@ export const connectedEnvironmentNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0
 export const resourceGroupNameValidation = /^[-\w._()]{1,90}$/;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 
-// Codeful SDK versions
-export const CodefulSDKs = {
+export const CodefulSdk = {
   DurableTask: 'Microsoft.Azure.WebJobs.Extensions.DurableTask',
   WorkflowsWebJobs: 'Microsoft.Azure.Workflows.WebJobs.Extension',
   WorkflowsSDK: 'Microsoft.Azure.Workflows.Sdk',
 };
-export type CodefulSDKs = (typeof CodefulSDKs)[keyof typeof CodefulSDKs];
+export type CodefulSdk = (typeof CodefulSdk)[keyof typeof CodefulSdk];
 
-const codefulSdkVersion = '1.127.21.3-preview';
-const workflowsWebJobsVersion = '1.127.21.3-preview';
-const durableTaskVersion = '2.9.0';
-
-export const CodefulSdkVersions = {
-  [CodefulSDKs.DurableTask]: durableTaskVersion,
-  [CodefulSDKs.WorkflowsWebJobs]: workflowsWebJobsVersion,
-  [CodefulSDKs.WorkflowsSDK]: codefulSdkVersion,
+export const CodefulSdkVersion = {
+  DurableTask: '2.9.0',
+  WorkflowsWebJobs: '1.127.21.3-preview',
+  WorkflowsSDK: '1.0.0-preview.3',
 };
+export type CodefulSdkVersion = (typeof CodefulSdkVersion)[keyof typeof CodefulSdkVersion];

@@ -6,12 +6,26 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
-import { devContainerFolderName, devContainerFileName } from '../../../../../constants';
+import { CodefulSdkVersion, devContainerFolderName, devContainerFileName } from '../../../../../constants';
 
-// Unmock fs-extra to use real file operations for integration tests
-vi.unmock('fs-extra');
+// Use real disk operations; resolve codeful templates from source rather than beside the compiled bundle.
+vi.mock('fs-extra', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs-extra')>();
+  const actualFs = (actual as any).default ?? actual;
+  return {
+    ...actualFs,
+    ...actual,
+    readFile: (filePath: string, ...args: any[]) =>
+      actualFs.readFile(
+        typeof filePath === 'string' && filePath.includes('CodefulProjectTemplate')
+          ? new URL(`../../../../../assets/CodefulProjectTemplate/${path.basename(filePath)}`, import.meta.url)
+          : filePath,
+        ...args
+      ),
+  };
+});
 
 // Mock binariesExistSync to avoid VS Code workspace API calls in test
 vi.mock('../../../../utils/binaries', () => ({
@@ -19,7 +33,7 @@ vi.mock('../../../../utils/binaries', () => ({
   binariesExist: vi.fn().mockReturnValue(true),
 }));
 
-// Import fs-extra after unmocking
+// Import fs-extra after configuring the partial mock.
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
@@ -376,6 +390,33 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
   });
 
   describe('Full Workspace Creation Integration', () => {
+    it('should create a .NET 8 codeful workspace using the configured SDK version', async () => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'CodefulWorkspace',
+        logicAppName: 'CodefulApp',
+        logicAppType: ProjectType.codeful,
+        workflowName: 'CodefulWorkflow',
+        workflowType: 'Stateful-Codeful',
+        targetFramework: TargetFramework.Net8,
+      };
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      const appPath = getLogicAppFolderPath(options.workspaceName, options.logicAppName);
+      const csproj = await fse.readFile(path.join(appPath, `${options.logicAppName}.csproj`), 'utf8');
+      const settings = await fse.readJson(path.join(appPath, 'local.settings.json'));
+
+      expect(options.targetFramework).toBe(TargetFramework.Net8);
+      expect(csproj).toContain('<TargetFramework>net8</TargetFramework>');
+      expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.21.0" />');
+      expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.1" />');
+      expect(csproj).toContain('<PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.19.0" />');
+      expect(csproj).toContain(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="${CodefulSdkVersion.WorkflowsSDK}"/>`);
+      expect(csproj).not.toContain('<%= codefulSdkPackageVersion %>');
+      expect(settings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
+    });
+
     it('should create complete workspace for standard logic app', async () => {
       const options: IWebviewProjectContext = {
         workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
