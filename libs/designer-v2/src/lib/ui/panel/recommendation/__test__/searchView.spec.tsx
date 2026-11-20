@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { SearchView } from '../searchView';
 
 // Mock the selectors
@@ -64,12 +65,13 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
 });
 
 vi.mock('../SearchOpeationsService', () => ({
-  DefaultSearchOperationsService: vi.fn().mockImplementation((operations) => ({
-    searchOperations: vi.fn((term, filter) => {
-      if (!term) return Promise.resolve([]);
-      return Promise.resolve(operations.filter((op: any) => op.name?.toLowerCase().includes(term.toLowerCase()) && filter(op)));
-    }),
-  })),
+  DefaultSearchOperationsService: class {
+    constructor(private operations: DiscoveryOpArray) {}
+
+    async searchOperations(term: string, filter: (operation: DiscoveryOpArray[number]) => boolean) {
+      return term ? this.operations.filter((op) => op.name.toLowerCase().includes(term.toLowerCase()) && filter(op)) : [];
+    }
+  },
 }));
 
 import {
