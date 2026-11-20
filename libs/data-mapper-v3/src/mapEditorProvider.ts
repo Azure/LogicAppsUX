@@ -17,7 +17,8 @@ import { CompilerWorkerClient } from './worker/compilerWorkerClient';
 import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
-import { resolveSchemaFilePath } from './schema/schemaFileResolver';
+import { readTextFileSync, resolveSchemaFilePath } from './schema/schemaFileResolver';
+import { resolveAssemblyFilePath, resolveExtensionObjectAssemblyPaths } from './schema/extensionObjectResolver';
 import { replaceSchema } from './schema/schemaReplacement';
 import { describeSchemaLoadError, SchemaNotFoundError, type SchemaLoadResult } from './schema/schemaLoadError';
 import {
@@ -30,6 +31,7 @@ import {
 import { errorCategory, getDataMapperLogger } from './logger';
 import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
 import { copySchemaWithDependencies, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
+import { validateTestMapOutput } from './testMapOutput';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
@@ -757,11 +759,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 outputXml = await xslt.xsltProcess(xmlParser.xmlParse(inputXml), xmlParser.xmlParse(processedXslt));
               }
 
-              if (!outputXml || outputXml.trim().length === 0) {
-                this.logger.error(`${operation}: transformation produced empty output.`);
+              if (typeof outputXml !== 'string') {
+                this.logger.error(`${operation}: transformation did not return serialized output.`);
                 webviewPanel.webview.postMessage({
                   type: 'testMapResult',
-                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform produced empty output. Check your map links.` },
+                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform did not return serialized output.` },
                 });
                 break;
               }
@@ -769,29 +771,36 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 testMessages.push('✓ Transform completed');
               }
 
-              // Step 4: Validate output is well-formed XML
-              const formattedOutput = this.formatXml(outputXml);
+              // Step 4: Validate XML output without modifying serialized text or HTML.
               try {
-                const { XMLParser } = require('fast-xml-parser');
-                const outParser = new XMLParser({ ignoreAttributes: false });
-                outParser.parse(formattedOutput);
-                this.logger.info(`${operation}: output XML parsing completed.`);
-                testMessages.push('✓ Output XML is well-formed');
-              } catch (outParseErr: any) {
-                this.logger.warn(`${operation}: output XML parsing warning (${errorCategory(outParseErr)}).`);
-                testMessages.push(`⚠ Output XML validation warning: ${outParseErr.message}`);
+                const outputMethod = validateTestMapOutput(compileResult.xslt, outputXml);
+                if (outputMethod === 'xml') {
+                  // Saved files use UTF-8 regardless of the transform's requested encoding.
+                  outputXml = this.normalizeXmlForUtf8(outputXml);
+                }
+                this.logger.info(`${operation}: ${outputMethod} output validation completed.`);
+                testMessages.push(
+                  outputMethod === 'xml' ? '✓ Output XML is well-formed' : `✓ ${outputMethod.toUpperCase()} output preserved`
+                );
+              } catch (validationError: any) {
+                this.logger.error(`${operation}: output validation failed (${errorCategory(validationError)}).`);
+                webviewPanel.webview.postMessage({
+                  type: 'testMapResult',
+                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Output validation failed:\n${validationError.message}` },
+                });
+                break;
               }
 
               // Step 5: Save output.xml
-              fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
-              this.logger.info(`${operation}: output XML saved (${Buffer.byteLength(formattedOutput)} bytes); Test Map succeeded.`);
+              fs.writeFileSync(outputPath, outputXml, 'utf-8');
+              this.logger.info(`${operation}: output saved (${Buffer.byteLength(outputXml)} bytes); Test Map succeeded.`);
               testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
 
               // Open the output file in VS Code
               const outputUri = vscode.Uri.file(outputPath);
               await vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
 
-              const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${formattedOutput}`;
+              const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${outputXml}`;
               webviewPanel.webview.postMessage({
                 type: 'testMapResult',
                 data: { output: resultSummary },
@@ -1105,15 +1114,51 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     const baseDirectory = path.dirname(document.uri.fsPath);
     if (map.customXsltPath) {
       const xsltPath = path.resolve(baseDirectory, map.customXsltPath);
-      hydrated.customXslt = fs.existsSync(xsltPath) ? fs.readFileSync(xsltPath, 'utf-8') : '';
+      hydrated.customXslt = readTextFileSync(xsltPath) ?? '';
     }
     if (map.customExtensionXmlPath) {
       const extensionPath = path.resolve(baseDirectory, map.customExtensionXmlPath);
-      hydrated.customExtensionXml = fs.existsSync(extensionPath) ? fs.readFileSync(extensionPath, 'utf-8') : '';
+      const extensionXml = readTextFileSync(extensionPath);
+      if (extensionXml === undefined) {
+        throw new Error(`Custom extension-object XML file could not be read: ${extensionPath}`);
+      }
+      try {
+        hydrated.customExtensionXml = resolveExtensionObjectAssemblyPaths(extensionXml, path.dirname(extensionPath));
+      } catch (error) {
+        throw new Error(`${error instanceof Error ? error.message : String(error)}: ${extensionPath}`);
+      }
+    } else if (map.customExtensionXml !== undefined) {
+      hydrated.customExtensionXml = resolveExtensionObjectAssemblyPaths(map.customExtensionXml, baseDirectory);
     } else if (map.customXsltPath) {
       hydrated.customExtensionXml = '<ExtensionObjects />';
     }
+    hydrated.pages = map.pages.map((page) => ({
+      ...page,
+      functoids: page.functoids.map((functoid) => ({
+        ...functoid,
+        parameters: functoid.parameters.map((parameter) =>
+          parameter.type === 'assemblyPath' ? { ...parameter, value: resolveAssemblyFilePath(parameter.value, baseDirectory) } : parameter
+        ),
+        ...(functoid.scriptImplementations
+          ? {
+              scriptImplementations: functoid.scriptImplementations.map((implementation) =>
+                implementation.assemblyPath
+                  ? { ...implementation, assemblyPath: resolveAssemblyFilePath(implementation.assemblyPath, baseDirectory) }
+                  : implementation
+              ),
+            }
+          : {}),
+      })),
+    }));
     return hydrated;
+  }
+
+  private normalizeXmlForUtf8(content: string): string {
+    return content
+      .replace(/^\uFEFF/, '')
+      .replace(/^(\s*<\?xml\s[^?]*\bencoding\s*=\s*)(["'])([^"']+)\2/i, (declaration, prefix, quote, encoding) =>
+        encoding.toLowerCase() === 'utf-8' ? declaration : `${prefix}${quote}utf-8${quote}`
+      );
   }
 
   private async compileMap(map: MapDocument, sourceSchema?: SchemaTree, targetSchema?: SchemaTree): Promise<CompileResult> {
@@ -1124,6 +1169,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       const enrichedMap = await this.enrichExternalAssemblyMetadata(map);
       this.logger.info('Compilation: sending map to compiler worker.');
       const result = await this.compilerWorker.compileMap({ map: enrichedMap, sourceSchema, targetSchema });
+      if (result.xslt !== undefined) {
+        result.xslt = this.normalizeXmlForUtf8(result.xslt);
+      }
+      if (result.extensionObjectXml !== undefined) {
+        result.extensionObjectXml = this.normalizeXmlForUtf8(result.extensionObjectXml);
+      }
       const summary = `Compilation ${result.success ? 'succeeded' : 'failed'} in ${Date.now() - started}ms: ${result.errors.length} errors, ${result.warnings.length} warnings. Diagnostic details are shown in the editor.`;
       if (!result.success) {
         this.logger.error(summary);
@@ -1341,33 +1392,6 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
     result += xslt.substring(lastIndex);
     return result;
-  }
-
-  private formatXml(xml: string): string {
-    // Simple XML pretty-printer
-    let formatted = '';
-    let indent = 0;
-    const lines = xml.replace(/>\s*</g, '>\n<').split('\n');
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        continue;
-      }
-      if (trimmed.startsWith('</')) {
-        indent = Math.max(0, indent - 1);
-      }
-      formatted += `${'  '.repeat(indent)}${trimmed}\n`;
-      if (
-        trimmed.startsWith('<') &&
-        !trimmed.startsWith('</') &&
-        !trimmed.startsWith('<?') &&
-        !trimmed.endsWith('/>') &&
-        !trimmed.includes('</')
-      ) {
-        indent++;
-      }
-    }
-    return `<?xml version="1.0" encoding="utf-8"?>\n${formatted.replace(/^<\?xml[^?]*\?>\s*/i, '')}`;
   }
 
   private async resolveSchemaDependencies(schemaXml: string, schemaPath: string): Promise<Map<string, any>> {

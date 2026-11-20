@@ -9,14 +9,14 @@ import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
 // ESM namespace exports can't be spied on, so the two fs functions the provider writes/reads are wrapped here and default to the real ones.
 vi.mock('fs', async () => {
-  const actual = await vi.importActual<typeof import('fs')>('fs');
+  const actual = await vi.importActual<typeof fs>('fs');
   return { ...actual, default: actual, writeFileSync: vi.fn(actual.writeFileSync), readFileSync: vi.fn(actual.readFileSync) };
 });
 vi.mock('../src/worker/compilerWorkerClient', () => ({
   CompilerWorkerClient: vi.fn(() => ({ compileMap: vi.fn(), testMap: vi.fn() })),
 }));
 vi.mock('vscode', async () => {
-  const base = await vi.importActual<typeof import('vscode')>('vscode');
+  const base = await vi.importActual<typeof vscode>('vscode');
   return {
     ...base,
     ViewColumn: { Beside: 2 },
@@ -145,7 +145,7 @@ describe('map compilation and Test Map logging', () => {
     expect(logs()).toContain('parsing input XML');
     expect(logs()).toContain('compiled XSLT saved');
     expect(logs()).toContain('.NET transformation completed');
-    expect(logs()).toContain('output XML saved');
+    expect(logs()).toContain('output saved');
     expect(logs()).toContain('Test Map succeeded');
     expect(logs()).not.toMatch(/private-input|private-output|private-script/);
     expect(outputChannel.warn).toHaveBeenCalledWith(`Compilation warning 1/1: ${JSON.stringify(warning)}`);
@@ -167,6 +167,91 @@ describe('map compilation and Test Map logging', () => {
     expect(host.postMessage).toHaveBeenLastCalledWith({
       type: 'testMapResult',
       data: { output: '', error: 'private-path' },
+    });
+  });
+
+  test.each(['', '<?xml version="1.0" encoding="utf-8"?>', '<root><child></root>', '<first/><second/>', '<p:root/>'])(
+    'rejects invalid XML output before saving, opening or announcing success',
+    async (outputXml) => {
+      const host = await setup();
+      host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt: '<stylesheet/>' });
+      host.worker.testMap.mockResolvedValue({ outputXml, diagnostics: [] });
+      vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+      vi.mocked(fs.readFileSync).mockReturnValue('<stylesheet/>');
+
+      await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });
+
+      expect(fs.writeFileSync).not.toHaveBeenCalledWith(expect.stringMatching(/_output\.xml$/), expect.anything(), expect.anything());
+      expect(vscode.window.showTextDocument).not.toHaveBeenCalled();
+      expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+      expect(host.postMessage).toHaveBeenLastCalledWith({
+        type: 'testMapResult',
+        data: { output: '', error: expect.stringContaining('Output validation failed:') },
+      });
+      expect(logs()).not.toContain('Test Map succeeded');
+    }
+  );
+
+  test.each([
+    ['text', ''],
+    ['xml', '<?xml version="1.0"?><root> preserve <b>mixed</b> content </root>'],
+    ['text', '  text with < and &\r\n'],
+    ['html', '<!DOCTYPE html><html><body><br><input disabled></body></html>'],
+  ])('preserves serialized %s output when saving and reporting success', async (method, outputXml) => {
+    const host = await setup();
+    const xslt = `<x:stylesheet xmlns:x="http://www.w3.org/1999/XSL/Transform" version="1.0"><x:output method="${method}"/><x:template match="/"/></x:stylesheet>`;
+    host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt });
+    host.worker.testMap.mockResolvedValue({ outputXml, diagnostics: [] });
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue(xslt);
+
+    await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });
+
+    expect(fs.writeFileSync).toHaveBeenCalledWith(expect.stringMatching(/_output\.xml$/), outputXml, 'utf-8');
+    expect(vscode.window.showTextDocument).toHaveBeenCalledOnce();
+    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Test Map succeeded'));
+    expect(host.postMessage).toHaveBeenLastCalledWith({
+      type: 'testMapResult',
+      data: { output: expect.stringContaining(outputXml) },
+    });
+  });
+
+  test('also validates output produced by the JavaScript fallback', async () => {
+    const host = await setup();
+    const xslt =
+      '<x:stylesheet xmlns:x="http://www.w3.org/1999/XSL/Transform" version="1.0"><x:output method="xml"/><x:template match="/"><x:text>not XML</x:text></x:template></x:stylesheet>';
+    host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt });
+    host.worker.testMap.mockRejectedValue(new Error('Worker unavailable'));
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue(xslt);
+
+    await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });
+
+    expect(fs.writeFileSync).not.toHaveBeenCalledWith(expect.stringMatching(/_output\.xml$/), expect.anything(), expect.anything());
+    expect(vscode.window.showTextDocument).not.toHaveBeenCalled();
+    expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+    expect(host.postMessage).toHaveBeenLastCalledWith({
+      type: 'testMapResult',
+      data: { output: '', error: expect.stringContaining('Output validation failed:') },
+    });
+  });
+
+  test.each(['utf-16', 'iso-8859-1'])('keeps the XML declaration consistent with UTF-8 output files for %s', async (encoding) => {
+    const host = await setup();
+    const xslt = '<x:stylesheet xmlns:x="http://www.w3.org/1999/XSL/Transform" version="1.0"><x:output method="xml"/></x:stylesheet>';
+    const content = '<root> preserve <b>mixed</b> content </root>';
+    host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt });
+    host.worker.testMap.mockResolvedValue({ outputXml: `<?xml version="1.0" encoding="${encoding}"?>${content}`, diagnostics: [] });
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue(xslt);
+
+    await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });
+
+    const outputXml = `<?xml version="1.0" encoding="utf-8"?>${content}`;
+    expect(fs.writeFileSync).toHaveBeenCalledWith(expect.stringMatching(/_output\.xml$/), outputXml, 'utf-8');
+    expect(host.postMessage).toHaveBeenLastCalledWith({
+      type: 'testMapResult',
+      data: { output: expect.stringContaining(outputXml) },
     });
   });
 

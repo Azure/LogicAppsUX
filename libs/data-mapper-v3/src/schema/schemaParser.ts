@@ -681,7 +681,9 @@ export class SchemaParser {
       return undefined;
     }
     if (!qname.includes(':')) {
-      return schema['@_targetNamespace'];
+      const namespace = namespaces.get('') ?? schema['@_xmlns'] ?? '';
+      // Chameleon includes retarget references that originally had no namespace.
+      return namespace || schema['#chameleonTargetNamespace'] || '';
     }
     const prefix = qname.split(':')[0];
     return namespaces.get(prefix) ?? schema[`@_xmlns:${prefix}`];
@@ -888,7 +890,9 @@ export class SchemaParser {
   private extractNamespaces(schema: any): Map<string, string> {
     const namespaces = new Map<string, string>();
     for (const key of Object.keys(schema)) {
-      if (key.startsWith('@_xmlns:')) {
+      if (key === '@_xmlns') {
+        namespaces.set('', schema[key]);
+      } else if (key.startsWith('@_xmlns:')) {
         const prefix = key.substring(8);
         namespaces.set(prefix, schema[key]);
       }

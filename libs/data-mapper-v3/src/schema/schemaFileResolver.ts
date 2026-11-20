@@ -30,25 +30,26 @@ export function resolveSchemaFilePath(docDir: string, schemaLocation: string, ro
   if (!schemaLocation) {
     return '';
   }
-  if (path.isAbsolute(schemaLocation)) {
-    return schemaLocation;
+  const location = schemaLocation.replace(/[\\/]/g, path.sep);
+  if (path.isAbsolute(location)) {
+    return location;
   }
 
   // Try exact match first
-  let resolved = path.resolve(docDir, schemaLocation);
+  let resolved = path.resolve(docDir, location);
   if (fs.existsSync(resolved)) {
     return resolved;
   }
 
   // Try appending .xsd extension
-  resolved = path.resolve(docDir, `${schemaLocation}.xsd`);
+  resolved = path.resolve(docDir, `${location}.xsd`);
   if (fs.existsSync(resolved)) {
     return resolved;
   }
 
   // Try just the filename in the same directory (handles paths like
   // ".\Web References\localhost\Reference.xsd" when the XSD is alongside the BTM)
-  const baseName = path.basename(schemaLocation);
+  const baseName = path.basename(location);
   resolved = path.resolve(docDir, baseName);
   if (fs.existsSync(resolved)) {
     return resolved;
@@ -64,16 +65,16 @@ export function resolveSchemaFilePath(docDir: string, schemaLocation: string, ro
 
   // Handle .NET fully-qualified type names used as schema references in BizTalk
   // e.g. "Microsoft.Samples.BizTalk.Litware.Schemas.EDI.X12_00401_850"
-  if (schemaLocation.includes('.') && !schemaLocation.includes('/') && !schemaLocation.includes('\\')) {
+  if (location.includes('.') && !location.includes('/') && !location.includes('\\')) {
     // Try the full dotted name + .xsd (e.g. "Microsoft.Samples...X12_00401_850.xsd")
-    resolved = path.resolve(docDir, `${schemaLocation}.xsd`);
+    resolved = path.resolve(docDir, `${location}.xsd`);
     if (fs.existsSync(resolved)) {
       return resolved;
     }
 
     // Try the short name (last segment after final dot) + .xsd
-    const lastDotIdx = schemaLocation.lastIndexOf('.');
-    const shortName = schemaLocation.substring(lastDotIdx + 1);
+    const lastDotIdx = location.lastIndexOf('.');
+    const shortName = location.substring(lastDotIdx + 1);
     resolved = path.resolve(docDir, `${shortName}.xsd`);
     if (fs.existsSync(resolved)) {
       return resolved;
@@ -99,7 +100,7 @@ export function resolveSchemaFilePath(docDir: string, schemaLocation: string, ro
       const match = files.find(
         (f: string) =>
           f.endsWith('.xsd') &&
-          (f === `${schemaLocation}.xsd` ||
+          (f === `${location}.xsd` ||
             f === `${shortName}.xsd` ||
             f.endsWith(`.${shortName}.xsd`) ||
             (shortName.endsWith('Schema') && f === `${shortName.slice(0, -6)}.xsd`))
@@ -135,7 +136,7 @@ export function resolveSchemaFilePath(docDir: string, schemaLocation: string, ro
         return resolved;
       }
     }
-    resolved = path.join(dir, schemaLocation);
+    resolved = path.join(dir, location);
     if (fs.existsSync(resolved)) {
       return resolved;
     }
@@ -153,18 +154,18 @@ export function resolveSchemaFilePath(docDir: string, schemaLocation: string, ro
       }
     });
 
-  const localMatch = resolveLooseSchemaReference(schemaLocation, collectCandidatePaths([docDir]), rootName, readTextFileSync);
+  const localMatch = resolveLooseSchemaReference(location, collectCandidatePaths([docDir]), rootName, readTextFileSync);
   if (localMatch) {
     return localMatch;
   }
 
-  const looseMatch = resolveLooseSchemaReference(schemaLocation, collectCandidatePaths(siblingDirs), rootName, readTextFileSync);
+  const looseMatch = resolveLooseSchemaReference(location, collectCandidatePaths(siblingDirs), rootName, readTextFileSync);
   if (looseMatch) {
     return looseMatch;
   }
 
   // Fallback
-  return path.resolve(docDir, schemaLocation);
+  return path.resolve(docDir, location);
 }
 
 // Returns the schemaLocation of every xs:import / xs:include in a schema document.
