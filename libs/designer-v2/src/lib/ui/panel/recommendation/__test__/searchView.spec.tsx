@@ -68,8 +68,15 @@ vi.mock('../SearchOpeationsService', () => ({
   DefaultSearchOperationsService: class {
     constructor(private operations: DiscoveryOpArray) {}
 
-    async searchOperations(term: string, filter: (operation: DiscoveryOpArray[number]) => boolean) {
-      return term ? this.operations.filter((op) => op.name.toLowerCase().includes(term.toLowerCase()) && filter(op)) : [];
+    async searchOperations(term: string, filter?: (operation: DiscoveryOpArray[number]) => boolean) {
+      if (!term) {
+        return [];
+      }
+
+      return this.operations
+        .filter((op) => op.name.toLowerCase().includes(term.toLowerCase()))
+        .slice(0, 100)
+        .filter((op) => !filter || filter(op));
     }
   },
 }));
@@ -232,6 +239,36 @@ describe('SearchView', () => {
   });
 
   describe('Search Filtering', () => {
+    test('finds a matching trigger after more than 100 matching actions', async () => {
+      vi.mocked(useDiscoveryPanelIsAddingTrigger).mockReturnValue(true);
+      const actions = Array.from({ length: 101 }, (_, index) => ({ ...mockOperations[0], id: `http-action-${index}` }));
+      const operations = [
+        ...actions,
+        {
+          id: 'http-trigger',
+          name: 'When an HTTP request is received',
+          type: 'trigger',
+          properties: { ...mockOperations[0].properties, trigger: 'Request' },
+        },
+      ];
+
+      render(
+        <SearchView
+          searchTerm="http"
+          allOperations={operations}
+          groupByConnector={true}
+          setGroupByConnector={mockSetGroupByConnector}
+          isLoading={false}
+          onOperationClick={mockOnOperationClick}
+          displayRuntimeInfo={true}
+        />,
+        { wrapper: createWrapper() }
+      );
+
+      await screen.findByTestId('result-http-trigger');
+      expect(screen.getByTestId('results-count').textContent).toBe('1');
+    });
+
     test.each([true, false])('only hides matching actions when adding a trigger (%s)', async (isAddingTrigger) => {
       vi.mocked(useDiscoveryPanelIsAddingTrigger).mockReturnValue(isAddingTrigger);
       const operations = [
