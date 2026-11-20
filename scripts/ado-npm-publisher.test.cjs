@@ -361,6 +361,27 @@ test('builds and packs only the verified cohort after checking each version rewr
     assert.equal(attempted.length, 2);
 });
 
+test('branch bootstrap rejects a mismatched pnpm download before extracting or running it', () => {
+    const root = workspace();
+    const { packageManager } = require('../package.json');
+    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ packageManager }));
+    const output = path.join(root, 'output');
+    const requested = [];
+    const download = (command, args) => {
+        requested.push(command);
+        assert.equal(command, 'curl');
+        assert.equal(new URL(args.at(-1)).hostname, 'ms-feed-25.pkgs.visualstudio.com');
+        fs.writeFileSync(args[args.indexOf('--output') + 1], 'not the pinned pnpm archive');
+        return { status: 0 };
+    };
+    assert.throws(
+        () => buildCohort({ ...branchEnv, SOURCE_ROOT: root, ARTIFACT_ROOT: output },
+            { verified: branchProvenance(branchEnv) }, download, assert.fail, { HOME: root }),
+        /pnpm archive does not match the pinned SHA-512/
+    );
+    assert.deepEqual(requested, ['curl']);
+});
+
 test('validates ustar prefix, entry types, checksums and entrypoint files without a leading ./', () => {
     const item = COHORT[0];
     const { contract, pack, content, packed } = fixture(item);

@@ -1,7 +1,8 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
 const { COHORT, branchProvenance, buildManifestContract, parseReleaseRef, readVerifiedContracts, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
     require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, npmRunner, publishPackage, readNpmAuthorization, validateArtifactFiles } =
@@ -16,6 +17,32 @@ async function prepareArtifact(env, log) {
     verifyCheckoutHead(env.SOURCE_ROOT, snapshot.verified.commitSha);
     const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, snapshot.verified, snapshot.contracts, { prepare: true });
     log(`Validated ${artifact.packages.length} tarballs; feed authentication and publication were not attempted.`);
+}
+
+function bootstrapBranchPnpm(sourceRoot, home, exec) {
+    // snapshotCheckout already checked this pin against the committed, reviewed manifest.
+    const { packageManager } = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'package.json'), 'utf8'));
+    const pin = /^pnpm@(\d+\.\d+\.\d+)\+sha512\.([a-f0-9]{128})$/.exec(packageManager);
+    assert(pin, 'Expected pnpm with an exact version and SHA-512 pin.');
+    const [, version, sha512] = pin;
+    const archive = path.join(home, 'pnpm.tgz');
+
+    // The lockfile mirror serves the tarball but not Corepack's version metadata endpoint.
+    const mirror = 'https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry';
+    exec('curl', [
+        '--disable', '--fail', '--silent', '--show-error', '--location', '--max-redirs', '1',
+        '--proto', '=https', '--proto-redir', '=https', '--max-time', '120', '--max-filesize', '10000000',
+        '--output', archive, `${mirror}/pnpm/-/pnpm-${version}.tgz`,
+    ]);
+    assert(
+        createHash('sha512').update(fs.readFileSync(archive)).digest('hex') === sha512,
+        'Downloaded pnpm archive does not match the pinned SHA-512.'
+    );
+    exec('tar', ['-xzf', archive, '-C', home]);
+    // Nested build scripts also invoke pnpm by name.
+    const pnpm = path.join(home, 'bin', 'pnpm');
+    fs.symlinkSync(path.join(home, 'package', 'bin', 'pnpm.cjs'), pnpm);
+    return pnpm;
 }
 
 function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => process.stdout.write(text), childEnv) {
@@ -40,11 +67,9 @@ function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => proce
             throw new Error(`${command} failed: ${result.error?.message ?? `exit ${result.status ?? 'unavailable'}`}.`);
         }
     };
-    if (childEnv) {
-        // Nested package builds invoke pnpm by name; keep its shim off the shared tool installation.
-        exec('corepack', ['enable', '--install-directory', path.join(childEnv.HOME, 'bin'), 'pnpm']);
-    }
-    exec('corepack', ['pnpm', 'install', '--recursive', '--frozen-lockfile', '--strict-peer-dependencies']);
+    const pnpmBin = childEnv && bootstrapBranchPnpm(env.SOURCE_ROOT, childEnv.HOME, exec);
+    const pnpm = args => (pnpmBin ? exec(pnpmBin, args) : exec('corepack', ['pnpm', ...args]));
+    pnpm(['install', '--recursive', '--frozen-lockfile', '--strict-peer-dependencies']);
     exec(process.execPath, ['scripts/update-versions.js', version]);
     // The source rewrite logs individual file failures, so verify all nine before building.
     for (const item of COHORT) {
@@ -52,9 +77,9 @@ function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => proce
         assert.equal(manifest.version, version, `${item.name}: version rewrite failed.`);
         assert.deepEqual(buildManifestContract(item, manifest, version), snapshot.contracts[item.name], `${item.name}: source contract changed.`);
     }
-    exec('corepack', ['pnpm', 'run', 'build:lib']);
+    pnpm(['run', 'build:lib']);
     for (const item of COHORT) {
-        exec('corepack', ['pnpm', '--dir', path.join(env.SOURCE_ROOT, item.directory), 'pack', '--pack-destination', env.ARTIFACT_ROOT]);
+        pnpm(['--dir', path.join(env.SOURCE_ROOT, item.directory), 'pack', '--pack-destination', env.ARTIFACT_ROOT]);
     }
 }
 
