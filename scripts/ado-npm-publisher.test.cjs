@@ -373,7 +373,7 @@ test('validates ustar prefix, entry types, checksums and entrypoint files withou
     assert.throws(() => validate(pack(packed, [...content, ['package/build/lib/.npmrc', 'x']])), /outside the library package/);
 });
 
-test('reads actual local npm pack output from a synthetic library without running lifecycle scripts', () => {
+test('validates a real npm pack archive against the bundled parser and preserves its integrity', () => {
     const item = COHORT[0];
     const { contract, packed } = fixture(item);
     const root = workspace();
@@ -382,11 +382,13 @@ test('reads actual local npm pack output from a synthetic library without runnin
     fs.mkdirSync(path.join(root, 'build/lib'), { recursive: true });
     for (const file of ['index.js', 'index.d.ts', 'index.css']) fs.writeFileSync(path.join(root, 'build/lib', file), 'fixture');
     fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ ...packed, files: ['build/lib/**/*'] }));
-    const result = spawnSync('npm', ['pack', '--offline', '--ignore-scripts', '--json', '--prefix', root, '--userconfig', config,
+    const npm = path.join(resolveNpmRoot(), 'bin/npm-cli.js');
+    const result = spawnSync(process.execPath, [npm, 'pack', '--offline', '--ignore-scripts', '--json', '--prefix', root, '--userconfig', config,
         '--globalconfig', '/dev/null', '--cache', path.join(root, 'cache')], { cwd: root, env: { HOME: root, PATH: process.env.PATH }, encoding: 'utf8' });
     assert.equal(result.status, 0, 'npm pack fixture failed');
-    const [{ filename }] = JSON.parse(result.stdout);
-    assert.equal(validateTarballArtifact(fs.readFileSync(path.join(root, filename)), item, version, contract).file, filename);
+    const [{ filename, integrity, size }] = JSON.parse(result.stdout);
+    const artifact = validateTarballArtifact(fs.readFileSync(path.join(root, filename)), item, version, contract);
+    assert.deepEqual({ file: artifact.file, integrity: artifact.integrity, bytes: artifact.bytes }, { file: filename, integrity, bytes: size });
 });
 
 test('rejects file ancestors in either tar order and noncanonical root manifests', () => {

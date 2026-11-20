@@ -65,37 +65,38 @@ function readTarball(buffer) {
     let ended = false;
     const parser = new Parser({
         strict: true,
-        onentry(entry) {
-            const directory = entry.type === 'Directory';
-            const name = directory ? entry.path.replace(/\/$/, '') : entry.path;
-            const foldedName = name.toLowerCase().normalize('NFC');
-            if (foldedName === 'package/package.json' && name !== 'package/package.json') {
-                throw new Error('Noncanonical package manifest path.');
-            }
-            if (!isPackagePath(name) || (name !== 'package' && !name.startsWith('package/')) ||
-                foldedFiles.has(foldedName) || foldedDirectories.has(foldedName)) throw new Error('Invalid or duplicate tar entry path.');
-            if (!directory && !['File', 'OldFile'].includes(entry.type)) throw new Error('Unexpected tar entry type.');
-            if (!isPackageContent(name, directory)) throw new Error('Unexpected path outside the library package content.');
-            // Case-insensitive consumers must not see files overwrite entries or become directories.
-            const parts = foldedName.split('/');
-            if (parts.some((_, index) => foldedFiles.has(parts.slice(0, index).join('/'))) ||
-                (!directory && [...foldedFiles, ...foldedDirectories].some(existing => existing.startsWith(`${foldedName}/`)))) {
-                throw new Error('Tar file conflicts with a directory ancestor.');
-            }
-            if (directory) foldedDirectories.add(foldedName);
-            else {
-                foldedFiles.add(foldedName);
-                entries.set(name, entry.size);
-            }
-            if (name === 'package/package.json') {
-                if (!entries.has(name) || entry.size > 256 * 1024) throw new Error('Invalid packed package.json.');
-                const chunks = [];
-                entry.on('data', chunk => chunks.push(chunk));
-                entry.on('end', () => entries.set(name, Buffer.concat(chunks)));
-            }
-            entry.resume();
-        },
         ondone() { ended = true; },
+    });
+    // The entry event is supported across npm's bundled tar versions, unlike the onentry option.
+    parser.on('entry', entry => {
+        const directory = entry.type === 'Directory';
+        const name = directory ? entry.path.replace(/\/$/, '') : entry.path;
+        const foldedName = name.toLowerCase().normalize('NFC');
+        if (foldedName === 'package/package.json' && name !== 'package/package.json') {
+            throw new Error('Noncanonical package manifest path.');
+        }
+        if (!isPackagePath(name) || (name !== 'package' && !name.startsWith('package/')) ||
+            foldedFiles.has(foldedName) || foldedDirectories.has(foldedName)) throw new Error('Invalid or duplicate tar entry path.');
+        if (!directory && !['File', 'OldFile'].includes(entry.type)) throw new Error('Unexpected tar entry type.');
+        if (!isPackageContent(name, directory)) throw new Error('Unexpected path outside the library package content.');
+        // Case-insensitive consumers must not see files overwrite entries or become directories.
+        const parts = foldedName.split('/');
+        if (parts.some((_, index) => foldedFiles.has(parts.slice(0, index).join('/'))) ||
+            (!directory && [...foldedFiles, ...foldedDirectories].some(existing => existing.startsWith(`${foldedName}/`)))) {
+            throw new Error('Tar file conflicts with a directory ancestor.');
+        }
+        if (directory) foldedDirectories.add(foldedName);
+        else {
+            foldedFiles.add(foldedName);
+            entries.set(name, entry.size);
+        }
+        if (name === 'package/package.json') {
+            if (!entries.has(name) || entry.size > 256 * 1024) throw new Error('Invalid packed package.json.');
+            const chunks = [];
+            entry.on('data', chunk => chunks.push(chunk));
+            entry.on('end', () => entries.set(name, Buffer.concat(chunks)));
+        }
+        entry.resume();
     });
     parser.on('ignoredEntry', entry => {
         if (!['ExtendedHeader', 'NextFileHasLongPath', 'OldExtendedHeader'].includes(entry.type)) {
