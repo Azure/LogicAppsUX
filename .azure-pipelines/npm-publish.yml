@@ -1,16 +1,213 @@
-# Starter for the Azure DevOps npm publishing pipeline (manual runs only).
-# Placeholder so the ADO pipeline definition can be created; the real
-# build/pack/publish steps replace this. It publishes nothing.
+# Manual 1ES validation for the additive LogicAppsUX npm publisher.
+# Do not queue until the agent, connection, and public-source controls are approved.
 trigger: none
 pr: none
+schedules: []
 
-pool:
-  vmImage: ubuntu-latest
+parameters:
+  - name: approvedPool
+    displayName: Approved Linux 1ES pool and image
+    type: object
+    default: {}
+  - name: approvedSdlPool
+    displayName: Approved Windows 1ES source analysis pool and image
+    type: object
+    default: {}
+  - name: releaseRef
+    displayName: Existing release tag (refs/tags/v<major>.<minor>.<patch>)
+    type: string
+    default: ''
+  - name: expectedSha
+    displayName: Expected 40-character commit SHA for the release tag
+    type: string
+    default: ''
+  - name: publishToFeed
+    displayName: Publish to microsoft-logic-apps (blocked)
+    type: boolean
+    default: false
+  - name: runNpmDryRun
+    displayName: Run authenticated npm dry run
+    type: boolean
+    default: false
+  - name: runCredentialedPreflight
+    displayName: Run read-only feed preflight (without npm dry run)
+    type: boolean
+    default: false
+  - name: requestLocalIsolatedTestFeed
+    displayName: Request local-only isolated test-feed path (blocked)
+    type: boolean
+    default: false
 
-steps:
-  - checkout: self
-    fetchDepth: 1
-  - script: |
-      echo "Starter pipeline for LogicAppsUX npm publishing (no-op)."
-      echo "Source: $(Build.Repository.Name) @ $(Build.SourceVersion)"
-    displayName: Starter no-op
+variables:
+  PublisherRoot: '$(Pipeline.Workspace)/publisher-self'
+  SourceRoot: '$(Pipeline.Workspace)/logicappsux-source'
+  PackageArtifact: logicappsux-npm-cohort
+  PackageOutput: '$(Build.ArtifactStagingDirectory)/logicappsux-npm-cohort'
+  ProvenanceFile: '$(Agent.TempDirectory)/publisher-provenance.json'
+  ContractFile: '$(Agent.TempDirectory)/publisher-contract.json'
+  PublishNpmrc: '$(Agent.TempDirectory)/ado-logicappsux-publish.npmrc'
+  NpmCwd: '$(Agent.TempDirectory)/ado-logicappsux-npm'
+
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+    # Self supplies the helpers; the separate tag checkout uses the same GitHub connection as definition 489908.
+    - repository: logicAppsUxRelease
+      type: github
+      name: Azure/LogicAppsUX
+      endpoint: 425f6c0e-5d1b-4d23-bf31-4d3650f9b98c
+      ref: ${{ parameters.releaseRef }}
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool: ${{ parameters.approvedPool }}
+    sdl:
+      sourceAnalysisPool: ${{ parameters.approvedSdlPool }}
+      sourceRepositoriesToScan:
+        include:
+          - repository: logicAppsUxRelease
+    stages:
+      # Contributors cannot queue local-only isolated test-feed runs from this pipeline definition.
+      - ${{ if parameters.requestLocalIsolatedTestFeed }}:
+        - stage: LocalIsolatedTestFeedBlocked
+          jobs:
+            - job: RejectIsolatedTestFeedRequest
+              steps:
+                - checkout: none
+                - bash: |
+                    printf '%s\n' 'Local-only isolated test-feed path is fixture-only and cannot run in this pipeline.' >&2
+                    exit 1
+                  displayName: Block isolated test-feed request
+      # Do not expand any build, release checkout, artifact, or authentication steps for a publication request.
+      - ${{ if and(not(parameters.requestLocalIsolatedTestFeed), parameters.publishToFeed) }}:
+        - stage: PublicationBlocked
+          jobs:
+            - job: RejectPublication
+              steps:
+                - checkout: none
+                - bash: |
+                    printf '%s\n' 'Publication blocked: public-source controls and Azure Artifacts publication behavior have not been verified.' >&2
+                    exit 1
+                  displayName: Block production publication
+      - ${{ if and(not(parameters.requestLocalIsolatedTestFeed), not(parameters.publishToFeed)) }}:
+        - stage: BuildValidation
+          displayName: Build and validate additive npm artifact
+          jobs:
+            - job: BuildCohort
+              workspace:
+                clean: all
+              templateContext:
+                outputs:
+                  - output: pipelineArtifact
+                    targetPath: '$(PackageOutput)'
+                    artifactName: '$(PackageArtifact)'
+              steps:
+                - checkout: self
+                  path: publisher-self
+                  clean: true
+                  persistCredentials: false
+                - task: UseNode@1
+                  displayName: Use Node 24 for trusted release verification
+                  inputs:
+                    version: '24.x'
+                - bash: node scripts/ado-npm-publisher.cjs verify-source
+                  displayName: Verify the public release before release checkout
+                  workingDirectory: '$(PublisherRoot)'
+                  env:
+                    RELEASE_REF: ${{ parameters.releaseRef }}
+                    EXPECTED_SHA: ${{ parameters.expectedSha }}
+                    PROVENANCE_FILE: '$(ProvenanceFile)'
+                - checkout: logicAppsUxRelease
+                  path: logicappsux-source
+                  clean: true
+                  persistCredentials: false
+                  fetchDepth: 0
+                - bash: node scripts/ado-npm-publisher.cjs snapshot-source
+                  displayName: Reverify the release and snapshot checked-out Git manifests
+                  workingDirectory: '$(PublisherRoot)'
+                  env:
+                    RELEASE_REF: ${{ parameters.releaseRef }}
+                    EXPECTED_SHA: ${{ parameters.expectedSha }}
+                    PROVENANCE_FILE: '$(ProvenanceFile)'
+                    SOURCE_ROOT: '$(SourceRoot)'
+                    CONTRACT_FILE: '$(ContractFile)'
+                - bash: node scripts/ado-npm-publisher.cjs build-cohort
+                  displayName: Restore, build and pack the verified release cohort
+                  workingDirectory: '$(PublisherRoot)'
+                  env:
+                    SOURCE_ROOT: '$(SourceRoot)'
+                    CONTRACT_FILE: '$(ContractFile)'
+                    ARTIFACT_ROOT: '$(PackageOutput)'
+                - bash: node scripts/ado-npm-publisher.cjs prepare-artifact
+                  displayName: Verify unchanged HEAD and validate isolated build output
+                  workingDirectory: '$(PublisherRoot)'
+                  env:
+                    SOURCE_ROOT: '$(SourceRoot)'
+                    CONTRACT_FILE: '$(ContractFile)'
+                    ARTIFACT_ROOT: '$(PackageOutput)'
+        - ${{ if or(parameters.runNpmDryRun, parameters.runCredentialedPreflight) }}:
+          - stage: Feed
+            displayName: Read-only feed preflight and optional npm dry run
+            dependsOn: BuildValidation
+            jobs:
+              - job: TarballsOnly
+                workspace:
+                  clean: all
+                steps:
+                  - checkout: self
+                    path: publisher-self
+                    clean: true
+                    persistCredentials: false
+                  - task: UseNode@1
+                    inputs:
+                      version: '24.x'
+                  - task: DownloadPipelineArtifact@2
+                    displayName: Download this run's validated tarball artifact
+                    inputs:
+                      artifact: '$(PackageArtifact)'
+                      path: '$(Pipeline.Workspace)/$(PackageArtifact)'
+                  - bash: node scripts/ado-npm-publisher.cjs validate-artifact
+                    displayName: Revalidate provenance and tarball contents before authentication
+                    workingDirectory: '$(PublisherRoot)'
+                    env:
+                      RELEASE_REF: ${{ parameters.releaseRef }}
+                      EXPECTED_SHA: ${{ parameters.expectedSha }}
+                      ARTIFACT_ROOT: '$(Pipeline.Workspace)/$(PackageArtifact)'
+                  - bash: |
+                      set -eu
+                      umask 077
+                      mkdir "$NPM_CWD"
+                      (set -C; printf '%s\n' 'registry=https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/' > "$PUBLISH_NPMRC")
+                    displayName: Create dedicated npm config and empty working directory
+                    workingDirectory: '$(PublisherRoot)'
+                    env:
+                      PUBLISH_NPMRC: '$(PublishNpmrc)'
+                      NPM_CWD: '$(NpmCwd)'
+                  - task: npmAuthenticate@0
+                    displayName: Authenticate dedicated npmrc
+                    inputs:
+                      workingFile: '$(PublishNpmrc)'
+                  - bash: node scripts/ado-npm-publisher.cjs feed
+                    displayName: Validate exact feed and package metadata
+                    workingDirectory: '$(PublisherRoot)'
+                    env:
+                      RELEASE_REF: ${{ parameters.releaseRef }}
+                      EXPECTED_SHA: ${{ parameters.expectedSha }}
+                      ARTIFACT_ROOT: '$(Pipeline.Workspace)/$(PackageArtifact)'
+                      PUBLISH_NPMRC: '$(PublishNpmrc)'
+                      NPM_CWD: '$(NpmCwd)'
+                      ADO_FEED_TOKEN: $(System.AccessToken)
+                      ${{ if parameters.runNpmDryRun }}:
+                        PUBLISHER_MODE: dry-run
+                      ${{ else }}:
+                        PUBLISHER_MODE: preflight
+                  - bash: rm -f -- "$PUBLISH_NPMRC"
+                    condition: always()
+                    displayName: Remove authenticated npm config
+                    workingDirectory: '$(PublisherRoot)'
+                    env:
+                      PUBLISH_NPMRC: '$(PublishNpmrc)'
