@@ -5,7 +5,7 @@ const { spawnSync } = require('node:child_process');
 const { randomUUID } = require('node:crypto');
 const { gzipSync } = require('node:zlib');
 const { afterEach, test } = require('node:test');
-const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, MANIFEST_FILE_NAME, buildManifestContract, parseReleaseRef, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } =
+const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, MANIFEST_FILE_NAME, branchProvenance, buildManifestContract, parseReleaseRef, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } =
     require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, digest, npmRunner, publishPackage, readNpmAuthorization, resolveNpmRoot, validateArtifactFiles, validateTarballArtifact } =
     require('./ado-npm-publisher-artifact.cjs');
@@ -18,6 +18,13 @@ const version = '5.1022.0';
 const previousVersion = '5.1021.0';
 const distTag = 'latest';
 const verified = { releaseTag: 'v5.1022.0', releaseId: 7, commitSha, version };
+const branchEnv = {
+    SOURCE_REPOSITORY: 'Azure/LogicAppsUX',
+    SOURCE_BRANCH: 'refs/heads/krmitta/ado-npm-publish-pipeline',
+    SOURCE_VERSION: commitSha,
+    EXPECTED_SHA: commitSha,
+    BUILD_ID: '192333967',
+};
 const roots = [];
 const workspace = () => {
     const root = path.join(fs.realpathSync('scripts'), `.publisher-test-${randomUUID()}`);
@@ -47,15 +54,15 @@ function tar(entries) {
     return gzipSync(Buffer.concat([...chunks, Buffer.alloc(1024)]));
 }
 
-function fixture(definition) {
+function fixture(definition, artifactVersion = version) {
     const source = { name: definition.name,
         dependencies: { react: '^18.2.0', ...Object.fromEntries(definition.runtimeDependencies.map(name => [name, 'workspace:*'])) },
         peerDependencies: { '@fluentui/react': '^8.0.0' },
         publishConfig: { main: 'build/lib/index.js', module: 'build/lib/index.js', types: 'build/lib/index.d.ts',
             exports: { '.': './build/lib/index.js', './index.css': './build/lib/index.css' } } };
     if (definition.directory === 'libs/designer-ui-v2') source.publishConfig.exports['./metrics'] = './build/lib/metrics.js';
-    const contract = buildManifestContract(definition, source, version);
-    const packed = { name: definition.name, version, ...source.publishConfig, dependencies: contract.dependencies, peerDependencies: contract.peerDependencies };
+    const contract = buildManifestContract(definition, source, artifactVersion);
+    const packed = { name: definition.name, version: artifactVersion, ...source.publishConfig, dependencies: contract.dependencies, peerDependencies: contract.peerDependencies };
     const content = [
         ['index.js', 'export {};', { prefix: 'package/build/lib' }],
         ['package/build/lib/index.d.ts', 'export {};'],
@@ -67,23 +74,25 @@ function fixture(definition) {
     return { source, contract, packed, content, pack };
 }
 
-function artifactFixture() {
+function artifactFixture(provenance = verified) {
     const dir = workspace();
     const contracts = Object.fromEntries(COHORT.map(item => {
-        const { pack, contract } = fixture(item);
-        const filename = `${item.name.slice(1).replace('/', '-')}-${version}.tgz`;
+        const { pack, contract } = fixture(item, provenance.version);
+        const filename = `${item.name.slice(1).replace('/', '-')}-${provenance.version}.tgz`;
         fs.writeFileSync(path.join(dir, filename), pack());
         return [item.name, contract];
     }));
-    return { dir, contracts, record: validateArtifactFiles(dir, verified, contracts, { prepare: true }) };
+    return { dir, contracts, record: validateArtifactFiles(dir, provenance, contracts, { prepare: true }) };
 }
 
-function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = new Set() } = {}) {
+function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = new Set(), provenance = verified } = {}) {
     const pinnedFeed = { id: 'logicappsux-npm-e2e.invalid', name: 'logicappsux-npm-e2e', registry: 'https://logicappsux-feed.invalid/npm/registry/' };
     const state = new Map();
     const writes = [];
     const stored = new Map();
-    const { dir, contracts, record } = artifactFixture();
+    const { dir, contracts, record } = artifactFixture(provenance);
+    const branch = provenance.kind === 'branch-e2e';
+    const tagField = branch ? 'testTag' : 'latest';
     for (const pkg of record.packages) {
         if (empty) continue;
         if (missing.has(pkg.name)) {
@@ -107,7 +116,7 @@ function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = ne
             protocol: FIXTURE_PROTOCOL,
             packageName: name,
             status: 200,
-            latest: snapshot.latest,
+            [tagField]: snapshot.latest,
             versions: [...snapshot.versions.entries()].map(([pkgVersion, integrity]) => ({ name, version: pkgVersion, integrity })),
         };
     };
@@ -119,7 +128,7 @@ function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = ne
                 events.push({ type: 'version', version: pkgVersion, integrity });
             }
         }
-        if (upstream.has(name)) events.push({ type: 'upstream', version });
+        if (upstream.has(name)) events.push({ type: 'upstream', version: provenance.version });
         return [
             { protocol: FIXTURE_PROTOCOL, packageName: name, events: events.slice(0, 1), nextCursor: events.length > 1 ? 'next' : null, complete: events.length <= 1 },
             { protocol: FIXTURE_PROTOCOL, packageName: name, events: events.slice(1), nextCursor: null, complete: true },
@@ -136,7 +145,8 @@ function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = ne
             const pages = inventory(name);
             return cursor === 'next' ? pages[1] : pages[0];
         },
-        async writePackage(entry, bytes) {
+        async writePackage(entry, bytes, tag = distTag) {
+            assert.equal(tag, branch ? 'ado-e2e' : distTag);
             assert.deepEqual(digest(bytes), { integrity: entry.integrity, bytes: entry.bytes, sha256: entry.sha256 });
             writes.push(entry.name);
             const versions = state.get(entry.name)?.versions ?? new Map();
@@ -181,7 +191,7 @@ function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = ne
         writes,
         options: {
             artifactRoot: dir,
-            verified,
+            verified: provenance,
             contracts,
             pinnedFeed,
             readFeedIdentity: async () => pinnedFeed,
@@ -883,9 +893,56 @@ test('isolated consumer rejects duplicate records and an unexpected tarball URL'
     }
 });
 
-test('yaml keeps default-false isolated test-feed blocker before build and feed branches', () => {
+test('branch provenance rejects unreviewed sources and requires the pipeline SHA to match', () => {
+    assert.throws(() => branchProvenance({ ...branchEnv, SOURCE_REPOSITORY: 'fork/LogicAppsUX' }), /GitHub repository/);
+    assert.throws(() => branchProvenance({ ...branchEnv, SOURCE_BRANCH: 'refs/heads/main' }), /designated test branch/);
+    assert.throws(() => branchProvenance({ ...branchEnv, SOURCE_VERSION: 'a'.repeat(40) }), /does not match the reviewed SHA/);
+    assert.throws(() => branchProvenance({ ...branchEnv, BUILD_ID: '001' }), /positive Azure Pipelines build ID/);
+});
+
+test('branch tarballs pin all intra-cohort dependencies to the test version and cannot override the registry', () => {
+    const provenance = branchProvenance(branchEnv);
+    const definition = COHORT[1];
+    const { source, contract, pack, packed } = fixture(definition, provenance.version);
+    const override = { registry: DESTINATION_REGISTRY };
+    assert.equal(contract.dependencies[COHORT[0].name], provenance.version);
+    assert.throws(() => buildManifestContract(definition, { ...source, publishConfig: override }, provenance.version), /cannot override the registry/);
+    assert.throws(() => validateTarballArtifact(pack({ ...packed, publishConfig: override }), definition, provenance.version, contract), /cannot override the registry/);
+});
+
+test('branch artifact cannot be reclassified as a release, even at the same commit', () => {
+    const provenance = branchProvenance(branchEnv);
+    const { dir, contracts, record } = artifactFixture(provenance);
+    assert.equal(record.destination, null);
+    assert.equal(record.source.version, `0.0.0-ado.${branchEnv.BUILD_ID}.g${commitSha}`);
+    assert.throws(() => validateArtifactFiles(dir, { ...verified, version: provenance.version }, contracts), /source provenance mismatch/);
+});
+
+test('branch fixture writes nine test-tagged tarballs, then verifies them in a read-only replay', async () => {
+    const provenance = branchProvenance(branchEnv);
+    const { options, operations, writes } = isolatedFeedFixture({ empty: true, provenance });
+    const { writePackage, ...reader } = operations;
+    const replay = { ...options, mode: 'replay', openFeedOperations: async () => reader };
+    await assert.rejects(runIsolatedTestFeedPath(replay), /requires all nine versions/);
+    assert.deepEqual(writes, []);
+    assert.deepEqual((await runIsolatedTestFeedPath({ ...options, mode: 'publish' })).summary, { writes: 9, 'already-identical': 9 });
+    assert.deepEqual((await runIsolatedTestFeedPath(replay)).summary, { writes: 0, 'already-identical': 9 });
+    assert.deepEqual(writes, COHORT.map(({ name }) => name));
+});
+
+test('branch fixture rejects a reserved test version already in upstream inventory', async () => {
+    const provenance = branchProvenance(branchEnv);
+    const { options, writes } = isolatedFeedFixture({ empty: true, provenance, upstream: new Set([COHORT[1].name]) });
+    await assert.rejects(runIsolatedTestFeedPath({ ...options, mode: 'publish' }), /deleted or upstream/);
+    assert.deepEqual(writes, []);
+});
+
+test('branch build is manual and opt-in, uses only self and cannot expand a feed stage', () => {
     const file = path.join(process.cwd(), '.azure-pipelines/npm-publish.yml');
     const yaml = fs.readFileSync(file, 'utf8');
     assert.match(yaml, /- name: requestLocalIsolatedTestFeed[\s\S]*default: false/);
-    assert.match(yaml, /stage: LocalIsolatedTestFeedBlocked[\s\S]*checkout: none[\s\S]*fixture-only and cannot run in this pipeline/);
+    assert.match(yaml, /- name: runBranchBuild[\s\S]*default: false/);
+    assert.match(yaml, /stage: PublicationBlocked[\s\S]*checkout: none[\s\S]*stage: BuildValidation/);
+    assert.match(yaml, /checkout: self\s+clean: true\s+persistCredentials: false/);
+    assert.doesNotMatch(yaml, /logicAppsUxRelease|sourceRepositoriesToScan|System\.AccessToken|npmAuthenticate|stage: Feed/);
 });

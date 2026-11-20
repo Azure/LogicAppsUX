@@ -1,6 +1,6 @@
 const path = require('node:path');
 const { isDeepStrictEqual } = require('node:util');
-const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY } = require('./ado-npm-publisher-lib.cjs');
+const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, TEST_VERSION_PATTERN } = require('./ado-npm-publisher-lib.cjs');
 const { digest, readRegularFile, validateArtifactFiles } = require('./ado-npm-publisher-artifact.cjs');
 
 const FIXTURE_PROTOCOL = 'logicappsux-isolated-test-feed/v1';
@@ -49,28 +49,29 @@ function assertIdentityMatch(expected, actual, source) {
     }
 }
 
-function parseStableVersion(version, label) {
-    if (typeof version !== 'string' || version.length > 256 || !VERSION_PATTERN.test(version)) {
-        throw new Error(`${label} must be a stable semver version.`);
+function parseVersion(version, label, branch) {
+    if (typeof version !== 'string' || version.length > 256 || !(branch ? TEST_VERSION_PATTERN : VERSION_PATTERN).test(version)) {
+        throw new Error(`${label} must be a ${branch ? 'reserved branch test' : 'stable semver'} version.`);
     }
+    if (branch) return [BigInt(version.split('.')[3])];
     const [major, minor, patch] = version.split(/[.+]/);
     return [BigInt(major), BigInt(minor), BigInt(patch)];
 }
 
-function compareStable(left, right) {
-    const a = parseStableVersion(left, 'left version');
-    const b = parseStableVersion(right, 'right version');
+function compareVersions(left, right, branch) {
+    const a = parseVersion(left, 'left version', branch);
+    const b = parseVersion(right, 'right version', branch);
     for (let i = 0; i < a.length; i++) {
         if (a[i] !== b[i]) return a[i] > b[i] ? 1 : -1;
     }
     return 0;
 }
 
-function normalizeInventoryEvent(event) {
+function normalizeInventoryEvent(event, branch) {
     if (!event || typeof event !== 'object') throw new Error('Inventory event must be an object.');
     const { type, version } = event;
     if (!['version', 'deleted', 'upstream'].includes(type)) throw new Error('Inventory event type is not supported.');
-    parseStableVersion(version, 'Inventory event version');
+    parseVersion(version, 'Inventory event version', branch);
     const normalized = { type, version };
     if (type === 'version') {
         if (typeof event.integrity !== 'string' || !SHA512_PATTERN.test(event.integrity)) {
@@ -81,7 +82,7 @@ function normalizeInventoryEvent(event) {
     return normalized;
 }
 
-async function readBoundedInventory(readPage, packageName, maxPages, maxEvents) {
+async function readBoundedInventory(readPage, packageName, { maxInventoryPages: maxPages, maxInventoryEvents: maxEvents, branch }) {
     const visited = new Set();
     const versions = new Map();
     const deleted = new Set();
@@ -100,7 +101,7 @@ async function readBoundedInventory(readPage, packageName, maxPages, maxEvents) 
         }
         for (const raw of page.events) {
             if (++eventCount > maxEvents) throw new Error(`Inventory exceeded ${maxEvents} events for ${packageName}.`);
-            const event = normalizeInventoryEvent(raw);
+            const event = normalizeInventoryEvent(raw, branch);
             if (versions.has(event.version) || deleted.has(event.version) || upstream.has(event.version)) {
                 throw new Error(`Ambiguous inventory: duplicate version for ${packageName}.`);
             }
@@ -122,35 +123,37 @@ async function readBoundedInventory(readPage, packageName, maxPages, maxEvents) 
     return { versions, deleted, upstream };
 }
 
-function normalizeMetadata(packageName, metadata, maxVersions) {
+function normalizeMetadata(packageName, metadata, { maxInventoryEvents: maxVersions, branch, tagField }) {
     if (metadata?.protocol !== FIXTURE_PROTOCOL || metadata?.packageName !== packageName || typeof metadata?.status !== 'number') {
         throw new Error(`Package metadata does not match fixture protocol for ${packageName}.`);
     }
-    if (metadata.status === 404 && metadata.versions === undefined && metadata.latest === undefined) {
+    if (metadata.status === 404 && metadata.versions === undefined && metadata.latest === undefined && metadata.testTag === undefined) {
         return { status: 'not-found' };
     }
-    if (metadata.status !== 200 || !Array.isArray(metadata.versions) || metadata.versions.length > maxVersions || typeof metadata.latest !== 'string') {
+    const taggedVersion = metadata[tagField];
+    if (metadata.status !== 200 || !Array.isArray(metadata.versions) || metadata.versions.length > maxVersions || typeof taggedVersion !== 'string') {
         return { status: 'unknown', reason: `Package metadata read failed with status ${metadata.status}.` };
     }
-    parseStableVersion(metadata.latest, 'dist-tag latest');
+    parseVersion(taggedVersion, 'Dist-tag version', branch);
     const versions = new Map();
     for (const item of metadata.versions) {
         if (!item || item.name !== packageName || typeof item.version !== 'string' ||
             typeof item.integrity !== 'string' || !SHA512_PATTERN.test(item.integrity) || versions.has(item.version)) {
             return { status: 'unknown', reason: 'Package metadata contains invalid version entries.' };
         }
-        parseStableVersion(item.version, 'Package version');
+        parseVersion(item.version, 'Package version', branch);
         versions.set(item.version, item.integrity);
     }
-    if (!versions.has(metadata.latest)) {
-        return { status: 'unknown', reason: 'Package metadata latest tag is missing from version entries.' };
+    if (!versions.has(taggedVersion)) {
+        return { status: 'unknown', reason: 'Tagged version is missing from version entries.' };
     }
-    return { status: 'ok', latest: metadata.latest, versions };
+    return { status: 'ok', taggedVersion, versions };
 }
 
-function classifyPackage(entry, metadata, inventory) {
+function classifyPackage(entry, metadata, inventory, branch) {
     if (metadata.status === 'unknown') return metadata;
-    const sameRelease = v => compareStable(v, entry.version) === 0;
+    const compareToEntry = v => compareVersions(v, entry.version, branch);
+    const sameRelease = v => compareToEntry(v) === 0;
     if ([...inventory.deleted, ...inventory.upstream].some(sameRelease)) {
         return { status: 'conflict', reason: 'Release precedence collides with deleted or upstream inventory.' };
     }
@@ -160,7 +163,7 @@ function classifyPackage(entry, metadata, inventory) {
             ? { status: 'absent', reason: 'Package is absent from complete authenticated inventory.' }
             : { status: 'unknown', reason: 'npm 404 disagrees with authenticated package inventory.' };
     }
-    if ([...metadata.versions.keys(), ...inventory.versions.keys()].some(v => v !== entry.version && compareStable(v, entry.version) >= 0)) {
+    if ([...metadata.versions.keys(), ...inventory.versions.keys()].some(v => v !== entry.version && compareToEntry(v) >= 0)) {
         return { status: 'conflict', reason: 'Inventory or metadata contains a newer or same-precedence release.' };
     }
     // For fixture evidence, omission from one view isn't proof: both views must agree on every live record.
@@ -174,8 +177,8 @@ function classifyPackage(entry, metadata, inventory) {
     if (metadataIntegrity !== entry.integrity) {
         return { status: 'conflict', reason: 'Existing release integrity differs from artifact bytes.' };
     }
-    if (metadata.latest !== entry.version) {
-        return { status: 'conflict', reason: 'Existing identical release is not latest.' };
+    if (metadata.taggedVersion !== entry.version) {
+        return { status: 'conflict', reason: 'Existing identical release does not match the selected dist-tag.' };
     }
     return { status: 'already-identical', reason: 'Release identity and integrity match.' };
 }
@@ -218,11 +221,11 @@ function assertConsumerResult(consumer, artifact, pinned) {
 }
 
 async function classifyWithOperations(entry, operations, limits) {
-    const metadata = normalizeMetadata(entry.name, await operations.readPackageMetadata(entry.name), limits.maxInventoryEvents);
+    const metadata = normalizeMetadata(entry.name, await operations.readPackageMetadata(entry.name), limits);
     const inventory = await readBoundedInventory(
-        (name, cursor) => operations.readPackageInventoryPage(name, cursor), entry.name, limits.maxInventoryPages, limits.maxInventoryEvents
+        (name, cursor) => operations.readPackageInventoryPage(name, cursor), entry.name, limits
     );
-    return classifyPackage(entry, metadata, inventory);
+    return classifyPackage(entry, metadata, inventory, limits.branch);
 }
 
 function readRetainedBytes(artifactRoot, entry) {
@@ -240,7 +243,7 @@ async function writeAndVerify(entry, artifactRoot, operations, limits, verifyDow
         throw new Error(`Pre-publication recheck failed for ${entry.name}@${entry.version}: ${before.reason}`);
     }
     // Never retry an interrupted write in the same run. A replay rechecks the same artifact before writing.
-    await operations.writePackage(Object.freeze({ ...entry }), readRetainedBytes(artifactRoot, entry));
+    await operations.writePackage(Object.freeze({ ...entry }), readRetainedBytes(artifactRoot, entry), limits.distTag);
     const after = await classifyWithOperations(entry, operations, limits);
     if (after.status !== 'already-identical') {
         throw new Error(`Publication outcome unresolved for ${entry.name}@${entry.version}: ${after.reason}`);
@@ -254,7 +257,7 @@ async function runIsolatedTestFeedPath(options) {
         artifactRoot, verified, contracts, pinnedFeed, readFeedIdentity, openFeedOperations,
         mode = 'preflight', maxInventoryPages = MAX_INVENTORY_PAGES, maxInventoryEvents = MAX_INVENTORY_EVENTS,
     } = options ?? {};
-    if (!['preflight', 'publish'].includes(mode)) throw new Error('Isolated test-feed mode must be preflight or publish.');
+    if (!['preflight', 'publish', 'replay'].includes(mode)) throw new Error('Isolated test-feed mode must be preflight, publish or replay.');
     if (typeof readFeedIdentity !== 'function' || typeof openFeedOperations !== 'function') {
         throw new Error('Isolated test-feed path requires injected feed adapter callbacks.');
     }
@@ -264,6 +267,8 @@ async function runIsolatedTestFeedPath(options) {
     }
 
     const pinned = assertPinnedIsolatedIdentity(pinnedFeed);
+    const branch = verified?.kind === 'branch-e2e';
+    parseVersion(verified?.version, 'Artifact version', branch);
     const artifact = validateArtifactFiles(artifactRoot, verified, contracts);
     if (artifact.packages.length !== COHORT.length) throw new Error(`Expected ${COHORT.length} packages in artifact cohort.`);
     assertIdentityMatch(pinned, await readFeedIdentity(pinned), 'Unauthenticated');
@@ -275,7 +280,8 @@ async function runIsolatedTestFeedPath(options) {
     }
     assertIdentityMatch(pinned, await operations.readAuthenticatedFeedIdentity(pinned), 'Authenticated');
 
-    const limits = { maxInventoryPages, maxInventoryEvents };
+    // Branch fixtures use only the reserved versions and never use the production "latest" tag.
+    const limits = { maxInventoryPages, maxInventoryEvents, branch, tagField: branch ? 'testTag' : 'latest', distTag: branch ? 'ado-e2e' : 'latest' };
 
     const states = new Map();
     for (const entry of artifact.packages) {
@@ -284,6 +290,9 @@ async function runIsolatedTestFeedPath(options) {
             throw new Error(`Preflight blocked for ${entry.name}@${entry.version}: ${state.reason}`);
         }
         states.set(entry.name, state);
+    }
+    if (mode === 'replay' && [...states.values()].some(state => state.status !== 'already-identical')) {
+        throw new Error('Read-only replay requires all nine versions to be present; zero writes.');
     }
 
     let writes = 0;

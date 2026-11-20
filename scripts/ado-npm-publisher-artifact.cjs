@@ -6,7 +6,7 @@ const { spawnSync } = require('node:child_process');
 const { gunzipSync } = require('node:zlib');
 const {
     COHORT, DEPENDENCY_FIELDS, DESTINATION_FEED_ID, DESTINATION_REGISTRY, DIST_TAG, ENTRY_FIELDS,
-    MANIFEST_FILE_NAME, SOURCE_REPOSITORY, assertSafeManifest, dependencyMap, fetchJson, isObject, normalizeSha,
+    MANIFEST_FILE_NAME, SOURCE_REPOSITORY, TEST_VERSION_PATTERN, assertNoRegistryOverride, assertSafeManifest, dependencyMap, fetchJson, isObject, normalizeSha,
 } = require('./ado-npm-publisher-lib.cjs');
 
 const FEED_URL = `https://feeds.dev.azure.com/msazure/One/_apis/packaging/feeds/${DESTINATION_FEED_ID}?api-version=7.1`;
@@ -150,6 +150,9 @@ function validateTarballArtifact(buffer, definition, version, contract) {
     const entries = readTarball(buffer);
     const manifest = JSON.parse(entries.get('package/package.json').toString('utf8'));
     assertSafeManifest(manifest, definition.name);
+    if (TEST_VERSION_PATTERN.test(version)) {
+        assertNoRegistryOverride(manifest, definition.name);
+    }
     assert.equal(manifest.version, version, `${definition.name}: packed version mismatch.`);
     for (const field of DEPENDENCY_FIELDS) {
         assert.deepEqual(dependencyMap(manifest, field), contract[field], `${definition.name}: packed ${field} differs from source.`);
@@ -163,6 +166,15 @@ function tarballName(definition, version) {
 }
 
 function expectedProvenance(verified) {
+    if (verified.kind === 'branch-e2e') {
+        return {
+            source: {
+                kind: verified.kind, repository: SOURCE_REPOSITORY, branchRef: verified.branchRef,
+                verifiedSha: verified.commitSha, buildId: verified.buildId, version: verified.version,
+            },
+            destination: null,
+        };
+    }
     return {
         source: { repository: SOURCE_REPOSITORY, releaseRef: `refs/tags/${verified.releaseTag}`, releaseId: verified.releaseId,
             verifiedSha: verified.commitSha, version: verified.version },

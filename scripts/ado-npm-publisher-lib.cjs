@@ -42,6 +42,18 @@ const COHORT_BY_NAME = new Map(COHORT.map(definition => [definition.name, defini
 const EXCLUDED_PACKAGES = new Set(['@microsoft/logic-apps-chat', '@microsoft/logic-apps-graph-layout', 'btm-data-mapper']);
 const ENTRY_FIELDS = ['main', 'module', 'types', 'typings', 'style', 'exports'];
 const DEPENDENCY_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependencies', 'peerDependenciesMeta'];
+const TEST_BRANCH = 'refs/heads/krmitta/ado-npm-publish-pipeline';
+const TEST_VERSION_PATTERN = /^0\.0\.0-ado\.[1-9]\d{0,14}\.g[0-9a-f]{40}$/;
+
+function branchProvenance(env) {
+    assert.equal(env.SOURCE_REPOSITORY, SOURCE_REPOSITORY, 'Expected the LogicAppsUX GitHub repository.');
+    assert.equal(env.SOURCE_BRANCH, TEST_BRANCH, 'Branch validation is limited to the designated test branch.');
+    const commitSha = normalizeSha(env.EXPECTED_SHA);
+    assert.equal(normalizeSha(env.SOURCE_VERSION), commitSha, 'Azure Pipelines source version does not match the reviewed SHA.');
+    const buildId = env.BUILD_ID;
+    assert(typeof buildId === 'string' && /^[1-9]\d{0,14}$/.test(buildId), 'Expected a positive Azure Pipelines build ID.');
+    return { kind: 'branch-e2e', branchRef: TEST_BRANCH, commitSha, buildId, version: `0.0.0-ado.${buildId}.g${commitSha}` };
+}
 
 function parseReleaseRef(releaseRef) {
     const match = /^refs\/tags\/v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(releaseRef ?? '');
@@ -172,6 +184,10 @@ function assertSafeManifest(manifest, packageName) {
     }
 }
 
+function assertNoRegistryOverride(manifest, name) {
+    assert(!Object.hasOwn(manifest.publishConfig ?? {}, 'registry'), `${name}: branch test artifacts cannot override the registry.`);
+}
+
 function dependencyMap(manifest, field) {
     const value = manifest[field];
     if (value === undefined) return {};
@@ -189,6 +205,9 @@ function assertExternalDependency(name, spec, owner) {
 
 function buildManifestContract(definition, manifest, version) {
     assertSafeManifest(manifest, definition.name);
+    if (TEST_VERSION_PATTERN.test(version)) {
+        assertNoRegistryOverride(manifest, definition.name);
+    }
     const dependencies = dependencyMap(manifest, 'dependencies');
     for (const name of definition.runtimeDependencies) {
         assert.equal(dependencies[name], 'workspace:*', `${definition.name}: expected workspace:* for ${name}.`);
@@ -247,7 +266,10 @@ module.exports = {
     ENTRY_FIELDS,
     MANIFEST_FILE_NAME,
     SOURCE_REPOSITORY,
+    TEST_VERSION_PATTERN,
+    assertNoRegistryOverride,
     assertSafeManifest,
+    branchProvenance,
     buildManifestContract,
     dependencyMap,
     fetchJson,

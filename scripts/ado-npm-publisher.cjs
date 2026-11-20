@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { COHORT, buildManifestContract, parseReleaseRef, readVerifiedContracts, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
+const { COHORT, branchProvenance, buildManifestContract, parseReleaseRef, readVerifiedContracts, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
     require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, npmRunner, publishPackage, readNpmAuthorization, validateArtifactFiles } =
     require('./ado-npm-publisher-artifact.cjs');
@@ -18,14 +18,19 @@ async function prepareArtifact(env, log) {
     log(`Validated ${artifact.packages.length} tarballs; feed authentication and publication were not attempted.`);
 }
 
-function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => process.stdout.write(text)) {
-    const version = parseReleaseRef(`refs/tags/${snapshot.verified.releaseTag}`).version;
-    assert.equal(version, snapshot.verified.version, 'Verified release version mismatch.');
+function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => process.stdout.write(text), childEnv) {
+    const { verified } = snapshot;
+    if (verified.kind === 'branch-e2e') {
+        assert.deepEqual(verified, branchProvenance(env), 'Verified branch provenance mismatch.');
+    } else {
+        assert.equal(verified.version, parseReleaseRef(`refs/tags/${verified.releaseTag}`).version, 'Verified release version mismatch.');
+    }
+    const { version } = verified;
     fs.mkdirSync(env.ARTIFACT_ROOT);
     const exec = (command, args) => {
         const result = run(command, args, {
             cwd: env.SOURCE_ROOT, stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8',
-            timeout: 1_800_000, maxBuffer: 64 * 1024 * 1024,
+            timeout: 1_800_000, maxBuffer: 64 * 1024 * 1024, env: childEnv,
         });
         // Source and dependency output must not become Azure Pipelines logging commands.
         for (const output of [result.stdout, result.stderr]) {
@@ -35,6 +40,10 @@ function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => proce
             throw new Error(`${command} failed: ${result.error?.message ?? `exit ${result.status ?? 'unavailable'}`}.`);
         }
     };
+    if (childEnv) {
+        // Nested package builds invoke pnpm by name; keep its shim off the shared tool installation.
+        exec('corepack', ['enable', '--install-directory', path.join(childEnv.HOME, 'bin'), 'pnpm']);
+    }
     exec('corepack', ['pnpm', 'install', '--recursive', '--frozen-lockfile', '--strict-peer-dependencies']);
     exec(process.execPath, ['scripts/update-versions.js', version]);
     // The source rewrite logs individual file failures, so verify all nine before building.
@@ -46,6 +55,33 @@ function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => proce
     exec('corepack', ['pnpm', 'run', 'build:lib']);
     for (const item of COHORT) {
         exec('corepack', ['pnpm', '--dir', path.join(env.SOURCE_ROOT, item.directory), 'pack', '--pack-destination', env.ARTIFACT_ROOT]);
+    }
+}
+
+function buildBranchArtifact(env, log, run = spawnSync) {
+    const verified = branchProvenance(env);
+    const contracts = snapshotCheckout(env.SOURCE_ROOT, verified);
+    const home = fs.mkdtempSync(path.join(env.AGENT_TMP, 'npm-branch-home-'));
+    try {
+        const bin = path.join(home, 'bin');
+        fs.mkdirSync(bin);
+        // This limits credential inheritance, but is not an agent/job isolation boundary.
+        buildCohort(env, { verified, contracts }, run, undefined, {
+            PATH: `${bin}${path.delimiter}${env.PATH}`,
+            HOME: home,
+            CI: 'true',
+            HUSKY: '0',
+            GIT_CONFIG_NOSYSTEM: '1',
+            GIT_CONFIG_GLOBAL: '/dev/null',
+            GIT_TERMINAL_PROMPT: '0',
+            NPM_CONFIG_USERCONFIG: '/dev/null',
+            NPM_CONFIG_GLOBALCONFIG: path.join(home, 'global.npmrc'),
+        });
+        verifyCheckoutHead(env.SOURCE_ROOT, verified.commitSha);
+        const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
+        log(`Validated ${artifact.packages.length} test tarballs at ${verified.version}; publication was not attempted.`);
+    } finally {
+        fs.rmSync(home, { force: true, recursive: true });
     }
 }
 
@@ -109,6 +145,7 @@ async function main([command, ...args] = process.argv.slice(2), env = process.en
     if (command === 'isolated-test-feed') {
         throw new Error('Isolated test-feed attempts are fixture-only and are rejected before environment, provenance, or network reads.');
     }
+    if (command === 'build-branch-artifact') return buildBranchArtifact(env, log);
     if (command === 'prepare-artifact') return prepareArtifact(env, log);
     if (command === 'build-cohort') {
         const snapshot = JSON.parse(fs.readFileSync(env.CONTRACT_FILE, 'utf8'));
@@ -151,8 +188,7 @@ async function main([command, ...args] = process.argv.slice(2), env = process.en
     log(`${mode} ${artifact.source.releaseRef} ${artifact.source.verifiedSha} ${artifact.destination.registry} tag=${artifact.destination.distTag}`);
     await authenticateFeed(env.ADO_FEED_TOKEN, fetchImpl);
     const registry = createRegistry(authorization, fetchImpl);
-    const write = mode === 'publish' ? (file, tag) => npm(path.join(env.ARTIFACT_ROOT, file), tag) : undefined;
-    await processCohort(artifact, registry, write, log);
+    await processCohort(artifact, registry, undefined, log);
     if (mode === 'dry-run') dryRunCohort(artifact, env.ARTIFACT_ROOT, npm, log);
 }
 
@@ -163,4 +199,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { buildCohort, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput };
+module.exports = { buildBranchArtifact, buildCohort, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput };
