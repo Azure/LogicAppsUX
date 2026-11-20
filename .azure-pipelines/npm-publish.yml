@@ -138,8 +138,8 @@ extends:
                     PY
                     printf 'registry=%s\n' "$REGISTRY" > "$WRITER/.npmrc"
                   displayName: Check the reviewed commit, version, and all nine retained tarball digests
-                  bashEnvValue: /dev/null
                   env:
+                    BASH_ENV: /dev/null
                     BUILD_REASON: '$(Build.Reason)'
                     SOURCE_BRANCH: '$(Build.SourceBranch)'
                     SOURCE_VERSION: '$(Build.SourceVersion)'
@@ -180,9 +180,9 @@ extends:
                       printf 'Published and verified %s\n' "$spec"
                     done < cohort.tsv
                   displayName: Publish and read back all nine exact versions
-                  bashEnvValue: /dev/null
                   workingDirectory: '$(NpmWriter)'
                   env:
+                    BASH_ENV: /dev/null
                     REGISTRY: '$(NpmRegistry)'
       - ${{ elseif parameters.runBranchBuild }}:
         - stage: BuildValidation
