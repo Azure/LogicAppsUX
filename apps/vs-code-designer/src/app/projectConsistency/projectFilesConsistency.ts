@@ -25,6 +25,7 @@ import { ext } from '../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../utils/vsCodeConfig/settings';
 import {
   generateHostJson,
+  generateCodelessNugetHostJson,
   generateDesignTimeHostJson,
   generateLocalSettingsJson,
   generateDesignTimeLocalSettingsJson,
@@ -33,13 +34,13 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appS
 import { hasJdbcDriverJars } from '../utils/java/jdbcConnector';
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
-import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { type ILocalSettingsJson, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri, workspace } from 'vscode';
-import { detectProjectType } from '../utils/project';
+import { detectProjectPackageType, detectProjectType } from '../utils/project';
 
 /**
  * Matches app setting references such as `@appsetting('MY_SETTING')` and the interpolated
@@ -74,7 +75,8 @@ const designTimeArtifactPrefix = 'design-time ';
 export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
-    const hostResult = await ensureHostFile(projectPath);
+    const [projectPackageType, projectType] = await Promise.all([detectProjectPackageType(projectPath), detectProjectType(projectPath)]);
+    const hostResult = await ensureHostFile(projectPath, projectPackageType, projectType);
     const localSettings = await ensureLocalSettingsFile(context, projectPath);
     const designTimeData = await ensureDesignTimeFiles(context, projectPath);
 
@@ -113,14 +115,22 @@ export async function ensureProjectFiles(context: IActionContext, projectPath: s
  * @returns {Promise<{ changed: boolean; changedArtifacts: string[] }>} Whether the file was written
  * (created or repaired), and the human-readable label for the artifact when it changed.
  */
-export async function ensureHostFile(projectPath: string): Promise<{ changed: boolean; changedArtifacts: string[] }> {
+export async function ensureHostFile(
+  projectPath: string,
+  projectPackageType?: ProjectPackageType,
+  projectType?: ProjectType
+): Promise<{ changed: boolean; changedArtifacts: string[] }> {
   const hostFilePath = path.join(projectPath, hostFileName);
+  projectPackageType ??= await detectProjectPackageType(projectPath);
+  projectType ??= await detectProjectType(projectPath);
+  const isCodelessNugetProject = projectPackageType === ProjectPackageType.Nuget && projectType !== ProjectType.codeful;
 
-  if (await isHostFileValid(hostFilePath, false)) {
+  if (await isHostFileValid(hostFilePath, false, isCodelessNugetProject)) {
     return { changed: false, changedArtifacts: [] };
   }
 
-  await writeFormattedJson(hostFilePath, generateHostJson());
+  const hostFileContent = isCodelessNugetProject ? generateCodelessNugetHostJson() : generateHostJson();
+  await writeFormattedJson(hostFilePath, hostFileContent);
   return { changed: true, changedArtifacts: [hostFileName] };
 }
 
@@ -282,10 +292,7 @@ export function mergeFeatureFlags(existing: string, incoming: string): string {
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<{ changedArtifacts: string[] }>} The human-readable label(s) for the artifact(s) that changed.
  */
-export async function ensureDesignTimeFiles(
-  context: IActionContext,
-  projectPath: string
-): Promise<{ changedArtifacts: string[] }> {
+export async function ensureDesignTimeFiles(context: IActionContext, projectPath: string): Promise<{ changedArtifacts: string[] }> {
   const designTimeDirectory = Uri.file(path.join(projectPath, designTimeDirectoryName));
   if (!(await fse.pathExists(designTimeDirectory.fsPath))) {
     await workspace.fs.createDirectory(designTimeDirectory);
@@ -356,16 +363,16 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
 }
 
 /**
- * Validates the host.json file content. Used for both the project-level host.json and the design-time
- * host.json: both require a version and the workflows extension bundle (id + version). The design-time
- * host.json additionally must enable workflow operation discovery host mode so the design-time API can
- * enumerate operations.
+ * Validates host.json content for the project model. Bundle-based and codeful SDK root files, plus
+ * all design-time files, require the Workflows extension bundle. Codeless NuGet-based root files
+ * must omit extensionBundle because runtime extensions come from package references. Design-time
+ * files also enable workflow operation discovery host mode so the design-time API can enumerate operations.
  *
  * @param {string} hostFilePath - Absolute path to the host.json file.
  * @param {boolean} isDesignTime - Whether the file is the design-time host.json (stricter validation).
  * @returns {Promise<boolean>} True when host.json exists and is valid.
  */
-async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Promise<boolean> {
+async function isHostFileValid(hostFilePath: string, isDesignTime: boolean, isCodelessNugetProject = false): Promise<boolean> {
   const content = await readFileTextSafe(hostFilePath);
   if (!content) {
     return false;
@@ -378,7 +385,15 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
       extensions?: { workflow?: { settings?: Record<string, string> } };
     };
 
-    const hasValidBundle = !!parsed?.version && parsed?.extensionBundle?.id === extensionBundleId && !!parsed?.extensionBundle?.version;
+    if (!parsed?.version) {
+      return false;
+    }
+
+    if (!isDesignTime && isCodelessNugetProject) {
+      return parsed.extensionBundle === undefined;
+    }
+
+    const hasValidBundle = parsed.extensionBundle?.id === extensionBundleId && !!parsed.extensionBundle?.version;
     if (!hasValidBundle) {
       return false;
     }

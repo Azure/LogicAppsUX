@@ -9,6 +9,8 @@ import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
 import { releaseReservedPort, reserveFreePort } from '../../portReservation';
 import { getExperimentalBundleRuntime } from '../../bundleFeed';
+import { ensureDesignTimeFiles, ensureProjectFiles } from '../../../projectConsistency/projectFilesConsistency';
+import { isProjectConsistencyCheckEnabled } from '../../vsCodeConfig/settings';
 import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
 
 vi.mock('../../appSettings/localSettings', () => ({
@@ -26,6 +28,11 @@ vi.mock('../../../projectConsistency/projectFilesConsistency', () => ({
     const designTimeDirectory = Uri.file(`${projectPath}/workflow-designtime`);
     await workspace.fs.createDirectory(designTimeDirectory);
     return designTimeDirectory;
+  }),
+  ensureDesignTimeFiles: vi.fn(async (_context: unknown, projectPath: string) => {
+    const designTimeDirectory = Uri.file(`${projectPath}/workflow-designtime`);
+    await workspace.fs.createDirectory(designTimeDirectory);
+    return { changedArtifacts: [] };
   }),
 }));
 
@@ -53,6 +60,7 @@ vi.mock('../../vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
   isManagedIdentityAuthEnabled: vi.fn(() => false),
+  isProjectConsistencyCheckEnabled: vi.fn(() => true),
   useNodeDesignTimeWorker: vi.fn(() => false),
 }));
 
@@ -97,6 +105,7 @@ describe('startAllDesignTimeApis', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getExperimentalBundleRuntime).mockReset();
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(true);
     ext.designTimeInstances.clear();
     (workspace as any).workspaceFolders = [];
     workspace.fs.createDirectory = vi.fn().mockRejectedValue(new Error('skip startup after logging')) as any;
@@ -128,6 +137,15 @@ describe('startAllDesignTimeApis', () => {
       expect(ext.designTimeInstances.get('D:/workspace/app-one')?.isStarting).toBe(false);
     }
   );
+
+  it('creates only required design-time files when project consistency checks are disabled', async () => {
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(false);
+
+    await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow('skip startup after logging');
+
+    expect(ensureProjectFiles).not.toHaveBeenCalled();
+    expect(ensureDesignTimeFiles).toHaveBeenCalledWith(expect.any(Object), 'D:/workspace/app-one');
+  });
 
   it('reuses a healthy tracked host launched with the same experimental selection', async () => {
     const source = 'http://127.0.0.1:12345/current-selection';

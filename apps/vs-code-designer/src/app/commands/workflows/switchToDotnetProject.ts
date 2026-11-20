@@ -235,7 +235,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     functionsVersion
   );
 
-  await copyBundleProjectFiles(node);
+  await finalizeConvertedProjectFiles(node);
   await updateBuildFile(context, node, dotnetVersion, isCodeful);
   if (useBinaries && dotnetLocalVersion) {
     await createGlobalJsonFile(dotnetLocalVersion, node.fsPath);
@@ -344,16 +344,27 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
   await fse.rename(fileName, newFileName);
 }
 
-async function copyBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesToBeCopied: string[] = [hostFileName, localSettingsFileName];
-  for (const fileName of filesToBeCopied) {
-    if (
-      (await fse.pathExists(path.join(target.fsPath, fileName))) &&
-      (await fse.pathExists(path.join(target.fsPath, `${fileName}-copy`)))
-    ) {
-      await deleteFile(path.join(target.fsPath, fileName));
-      await renameFile(path.join(target.fsPath, `${fileName}-copy`), path.join(target.fsPath, fileName));
+async function finalizeConvertedProjectFiles(target: vscode.Uri): Promise<void> {
+  const hostFilePath = path.join(target.fsPath, hostFileName);
+  const hostFileBackupPath = path.join(target.fsPath, `${hostFileName}-copy`);
+  if (!(await fse.pathExists(hostFilePath))) {
+    if (await fse.pathExists(hostFileBackupPath)) {
+      await renameFile(hostFileBackupPath, hostFilePath);
     }
+    throw new Error(localize('nugetHostFileNotGenerated', 'NuGet project template did not generate host.json.'));
+  }
+
+  if (await fse.pathExists(hostFileBackupPath)) {
+    await deleteFile(hostFileBackupPath);
+  }
+
+  const localSettingsFilePath = path.join(target.fsPath, localSettingsFileName);
+  const localSettingsBackupPath = path.join(target.fsPath, `${localSettingsFileName}-copy`);
+  if (await fse.pathExists(localSettingsBackupPath)) {
+    if (await fse.pathExists(localSettingsFilePath)) {
+      await deleteFile(localSettingsFilePath);
+    }
+    await renameFile(localSettingsBackupPath, localSettingsFilePath);
   }
 }
 
