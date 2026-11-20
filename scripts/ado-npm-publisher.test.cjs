@@ -966,6 +966,8 @@ test('branch build is manual and opt-in, uses only self and cannot expand a feed
     assert.match(yaml, /- name: requestLocalIsolatedTestFeed[\s\S]*default: false/);
     assert.match(yaml, /- name: runBranchBuild[\s\S]*default: false/);
     assert.match(yaml, /stage: PublicationBlocked[\s\S]*checkout: none[\s\S]*stage: BuildValidation/);
-    assert.match(yaml, /checkout: self\s+clean: true\s+persistCredentials: false/);
-    assert.doesNotMatch(yaml, /logicAppsUxRelease|sourceRepositoriesToScan|System\.AccessToken|npmAuthenticate|stage: Feed/);
+    const build = yaml.slice(yaml.indexOf('stage: BuildValidation'));
+    assert.match(build, /checkout: self\s+clean: true\s+persistCredentials: false/);
+    assert.doesNotMatch(build, /npmAuthenticate|System\.AccessToken/);
+    assert.doesNotMatch(yaml, /logicAppsUxRelease|sourceRepositoriesToScan|stage: Feed/);
 });

@@ -1,4 +1,4 @@
-# Manual 1ES build-only validation for the LogicAppsUX npm test branch.
+# Manual 1ES build and retained-cohort publish smoke test for LogicAppsUX.
 trigger: none
 pr: none
 schedules: []
@@ -28,6 +28,10 @@ parameters:
     displayName: Request isolated test-feed publishing (blocked pending approved target and identity)
     type: boolean
     default: false
+  - name: publishRetainedCohort
+    displayName: Publish the nine verified packages from run 192458185 (requires connection approval)
+    type: boolean
+    default: false
 
 variables:
   PackageOutput: '$(Build.ArtifactStagingDirectory)/logicappsux-npm-branch-cohort'
@@ -47,16 +51,139 @@ extends:
       sourceAnalysisPool: ${{ parameters.approvedSdlPool }}
       # Use 1ES's default scanning of self, which is also the only source checkout.
     stages:
-      - ${{ if or(parameters.publishToFeed, parameters.requestLocalIsolatedTestFeed) }}:
+      - ${{ if or(parameters.publishToFeed, parameters.requestLocalIsolatedTestFeed, and(parameters.runBranchBuild, parameters.publishRetainedCohort)) }}:
         - stage: PublicationBlocked
           jobs:
             - job: RejectPublication
               steps:
                 - checkout: none
                 - bash: |
-                    printf '%s\n' 'Publication blocked. This definition has no approved isolated feed or writer; production writes are disabled.' >&2
+                    printf '%s\n' 'Production and isolated-feed requests are blocked. Select either build-only or the retained-cohort smoke test, not both.' >&2
                     exit 1
-                  displayName: Block all publication requests
+                  displayName: Reject unsupported publication requests
+      - ${{ elseif parameters.publishRetainedCohort }}:
+        - stage: PublishRetainedCohort
+          # The service connection must enforce approval of the exact writer commit and run outside this YAML.
+          displayName: Publish nine retained npm tarballs
+          variables:
+            NpmWriter: '$(Agent.TempDirectory)/logicappsux-npm-writer'
+            NpmRegistry: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
+          jobs:
+            - job: PublishCohort
+              workspace:
+                clean: all
+              steps:
+                - checkout: none
+                - task: UseNode@1
+                  inputs:
+                    version: '24.x'
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download only the retained npm cohort from run 192458185
+                  inputs:
+                    buildType: specific
+                    project: One
+                    definition: '489908'
+                    buildVersionToDownload: specific
+                    pipelineId: '192458185'
+                    artifactName: logicappsux-npm-branch-cohort
+                    itemPattern: |
+                      publisher-artifact.json
+                      *.tgz
+                    targetPath: '$(Pipeline.Workspace)/retained-npm-cohort'
+                - bash: |
+                    set -euo pipefail
+                    if [[ "$BUILD_REASON" != Manual || "$SOURCE_BRANCH" != refs/heads/krmitta/ado-npm-publish-pipeline ||
+                          ! "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ || "$SOURCE_VERSION" != "$EXPECTED_SHA" ]]; then
+                      echo 'Publish rejected: queue the reviewed commit manually on the test branch.' >&2
+                      exit 1
+                    fi
+                    umask 077
+                    mkdir -- "$WRITER"
+                    # The reviewed manifest digest binds all nine archives to the successful producer run.
+                    python3 -I - <<'PY'
+                    import base64, hashlib, json, os, re, sys
+                    from pathlib import Path
+
+                    artifact = Path(os.environ["ARTIFACT"])
+                    writer = Path(os.environ["WRITER"])
+                    producer_sha = "be5f0745502d59381363c826c43aa5a993b58622"
+                    version = f"0.0.0-ado.192458185.g{producer_sha}"
+
+                    def read_regular(name, limit):
+                        file = artifact / name
+                        if file.is_symlink() or not file.is_file() or file.stat().st_size > limit:
+                            sys.exit(f"Invalid retained artifact file: {name}")
+                        return file.read_bytes()
+
+                    manifest = read_regular("publisher-artifact.json", 128 * 1024)
+                    if hashlib.sha256(manifest).hexdigest() != "73df569e98acd73fbc83660d7204e1ce8732f60b242f5b9f35bb3a0d9dbb04fa":
+                        sys.exit("Retained manifest does not match the reviewed run.")
+                    record = json.loads(manifest)
+                    source = record["source"]
+                    if (source["buildId"], source["verifiedSha"], source["version"], record["destination"]) != ("192458185", producer_sha, version, None) or len(record["packages"]) != 9:
+                        sys.exit("Unexpected retained run, version, destination, or cohort size.")
+                    rows = []
+                    for entry in record["packages"]:
+                        name = entry["name"]
+                        if not re.fullmatch(r"@microsoft/[a-z0-9-]+", name) or entry["version"] != version:
+                            sys.exit("Unexpected package identity in the retained cohort.")
+                        file = f"microsoft-{name.split('/')[1]}-{version}.tgz"
+                        data = read_regular(file, 64 * 1024 * 1024)
+                        integrity = "sha512-" + base64.b64encode(hashlib.sha512(data).digest()).decode()
+                        if (entry["file"], entry["bytes"], entry["sha256"], entry["integrity"]) != (file, len(data), hashlib.sha256(data).hexdigest(), integrity):
+                            sys.exit(f"Retained tarball does not match the reviewed digest: {file}")
+                        (writer / file).write_bytes(data)
+                        rows.append(f"{name}@{version}\t{file}\n")
+                    (writer / "cohort.tsv").write_text("".join(rows))
+                    PY
+                    printf 'registry=%s\n' "$REGISTRY" > "$WRITER/.npmrc"
+                  displayName: Check the reviewed commit, version, and all nine retained tarball digests
+                  bashEnvValue: /dev/null
+                  env:
+                    BUILD_REASON: '$(Build.Reason)'
+                    SOURCE_BRANCH: '$(Build.SourceBranch)'
+                    SOURCE_VERSION: '$(Build.SourceVersion)'
+                    EXPECTED_SHA: ${{ parameters.expectedSha }}
+                    ARTIFACT: '$(Pipeline.Workspace)/retained-npm-cohort'
+                    WRITER: '$(NpmWriter)'
+                    REGISTRY: '$(NpmRegistry)'
+                - task: npmAuthenticate@0
+                  displayName: Authenticate the dedicated publishing identity
+                  inputs:
+                    workingFile: '$(NpmWriter)/.npmrc'
+                    workloadIdentityServiceConnection: '21d5a1d8-11d3-425c-8d3a-e7f088725481' # logicappsux-ado-npm-publisher
+                    feedUrl: '$(NpmRegistry)'
+                - bash: |
+                    set -euo pipefail
+                    umask 077
+                    # The pinned WIF connection is mandatory; require the task's scoped token output.
+                    if ! grep -Eq '^//pkgs\.dev\.azure\.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/:_authToken=[^[:space:]]+$' .npmrc; then
+                      echo 'Dedicated federated npm credentials are missing.' >&2
+                      exit 1
+                    fi
+                    mkdir -- readback
+                    run_npm() {
+                      env -i PATH="$PATH" HOME="$PWD" npm "$@" --registry "$REGISTRY" --ignore-scripts \
+                        --userconfig "$PWD/.npmrc" --globalconfig /dev/null --fetch-retries 0 --fetch-timeout 60000 --logs-max 0 </dev/null
+                    }
+                    while IFS=$'\t' read -r spec file; do
+                      if ! run_npm publish "./$file" --tag ado-test-489908-192458185 --cache "$PWD/write-cache" >/dev/null 2>&1; then
+                        printf 'Publish failed for %s. Verify feed state before retrying.\n' "$spec" >&2
+                        exit 1
+                      fi
+                      # A separate, fresh cache makes this a registry read, not a local pack check.
+                      if ! run_npm pack "$spec" --prefer-online --cache "$PWD/read-cache" --pack-destination "$PWD/readback" >/dev/null 2>&1 ||
+                         ! cmp -s -- "$file" "readback/$file"; then
+                        printf 'Exact version readback failed for %s. Verify feed state before retrying.\n' "$spec" >&2
+                        exit 1
+                      fi
+                      printf 'Published and verified %s\n' "$spec"
+                    done < cohort.tsv
+                  displayName: Publish and read back all nine exact versions
+                  bashEnvValue: /dev/null
+                  workingDirectory: '$(NpmWriter)'
+                  env:
+                    REGISTRY: '$(NpmRegistry)'
       - ${{ elseif parameters.runBranchBuild }}:
         - stage: BuildValidation
           displayName: Build and validate branch test tarballs only
@@ -89,7 +216,7 @@ extends:
                   inputs:
                     version: '24.x'
                 - bash: node scripts/ado-npm-publisher.cjs build-branch-artifact
-                  displayName: Verify self, build libraries and validate nine tarballs
+                  displayName: Build and pack npm packages
                   workingDirectory: '$(Build.Repository.LocalPath)'
                   env:
                     EXPECTED_SHA: ${{ parameters.expectedSha }}
