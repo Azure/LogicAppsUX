@@ -8,6 +8,7 @@ import { SearchView } from '../searchView';
 
 // Mock the selectors
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
+  useDiscoveryPanelIsAddingTrigger: vi.fn(() => false),
   useDiscoveryPanelRelationshipIds: vi.fn(() => ({
     graphId: 'root',
     parentId: undefined,
@@ -71,7 +72,11 @@ vi.mock('../SearchOpeationsService', () => ({
   })),
 }));
 
-import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelIsAddingTrigger,
+  useDiscoveryPanelRelationshipIds,
+  useIsAddingAgentTool,
+} from '../../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
 import { useIsAgenticWorkflow, useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { useEnableNestedAgentLoops } from '../../../../core/state/designerOptions/designerOptionsSelectors';
@@ -149,6 +154,7 @@ describe('SearchView', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useDiscoveryPanelIsAddingTrigger).mockReturnValue(false);
     mockUseDiscoveryPanelRelationshipIds.mockReturnValue({
       graphId: 'root',
       parentId: undefined,
@@ -224,6 +230,35 @@ describe('SearchView', () => {
   });
 
   describe('Search Filtering', () => {
+    test.each([true, false])('only hides matching actions when adding a trigger (%s)', async (isAddingTrigger) => {
+      vi.mocked(useDiscoveryPanelIsAddingTrigger).mockReturnValue(isAddingTrigger);
+      const operations = [
+        ...mockOperations,
+        {
+          id: 'http-trigger',
+          name: 'When an HTTP request is received',
+          type: 'trigger',
+          properties: { ...mockOperations[0].properties, trigger: 'Request' },
+        },
+      ];
+
+      render(
+        <SearchView
+          searchTerm="http"
+          allOperations={operations}
+          groupByConnector={true}
+          setGroupByConnector={mockSetGroupByConnector}
+          isLoading={false}
+          onOperationClick={mockOnOperationClick}
+          displayRuntimeInfo={true}
+        />,
+        { wrapper: createWrapper() }
+      );
+
+      await screen.findByTestId('result-http-trigger');
+      expect(screen.queryByTestId('result-http-request') !== null).toBe(!isAddingTrigger);
+    });
+
     test('should filter operations based on search term', async () => {
       const { rerender } = render(
         <SearchView

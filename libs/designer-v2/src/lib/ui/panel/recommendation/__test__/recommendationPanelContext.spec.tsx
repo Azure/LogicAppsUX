@@ -9,6 +9,7 @@ import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecommendationPanelContext } from '../recommendationPanelContext';
 import { SELECTION_STATES } from '../../../../core/state/panel/panelTypes';
+import { requestOperation, responseOperation } from '@microsoft/logic-apps-shared';
 
 // Mock the selectors
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
@@ -33,6 +34,10 @@ vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () =>
   useHostOptions: vi.fn(() => ({ displayRuntimeInfo: true })),
 }));
 
+vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({
+  useIsWithinAgenticLoop: vi.fn(() => false),
+}));
+
 vi.mock('../../../../core/state/panel/panelSlice', () => ({
   selectOperationGroupId: vi.fn((id) => ({ type: 'panel/selectOperationGroupId', payload: id })),
   selectOperationId: vi.fn((id) => ({ type: 'panel/selectOperationId', payload: id })),
@@ -47,9 +52,10 @@ vi.mock('../../../../core/actions/bjsworkflow/add', () => ({
 }));
 
 vi.mock('../../../../core/queries/browse', () => ({
-  useAllConnectors: vi.fn(() => ({ data: [], isLoading: false })),
+  useAllConnectors: vi.fn(() => ({ data: [{ id: 'connectionProviders/request', properties: { displayName: 'Request' } }] })),
   useAllOperations: vi.fn(() => ({ data: [], isLoading: false })),
   useMcpServersQuery: vi.fn(() => ({ data: { data: [] }, isLoading: false })),
+  useOperationsByConnector: vi.fn(() => ({ data: [requestOperation, responseOperation], isLoading: false })),
 }));
 
 vi.mock('../hooks', () => ({
@@ -80,8 +86,14 @@ vi.mock('../customSwaggerSelection', () => ({
   CustomSwaggerSelection: vi.fn(() => <div data-testid="custom-swagger-selection">Custom Swagger Selection</div>),
 }));
 
-vi.mock('../details/connectorDetailsView', () => ({
-  ConnectorDetailsView: vi.fn(() => <div data-testid="connector-details-view">Connector Details View</div>),
+vi.mock('../details/operationsAccordion', () => ({
+  OperationsAccordion: ({ triggers, actions }: import('../details/operationsAccordion').OperationsAccordionProps) => (
+    <div>
+      {[...triggers, ...actions].map(({ id, title }) => (
+        <button key={id}>{title}</button>
+      ))}
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/designer-ui', async (importOriginal) => {
@@ -94,6 +106,7 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
       </div>
     )),
     XLargeText: vi.fn(({ text }) => <h2 data-testid="panel-heading">{text}</h2>),
+    FavoriteButton: () => null,
   };
 });
 
@@ -112,7 +125,6 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
       Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     },
     equals: vi.fn((a, b) => a?.toLowerCase() === b?.toLowerCase()),
-    requestOperation: { id: 'request', type: 'Request' },
   };
 });
 
@@ -312,6 +324,25 @@ describe('RecommendationPanelContext', () => {
       expect(screen.getByTestId('search-view').textContent).toContain('Search: http');
     });
 
+    test.each([
+      { isTrigger: true, searchTerm: 'request', showActions: false },
+      { isTrigger: true, searchTerm: '', showActions: true },
+      { isTrigger: false, searchTerm: 'request', showActions: true },
+    ])(
+      'shows connector actions only outside trigger search (trigger=$isTrigger, search="$searchTerm")',
+      ({ isTrigger, searchTerm, showActions }) => {
+        mockUseDiscoveryPanelIsAddingTrigger.mockReturnValue(isTrigger);
+        mockUseDiscoveryPanelSearchTerm.mockReturnValue(searchTerm);
+        mockUseDiscoveryPanelSelectedOperationGroupId.mockReturnValue('connectionProviders/request');
+        mockUseDiscoveryPanelSelectionState.mockReturnValue(SELECTION_STATES.DETAILS);
+
+        render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+        expect(screen.getByRole('button', { name: 'When an HTTP request is received' })).toBeDefined();
+        expect(screen.queryByRole('button', { name: 'Response' }) !== null).toBe(showActions);
+      }
+    );
+
     test('should render McpToolWizard when MCP wizard state is set', () => {
       mockUseMcpToolWizard.mockReturnValue({
         operation: {
@@ -347,15 +378,6 @@ describe('RecommendationPanelContext', () => {
       render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
 
       expect(screen.queryByTestId('search-header')).toBeNull();
-    });
-
-    test('should render ConnectorDetailsView when in DETAILS state with connector selected', () => {
-      mockUseDiscoveryPanelSelectionState.mockReturnValue(SELECTION_STATES.DETAILS);
-      mockUseDiscoveryPanelSelectedOperationGroupId.mockReturnValue('connector-123');
-
-      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
-
-      expect(screen.getByTestId('connector-details-view')).toBeDefined();
     });
 
     test('should render AzureResourceSelection when in AZURE_RESOURCE state', () => {
