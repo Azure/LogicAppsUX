@@ -1,16 +1,41 @@
 import { describe, expect, it } from 'vitest';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { compactNodeMetrics, getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import Constants from '../../../common/constants';
 import { exportForTesting } from '../elklayout';
-import { AGENT_TOOL_CONNECTOR_HEIGHT, createWorkflowNode, getNodePresentation, SHARED_COLLAPSED_CARD_HEIGHT } from '../../utils/graph';
+import { AGENT_TOOL_CONNECTOR_HEIGHT, createWorkflowNode, getNodePresentation } from '../../utils/graph';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { getWorkflowNodePresentationContext } from '../helpers';
+
+const compactCardSize = { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.height };
+const wrappingTitle = 'Send an email notification to the on-call engineer';
 
 const expectedTerminalPadding = nodeMetrics.actionAdd.buttonHeight + nodeMetrics.terminalConnectionLength;
 const expectedTerminalCenterOffset = nodeMetrics.actionAdd.buttonHeight / 2 + nodeMetrics.terminalConnectionLength;
 const getPaddingValue = (padding: string, key: 'bottom' | 'right') => Number(padding.match(new RegExp(`${key}=(\\d+)`))?.[1] ?? Number.NaN);
 
 describe('shared node geometry contracts', () => {
+  it('tightens compact monitoring layers without resizing the cards', async () => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      children: [createWorkflowNode('first'), createWorkflowNode('second')],
+      edges: [{ id: 'edge', source: 'first', target: 'second', type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE }],
+    };
+    const layout = async (compactMonitoring: boolean) => {
+      const { children } = await exportForTesting.elkLayout(
+        exportForTesting.convertWorkflowGraphToElkGraph(graph, true),
+        true,
+        compactMonitoring
+      );
+      const [first, second] = children!;
+      return { height: first.height, gap: second.y! - first.y! - first.height! };
+    };
+
+    expect(await layout(true)).toEqual({ height: compactCardSize.height, gap: 32 });
+    expect(await layout(false)).toEqual({ height: compactCardSize.height, gap: 40 });
+  });
+
   it('keeps legacy 200x44 node sizing and omits ReactFlow width/height when shared presentation is off', async () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, false)).toEqual({ shared: false });
 
@@ -30,10 +55,33 @@ describe('shared node geometry contracts', () => {
     expect(rfAction).not.toHaveProperty('height');
   });
 
+  it('grows compact action and scope headers only when the title needs a second line', () => {
+    const wrapped = { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight };
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: wrappingTitle })).toEqual({
+      shared: true,
+      titleLines: 2,
+      size: wrapped,
+    });
+    expect(
+      getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: Constants.NODE.TYPE.SCOPE, title: wrappingTitle })
+    ).toEqual({ shared: true, family: 'scope', titleLines: 2, size: wrapped });
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: 'Compose' })).toMatchObject({
+      titleLines: 1,
+      size: compactCardSize,
+    });
+  });
+
+  it('sizes compact titles from the renamed caption the card renders', () => {
+    const node = createWorkflowNode('Send_email');
+    expect(getWorkflowNodePresentationContext(node).title).toBe('Send email');
+    expect(getWorkflowNodePresentationContext(node, { idReplacements: { Send_email: wrappingTitle } }).title).toBe(wrappingTitle);
+  });
+
   it('derives shared node family sizes from nodeMetrics without hard-coded host dimensions', () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true)).toEqual({
       shared: true,
-      size: nodeMetrics.cards.action,
+      titleLines: 1,
+      size: compactCardSize,
     });
 
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE, true)).toEqual({
@@ -45,7 +93,7 @@ describe('shared node geometry contracts', () => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.COLLAPSED_NODE, true)).toEqual({
       shared: true,
       family: 'collapsed',
-      size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT },
+      size: { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight },
     });
 
     expect(
@@ -55,7 +103,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'scope',
-      size: nodeMetrics.cards.action,
+      titleLines: 1,
+      size: compactCardSize,
     });
 
     expect(
@@ -75,7 +124,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'loop',
-      size: nodeMetrics.cards.loop,
+      size: { width: nodeMetrics.cards.loop.width, height: compactNodeMetrics.card.height },
+      titleLines: 1,
     });
 
     expect(
@@ -85,7 +135,8 @@ describe('shared node geometry contracts', () => {
     ).toEqual({
       shared: true,
       family: 'loop',
-      size: nodeMetrics.cards.loop,
+      size: { width: nodeMetrics.cards.loop.width, height: compactNodeMetrics.card.height },
+      titleLines: 1,
     });
 
     expect(
@@ -128,7 +179,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
-        hasToolStatus: false,
       })
     ).toEqual({
       shared: true,
@@ -143,7 +193,6 @@ describe('shared node geometry contracts', () => {
     expect(
       getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, {
         subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
-        hasToolStatus: true,
       })
     ).toEqual({
       shared: true,
@@ -151,7 +200,7 @@ describe('shared node geometry contracts', () => {
       toolKind: 'mcp',
       size: {
         width: nodeMetrics.cards.tool.width,
-        height: nodeMetrics.cards.tool.smallHeight + nodeMetrics.badge.overhang,
+        height: nodeMetrics.cards.tool.smallHeight,
       },
     });
 
@@ -194,7 +243,10 @@ describe('shared node geometry contracts', () => {
         'inside-action': { type: 'Compose' },
       } as any,
     });
-    expect(elkScope.layoutOptions?.['elk.nodeSize.minimum']).toBe('(232,220)');
+    const headerHeight = elkScope.children![0].height!;
+    expect(elkScope.layoutOptions?.['elk.nodeSize.minimum']).toBe(
+      `(232,${headerHeight + expectedTerminalPadding + nodeMetrics.frame.minBodyHeight})`
+    );
 
     const laidOutDirect = await exportForTesting.elkLayout(elkScope);
     const [scopeNodes] = exportForTesting.convertElkGraphToReactFlow(
@@ -207,7 +259,7 @@ describe('shared node geometry contracts', () => {
       true
     );
     const frameNode = scopeNodes.find((n) => n.id === 'foreach-scope')!;
-    const expectedHeaderOffset = nodeMetrics.cards.action.height + expectedTerminalPadding;
+    const expectedHeaderOffset = headerHeight + expectedTerminalPadding;
     expect(frameNode.data.presentation).toEqual({ shared: true, family: 'frame' });
     expect(frameNode.data.bodyFrame).toEqual({
       y: expectedHeaderOffset,
@@ -243,6 +295,10 @@ describe('shared node geometry contracts', () => {
     const laidOut = await exportForTesting.elkLayout(horizontal);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(laidOut, true);
     expect(nodes.map((node) => node.data.handleAxis)).toEqual(['horizontal', 'horizontal']);
-    expect(nodes.every((node) => node.data.presentation?.shared === true && node.width === 232 && node.height === 74)).toBe(true);
+    expect(
+      nodes.every(
+        (node) => node.data.presentation?.shared === true && node.width === compactCardSize.width && node.height === compactCardSize.height
+      )
+    ).toBe(true);
   });
 });

@@ -66,7 +66,8 @@ import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
 import { OperationNodeCard } from './components/card/OperationNodeCard';
-import type { NodePresentation } from '../../core/utils/graph';
+import { hasMcpToolPager, type NodePresentation } from '../../core/utils/graph';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { useInitialMountSettled } from '../../core/hooks/useInitialMountSettled';
 
 type OperationGraphNode = Node<{ presentation?: NodePresentation; handleAxis?: 'vertical' | 'horizontal' }>;
@@ -157,6 +158,9 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
+  // Operation info is absent when connector metadata fails to load; the workflow definition still states the operation type,
+  // so shared cards classify from it (e.g. an unresolved ApiConnection reads as 'Azure', never 'Built-in').
+  const definition = useActionMetadata(id);
   const connectorName = useConnectorName(operationInfo);
   const isTrigger = useMemo(() => metadata?.isTrigger ?? false, [metadata]);
   const parentNodeId = useParentNodeId(id);
@@ -174,11 +178,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isAgentTool = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
 
-  const shouldShowPager = useMemo(() => {
-    const isParentAgent = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
-    const isMcpClient = metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
-    return isMonitoringView && isParentAgent && isMcpClient && (metadata?.toolRunData?.repetitionCount ?? 0) > 1;
-  }, [metadata?.toolRunData?.repetitionCount, metadata?.subgraphType, parentActionMetadata?.type, isMonitoringView]);
+  const shouldShowPager = hasMcpToolPager(metadata, parentActionMetadata?.type, isMonitoringView);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
@@ -392,13 +392,14 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
         <OperationNodeCard
           id={id}
           sharedPresentation={data?.presentation?.shared}
+          titleLines={data?.presentation?.titleLines}
           active={isCardActive}
           title={label}
           icon={iconUri}
           connectorName={connectorName?.result}
           isTrigger={isTrigger}
-          operationType={operationInfo.type}
-          operationKind={operationInfo.kind}
+          operationType={operationInfo.type || definition?.type}
+          operationKind={operationInfo.type ? operationInfo.kind : definition?.kind}
           metadataUnavailable={metadataUnavailable}
           description={operationQuery.data?.properties?.description}
           isMonitoringView={isMonitoringView}
@@ -453,7 +454,9 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
       ) : null}
       {shouldShowPager ? (
         shared ? (
-          <SharedLoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} />
+          <div style={{ display: 'flex', height: nodeMetrics.iterationPager.height }}>
+            <SharedLoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} />
+          </div>
         ) : (
           <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} />
         )

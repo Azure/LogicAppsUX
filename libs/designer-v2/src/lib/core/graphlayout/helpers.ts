@@ -1,13 +1,46 @@
-import { removeIdTag, SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  getRecordEntry,
+  labelCase,
+  removeIdTag,
+  SUBGRAPH_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  WORKFLOW_NODE_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
-import type { NodePresentationContext } from '../utils/graph';
+import { hasMcpToolPager, type NodePresentationContext } from '../utils/graph';
+import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 
 export const footerMarker = '#footer';
+
+export interface BranchGroupDecoration {
+  /** Body starts after the header on the layout's primary axis. */
+  start: number;
+  exits: { x: number; y: number }[];
+}
+
+export const getBranchGroupDecoration = (graph: ElkNode, horizontal: boolean): BranchGroupDecoration | undefined => {
+  const header = graph.children?.find((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
+  const branches = graph.children?.filter((child) => child.layoutOptions?.nodeType === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
+  if (!header || !branches?.length) {
+    return undefined;
+  }
+  // Use existing branch bounds and the parent source anchor. This is paint only: there are no extra ELK edges or ports.
+  return {
+    start: horizontal ? (header.x ?? 0) + (header.width ?? 0) : (header.y ?? 0) + (header.height ?? 0),
+    exits: branches.map(({ x = 0, y = 0, width = 0, height = 0 }) => ({
+      x: x + (horizontal ? width : width / 2),
+      y: y + (horizontal ? height / 2 : height),
+    })),
+  };
+};
 
 export interface GraphPresentationContext {
   operations?: Operations;
   nodesMetadata?: NodesMetadata;
+  /** Renamed node captions; titles feed compact card height, matching useNodeDisplayName. */
+  idReplacements?: Record<string, string>;
+  isMonitoringView?: boolean;
 }
 
 export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: GraphPresentationContext = {}): NodePresentationContext => {
@@ -29,8 +62,11 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
       : definition;
   return {
     operationType: operation?.type,
+    title: labelCase(getRecordEntry(context.idReplacements, id) ?? id),
     subgraphType: metadata?.subgraphType,
     caseCount: operation && 'cases' in operation ? Object.keys(operation.cases ?? {}).length + 1 : undefined,
+    ...(node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE &&
+      hasMcpToolPager(metadata, parent?.type, context.isMonitoringView) && { hasToolPager: true }),
     ...(toolRow && {
       toolKind:
         metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
@@ -38,7 +74,6 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
           : toolOperation?.type?.toLowerCase() === 'workflow'
             ? 'subWorkflow'
             : 'action',
-      hasToolStatus: !!(metadata?.toolRunData ?? metadata?.runData)?.status,
     }),
   };
 };

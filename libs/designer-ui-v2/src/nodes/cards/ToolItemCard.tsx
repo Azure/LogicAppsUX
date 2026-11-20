@@ -10,6 +10,7 @@ import type { NodeToolItemSize, NodeToolKind } from '../types';
 import type { ActionNodeCardStrings, NodeStrings } from '../strings';
 import { defaultNodeStrings } from '../strings';
 import { resolveNodeIcons } from './shared';
+import { useNodeCount } from '../countLabel';
 import type { BaseNodeCardProps } from './shared';
 const ICONS = {
   action: { icon: <FlashRegular />, selectedIcon: <FlashFilled /> },
@@ -29,11 +30,16 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
     size = 'medium',
     title,
     subtitle,
+    subtitleKind,
+    countLabel,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
+    statusDisplay = 'badge',
     strings = defaultNodeStrings,
     className,
     ...rest
@@ -42,17 +48,20 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
 ) {
   const styles = useStyles();
   const testData = status === 'mock';
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
       width={size === 'small' ? 'fill' : 'standard'}
       size={size}
       selected={selected}
       status={status}
       statusDetail={statusDetail}
+      statusDisplay={statusDisplay}
       strings={strings}
-      className={mergeClasses(size === 'small' && status && !testData && styles.badgeClearance, className)}
+      className={mergeClasses(size === 'small' && status && !testData && statusDisplay !== 'contained' && styles.badgeClearance, className)}
       data-node-card="tool"
       data-tool-kind={kind}
     >
@@ -62,9 +71,16 @@ export const ToolItemCard = forwardRef<HTMLDivElement, ToolItemCardProps>(functi
           size={size}
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, ICONS[kind])}
         />
-        <NodeText title={title} subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])} />
+        <NodeText
+          title={title}
+          subtitle={subtitle ?? (kind === 'action' ? undefined : strings.tool[kind])}
+          subtitleKind={subtitleKind}
+          {...nodeCount.textProps}
+        />
       </NodeCardBody>
     </NodeCard>
   );

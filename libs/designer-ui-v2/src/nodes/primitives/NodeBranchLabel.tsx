@@ -26,6 +26,10 @@ const useStyles = makeStyles({
   tickNeutral: { width: tokens.strokeWidthThin, backgroundColor: tokens.colorNeutralStroke1 },
   tickSuccess: { width: tokens.strokeWidthThick, backgroundColor: tokens.colorStatusSuccessBorder2 },
   tickDanger: { width: tokens.strokeWidthThick, backgroundColor: tokens.colorStatusDangerBorder2 },
+  icon: { display: 'inline-flex', flexShrink: 0, fontSize: tokens.fontSizeBase400 },
+  iconLabel: { fontWeight: tokens.fontWeightSemibold },
+  iconSuccess: { color: tokens.colorStatusSuccessForeground1 },
+  iconDanger: { color: tokens.colorStatusDangerForeground1 },
   action: { display: 'inline-flex', marginInlineStart: tokens.spacingHorizontalXS },
   srOnly: {
     position: 'absolute',
@@ -46,13 +50,15 @@ export interface NodeBranchLabelProps extends Omit<HTMLAttributes<HTMLSpanElemen
   label: string;
   tone?: 'success' | 'danger' | 'neutral';
   state?: 'taken' | 'notTaken';
+  /** Replaces the tick with a decorative glyph and applies the tone to the caption. */
+  icon?: ReactNode;
   action?: ReactNode;
   strings?: NodeBranchLabelStrings;
 }
 
 /** Host-owned branch caption chip; this primitive never positions path geometry or commands. */
 export const NodeBranchLabel = forwardRef<HTMLSpanElement, NodeBranchLabelProps>(function NodeBranchLabel(
-  { label, tone = 'neutral', state, action, strings, className, ...rest },
+  { label, tone = 'neutral', state, icon, action, strings, className, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -61,14 +67,30 @@ export const NodeBranchLabel = forwardRef<HTMLSpanElement, NodeBranchLabelProps>
   const notTaken = state === 'notTaken';
   const taken = state === 'taken';
   return (
-    <span {...rest} ref={ref} className={mergeClasses(styles.root, notTaken && !ancestorInactive && styles.inactive, className)}>
-      <span
-        className={mergeClasses(
-          styles.tick,
-          tone === 'success' ? styles.tickSuccess : tone === 'danger' ? styles.tickDanger : styles.tickNeutral
-        )}
-        aria-hidden="true"
-      />
+    <span
+      {...rest}
+      ref={ref}
+      className={mergeClasses(
+        styles.root,
+        notTaken && !ancestorInactive && styles.inactive,
+        icon != null && styles.iconLabel,
+        icon != null && (tone === 'success' ? styles.iconSuccess : tone === 'danger' && styles.iconDanger),
+        className
+      )}
+    >
+      {icon != null ? (
+        <span className={styles.icon} aria-hidden="true">
+          {icon}
+        </span>
+      ) : (
+        <span
+          className={mergeClasses(
+            styles.tick,
+            tone === 'success' ? styles.tickSuccess : tone === 'danger' ? styles.tickDanger : styles.tickNeutral
+          )}
+          aria-hidden="true"
+        />
+      )}
       <span>
         {taken ? (
           <>

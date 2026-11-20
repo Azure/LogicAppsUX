@@ -5,7 +5,15 @@ import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from './workflowGraphTraversal';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
+import {
+  containsIdTag,
+  labelCase,
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  getRecordEntry,
+  SUBGRAPH_TYPES,
+  equals,
+} from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,6 +22,7 @@ import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
 import { collapseFlowTree, isSingleHandoffAction } from './helper';
 import { useEdges } from '@xyflow/react';
+import { ErrorLevel } from '../operation/errorLevel';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
 
@@ -380,6 +389,49 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
 
 // Memoized index of all workflow nodes by ID — only rebuilds when graph reference changes
 const selectNodeIndex = createSelector([(state: RootState) => state.workflow.graph], buildNodeIndex);
+
+export const useBranchValidationCount = (branchId: string | undefined) => {
+  const selectCount = useMemo(
+    () =>
+      createSelector(
+        [
+          (state: RootState) => (branchId === undefined ? undefined : selectNodeIndex(state).get(branchId)),
+          (state: RootState) => state.workflow.flowErrors,
+          (state: RootState) => state.operations.errors,
+          (state: RootState) => state.operations.inputParameters,
+          (state: RootState) => state.settings.validationErrors,
+        ],
+        (branch, flowErrors, operationErrors, inputs, settings) => {
+          // Use the unpruned tree so collapse does not hide validation. Ignore synthetic headers/footers
+          // and count each real descendant once, even if several validation sources flag it.
+          const pending = [...(branch?.children ?? [])];
+          let count = 0;
+          while (pending.length) {
+            const child = pending.pop()!;
+            if (child.type === WORKFLOW_NODE_TYPES.HIDDEN_NODE || containsIdTag(child.id)) {
+              continue;
+            }
+            const id = child.id;
+            const errors = getRecordEntry(operationErrors, id);
+            if (
+              getRecordEntry(flowErrors, id)?.length ||
+              getRecordEntry(settings, id)?.length ||
+              Object.values(errors ?? {}).some((error) => error && error.level !== ErrorLevel.DynamicOutputs) ||
+              Object.values(getRecordEntry(inputs, id)?.parameterGroups ?? {}).some(({ parameters }) =>
+                parameters.some((parameter) => parameter.validationErrors?.some(Boolean))
+              )
+            ) {
+              count++;
+            }
+            pending.push(...(child.children ?? []));
+          }
+          return count;
+        }
+      ),
+    [branchId]
+  );
+  return useSelector(selectCount);
+};
 
 export const useWorkflowNode = (actionId?: string) => {
   return useSelector((state: RootState) => {

@@ -14,6 +14,9 @@ const useStyles = makeStyles({
     padding: tokens.spacingHorizontalL,
   },
   small: { gap: tokens.spacingHorizontalMNudge, padding: tokens.spacingHorizontalS },
+  // 4px block padding: a two-line title (40) + gap (2) + subtitle (16) + borders fills the 68px wrapped card exactly.
+  compact: { gap: tokens.spacingHorizontalS, padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalM}` },
+  compactIndicator: { right: tokens.spacingHorizontalM, bottom: 'auto', top: '50%', transform: 'translateY(-50%)' },
   testData: { [nodeCardVars.textEndReserve]: `${nodeMetrics.testData.textReserve}px` },
   indicator: { position: 'absolute', right: tokens.spacingHorizontalL, bottom: tokens.spacingVerticalL, display: 'inline-flex' },
   footer: {
@@ -33,7 +36,7 @@ const useStyles = makeStyles({
   footerAction: { display: 'inline-flex', alignItems: 'center', marginInlineStart: 'auto' },
 });
 export interface NodeCardBodyProps extends HTMLAttributes<HTMLDivElement> {
-  density?: 'default' | 'small';
+  density?: 'default' | 'small' | 'compact';
   testData?: boolean;
   testDataLabel?: string;
 }
@@ -46,11 +49,17 @@ export const NodeCardBody = forwardRef<HTMLDivElement, NodeCardBodyProps>(functi
     <div
       {...rest}
       ref={ref}
-      className={mergeClasses(styles.root, density === 'small' && styles.small, testData && styles.testData, className)}
+      className={mergeClasses(
+        styles.root,
+        density === 'small' && styles.small,
+        density === 'compact' && styles.compact,
+        testData && styles.testData,
+        className
+      )}
     >
       {children}
       {testData ? (
-        <span className={styles.indicator}>
+        <span className={mergeClasses(styles.indicator, density === 'compact' && styles.compactIndicator)}>
           <NodeTestDataIndicator label={testDataLabel} />
         </span>
       ) : null}

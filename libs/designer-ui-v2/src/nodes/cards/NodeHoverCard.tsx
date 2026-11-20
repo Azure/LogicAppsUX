@@ -57,6 +57,11 @@ export interface NodeHoverCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
   disabled?: boolean;
   externalFocusTarget?: HTMLElement | null;
   triggerRef?: Ref<HTMLDivElement>;
+  /**
+   * `above` (default) keeps the Otto placement. `side` opens beside the node and flips when blocked, so canvas hosts
+   * with vertical flows do not cover the upstream node or its incoming edge.
+   */
+  placement?: 'above' | 'side';
 }
 export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(function NodeHoverCard(
   {
@@ -67,6 +72,7 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
     disabled = false,
     externalFocusTarget,
     triggerRef,
+    placement = 'above',
     className,
     ...rest
   },
@@ -388,7 +394,17 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
             dismiss();
           }
         }}
-        positioning={{ target, position: 'above', align: 'start', offset: nodeMetrics.hoverCard.offset }}
+        positioning={
+          placement === 'side'
+            ? {
+                target,
+                position: 'after',
+                align: 'top',
+                offset: nodeMetrics.hoverCard.offset,
+                fallbackPositions: ['before', 'below', 'above'],
+              }
+            : { target, position: 'above', align: 'start', offset: nodeMetrics.hoverCard.offset }
+        }
         trapFocus={false}
         unstable_disableAutoFocus
       >

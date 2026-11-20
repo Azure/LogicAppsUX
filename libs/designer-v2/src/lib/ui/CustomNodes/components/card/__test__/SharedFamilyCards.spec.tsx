@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SharedAgentScopeCard, SharedBranchCard, SharedScopeCard } from '../SharedFamilyCards';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
-import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { compactNodeMetrics, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { NodeInactiveContext } from '@microsoft/designer-ui-v2';
 import type { ActionCardProps } from '../actionCard';
 import { PreviewOperationCard } from '../../../../panel/multiSelectPanel/SharedExtractionPreviewNode';
@@ -51,14 +51,35 @@ const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
 };
 
 describe('shared family interaction adapters', () => {
+  it.each([
+    [SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'True', 'true'],
+    [SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'False', 'false'],
+    [SUBGRAPH_TYPES.SWITCH_CASE, 'Case label', undefined],
+  ] as const)('shows branch text and a descendant validation badge on %s', (subgraphType, label, branch) => {
+    const { rerender } = render(
+      <SharedBranchCard id="branch" title="Case label" subgraphType={subgraphType} onClick={vi.fn()} descendantErrorCount={2} collapsed />
+    );
+    const header = screen.getByRole('button', { name: label });
+    expect(header).toHaveAttribute('aria-description', '2 nested steps have validation errors');
+    expect(within(header).getByAltText('Errors')).toBeVisible();
+    if (branch) {
+      const icon = branch === 'true' ? 'CheckmarkRegular' : 'DismissRegular';
+      expect(header.querySelector(`[data-branch="${branch}"] [aria-hidden="true"] [data-icon-name="${icon}"]`)).not.toBeNull();
+    }
+    rerender(<SharedBranchCard id="branch" title="Case label" subgraphType={subgraphType} onClick={vi.fn()} />);
+    expect(within(header).queryByAltText('Errors')).not.toBeInTheDocument();
+  });
   it.each(['if', 'switch', 'loop', 'agent', 'scope'] as const)('keeps %s host status quiet and in the card name', (family) => {
     const { container } = render(<SharedScopeCard {...props()} family={family} runData={{ status: 'Succeeded', duration: '1 s' }} />);
     expect(screen.getByTestId('card-Renamed operation')).toHaveAccessibleName(/Succeeded/);
     expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
     expect(container.querySelector('[role="status"]')).toBeNull();
   });
-  it('keeps the extraction Scope header identical to the actual main Scope header', () => {
-    const input = props();
+  it.each([
+    ['Build message', compactNodeMetrics.card.height],
+    ['Send an email notification to the on-call engineer', compactNodeMetrics.card.wrappedHeight],
+  ] as const)('matches the editor geometry for the extraction Scope title "%s"', (title, height) => {
+    const input = { ...props(), title };
     const { container } = render(
       <>
         <SharedScopeCard {...input} family="scope" operationType="Scope" />
@@ -74,8 +95,20 @@ describe('shared family interaction adapters', () => {
         />
       </>
     );
-    const main = within(container.querySelector('#msla-node-real-id')!).getByText(input.title).parentElement!;
-    const preview = within(container.querySelector('#preview-scope')!).getByText(input.title).parentElement!;
+    const mainCard = container.querySelector<HTMLElement>('#msla-node-real-id')!;
+    const previewCard = container.querySelector<HTMLElement>('#preview-scope')!;
+    for (const card of [mainCard, previewCard]) {
+      expect(getMatchedStyleRules(card).map((rule) => rule.style.getPropertyValue('width'))).toContain(
+        `${compactNodeMetrics.card.width}px`
+      );
+      const body = card.querySelector<HTMLElement>(':scope > div')!;
+      expect(getMatchedStyleRules(body).map((rule) => rule.style.getPropertyValue('min-height'))).toContain(`${height}px`);
+    }
+    expect(previewCard.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe(
+      mainCard.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')
+    );
+    const main = within(mainCard).getByText(input.title).parentElement!;
+    const preview = within(previewCard).getByText(input.title).parentElement!;
     expect(main.textContent).toBe(input.title);
     expect(Array.from(preview.children, (line) => line.textContent)).toEqual(Array.from(main.children, (line) => line.textContent));
   });
@@ -91,6 +124,12 @@ describe('shared family interaction adapters', () => {
     expect(container.querySelector(`[data-node-card="${surface}"]`)).not.toBeNull();
     expect(screen.getByTestId('card-Renamed operation')).toHaveAttribute('id', 'msla-node-real-id');
     expect(screen.getByRole('button', { name: 'Collapse' })).toHaveAttribute('id', 'real-id-collapse-toggle');
+  });
+
+  it('reserves the compact Scope title column for the collapse chevron', () => {
+    render(<SharedScopeCard {...props()} family="scope" operationType="Scope" title="Update order info" />);
+    const card = screen.getByTestId('card-Update order info');
+    expect(card.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe('20px');
   });
 
   it('keeps Standard condition cards in multi-output mode and agent cards with below tools placement', () => {
@@ -189,6 +228,7 @@ describe('shared family interaction adapters', () => {
     const agent = container.querySelector('[data-node-card="agent"]')!;
     expect(agent.querySelector('img')).toBeNull();
     expect(agent.querySelector('[data-icon-name="AgentsRegular"]')).not.toBeNull();
+    expect(agent.querySelector('[data-category="agent"]')).toHaveAttribute('data-tone', 'pink');
   });
 
   it('composes the real tools panel inside the Agent before its output without cloning tool rows', () => {
@@ -347,6 +387,24 @@ describe('shared family interaction adapters', () => {
     expect(screen.getByRole('button', { name: 'MCP tool: Renamed tool' })).toHaveAttribute('aria-pressed', 'true');
   });
 
+  it('renders host-resolved tool art untinted instead of the tool-kind default glyph', () => {
+    const { container, rerender } = render(
+      <SharedBranchCard
+        id="mcp-tool"
+        title="Managed MCP"
+        subgraphType={SUBGRAPH_TYPES.MCP_CLIENT}
+        icon={<img alt="" src="office365.svg" />}
+        iconArtwork
+        onClick={vi.fn()}
+      />
+    );
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool.querySelector('img')).toHaveAttribute('src', 'office365.svg');
+    expect(tool.querySelector('[data-artwork="true"]')).not.toBeNull();
+    rerender(<SharedBranchCard id="mcp-tool" title="Managed MCP" subgraphType={SUBGRAPH_TYPES.MCP_CLIENT} onClick={vi.fn()} />);
+    expect(container.querySelector('[data-node-card="tool"] img')).toBeNull();
+  });
+
   it.each(['Wait', 'Send_teams_message_for_PR_details', 'Post_or_Patch_Azure_DevOps_REST_API', 'Long tool label '.repeat(12)])(
     'constrains the tool hover trigger to accepted geometry without losing the full label: %s',
     (title) => {
@@ -424,7 +482,8 @@ describe('shared family interaction adapters', () => {
       />
     );
     expect(tool.container.querySelector('[data-node-card="tool"]')).toHaveAttribute('data-inactive', 'true');
-    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Waiting');
+    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent('Waiting');
+    expect(tool.container.querySelector('[data-badge-status]')).toBeNull();
     cleanup();
     const branch = render(
       <SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active={false} onClick={vi.fn()} />
@@ -434,6 +493,40 @@ describe('shared family interaction adapters', () => {
     expect(getMatchedStyleRules(plain).some((rule) => rule.style.opacity === String(nodeMetrics.inactiveOpacity))).toBe(true);
     branch.rerender(<SharedBranchCard id="case-1" title="Case 1" subgraphType={SUBGRAPH_TYPES.SWITCH_CASE} active onClick={vi.fn()} />);
     expect(branch.container.querySelector('[data-inactive]')).toBeNull();
+  });
+
+  it('uses contained monitoring status rows for scope and tool cards, with failed-only tint', () => {
+    const scope = render(
+      <SharedScopeCard
+        {...props()}
+        operationType="Scope"
+        isMonitoringView
+        runData={{ status: 'TimedOut', duration: '3s' } as ActionCardProps['runData']}
+      />
+    );
+    const scopeCard = scope.container.querySelector('[data-testid="card-Renamed operation"]') as HTMLElement;
+    expect(scopeCard).toHaveAttribute('data-status-display', 'contained');
+    expect(scopeCard).toHaveAttribute('data-status-tone', 'warning');
+    expect(scopeCard).not.toHaveAttribute('data-status-tint');
+    expect(scope.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Timed out\s*3s/);
+    expect(scope.container.querySelector('[data-badge-status]')).toBeNull();
+    cleanup();
+    const tool = render(
+      <SharedBranchCard
+        id="tool"
+        title="Tool"
+        subgraphType={SUBGRAPH_TYPES.AGENT_CONDITION}
+        isMonitoringView
+        runData={{ status: 'Failed', duration: '1s' }}
+        onClick={vi.fn()}
+      />
+    );
+    const toolCard = tool.container.querySelector('[data-testid="card-Tool"]') as HTMLElement;
+    expect(toolCard).toHaveAttribute('data-status-display', 'contained');
+    expect(toolCard).toHaveAttribute('data-status-tone', 'danger');
+    expect(toolCard).toHaveAttribute('data-status-tint', 'failed');
+    expect(tool.container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Failed\s*1s/);
+    expect(tool.container.querySelector('[data-badge-status]')).toBeNull();
   });
 
   // The parent Switch frame already renders at 0.4; a nested untaken case must not multiply that to 0.16.

@@ -9,9 +9,11 @@ export const nodeMetrics = {
     agent: { width: 280, headerHeight: 74, modelHeight: 42 },
     tool: { width: 232, height: 74, smallHeight: 56 },
   },
-  tile: { medium: 40, small: 32, mediumIcon: 24, smallIcon: 20 },
+  tile: { medium: 40, small: 32, mediumIcon: 24, smallIcon: 20, mediumArtwork: 30, smallArtwork: 24 },
   handle: { size: 12, stroke: 1.5, edgeOffset: -7, labeledHeight: 20 },
-  badge: { height: 20, icon: 12, overhang: 10 },
+  /** handleGap: clearance between a vertical-axis badge and the centred input handle it must never cover. */
+  badge: { height: 20, icon: 12, overhang: 10, handleGap: 4 },
+  iterationPager: { height: 24 },
   testData: { size: 20, icon: 16, textReserve: 32 },
   toolConnector: { diamond: 12, gap: 9, line: 20, add: 20, sideRowHeight: 74 },
   toolsHeader: 20,
@@ -30,6 +32,25 @@ export const nodeMetrics = {
   /** Pinned Otto arrow-cap half-extent; getNodeLineArrowPath parity depends on this exact value. */
   lineArrowSize: 3.18,
 } as const;
+
+/**
+ * Opt-in "Standard compact" preset for dense hosts. Defaults in nodeMetrics stay unchanged.
+ * Text width = card width - 2px border - 2 * paddingInline - tile - gap; titles wrap to at most two lines.
+ */
+export const compactNodeMetrics = {
+  card: { width: 208, height: 52, wrappedHeight: 68 },
+  paddingInline: 12,
+  tile: 32,
+  icon: 20,
+  gap: 8,
+  textWidth: 142,
+  titleFont: { size: 14, weight: 600, lineHeight: 20 },
+} as const;
+
+export type CompactTitleLines = 1 | 2;
+
+export const getCompactNodeHeight = (titleLines: CompactTitleLines = 1) =>
+  titleLines === 2 ? compactNodeMetrics.card.wrappedHeight : compactNodeMetrics.card.height;
 
 /** Tight Switch output margins cancel body padding; the card still reserves both borders. */
 export const getSwitchNodeSize = (caseCount = 1, axis: 'horizontal' | 'vertical' = 'vertical') => {

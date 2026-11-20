@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ActionCardProps } from '../actionCard';
 import { SharedActionCard } from '../SharedActionCard';
 import { OperationNodeCard } from '../OperationNodeCard';
-import { getOperationNodeSubtitle, mapSharedRunPresentation, mapSharedRunStatus } from '../nodeUiStrings';
+import { getOperationNodeSubtitle, mapSharedRunPresentation, mapSharedRunStatus, mapSharedRunVisuals } from '../nodeUiStrings';
 import { createIntl } from 'react-intl';
 import { useCardStyles } from '../card.styles';
 import * as Intl from 'react-intl';
@@ -224,14 +224,18 @@ describe('shared host action adapter', () => {
     expect(container.querySelector(`[data-icon-name="${glyph}Filled"]`)).toBeInTheDocument();
   });
 
-  it('uses the canonical default for unmapped built-ins and failed connector images without a false spinner', () => {
-    const { container, rerender } = render(<SharedActionCard {...props} operationType="XmlValidation" />);
+  it('uses art for unmapped built-ins, a neutral connector mark for failed connector images, and no false spinner', () => {
+    const { container, rerender } = render(<SharedActionCard {...props} operationType="XmlValidation" icon={undefined} />);
     expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeInTheDocument();
     expect(container.querySelector('img')).toBeNull();
+    rerender(<SharedActionCard {...props} operationType="XmlValidation" />);
+    expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
     rerender(<SharedActionCard {...props} operationType="ApiConnection" />);
     fireEvent.error(container.querySelector('img')!);
     expect(container.querySelector('img')).toBeNull();
-    expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-icon-name="FlashRegular"]')).toBeNull();
+    expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-tone="neutral"]')).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).toBeNull();
     rerender(<SharedActionCard {...props} operationType="ApiConnection" icon="new-logo.svg" />);
     expect(container.querySelector('img')).toHaveAttribute('src', 'new-logo.svg');
@@ -294,12 +298,15 @@ describe('shared host action adapter', () => {
       fireEvent.click(card);
       expect(onClick).toHaveBeenCalledOnce();
       if (toolKind === 'mcp') {
-        expect(container.querySelector('img')).toBeNull();
-        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+        // Resolved MCP server art renders untinted instead of a monochrome glyph.
+        expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
+        expect(container.querySelector('[data-artwork="true"]')).toBeInTheDocument();
         expect(screen.getByText('Type · MCP')).toBeInTheDocument();
         rerender(<SharedActionCard {...props} toolKind={toolKind} isSelected isLoading />);
-        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
+        expect(container.querySelector('img')).toHaveAttribute('src', 'icon.svg');
+        rerender(<SharedActionCard {...props} icon={undefined} toolKind={toolKind} />);
         expect(container.querySelector('img')).toBeNull();
+        expect(container.querySelector('[data-icon-name="PlugConnectedRegular"]')).toBeInTheDocument();
       } else if (toolKind === 'subWorkflow') {
         expect(screen.getByText('Sub-workflow')).toBeInTheDocument();
       }
@@ -380,6 +387,8 @@ describe('shared host action adapter', () => {
     expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-comment')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();
+    // Indicators sit below compact cards, so the title column keeps the full width ELK measured.
+    expect(card.style.getPropertyValue('--designer-ui-v2-node-text-end-reserve')).toBe('');
     expect(screen.getAllByRole('progressbar', { name: 'Loading operation' })).toHaveLength(2);
     expect(screen.getAllByRole('progressbar', { hidden: true })).toHaveLength(2);
     expect(card.querySelector('[data-handle]')).toBeNull();
@@ -474,6 +483,22 @@ describe('shared host action adapter', () => {
     expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent(status);
   });
 
+  it('uses contained monitoring status rows with an inset perimeter and failed-only tint', () => {
+    const { container, rerender } = render(
+      <SharedActionCard {...props} isMonitoringView runData={{ status: 'TimedOut', duration: '2s' } as ActionCardProps['runData']} />
+    );
+    const timedOut = screen.getByRole('button');
+    expect(timedOut).toHaveAttribute('data-status-display', 'contained');
+    expect(timedOut).toHaveAttribute('data-status-tone', 'warning');
+    expect(timedOut).not.toHaveAttribute('data-status-tint');
+    expect(container.querySelector('[data-node-subtitle-kind="status"]')).toHaveTextContent(/Timed out\s*2s/);
+    expect(container.querySelector('[data-badge-status]')).toBeNull();
+    rerender(<SharedActionCard {...props} isMonitoringView runData={{ status: 'Failed', duration: '1s' } as ActionCardProps['runData']} />);
+    const failed = screen.getByRole('button');
+    expect(failed).toHaveAttribute('data-status-tone', 'danger');
+    expect(failed).toHaveAttribute('data-status-tint', 'failed');
+  });
+
   it.each([
     ['TimedOut', 'failed', 'Timed out'],
     ['Resuming', 'running', 'Resuming'],
@@ -481,6 +506,7 @@ describe('shared host action adapter', () => {
     ['Aborted', 'cancelled', 'Aborted'],
     ['SucceededWithWarning', 'warning', 'Succeeded with warning'],
     ['Custom runtime state', 'pending', 'Custom runtime state'],
+    ['toString', 'pending', 'toString'],
     ['Succeeded', 'succeeded', undefined],
     ['FAILED', 'failed', undefined],
     ['Pending', 'pending', undefined],
@@ -493,6 +519,18 @@ describe('shared host action adapter', () => {
   ])('presents service status %s as tone %s with truthful label %s', (raw, status, label) => {
     const intl = createIntl({ locale: 'en', defaultLocale: 'en' });
     expect(mapSharedRunPresentation(raw, intl)).toEqual(label ? { status, label } : { status });
+  });
+
+  it.each([
+    ['TimedOut', { statusTone: 'warning', failedTint: false }],
+    ['Cancelled', { statusTone: 'warning', failedTint: false }],
+    ['Failed', { statusTone: 'danger', failedTint: true }],
+    ['Succeeded', { statusTone: 'success', failedTint: false }],
+    ['Unknown runtime state', { statusTone: 'neutral', failedTint: false }],
+    ['toString', { statusTone: 'neutral', failedTint: false }],
+    ['   ', {}],
+  ])('maps %s to contained status visuals', (raw, expected) => {
+    expect(mapSharedRunVisuals(raw)).toEqual(expected);
   });
 
   // Badges are no longer live regions, so monitoring status must reach assistive tech through the card name.

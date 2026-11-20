@@ -6,11 +6,12 @@ import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { clearFocusCollapsedNode, clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
-import { useWindowDimensions } from '@microsoft/logic-apps-shared';
+import { removeIdTag, useWindowDimensions, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { getTargetPositionForWorkflow } from '../core/utils/designerLayoutHelpers';
 
 export const CanvasFinder = () => {
   const focusNodeId = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
+  const expandedActionId = useSelector((state: RootState) => state.workflow.focusExpandedActionId);
   const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
   const windowDimensions = useWindowDimensions();
@@ -20,7 +21,15 @@ export const CanvasFinder = () => {
 
   const nodes = useNodes();
   const firstNode = useMemo(() => nodes[0], [nodes]);
-  const focusNode = useInternalNode(focusNodeId ?? '');
+  // The retired summary and expanded operation can have the same ID while ELK is still running.
+  const expandedCard = expandedActionId
+    ? nodes.find(
+        ({ id, type }) =>
+          (type === WORKFLOW_NODE_TYPES.OPERATION_NODE && id === expandedActionId) ||
+          (type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE && removeIdTag(id) === expandedActionId)
+      )
+    : undefined;
+  const focusNode = useInternalNode((expandedActionId ? expandedCard?.id : focusNodeId) ?? '');
 
   // Center the canvas on the first node when the workflow is first loaded
   useEffect(() => {
@@ -47,7 +56,7 @@ export const CanvasFinder = () => {
   // Center the canvas on the focused node when set
   const setCanvasCenterToFocus = useCallback(() => {
     if (!focusNode) {
-      return;
+      return undefined;
     }
 
     const xRawPos = focusNode?.internals.positionAbsolute?.x ?? 0;
@@ -57,19 +66,34 @@ export const CanvasFinder = () => {
     const clampedHeight = Math.min(windowDimensions.height * 0.4, focusNode?.measured?.height ?? DEFAULT_NODE_SIZE.height);
     const yTarget = yRawPos + clampedHeight / 2; // Center Y on node midpoint
 
-    setCenter(xTarget, yTarget, {
+    return setCenter(xTarget, yTarget, {
       zoom: getZoom(),
       duration: 350,
     });
-
-    dispatch(clearFocusNode());
-    dispatch(clearFocusCollapsedNode());
-  }, [focusNode, windowDimensions.height, setCenter, getZoom, dispatch]);
+  }, [focusNode, windowDimensions.height, setCenter, getZoom]);
 
   useEffect(() => {
-    setCanvasCenterToFocus();
+    const centering = setCanvasCenterToFocus();
+    if (!centering) {
+      return;
+    }
+    if (!expandedActionId) {
+      dispatch(clearFocusNode());
+      dispatch(clearFocusCollapsedNode());
+      return;
+    }
+    // Keep the focus flag while panning so a restored card outside the viewport can mount and receive it.
+    let active = true;
+    centering.then(() => {
+      if (active) {
+        dispatch(clearFocusNode());
+      }
+    });
+    return () => {
+      active = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusNode]);
+  }, [focusNode, expandedActionId]);
 
   return null;
 };

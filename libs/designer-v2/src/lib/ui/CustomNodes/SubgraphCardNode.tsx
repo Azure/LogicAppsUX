@@ -9,6 +9,7 @@ import { useIsNodeSelectedInOperationPanel, useIsNodePinnedToOperationPanel } fr
 import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
+  useBranchValidationCount,
   useFlowErrorsForNode,
   useIsGraphCollapsed,
   useIsLeafNode,
@@ -48,6 +49,7 @@ import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import { useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { SharedBranchCard } from './components/card/SharedFamilyCards';
+import { useOperationNodeIcon } from './components/card/useOperationNodeIcon';
 import { NodeAddButton } from '@microsoft/designer-ui-v2';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
@@ -69,10 +71,10 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
     getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, sharedOption, {
       operationType: node?.type,
       subgraphType: metadata?.subgraphType,
-      hasToolStatus: !!(metadata?.toolRunData ?? metadata?.runData)?.status,
     });
   const shared = presentation.shared;
   const sharedTool = shared && presentation.family === 'tool';
+  const descendantErrorCount = useBranchValidationCount(shared && presentation.family === 'branch' ? subgraphId : undefined);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);
   const operationInfo = useOperationInfo(graphId);
@@ -80,6 +82,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const normalizedType = node?.type.toLowerCase();
   const parentNodeId = useParentNodeId(subgraphId);
   const runData = useRunData(parentNodeId ?? subgraphId);
+  const effectiveToolRunData = metadata?.toolRunData ?? metadata?.runData;
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
@@ -91,6 +94,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const isAgentAddTool = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
 
   const isAddCase = isSwitchAddCase || isAgentAddTool;
+  // Shared tool rows render the collapsed count in their text; fixed-height (36px) branch headers have no
+  // second text line, so the host keeps their count below the header.
+  const sharedOwnsCount = sharedTool;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
 
@@ -237,6 +243,11 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   );
 
   const opQuery = useOperationQuery(subgraphId);
+  // Tool subgraphs (MCP servers, agent tools) resolve their own connector art; only pass it through when it is real
+  // artwork or a family-colored built-in glyph so unmapped tools keep ToolItemCard's kind-specific default glyph.
+  const toolIconUri = useIconUri(subgraphId);
+  const toolIcon = useOperationNodeIcon(node?.type ?? '', node?.kind, toolIconUri || undefined, opQuery.isLoading);
+  const useToolIcon = sharedTool && (toolIcon.artwork || (toolIcon.tone !== undefined && toolIcon.tone !== 'neutral'));
   const errorInfo = useOperationErrorInfo(subgraphId);
   const settingValidationErrors = useSettingValidationErrors(subgraphId);
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
@@ -316,12 +327,16 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   title={title}
                   subgraphType={metadata.subgraphType}
                   toolKind={presentation.toolKind}
+                  icon={useToolIcon ? toolIcon.icon : undefined}
+                  selectedIcon={useToolIcon ? toolIcon.selectedIcon : undefined}
+                  iconTone={useToolIcon ? toolIcon.tone : undefined}
+                  iconArtwork={useToolIcon ? toolIcon.artwork : undefined}
                   handleAxis={handleAxis}
                   inputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="target" /> : undefined}
                   outputSlot={sharedTool ? <DefaultHandle axis={handleAxis} type="source" /> : undefined}
                   selected={selected}
                   pinned={isPinned}
-                  active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+                  active={isMonitoringView ? !isNullOrUndefined((sharedTool ? effectiveToolRunData : runData)?.status) : true}
                   onClick={() =>
                     subgraphClick(
                       metadata.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ||
@@ -336,10 +351,12 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   collapsed={graphCollapsed}
                   onCollapse={handleGraphCollapse}
                   errorMessages={errorMessages}
+                  descendantErrorCount={descendantErrorCount}
                   nodeIndex={nodeIndex}
-                  runData={metadata.toolRunData ?? metadata.runData}
+                  runData={effectiveToolRunData}
                   description={opQuery.data?.properties?.description}
                   isMonitoringView={isMonitoringView}
+                  countLabel={sharedOwnsCount && graphCollapsed ? { count: actionCount, unit: 'actions' } : undefined}
                 />
               ) : (
                 <SubgraphCard
@@ -372,7 +389,7 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
           {sharedTool ? null : <DefaultHandle axis={handleAxis} type="source" />}
         </div>
       </div>
-      {graphCollapsed ? (
+      {graphCollapsed && !sharedOwnsCount ? (
         <p className="no-actions-text" data-automation-id={`subgraph-${id}-no-actions`}>
           {intlText.collapsedText}
         </p>

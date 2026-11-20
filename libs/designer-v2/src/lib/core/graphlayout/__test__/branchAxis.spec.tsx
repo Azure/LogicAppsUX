@@ -93,7 +93,7 @@ describe('actual deserialized tool-branch axis contracts', () => {
       const node = get(id);
       expect(node.parentId).toBe(toolId);
       expect(node.data.handleAxis).toBe('horizontal');
-      expect(node.width).toBe(232);
+      expect(node.width).toBe(index === 0 ? 232 : 208);
       if (index > 0) {
         const previous = get(sequence[index - 1]);
         expect(node.position.x).toBeGreaterThanOrEqual(previous.position.x + previous.width! + 12);

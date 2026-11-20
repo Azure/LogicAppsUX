@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { CollapseChip } from '@microsoft/designer-ui-v2';
 import type { CollapseChipProps } from '@microsoft/designer-ui-v2';
+import { BoxMultipleRegular, CodeRegular, MailRegular, PlugConnectedRegular } from '@fluentui/react-icons';
 import { Example } from './storyFixtures';
 
 function LocalCollapse(args: CollapseChipProps) {
@@ -52,6 +53,22 @@ export const ToggleLocally: Story = {
   },
 };
 export const Expanded: Story = { args: { collapsed: false } };
+export const ActionSummary: Story = {
+  args: {
+    'aria-label': 'Customer intake: show 4 actions',
+    count: 4,
+    summary: {
+      title: 'Customer intake',
+      icon: <BoxMultipleRegular />,
+      countLabel: { count: 4, unit: 'actions' },
+      thumbnails: [
+        { id: 'compose', icon: <CodeRegular /> },
+        { id: 'email', icon: <MailRegular /> },
+        { id: 'update', icon: <PlugConnectedRegular /> },
+      ],
+    },
+  },
+};
 export const CountBoundaries: Story = {
   render: (args) => (
     <div className="sb-grid">

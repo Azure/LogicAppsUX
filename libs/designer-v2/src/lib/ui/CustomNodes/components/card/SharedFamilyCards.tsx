@@ -5,14 +5,25 @@ import {
   ConditionNodeCard,
   LoopNodeCard,
   NodeInactiveContext,
-  NodeLabeledHandle,
+  NodeBranchLabel,
   NodeText,
   ToolItemCard,
+  getCompactTitleLines,
+  type NodeIconTone,
+  type NodeFrameCountLabel,
 } from '@microsoft/designer-ui-v2';
+import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import { Button, makeStyles, mergeClasses, tokens, useMergedRefs, useRestoreFocusTarget } from '@fluentui/react-components';
-import { ChevronDownRegular, ChevronRightRegular, FlowRegular, PlugConnectedRegular } from '@fluentui/react-icons';
+import {
+  CheckmarkRegular,
+  ChevronDownRegular,
+  ChevronRightRegular,
+  DismissRegular,
+  FlowRegular,
+  PlugConnectedRegular,
+} from '@fluentui/react-icons';
 import { replaceWhiteSpaceWithUnderscore, SUBGRAPH_TYPES, type SubgraphType } from '@microsoft/logic-apps-shared';
-import { useContext, useEffect, useRef, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 import type { ActionCardProps } from './actionCard';
 import { useKeyboardInteraction } from './keyboardInteraction';
@@ -25,20 +36,40 @@ import {
   mapLoopNodeStrings,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
-import { scopeNodeIcon } from './operationNodeGlyphs';
-import type { NodePresentation } from '../../../../core/utils/graph';
+import { agentNodeTone, scopeNodeIcon } from './operationNodeGlyphs';
+import { getNodePresentation, SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 
 const useStyles = makeStyles({
   // Plain branch labels are not shared NodeCards, so mirror the card's inactive dimming from shared metrics.
   inactive: { opacity: nodeMetrics.inactiveOpacity },
   pinned: { outline: `2px solid ${tokens.colorPalettePumpkinBorderActive}`, outlineOffset: '2px' },
   collapse: { position: 'absolute', top: '4px', right: '4px', minWidth: 0 },
-  branch: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' },
+  branch: {
+    position: 'relative',
+    boxSizing: 'border-box',
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 1fr)',
+    alignItems: 'center',
+    textAlign: 'center',
+    height: '100%',
+    paddingInline: tokens.spacingHorizontalXXL,
+    borderRadius: tokens.borderRadius2XLarge,
+    color: tokens.colorNeutralForeground1,
+  },
+  trueBranch: { backgroundColor: tokens.colorStatusSuccessBackground1 },
+  falseBranch: { backgroundColor: tokens.colorStatusDangerBackground1 },
+  caseBranch: { backgroundColor: tokens.colorNeutralBackground3 },
+  loopBranch: { backgroundColor: tokens.colorPaletteBlueBackground2 },
+  branchSelected: { outline: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandStroke}`, outlineOffset: '-2px' },
+  branchLabel: { justifyContent: 'center', minWidth: 0 },
+  branchError: { top: '50%', right: 'auto', insetInlineStart: tokens.spacingHorizontalS, transform: 'translateY(-50%)' },
   acceptedFrame: { width: '100%' },
   pagerSlot: { display: 'inline-flex', height: '20px', alignItems: 'center' },
 });
@@ -95,6 +126,10 @@ interface SharedScopeCardProps extends ActionCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolsPanel?: { width: number; height: number; bottomPadding: number; collapsed?: boolean; items: { id: string }[] };
+  /** Title clamp ELK sized the scope header for. */
+  titleLines?: CompactTitleLines;
+  /** Collapsed-container count rendered by the shared card text (unit picks the localized noun). */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedAgentScopeCard = (props: SharedScopeCardProps) => {
@@ -116,6 +151,7 @@ export const SharedScopeCard = ({
   description,
   isMonitoringView,
   toolsPanel,
+  countLabel,
   ...props
 }: SharedScopeCardProps) => {
   const intl = useIntl();
@@ -134,7 +170,9 @@ export const SharedScopeCard = ({
   }, [props.setFocus]);
   const actionStrings = mapActionNodeStrings(intl);
   const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(props.runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  const containsStatus = !!isMonitoringView && !!status;
   const collapse = (
     <FamilyCollapseButton
       id={`${props.id}-collapse-toggle`}
@@ -151,8 +189,12 @@ export const SharedScopeCard = ({
     status,
     statusLabel,
     statusDetail: props.runData?.duration,
+    statusDisplay: containsStatus ? ('contained' as const) : ('badge' as const),
+    statusTone: containsStatus ? runVisuals.statusTone : undefined,
+    statusTint: containsStatus && runVisuals.failedTint ? ('failed' as const) : ('none' as const),
     inactive: props.active === false,
     handleAxis,
+    countLabel,
     id: `msla-node-${props.id}`,
     role: 'button',
     tabIndex: props.nodeIndex,
@@ -205,7 +247,9 @@ export const SharedScopeCard = ({
     return withHover(
       <ConditionNodeCard
         {...common}
+        headerTint={family === 'if' ? 'condition' : 'switch'}
         kind={family}
+        subtitleKind={containsStatus ? 'status' : undefined}
         // Standard keeps explicit true/false (or case) exits as first-class branch nodes, so trunk mode is invalid here.
         mode="multiOutput"
         caseCount={caseCount}
@@ -220,7 +264,16 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
-        subtitle={strings.loop.foreach}
+        headerTint="loop"
+        density="compact"
+        titleLines={
+          props.titleLines ??
+          getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: operationType ?? 'foreach', title: props.title })
+            .titleLines
+        }
+        style={{ ...common.style, '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties}
+        subtitle={containsStatus ? undefined : strings.loop.foreach}
+        subtitleKind={containsStatus ? 'status' : undefined}
         bodyPlacement="none"
         strings={strings}
         inputSlot={inputSlot}
@@ -234,6 +287,8 @@ export const SharedScopeCard = ({
     return withHover(
       <AgentNodeCard
         {...common}
+        iconTone={agentNodeTone}
+        subtitleKind={containsStatus ? 'status' : undefined}
         model={model}
         // The host owns stacked tool rows below the Agent header; side placement belongs to Otto topology follow-ups.
         toolsPlacement="below"
@@ -275,7 +330,19 @@ export const SharedScopeCard = ({
       />
     );
   }
-  return withHover(<ActionNodeCard {...common} strings={actionStrings} handles={false} icon={scopeNodeIcon} />);
+  return withHover(
+    <ActionNodeCard
+      {...common}
+      headerTint="scope"
+      strings={actionStrings}
+      subtitleKind={containsStatus ? 'status' : undefined}
+      handles={false}
+      icon={scopeNodeIcon}
+      density="compact"
+      style={{ ...common.style, '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties}
+      titleLines={props.titleLines ?? getCompactTitleLines(props.title ?? '', SHARED_SCOPE_TITLE_RESERVE)}
+    />
+  );
 };
 
 interface SharedBranchCardProps {
@@ -288,6 +355,7 @@ interface SharedBranchCardProps {
   collapsed?: boolean;
   nodeIndex?: number;
   errorMessages?: string[];
+  descendantErrorCount?: number;
   onClick: () => void;
   onContextMenu?: React.MouseEventHandler<HTMLElement>;
   onDeleteClick?: () => void;
@@ -296,9 +364,16 @@ interface SharedBranchCardProps {
   description?: string;
   isMonitoringView?: boolean;
   toolKind?: NodePresentation['toolKind'];
+  /** Tool identity resolved by the host (connector or MCP art, or a family glyph); omitted falls back to the tool-kind default. */
+  icon?: ReactNode;
+  selectedIcon?: ReactNode;
+  iconTone?: NodeIconTone;
+  iconArtwork?: boolean;
   handleAxis?: 'vertical' | 'horizontal';
   inputSlot?: ReactNode;
   outputSlot?: ReactNode;
+  /** Collapsed count for tool rows; fixed-height branch headers have no second text line and ignore it. */
+  countLabel?: NodeFrameCountLabel;
 }
 
 export const SharedBranchCard = (props: SharedBranchCardProps) => {
@@ -354,14 +429,17 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
   if (props.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
     const toolKind = props.toolKind ?? (props.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? 'mcp' : 'action');
     const runPresentation = mapSharedRunPresentation(props.runData?.status, intl);
+    const runVisuals = mapSharedRunVisuals(props.runData?.status);
     const { status, label: statusLabel } = runPresentation;
     const toolStrings = mapToolNodeStrings(intl);
+    // Shared tool rows use contained status whenever run evidence exists to stay within their fixed 56px slot.
+    const containsStatus = !!status && (!!props.isMonitoringView || toolKind !== undefined);
     return (
       <SharedNodeHoverCard
         // Small ToolItems fill their parent; constrain the hover trigger to the accepted header width.
         className={styles.acceptedFrame}
         category="action"
-        icon={toolKind === 'mcp' ? <PlugConnectedRegular /> : toolKind === 'subWorkflow' ? <FlowRegular /> : undefined}
+        icon={props.icon ?? (toolKind === 'mcp' ? <PlugConnectedRegular /> : toolKind === 'subWorkflow' ? <FlowRegular /> : undefined)}
         title={title}
         description={props.description}
         configured={!props.errorMessages?.length}
@@ -385,12 +463,21 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
           )}
           aria-pressed={props.selected ?? false}
           title={title}
+          subtitleKind={containsStatus ? 'status' : undefined}
           selected={props.selected}
           status={status}
           statusLabel={statusLabel}
           statusDetail={props.runData?.duration}
+          statusDisplay={containsStatus ? 'contained' : 'badge'}
+          statusTone={containsStatus ? runVisuals.statusTone : undefined}
+          statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
           inactive={props.active === false}
           kind={toolKind}
+          icon={props.icon}
+          selectedIcon={props.selectedIcon}
+          iconTone={props.iconTone}
+          iconArtwork={props.iconArtwork}
+          countLabel={props.countLabel}
           size="small"
           strings={toolStrings}
           after={
@@ -406,14 +493,51 @@ export const SharedBranchCard = (props: SharedBranchCardProps) => {
       </SharedNodeHoverCard>
     );
   }
+  const errors = [...(props.errorMessages ?? [])];
+  if (props.descendantErrorCount) {
+    errors.push(
+      intl.formatMessage(
+        {
+          defaultMessage: '{count, plural, one {# nested step has validation errors} other {# nested steps have validation errors}}',
+          id: 'qMz2QQ',
+          description: 'Validation summary on a branch when steps inside it have errors',
+        },
+        { count: props.descendantErrorCount }
+      )
+    );
+  }
   return (
     <div
       {...common}
+      aria-description={errors.length ? errors.join('\n') : undefined}
       data-automation-id={compact ? `${props.id}-collapse-toggle-small` : common['data-automation-id']}
-      className={mergeClasses(styles.branch, props.active === false && !ancestorInactive && styles.inactive, common.className)}
+      className={mergeClasses(
+        styles.branch,
+        conditional
+          ? isTrue
+            ? styles.trueBranch
+            : styles.falseBranch
+          : props.subgraphType === SUBGRAPH_TYPES.UNTIL_DO
+            ? styles.loopBranch
+            : styles.caseBranch,
+        props.selected && styles.branchSelected,
+        props.active === false && !ancestorInactive && styles.inactive,
+        common.className
+      )}
       data-inactive={props.active === false || undefined}
     >
-      {conditional ? <NodeLabeledHandle branch={isTrue ? 'true' : 'false'} label={title} lineLength={0} /> : <NodeText title={title} />}
+      {conditional ? (
+        <NodeBranchLabel
+          className={styles.branchLabel}
+          tone={isTrue ? 'success' : 'danger'}
+          icon={isTrue ? <CheckmarkRegular /> : <DismissRegular />}
+          label={title}
+          data-branch={isTrue ? 'true' : 'false'}
+        />
+      ) : (
+        <NodeText title={title} />
+      )}
+      {errors.length ? <CardErrorBadge className={styles.branchError} messages={errors} /> : null}
       {collapse}
     </div>
   );

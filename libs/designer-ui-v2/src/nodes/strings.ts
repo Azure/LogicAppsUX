@@ -3,6 +3,8 @@ import type { NodeRunStatus } from './types';
 export type NodeStatusStrings = Record<NodeRunStatus, string>;
 export interface ActionNodeCardStrings {
   status: NodeStatusStrings;
+  /** Formats unit-aware counts on collapsed container cards; optional so older dictionaries still compile. */
+  frame?: NodeFrameStrings;
 }
 export interface AgentToolsStrings {
   heading: (count: number) => string;
@@ -30,6 +32,11 @@ export interface NodeBranchStrings {
 /** What a frame count measures; the host supplies meaning, the dictionary owns wording and plurals. */
 export type NodeFrameCountUnit = 'actions' | 'cases' | 'tools' | 'hiddenItems';
 export type NodeFrameCountStrings = Record<NodeFrameCountUnit, (count: number) => string>;
+/** A unit-aware count the host measures; the frame dictionary owns wording and plurals. */
+export interface NodeFrameCountLabel {
+  count: number;
+  unit: NodeFrameCountUnit;
+}
 export interface NodeFrameStrings {
   actionCount: (count: number) => string;
   /** Optional so dictionaries written before unit-aware counts still compile; missing units use the defaults. */

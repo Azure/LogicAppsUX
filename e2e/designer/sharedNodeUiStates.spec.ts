@@ -88,8 +88,9 @@ test.describe('Shared node UI state and command journeys', { tag: ['@mock', '@sh
   test('shows real monitoring statuses and suppresses editing and rich hover', async ({ page }, testInfo) => {
     await openSharedWorkflow(page, 'Monitoring view conditional');
     await LoadRunFile(page, 'normalState');
-    await expect(page.locator('[data-badge-status="succeeded"]').first()).toBeVisible();
-    expect(await page.locator('[data-badge-status="skipped"]').count()).toBeGreaterThan(0);
+    await expect(page.locator('[data-status-display="contained"][data-status-tone="success"]').first()).toBeVisible();
+    expect(await page.locator('[data-status-display="contained"][data-status-tone="skipped"]').count()).toBeGreaterThan(0);
+    await expect(page.locator('[data-badge-status]')).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Insert a new step/ })).toHaveCount(0);
     const card = page.locator('[data-node-card="action"]').first();
     await card.hover();
@@ -114,14 +115,19 @@ test.describe('Shared node UI state and command journeys', { tag: ['@mock', '@sh
     });
   }
 
-  test('keeps canonical MCP glyphs unbranded in the actual tool consumer', async ({ page }) => {
+  test('renders resolved MCP connector art untinted in the actual tool consumer', async ({ page }) => {
     await openSharedWorkflow(page, 'Agent with MCP Tools');
     const tools = page.locator('[data-node-card="tool"][data-tool-kind="mcp"]');
     await expect(tools).toHaveCount(2);
     await expect(tools.first()).toContainText('Type · MCP');
     await expect(tools.last()).toContainText('Type · MCP');
-    await expect(tools.locator('[data-category="action"] img')).toHaveCount(0);
-    expect(await tools.first().locator('[data-category="action"] svg').count()).toBeGreaterThan(0);
+    // Resolved connector art wins over the monochrome MCP glyph and is never tinted by a family tone.
+    const art = tools.locator('[data-category="action"] img');
+    await expect(art).toHaveCount(2);
+    await expect(art.first()).toHaveAttribute('alt', '');
+    await expect.poll(() => art.first().evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(tools.first().locator('[data-artwork="true"]')).toHaveCount(1);
+    await expect(tools.first().locator('[data-artwork="true"][data-tone]')).toHaveCount(0);
   });
 
   test('renders the complete control-flow canvas in dark and forced-color reduced-motion modes', async ({ page }, testInfo) => {

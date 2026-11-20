@@ -104,11 +104,22 @@ describe('Graph Utilities', () => {
   };
 
   it('uses renderer-authoritative operation sizes without overriding other measured node kinds', () => {
-    expect(graphUtils.getNodePresentation(undefined, true)).toEqual({ shared: true, size: { width: 232, height: 74 } });
+    expect(graphUtils.getNodePresentation(undefined, true)).toEqual({ shared: true, titleLines: 1, size: { width: 208, height: 52 } });
     expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, false)).toEqual({
       shared: false,
     });
     expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true)).toEqual({ shared: false, size: undefined });
+  });
+
+  it('estimates compact scope titles against the column left beside the collapse chevron', () => {
+    const scope = (title: string) =>
+      graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: 'Scope', title });
+    // Fits an action's full column but wraps once the scope header reserves room for the chevron.
+    expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: 'Update order info' })).toMatchObject({
+      titleLines: 1,
+    });
+    expect(scope('Update order info')).toEqual({ shared: true, family: 'scope', titleLines: 2, size: { width: 208, height: 68 } });
+    expect(scope('Scope')).toMatchObject({ titleLines: 1, size: { width: 208, height: 52 } });
   });
 
   it('defaults parser nodes to the rendered card size for each node type and subgraph variant', () => {

@@ -2,6 +2,7 @@ import {
   ActionNodeCard,
   ToolItemCard,
   TriggerNodeCard,
+  getCompactTitleLines,
   NODE_HOVER_CARD_IGNORE_ATTRIBUTE,
   type NodeToolKind,
 } from '@microsoft/designer-ui-v2';
@@ -10,6 +11,7 @@ import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import type { CompactTitleLines } from '@microsoft/designer-ui-v2/metrics';
 import type { ActionCardProps } from './actionCard';
 import { useKeyboardInteraction } from './keyboardInteraction';
 import { CardIndicatorBadges } from './cardIndicatorBadges';
@@ -20,6 +22,7 @@ import {
   mapActionNodeStrings,
   getSharedCardAccessibleName,
   mapSharedRunPresentation,
+  mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
 import { useCardStyles } from './card.styles';
@@ -51,6 +54,8 @@ export interface SharedActionCardProps extends ActionCardProps {
   isMonitoringView?: boolean;
   toolKind?: NodeToolKind;
   handleAxis?: 'vertical' | 'horizontal';
+  /** Title clamp ELK sized this card for; non-tool cards render the Standard compact preset. */
+  titleLines?: CompactTitleLines;
 }
 
 /** Host-only adapter: no graph/store/service/localization contracts leak into the presentation package. */
@@ -68,6 +73,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     isMonitoringView,
     toolKind,
     handleAxis = 'vertical',
+    titleLines,
     drag,
     dragPreview,
     rootRef,
@@ -99,7 +105,10 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   // One mapper yields the shared tone plus a truthful label (Waiting, Resuming, TimedOut, raw unknowns)
   // so the localized status dictionary is never cloned per card.
   const runPresentation = mapSharedRunPresentation(runData?.status, intl);
+  const runVisuals = mapSharedRunVisuals(runData?.status);
   const { status, label: statusLabel } = runPresentation;
+  // Tool rows keep the same 56px geometry whenever they carry run evidence, even outside monitoring transitions.
+  const containsStatus = !!status && (!!isMonitoringView || !!toolKind);
   const focusRef = useRef<HTMLDivElement>(null);
   const dndRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -150,8 +159,10 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
   const {
     icon: cardIcon,
     selectedIcon,
+    tone: iconTone,
+    artwork: iconArtwork,
     connectorLoading,
-  } = useOperationNodeIcon(operationType, operationKind, icon, primaryLoading, toolKind === 'mcp');
+  } = useOperationNodeIcon(operationType, operationKind, icon, primaryLoading);
   const errors = metadataUnavailable
     ? [
         ...errorMessages,
@@ -176,21 +187,31 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       ref={ref}
       title={title}
       subtitle={
-        toolKind === 'mcp' || toolKind === 'subWorkflow'
+        containsStatus
           ? undefined
-          : toolKind && !connectorLoading
-            ? detail
-            : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
+          : toolKind === 'mcp' || toolKind === 'subWorkflow'
+            ? undefined
+            : toolKind && !connectorLoading
+              ? detail
+              : getOperationNodeSubtitle(intl, operationType, operationKind, connectorName, isTrigger, connectorLoading)
       }
+      subtitleKind={containsStatus ? 'status' : undefined}
       icon={cardIcon}
       selectedIcon={selectedIcon}
+      iconTone={iconTone}
+      iconArtwork={iconArtwork}
       selected={isSelected}
       status={status}
       statusLabel={statusLabel}
       statusDetail={runData?.duration}
+      statusDisplay={containsStatus ? 'contained' : 'badge'}
+      statusTone={containsStatus ? runVisuals.statusTone : undefined}
+      statusTint={containsStatus && runVisuals.failedTint ? 'failed' : 'none'}
       strings={cardStrings}
       inactive={!active}
-      {...(toolKind ? { kind: toolKind, size: 'small' as const } : { handles: false })}
+      {...(toolKind
+        ? { kind: toolKind, size: 'small' as const }
+        : { handles: false, density: 'compact' as const, titleLines: titleLines ?? getCompactTitleLines(title ?? '') })}
       handleAxis={handleAxis}
       role="button"
       tabIndex={nodeIndex}
@@ -219,7 +240,9 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
           keyboard.keyUp(event);
         }
       }}
-      style={{ '--designer-ui-v2-node-text-end-reserve': `${indicatorCount * 20}px` } as CSSProperties}
+      // Compact cards render indicator badges below the card, outside the title column, so only tool cards reserve
+      // space for them; reserving here would narrow the column ELK measured and truncate instead of wrapping.
+      style={toolKind ? ({ '--designer-ui-v2-node-text-end-reserve': `${indicatorCount * 20}px` } as CSSProperties) : undefined}
       after={
         // A layout-neutral boundary excludes badges from rich hover while preserving their own tooltips.
         <span className={styles.after} {...{ [NODE_HOVER_CARD_IGNORE_ATTRIBUTE]: true }}>

@@ -1,13 +1,15 @@
 export * from './types';
 export * from './strings';
 export * from './glyphs';
-export { nodeMetrics, nodeHoverCardTiming } from './metrics';
-export * from './primitives/NodeCard';
+export { nodeMetrics, nodeHoverCardTiming, compactNodeMetrics, getCompactNodeHeight } from './metrics';
+export { getCompactTitleLines } from './compactTitle';
+export type { CompactTitleLines } from './metrics';
+export { NodeCard, type NodeCardProps } from './primitives/NodeCard';
 export * from './primitives/NodeCardBody';
 export * from './primitives/NodeHandle';
 export * from './primitives/NodeIconTile';
 export * from './primitives/NodeText';
-export * from './primitives/NodeStatusBadge';
+export { getNodeStatusLabel, NodeStatusBadge, type NodeStatusBadgeProps } from './primitives/NodeStatusBadge';
 export * from './primitives/NodeTestDataIndicator';
 export * from './primitives/NodeToolConnector';
 export * from './primitives/NodeLabeledHandle';

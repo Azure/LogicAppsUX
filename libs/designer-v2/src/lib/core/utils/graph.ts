@@ -1,7 +1,7 @@
 import type { IntlShape } from 'react-intl';
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
-import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
+import type { NodeMetadata, NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
 import {
   isTemplateExpression,
   hasInvalidChars,
@@ -14,7 +14,14 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
-import { getSwitchNodeSize, nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import {
+  compactNodeMetrics,
+  getCompactNodeHeight,
+  getSwitchNodeSize,
+  nodeMetrics,
+  type CompactTitleLines,
+} from '@microsoft/designer-ui-v2/metrics';
+import { getCompactTitleLines } from '@microsoft/designer-ui-v2';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -57,7 +64,12 @@ export const AGENT_TOOL_CONNECTOR_HEIGHT =
   nodeMetrics.handle.size / 2;
 // ELK/ports/drop-zones all consume this accepted add-card height; derive it once from shared metrics.
 const SHARED_ADD_NODE_HEIGHT = nodeMetrics.actionAdd.containerHeight;
-export const SHARED_COLLAPSED_CARD_HEIGHT = 50;
+
+export const hasMcpToolPager = (metadata: NodeMetadata | undefined, parentType: string | undefined, isMonitoringView = false): boolean =>
+  isMonitoringView &&
+  parentType?.toLowerCase() === 'agent' &&
+  metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT &&
+  (metadata.toolRunData?.repetitionCount ?? 0) > 1;
 
 export interface NodePresentationContext {
   operationType?: string;
@@ -65,7 +77,9 @@ export interface NodePresentationContext {
   caseCount?: number;
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
-  hasToolStatus?: boolean;
+  hasToolPager?: boolean;
+  /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
+  title?: string;
 }
 
 export interface NodePresentation {
@@ -73,7 +87,22 @@ export interface NodePresentation {
   size?: { width: number; height: number };
   family?: 'scope' | 'if' | 'switch' | 'loop' | 'agent' | 'branch' | 'tool' | 'add' | 'frame' | 'placeholder' | 'collapsed';
   toolKind?: NodePresentationContext['toolKind'];
+  /** Standard compact title clamp; the renderer must apply the same count ELK sized for. */
+  titleLines?: CompactTitleLines;
 }
+
+// Single-row action, trigger and scope headers use the Standard compact preset; the title line count is decided
+// once here so ELK geometry and the rendered clamp never disagree.
+/**
+ * Compact scope headers host the collapse chevron in their top-end corner (inside the text column), so the title
+ * column gives up this much width. Layout and the renderer must use the same value or ELK and the clamp disagree.
+ */
+export const SHARED_SCOPE_TITLE_RESERVE = 20;
+
+const getCompactCardPresentation = (title: string | undefined, textEndReserve = 0, width: number = compactNodeMetrics.card.width) => {
+  const titleLines = getCompactTitleLines(title ?? '', textEndReserve + compactNodeMetrics.card.width - width);
+  return { titleLines, size: { width, height: getCompactNodeHeight(titleLines) } };
+};
 
 /** One admission decision for the renderer AND ELK. Raw identity is resolved by the host, never from a caption. */
 export const getNodePresentation = (
@@ -85,9 +114,10 @@ export const getNodePresentation = (
   if (!useSharedNodeUi) {
     return { shared: false };
   }
+  // Monitoring status now uses the in-card secondary line/perimeter, so tool rows keep their canonical 56px body.
   const toolSize = {
     width: nodeMetrics.cards.tool.width,
-    height: nodeMetrics.cards.tool.smallHeight + (context.hasToolStatus ? nodeMetrics.badge.overhang : 0),
+    height: nodeMetrics.cards.tool.smallHeight,
   };
   if (operation) {
     if (context.toolKind) {
@@ -95,10 +125,11 @@ export const getNodePresentation = (
         shared: true,
         family: 'tool',
         toolKind: context.toolKind,
-        size: toolSize,
+        // The pager sits below the 56px card and must be included in the allocated row bounds.
+        size: context.hasToolPager ? { ...toolSize, height: toolSize.height + nodeMetrics.iterationPager.height } : toolSize,
       };
     }
-    return { shared: true, size: nodeMetrics.cards.action };
+    return { shared: true, ...getCompactCardPresentation(context.title) };
   }
   const { operationType, subgraphType } = context;
   if (type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE) {
@@ -113,7 +144,11 @@ export const getNodePresentation = (
         };
       case 'foreach':
       case 'until':
-        return { shared: true, family: 'loop', size: nodeMetrics.cards.loop };
+        return {
+          shared: true,
+          family: 'loop',
+          ...getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE, nodeMetrics.cards.loop.width),
+        };
       case 'agent':
         return {
           shared: true,
@@ -124,7 +159,7 @@ export const getNodePresentation = (
           },
         };
       case 'scope':
-        return { shared: true, family: 'scope', size: nodeMetrics.cards.action };
+        return { shared: true, family: 'scope', ...getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE) };
       default:
         return { shared: false };
     }
@@ -154,7 +189,11 @@ export const getNodePresentation = (
     return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
   }
   if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
-    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: SHARED_COLLAPSED_CARD_HEIGHT } };
+    return {
+      shared: true,
+      family: 'collapsed',
+      size: { width: compactNodeMetrics.card.width, height: compactNodeMetrics.card.wrappedHeight },
+    };
   }
   // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
   return { shared: false };

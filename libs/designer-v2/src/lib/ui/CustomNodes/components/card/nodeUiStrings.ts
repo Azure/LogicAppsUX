@@ -3,12 +3,14 @@ import {
   joinNodeSubtitle,
   type ActionNodeCardStrings,
   type NodeRunStatus,
+  type NodeStatusTone,
+  type NodeFrameStrings,
   type NodeStatusStrings,
   type ToolItemCardProps,
 } from '@microsoft/designer-ui-v2';
 import type { IntlShape } from 'react-intl';
 import { defineMessages } from 'react-intl';
-import { getOperationNodeVisualKind } from './operationNodeGlyphs';
+import { getOperationNodeVisualKind, isBuiltInOperationNode } from './operationNodeGlyphs';
 
 const typeMessages = defineMessages({
   compose: { defaultMessage: 'Compose', id: 'YbWOeB', description: 'Compose operation type on a shared node card' },
@@ -33,14 +35,27 @@ export function getOperationNodeSubtitle(
   const detail = getOperationNodeDetail(intl, type, kind, connectorName);
   const category = isTrigger
     ? intl.formatMessage({ defaultMessage: 'Trigger', id: 'MGq28G', description: 'Column name for trigger type' })
-    : /^apiconnection(?:webhook|notification)?$/i.test(type)
-      ? intl.formatMessage({
-          defaultMessage: 'Azure',
-          id: 'uVsa1i',
-          description: 'Azure connector category on a shared node card',
-        })
-      : intl.formatMessage({ defaultMessage: 'Built-in', id: '+DmIHG', description: 'Label for built-in connectors' });
+    : getOperationNodeCategoryLabel(intl, type, kind);
   return detail === category ? detail : joinNodeSubtitle(category, detail);
+}
+
+/**
+ * Category from the operation definition and connector identity, never from glyph or art availability:
+ * runtime built-ins and in-app service providers are 'Built-in', managed API connections are 'Azure', and any
+ * other connector (custom/OpenAPI, managed MCP, unknown types whose metadata failed) is a neutral 'Connector'.
+ */
+export function getOperationNodeCategoryLabel(intl: IntlShape, type: string, kind: string | undefined): string {
+  if (isBuiltInOperationNode(type, kind) || type.toLowerCase() === 'serviceprovider') {
+    return intl.formatMessage({ defaultMessage: 'Built-in', id: '+DmIHG', description: 'Label for built-in connectors' });
+  }
+  if (/^apiconnection(?:webhook|notification)?$/i.test(type)) {
+    return intl.formatMessage({ defaultMessage: 'Azure', id: 'uVsa1i', description: 'Azure connector category on a shared node card' });
+  }
+  return intl.formatMessage({
+    defaultMessage: 'Connector',
+    id: 'id+hZX',
+    description: 'Category on a shared node card for a connector that is neither built-in nor an Azure managed connection',
+  });
 }
 
 export function getOperationNodeDetail(intl: IntlShape, type: string, kind: string | undefined, connectorName: string | undefined): string {
@@ -50,8 +65,58 @@ export function getOperationNodeDetail(intl: IntlShape, type: string, kind: stri
   return builtIn ? (message ? intl.formatMessage(message) : detail) : (connectorName ?? type);
 }
 
+/**
+ * Unit-aware counts for collapsed container cards. Reuses the legacy collapsed-scope message IDs so the shared
+ * path shows the same localized wording the host `<p>` used to render below the card.
+ */
+export function mapNodeFrameStrings(intl: IntlShape): NodeFrameStrings {
+  const actions = (actionCount: number) =>
+    intl.formatMessage(
+      {
+        defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+        id: 'B/JzwK',
+        description: 'This is the number of actions to be completed in a group',
+      },
+      { actionCount }
+    );
+  return {
+    actionCount: actions,
+    counts: {
+      actions,
+      cases: (actionCount) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+            id: 'KX1poC',
+            description: 'This is the number of cases or options the program can take',
+          },
+          { actionCount }
+        ),
+      tools: (actionCount) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{actionCount, plural, one {# Tool} =0 {0 Tools} other {# Tools}}',
+            id: 'Fmt/E7',
+            description: 'This is the number of tools to be completed in a group',
+          },
+          { actionCount }
+        ),
+      hiddenItems: (count) =>
+        intl.formatMessage(
+          {
+            defaultMessage: '{count, plural, one {# hidden item} other {# hidden items}}',
+            id: 'v1764Q',
+            description: 'Number of collapsed items hidden inside a shared node frame',
+          },
+          { count }
+        ),
+    },
+  };
+}
+
 export function mapActionNodeStrings(intl: IntlShape): ActionNodeCardStrings {
   return {
+    frame: mapNodeFrameStrings(intl),
     status: {
       pending: intl.formatMessage({ defaultMessage: 'Pending', id: 'qaoC92', description: 'Pending shared node status' }),
       running: intl.formatMessage({ defaultMessage: 'Running', id: 'QHq/Rc', description: 'Running shared node status' }),
@@ -114,36 +179,11 @@ export function mapToolNodeStrings(intl: IntlShape): NonNullable<ToolItemCardPro
 
 /** Keep service status semantics in the host, including nonstandard runtime status labels. */
 export const mapSharedRunStatus = (status: string | undefined): NodeRunStatus | undefined => {
-  // Trim first so whitespace-only service values mean "no status" (no badge) instead of an unknown tone.
-  switch (status?.trim().toLowerCase()) {
-    case undefined:
-    case '':
-      return undefined;
-    case 'running':
-    case 'resuming':
-      return 'running';
-    case 'succeeded':
-      return 'succeeded';
-    case 'skipped':
-      return 'skipped';
-    case 'failed':
-    case 'timedout':
-      return 'failed';
-    case 'cancelled':
-    case 'aborted':
-      return 'cancelled';
-    case 'warning':
-    case 'succeededwithwarning':
-      return 'warning';
-    case 'error':
-      return 'error';
-    // Only an explicit normalized mock state (Otto) maps here; Standard static results/sample input stay
-    // unbadged and use the separate test-data indicator instead of claiming a mock run.
-    case 'mock':
-      return 'mock';
-    default:
-      return 'pending';
+  const key = status?.trim().toLowerCase();
+  if (!key) {
+    return undefined;
   }
+  return runStatusMappings.get(key)?.status ?? 'pending';
 };
 
 const runStatusMessages = defineMessages({
@@ -162,30 +202,40 @@ const runStatusMessages = defineMessages({
   },
 });
 
-const runStatusLabelKeys: Record<string, keyof typeof runStatusMessages> = {
-  timedout: 'timedOut',
-  resuming: 'resuming',
-  waiting: 'waiting',
-  aborted: 'aborted',
-  succeededwithwarning: 'succeededWithWarning',
-};
+interface RawRunStatusMapping {
+  status: NodeRunStatus;
+  statusTone: NodeStatusTone;
+  labelKey?: keyof typeof runStatusMessages;
+  failedTint?: boolean;
+}
 
-const sharedNodeRunStatuses = new Set<string>([
-  'succeeded',
-  'failed',
-  'skipped',
-  'running',
-  'pending',
-  'cancelled',
-  'warning',
-  'error',
-  'mock',
+// Raw status lookups use a Map so unknown strings never resolve through inherited object keys.
+const runStatusMappings = new Map<string, RawRunStatusMapping>([
+  ['succeeded', { status: 'succeeded', statusTone: 'success' }],
+  ['failed', { status: 'failed', statusTone: 'danger', failedTint: true }],
+  ['error', { status: 'error', statusTone: 'danger' }],
+  ['warning', { status: 'warning', statusTone: 'warning' }],
+  ['succeededwithwarning', { status: 'warning', statusTone: 'warning', labelKey: 'succeededWithWarning' }],
+  ['timedout', { status: 'failed', statusTone: 'warning', labelKey: 'timedOut' }],
+  ['cancelled', { status: 'cancelled', statusTone: 'warning' }],
+  ['aborted', { status: 'cancelled', statusTone: 'warning', labelKey: 'aborted' }],
+  ['running', { status: 'running', statusTone: 'running' }],
+  ['resuming', { status: 'running', statusTone: 'running', labelKey: 'resuming' }],
+  ['skipped', { status: 'skipped', statusTone: 'skipped' }],
+  ['pending', { status: 'pending', statusTone: 'neutral' }],
+  ['waiting', { status: 'pending', statusTone: 'neutral', labelKey: 'waiting' }],
+  ['mock', { status: 'mock', statusTone: 'neutral' }],
 ]);
 
 export interface SharedRunPresentation {
   status: NodeRunStatus | undefined;
   /** Visible label override; absent when the shared tone's default label is already truthful. */
   label?: string;
+}
+
+export interface SharedRunVisuals {
+  statusTone?: NodeStatusTone;
+  failedTint?: boolean;
 }
 
 /**
@@ -196,13 +246,31 @@ export interface SharedRunPresentation {
  */
 export const mapSharedRunPresentation = (raw: string | undefined, intl: IntlShape): SharedRunPresentation => {
   const trimmed = raw?.trim();
-  const status = mapSharedRunStatus(trimmed);
   const key = trimmed?.toLowerCase();
-  if (!key || !status || sharedNodeRunStatuses.has(key)) {
-    return { status };
+  if (!key) {
+    return { status: undefined };
   }
-  const messageKey = runStatusLabelKeys[key];
-  return { status, label: messageKey ? intl.formatMessage(runStatusMessages[messageKey]) : trimmed };
+  const mapping = runStatusMappings.get(key);
+  if (!mapping) {
+    return { status: 'pending', label: trimmed };
+  }
+  return {
+    status: mapping.status,
+    ...(mapping.labelKey ? { label: intl.formatMessage(runStatusMessages[mapping.labelKey]) } : {}),
+  };
+};
+
+/** Perimeter semantics stay in the host so runtime states can keep truthful labels while sharing one visual contract. */
+export const mapSharedRunVisuals = (raw: string | undefined): SharedRunVisuals => {
+  const key = raw?.trim().toLowerCase();
+  if (!key) {
+    return {};
+  }
+  const mapping = runStatusMappings.get(key);
+  return {
+    statusTone: mapping?.statusTone ?? 'neutral',
+    failedTint: mapping?.failedTint ?? false,
+  };
 };
 
 /**

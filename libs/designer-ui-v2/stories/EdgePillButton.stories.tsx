@@ -59,3 +59,22 @@ export const HiddenKeyboardActivation: Story = {
 };
 export const MissingCallback: Story = { args: { onActivate: undefined } };
 export const Disabled: Story = { args: { disabled: true } };
+export const RestingVisible: Story = {
+  args: { isRevealed: false, restingVisibility: 'visible', tooltipPlacement: 'side' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Opt-in host mode: a neutral pill stays visible at rest so insertion is discoverable; hover, focus or isRevealed add brand emphasis without moving it. The tooltip anchors to the side.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Insert action' });
+    await expect(getComputedStyle(button).opacity).toBe('1');
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(canvas.getByTestId('edge-state')).toHaveTextContent('Activations: 1');
+  },
+};

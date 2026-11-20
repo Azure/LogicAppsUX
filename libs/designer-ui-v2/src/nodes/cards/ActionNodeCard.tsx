@@ -7,10 +7,11 @@ import { NodeText } from '../primitives/NodeText';
 import { defaultNodeStrings } from '../strings';
 import type { NodeHandleVariant } from '../types';
 import { categoryNodeIcons } from './categoryIcons';
-import { resolveNodeIcons } from './shared';
-import type { BaseNodeCardProps } from './shared';
+import { useNodeCount } from '../countLabel';
+import { resolveCardDensity, resolveNodeIcons } from './shared';
+import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
 
-export interface ActionNodeCardProps extends BaseNodeCardProps {
+export interface ActionNodeCardProps extends BaseNodeCardProps, CompactNodeCardProps {
   /** Visual dots only; disable when the host draws its own real handle affordances. */
   handles?: boolean;
   /** Colors only the input handle so host semantics can be emphasized without recoloring outputs. */
@@ -21,39 +22,52 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
   {
     title,
     subtitle,
+    subtitleKind,
+    countLabel,
     icon,
     selectedIcon,
+    iconTone,
+    iconArtwork,
     selected,
     status,
     statusDetail,
     strings = defaultNodeStrings,
     handles = true,
     inputVariant,
+    density,
+    titleLines,
     ...rest
   },
   ref
 ) {
   const testData = status === 'mock';
+  const layout = resolveCardDensity({ density, titleLines });
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
   return (
     <NodeCard
       {...rest}
+      aria-describedby={nodeCount.describedBy}
       ref={ref}
-      width="standard"
+      width={layout.width}
+      size={layout.size}
       selected={selected}
       status={status}
       statusDetail={statusDetail}
       strings={strings}
       data-node-card="action"
     >
-      <NodeCardBody testData={testData} testDataLabel={strings.status.mock}>
+      <NodeCardBody density={layout.body} testData={testData} testDataLabel={strings.status.mock}>
         {handles ? <NodeInputHandle variant={inputVariant} /> : null}
         <NodeIconTile
           category="action"
+          size={layout.tile}
           selected={selected}
           testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
-        <NodeText title={title} subtitle={subtitle} />
+        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} titleLines={layout.titleLines} {...nodeCount.textProps} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

@@ -154,6 +154,17 @@ for (const flag of ['true', 'false'] as const) {
           await expect(pager.getByRole('button', { name: /failed iteration/ })).toHaveCount(0);
         }
       }
+      if (flag === 'true') {
+        const pager = page.getByTestId('msla-pager-v2-builtin_mcp_server');
+        const managedCard = page.locator('.react-flow__node[data-id="Managed_MCP_Server"]').locator('[data-node-card="tool"]');
+        await managedCard.click({ trial: true });
+        const pagerBox = await pager.boundingBox();
+        const managedBox = await managedCard.boundingBox();
+        if (!pagerBox || !managedBox) {
+          throw new Error('Both the built-in MCP pager and the managed MCP card must have visible bounds.');
+        }
+        expect(pagerBox.y + pagerBox.height).toBeLessThan(managedBox.y);
+      }
       expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
       expect(await page.evaluate(() => (window as DesignerWindow).DesignerStoreV2.getState().workflow.runInstance)).toBeNull();
       await expect(page.getByRole('button', { name: /Insert a new step/ })).toHaveCount(0);

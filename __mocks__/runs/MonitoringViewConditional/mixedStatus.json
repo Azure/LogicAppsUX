@@ -1,0 +1,45 @@
+{
+  "id": "/workflows/MonitoringViewConditional/runs/mixedStatus",
+  "name": "mixedStatus",
+  "type": "workflows/runs",
+  "properties": {
+    "waitEndTime": "2025-05-15T06:07:42Z",
+    "startTime": "2025-05-15T06:07:42Z",
+    "endTime": "2025-05-15T06:07:45Z",
+    "status": "Failed",
+    "correlation": {
+      "clientTrackingId": "mixed-status"
+    },
+    "trigger": {
+      "name": "When_a_HTTP_request_is_received",
+      "startTime": "2025-05-15T06:07:42Z",
+      "endTime": "2025-05-15T06:07:42Z",
+      "status": "Succeeded",
+      "code": "OK"
+    },
+    "actions": {
+      "Parse_JSON": {
+        "startTime": "2025-05-15T06:07:42Z",
+        "endTime": "2025-05-15T06:07:43Z",
+        "status": "Succeeded",
+        "code": "OK"
+      },
+      "Delay": {
+        "startTime": "2025-05-15T06:07:43Z",
+        "endTime": "2025-05-15T06:07:45Z",
+        "status": "Failed",
+        "code": "InternalServerError",
+        "error": {
+          "code": "InternalServerError",
+          "message": "Synthetic failure for the monitoring fixture."
+        }
+      },
+      "Response": {
+        "startTime": "2025-05-15T06:07:45Z",
+        "endTime": "2025-05-15T06:07:45Z",
+        "status": "Skipped",
+        "code": "ActionSkipped"
+      }
+    }
+  }
+}

@@ -86,6 +86,8 @@ export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
       className={className}
       card={renderCard}
       disabled={disabled}
+      // Side placement keeps the card off the upstream node and its incoming edge; NodeHoverCard flips when blocked.
+      placement="side"
       externalFocusTarget={canvasFocusTarget}
       triggerRef={triggerRef}
     >

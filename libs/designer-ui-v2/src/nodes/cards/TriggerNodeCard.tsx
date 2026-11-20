@@ -6,16 +6,33 @@ import { NodeIconTile } from '../primitives/NodeIconTile';
 import { NodeText } from '../primitives/NodeText';
 import { defaultNodeStrings } from '../strings';
 import { categoryNodeIcons } from './categoryIcons';
-import { resolveNodeIcons } from './shared';
-import type { BaseNodeCardProps } from './shared';
-export interface TriggerNodeCardProps extends BaseNodeCardProps {
+import { resolveCardDensity, resolveNodeIcons } from './shared';
+import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
+export interface TriggerNodeCardProps extends Omit<BaseNodeCardProps, 'countLabel'>, CompactNodeCardProps {
   handles?: boolean;
 }
 const OUTPUTS = ['neutral'] as const;
 export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(function TriggerNodeCard(
-  { title, subtitle, icon, selectedIcon, selected, status, statusDetail, strings = defaultNodeStrings, handles = true, ...rest },
+  {
+    title,
+    subtitle,
+    subtitleKind,
+    icon,
+    selectedIcon,
+    iconTone,
+    iconArtwork,
+    selected,
+    status,
+    statusDetail,
+    strings = defaultNodeStrings,
+    handles = true,
+    density,
+    titleLines,
+    ...rest
+  },
   ref
 ) {
+  const layout = resolveCardDensity({ density, titleLines });
   // Triggers consume saved sample *input*; they never substitute output, so `mock` is forwarded for status-union
   // compatibility without the action-only beaker paint.
   return (
@@ -23,16 +40,24 @@ export const TriggerNodeCard = forwardRef<HTMLDivElement, TriggerNodeCardProps>(
       {...rest}
       ref={ref}
       shape="pill"
-      width="standard"
+      width={layout.width}
+      size={layout.size}
       selected={selected}
       status={status}
       statusDetail={statusDetail}
       strings={strings}
       data-node-card="trigger"
     >
-      <NodeCardBody>
-        <NodeIconTile category="trigger" selected={selected} {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)} />
-        <NodeText title={title} subtitle={subtitle} />
+      <NodeCardBody density={layout.body}>
+        <NodeIconTile
+          category="trigger"
+          size={layout.tile}
+          selected={selected}
+          tone={iconTone}
+          artwork={iconArtwork}
+          {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.trigger)}
+        />
+        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} titleLines={layout.titleLines} />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

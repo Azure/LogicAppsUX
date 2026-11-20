@@ -9,7 +9,7 @@ import {
   expectedAgentMcpWorkflowDefinitionOutput,
 } from '../../parsers/BJSWorkflow/__test__/agentMcpWorkflowDefinition';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { getWorkflowNodePresentationContext } from '../helpers';
+import { getLayoutRelevantData, getWorkflowNodePresentationContext } from '../helpers';
 import { createElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -20,11 +20,11 @@ import Constants from '../../../common/constants';
 
 describe('family admission and matching geometry', () => {
   it.each([
-    ['Scope', 'scope', 232, 74],
+    ['Scope', 'scope', 208, 52],
     ['If', 'if', 160, 74],
     ['Switch', 'switch', 160, 74],
-    ['Foreach', 'loop', 160, 74],
-    ['Until', 'loop', 160, 74],
+    ['Foreach', 'loop', 160, 52],
+    ['Until', 'loop', 160, 52],
     ['Agent', 'agent', 280, 181],
   ])('admits renamed %s by definition, not display name', (operationType, family, width, height) => {
     expect(getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType })).toMatchObject({
@@ -66,17 +66,44 @@ describe('family admission and matching geometry', () => {
       });
     }
     const nested = getWorkflowNodePresentationContext({ id: 'descendant', type: 'OPERATION_NODE' }, context);
-    expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 232, height: 74 } });
+    expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 208, height: 52 } });
   });
 
-  it('reserves the canonical small-tool status badge clearance when actual tool run data appears', () => {
+  it('keeps canonical small-tool height when actual tool run data appears', () => {
     const node: WorkflowNode = { id: 'mcp', type: 'OPERATION_NODE' };
     const actual = getWorkflowNodePresentationContext(node, {
       nodesMetadata: { mcp: { graphId: 'agent', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, toolRunData: { status: 'Succeeded' } } },
     });
-    expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 66 });
+    expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 56 });
   });
 
+  it('reserves the MCP pager only for a multi-iteration monitoring run, before packing the next tool', async () => {
+    const { graph, actionData: operations, nodesMetadata } = expectedAgentMcpWorkflowDefinitionOutput;
+    const mcpId = 'McpFileServer';
+    const context = {
+      operations,
+      isMonitoringView: true,
+      nodesMetadata: { ...nodesMetadata, [mcpId]: { ...nodesMetadata[mcpId], toolRunData: { repetitionCount: 1 } } },
+    };
+    const withPager = {
+      ...context,
+      nodesMetadata: { ...context.nodesMetadata, [mcpId]: { ...context.nodesMetadata[mcpId], toolRunData: { repetitionCount: 4 } } },
+    };
+    const layout = async (presentationContext: typeof context, shared = true) => {
+      const input = exportForTesting.convertWorkflowGraphToElkGraph(graph as WorkflowNode, shared, presentationContext);
+      const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(input, true), shared);
+      return nodes;
+    };
+    const pagedNodes = await layout(withPager);
+    const mcp = pagedNodes.find(({ id }) => id === mcpId)!;
+    const followingTool = pagedNodes.find((node) => node.parentId === mcp.parentId && node.position.y > mcp.position.y)!;
+    expect(mcp.height).toBe(80);
+    expect(followingTool.position.y - mcp.position.y).toBeGreaterThanOrEqual(92);
+    expect((await layout(context)).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect((await layout({ ...withPager, isMonitoringView: false })).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect(await layout(withPager, false)).toEqual(await layout(context, false));
+    expect(getLayoutRelevantData(graph as WorkflowNode, withPager)).not.toEqual(getLayoutRelevantData(graph as WorkflowNode, context));
+  });
   it('keeps one real named tool row and distinct ordinary inner operations from actual Agent deserialization', async () => {
     const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
     const parsed = Deserialize(
@@ -110,7 +137,7 @@ describe('family admission and matching geometry', () => {
     for (const id of ['CallWorkflow', 'InnerCompose']) {
       const bodyAction = nodes.find((node) => node.id === id)!;
       expect(bodyAction.parentId).toBe('NamedTool');
-      expect(bodyAction.data.presentation).toMatchObject({ shared: true, size: { width: 232, height: 74 } });
+      expect(bodyAction.data.presentation).toMatchObject({ shared: true, titleLines: 1, size: { width: 208, height: 52 } });
       expect(bodyAction.data.presentation).not.toHaveProperty('toolKind');
     }
     expect(
@@ -172,13 +199,13 @@ describe('family admission and matching geometry', () => {
     };
     const context = { operations: { renamed: { type: 'Foreach' } }, nodesMetadata: {} };
     const elkGraph = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, context);
-    expect(elkGraph.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 74 });
+    expect(elkGraph.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 52 });
     const layout = await exportForTesting.elkLayout(elkGraph);
     const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
     expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.presentation).toMatchObject({
       shared: true,
       family: 'loop',
-      size: { width: 160, height: 74 },
+      size: { width: 160, height: 52 },
     });
     expect(nodes.find(({ id }) => id === 'renamed')?.width).toBeGreaterThan(232);
     expect(graph.children?.[0].children?.[0].width).toBe(200);
@@ -215,6 +242,20 @@ describe('family admission and matching geometry', () => {
     expect(converted.children?.[0].children?.[0].ports).toHaveLength(2);
     const layout = await exportForTesting.elkLayout(converted);
     const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    const header = nodes.find(({ id }) => id === 'renamed-#scope')!;
+    const branchGroup = nodes.find(({ id }) => id === 'renamed')?.data.branchGroup;
+    expect(branchGroup).toEqual({
+      start: header.position.y + header.height!,
+      exits: expect.arrayContaining(
+        nodes
+          .filter(({ id }) => id === 'actual-true' || id === 'actual-false')
+          .map((branch) => ({
+            x: branch.position.x + branch.width! / 2,
+            y: branch.position.y + branch.height!,
+          }))
+      ),
+    });
+    expect(edges).toHaveLength(2);
     expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.branchPorts).toEqual([
       { id: 'actual-true', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
       { id: 'actual-false', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
@@ -239,7 +280,28 @@ describe('family admission and matching geometry', () => {
     });
     const layout = await exportForTesting.elkLayout(converted);
     expect(layout.width).toBeGreaterThanOrEqual(232);
-    expect(layout.height).toBeGreaterThanOrEqual(220);
+    expect(layout.height).toBeGreaterThanOrEqual(198);
+  });
+
+  it.each([
+    ['ForEach_nested', 'Foreach', '#scope'],
+    ['ForEach_empty', 'Foreach', '#scope'],
+    ['Until_Nested', 'Until', '#footer'],
+  ] as const)('uses the same wrapped geometry for %s in ELK and React Flow', async (id, type, tag) => {
+    const headerId = `${id}-${tag}`;
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [{ id, type: 'GRAPH_NODE', children: [{ id: headerId, type: 'SCOPE_CARD_NODE' }] }],
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, { operations: { [id]: { type } } });
+    expect(converted.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 68 });
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    expect(nodes.find((node) => node.id === headerId)).toMatchObject({
+      width: 160,
+      height: 68,
+      data: { presentation: { titleLines: 2 } },
+    });
   });
 
   it('packs real Agent tool graphs vertically without leaking layout-only identities or duplicating MCP editor nodes', async () => {

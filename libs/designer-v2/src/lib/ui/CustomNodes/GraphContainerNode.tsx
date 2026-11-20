@@ -24,8 +24,22 @@ import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { DefaultHandle } from './components/handles/DefaultHandle';
-import { AgentToolsDecoration, NodeFrame } from '@microsoft/designer-ui-v2';
+import { AgentToolsDecoration, NodeFrame, nodeMetrics } from '@microsoft/designer-ui-v2';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
+import type { BranchGroupDecoration } from '../../core/graphlayout/helpers';
+import { makeStyles, tokens } from '@fluentui/react-components';
+
+const useStyles = makeStyles({
+  group: { position: 'absolute', pointerEvents: 'none', minWidth: 0 },
+  convergence: {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'visible',
+    pointerEvents: 'none',
+    color: tokens.colorNeutralStroke1,
+    '@media (forced-colors: active)': { color: 'CanvasText' },
+  },
+});
 
 interface AgentToolsPanelBounds {
   x: number;
@@ -35,6 +49,7 @@ interface AgentToolsPanelBounds {
 }
 
 const GraphContainerNode = ({ id, data }: NodeProps) => {
+  const styles = useStyles();
   const readOnly = useReadOnly();
   const sharedOption = useSharedNodeUi();
 
@@ -67,6 +82,18 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   // Same truth as the legacy GraphContainer `active` prop: in monitoring, a container with no run record was
   // not reached, so the shared frame and its merge junction render at the single inactive opacity level.
   const inactive = isMonitoringView && isNullOrUndefined(runData?.status);
+  const branchGroup = merge ? (data?.branchGroup as BranchGroupDecoration | undefined) : undefined;
+  const horizontal = handleAxis === 'horizontal';
+  const width = nodeSize?.width ?? 0;
+  const height = nodeSize?.height ?? 0;
+  const mergeX = horizontal ? width : width / 2;
+  const mergeY = horizontal ? height / 2 : height;
+  const exits = branchGroup?.exits ?? [];
+  // Cross lanes only after the longest lane ends. Draw the shared crossbar and stem once.
+  const gutter = ((horizontal ? mergeX : mergeY) + Math.max(...exits.map(({ x, y }) => (horizontal ? x : y)))) / 2;
+  const crossPositions = [horizontal ? mergeY : mergeX, ...exits.map(({ x, y }) => (horizontal ? y : x))];
+  const crossStart = Math.min(...crossPositions);
+  const crossEnd = Math.max(...crossPositions);
 
   return (
     <>
@@ -81,7 +108,43 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
         {/* Structural targets use the graph boundary; contained positioning is only for a canonical handle dot. */}
         <DefaultHandle axis={handleAxis} type="target" />
         {shared ? (
-          type === 'agent' || type === 'if' || type === 'switch' ? null : (
+          merge ? (
+            branchGroup && (
+              <>
+                <NodeFrame
+                  kind={kind}
+                  selected={selected || isMultiSelected}
+                  inactive={inactive}
+                  handleAxis={handleAxis}
+                  aria-hidden="true"
+                  className={styles.group}
+                  style={{ inset: horizontal ? `0 0 0 ${branchGroup.start}px` : `${branchGroup.start}px 0 0` }}
+                />
+                <svg
+                  aria-hidden="true"
+                  className={styles.convergence}
+                  width={width}
+                  height={height}
+                  opacity={inactive ? nodeMetrics.inactiveOpacity : 1}
+                  data-branch-convergence={id}
+                >
+                  {exits.length > 0 && (
+                    <path
+                      d={[
+                        ...exits.map(({ x, y }) => `M ${x} ${y} ${horizontal ? 'H' : 'V'} ${gutter}`),
+                        horizontal
+                          ? `M ${gutter} ${crossStart} V ${crossEnd} M ${gutter} ${mergeY} H ${mergeX}`
+                          : `M ${crossStart} ${gutter} H ${crossEnd} M ${mergeX} ${gutter} V ${mergeY}`,
+                      ].join(' ')}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeDasharray="3 2"
+                    />
+                  )}
+                </svg>
+              </>
+            )
+          ) : type === 'agent' ? null : (
             <NodeFrame
               kind={kind}
               selected={selected || isMultiSelected}

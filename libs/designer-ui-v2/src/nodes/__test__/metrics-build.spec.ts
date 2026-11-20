@@ -28,7 +28,14 @@ describe('built metrics dependency closure', () => {
 
   it('exports the arrow helper from the built React-free entry', async () => {
     const metrics = await import('../../../build/lib/metrics.js');
-    expect(Object.keys(metrics).sort()).toEqual(['getNodeLineArrowPath', 'getSwitchNodeSize', 'nodeHoverCardTiming', 'nodeMetrics']);
+    expect(Object.keys(metrics).sort()).toEqual([
+      'compactNodeMetrics',
+      'getCompactNodeHeight',
+      'getNodeLineArrowPath',
+      'getSwitchNodeSize',
+      'nodeHoverCardTiming',
+      'nodeMetrics',
+    ]);
     expect(metrics.getNodeLineArrowPath(10, 20, 'left', 2)).toBe('M 12 22 L 10 20 L 12 18');
     expect(metrics.getNodeLineArrowPath(0, 0)).toBe('M -3.18 -3.18 L 0 0 L -3.18 3.18');
     const entryDeclaration = readFileSync(new URL('../../../build/lib/metrics.d.ts', import.meta.url), 'utf8');

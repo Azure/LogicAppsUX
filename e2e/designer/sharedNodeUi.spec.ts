@@ -13,7 +13,7 @@ test.describe('Shared node UI host integration', { tag: ['@mock', '@shared-node-
       await expect(page.locator('.react-flow__node')).toHaveCount(7);
       if (flag === 'true') {
         await expect(compose).toHaveAttribute('data-node-card', 'action');
-        await expect(compose).toHaveCSS('width', '232px');
+        await expect(compose).toHaveCSS('width', '208px');
         await expect(compose).toContainText('Built-in · Compose');
         await expect(compose.locator('img')).toHaveCount(0);
         await expect(page.locator('[data-node-card="trigger"]')).toHaveCount(1);

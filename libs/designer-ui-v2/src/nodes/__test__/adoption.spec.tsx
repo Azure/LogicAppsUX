@@ -386,6 +386,20 @@ describe('admitted canonical components', () => {
     expect(container.querySelector('[data-icon-name]')).toBeNull();
   });
 
+  it('clears the off-center vertical input handle without overriding the default badge position', () => {
+    const { container, rerender } = render(<ui.NodeFrame kind="scope" handles handleAxis="vertical" handleLeft={140} status="failed" />);
+    const badge = () => container.querySelector<HTMLElement>('[data-badge-status]')!;
+    const input = container.querySelector<HTMLElement>('[data-handle]')!;
+    expect(Number.parseFloat(badge().style.left) - Number.parseFloat(input.style.left)).toBe(
+      ui.nodeMetrics.handle.size / 2 + ui.nodeMetrics.badge.handleGap
+    );
+
+    rerender(<ui.NodeFrame kind="scope" handles handleAxis="vertical" status="failed" />);
+    expect(badge().style.left).toBe('');
+    rerender(<ui.NodeFrame kind="scope" handles handleAxis="horizontal" handleLeft={140} status="failed" />);
+    expect(badge().style.left).toBe('');
+  });
+
   it('retains a headerless body, optional decorative frame handles, and the canonical mock badge palette', () => {
     const { container } = render(
       <ui.DesignerUiScope mode="dark" data-testid="scope">

@@ -99,6 +99,44 @@ describe('GraphContainerNode', () => {
     expect(tree.root.findByProps({ className: 'msla-graph-container-wrapper' }).props.style).toMatchObject({ padding: 0 });
   });
 
+  it.each([
+    [
+      'If',
+      'vertical',
+      '28px 0 0',
+      [
+        { x: 25, y: 40 },
+        { x: 75, y: 80 },
+      ],
+      'M 25 40 V 90 M 75 80 V 90 M 25 90 H 75 M 50 90 V 100',
+    ],
+    [
+      'Switch',
+      'horizontal',
+      '0 0 0 28px',
+      [
+        { x: 40, y: 25 },
+        { x: 80, y: 75 },
+      ],
+      'M 40 25 H 90 M 80 75 H 90 M 90 25 V 75 M 90 50 H 100',
+    ],
+  ] as const)(
+    'groups unequal %s branches downstream of both lanes at the existing %s merge source',
+    (type, handleAxis, inset, exits, path) => {
+      (useSharedNodeUi as Mock).mockReturnValue(true);
+      (useActionMetadata as Mock).mockReturnValue({ type });
+      const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ handleAxis, branchGroup: { start: 28, exits } }} />);
+      expect(tree.root.findByType(NodeFrame).props.style).toEqual({ inset });
+      expect(tree.root.findByType('path').props.d).toBe(path);
+      expect(tree.root.findAllByType(DefaultHandle)).toHaveLength(2);
+      expect(tree.root.findAllByType(NodeMergePoint)).toHaveLength(1);
+      tree.update(<GraphContainerNode {...defaultProps} data={{ handleAxis }} />);
+      expect(tree.root.findAllByType(NodeFrame)).toHaveLength(0);
+      expect(tree.root.findAllByType('path')).toHaveLength(0);
+      expect(tree.root.findAllByType(NodeMergePoint)).toHaveLength(1);
+    }
+  );
+
   it('keeps the shared Agent structural target on its top boundary rather than centering it in the compound graph', () => {
     (useSharedNodeUi as Mock).mockReturnValue(true);
     (useActionMetadata as Mock).mockReturnValue({ type: 'Agent' });
