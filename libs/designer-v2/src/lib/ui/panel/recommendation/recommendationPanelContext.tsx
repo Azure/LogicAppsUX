@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllConnectors, useAllOperations, useMcpServersQuery } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useMcpServersQuery, useOperationsByConnector } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useDiscoveryPanelFavoriteOperations,
@@ -126,6 +126,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const selectedOperationId = useDiscoveryPanelSelectedOperationId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
+  // Shares the query cache with ConnectorDetailsView. Needed because the connector view can render
+  // before the full operations preload finishes on large tenants.
+  const { data: selectedConnectorOperations } = useOperationsByConnector(selectedOperationGroupId || '');
 
   // Derive selectedOperation from Redux selectedOperationId to persist across component remounts
   const selectedOperation = useMemo(() => allOperations?.find((o) => o.id === selectedOperationId), [allOperations, selectedOperationId]);
@@ -162,7 +165,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const onOperationClick = useCallback(
     (id: string, apiId?: string, forceAsTrigger?: boolean) => {
       const operations = isAgentTool ? [...allOperations, ...mcpServers] : allOperations;
-      const operation = operations.find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id));
+      const isMatch = (o: DiscoveryOperation<DiscoveryResultTypes>) =>
+        apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id;
+      const operation = operations.find(isMatch) ?? selectedConnectorOperations?.find(isMatch);
 
       if (!operation) {
         return;
@@ -259,6 +264,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       isTrigger,
       mcpServers,
       relationshipIds,
+      selectedConnectorOperations,
     ]
   );
 

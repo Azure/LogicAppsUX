@@ -50,6 +50,7 @@ vi.mock('../../../../core/queries/browse', () => ({
   useAllConnectors: vi.fn(() => ({ data: [], isLoading: false })),
   useAllOperations: vi.fn(() => ({ data: [], isLoading: false })),
   useMcpServersQuery: vi.fn(() => ({ data: { data: [] }, isLoading: false })),
+  useOperationsByConnector: vi.fn(() => ({ data: undefined, isLoading: false })),
 }));
 
 vi.mock('../hooks', () => ({
@@ -126,7 +127,9 @@ import {
   useMcpToolWizard,
 } from '../../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectBrowseCategory, setDiscoverySearchTerm } from '../../../../core/state/panel/panelSlice';
-import { useAllOperations } from '../../../../core/queries/browse';
+import { useAllOperations, useOperationsByConnector } from '../../../../core/queries/browse';
+import { ConnectorDetailsView } from '../details/connectorDetailsView';
+import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 
 const mockUseDiscoveryPanelIsAddingTrigger = vi.mocked(useDiscoveryPanelIsAddingTrigger);
 const mockUseDiscoveryPanelSelectedOperationGroupId = vi.mocked(useDiscoveryPanelSelectedOperationGroupId);
@@ -139,6 +142,9 @@ const mockSelectOperationGroupId = vi.mocked(selectOperationGroupId);
 const mockSelectBrowseCategory = vi.mocked(selectBrowseCategory);
 const mockSetDiscoverySearchTerm = vi.mocked(setDiscoverySearchTerm);
 const mockUseAllOperations = vi.mocked(useAllOperations);
+const mockUseOperationsByConnector = vi.mocked(useOperationsByConnector);
+const mockConnectorDetailsView = vi.mocked(ConnectorDetailsView);
+const mockAddOperation = vi.mocked(addOperation);
 
 const createTestStore = () =>
   configureStore({
@@ -186,6 +192,7 @@ describe('RecommendationPanelContext', () => {
     mockUseMcpToolWizard.mockReturnValue(null);
     mockUseDiscoveryPanelSearchTerm.mockReturnValue('');
     mockUseAllOperations.mockReturnValue({ data: [], isLoading: false } as any);
+    mockUseOperationsByConnector.mockReturnValue({ data: undefined, isLoading: false } as any);
     mockGetActiveSearchOperations.mockResolvedValue([]);
   });
 
@@ -506,6 +513,49 @@ describe('RecommendationPanelContext', () => {
       render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
 
       await waitFor(() => expect(mockGetActiveSearchOperations).toHaveBeenCalledWith('github'));
+    });
+  });
+
+  describe('Operation click from connector details', () => {
+    const connectorId = '/subscriptions/sub/providers/Microsoft.Web/locations/westus/managedApis/azureblob';
+    const copyBlobOperation = {
+      id: 'CopyFile_V2',
+      name: 'CopyFile_V2',
+      type: 'Microsoft.Web/locations/managedApis/apiOperations',
+      properties: {
+        summary: 'Copy blob (V2)',
+        api: { id: connectorId, name: 'azureblob', displayName: 'Azure Blob Storage' },
+      },
+    };
+
+    beforeEach(() => {
+      mockUseDiscoveryPanelSelectionState.mockReturnValue(SELECTION_STATES.DETAILS);
+      mockUseDiscoveryPanelSelectedOperationGroupId.mockReturnValue(connectorId);
+      mockUseOperationsByConnector.mockReturnValue({ data: [copyBlobOperation], isLoading: false } as any);
+      mockConnectorDetailsView.mockImplementation(({ onOperationClick }: any) => (
+        <button data-testid="copy-blob" onClick={() => onOperationClick('CopyFile_V2', connectorId, false)}>
+          Copy blob (V2)
+        </button>
+      ));
+    });
+
+    test('should add the operation while the full operations preload is still in progress', async () => {
+      mockUseAllOperations.mockReturnValue({ data: [], isLoading: true } as any);
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+      fireEvent.click(screen.getByTestId('copy-blob'));
+
+      await waitFor(() => expect(mockAddOperation).toHaveBeenCalledWith(expect.objectContaining({ operation: copyBlobOperation })));
+    });
+
+    test('should not add anything when the operation is in neither list', async () => {
+      mockUseOperationsByConnector.mockReturnValue({ data: [], isLoading: false } as any);
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+      fireEvent.click(screen.getByTestId('copy-blob'));
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(mockAddOperation).not.toHaveBeenCalled();
     });
   });
 });
