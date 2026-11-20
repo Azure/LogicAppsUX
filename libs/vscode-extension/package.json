@@ -48,8 +48,7 @@
         "import": "./build/lib/index.js",
         "default": "./build/lib/index.js"
       },
-      "./package.json": "./package.json",
-      "./build/lib/index.css": "./build/lib/index.css"
+      "./package.json": "./package.json"
     }
   },
   "scripts": {
