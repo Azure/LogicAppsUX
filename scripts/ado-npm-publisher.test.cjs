@@ -8,7 +8,7 @@ const { randomUUID } = crypto;
 const { gzipSync } = require('node:zlib');
 const { afterEach, test } = require('node:test');
 const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, MANIFEST_FILE_NAME, branchProvenance, buildManifestContract, fetchReleaseSource, parseReleaseRef, parseReleaseUrl,
-    releaseRunSource, resolveReleaseMetadata, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } = require('./ado-npm-publisher-lib.cjs');
+    fetchReleaseJson, releaseRunSource, resolveReleaseMetadata, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } = require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, digest, npmRunner, publishPackage, readNpmAuthorization, resolveNpmRoot, validateArtifactFiles, validateTarballArtifact } =
     require('./ado-npm-publisher-artifact.cjs');
 const { buildCohort, buildReleaseArtifact, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput } = require('./ado-npm-publisher.cjs');
@@ -1131,6 +1131,45 @@ test('release URL resolution peels the annotated tag and never reads assets or l
     const missing = releaseApi();
     missing.responses.delete('releases/tags/v5.1022.0');
     await assert.rejects(resolveReleaseMetadata({ releaseRef, fetchImpl: missing.fetchImpl }), /unexpected HTTP 404/);
+});
+
+// Hosted runs failed on the post-build re-read; release reads are single-use, redirect-refusing and report sanitized causes only.
+test('release reads close each connection, refuse redirects and sanitize failures without retrying', async () => {
+    const api = releaseApi();
+    const inits = [];
+    await resolveReleaseMetadata({ releaseRef, fetchImpl: async (url, options) => { inits.push(options); return api.fetchImpl(url); } });
+    assert.equal(inits.length, 4);
+    for (const init of inits) {
+        assert.equal(init.redirect, 'manual');
+        assert.equal(init.headers.connection, 'close');
+        assert.equal(init.headers.authorization, undefined);
+        assert(init.signal instanceof AbortSignal);
+    }
+    assert.equal(inits[0].headers.accept, 'application/vnd.github+json');
+    const secretUrl = 'https://api.github.com/repos/Azure/LogicAppsUX/releases/tags/v5.1022.0?leak';
+    const attempt = async (impl, pattern) => {
+        let calls = 0;
+        const error = await fetchReleaseJson(secretUrl, async (...args) => { calls++; return impl(...args); }, undefined, 'Probe')
+            .then(() => assert.fail('expected rejection'), err => err);
+        assert.match(error.message, pattern);
+        assert.doesNotMatch(error.message, /leak|https?:|api\.github|location|example/i);
+        assert.equal(calls, 1);
+    };
+    const redirect = status => async () => ({ status, redirected: false, headers: new Map([['location', 'https://example.test/leak']]), text: async () => '' });
+    for (const status of [0, 301, 302, 307, 308]) await attempt(redirect(status), new RegExp(`^Probe: refused redirect \\(HTTP ${status}\\)\\.$`));
+    await attempt(async () => json({}, 200, true), /^Probe: refused redirect \(HTTP 200\)\.$/);
+    for (const status of [403, 404, 429, 500]) await attempt(async () => json({}, status), new RegExp(`^Probe: unexpected HTTP ${status}\\.$`));
+    await attempt(async () => { throw new DOMException('signal timed out https://leak', 'TimeoutError'); }, /^Probe: timeout\.$/);
+    await attempt(async () => { throw new DOMException('aborted https://leak', 'AbortError'); }, /^Probe: timeout\.$/);
+    for (const code of ['ECONNRESET', 'ENOTFOUND', 'UND_ERR_SOCKET', 'UND_ERR_HEADERS_TIMEOUT', 'CERT_HAS_EXPIRED']) {
+        await attempt(async () => { throw new TypeError('fetch failed https://leak', { cause: Object.assign(new Error('leak'), { code }) }); },
+            new RegExp(`^Probe: transport failure \\(${code}\\)\\.$`));
+    }
+    await attempt(async () => { throw new TypeError('fetch failed', { cause: Object.assign(new Error('x'), { code: 'leak https://x' }) }); }, /^Probe: transport failure\.$/);
+    await attempt(async () => { throw Object.assign(new Error('Probe: unexpected HTTP 200 leak'), { sanitized: true }); }, /^Probe: transport failure\.$/);
+    await attempt(async () => ({ status: 200, redirected: false, text: async () => { throw new TypeError('terminated', { cause: { code: 'UND_ERR_SOCKET' } }); } }),
+        /^Probe: transport failure \(UND_ERR_SOCKET\)\.$/);
+    await attempt(async () => ({ status: 200, redirected: false, text: async () => '{bad' }), /^Probe: invalid JSON\.$/);
 });
 
 // Builds from a local release repository: the mock records commands, rewrites versions and writes real-format tarballs.

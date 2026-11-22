@@ -127,17 +127,58 @@ async function verifyReleaseMetadata({ releaseRef, expectedSha, fetchImpl = fetc
     return verified;
 }
 
+// Only standard platform codes are reported; raw messages can carry URLs or headers.
+const TRANSPORT_CODE = /^(?:E[A-Z]{2,15}|UND_ERR_[A-Z_]{2,30}|CERT_[A-Z_]{2,40}|ERR_TLS_[A-Z_]{2,40}|(?:UNABLE|SELF|DEPTH)_[A-Z_]{2,40})$/;
+
+function describeFetchFailure(error) {
+    if (error?.name === 'TimeoutError' || error?.name === 'AbortError') return 'timeout';
+    const code = error?.cause?.code ?? error?.code;
+    return typeof code === 'string' && TRANSPORT_CODE.test(code) ? `transport failure (${code})` : 'transport failure';
+}
+
+// Uncredentialed GitHub release/tag/commit reads only (the feed keeps fetchJson). Each read is single-use:
+// `connection: close` stops reuse of a pooled socket left idle across the long build, redirects are refused
+// by numeric status, and failures never retry.
+async function fetchReleaseJson(url, fetchImpl, accept = 'application/json', label = 'GitHub source read') {
+    let response;
+    try {
+        response = await fetchImpl(url, {
+            headers: { accept, 'user-agent': 'ado-additive-npm-publisher', connection: 'close' },
+            redirect: 'manual',
+            signal: AbortSignal.timeout(30_000),
+        });
+    } catch (error) {
+        throw new Error(`${label}: ${describeFetchFailure(error)}.`);
+    }
+    const status = Number.isInteger(response?.status) ? response.status : 0;
+    if (status === 0 || (status >= 300 && status < 400) || response.redirected) {
+        throw new Error(`${label}: refused redirect (HTTP ${status}).`);
+    }
+    if (status !== 200) throw new Error(`${label}: unexpected HTTP ${status}.`);
+    let body;
+    try {
+        body = await response.text();
+    } catch (error) {
+        throw new Error(`${label}: ${describeFetchFailure(error)}.`);
+    }
+    try {
+        return JSON.parse(body);
+    } catch {
+        throw new Error(`${label}: invalid JSON.`);
+    }
+}
+
 // Resolves an exact stable tag to its published GitHub Release and peeled commit. Release assets are never read.
 async function resolveReleaseMetadata({ releaseRef, fetchImpl = fetch }) {
     const { tag, version } = parseReleaseRef(releaseRef);
-    const release = await fetchJson(`${SOURCE_API_BASE}/releases/tags/${encodeURIComponent(tag)}`, fetchImpl,
-        { accept: 'application/vnd.github+json' }, 'GitHub release lookup');
+    const release = await fetchReleaseJson(`${SOURCE_API_BASE}/releases/tags/${encodeURIComponent(tag)}`, fetchImpl,
+        'application/vnd.github+json', 'GitHub release lookup');
     if (release?.tag_name !== tag || release.draft !== false || release.prerelease !== false ||
         !Number.isSafeInteger(release.id) || release.id <= 0 || !Number.isFinite(Date.parse(release.published_at))) {
         throw new Error(`Release '${tag}' is not a verified published stable release.`);
     }
 
-    const tagRef = await fetchJson(`${SOURCE_API_BASE}/git/ref/tags/${encodeURIComponent(tag)}`, fetchImpl);
+    const tagRef = await fetchReleaseJson(`${SOURCE_API_BASE}/git/ref/tags/${encodeURIComponent(tag)}`, fetchImpl);
     if (tagRef?.ref !== `refs/tags/${tag}`) {
         throw new Error(`Release tag reference mismatch. Expected refs/tags/${tag}.`);
     }
@@ -147,7 +188,7 @@ async function resolveReleaseMetadata({ releaseRef, fetchImpl = fetch }) {
         peeledCommitSha = normalizeSha(tagRef.object.sha);
     } else if (tagRef?.object?.type === 'tag') {
         const tagSha = normalizeSha(tagRef.object.sha);
-        const tagObject = await fetchJson(`${SOURCE_API_BASE}/git/tags/${tagSha}`, fetchImpl);
+        const tagObject = await fetchReleaseJson(`${SOURCE_API_BASE}/git/tags/${tagSha}`, fetchImpl);
         if (tagObject?.sha !== tagSha || tagObject?.tag !== tag || tagObject?.object?.type !== 'commit') {
             throw new Error(`Annotated tag '${tag}' does not point to a commit.`);
         }
@@ -156,7 +197,7 @@ async function resolveReleaseMetadata({ releaseRef, fetchImpl = fetch }) {
         throw new Error(`Unsupported tag object type '${tagRef?.object?.type ?? 'unknown'}' for ${tag}.`);
     }
 
-    const commit = await fetchJson(`${SOURCE_API_BASE}/git/commits/${peeledCommitSha}`, fetchImpl);
+    const commit = await fetchReleaseJson(`${SOURCE_API_BASE}/git/commits/${peeledCommitSha}`, fetchImpl);
     if (commit?.sha !== peeledCommitSha) throw new Error('GitHub commit response does not match the peeled tag.');
 
     return {
@@ -326,6 +367,7 @@ module.exports = {
     buildManifestContract,
     dependencyMap,
     fetchJson,
+    fetchReleaseJson,
     fetchReleaseSource,
     isObject,
     normalizeSha,
