@@ -178,7 +178,9 @@ function expectedProvenance(verified) {
     }
     return {
         source: { repository: SOURCE_REPOSITORY, releaseRef: `refs/tags/${verified.releaseTag}`, releaseId: verified.releaseId,
-            verifiedSha: verified.commitSha, version: verified.version },
+            verifiedSha: verified.commitSha, version: verified.version,
+            // Release-URL builds bind the artifact to the producing run and reviewed recipe commit.
+            ...(verified.buildId === undefined ? {} : { buildId: verified.buildId, recipeSha: verified.recipeSha }) },
         destination: { registry: DESTINATION_REGISTRY, feedId: DESTINATION_FEED_ID, distTag: DIST_TAG },
     };
 }

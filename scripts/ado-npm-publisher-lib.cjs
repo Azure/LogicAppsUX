@@ -63,6 +63,32 @@ function parseReleaseRef(releaseRef) {
     return { tag: `v${match[1]}.${match[2]}.${match[3]}`, version: `${match[1]}.${match[2]}.${match[3]}` };
 }
 
+const RELEASE_PAGE_PREFIX = `https://github.com/${SOURCE_REPOSITORY}/releases/tag/`;
+
+// The only release input is the canonical GitHub Release page URL; "latest", other repositories,
+// query strings, fragments, encodings and prerelease tags are rejected before any network read.
+function parseReleaseUrl(releaseUrl) {
+    if (typeof releaseUrl !== 'string' || !releaseUrl.startsWith(RELEASE_PAGE_PREFIX) || releaseUrl.length > 200) {
+        throw new Error(`Invalid releaseUrl. Expected ${RELEASE_PAGE_PREFIX}v<major>.<minor>.<patch>.`);
+    }
+    const releaseRef = `refs/tags/${releaseUrl.slice(RELEASE_PAGE_PREFIX.length)}`;
+    try {
+        return { releaseUrl, releaseRef, ...parseReleaseRef(releaseRef) };
+    } catch {
+        throw new Error(`Invalid releaseUrl. Expected ${RELEASE_PAGE_PREFIX}v<major>.<minor>.<patch>.`);
+    }
+}
+
+// The pipeline runs from a reviewed recipe ref; the release source is resolved separately from the URL.
+function releaseRunSource(env) {
+    assert.equal(env.BUILD_REASON, 'Manual', 'Release builds must be queued manually.');
+    assert.equal(env.SOURCE_REPOSITORY, SOURCE_REPOSITORY, 'Expected the LogicAppsUX GitHub repository.');
+    const release = parseReleaseUrl(env.RELEASE_URL);
+    const buildId = env.BUILD_ID;
+    assert(typeof buildId === 'string' && /^[1-9]\d{0,14}$/.test(buildId), 'Expected a positive Azure Pipelines build ID.');
+    return { ...release, buildId, recipeSha: normalizeSha(env.RECIPE_SHA) };
+}
+
 function normalizeSha(input) {
     const normalized = String(input ?? '').toLowerCase();
     if (normalized.length !== 40 || !/^[0-9a-f]{40}$/.test(normalized)) {
@@ -93,8 +119,17 @@ async function fetchJson(url, fetchImpl = fetch, headers = {}, label = 'GitHub s
 }
 
 async function verifyReleaseMetadata({ releaseRef, expectedSha, fetchImpl = fetch }) {
-    const { tag, version } = parseReleaseRef(releaseRef);
     const normalizedExpectedSha = normalizeSha(expectedSha);
+    const verified = await resolveReleaseMetadata({ releaseRef, fetchImpl });
+    if (verified.commitSha !== normalizedExpectedSha) {
+        throw new Error(`Tag commit SHA '${verified.commitSha}' does not match expectedSha '${normalizedExpectedSha}'.`);
+    }
+    return verified;
+}
+
+// Resolves an exact stable tag to its published GitHub Release and peeled commit. Release assets are never read.
+async function resolveReleaseMetadata({ releaseRef, fetchImpl = fetch }) {
+    const { tag, version } = parseReleaseRef(releaseRef);
     const release = await fetchJson(`${SOURCE_API_BASE}/releases/tags/${encodeURIComponent(tag)}`, fetchImpl,
         { accept: 'application/vnd.github+json' }, 'GitHub release lookup');
     if (release?.tag_name !== tag || release.draft !== false || release.prerelease !== false ||
@@ -121,9 +156,6 @@ async function verifyReleaseMetadata({ releaseRef, expectedSha, fetchImpl = fetc
         throw new Error(`Unsupported tag object type '${tagRef?.object?.type ?? 'unknown'}' for ${tag}.`);
     }
 
-    if (peeledCommitSha !== normalizedExpectedSha) {
-        throw new Error(`Tag commit SHA '${peeledCommitSha}' does not match expectedSha '${normalizedExpectedSha}'.`);
-    }
     const commit = await fetchJson(`${SOURCE_API_BASE}/git/commits/${peeledCommitSha}`, fetchImpl);
     if (commit?.sha !== peeledCommitSha) throw new Error('GitHub commit response does not match the peeled tag.');
 
@@ -144,7 +176,11 @@ function runGit(args, cwd) {
         timeout: 180_000,
         env: { PATH: process.env.PATH, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_TERMINAL_PROMPT: '0' },
     });
-    if (result.status !== 0) throw new Error(`Git ${args[0]} failed (exit ${result.status ?? 'unavailable'}).`);
+    if (result.status !== 0) {
+        // Report the git subcommand, not leading `-c key=value` options.
+        const command = args.find((arg, index) => !arg.startsWith('-') && args[index - 1] !== '-c');
+        throw new Error(`Git ${command} failed (exit ${result.status ?? 'unavailable'}).`);
+    }
     return result.stdout;
 }
 
@@ -160,6 +196,23 @@ function verifyCleanCheckout(sourceRoot) {
     if (runGit(['status', '--porcelain=v1', '--untracked-files=all'], sourceRoot)) {
         throw new Error('Source checkout contains modified or untracked files.');
     }
+}
+
+// Fetches exactly one released commit into a new directory without credentials, hooks, tags or
+// global config. The recipe stays in the pipeline checkout; only the source content comes from here.
+// `remote` is a code-level seam for local fixtures; it is never read from the environment.
+function fetchReleaseSource(sourceRoot, commitSha, remote = `https://github.com/${SOURCE_REPOSITORY}.git`) {
+    const sha = normalizeSha(commitSha);
+    fs.mkdirSync(sourceRoot);
+    const protocol = remote.startsWith('https://') ? 'https' : 'file';
+    runGit(['init', '--quiet'], sourceRoot);
+    runGit(['-c', 'protocol.allow=never', '-c', `protocol.${protocol}.allow=always`, '-c', 'credential.helper=',
+        'fetch', '--quiet', '--no-tags', '--no-recurse-submodules', '--depth=1', remote, sha], sourceRoot);
+    const fetched = runGit(['rev-parse', 'FETCH_HEAD^{commit}'], sourceRoot).trim().toLowerCase();
+    if (fetched !== sha) throw new Error(`Fetched commit '${fetched}' does not match '${sha}'.`);
+    runGit(['-c', 'advice.detachedHead=false', 'checkout', '--quiet', '--detach', sha], sourceRoot);
+    verifyCheckoutHead(sourceRoot, sha);
+    verifyCleanCheckout(sourceRoot);
 }
 
 function isObject(value) {
@@ -273,10 +326,14 @@ module.exports = {
     buildManifestContract,
     dependencyMap,
     fetchJson,
+    fetchReleaseSource,
     isObject,
     normalizeSha,
     parseReleaseRef,
+    parseReleaseUrl,
     readVerifiedContracts,
+    releaseRunSource,
+    resolveReleaseMetadata,
     snapshotCheckout,
     verifyBuildPrerequisites,
     verifyCheckoutHead,

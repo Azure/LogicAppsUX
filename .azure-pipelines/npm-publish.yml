@@ -1,40 +1,30 @@
-# Manual 1ES build and retained-cohort publish smoke test for LogicAppsUX.
+# Manual npm release build for LogicAppsUX, driven by one GitHub Release page URL.
+#
+# Versioning and the GitHub Release stay in GitHub (version-release.yml). This pipeline takes the
+# canonical Release page URL, resolves it to a published, non-draft, non-prerelease stable tag and
+# its exact peeled commit, and builds that commit with the recipe (scripts/ado-npm-publisher*.cjs
+# and this YAML) from the reviewed pipeline ref. Released tags never need to carry this pipeline.
+# The product build scripts (pnpm build:lib, scripts/update-versions.js) come from the released tree.
+# Release assets (VSIX, iframe ZIP) are never read or treated as npm packages.
+#
+# Released source is built exactly as tagged. A release whose package manifests fail the strict
+# archive contract (for example the stylesheet exports removed by 05f0408d7, not yet on main) resolves
+# successfully but fails packing/validation; cut a new release after the fix lands instead of patching.
+#
+# Production publishing is not activated: no feed credential, service connection or writer runs here.
 trigger: none
 pr: none
 schedules: []
 
 parameters:
-  - name: approvedPool
-    displayName: Approved Linux 1ES pool and image
-    type: object
-    default: {}
-  - name: approvedSdlPool
-    displayName: Approved Windows 1ES source analysis pool and image
-    type: object
-    default: {}
-  - name: expectedSha
-    displayName: Full reviewed commit SHA of krmitta/ado-npm-publish-pipeline
+  - name: releaseUrl
+    displayName: GitHub Release page URL (https://github.com/Azure/LogicAppsUX/releases/tag/vX.Y.Z)
     type: string
     default: ''
-  - name: runBranchBuild
-    displayName: Build only (requires public-source review and source-job credential isolation)
-    type: boolean
-    default: false
-  - name: publishToFeed
-    displayName: Publish to production (blocked)
-    type: boolean
-    default: false
-  - name: requestLocalIsolatedTestFeed
-    displayName: Request isolated test-feed publishing (blocked pending approved target and identity)
-    type: boolean
-    default: false
-  - name: publishRetainedCohort
-    displayName: Publish the nine verified packages from run 192458185 (requires connection approval)
-    type: boolean
-    default: false
 
 variables:
-  PackageOutput: '$(Build.ArtifactStagingDirectory)/logicappsux-npm-branch-cohort'
+  ArtifactName: logicappsux-npm-release-cohort
+  PackageOutput: '$(Build.ArtifactStagingDirectory)/logicappsux-npm-release-cohort'
 
 resources:
   repositories:
@@ -46,192 +36,183 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
-    pool: ${{ parameters.approvedPool }}
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: ubuntu-latest
+      os: linux
     sdl:
-      sourceAnalysisPool: ${{ parameters.approvedSdlPool }}
-      # Use 1ES's default scanning of self, which is also the only source checkout.
+      sourceAnalysisPool:
+        name: Azure-Pipelines-1ESPT-ExDShared
+        image: windows-latest
+        os: windows
     stages:
-      - ${{ if or(parameters.publishToFeed, parameters.requestLocalIsolatedTestFeed, and(parameters.runBranchBuild, parameters.publishRetainedCohort)) }}:
-        - stage: PublicationBlocked
-          jobs:
-            - job: RejectPublication
-              steps:
-                - checkout: none
-                - bash: |
-                    printf '%s\n' 'Production and isolated-feed requests are blocked. Select either build-only or the retained-cohort smoke test, not both.' >&2
-                    exit 1
-                  displayName: Reject unsupported publication requests
-      - ${{ elseif parameters.publishRetainedCohort }}:
-        - stage: PublishRetainedCohort
-          # The service connection must enforce approval of the exact writer commit and run outside this YAML.
-          displayName: Publish nine retained npm tarballs
-          variables:
-            NpmWriter: '$(Agent.TempDirectory)/logicappsux-npm-writer'
-            NpmRegistry: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
-          jobs:
-            - job: PublishCohort
-              workspace:
-                clean: all
-              steps:
-                - checkout: none
-                - task: UseNode@1
-                  inputs:
-                    version: '24.x'
-                - task: DownloadPipelineArtifact@2
-                  displayName: Download only the retained npm cohort from run 192458185
-                  inputs:
-                    buildType: specific
-                    project: One
-                    definition: '489908'
-                    buildVersionToDownload: specific
-                    pipelineId: '192458185'
-                    artifactName: logicappsux-npm-branch-cohort
-                    itemPattern: |
-                      publisher-artifact.json
-                      *.tgz
-                    targetPath: '$(Pipeline.Workspace)/retained-npm-cohort'
-                - bash: |
-                    set -euo pipefail
-                    if [[ "$BUILD_REASON" != Manual || "$SOURCE_BRANCH" != refs/heads/krmitta/ado-npm-publish-pipeline ||
-                          ! "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ || "$SOURCE_VERSION" != "$EXPECTED_SHA" ]]; then
-                      echo 'Publish rejected: queue the reviewed commit manually on the test branch.' >&2
-                      exit 1
-                    fi
-                    umask 077
-                    mkdir -- "$WRITER"
-                    # The reviewed manifest digest binds all nine archives to the successful producer run.
-                    python3 -I - <<'PY'
-                    import base64, hashlib, json, os, re, sys
-                    from pathlib import Path
+      - stage: Release
+        displayName: Build and verify npm packages for one GitHub Release
+        jobs:
+          - job: BuildRelease
+            displayName: Resolve release, build exact source, pack and validate
+            workspace:
+              clean: all
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: '$(PackageOutput)'
+                  artifactName: '$(ArtifactName)'
+            steps:
+              # Recipe checkout only; the released source is fetched separately at the verified SHA.
+              - checkout: self
+                clean: true
+                persistCredentials: false
+              - task: UseNode@1
+                displayName: Use Node 24
+                inputs:
+                  version: '24.x'
+              - bash: node scripts/ado-npm-publisher.cjs build-release-artifact
+                displayName: Resolve the release URL, build its exact commit and validate nine tarballs
+                workingDirectory: '$(Build.Repository.LocalPath)'
+                env:
+                  BASH_ENV: /dev/null
+                  RELEASE_URL: ${{ parameters.releaseUrl }}
+                  BUILD_REASON: '$(Build.Reason)'
+                  BUILD_ID: '$(Build.BuildId)'
+                  RECIPE_SHA: '$(Build.SourceVersion)'
+                  SOURCE_REPOSITORY: '$(Build.Repository.Name)'
+                  AGENT_TMP: '$(Agent.TempDirectory)'
+                  ARTIFACT_ROOT: '$(PackageOutput)'
+              # Publish the manifest digest as a job output so the verifier pins the exact uploaded manifest.
+              - bash: |
+                  set -euo pipefail
+                  python3 -I - <<'PY'
+                  import hashlib, json, os, re, stat
+                  path = os.path.join(os.environ['PACKAGE_OUTPUT'], 'publisher-artifact.json')
+                  fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+                  with os.fdopen(fd, 'rb') as handle:
+                      if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                          raise SystemExit('Manifest is not a regular file.')
+                      data = handle.read(128 * 1024 + 1)
+                  if len(data) > 128 * 1024:
+                      raise SystemExit('Manifest is too large.')
+                  sha = json.loads(data)['source']['verifiedSha']
+                  if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha):
+                      raise SystemExit('Manifest source SHA is invalid.')
+                  print('##vso[task.setvariable variable=ManifestSha256;isOutput=true]' + hashlib.sha256(data).hexdigest())
+                  print('##vso[task.setvariable variable=SourceSha;isOutput=true]' + sha)
+                  PY
+                name: manifest
+                displayName: Record manifest digest and source SHA
+                env:
+                  BASH_ENV: /dev/null
+                  PACKAGE_OUTPUT: '$(PackageOutput)'
 
-                    artifact = Path(os.environ["ARTIFACT"])
-                    writer = Path(os.environ["WRITER"])
-                    producer_sha = "be5f0745502d59381363c826c43aa5a993b58622"
-                    version = f"0.0.0-ado.192458185.g{producer_sha}"
+          # Artifact-only consumer: no repository checkout, no tool from the artifact is executed, and every
+          # byte is checked against this run's manifest digest, release URL, build ID and recipe commit.
+          - job: VerifyRelease
+            displayName: Verify the same-run artifact without a checkout
+            dependsOn: BuildRelease
+            variables:
+              ExpectedManifestSha256: $[ dependencies.BuildRelease.outputs['manifest.ManifestSha256'] ]
+              ExpectedSourceSha: $[ dependencies.BuildRelease.outputs['manifest.SourceSha'] ]
+            templateContext:
+              inputs:
+                - input: pipelineArtifact
+                  buildType: current
+                  artifactName: '$(ArtifactName)'
+                  targetPath: '$(Pipeline.Workspace)/release-artifact'
+            steps:
+              - checkout: none
+              - bash: |
+                  set -euo pipefail
+                  python3 -I - <<'PY'
+                  import base64, hashlib, json, os, re, stat
+                  prefix = 'https://github.com/Azure/LogicAppsUX/releases/tag/'
+                  url = os.environ['RELEASE_URL']
+                  match = re.fullmatch(r'v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', url[len(prefix):]) if url.startswith(prefix) else None
+                  if match is None or len(url) > 200:
+                      raise SystemExit('Invalid GitHub Release page URL.')
+                  version = '.'.join(match.groups())
+                  hex40 = re.compile(r'[0-9a-f]{40}')
+                  build_id, recipe_sha, source_sha = os.environ['BUILD_ID'], os.environ['RECIPE_SHA'].lower(), os.environ['SOURCE_SHA']
+                  manifest_sha256 = os.environ['EXPECTED_MANIFEST_SHA256']
+                  if not re.fullmatch(r'[1-9]\d{0,14}', build_id) or not hex40.fullmatch(recipe_sha) or not hex40.fullmatch(source_sha):
+                      raise SystemExit('Run identity is invalid.')
+                  if not re.fullmatch(r'[0-9a-f]{64}', manifest_sha256):
+                      raise SystemExit('Expected manifest digest is missing.')
+                  packages = ['logic-apps-shared', 'designer-ui', 'designer-ui-v2', 'logic-apps-chatbot', 'logic-apps-designer',
+                              'logic-apps-designer-v2', 'logic-apps-data-mapper', 'logic-apps-data-mapper-v2', 'vscode-extension-logic-apps']
+                  files = ['microsoft-%s-%s.tgz' % (name, version) for name in packages]
+                  root = os.environ['ARTIFACT_DIR']
+                  if not stat.S_ISDIR(os.lstat(root).st_mode) or os.path.realpath(root) != os.path.abspath(root):
+                      raise SystemExit('Artifact directory is not confined.')
+                  # 1ES adds a reserved _manifest/ SBOM directory to pipeline artifacts; it is never read here.
+                  entries = os.listdir(root)
+                  if '_manifest' in entries:
+                      if not stat.S_ISDIR(os.lstat(os.path.join(root, '_manifest')).st_mode):
+                          raise SystemExit('Reserved _manifest entry is not a directory.')
+                      entries.remove('_manifest')
+                  if sorted(entries) != sorted(files + ['publisher-artifact.json']):
+                      raise SystemExit('Artifact must contain exactly the nine tarballs and the manifest.')
+                  def read_regular(name, limit):
+                      try:
+                          fd = os.open(os.path.join(root, name), os.O_RDONLY | os.O_NOFOLLOW)
+                      except OSError:
+                          raise SystemExit('Artifact entry is not a regular file: ' + name)
+                      with os.fdopen(fd, 'rb') as handle:
+                          if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                              raise SystemExit('Artifact entry is not a regular file: ' + name)
+                          data = handle.read(limit + 1)
+                      if len(data) > limit:
+                          raise SystemExit('Artifact entry is too large: ' + name)
+                      return data
+                  manifest = read_regular('publisher-artifact.json', 128 * 1024)
+                  if hashlib.sha256(manifest).hexdigest() != manifest_sha256:
+                      raise SystemExit('Manifest digest does not match the producing job.')
+                  record = json.loads(manifest)
+                  if not isinstance(record, dict) or sorted(record) != ['destination', 'packages', 'source']:
+                      raise SystemExit('Manifest shape is invalid.')
+                  source = record['source']
+                  if not isinstance(source, dict):
+                      raise SystemExit('Manifest shape is invalid.')
+                  release_id = source.get('releaseId')
+                  if type(release_id) is not int or release_id <= 0:
+                      raise SystemExit('Manifest release ID is invalid.')
+                  expected_source = {'repository': 'Azure/LogicAppsUX', 'releaseRef': 'refs/tags/v' + version, 'releaseId': release_id,
+                                     'verifiedSha': source_sha, 'version': version, 'buildId': build_id, 'recipeSha': recipe_sha}
+                  if source != expected_source:
+                      raise SystemExit('Manifest provenance does not match this run, release tag, source SHA or recipe commit.')
+                  expected_destination = {'registry': 'https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/',
+                                          'feedId': '44fc6edc-394a-403a-86cd-700a15978af1', 'distTag': 'latest'}
+                  if record['destination'] != expected_destination:
+                      raise SystemExit('Manifest destination is invalid.')
+                  expected_packages = []
+                  for name, file in zip(packages, files):
+                      data = read_regular(file, 64 * 1024 * 1024)
+                      expected_packages.append({'name': '@microsoft/' + name, 'version': version, 'file': file,
+                                                'integrity': 'sha512-' + base64.b64encode(hashlib.sha512(data).digest()).decode(),
+                                                'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data)})
+                  if record['packages'] != expected_packages:
+                      raise SystemExit('Package identity or integrity mismatch.')
+                  print('Verified nine packages for v%s at %s from build %s.' % (version, source_sha, build_id))
+                  PY
+                displayName: Verify manifest digest, provenance and nine tarballs
+                env:
+                  BASH_ENV: /dev/null
+                  ARTIFACT_DIR: '$(Pipeline.Workspace)/release-artifact'
+                  RELEASE_URL: ${{ parameters.releaseUrl }}
+                  BUILD_ID: '$(Build.BuildId)'
+                  RECIPE_SHA: '$(Build.SourceVersion)'
+                  SOURCE_SHA: '$(ExpectedSourceSha)'
+                  EXPECTED_MANIFEST_SHA256: '$(ExpectedManifestSha256)'
 
-                    def read_regular(name, limit):
-                        file = artifact / name
-                        if file.is_symlink() or not file.is_file() or file.stat().st_size > limit:
-                            sys.exit(f"Invalid retained artifact file: {name}")
-                        return file.read_bytes()
-
-                    manifest = read_regular("publisher-artifact.json", 128 * 1024)
-                    if hashlib.sha256(manifest).hexdigest() != "73df569e98acd73fbc83660d7204e1ce8732f60b242f5b9f35bb3a0d9dbb04fa":
-                        sys.exit("Retained manifest does not match the reviewed run.")
-                    record = json.loads(manifest)
-                    source = record["source"]
-                    if (source["buildId"], source["verifiedSha"], source["version"], record["destination"]) != ("192458185", producer_sha, version, None) or len(record["packages"]) != 9:
-                        sys.exit("Unexpected retained run, version, destination, or cohort size.")
-                    rows = []
-                    for entry in record["packages"]:
-                        name = entry["name"]
-                        if not re.fullmatch(r"@microsoft/[a-z0-9-]+", name) or entry["version"] != version:
-                            sys.exit("Unexpected package identity in the retained cohort.")
-                        file = f"microsoft-{name.split('/')[1]}-{version}.tgz"
-                        data = read_regular(file, 64 * 1024 * 1024)
-                        integrity = "sha512-" + base64.b64encode(hashlib.sha512(data).digest()).decode()
-                        if (entry["file"], entry["bytes"], entry["sha256"], entry["integrity"]) != (file, len(data), hashlib.sha256(data).hexdigest(), integrity):
-                            sys.exit(f"Retained tarball does not match the reviewed digest: {file}")
-                        (writer / file).write_bytes(data)
-                        rows.append(f"{name}@{version}\t{file}\n")
-                    (writer / "cohort.tsv").write_text("".join(rows))
-                    PY
-                    printf 'registry=%s\n' "$REGISTRY" > "$WRITER/.npmrc"
-                  displayName: Check the reviewed commit, version, and all nine retained tarball digests
-                  env:
-                    BASH_ENV: /dev/null
-                    BUILD_REASON: '$(Build.Reason)'
-                    SOURCE_BRANCH: '$(Build.SourceBranch)'
-                    SOURCE_VERSION: '$(Build.SourceVersion)'
-                    EXPECTED_SHA: ${{ parameters.expectedSha }}
-                    ARTIFACT: '$(Pipeline.Workspace)/retained-npm-cohort'
-                    WRITER: '$(NpmWriter)'
-                    REGISTRY: '$(NpmRegistry)'
-                - task: npmAuthenticate@0
-                  displayName: Authenticate the dedicated publishing identity
-                  inputs:
-                    workingFile: '$(NpmWriter)/.npmrc'
-                    workloadIdentityServiceConnection: '21d5a1d8-11d3-425c-8d3a-e7f088725481' # logicappsux-ado-npm-publisher
-                    feedUrl: '$(NpmRegistry)'
-                - bash: |
-                    set -euo pipefail
-                    umask 077
-                    # The pinned WIF connection is mandatory; require the task's scoped token output.
-                    if ! grep -Eq '^//pkgs\.dev\.azure\.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/:_authToken=[^[:space:]]+$' .npmrc; then
-                      echo 'Dedicated federated npm credentials are missing.' >&2
-                      exit 1
-                    fi
-                    mkdir -- readback
-                    run_npm() {
-                      env -i PATH="$PATH" HOME="$PWD" npm "$@" --registry "$REGISTRY" --ignore-scripts \
-                        --userconfig "$PWD/.npmrc" --globalconfig /dev/null --fetch-retries 0 --fetch-timeout 60000 --logs-max 0 </dev/null
-                    }
-                    while IFS=$'\t' read -r spec file; do
-                      if ! run_npm publish "./$file" --tag ado-test-489908-192458185 --cache "$PWD/write-cache" >/dev/null 2>&1; then
-                        printf 'Publish failed for %s. Verify feed state before retrying.\n' "$spec" >&2
-                        exit 1
-                      fi
-                      # A separate, fresh cache makes this a registry read, not a local pack check.
-                      if ! run_npm pack "$spec" --prefer-online --cache "$PWD/read-cache" --pack-destination "$PWD/readback" >/dev/null 2>&1 ||
-                         ! cmp -s -- "$file" "readback/$file"; then
-                        printf 'Exact version readback failed for %s. Verify feed state before retrying.\n' "$spec" >&2
-                        exit 1
-                      fi
-                      printf 'Published and verified %s\n' "$spec"
-                    done < cohort.tsv
-                  displayName: Publish and read back all nine exact versions
-                  workingDirectory: '$(NpmWriter)'
-                  env:
-                    BASH_ENV: /dev/null
-                    REGISTRY: '$(NpmRegistry)'
-      - ${{ elseif parameters.runBranchBuild }}:
-        - stage: BuildValidation
-          displayName: Build and validate branch test tarballs only
-          # Opt-in is not an approval control. The agent/identity and exact SHA must be reviewed before queueing.
-          jobs:
-            - job: BuildCohort
-              workspace:
-                clean: all
-              templateContext:
-                outputs:
-                  - output: pipelineArtifact
-                    targetPath: '$(PackageOutput)'
-                    artifactName: logicappsux-npm-branch-cohort
-              steps:
-                # Fail explicitly instead of letting an invalid opt-in appear as a successful skip.
-                - bash: |
-                    if [ "$BUILD_REASON" != Manual ] || [ "$SOURCE_BRANCH" != refs/heads/krmitta/ado-npm-publish-pipeline ]; then
-                      printf '%s\n' 'Build rejected: queue manually from krmitta/ado-npm-publish-pipeline.' >&2
-                      exit 1
-                    fi
-                  displayName: Reject invalid build requests before source checkout
-                  env:
-                    BUILD_REASON: '$(Build.Reason)'
-                    SOURCE_BRANCH: '$(Build.SourceBranch)'
-                - checkout: self
-                  clean: true
-                  persistCredentials: false
-                - task: UseNode@1
-                  displayName: Use Node 24
-                  inputs:
-                    version: '24.x'
-                - bash: node scripts/ado-npm-publisher.cjs build-branch-artifact
-                  displayName: Build and pack npm packages
-                  workingDirectory: '$(Build.Repository.LocalPath)'
-                  env:
-                    EXPECTED_SHA: ${{ parameters.expectedSha }}
-                    SOURCE_REPOSITORY: '$(Build.Repository.Name)'
-                    SOURCE_BRANCH: '$(Build.SourceBranch)'
-                    SOURCE_VERSION: '$(Build.SourceVersion)'
-                    BUILD_ID: '$(Build.BuildId)'
-                    SOURCE_ROOT: '$(Build.Repository.LocalPath)'
-                    AGENT_TMP: '$(Agent.TempDirectory)'
-                    ARTIFACT_ROOT: '$(PackageOutput)'
-      - ${{ else }}:
-        - stage: BuildNotRequested
-          jobs:
-            - job: ExplainBuildOptIn
-              steps:
-                - checkout: none
-                - bash: printf '%s\n' 'No build requested. Review public-source and agent credential boundaries before opting in.'
-                  displayName: Explain disabled build
+          # Intentionally credential-free. A feed writer is not wired until the hosted gates (writer
+          # boundary, least-privilege identity, protected recipe ref, single writer) are verified.
+          - job: ProductionPublishNotActivated
+            displayName: Production publish not activated
+            dependsOn: VerifyRelease
+            steps:
+              - checkout: none
+              - bash: |
+                  set -euo pipefail
+                  echo '##vso[task.logissue type=warning]Verified artifact only. Production npm publishing is not activated in this pipeline.'
+                displayName: Report that no feed write was attempted
+                env:
+                  BASH_ENV: /dev/null

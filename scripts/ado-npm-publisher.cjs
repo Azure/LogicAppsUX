@@ -3,7 +3,7 @@ const { spawnSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { COHORT, branchProvenance, buildManifestContract, parseReleaseRef, readVerifiedContracts, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
+const { COHORT, branchProvenance, buildManifestContract, fetchReleaseSource, parseReleaseRef, readVerifiedContracts, releaseRunSource, resolveReleaseMetadata, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
     require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, npmRunner, publishPackage, readNpmAuthorization, validateArtifactFiles } =
     require('./ado-npm-publisher-artifact.cjs');
@@ -83,15 +83,13 @@ function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => proce
     }
 }
 
-function buildBranchArtifact(env, log, run = spawnSync) {
-    const verified = branchProvenance(env);
-    const contracts = snapshotCheckout(env.SOURCE_ROOT, verified);
-    const home = fs.mkdtempSync(path.join(env.AGENT_TMP, 'npm-branch-home-'));
+function withSandboxedBuild(env, prefix, build) {
+    const home = fs.mkdtempSync(path.join(env.AGENT_TMP, prefix));
     try {
         const bin = path.join(home, 'bin');
         fs.mkdirSync(bin);
         // This limits credential inheritance, but is not an agent/job isolation boundary.
-        buildCohort(env, { verified, contracts }, run, undefined, {
+        return build({
             PATH: `${bin}${path.delimiter}${env.PATH}`,
             HOME: home,
             CI: 'true',
@@ -102,12 +100,53 @@ function buildBranchArtifact(env, log, run = spawnSync) {
             NPM_CONFIG_USERCONFIG: '/dev/null',
             NPM_CONFIG_GLOBALCONFIG: path.join(home, 'global.npmrc'),
         });
-        verifyCheckoutHead(env.SOURCE_ROOT, verified.commitSha);
-        const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
-        log(`Validated ${artifact.packages.length} test tarballs at ${verified.version}; publication was not attempted.`);
     } finally {
         fs.rmSync(home, { force: true, recursive: true });
     }
+}
+
+function buildBranchArtifact(env, log, run = spawnSync) {
+    const verified = branchProvenance(env);
+    const contracts = snapshotCheckout(env.SOURCE_ROOT, verified);
+    withSandboxedBuild(env, 'npm-branch-home-', childEnv => buildCohort(env, { verified, contracts }, run, undefined, childEnv));
+    verifyCheckoutHead(env.SOURCE_ROOT, verified.commitSha);
+    const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
+    log(`Validated ${artifact.packages.length} test tarballs at ${verified.version}; publication was not attempted.`);
+}
+
+const RELEASE_IDENTITY_FIELDS = ['releaseTag', 'version', 'commitSha', 'releaseId', 'releaseUrl'];
+
+async function resolveRelease(source, fetchImpl) {
+    const release = await resolveReleaseMetadata({ releaseRef: source.releaseRef, fetchImpl });
+    // GitHub must report the same canonical page the operator supplied.
+    assert.equal(release.releaseUrl, source.releaseUrl, 'GitHub Release page URL does not match releaseUrl.');
+    return release;
+}
+
+// Release-URL build. The pipeline recipe (this script and the YAML) comes from the reviewed pipeline
+// ref; the product source is fetched separately at the exact commit the published, non-draft,
+// non-prerelease GitHub Release tag peels to, so released tags never need to carry this pipeline.
+// The release is re-read after the build so a release edited or retagged mid-run fails closed.
+// Released source is built exactly as tagged: packaging defects in a tag fail validation, never get patched here.
+// The options are code-level seams for local fixtures only; none is read from the environment.
+async function buildReleaseArtifact(env, log, fetchImpl = fetch, { run = spawnSync, sourceRemote, sandbox = withSandboxedBuild } = {}) {
+    const source = releaseRunSource(env);
+    const release = await resolveRelease(source, fetchImpl);
+    const verified = { ...release, buildId: source.buildId, recipeSha: source.recipeSha };
+    log(`Resolved ${source.releaseUrl} to published ${verified.releaseTag} at ${verified.commitSha}; packing has not started.`);
+    const sourceRoot = path.join(env.AGENT_TMP, 'release-source');
+    fetchReleaseSource(sourceRoot, verified.commitSha, sourceRemote);
+    const contracts = snapshotCheckout(sourceRoot, verified);
+    const buildEnv = { ...env, SOURCE_ROOT: sourceRoot };
+    sandbox(env, 'npm-release-home-', childEnv => buildCohort(buildEnv, { verified, contracts }, run, undefined, childEnv));
+    verifyCheckoutHead(sourceRoot, verified.commitSha);
+    const recheck = await resolveRelease(source, fetchImpl);
+    for (const field of RELEASE_IDENTITY_FIELDS) {
+        assert.equal(recheck[field], verified[field], 'Release metadata changed during the build.');
+    }
+    const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
+    log(`Packed and validated ${artifact.packages.length} release tarballs for ${verified.releaseTag} at ${verified.commitSha} (run ${verified.buildId}, recipe ${verified.recipeSha}); publication was not attempted.`);
+    return artifact;
 }
 
 async function verifyArtifact(env, fetchImpl) {
@@ -171,6 +210,10 @@ async function main([command, ...args] = process.argv.slice(2), env = process.en
         throw new Error('Isolated test-feed attempts are fixture-only and are rejected before environment, provenance, or network reads.');
     }
     if (command === 'build-branch-artifact') return buildBranchArtifact(env, log);
+    if (command === 'build-release-artifact') {
+        await buildReleaseArtifact(env, log, fetchImpl);
+        return;
+    }
     if (command === 'prepare-artifact') return prepareArtifact(env, log);
     if (command === 'build-cohort') {
         const snapshot = JSON.parse(fs.readFileSync(env.CONTRACT_FILE, 'utf8'));
@@ -224,4 +267,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { buildBranchArtifact, buildCohort, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput };
+module.exports = { buildBranchArtifact, buildCohort, buildReleaseArtifact, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput };

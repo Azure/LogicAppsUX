@@ -2,14 +2,16 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { randomUUID } = require('node:crypto');
+const crypto = require('node:crypto');
+const os = require('node:os');
+const { randomUUID } = crypto;
 const { gzipSync } = require('node:zlib');
 const { afterEach, test } = require('node:test');
-const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, MANIFEST_FILE_NAME, branchProvenance, buildManifestContract, parseReleaseRef, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } =
-    require('./ado-npm-publisher-lib.cjs');
+const { COHORT, DESTINATION_FEED_ID, DESTINATION_REGISTRY, MANIFEST_FILE_NAME, branchProvenance, buildManifestContract, fetchReleaseSource, parseReleaseRef, parseReleaseUrl,
+    releaseRunSource, resolveReleaseMetadata, verifyBuildPrerequisites, verifyCleanCheckout, verifyReleaseMetadata } = require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, digest, npmRunner, publishPackage, readNpmAuthorization, resolveNpmRoot, validateArtifactFiles, validateTarballArtifact } =
     require('./ado-npm-publisher-artifact.cjs');
-const { buildCohort, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput } = require('./ado-npm-publisher.cjs');
+const { buildCohort, buildReleaseArtifact, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput } = require('./ado-npm-publisher.cjs');
 const { FIXTURE_PROTOCOL, assertPinnedIsolatedIdentity, runIsolatedTestFeedPath } = require('./ado-npm-publisher-test-feed.cjs');
 
 const releaseRef = 'refs/tags/v5.1022.0';
@@ -201,6 +203,67 @@ function isolatedFeedFixture({ missing = new Set(), empty = false, upstream = ne
 }
 
 const json = (body, status = 200, redirected = false) => ({ status, redirected, text: async () => JSON.stringify(body) });
+
+const releaseUrl = 'https://github.com/Azure/LogicAppsUX/releases/tag/v5.1022.0';
+const recipeSha = 'c0ffee0000000000000000000000000000000001';
+const releaseEnv = { BUILD_REASON: 'Manual', SOURCE_REPOSITORY: 'Azure/LogicAppsUX', RELEASE_URL: releaseUrl, BUILD_ID: '192333967', RECIPE_SHA: recipeSha };
+const releaseProvenance = { ...verified, buildId: releaseEnv.BUILD_ID, recipeSha };
+
+// GitHub API mock for one release. Unknown paths return 404, so any asset or "latest" lookup fails loudly.
+function releaseApi(sha = commitSha) {
+    const tagObject = '773772347897c57b58c9bf51ec7cc7bb27d24581';
+    const release = { id: 7, tag_name: 'v5.1022.0', html_url: releaseUrl, draft: false, prerelease: false, published_at: '2026-11-18T16:55:54Z',
+        assets: [{ name: 'vscode-azurelogicapps-5.1022.0.vsix', browser_download_url: `${releaseUrl}/x.vsix` }] };
+    const responses = new Map([
+        ['releases/tags/v5.1022.0', release],
+        ['git/ref/tags/v5.1022.0', { ref: releaseRef, object: { type: 'tag', sha: tagObject } }],
+        [`git/tags/${tagObject}`, { sha: tagObject, tag: 'v5.1022.0', object: { type: 'commit', sha } }],
+        [`git/commits/${sha}`, { sha }],
+    ]);
+    const calls = [];
+    const fetchImpl = async url => {
+        const key = url.split('/LogicAppsUX/')[1];
+        calls.push(key);
+        return responses.has(key) ? json(responses.get(key)) : json({ message: 'Not Found' }, 404);
+    };
+    return { release, responses, calls, fetchImpl, tagObject };
+}
+
+function gitFixture(cwd, ...args) {
+    const result = spawnSync('git', ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', ...args], {
+        cwd, encoding: 'utf8', env: { PATH: process.env.PATH, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null' },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    return result.stdout.trim();
+}
+
+// A local release repository with the root pins and the nine package manifests snapshotCheckout reads.
+function releaseRepoFixture() {
+    const repo = path.join(workspace(), 'release-repo');
+    fs.mkdirSync(repo);
+    const { packageManager } = require('../package.json');
+    fs.writeFileSync(path.join(repo, 'package.json'), JSON.stringify({ packageManager }));
+    const prerequisites = ['@microsoft/designer-ui-v2#build:lib', '@microsoft/logic-apps-graph-layout#build:lib'];
+    fs.writeFileSync(path.join(repo, 'turbo.json'), JSON.stringify({ tasks: { '@microsoft/logic-apps-designer-v2#build:lib': { dependsOn: prerequisites } } }));
+    for (const item of COHORT) {
+        fs.mkdirSync(path.join(repo, item.directory), { recursive: true });
+        fs.writeFileSync(path.join(repo, item.directory, 'package.json'), JSON.stringify({ ...fixture(item).source, version: '5.110.0' }));
+    }
+    gitFixture(repo, 'init', '--quiet');
+    gitFixture(repo, 'add', '.');
+    gitFixture(repo, 'commit', '--quiet', '-m', 'release');
+    return { repo, sha: gitFixture(repo, 'rev-parse', 'HEAD') };
+}
+
+// Extracts an inline python verifier from the pipeline YAML so the tests run the exact hosted code.
+const pipelineFile = path.join(__dirname, '..', '.azure-pipelines', 'npm-publish.yml');
+function pipelinePython(index) {
+    const yaml = fs.readFileSync(pipelineFile, 'utf8');
+    const block = [...yaml.matchAll(/python3 -I - <<'PY'\n([\s\S]*?)\n *PY\n/g)][index][1].split('\n');
+    const indent = Math.min(...block.filter(line => line.trim()).map(line => /^ */.exec(line)[0].length));
+    return block.map(line => line.slice(indent)).join('\n');
+}
+const runPython = (index, env) => spawnSync('python3', ['-I', '-'], { input: pipelinePython(index), encoding: 'utf8', env: { PATH: process.env.PATH, ...env } });
 
 test('rejects whitespace, non-stable refs and queue macro text before any request', async () => {
     assert.deepEqual(parseReleaseRef(releaseRef), { version, tag: 'v5.1022.0' });
@@ -960,14 +1023,175 @@ test('branch fixture rejects a reserved test version already in upstream invento
     assert.deepEqual(writes, []);
 });
 
-test('branch build is manual and opt-in, uses only self and cannot expand a feed stage', () => {
-    const file = path.join(process.cwd(), '.azure-pipelines/npm-publish.yml');
-    const yaml = fs.readFileSync(file, 'utf8');
-    assert.match(yaml, /- name: requestLocalIsolatedTestFeed[\s\S]*default: false/);
-    assert.match(yaml, /- name: runBranchBuild[\s\S]*default: false/);
-    assert.match(yaml, /stage: PublicationBlocked[\s\S]*checkout: none[\s\S]*stage: BuildValidation/);
-    const build = yaml.slice(yaml.indexOf('stage: BuildValidation'));
-    assert.match(build, /checkout: self\s+clean: true\s+persistCredentials: false/);
-    assert.doesNotMatch(build, /npmAuthenticate|System\.AccessToken/);
-    assert.doesNotMatch(yaml, /logicAppsUxRelease|sourceRepositoriesToScan|stage: Feed/);
+
+test('release pipeline takes only the release URL and keeps every job credential-free', () => {
+    const yaml = fs.readFileSync(pipelineFile, 'utf8');
+    assert.match(yaml, /^trigger: none\npr: none\nschedules: \[\]$/m);
+    assert.deepEqual([...yaml.matchAll(/^ {2}- name: (\w+)/gm)].map(match => match[1]), ['releaseUrl']);
+    assert.doesNotMatch(yaml, /npmAuthenticate|System\.AccessToken|serviceConnection|workloadIdentity|type: boolean/i);
+    assert.match(yaml, /name: Azure-Pipelines-1ESPT-ExDShared\s+image: ubuntu-latest\s+os: linux/);
+    const verify = yaml.slice(yaml.indexOf('- job: VerifyRelease'), yaml.indexOf('- job: ProductionPublishNotActivated'));
+    assert.match(verify, /buildType: current/);
+    assert.match(verify, /steps:\s+- checkout: none/);
+    assert.equal((yaml.match(/- checkout: self/g) ?? []).length, 1);
+    assert.match(yaml.slice(yaml.indexOf('- job: ProductionPublishNotActivated')), /checkout: none/);
+    // The verifier restates the cohort independently of the producer; it must still name the same nine packages in order.
+    const listed = /packages = \[([^\]]+)\]/.exec(verify)[1].match(/'[^']+'/g).map(name => `@microsoft/${name.slice(1, -1)}`);
+    assert.deepEqual(listed, COHORT.map(item => item.name));
+});
+
+test('inline verifiers accept the same-run artifact and reject changed bytes, wrong runs and unexpected entries', () => {
+    const { dir } = artifactFixture(releaseProvenance);
+    const recorded = runPython(0, { PACKAGE_OUTPUT: dir });
+    assert.equal(recorded.status, 0, recorded.stderr);
+    const outputs = Object.fromEntries([...recorded.stdout.matchAll(/variable=(\w+);isOutput=true\](\S+)/g)].map(match => match.slice(1)));
+    const manifestBytes = fs.readFileSync(path.join(dir, 'publisher-artifact.json'));
+    assert.deepEqual(outputs, { ManifestSha256: crypto.createHash('sha256').update(manifestBytes).digest('hex'), SourceSha: commitSha });
+
+    const env = { ARTIFACT_DIR: dir, RELEASE_URL: releaseUrl, BUILD_ID: releaseEnv.BUILD_ID, RECIPE_SHA: recipeSha,
+        SOURCE_SHA: outputs.SourceSha, EXPECTED_MANIFEST_SHA256: outputs.ManifestSha256 };
+    const verify = (overrides = {}) => runPython(1, { ...env, ...overrides });
+    const good = verify();
+    assert.equal(good.status, 0, good.stderr);
+    assert.match(good.stdout, /Verified nine packages for v5\.1022\.0/);
+
+    // 1ES stages a reserved _manifest/ SBOM directory beside the payload; only a real directory is tolerated.
+    fs.mkdirSync(path.join(dir, '_manifest'));
+    fs.writeFileSync(path.join(dir, '_manifest', 'manifest.json'), '{}');
+    assert.equal(verify().status, 0);
+
+    const rejects = (overrides, message) => {
+        const result = verify(overrides);
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, message);
+    };
+    rejects({ BUILD_ID: '192333968' }, /does not match this run/);
+    rejects({ RECIPE_SHA: commitSha }, /does not match this run/);
+    rejects({ SOURCE_SHA: recipeSha }, /does not match this run/);
+    rejects({ RELEASE_URL: releaseUrl.replace('5.1022.0', '5.1023.0') }, /exactly the nine tarballs/);
+    rejects({ RELEASE_URL: 'https://github.com/Azure/LogicAppsUX/releases/latest' }, /Invalid GitHub Release page URL/);
+    rejects({ EXPECTED_MANIFEST_SHA256: '0'.repeat(64) }, /digest does not match/);
+    rejects({ EXPECTED_MANIFEST_SHA256: '' }, /digest is missing/);
+
+    const tarball = path.join(dir, `microsoft-designer-ui-v2-${version}.tgz`);
+    const original = fs.readFileSync(tarball);
+    fs.writeFileSync(tarball, Buffer.concat([original, Buffer.from([0])]));
+    rejects({}, /identity or integrity mismatch/);
+    fs.writeFileSync(tarball, original);
+    assert.equal(verify().status, 0);
+
+    fs.writeFileSync(path.join(dir, 'extra.tgz'), '');
+    rejects({}, /exactly the nine tarballs/);
+    fs.rmSync(path.join(dir, 'extra.tgz'));
+
+    fs.rmSync(path.join(dir, '_manifest'), { recursive: true });
+    fs.writeFileSync(path.join(dir, '_manifest'), '');
+    rejects({}, /Reserved _manifest entry is not a directory/);
+    fs.rmSync(path.join(dir, '_manifest'));
+    fs.symlinkSync(os.tmpdir(), path.join(dir, '_manifest'));
+    rejects({}, /Reserved _manifest entry is not a directory/);
+    fs.rmSync(path.join(dir, '_manifest'));
+
+    // A symlinked payload is refused even when it points at identical bytes.
+    const outside = path.join(workspace(), 'outside.tgz');
+    fs.writeFileSync(outside, original);
+    fs.rmSync(tarball);
+    fs.symlinkSync(outside, tarball);
+    rejects({}, /not a regular file/);
+});
+
+test('accepts only the canonical stable GitHub Release page URL', () => {
+    assert.deepEqual(parseReleaseUrl(releaseUrl), { releaseUrl, releaseRef, tag: 'v5.1022.0', version });
+    for (const url of [`${releaseUrl}/`, `${releaseUrl}?x=1`, `${releaseUrl}#a`, `${releaseUrl}\n`, 'https://github.com/Azure/LogicAppsUX/releases/latest',
+        'https://github.com/Azure/LogicAppsUX/releases/tag/v5.1022.0-beta.1', 'https://github.com/Azure/LogicAppsUX/releases/tag/v05.1022.0',
+        'https://github.com/Azure/LogicAppsUX/releases/tag/v5.1022.0%2F', 'https://github.com/fork/LogicAppsUX/releases/tag/v5.1022.0',
+        'http://github.com/Azure/LogicAppsUX/releases/tag/v5.1022.0', 'https://github.com/Azure/LogicAppsUX/releases/download/v5.1022.0/x.vsix', '', undefined]) {
+        assert.throws(() => parseReleaseUrl(url), /Invalid releaseUrl/);
+    }
+});
+
+test('release runs must be manual, from this repository, with a numeric build ID and full recipe SHA', () => {
+    assert.deepEqual(releaseRunSource(releaseEnv), { ...parseReleaseUrl(releaseUrl), buildId: releaseEnv.BUILD_ID, recipeSha });
+    assert.equal(releaseRunSource({ ...releaseEnv, RECIPE_SHA: recipeSha.toUpperCase() }).recipeSha, recipeSha);
+    for (const [override, message] of [[{ BUILD_REASON: 'IndividualCI' }, /queued manually/], [{ SOURCE_REPOSITORY: 'fork/LogicAppsUX' }, /LogicAppsUX GitHub repository/],
+        [{ RELEASE_URL: '' }, /Invalid releaseUrl/], [{ BUILD_ID: '0' }, /build ID/], [{ BUILD_ID: '$(Build.BuildId)' }, /build ID/], [{ RECIPE_SHA: 'abc' }, /40-character/]]) {
+        assert.throws(() => releaseRunSource({ ...releaseEnv, ...override }), message);
+    }
+});
+
+test('release URL resolution peels the annotated tag and never reads assets or latest', async () => {
+    const api = releaseApi();
+    const resolved = await resolveReleaseMetadata({ releaseRef, fetchImpl: api.fetchImpl });
+    assert.deepEqual(resolved, { sourceRepository: 'Azure/LogicAppsUX', releaseTag: 'v5.1022.0', version, commitSha, releaseId: 7, releaseUrl });
+    assert.deepEqual(api.calls, ['releases/tags/v5.1022.0', 'git/ref/tags/v5.1022.0', `git/tags/${api.tagObject}`, `git/commits/${commitSha}`]);
+    for (const change of [{ draft: true }, { prerelease: true }, { tag_name: 'v5.1023.0' }, { published_at: null }, { id: 0 }]) {
+        Object.assign(api.release, { draft: false, prerelease: false, tag_name: 'v5.1022.0', published_at: '2026-11-18T16:55:54Z', id: 7 }, change);
+        await assert.rejects(resolveReleaseMetadata({ releaseRef, fetchImpl: api.fetchImpl }), /not a verified published stable release/);
+    }
+    const missing = releaseApi();
+    missing.responses.delete('releases/tags/v5.1022.0');
+    await assert.rejects(resolveReleaseMetadata({ releaseRef, fetchImpl: missing.fetchImpl }), /unexpected HTTP 404/);
+});
+
+// Builds from a local release repository: the mock records commands, rewrites versions and writes real-format tarballs.
+function releaseBuild({ api, repo, afterBuild = () => {} }) {
+    const tmp = workspace();
+    const env = { ...releaseEnv, AGENT_TMP: tmp, ARTIFACT_ROOT: path.join(tmp, 'out'), PATH: process.env.PATH };
+    const sourceRoot = path.join(tmp, 'release-source');
+    const calls = [];
+    const run = (command, args) => {
+        calls.push(args);
+        if (command === process.execPath) {
+            for (const item of COHORT) {
+                const file = path.join(sourceRoot, item.directory, 'package.json');
+                fs.writeFileSync(file, JSON.stringify({ ...JSON.parse(fs.readFileSync(file, 'utf8')), version }));
+            }
+        }
+        const packIndex = args.indexOf('pack');
+        if (packIndex > 0) {
+            const item = COHORT.find(entry => path.join(sourceRoot, entry.directory) === args[packIndex - 1]);
+            fs.writeFileSync(path.join(env.ARTIFACT_ROOT, `${item.name.slice(1).replace('/', '-')}-${version}.tgz`), fixture(item).pack());
+        }
+        if (args.includes('build:lib')) afterBuild();
+        return { status: 0, stdout: '', stderr: '' };
+    };
+    const logs = [];
+    const result = buildReleaseArtifact(env, text => logs.push(text), api.fetchImpl, { run, sourceRemote: repo, sandbox: (e, p, build) => build(undefined) });
+    return { result, logs, calls, env };
+}
+
+test('release URL build fetches the exact peeled commit and packs nine validated tarballs with run provenance', async () => {
+    const { repo, sha } = releaseRepoFixture();
+    const api = releaseApi(sha);
+    const { result, logs, calls, env } = releaseBuild({ api, repo });
+    const artifact = await result;
+    assert.deepEqual(artifact.source, { repository: 'Azure/LogicAppsUX', releaseRef, releaseId: 7, verifiedSha: sha, version, buildId: env.BUILD_ID, recipeSha });
+    assert.deepEqual(artifact.packages.map(entry => entry.name), COHORT.map(item => item.name));
+    assert.match(logs[0], /Resolved .* to published v5\.1022\.0 at [0-9a-f]{40}; packing has not started/);
+    assert.match(logs.at(-1), /Packed and validated 9 release tarballs .*publication was not attempted/);
+    assert.equal(calls.filter(args => args.includes('pack')).length, 9);
+    assert(api.calls.every(call => !/assets|latest/.test(call)));
+    // The manifest goes through the inline verifier exactly as the hosted consumer job would see it.
+    const manifestPath = path.join(env.ARTIFACT_ROOT, 'publisher-artifact.json');
+    const verify = runPython(1, { ARTIFACT_DIR: env.ARTIFACT_ROOT, RELEASE_URL: releaseUrl, BUILD_ID: env.BUILD_ID, RECIPE_SHA: recipeSha, SOURCE_SHA: sha,
+        EXPECTED_MANIFEST_SHA256: crypto.createHash('sha256').update(fs.readFileSync(manifestPath)).digest('hex') });
+    assert.equal(verify.status, 0, verify.stderr);
+});
+
+test('release URL build fails closed on a mismatched page URL, SHA or a release edited mid-build', async () => {
+    const { repo, sha } = releaseRepoFixture();
+    const moved = releaseApi(sha);
+    moved.release.html_url = `${releaseUrl}x`;
+    await assert.rejects(releaseBuild({ api: moved, repo }).result, /page URL does not match/);
+
+    // A tag peeling to a commit absent from the source repository never reaches the build.
+    const absent = releaseApi(commitSha);
+    const noBuild = releaseBuild({ api: absent, repo });
+    await assert.rejects(noBuild.result, /Git fetch failed/);
+    assert.deepEqual(noBuild.calls, []);
+
+    const edited = releaseApi(sha);
+    const { result, env } = releaseBuild({ api: edited, repo, afterBuild: () => { edited.release.id = 8; } });
+    await assert.rejects(result, /Release metadata changed during the build/);
+    assert(!fs.existsSync(path.join(env.ARTIFACT_ROOT, 'publisher-artifact.json')));
 });
