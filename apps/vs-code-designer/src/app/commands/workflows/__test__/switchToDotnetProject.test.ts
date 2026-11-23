@@ -406,12 +406,18 @@ describe('switchToDotnetProject', () => {
         if (filePath === '/test/project/host.json') {
           return !templateExecuted;
         }
-        return filePath === '/test/project/host.json-copy' || filePath === '/test/project/local.settings.json';
+        return (
+          filePath === '/test/project/host.json-copy' ||
+          filePath === '/test/project/local.settings.json' ||
+          filePath === '/test/project/local.settings.json-copy'
+        );
       });
 
       await expect(switchToDotnetProject(mockContext, mockTarget)).rejects.toThrow('NuGet project template did not generate host.json.');
 
       expect(fse.rename).toHaveBeenCalledWith('/test/project/host.json-copy', '/test/project/host.json');
+      expect(fse.unlink).toHaveBeenCalledWith('/test/project/local.settings.json');
+      expect(fse.rename).toHaveBeenCalledWith('/test/project/local.settings.json-copy', '/test/project/local.settings.json');
       expect(initDotnetExecute).not.toHaveBeenCalled();
     });
   });

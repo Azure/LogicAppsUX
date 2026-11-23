@@ -347,24 +347,27 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
 async function finalizeConvertedProjectFiles(target: vscode.Uri): Promise<void> {
   const hostFilePath = path.join(target.fsPath, hostFileName);
   const hostFileBackupPath = path.join(target.fsPath, `${hostFileName}-copy`);
-  if (!(await fse.pathExists(hostFilePath))) {
+  const localSettingsFilePath = path.join(target.fsPath, localSettingsFileName);
+  const localSettingsBackupPath = path.join(target.fsPath, `${localSettingsFileName}-copy`);
+  const hostFileMissing = !(await fse.pathExists(hostFilePath));
+
+  if (hostFileMissing) {
     if (await fse.pathExists(hostFileBackupPath)) {
       await renameFile(hostFileBackupPath, hostFilePath);
     }
-    throw new Error(localize('nugetHostFileNotGenerated', 'NuGet project template did not generate host.json.'));
-  }
-
-  if (await fse.pathExists(hostFileBackupPath)) {
+  } else if (await fse.pathExists(hostFileBackupPath)) {
     await deleteFile(hostFileBackupPath);
   }
 
-  const localSettingsFilePath = path.join(target.fsPath, localSettingsFileName);
-  const localSettingsBackupPath = path.join(target.fsPath, `${localSettingsFileName}-copy`);
   if (await fse.pathExists(localSettingsBackupPath)) {
     if (await fse.pathExists(localSettingsFilePath)) {
       await deleteFile(localSettingsFilePath);
     }
     await renameFile(localSettingsBackupPath, localSettingsFilePath);
+  }
+
+  if (hostFileMissing) {
+    throw new Error(localize('nugetHostFileNotGenerated', 'NuGet project template did not generate host.json.'));
   }
 }
 
