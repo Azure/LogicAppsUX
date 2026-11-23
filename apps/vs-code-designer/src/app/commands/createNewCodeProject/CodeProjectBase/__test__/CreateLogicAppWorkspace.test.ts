@@ -91,6 +91,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
       expect(templateContent).toContain('WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather');
       expect(templateContent).toContain('location: () => "98058"');
+      expect(templateContent).toContain('units: () => UnitsInput.Imperial');
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
@@ -129,6 +130,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).toContain('using Microsoft.Azure.Workflows.Sdk.Connectors.Office365;');
+      expect(templateContent).toContain('units: () => UnitsInput.Imperial');
+      expect(templateContent).toContain('emailMessage: () => new SendEmailEmailMessageInput(');
+      expect(templateContent).not.toContain('emailMessageto');
       expect(templateContent).not.toContain('AgentBuilder');
       expect(templateContent).not.toContain('.Builder');
       expect(templateContent).not.toContain('CreateAgentTrigger');
@@ -150,6 +155,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('MessageRole.User');
       expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).toContain('using Microsoft.Azure.Workflows.Sdk.Connectors.Office365;');
+      expect(templateContent).toContain('units: () => UnitsInput.Imperial');
+      expect(templateContent).toContain('emailMessage: () => new SendEmailEmailMessageInput(');
+      expect(templateContent).not.toContain('emailMessageto');
       expect(templateContent).not.toContain('AgentBuilder');
       expect(templateContent).not.toContain('.Builder');
       expect(templateContent).not.toContain('CreateAgentTrigger');
