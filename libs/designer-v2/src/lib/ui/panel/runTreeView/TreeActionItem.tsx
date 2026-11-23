@@ -225,6 +225,11 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
             const agentNodeId = data?.repetition?.properties?.repetitionIndexes?.[0]?.scopeName;
             const parentRepetitionName = data?.parentRepetition?.name;
             if (agentNodeId && selectedRun?.id && parentRepetitionName) {
+              if (useScopedAgentData && repetitionIndex?.itemIndex !== undefined) {
+                // Commit the parent selection before the request starts (which dispatches pending synchronously).
+                dispatch(setRunIndex({ nodeId: agentNodeId, page: repetitionIndex.itemIndex }));
+              }
+              const agentRepetitionIdentity = getSelectionIdentity(repetitionIndex?.itemIndex);
               dispatch(
                 fetchBuiltInToolRunData({
                   toolNodeId: id,
@@ -233,6 +238,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
                   repetitionName: parentRepetitionName,
                   inputsLink: data?.inputsLink,
                   outputsLink: data?.outputsLink,
+                  ...(agentRepetitionIdentity && { agentToolInvocation: { agentRepetitionIdentity, page: itemRunIndex } }),
                 })
               );
             }

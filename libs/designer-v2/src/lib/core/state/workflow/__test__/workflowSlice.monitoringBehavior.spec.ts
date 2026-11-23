@@ -6,6 +6,7 @@ import { fetchBuiltInToolRunData, initializeInputsOutputsBinding } from '../../.
 import { resetWorkflowState } from '../../global';
 import { updateNodeParameters, updateNodeSettings } from '../../operation/operationMetadataSlice';
 import type { WorkflowState } from '../workflowInterfaces';
+import { getNodeRunData } from '../workflowSelectors';
 import reducer, { initialWorkflowState, workflowSlice } from '../workflowSlice';
 
 const actions = workflowSlice.actions;
@@ -35,7 +36,130 @@ const run: LogicAppsV2.WorkflowRunAction = {
 const boundInputs = { input: { displayName: 'Input', value: 'actual request' } };
 const boundOutputs = { result: { displayName: 'Result', value: 'actual response' } };
 
+const toolId = 'code_interpreter';
+const agentToolInvocation = { agentRepetitionIdentity: 'run|Agent|000000|0|', page: 1 };
+const refreshBuiltInTool = (state: WorkflowState, identity = agentToolInvocation.agentRepetitionIdentity) =>
+  reducer(
+    state,
+    actions.updateAgenticMetadata({
+      nodeId: 'Agent',
+      agentRepetitionIdentity: identity,
+      scopeRepetitionRunData: { tools: { [toolId]: { status: 'Failed', iterations: 3 } } },
+    })
+  );
+const selectBuiltInTool = () =>
+  reducer(
+    refreshBuiltInTool({
+      ...fixture(),
+      runInstance: { id: 'run' } as LogicAppsV2.RunInstanceDefinition,
+      nodesMetadata: { Agent: { graphId: 'root', runIndex: 0 }, [toolId]: { graphId: 'Agent' } },
+    }),
+    actions.setRunIndex({ nodeId: toolId, page: 1 })
+  );
+const builtInToolResponse = fetchBuiltInToolRunData.fulfilled(
+  { ...run, toolNodeId: toolId, inputs: boundInputs, outputs: boundOutputs },
+  'built-in-request',
+  {
+    toolNodeId: toolId,
+    agentNodeId: 'Agent',
+    runId: 'run',
+    repetitionName: '000000',
+    agentToolInvocation,
+  }
+);
+
 describe('workflow monitoring and host state transitions', () => {
+  it('retains the selected built-in response and bound content across an aggregate refresh', () => {
+    const selected = reducer(selectBuiltInTool(), builtInToolResponse);
+    const refreshed = refreshBuiltInTool(selected);
+    expect(refreshed.nodesMetadata[toolId].runData).toMatchObject({
+      status: 'Succeeded',
+      duration: '2s',
+      repetitionCount: 3,
+      inputs: boundInputs,
+      outputs: boundOutputs,
+    });
+  });
+
+  it('ignores a built-in response after the tool page changes', () => {
+    const paged = reducer(selectBuiltInTool(), actions.setRunIndex({ nodeId: toolId, page: 2 }));
+    expect(reducer(paged, builtInToolResponse)).toBe(paged);
+  });
+
+  it('ignores a built-in response when the Agent changes repetition before the new aggregate arrives', () => {
+    const paged = reducer(selectBuiltInTool(), actions.setRunIndex({ nodeId: 'Agent', page: 1 }));
+    expect(reducer(paged, builtInToolResponse)).toBe(paged);
+  });
+
+  it.each([false, true])('applies a chat-selected built-in response (response before aggregate: %s)', (responseFirst) => {
+    const selected = selectBuiltInTool();
+    const nextInvocation = { agentRepetitionIdentity: 'run|Agent|000001|1|', page: 2 };
+    const request = { ...builtInToolResponse.meta.arg, repetitionName: '000001', agentToolInvocation: nextInvocation };
+    const moved = reducer(selected, actions.setRunIndex({ nodeId: 'Agent', page: 1 }));
+    const pending = reducer(moved, fetchBuiltInToolRunData.pending('chat-request', request));
+    const response = fetchBuiltInToolRunData.fulfilled(builtInToolResponse.payload, 'chat-request', request);
+    const refreshed = responseFirst
+      ? refreshBuiltInTool(reducer(pending, response), nextInvocation.agentRepetitionIdentity)
+      : reducer(refreshBuiltInTool(pending, nextInvocation.agentRepetitionIdentity), response);
+    expect(refreshed.nodesMetadata[toolId]).toMatchObject({
+      runIndex: 2,
+      runData: { status: 'Succeeded', repetitionCount: 3, inputs: boundInputs, outputs: boundOutputs },
+    });
+  });
+
+  it.each([false, true])(
+    'keeps admitted built-in details when leaving an unloaded Agent repetition (response arrived: %s)',
+    (responded) => {
+      const selected = reducer(selectBuiltInTool(), builtInToolResponse);
+      const request = {
+        ...builtInToolResponse.meta.arg,
+        repetitionName: '000001',
+        agentToolInvocation: { agentRepetitionIdentity: 'run|Agent|000001|1|', page: 2 },
+      };
+      let state = reducer(selected, actions.setRunIndex({ nodeId: 'Agent', page: 1 }));
+      state = reducer(state, fetchBuiltInToolRunData.pending('chat-request', request));
+      expect(getNodeRunData(state, toolId)).toBeUndefined();
+      const response = fetchBuiltInToolRunData.fulfilled({ ...builtInToolResponse.payload, status: 'Failed' }, 'chat-request', request);
+      if (responded) {
+        state = reducer(state, response);
+      }
+      state = reducer(state, actions.setRunIndex({ nodeId: 'Agent', page: 0 }));
+      if (!responded) {
+        state = reducer(state, response);
+      }
+      expect(state.nodesMetadata[toolId]).toEqual(selected.nodesMetadata[toolId]);
+      expect(getNodeRunData(state, toolId)).toEqual(selected.nodesMetadata[toolId].runData);
+    }
+  );
+
+  it('does not inherit Agent content when a scoped built-in tool page is clamped', () => {
+    const selected = reducer(selectBuiltInTool(), builtInToolResponse);
+    const agentInputs = { uri: 'https://example.test/agent/inputs' };
+    const agentOutputs = { uri: 'https://example.test/agent/outputs' };
+    const scopeRepetitionRunData = {
+      inputsLink: agentInputs,
+      outputsLink: agentOutputs,
+      tools: { [toolId]: { status: 'Failed', iterations: 1 } },
+    };
+    const refreshed = reducer(
+      selected,
+      actions.updateAgenticMetadata({
+        nodeId: 'Agent',
+        agentRepetitionIdentity: agentToolInvocation.agentRepetitionIdentity,
+        scopeRepetitionRunData,
+      })
+    );
+    const tool = refreshed.nodesMetadata[toolId];
+    expect(tool.runIndex).toBe(0);
+    expect(tool.runData?.status).toBe('Failed');
+    expect(tool.runData?.inputsLink?.uri).toBeUndefined();
+    expect(tool.runData?.outputsLink?.uri).toBeUndefined();
+    expect(tool.runData?.inputs).toBeUndefined();
+    expect(tool.runData?.outputs).toBeUndefined();
+    const legacy = reducer(selected, actions.updateAgenticMetadata({ nodeId: 'Agent', scopeRepetitionRunData }));
+    expect(legacy.nodesMetadata[toolId].runData).toMatchObject({ inputsLink: agentInputs, outputsLink: agentOutputs });
+  });
+
   it('updates repetition selection and timing, then clears nested run data while retaining root results', () => {
     let state = fixture();
     state = reducer(state, actions.setRunIndex({ nodeId: 'B', page: 2 }));

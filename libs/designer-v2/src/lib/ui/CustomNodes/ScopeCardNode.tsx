@@ -267,9 +267,14 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     if (isNullOrUndefined(agentActionsRepetitionData)) {
       return;
     }
-    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData as LogicAppsV2.RunRepetition[] };
+    // Child cards must not apply these results to a different Agent repetition's tool pages.
+    const updatePayload = {
+      nodeId: scopeId,
+      runData: agentActionsRepetitionData,
+      ...(agentRepetitionIdentity && { agentRepetitionIdentity }),
+    };
     dispatch(setSubgraphRunData(updatePayload));
-  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView]);
+  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView, agentRepetitionIdentity]);
 
   useEffect(() => {
     if (isMonitoringView && !isTimelineRepetitionSelected) {

@@ -203,6 +203,7 @@ vi.mock('../components/card/subgraphCard', () => ({
 }));
 
 import SubgraphCardNode from '../SubgraphCardNode';
+import { fetchBuiltInToolRunData } from '../../../core/actions/bjsworkflow/monitoring';
 
 describe('SubgraphCardNode (v2)', () => {
   const defaultProps = { id: 'testNode-#subgraph' } as NodeProps;
@@ -261,6 +262,45 @@ describe('SubgraphCardNode (v2)', () => {
     fireEvent.click(tool);
     expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
   });
+
+  it.each([false, true])(
+    'opens built-in tool details and only fetches if the current repetition has no pending selection (%s)',
+    (pending) => {
+      mockUseSharedNodeUi.mockReturnValue(true);
+      mockUseMonitoringView.mockReturnValue(true);
+      mockUseRunInstance.mockReturnValue({ id: 'run' });
+      mockUseRunIndex.mockReturnValue(1);
+      mockUseNodeMetadata.mockReturnValue({
+        graphId: 'Agent',
+        subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
+        agentRepetitionIdentity: 'run|Agent|000000|0|',
+      });
+      mockUseNodesMetadata.mockReturnValue({
+        Agent: {
+          pendingBuiltInTool: {
+            toolNodeId: 'code_interpreter',
+            invocation: { agentRepetitionIdentity: pending ? 'run|Agent|000001|1|' : 'run|Agent|000000|0|', page: 2 },
+            requestId: 'chat-request',
+          },
+        },
+      });
+      const { container } = render(<SubgraphCardNode {...defaultProps} id="code_interpreter-#subgraph" />);
+      fireEvent.click(container.querySelector('[data-node-card="tool"]')!);
+
+      expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'code_interpreter' });
+      if (pending) {
+        expect(fetchBuiltInToolRunData).not.toHaveBeenCalled();
+      } else {
+        expect(fetchBuiltInToolRunData).toHaveBeenCalledWith({
+          toolNodeId: 'code_interpreter',
+          agentNodeId: 'Agent',
+          runId: 'run',
+          repetitionName: '000001',
+          agentToolInvocation: { agentRepetitionIdentity: 'run|Agent|000001|1|', page: 0 },
+        });
+      }
+    }
+  );
 
   it('opts shared condition false branches into the neutral identity without changing legacy defaults', () => {
     mockUseSharedNodeUi.mockReturnValue(true);

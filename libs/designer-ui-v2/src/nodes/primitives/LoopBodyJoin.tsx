@@ -6,10 +6,6 @@ const useStyles = makeStyles({
     position: 'absolute',
     transform: 'translateX(-50%)',
     pointerEvents: 'none',
-    '[data-loop-active] > & > path': {
-      stroke: tokens.colorBrandStroke1,
-      '@media (forced-colors: active)': { stroke: 'Highlight' },
-    },
   },
   header: {
     '&[data-loop-group-header][data-loop-active]:not([data-selected])': {
@@ -19,6 +15,14 @@ const useStyles = makeStyles({
     },
   },
   body: {
+    '&[data-loop-active] > [data-loop-body-join] > path': {
+      stroke: tokens.colorBrandStroke1,
+      '@media (forced-colors: active)': {
+        // Use the system's own highlight without letting the browser replace the SVG stroke.
+        forcedColorAdjust: 'none',
+        stroke: 'Highlight !important',
+      },
+    },
     '&[data-loop-active] > [data-node-card="loop-frame"]:not([data-selected])': {
       outlineStyle: 'solid',
       outlineWidth: tokens.strokeWidthThin,

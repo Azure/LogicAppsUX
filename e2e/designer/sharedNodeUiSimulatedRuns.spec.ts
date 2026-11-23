@@ -160,6 +160,26 @@ for (const flag of ['true', 'false'] as const) {
         await expect(nestedHeader).toHaveAttribute('data-loop-active', '');
         await expect(header).not.toHaveAttribute('data-loop-active', '');
         await expect(frame).toHaveCSS('outline-style', 'none');
+        await page.emulateMedia({ forcedColors: 'active' });
+        const stroke = join.locator('path');
+        const systemColors = await stroke.evaluate(() => {
+          const probe = document.createElement('span');
+          probe.style.forcedColorAdjust = 'none';
+          document.body.append(probe);
+          const resolve = (color: string) => {
+            probe.style.color = color;
+            return getComputedStyle(probe).color;
+          };
+          const colors = { resting: resolve('CanvasText'), hovered: resolve('Highlight') };
+          probe.remove();
+          return colors;
+        });
+        await expect(stroke).toHaveCSS('stroke', systemColors.resting);
+        await header.hover();
+        await expect(stroke).toHaveCSS('stroke', systemColors.hovered);
+        await page.mouse.move(1, 1);
+        await expect(stroke).toHaveCSS('stroke', systemColors.resting);
+        await page.emulateMedia({ forcedColors: 'none' });
       } else {
         await expect(body).toHaveCount(0);
       }
@@ -203,7 +223,7 @@ for (const flag of ['true', 'false'] as const) {
           body: `${await response.text()}
             const originalGet = HttpClient.prototype.get;
             HttpClient.prototype.get = function (options) {
-              if (/^\\/url\\/agent-parity-run\\/actions\\/WorkflowAgent\\/agentRepetitions\\/\\d+\\?/.test(options.uri)) {
+              if (/^\\/url\\/agent-parity-run\\/actions\\/WorkflowAgent\\/agentRepetitions\\/\\d+(?:\\/actions)?\\?/.test(options.uri)) {
                 return fetch(options.uri).then(response => response.json());
               }
               return originalGet.apply(this, arguments);
@@ -221,6 +241,37 @@ for (const flag of ['true', 'false'] as const) {
         release.older = resolve;
       });
       const responses = /\/url\/agent-parity-run\/actions\/WorkflowAgent\/agentRepetitions\/00000[012]\?/;
+      if (flag === 'true') {
+        await page.route(/\/url\/agent-parity-run\/actions\/WorkflowAgent\/agentRepetitions\/00000[012]\/actions\?/, async (route) => {
+          const first = new URL(route.request().url()).pathname.includes('/000000/');
+          await route.fulfill({
+            json: {
+              value: first
+                ? [
+                    {
+                      name: 'BuiltIn_MCP_Server',
+                      properties: {
+                        actionResults: [
+                          { ...times, status: 'Failed' },
+                          { ...times, endTime: '2026-01-01T00:00:02Z', status: 'Succeeded' },
+                        ],
+                      },
+                    },
+                    {
+                      name: 'code_interpreter',
+                      properties: {
+                        actionResults: [
+                          { ...times, name: 'code_interpreter', status: 'Failed' },
+                          { ...times, name: 'code_interpreter', endTime: '2026-01-01T00:00:03Z', status: 'Succeeded' },
+                        ],
+                      },
+                    },
+                  ]
+                : [],
+            },
+          });
+        });
+      }
       await page.route(responses, async (route) => {
         const repetition = new URL(route.request().url()).pathname.split('/').pop()!;
         if (repetition === '000001') {
@@ -240,6 +291,7 @@ for (const flag of ['true', 'false'] as const) {
                 Regular_Tool: { status, iterations: 3 },
                 BuiltIn_MCP_Server: { status, iterations: 3 },
                 ...(repetition !== '000001' && { Managed_MCP_Server: { status, iterations: 3 } }),
+                ...(flag === 'true' && repetition === '000000' && { code_interpreter: { status: 'Failed', iterations: 2 } }),
               },
             },
           },
@@ -263,10 +315,47 @@ for (const flag of ['true', 'false'] as const) {
         }, tools);
       await expect.poll(activeStatus).toEqual(['Succeeded', 'Succeeded', 'Succeeded']);
       if (flag === 'true') {
-        for (const id of tools) {
+        for (const id of ['Regular_Tool', 'Managed_MCP_Server']) {
           await expect(card(id)).toHaveAttribute('data-status', 'succeeded');
         }
-        await expect(page.getByTestId('msla-pager-v2-builtin_mcp_server')).toBeVisible();
+        const mcp = card('BuiltIn_MCP_Server');
+        const mcpPager = page.getByTestId('msla-pager-v2-builtin_mcp_server');
+        await expect(mcpPager).toBeVisible();
+        await expect(mcp).toHaveAccessibleName(/Failed.*1s/i);
+        await mcpPager.getByLabel('Next iteration', { exact: true }).click();
+        await expect(mcp).toHaveAccessibleName(/Succeeded.*2s/i);
+        await mcpPager.getByLabel('Next iteration', { exact: true }).click();
+        await expect(mcp).toHaveAccessibleName(/Succeeded/i);
+        await expect(mcp).not.toHaveAccessibleName(/2s/i);
+
+        await page.evaluate(() => {
+          const store = (window as DesignerWindow).DesignerStoreV2;
+          const { WorkflowAgent } = store.getState().workflow.nodesMetadata;
+          store.dispatch({
+            type: 'workflow/updateAgenticMetadata',
+            payload: {
+              nodeId: 'WorkflowAgent',
+              agentRepetitionIdentity: WorkflowAgent.agentRepetitionIdentity,
+              scopeRepetitionRunData: {
+                ...WorkflowAgent.runData,
+                tools: {
+                  Regular_Tool: { status: 'Succeeded', iterations: 3 },
+                  BuiltIn_MCP_Server: { status: 'Succeeded', iterations: 2 },
+                  Managed_MCP_Server: { status: 'Succeeded', iterations: 3 },
+                  code_interpreter: { status: 'Failed', iterations: 2 },
+                },
+              },
+            },
+          });
+        });
+        await expect.poll(() => runIndex(page, 'BuiltIn_MCP_Server', true)).toBe(1);
+        await expect(mcp).toHaveAccessibleName(/Succeeded.*2s/i);
+
+        const builtIn = card('code_interpreter');
+        const builtInPager = page.getByTestId('msla-pager-v2-code_interpreter');
+        await builtInPager.getByLabel('Next iteration', { exact: true }).click();
+        await builtIn.click();
+        await expect(builtIn).toHaveAccessibleName(/Succeeded.*3s/i);
       }
       const previousRequest = page.waitForRequest(/\/agentRepetitions\/000001\?/);
       await next.click();

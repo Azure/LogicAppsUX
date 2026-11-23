@@ -2,8 +2,10 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 // Mock all external dependencies before importing the component
 const mockDispatch = vi.fn();
+const mockStore = { getState: () => ({ workflow: {} }) };
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
+  useStore: () => mockStore,
 }));
 
 vi.mock('react-intl', () => ({
@@ -24,15 +26,20 @@ vi.mock('../../../../core/queries/runs', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: vi.fn(() => true),
+  useSharedNodeUi: vi.fn(() => false),
 }));
 
-vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({
-  useAgentLastOperations: vi.fn(() => ({})),
-  useAgentOperations: vi.fn(() => []),
-  useFocusElement: vi.fn(() => undefined),
-  useUriForAgentChat: vi.fn(() => undefined),
-  useRunInstance: vi.fn(() => ({ id: 'run-123', properties: { status: 'Succeeded' } })),
-}));
+vi.mock('../../../../core/state/workflow/workflowSelectors', () => {
+  const run = { id: 'run-123', properties: { status: 'Succeeded' } };
+  return {
+    getSelectedAgentRepetitionIdentity: vi.fn(() => 'run-123|Agent|000001|1|'),
+    useAgentLastOperations: vi.fn(() => ({})),
+    useAgentOperations: vi.fn(() => []),
+    useFocusElement: vi.fn(() => undefined),
+    useUriForAgentChat: vi.fn(() => undefined),
+    useRunInstance: vi.fn(() => run),
+  };
+});
 
 vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: vi.fn(() => false),
@@ -84,30 +91,41 @@ vi.mock('@fluentui/react-components', () => ({
 }));
 
 import React from 'react';
-import { renderHook } from '@testing-library/react';
+import { act, render, renderHook } from '@testing-library/react';
 import { changePanelNode } from '../../../../core';
 import { setFocusNode, setRunIndex } from '../../../../core/state/workflow/workflowSlice';
 import { fetchBuiltInToolRunData } from '../../../../core/actions/bjsworkflow/monitoring';
-import { useRunInstance, useAgentLastOperations } from '../../../../core/state/workflow/workflowSelectors';
+import { useRunInstance } from '../../../../core/state/workflow/workflowSelectors';
+import { useChatHistory } from '../../../../core/queries/runs';
+import { useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { parseChatHistory } from '../../agentChat/helper';
 
 describe('AgentChatContent - toolResultCallback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should dispatch fetchBuiltInToolRunData for built-in tools like code_interpreter', async () => {
-    // Import the component module to test the callback behavior
+  it.each([false, true])('selects a built-in chat result without changing an old Shared tool page (Shared: %s)', async (shared) => {
+    vi.mocked(useSharedNodeUi).mockReturnValue(shared);
+    vi.mocked(useChatHistory, { partial: true }).mockReturnValue({ data: [] });
     const { AgentChatContent } = await import('../agentChatContent');
+    render(<AgentChatContent />);
+    const [, selectTool] = vi.mocked(parseChatHistory).mock.calls[0];
+    act(() => selectTool('Agent', 'code_interpreter', 1, 2));
 
-    // We test the toolResultCallback logic by verifying it dispatches correctly for built-in tools
-    // The key behavior: isBuiltInAgentTool('code_interpreter') returns true,
-    // so it should dispatch fetchBuiltInToolRunData + setFocusNode + changePanelNode
-
-    // Since we can't easily extract the callback from the component,
-    // we verify the imports and mock setup are correct
-    expect(fetchBuiltInToolRunData).toBeDefined();
-    expect(changePanelNode).toBeDefined();
-    expect(setFocusNode).toBeDefined();
+    expect(vi.mocked(setRunIndex).mock.calls.map(([selection]) => selection)).toEqual([
+      { page: 1, nodeId: 'Agent' },
+      ...(!shared ? [{ page: 2, nodeId: 'code_interpreter' }] : []),
+    ]);
+    expect(fetchBuiltInToolRunData).toHaveBeenCalledWith({
+      toolNodeId: 'code_interpreter',
+      agentNodeId: 'Agent',
+      runId: 'run-123',
+      repetitionName: '000001',
+      ...(shared && { agentToolInvocation: { agentRepetitionIdentity: 'run-123|Agent|000001|1|', page: 2 } }),
+    });
+    expect(changePanelNode).toHaveBeenCalledWith('code_interpreter');
+    expect(setFocusNode).toHaveBeenCalledWith('code_interpreter');
   });
 
   it('should have correct run instance available for built-in tool data fetching', () => {

@@ -6,7 +6,7 @@ import { getAllParentsForNode } from '../../../core/utils/graph';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
-export { getLoopsCount } from '../../../core/utils/loopRepetitions';
+export { getAgentRepetitionIdentity, getLoopsCount, getScopeRepetitionName } from '../../../core/utils/loopRepetitions';
 
 /**
  * Gets repetition name for API call.
@@ -33,41 +33,6 @@ export const getRepetitionName = (
   });
 
   return repetitionName;
-};
-
-/**
- * Gets repetition name for API call.
- * @param {number | undefined} index - Node's parent loop index.
- * @returns {string} Repetition name.
- */
-export const getScopeRepetitionName = (index: number | undefined): string => {
-  return String(index).padStart(6, '0');
-};
-
-interface AgentRepetitionIdentityParams {
-  runId: string | undefined;
-  ownerNodeId: string | undefined;
-  repetitionName: string | undefined;
-  repetitionIndex: number | undefined;
-  parentStatus: string | undefined;
-}
-
-/**
- * Builds the authoritative identity used to scope agent monitoring data to a specific selected iteration.
- * If the run identity is unavailable (legacy/synthetic paths), we intentionally skip scoping and keep
- * existing behavior unchanged.
- */
-export const getAgentRepetitionIdentity = ({
-  runId,
-  ownerNodeId,
-  repetitionName,
-  repetitionIndex,
-  parentStatus,
-}: AgentRepetitionIdentityParams): string | undefined => {
-  if (!runId || !ownerNodeId || repetitionName === undefined || repetitionIndex === undefined) {
-    return undefined;
-  }
-  return [runId, ownerNodeId, repetitionName, String(repetitionIndex), parentStatus ?? ''].join('|');
 };
 
 /**

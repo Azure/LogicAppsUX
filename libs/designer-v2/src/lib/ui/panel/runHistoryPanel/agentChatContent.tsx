@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { ChatbotUI } from '@microsoft/logic-apps-chatbot';
 import { useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useSharedNodeUi } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
+  getSelectedAgentRepetitionIdentity,
   useAgentLastOperations,
   useAgentOperations,
   useFocusElement,
@@ -13,8 +14,9 @@ import {
 } from '../../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, isBuiltInAgentTool, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogTitle, DialogTrigger } from '@fluentui/react-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
+import type { RootState } from '../../../core/store';
 import {
   clearFocusElement,
   setFocusNode,
@@ -41,6 +43,8 @@ export const AgentChatContent = () => {
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const shared = useSharedNodeUi();
+  const store = useStore<RootState>();
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const focusElement = useFocusElement();
   const { mutateAsync: refreshChat } = useRefreshChatMutation();
@@ -80,28 +84,32 @@ export const AgentChatContent = () => {
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number, mcpToolName?: string) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
+      const isBuiltInTool = isBuiltInAgentTool(toolName);
+      const scopedBuiltInTool = shared && !isA2AWorkflow && isBuiltInTool && !!runInstance?.id;
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
       } else {
         dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-        if (mcpToolName) {
-          dispatch(setToolRunIndex({ page: subIteration, nodeId: toolName }));
-        } else {
-          dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+        if (!scopedBuiltInTool) {
+          dispatch((mcpToolName ? setToolRunIndex : setRunIndex)({ page: subIteration, nodeId: toolName }));
         }
       }
 
       // For built-in tools (e.g. code_interpreter), there is no child operation in the graph.
       // Navigate to the tool node itself and fetch its run data from the parent agent repetition.
-      if (isBuiltInAgentTool(toolName)) {
+      if (isBuiltInTool) {
         const repetitionName = String(iteration).padStart(6, '0');
         if (runInstance?.id) {
+          const agentRepetitionIdentity = scopedBuiltInTool
+            ? getSelectedAgentRepetitionIdentity(store.getState().workflow, agentName)
+            : undefined;
           dispatch(
             fetchBuiltInToolRunData({
               toolNodeId: toolName,
               agentNodeId: agentName,
               runId: runInstance.id,
               repetitionName,
+              ...(agentRepetitionIdentity && { agentToolInvocation: { agentRepetitionIdentity, page: subIteration } }),
             })
           );
         }
@@ -112,7 +120,7 @@ export const AgentChatContent = () => {
         dispatch(changePanelNode(agentLastOperation));
       }
     },
-    [dispatch, isA2AWorkflow, rawAgentLastOperations, runInstance]
+    [dispatch, isA2AWorkflow, rawAgentLastOperations, runInstance, shared, store]
   );
 
   const toolContentCallback = useCallback(

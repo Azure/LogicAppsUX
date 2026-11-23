@@ -125,6 +125,11 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   );
   const useScopedToolMonitoringData = shared && sharedTool && isMonitoringView && !isA2AWorkflow && !!agentRepetitionIdentity;
   const hasCurrentToolMonitoringData = !useScopedToolMonitoringData || metadata?.agentRepetitionIdentity === agentRepetitionIdentity;
+  const pendingTool = nodesMetadata[graphId]?.pendingBuiltInTool;
+  const hasPendingToolSelection =
+    useScopedToolMonitoringData &&
+    pendingTool?.toolNodeId === subgraphId &&
+    pendingTool.invocation.agentRepetitionIdentity === agentRepetitionIdentity;
   const effectiveToolRunData =
     useScopedToolMonitoringData && !hasCurrentToolMonitoringData ? undefined : (metadata?.toolRunData ?? metadata?.runData);
 
@@ -249,14 +254,25 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
         dispatch(setFocusNode(newAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
-        // For built-in tools in monitoring view, fetch inputs/outputs if not already loaded
-        if (isMonitoringView && isBuiltInAgentTool(_id) && !metadata?.runData?.inputs && runInstance?.id && graphId) {
+        // Opening the card must not replace a chat-selected invocation with the fallback page while its summary loads.
+        if (
+          isMonitoringView &&
+          isBuiltInAgentTool(_id) &&
+          !hasPendingToolSelection &&
+          (!hasCurrentToolMonitoringData || !metadata?.runData?.inputs) &&
+          runInstance?.id &&
+          graphId
+        ) {
           dispatch(
             fetchBuiltInToolRunData({
               toolNodeId: _id,
               agentNodeId: graphId,
               runId: runInstance.id,
-              repetitionName: getScopeRepetitionName(agentRunIndex),
+              repetitionName: scopeRepetitionName,
+              ...(useScopedToolMonitoringData &&
+                agentRepetitionIdentity && {
+                  agentToolInvocation: { agentRepetitionIdentity, page: hasCurrentToolMonitoringData ? (metadata?.runIndex ?? 0) : 0 },
+                }),
             })
           );
         }
@@ -274,7 +290,11 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
       isMonitoringView,
       metadata,
       runInstance,
-      agentRunIndex,
+      scopeRepetitionName,
+      agentRepetitionIdentity,
+      hasCurrentToolMonitoringData,
+      hasPendingToolSelection,
+      useScopedToolMonitoringData,
     ]
   );
 

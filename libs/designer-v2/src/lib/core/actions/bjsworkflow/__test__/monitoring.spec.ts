@@ -54,6 +54,36 @@ describe('fetchBuiltInToolRunData', () => {
     vi.clearAllMocks();
   });
 
+  it('binds content and status from the requested built-in invocation, not the first match or aggregate', async () => {
+    const requestedLink = { uri: 'https://example.com/invocation-2', contentSize: 1 };
+    mockGetAgentActionsRepetition.mockResolvedValue([
+      {
+        name: 'code_interpreter',
+        properties: {
+          actionResults: [
+            { name: 'code_interpreter', status: 'Failed', outputsLink: { uri: 'https://example.com/invocation-1' } },
+            { name: 'code_interpreter', status: 'Succeeded', outputsLink: requestedLink },
+          ],
+        },
+      },
+    ]);
+    mockGetContent.mockResolvedValue({ result: 'second invocation' });
+
+    const response = await fetchBuiltInToolRunData({
+      toolNodeId: 'code_interpreter',
+      agentNodeId: 'Agent',
+      runId: 'run',
+      repetitionName: '000000',
+      agentToolInvocation: { agentRepetitionIdentity: 'run|Agent|000000|0|', page: 1 },
+    })(vi.fn(), vi.fn(), undefined);
+
+    expect(mockGetContent).toHaveBeenCalledExactlyOnceWith(requestedLink);
+    expect(response.payload).toMatchObject({
+      status: 'Succeeded',
+      outputs: { result: { value: 'second invocation' } },
+    });
+  });
+
   it('should fetch action-level data via getAgentActionsRepetition and convert to BoundParameters', async () => {
     const mockInputs = { message: 'hello', code: 'print("hi")' };
     const mockOutputs = { result: 'hi', exitCode: 0 };

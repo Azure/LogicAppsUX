@@ -25,6 +25,47 @@ for (const flag of ['false', 'true'] as const) {
   test.describe(`Node overview and convergence, flag ${flag}`, { tag: ['@mock', '@shared-node-ui'] }, () => {
     const shared = flag === 'true';
 
+    test('keeps a three-line authoring title inside its layout bounds at overview zoom', async ({ page }) => {
+      await page.setViewportSize({ width: 1600, height: 1000 });
+      await openSharedWorkflow(page, 'General Run After', flag);
+      const action = card(page, 'Init_all');
+      const label = 'Send an email notification to the on-call engineer after the nightly import';
+      await action.press('Enter');
+      const titleInput = page.getByRole('textbox', { name: 'Card title', exact: true });
+      await titleInput.fill(label);
+      await titleInput.press('Tab');
+      await expect(action).toHaveAccessibleName(new RegExp(label));
+      await page.getByTestId('msla-panel-header-close-nav').click();
+
+      const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+      const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+      for (let step = 0; step < 10 && (await zoom(page)) <= 0.5; step++) {
+        await zoomIn.click();
+        await waitForViewport(page);
+      }
+      expect(await zoom(page)).toBeGreaterThan(0.5);
+      const bounds = () =>
+        action.evaluate((element) => ({
+          card: element.offsetHeight,
+          reserved: element.closest<HTMLElement>('.react-flow__node')!.style.height,
+          title: element.querySelector<HTMLElement>('[data-node-title]')?.offsetHeight,
+        }));
+      const detailBounds = await bounds();
+      if (shared) {
+        expect(detailBounds).toEqual({ card: 68, reserved: '68px', title: 54 });
+      }
+      for (let step = 0; step < 10 && (await zoom(page)) >= 0.5; step++) {
+        await zoomOut.click();
+        await waitForViewport(page);
+      }
+      expect(await zoom(page)).toBeLessThan(0.5);
+      await expect(page.locator('[data-node-overview]')).toHaveCount(shared ? 1 : 0);
+      if (shared) {
+        await expect(action.locator('[data-node-title]')).toHaveCSS('font-size', '16px');
+      }
+      expect(await bounds()).toEqual(detailBounds);
+    });
+
     test('keeps run status visible at native fit and returns to detail without resizing the card', async ({ page }) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
       await openSharedWorkflow(page, 'Monitoring view conditional', flag);

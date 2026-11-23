@@ -4,8 +4,8 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 export const useNodeOverviewStyles = makeStyles({
   canvas: {
     '& [data-node-card] [data-node-title]': {
+      // The title owns its line height so a three-line card still fits the reserved bounds.
       fontSize: tokens.fontSizeBase400,
-      lineHeight: tokens.lineHeightBase300,
     },
     '& [data-node-card] [data-node-caption]': { display: 'none' },
     '& [data-node-card] [data-node-status-icon]': { fontSize: tokens.fontSizeBase400 },

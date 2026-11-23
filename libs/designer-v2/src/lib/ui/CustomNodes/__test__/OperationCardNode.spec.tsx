@@ -447,6 +447,43 @@ describe('OperationCardNode (v2)', () => {
     expect(screen.getByRole('button')).toHaveAttribute('data-status', 'succeeded');
   });
 
+  it('renders only the current shared MCP invocation and keeps the aggregate pager count', () => {
+    const identity = 'run-1|actual-agent|000002|2|';
+    const runData = { status: 'Succeeded', duration: '2s' };
+    const metadata = {
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { status: 'Failed', repetitionCount: 3 },
+      toolRunIndex: 1,
+      agentRepetitionIdentity: identity,
+      agentToolInvocation: { agentRepetitionIdentity: identity, page: 1 },
+      runData,
+    };
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseParentNodeId.mockImplementation((id?: string) => (id === 'testNode' ? 'actual-agent' : undefined));
+    mockUseActionMetadata.mockImplementation((id?: string) => (id === 'actual-agent' ? { type: 'Agent' } : undefined));
+    mockUseRunData.mockImplementation((id?: string) => (id === 'testNode' ? runData : undefined));
+    mockUseNodeMetadata.mockReturnValue(metadata);
+
+    const { rerender } = render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByRole('button', { name: /Succeeded.*2s/i })).toHaveAttribute('data-status', 'succeeded');
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
+
+    mockUseNodeMetadata.mockReturnValue({ ...metadata, toolRunIndex: 2 });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByRole('button', { name: /Failed/i })).toHaveAttribute('data-status', 'failed');
+    expect(screen.queryByText('2s')).not.toBeInTheDocument();
+
+    mockUseRunInstance.mockReturnValue({ id: 'run-2' });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-status');
+    expect(screen.queryByTestId('shared-loops-pager-testNode')).not.toBeInTheDocument();
+  });
+
   it('updates run data when the selected repetition response has no actionTrackingId', () => {
     mockUseMonitoringView.mockReturnValue(true);
     mockUseRunInstance.mockReturnValue({ id: 'run-1' });

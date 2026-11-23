@@ -85,6 +85,7 @@ interface NodeRunDataSyncProps {
   graphId: string;
   parentNodeId?: string;
   isMcpClientSubgraph: boolean;
+  scopedAgentRepetitionIdentity?: string;
   selfActionTrackingId?: string;
   onFetchingChange: (isFetching: boolean) => void;
 }
@@ -95,6 +96,7 @@ const NodeRunDataSync = ({
   graphId,
   parentNodeId,
   isMcpClientSubgraph,
+  scopedAgentRepetitionIdentity,
   selfActionTrackingId,
   onFetchingChange,
 }: NodeRunDataSyncProps) => {
@@ -106,7 +108,10 @@ const NodeRunDataSync = ({
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
+  const parentMetadata = useNodeMetadata(parentNodeId ?? '');
+  const toolMetadata = useNodeMetadata(id);
   const toolRunIndex = useRunIndex(graphId);
+  const ownRunIndex = useRunIndex(id);
   const mcpToolRunIndex = useToolRunIndex(id);
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
@@ -138,21 +143,28 @@ const NodeRunDataSync = ({
     }
   }, [dispatch, repetitionRunData, id, selfActionTrackingId]);
 
-  const actualToolRunIndex = isMcpClientSubgraph ? mcpToolRunIndex : toolRunIndex;
+  const actualToolRunIndex = isMcpClientSubgraph ? mcpToolRunIndex : scopedAgentRepetitionIdentity ? ownRunIndex : toolRunIndex;
+  const hasCurrentToolResults =
+    !scopedAgentRepetitionIdentity ||
+    (parentMetadata?.subgraphRunDataIdentity === scopedAgentRepetitionIdentity &&
+      toolMetadata?.agentRepetitionIdentity === scopedAgentRepetitionIdentity);
 
   useEffect(() => {
-    if (isWithinAgenticLoop && !isNullOrUndefined(actualToolRunIndex)) {
+    if (isWithinAgenticLoop && hasCurrentToolResults && !isNullOrUndefined(actualToolRunIndex)) {
       const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[actualToolRunIndex];
       if (subgraphRunData) {
         dispatch(
           setRepetitionRunData({
             nodeId: id,
             runData: subgraphRunData as LogicAppsV2.WorkflowRunAction,
+            ...(scopedAgentRepetitionIdentity && {
+              agentToolInvocation: { agentRepetitionIdentity: scopedAgentRepetitionIdentity, page: actualToolRunIndex },
+            }),
           })
         );
       }
     }
-  }, [isWithinAgenticLoop, id, dispatch, actualToolRunIndex, parentSubgraphRunData]);
+  }, [isWithinAgenticLoop, id, dispatch, actualToolRunIndex, parentSubgraphRunData, hasCurrentToolResults, scopedAgentRepetitionIdentity]);
 
   return null;
 };
@@ -213,14 +225,18 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const shouldShowPager =
     hasMcpToolPager(metadata, parentActionMetadata?.type, isMonitoringView) &&
     (!useScopedToolMonitoringData || hasCurrentToolMonitoringData);
-  // The direct MCP renderer owns a separate tool run from the underlying operation run.
-  const scopedRunData = useScopedToolMonitoringData
-    ? hasCurrentToolMonitoringData
-      ? isMcpClientSubgraph
-        ? metadata?.toolRunData
-        : selfRunData
-      : undefined
-    : selfRunData;
+  // MCP's aggregate drives the pager, but only the selected invocation can supply card details.
+  const invocation = metadata?.agentToolInvocation;
+  const hasCurrentMcpInvocation =
+    invocation && invocation.agentRepetitionIdentity === agentRepetitionIdentity && invocation.page === metadata?.toolRunIndex;
+  let scopedRunData = selfRunData;
+  if (useScopedToolMonitoringData) {
+    if (!hasCurrentToolMonitoringData) {
+      scopedRunData = undefined;
+    } else if (isMcpClientSubgraph) {
+      scopedRunData = (hasCurrentMcpInvocation ? selfRunData : undefined) ?? metadata?.toolRunData;
+    }
+  }
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
@@ -506,6 +522,7 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           graphId={graphId}
           parentNodeId={parentNodeId}
           isMcpClientSubgraph={metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT}
+          scopedAgentRepetitionIdentity={useScopedToolMonitoringData ? agentRepetitionIdentity : undefined}
           selfActionTrackingId={selfRunData?.correlation?.actionTrackingId}
           onFetchingChange={setIsRepetitionFetching}
         />

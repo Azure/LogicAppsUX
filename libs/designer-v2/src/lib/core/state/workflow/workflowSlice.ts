@@ -32,9 +32,9 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
-import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
+import type { AgentToolInvocation, ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
-import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
+import { getParentsUncollapseFromGraphState, getSelectedAgentRepetitionIdentity, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
   LoggerService,
@@ -59,6 +59,45 @@ import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../a
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
 import { UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+
+const clampToolPage = (page: number, count: number | undefined): number =>
+  Number.isInteger(count) ? Math.min(page, Math.max((count ?? 0) - 1, 0)) : page;
+
+const selectRunPage = (node: NodeMetadata, page: number) => {
+  if (node.runIndex !== page) {
+    delete node.pendingBuiltInTool;
+  }
+  if (node.agentToolInvocation && node.agentToolInvocation.page !== page && node.subgraphType !== SUBGRAPH_TYPES.MCP_CLIENT) {
+    node.runData = node.agentToolInvocation.aggregate;
+    delete node.agentToolInvocation;
+  }
+  node.runIndex = page;
+};
+
+const setToolInvocationRunData = (node: NodeMetadata, invocation: AgentToolInvocation, runData: Partial<LogicAppsV2.WorkflowRunAction>) => {
+  const isMcp = node.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+  const page = isMcp ? node.toolRunIndex : node.runIndex;
+  if (node.agentRepetitionIdentity !== invocation.agentRepetitionIdentity || page !== invocation.page) {
+    return;
+  }
+  const aggregate = isMcp ? undefined : node.agentToolInvocation ? node.agentToolInvocation.aggregate : node.runData;
+  if ((isMcp ? node.toolRunData?.repetitionCount : aggregate?.repetitionCount) === 0) {
+    return;
+  }
+  node.agentToolInvocation = { ...invocation, aggregate };
+  node.runData = {
+    ...formatRepetitionRunData(runData),
+    ...(!isMcp && { repetitionCount: aggregate?.repetitionCount }),
+  };
+};
+
+const formatRepetitionRunData = (runData: Partial<LogicAppsV2.WorkflowRunAction>): LogicAppsV2.WorkflowRunAction =>
+  ({
+    ...runData,
+    inputsLink: runData?.inputsLink ?? null,
+    outputsLink: runData?.outputsLink ?? null,
+    duration: getDurationStringPanelMode(Date.parse(runData?.endTime ?? '') - Date.parse(runData?.startTime ?? ''), /* abbreviated */ true),
+  }) as LogicAppsV2.WorkflowRunAction;
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -540,6 +579,8 @@ export const workflowSlice = createSlice({
       const { scopeRepetitionRunData, nodeId, agentRepetitionIdentity } = action.payload;
       const { tools = {} } = scopeRepetitionRunData ?? {};
       const agentGraph = getWorkflowNodeFromGraphState(state, nodeId);
+      const agentMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      const pendingTool = agentMetadata?.pendingBuiltInTool;
 
       // Agent monitoring is scoped to the selected repetition. When a tool is missing in that
       // repetition (or the run failed before invocation), clear the previous iteration's tool
@@ -565,6 +606,7 @@ export const workflowSlice = createSlice({
           delete clearedNodeData.toolRunIndex;
           delete clearedNodeData.runData;
           delete clearedNodeData.runIndex;
+          delete clearedNodeData.agentToolInvocation;
           state.nodesMetadata[toolId] = clearedNodeData as NodeMetadata;
         });
 
@@ -576,45 +618,70 @@ export const workflowSlice = createSlice({
 
         // A refresh of the current selection must not reset a tool page chosen in the run tree or canvas.
         const sameSelection = !!agentRepetitionIdentity && nodeMetadata.agentRepetitionIdentity === agentRepetitionIdentity;
-        if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+        const summary = { status: tools[toolId].status, repetitionCount: tools[toolId].iterations };
+        const isMcp = nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+        const currentPage = (isMcp ? nodeMetadata.toolRunIndex : nodeMetadata.runIndex) ?? 0;
+        const pending =
+          pendingTool && pendingTool.toolNodeId === toolId && pendingTool.invocation.agentRepetitionIdentity === agentRepetitionIdentity
+            ? pendingTool
+            : undefined;
+        const page = clampToolPage(pending?.invocation.page ?? (sameSelection ? currentPage : 0), summary.repetitionCount);
+        const preservePage = sameSelection && page === currentPage && summary.repetitionCount !== 0;
+        if (isMcp) {
           // MCP client action does not have a tool, so save the "tool" runData in a dedicated toolRunData.
           const nodeData = {
             ...nodeMetadata,
-            toolRunData: {
-              status: tools[toolId].status,
-              repetitionCount: tools[toolId].iterations,
-            },
-            toolRunIndex: sameSelection ? (nodeMetadata.toolRunIndex ?? 0) : 0,
+            toolRunData: summary,
+            toolRunIndex: page,
             agentRepetitionIdentity,
           };
-          if (agentRepetitionIdentity && !sameSelection) {
+          if (agentRepetitionIdentity && !preservePage) {
             delete nodeData.runData;
             delete nodeData.runIndex;
+            delete nodeData.agentToolInvocation;
           }
           state.nodesMetadata[toolId] = nodeData as NodeMetadata;
         } else {
-          const preserveToolDetails = sameSelection && nodeMetadata.runData;
+          const preserveToolDetails = preservePage && nodeMetadata.runData;
+          const invocation = nodeMetadata.agentToolInvocation;
+          const selectedInvocation =
+            preservePage && invocation && invocation.agentRepetitionIdentity === agentRepetitionIdentity && invocation.page === page
+              ? invocation
+              : undefined;
           const nodeData = {
             ...nodeMetadata,
             runData: {
-              ...(preserveToolDetails || {}),
-              status: tools[toolId].status,
-              repetitionCount: tools[toolId].iterations,
-              ...(isBuiltInAgentTool(toolId) && !preserveToolDetails
+              ...((invocation && !selectedInvocation && sameSelection ? invocation.aggregate : preserveToolDetails) || {}),
+              ...summary,
+              ...(selectedInvocation && { status: nodeMetadata.runData?.status ?? summary.status }),
+              // The Agent's content describes the whole repetition, not an individual tool invocation.
+              ...(!agentRepetitionIdentity && isBuiltInAgentTool(toolId) && !preserveToolDetails
                 ? {
                     inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
                     outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
                   }
                 : {}),
             },
-            runIndex: sameSelection ? (nodeMetadata.runIndex ?? 0) : 0,
+            runIndex: page,
             agentRepetitionIdentity,
           };
+          // Restore the latest aggregate if a different invocation is selected before its details arrive.
+          if (selectedInvocation) {
+            nodeData.agentToolInvocation = {
+              ...selectedInvocation,
+              aggregate: { ...selectedInvocation.aggregate, ...summary } as LogicAppsV2.WorkflowRunAction,
+            };
+          } else {
+            delete nodeData.agentToolInvocation;
+          }
+          if (pending?.runData) {
+            setToolInvocationRunData(nodeData as NodeMetadata, pending.invocation, pending.runData);
+          }
           state.nodesMetadata[toolId] = nodeData as NodeMetadata;
         }
       });
 
-      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      const nodeMetadata = agentMetadata;
       if (!nodeMetadata) {
         return;
       }
@@ -630,6 +697,7 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
       nodeMetadata.agentRepetitionIdentity = agentRepetitionIdentity;
+      delete nodeMetadata.pendingBuiltInTool;
       nodeMetadata.actionCount =
         (agentGraph?.children ?? []).filter((node) => !containsIdTag(node.id) && !containsCaseTag(node.id))?.length ?? -1;
 
@@ -840,7 +908,7 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
-      nodeMetadata.runIndex = page;
+      selectRunPage(nodeMetadata, page);
     },
     setToolRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
@@ -848,26 +916,36 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
+      const invocation = nodeMetadata.agentToolInvocation;
+      if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT && invocation && invocation.page !== page) {
+        delete nodeMetadata.runData;
+        delete nodeMetadata.agentToolInvocation;
+      }
       nodeMetadata.toolRunIndex = page;
     },
-    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
-      const { nodeId, runData } = action.payload;
+    setRepetitionRunData: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; agentToolInvocation?: AgentToolInvocation }>
+    ) => {
+      const { nodeId, runData, agentToolInvocation } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
       }
-      const nodeRunData = {
-        ...runData,
-        inputsLink: runData?.inputsLink ?? null,
-        outputsLink: runData?.outputsLink ?? null,
-        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
-      };
-      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+      if (agentToolInvocation) {
+        // A late result must not be promoted to the currently selected page.
+        setToolInvocationRunData(nodeMetadata, agentToolInvocation, runData);
+        return;
+      }
+      delete nodeMetadata.agentToolInvocation;
+      nodeMetadata.runData = formatRepetitionRunData(runData);
     },
     clearAllRepetitionRunData: (state: WorkflowState) => {
       for (const node of Object.values(state.nodesMetadata)) {
+        delete node.pendingBuiltInTool;
         if (node.agentRepetitionIdentity) {
           delete node.agentRepetitionIdentity;
+          delete node.agentToolInvocation;
           delete node.toolRunData;
           delete node.toolRunIndex;
         }
@@ -879,8 +957,11 @@ export const workflowSlice = createSlice({
         }
       }
     },
-    setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
-      const { nodeId, runData } = action.payload;
+    setSubgraphRunData: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[]; agentRepetitionIdentity?: string }>
+    ) => {
+      const { nodeId, runData, agentRepetitionIdentity } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
@@ -891,6 +972,11 @@ export const workflowSlice = createSlice({
         return acc;
       }, {} as any);
       nodeMetadata.subgraphRunData = subgraph;
+      if (agentRepetitionIdentity) {
+        nodeMetadata.subgraphRunDataIdentity = agentRepetitionIdentity;
+      } else {
+        delete nodeMetadata.subgraphRunDataIdentity;
+      }
     },
     setRunDataInputOutputs: (
       state: WorkflowState,
@@ -1198,8 +1284,51 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
+    builder.addCase(fetchBuiltInToolRunData.pending, (state, action) => {
+      const { agentNodeId, toolNodeId, runId, agentToolInvocation } = action.meta.arg;
+      if (
+        !agentToolInvocation ||
+        state.runInstance?.id !== runId ||
+        getSelectedAgentRepetitionIdentity(state, agentNodeId) !== agentToolInvocation.agentRepetitionIdentity
+      ) {
+        return;
+      }
+      const node = getRecordEntry(state.nodesMetadata, toolNodeId);
+      if (node?.agentRepetitionIdentity === agentToolInvocation.agentRepetitionIdentity) {
+        selectRunPage(node, clampToolPage(agentToolInvocation.page, node.runData?.repetitionCount));
+        return;
+      }
+      // Don't replace admitted tool details until the new Agent repetition is admitted.
+      const agent = getRecordEntry(state.nodesMetadata, agentNodeId);
+      if (agent) {
+        agent.pendingBuiltInTool = { toolNodeId, invocation: agentToolInvocation, requestId: action.meta.requestId };
+      }
+    });
     builder.addCase(fetchBuiltInToolRunData.fulfilled, (state, action) => {
+      if (!action.payload) {
+        return; // No action-level result exists for this scoped page yet.
+      }
       const { toolNodeId, inputsLink, outputsLink, inputs, outputs, startTime, endTime, status, correlation } = action.payload;
+      const runData = { inputsLink, outputsLink, inputs, outputs, startTime, endTime, status, correlation };
+      const { agentNodeId, runId, agentToolInvocation } = action.meta?.arg ?? {};
+      if (agentToolInvocation) {
+        if (
+          state.runInstance?.id !== runId ||
+          getSelectedAgentRepetitionIdentity(state, agentNodeId) !== agentToolInvocation.agentRepetitionIdentity
+        ) {
+          return;
+        }
+        const pending = getRecordEntry(state.nodesMetadata, agentNodeId)?.pendingBuiltInTool;
+        if (pending?.requestId === action.meta.requestId) {
+          pending.runData = runData;
+          return;
+        }
+        const node = getRecordEntry(state.nodesMetadata, toolNodeId);
+        if (node) {
+          setToolInvocationRunData(node, agentToolInvocation, runData);
+        }
+        return;
+      }
 
       // Create nodesMetadata entry if it doesn't exist (for built-in tools like code_interpreter)
       if (!state.nodesMetadata[toolNodeId]) {
@@ -1208,14 +1337,7 @@ export const workflowSlice = createSlice({
 
       state.nodesMetadata[toolNodeId].runData = {
         ...state.nodesMetadata[toolNodeId].runData,
-        inputsLink,
-        outputsLink,
-        inputs,
-        outputs,
-        startTime,
-        endTime,
-        status,
-        correlation,
+        ...runData,
       } as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
