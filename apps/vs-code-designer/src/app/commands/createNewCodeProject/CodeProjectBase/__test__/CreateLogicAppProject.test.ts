@@ -14,7 +14,7 @@ import {
   updateWorkspaceFile,
 } from '../CreateLogicAppWorkspace';
 import { createLogicAppVsCodeContents } from '../CreateLogicAppVSCodeContents';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { hostFileName } from '../../../../../constants';
@@ -937,7 +937,7 @@ local.settings.json`
         logicAppName: 'TestLogicApp',
         logicAppType,
         workflowName: 'SettingsWorkflow',
-        workflowType: 'Stateful',
+        workflowType: logicAppType === ProjectType.codeful ? WorkflowType.statefulCodeful : 'Stateful',
         functionFolderName: 'Functions',
         functionName: 'TestFunction',
         functionNamespace: 'TestNamespace',
