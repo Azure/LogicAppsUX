@@ -366,13 +366,6 @@ function getExpectedConvertedNugetTasksJson(): TasksJson {
     version: '2.0.0',
     tasks: [
       {
-        label: 'generateDebugSymbols',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-        args: ['${input:getDebugSymbolDll}'],
-        type: 'process',
-        problemMatcher: '$msCompile',
-      },
-      {
         label: 'clean',
         command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['clean', '/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'],
@@ -444,13 +437,6 @@ function getExpectedConvertedNugetTasksJson(): TasksJson {
         args: ['host', 'start'],
         isBackground: true,
         problemMatcher: '$func-watch',
-      },
-    ],
-    inputs: [
-      {
-        id: 'getDebugSymbolDll',
-        type: 'command',
-        command: 'azureLogicAppsStandard.getDebugSymbolDll',
       },
     ],
   };

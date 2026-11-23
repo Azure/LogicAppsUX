@@ -199,8 +199,7 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
-  if (symbolTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
+  if (symbolTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless)) {
     await startDebugTask(symbolTask, workspaceFolder);
   }
 
