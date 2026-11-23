@@ -257,6 +257,28 @@ describe('LocalCodefulOverviewPanel', () => {
     );
   });
 
+  it('preserves stateless kind during source-only workflow discovery', async () => {
+    mocks.isRuntimeUp.mockResolvedValue(false);
+    mocks.readFileSync.mockReturnValue(`
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      var workflow = trigger.Then(response);
+      return new[] { WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow) };
+    `);
+
+    const codefulPanel = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+    await codefulPanel.create();
+
+    const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+    await messageHandler({ command: ExtensionCommand.initialize });
+
+    const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
+    const workflowProperties = initCall?.[0].data.workflowPropertiesList[0];
+
+    expect(workflowProperties.name).toBe('stateless-workflow');
+    expect(workflowProperties.kind).toBe('Stateless');
+    expect(workflowProperties.stateType).toBe('Stateless');
+  });
+
   it('posts per-workflow callback URL updates when the runtime base URL appears', async () => {
     vi.useFakeTimers();
     (ext as any).workflowRuntimePort = undefined;

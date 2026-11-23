@@ -209,6 +209,29 @@ export const detectStatefulCodefulWorkflow = (fileContent: string): string | und
 };
 
 /**
+ * Detects if a C# file contains a CreateStatelessWorkflow call and extracts the workflow name.
+ * @param fileContent - The content of the C# file
+ * @returns The workflow name if detected, undefined otherwise
+ */
+export const detectStatelessCodefulWorkflow = (fileContent: string): string | undefined => {
+  const pattern = /WorkflowFactory[\s\S]*?\.CreateStatelessWorkflow\s*\(\s*([^,)]+)/;
+  const match = fileContent.match(pattern);
+
+  if (match && match[1]) {
+    let workflowName = match[1].trim();
+    workflowName = workflowName.replace(/^["']|["']$/g, '');
+
+    if (workflowName.includes('<%=') || workflowName.includes('%>')) {
+      return undefined;
+    }
+
+    return workflowName;
+  }
+
+  return undefined;
+};
+
+/**
  * Detects if a C# file contains a CreateConversationalAgent call and extracts the workflow name.
  * @param fileContent - The content of the C# file
  * @returns The workflow name if detected, undefined otherwise
@@ -247,10 +270,17 @@ export const detectAgentCodefulWorkflow = (fileContent: string): string | undefi
  * @param fileContent - The content of the C# file
  * @returns An object with the workflow name and type if detected, undefined otherwise
  */
-export const detectCodefulWorkflow = (fileContent: string): { workflowName: string; workflowType: 'stateful' | 'agent' } | undefined => {
+export const detectCodefulWorkflow = (
+  fileContent: string
+): { workflowName: string; workflowType: 'stateful' | 'stateless' | 'agent' } | undefined => {
   const statefulWorkflowName = detectStatefulCodefulWorkflow(fileContent);
   if (statefulWorkflowName) {
     return { workflowName: statefulWorkflowName, workflowType: 'stateful' };
+  }
+
+  const statelessWorkflowName = detectStatelessCodefulWorkflow(fileContent);
+  if (statelessWorkflowName) {
+    return { workflowName: statelessWorkflowName, workflowType: 'stateless' };
   }
 
   const agentWorkflowName = detectAgentCodefulWorkflow(fileContent);

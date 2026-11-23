@@ -396,8 +396,8 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       [ProjectType.logicApp, 'net10.0', 'Stateful', 'net10.0'],
       [ProjectType.rulesEngine, 'net10.0', 'Stateful', undefined],
       [ProjectType.rulesEngine, undefined, 'Stateful', undefined],
-      [ProjectType.codeful, 'net10.0', 'Stateful', undefined],
-      [ProjectType.codeful, undefined, 'Stateful', undefined],
+      [ProjectType.codeful, 'net10.0', WorkflowType.statefulCodeful, undefined],
+      [ProjectType.codeful, undefined, WorkflowType.statefulCodeful, undefined],
     ])('scaffolds type=%s framework=%s workflow=%s with version=%s', async (logicAppType, targetFramework, workflowType, version) => {
       vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
         get: vi.fn(),
