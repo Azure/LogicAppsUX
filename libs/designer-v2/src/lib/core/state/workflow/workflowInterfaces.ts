@@ -18,6 +18,7 @@ export interface NodeMetadata {
   handoffs?: Record<string, string>;
   toolRunIndex?: number;
   toolRunData?: LogicAppsV2.WorkflowRunAction;
+  agentRepetitionIdentity?: string;
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;

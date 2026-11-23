@@ -1,4 +1,5 @@
 import { joinNodeSubtitle, NodeHoverCard, NodeInfoCard, type NodeCategory } from '@microsoft/designer-ui-v2';
+import { Button } from '@fluentui/react-components';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent, ReactNode } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -20,9 +21,23 @@ export interface SharedNodeHoverCardProps {
   configured?: boolean;
   description?: string;
   disabled?: boolean;
+  testDataEnabled?: boolean;
+  onEditTestData?: () => void;
 }
 
 const stopPropagation = (event: MouseEvent) => event.stopPropagation();
+
+const getCanvasObstacles = (trigger: HTMLElement): DOMRectReadOnly[] => {
+  const canvas = trigger.closest('.react-flow');
+  const self = trigger.closest('.react-flow__node');
+  // Flow frames can contain entire branches; avoid their cards and controls, not the decorative frame bounds.
+  return Array.from(
+    canvas?.querySelectorAll('[data-node-card][id^="msla-node-"], [data-edge-control], .react-flow__controls, .react-flow__minimap') ?? []
+  )
+    .filter((element) => !self?.contains(element) && element.checkVisibility?.() !== false)
+    .map((element) => element.getBoundingClientRect())
+    .filter(({ width, height }) => width > 0 && height > 0);
+};
 
 export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
   children,
@@ -34,6 +49,8 @@ export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
   configured,
   description,
   disabled,
+  testDataEnabled,
+  onEditTestData,
 }: SharedNodeHoverCardProps) {
   const intl = useIntl();
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -71,23 +88,43 @@ export const SharedNodeHoverCard = memo(function SharedNodeHoverCard({
           category={category}
           icon={icon}
           title={title}
+          wrapTitle
           subtitle={cardSubtitle}
           configured={configured}
           description={description}
           onDismiss={close}
           strings={strings}
+          testData={testDataEnabled ? {} : undefined}
+          footer={
+            onEditTestData ? (
+              <Button
+                appearance="subtle"
+                size="small"
+                onClick={() => {
+                  close();
+                  onEditTestData();
+                }}
+              >
+                {intl.formatMessage({
+                  defaultMessage: 'Edit test data',
+                  id: 'Ak8mfG',
+                  description: 'Open the selected action’s Testing tab',
+                })}
+              </Button>
+            ) : undefined
+          }
         />
       </div>
     ),
-    [category, icon, title, cardSubtitle, configured, description, strings]
+    [category, icon, title, cardSubtitle, configured, description, strings, testDataEnabled, onEditTestData, intl]
   );
   return (
     <NodeHoverCard
       className={className}
       card={renderCard}
       disabled={disabled}
-      // Side placement keeps the card off the upstream node and its incoming edge; NodeHoverCard flips when blocked.
       placement="side"
+      getObstacles={getCanvasObstacles}
       externalFocusTarget={canvasFocusTarget}
       triggerRef={triggerRef}
     >

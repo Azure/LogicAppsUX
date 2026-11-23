@@ -77,6 +77,66 @@ describe('family admission and matching geometry', () => {
     expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 56 });
   });
 
+  it('reserves the Foreach pager on the Shared monitoring header only', () => {
+    const header = { id: 'loop-#scope', type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE };
+    const context = {
+      isMonitoringView: true,
+      operations: { loop: { type: 'Foreach' } },
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 4 } } },
+    };
+    const present = (node: WorkflowNode, options = context, shared = true) =>
+      getNodePresentation(node.type, shared, getWorkflowNodePresentationContext(node, options));
+    expect(present(header)).toMatchObject({ hasLoopPager: true, size: { width: 160, height: 76 } });
+    expect(present(header, { ...context, isMonitoringView: false })).toMatchObject({ size: { width: 160, height: 52 } });
+    expect(present({ ...header, id: 'loop-#footer' })).not.toHaveProperty('hasLoopPager');
+    expect(present(header, context, false)).not.toHaveProperty('hasLoopPager');
+    for (const [status, repetitionCount] of [
+      ['InProgress', 4],
+      ['Succeeded', 0],
+    ] as const) {
+      const options = { ...context, nodesMetadata: { loop: { graphId: 'root', runData: { status, repetitionCount } } } };
+      expect(present(header, options)).not.toHaveProperty('hasLoopPager');
+    }
+  });
+
+  it.each([true, false])('sizes a collapsed Foreach like an unpaged loop (shared: %s)', async (shared) => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      children: [
+        {
+          id: 'loop',
+          type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+          children: [{ id: 'loop-#scope', type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE }],
+        },
+      ],
+    };
+    const context = {
+      operations: { loop: { type: 'Foreach' } },
+      isMonitoringView: true,
+      collapsedGraphIds: { loop: true },
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 4 } } },
+    };
+    const measure = async (input: typeof context) => {
+      const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, shared, input);
+      const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted, true, shared), shared);
+      const header = nodes.find(({ id }) => id === 'loop-#scope')!;
+      const frame = nodes.find(({ id }) => id === 'loop')!;
+      return { headerHeight: header.height ?? header.initialHeight, frame: frame.data.bodyFrame, frameHeight: frame.data.size };
+    };
+    const unpaged = await measure({
+      ...context,
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 0 } } },
+    });
+    const collapsed = await measure(context);
+    expect(collapsed).toEqual(unpaged);
+    const reexpanded = await measure({ ...context, collapsedGraphIds: { loop: false } });
+    expect(reexpanded.headerHeight! - collapsed.headerHeight!).toBe(shared ? 24 : 0);
+    if (shared) {
+      expect((reexpanded.frame as { y: number }).y - (collapsed.frame as { y: number }).y).toBe(24);
+    }
+  });
+
   it('reserves the MCP pager only for a multi-iteration monitoring run, before packing the next tool', async () => {
     const { graph, actionData: operations, nodesMetadata } = expectedAgentMcpWorkflowDefinitionOutput;
     const mcpId = 'McpFileServer';

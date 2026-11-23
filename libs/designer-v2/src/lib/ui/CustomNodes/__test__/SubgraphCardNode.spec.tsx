@@ -84,10 +84,12 @@ const mockUseNewAdditiveSubgraphId = vi.fn().mockReturnValue('newCase-1');
 const mockUseNodeDisplayName = vi.fn().mockReturnValue('Test Subgraph');
 const mockUseNodeMetadata = vi.fn().mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
 const mockUseParentNodeId = vi.fn().mockReturnValue(undefined);
+const mockUseReplacedIds = vi.fn().mockReturnValue({});
 const mockUseRunData = vi.fn().mockReturnValue(undefined);
 const mockUseRunIndex = vi.fn().mockReturnValue(0);
 const mockUseRunInstance = vi.fn().mockReturnValue(undefined);
 const mockUseWorkflowNode = vi.fn().mockReturnValue({ id: 'graph1', children: [] });
+const mockUseNodesMetadata = vi.fn().mockReturnValue({});
 const mockUseFlowErrorsForNode = vi.fn().mockReturnValue([]);
 const mockUseBranchValidationCount = vi.fn().mockReturnValue(0);
 
@@ -99,16 +101,19 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useNodeDisplayName: (...args: any[]) => mockUseNodeDisplayName(...args),
   useNodeMetadata: (...args: any[]) => mockUseNodeMetadata(...args),
   useParentNodeId: (...args: any[]) => mockUseParentNodeId(...args),
+  useReplacedIds: (...args: any[]) => mockUseReplacedIds(...args),
   useRunData: (...args: any[]) => mockUseRunData(...args),
   useRunIndex: (...args: any[]) => mockUseRunIndex(...args),
   useRunInstance: (...args: any[]) => mockUseRunInstance(...args),
   useWorkflowNode: (...args: any[]) => mockUseWorkflowNode(...args),
+  useNodesMetadata: (...args: any[]) => mockUseNodesMetadata(...args),
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
   useBranchValidationCount: (...args: any[]) => mockUseBranchValidationCount(...args),
 }));
 
 vi.mock('../../../core/state/workflow/workflowSlice', () => ({
   addSwitchCase: vi.fn((payload) => ({ type: 'workflow/addSwitchCase', payload })),
+  replaceId: vi.fn((payload) => ({ type: 'workflow/replaceId', payload })),
   setFocusNode: vi.fn((payload) => ({ type: 'workflow/setFocusNode', payload })),
   toggleCollapsedGraphId: vi.fn((payload) => ({ type: 'workflow/toggleCollapsedGraphId', payload })),
 }));
@@ -118,7 +123,24 @@ vi.mock('../../../core/actions/bjsworkflow/monitoring', () => ({
 }));
 
 vi.mock('../../common/LoopsPager/helper', () => ({
-  getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
+  getAgentRepetitionIdentity: vi.fn((...args: any[]) => {
+    const first = args[0];
+    const params =
+      typeof first === 'object' && first !== null
+        ? first
+        : {
+            runId: args[0],
+            ownerNodeId: args[1],
+            repetitionName: args[2],
+            repetitionIndex: args[3],
+            parentStatus: args[4],
+          };
+    const { runId, ownerNodeId, repetitionName, repetitionIndex, parentStatus } = params;
+    return runId && ownerNodeId && repetitionName !== undefined && repetitionIndex !== undefined
+      ? [runId, ownerNodeId, repetitionName, String(repetitionIndex), parentStatus ?? ''].join('|')
+      : undefined;
+  }),
+  getScopeRepetitionName: vi.fn((index) => String(index).padStart(6, '0')),
 }));
 
 vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
@@ -201,6 +223,8 @@ describe('SubgraphCardNode (v2)', () => {
     mockUseRunIndex.mockReturnValue(0);
     mockUseRunInstance.mockReturnValue(undefined);
     mockUseWorkflowNode.mockReturnValue({ id: 'graph1', children: [] });
+    mockUseReplacedIds.mockReturnValue({});
+    mockUseNodesMetadata.mockReturnValue({});
     mockUseFlowErrorsForNode.mockReturnValue([]);
     mockUseBranchValidationCount.mockReturnValue(0);
     mockUseIconUri.mockReturnValue('test-icon-uri');
@@ -236,6 +260,14 @@ describe('SubgraphCardNode (v2)', () => {
     expect(tool).toHaveAttribute('id', 'msla-node-testNode');
     fireEvent.click(tool);
     expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
+  });
+
+  it('opts shared condition false branches into the neutral identity without changing legacy defaults', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE, actionCount: 0 });
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    expect(container.querySelector('[data-branch="false"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-branch="false"] [data-icon-name="DismissRegular"]')).toBeNull();
   });
 
   it('passes resolved MCP server art to the shared tool row untinted', () => {
@@ -332,6 +364,85 @@ describe('SubgraphCardNode (v2)', () => {
     const { container } = render(<SubgraphCardNode {...defaultProps} />);
     expect(container.querySelector('.no-actions-text')).toBeInTheDocument();
     expect(container.querySelector('[data-node-count]')).toBeNull();
+  });
+
+  it('renames a shared switch-case key through the edit glyph without touching case values', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
+    mockUseNodesMetadata.mockReturnValue({ ExistingCase: { graphId: 'graph1' } });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'branch' } }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Rename case' }));
+    const input = screen.getByRole('textbox', { name: 'Case name' });
+    fireEvent.change(input, { target: { value: 'Renamed case key' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'workflow/replaceId',
+      payload: { originalId: 'testNode', newId: 'Renamed case key' },
+    });
+  });
+
+  it('shows validation feedback for invalid switch-case rename attempts and keeps the dialog open', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'branch' } }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Rename case' }));
+    const input = screen.getByRole('textbox', { name: 'Case name' });
+    fireEvent.change(input, { target: { value: '' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(mockDispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'workflow/replaceId',
+      })
+    );
+  });
+
+  it('closes the switch-case rename dialog when escape is pressed', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'branch' } }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Rename case' }));
+    const input = screen.getByRole('textbox', { name: 'Case name' });
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('opens the host lane context menu from the switch-case more button', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'branch' } }} />);
+    const more = screen.getByRole('button', { name: 'More case actions' });
+    vi.spyOn(more, 'getBoundingClientRect').mockReturnValue({
+      left: 100,
+      top: 40,
+      right: 132,
+      bottom: 64,
+      width: 32,
+      height: 24,
+      x: 100,
+      y: 40,
+      toJSON: () => ({}),
+    } as DOMRect);
+    fireEvent.click(more);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'designerView/setNodeContextMenuData',
+        payload: {
+          nodeId: 'testNode',
+          entryPoint: 'shared-lane-more',
+          location: { x: 116, y: 64 },
+        },
+      })
+    );
+  });
+
+  it('does not render shared lane actions when shared mode is disabled', () => {
+    mockUseSharedNodeUi.mockReturnValue(false);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { family: 'branch' } }} />);
+    expect(screen.queryByRole('button', { name: 'Rename case' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'More case actions' })).not.toBeInTheDocument();
   });
 
   it('should show collapsed text when graph is collapsed', () => {
@@ -494,6 +605,49 @@ describe('SubgraphCardNode (v2)', () => {
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
     expect(screen.queryByTestId('loops-pager-testNode')).toBeNull();
+  });
+
+  it('hides the shared tool pager while metadata belongs to a previous selected iteration', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseParentNodeId.mockImplementation((id: string) => {
+      if (id === 'testNode') {
+        return 'parentAgent';
+      }
+      if (id === 'parentAgent') {
+        return 'agent-parent';
+      }
+      return undefined;
+    });
+    mockUseRunData.mockImplementation((id: string) => {
+      if (id === 'agent-parent') {
+        return { status: 'Succeeded' };
+      }
+      return undefined;
+    });
+    mockUseActionMetadata.mockImplementation((id: string) =>
+      id === 'parentAgent' ? { type: 'Agent', runAfter: {} } : { type: 'Scope', runAfter: {} }
+    );
+    const staleMetadata = {
+      graphId: 'parentAgent',
+      subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
+      actionCount: 1,
+      runData: { repetitionCount: 3 },
+      agentRepetitionIdentity: 'run-1|parentAgent|000001|1|Succeeded',
+    };
+    mockUseNodeMetadata.mockReturnValue(staleMetadata);
+
+    const { rerender } = render(<SubgraphCardNode {...defaultProps} />);
+    expect(screen.queryByTestId('shared-loops-pager-testNode')).toBeNull();
+
+    mockUseNodeMetadata.mockReturnValue({
+      ...staleMetadata,
+      agentRepetitionIdentity: 'run-1|parentAgent|000002|2|Succeeded',
+    });
+    rerender(<SubgraphCardNode {...defaultProps} data={{}} />);
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
   });
 
   it('should not render SubgraphCard when no subgraphType in metadata', () => {

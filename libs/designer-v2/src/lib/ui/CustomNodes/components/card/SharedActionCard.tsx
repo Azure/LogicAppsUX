@@ -51,6 +51,7 @@ export interface SharedActionCardProps extends ActionCardProps {
   operationKind?: string;
   metadataUnavailable?: boolean;
   description?: string;
+  onEditTestData?: () => void;
   isMonitoringView?: boolean;
   toolKind?: NodeToolKind;
   handleAxis?: 'vertical' | 'horizontal';
@@ -70,6 +71,7 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
     operationKind,
     metadataUnavailable,
     description,
+    onEditTestData,
     isMonitoringView,
     toolKind,
     handleAxis = 'vertical',
@@ -211,7 +213,12 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       inactive={!active}
       {...(toolKind
         ? { kind: toolKind, size: 'small' as const }
-        : { handles: false, density: 'compact' as const, titleLines: titleLines ?? getCompactTitleLines(title ?? '') })}
+        : {
+            handles: false,
+            density: 'compact' as const,
+            titleLines: titleLines ?? getCompactTitleLines(title ?? ''),
+            prioritizeTitle: true,
+          })}
       handleAxis={handleAxis}
       role="button"
       tabIndex={nodeIndex}
@@ -273,6 +280,8 @@ export const SharedActionCard = forwardRef<HTMLDivElement, SharedActionCardProps
       subtitle={detail}
       configured={!status && errors.length === 0}
       description={description}
+      testDataEnabled={staticResultsEnabled}
+      onEditTestData={onEditTestData}
       disabled={isSelected || isDragging || isMonitoringView}
     >
       {card}

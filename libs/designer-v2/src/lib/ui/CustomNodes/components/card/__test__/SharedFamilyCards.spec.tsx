@@ -7,6 +7,7 @@ import { compactNodeMetrics, nodeMetrics } from '@microsoft/designer-ui-v2/metri
 import { NodeInactiveContext } from '@microsoft/designer-ui-v2';
 import type { ActionCardProps } from '../actionCard';
 import { PreviewOperationCard } from '../../../../panel/multiSelectPanel/SharedExtractionPreviewNode';
+import * as Intl from 'react-intl';
 const modelParameter = vi.hoisted(() => ({ current: undefined as { value: { value: string }[] } | undefined }));
 vi.mock('../../../../../core/state/operation/operationSelector', () => ({
   useOperationParameterByName: () => modelParameter.current,
@@ -69,6 +70,47 @@ describe('shared family interaction adapters', () => {
     rerender(<SharedBranchCard id="branch" title="Case label" subgraphType={subgraphType} onClick={vi.fn()} />);
     expect(within(header).queryByAltText('Errors')).not.toBeInTheDocument();
   });
+
+  it('uses the neutral false branch glyph only when explicitly opted in', () => {
+    const defaultView = render(
+      <SharedBranchCard id="legacy-false" title="False" subgraphType={SUBGRAPH_TYPES.CONDITIONAL_FALSE} onClick={vi.fn()} />
+    );
+    expect(defaultView.container.querySelector('[data-branch="false"] [data-icon-name="DismissRegular"]')).not.toBeNull();
+    defaultView.unmount();
+
+    const neutralView = render(
+      <SharedBranchCard
+        id="neutral-false"
+        title="False"
+        subgraphType={SUBGRAPH_TYPES.CONDITIONAL_FALSE}
+        falseBranchGlyph="neutral"
+        onClick={vi.fn()}
+      />
+    );
+    expect(neutralView.container.querySelector('[data-branch="false"] [data-icon-name="DismissRegular"]')).toBeNull();
+  });
+
+  it('localizes shared If branch captions and the spoken taken outcome from host strings', () => {
+    const intl = Intl.createIntl({
+      locale: 'fr',
+      defaultLocale: 'fr',
+      messages: {
+        Zwdunb: 'Vrai',
+        '/oWzBF': 'Faux',
+        '7smF3w': '{label}, branche prise',
+      },
+    });
+    const useIntlSpy = vi.spyOn(Intl, 'useIntl').mockReturnValue(intl);
+    try {
+      render(<SharedScopeCard {...props()} family="if" takenOutput={1} />);
+      expect(screen.getByText('Vrai', { exact: true })).toBeVisible();
+      expect(screen.getByText('Faux', { exact: true })).toBeVisible();
+      expect(screen.getByText('Faux, branche prise')).toBeInTheDocument();
+    } finally {
+      useIntlSpy.mockRestore();
+    }
+  });
+
   it.each(['if', 'switch', 'loop', 'agent', 'scope'] as const)('keeps %s host status quiet and in the card name', (family) => {
     const { container } = render(<SharedScopeCard {...props()} family={family} runData={{ status: 'Succeeded', duration: '1 s' }} />);
     expect(screen.getByTestId('card-Renamed operation')).toHaveAccessibleName(/Succeeded/);
@@ -342,6 +384,50 @@ describe('shared family interaction adapters', () => {
     expect(collapse).toHaveBeenCalledWith(false);
     expect(collapse).toHaveBeenCalledTimes(2);
     expect(open).not.toHaveBeenCalled();
+  });
+
+  it('renders switch-case rename and more actions without triggering the primary branch selection', () => {
+    const open = vi.fn();
+    const rename = vi.fn();
+    const more = vi.fn();
+    const collapse = vi.fn();
+    render(
+      <SharedBranchCard
+        id="switch-case"
+        title="Case 1"
+        subgraphType={SUBGRAPH_TYPES.SWITCH_CASE}
+        onClick={open}
+        onCollapse={collapse}
+        onRenameClick={rename}
+        onMoreClick={more}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Rename case' }));
+    expect(rename).toHaveBeenCalledTimes(1);
+    expect(open).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'More case actions' }));
+    expect(more).toHaveBeenCalledTimes(1);
+    expect(more.mock.calls[0][0]).toBeInstanceOf(HTMLElement);
+    expect(open).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse' }));
+    expect(collapse).toHaveBeenCalledWith(false);
+    expect(more).toHaveBeenCalledTimes(1);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('keeps default lanes protected from lane-header rename and overflow controls', () => {
+    render(
+      <SharedBranchCard
+        id="switch-default"
+        title="Default"
+        subgraphType={SUBGRAPH_TYPES.SWITCH_DEFAULT}
+        onClick={vi.fn()}
+        onRenameClick={vi.fn()}
+        onMoreClick={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole('button', { name: 'Rename case' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'More case actions' })).not.toBeInTheDocument();
   });
 
   it('keeps collapsed Agent tool counts without claiming ownership of absent cards and preserves real expand', () => {

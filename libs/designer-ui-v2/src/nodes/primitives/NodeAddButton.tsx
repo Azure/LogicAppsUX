@@ -13,15 +13,21 @@ const useStyles = makeStyles({
     paddingInline: 0,
     color: tokens.colorNeutralForeground4,
   },
+  active: {
+    color: tokens.colorBrandForeground1,
+    backgroundColor: tokens.colorBrandBackground2,
+    '@media (forced-colors: active)': { outline: `${tokens.strokeWidthThick} solid Highlight` },
+  },
 });
 
 export interface NodeAddButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'children'> {
   label?: string;
+  active?: boolean;
 }
 
 /** Canonical standalone ActionAdd button; the host supplies any routed terminal path. */
 export const NodeAddButton = forwardRef<HTMLButtonElement, NodeAddButtonProps>(function NodeAddButton(
-  { label = defaultNodeStrings.addAction, onClick, disabled, className, ...rest },
+  { label = defaultNodeStrings.addAction, onClick, disabled, active, className, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -31,7 +37,7 @@ export const NodeAddButton = forwardRef<HTMLButtonElement, NodeAddButtonProps>(f
       ref={ref}
       type="button"
       shape="circular"
-      className={mergeClasses(styles.button, className)}
+      className={mergeClasses(styles.button, active && styles.active, className)}
       appearance="subtle"
       icon={<AddCircle20Regular />}
       aria-label={label}

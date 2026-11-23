@@ -26,6 +26,7 @@ vi.mock('../../../core/state/panel/panelSelectors', () => ({
 }));
 
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
+  useIsGraphCollapsed: () => false,
   useActionMetadata: vi.fn(),
   useNodeMetadata: vi.fn(),
   useNodeDisplayName: () => 'Actual graph display name',

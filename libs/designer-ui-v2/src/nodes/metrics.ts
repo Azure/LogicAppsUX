@@ -44,7 +44,12 @@ export const compactNodeMetrics = {
   icon: 20,
   gap: 8,
   textWidth: 142,
-  titleFont: { size: 14, weight: 600, lineHeight: 20 },
+  titleFont: {
+    size: 14,
+    weight: 600,
+    lineHeight: 20,
+    family: "'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif",
+  },
 } as const;
 
 export type CompactTitleLines = 1 | 2;

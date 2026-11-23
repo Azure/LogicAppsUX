@@ -2,6 +2,7 @@ import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/stat
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import {
   useActionMetadata,
+  useIsGraphCollapsed,
   useIsLeafNode,
   useNodeMetadata,
   useNodeDisplayName,
@@ -24,7 +25,7 @@ import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { DefaultHandle } from './components/handles/DefaultHandle';
-import { AgentToolsDecoration, NodeFrame, nodeMetrics } from '@microsoft/designer-ui-v2';
+import { AgentToolsDecoration, LoopBodyJoin, NodeFrame, nodeMetrics, useLoopBodyHoverClass } from '@microsoft/designer-ui-v2';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import type { BranchGroupDecoration } from '../../core/graphlayout/helpers';
 import { makeStyles, tokens } from '@fluentui/react-components';
@@ -67,6 +68,8 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   const parentNodeId = useParentNodeId(graphContainerId);
   const runData = useRunData(isSubgraphContainer ? (parentNodeId ?? graphContainerId) : graphContainerId);
   const nodeSize = useNodeSize(id);
+  const collapsed = useIsGraphCollapsed(id);
+  const loopBodyHoverClass = useLoopBodyHoverClass('body');
   const nodeLeafIndex = useNodeLeafIndex(id);
   const presentation =
     (data?.presentation as NodePresentation | undefined) ?? getNodePresentation(WORKFLOW_NODE_TYPES.GRAPH_NODE, sharedOption);
@@ -75,6 +78,8 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   const kind = type === 'if' ? 'condition' : type === 'switch' ? 'switch' : type === 'foreach' || type === 'until' ? 'loop' : 'scope';
   const merge = shared && (type === 'if' || type === 'switch');
   const bodyFrame = data?.bodyFrame as { y: number; height: number } | undefined;
+  const loopJoin = data?.loopJoin as { x: number; y: number } | undefined;
+  const showLoopJoin = shared && !collapsed && loopJoin && bodyFrame;
   const toolsPanel = data?.toolsPanel as AgentToolsPanelBounds | undefined;
   const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const hasAgentDecoration = shared && type === 'agent' && !!toolsPanel && toolsPanel.width > 0 && toolsPanel.height > 0;
@@ -98,7 +103,13 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
   return (
     <>
       <div
-        className={css('msla-graph-container-wrapper', hasFooter && 'has-footer', isSubgraphContainer && 'is-subgraph')}
+        className={css(
+          'msla-graph-container-wrapper',
+          hasFooter && 'has-footer',
+          isSubgraphContainer && 'is-subgraph',
+          shared && !collapsed && bodyFrame && loopBodyHoverClass
+        )}
+        data-loop-group-body={shared && !collapsed && bodyFrame ? id : undefined}
         style={{
           width: nodeSize?.width ?? 0,
           height: nodeSize?.height ?? 0,
@@ -107,6 +118,7 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
       >
         {/* Structural targets use the graph boundary; contained positioning is only for a canonical handle dot. */}
         <DefaultHandle axis={handleAxis} type="target" />
+        {showLoopJoin && <LoopBodyJoin {...loopJoin} length={bodyFrame.y - loopJoin.y} />}
         {shared ? (
           merge ? (
             branchGroup && (
@@ -175,7 +187,14 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
           />
         ) : null}
         {merge ? (
-          <DefaultHandle axis={handleAxis} type="source" presentation="merge" label={label} inactive={inactive} />
+          <DefaultHandle
+            axis={handleAxis}
+            type="source"
+            presentation="merge"
+            label={label}
+            inactive={inactive}
+            mergeAddSource={!readOnly && !isMonitoringView ? id : undefined}
+          />
         ) : isSubgraphContainer ? (
           <DefaultHandle axis={handleAxis} type="source" />
         ) : (
@@ -194,6 +213,7 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
             isLeaf={isLeaf}
             tabIndex={nodeLeafIndex}
             axis={handleAxis}
+            {...(shared && merge ? { followsMerge: true } : {})}
             {...(data?.presentation ? { sharedPresentation: shared } : {})}
           />
         </div>

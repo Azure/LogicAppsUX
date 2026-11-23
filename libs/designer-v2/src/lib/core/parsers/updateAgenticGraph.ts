@@ -7,6 +7,7 @@ import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
 export interface UpdateAgenticGraphPayload {
   nodeId: string;
   scopeRepetitionRunData: Record<string, any>;
+  agentRepetitionIdentity?: string;
 }
 
 export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentGraph: WorkflowNode, state: WorkflowState) => {

@@ -21,10 +21,10 @@ exports with explicit visual/nonvisual classifications; new unclassified values
 fail until classified. It also checks exact visual metadata coverage and
 supported public imports, while excluding type-only exports from runtime counts.
 
-Start with **Start here / Introduction** and **API and boundaries**. All **37**
+Start with **Start here / Introduction** and **API and boundaries**. All **40**
 public visual exports (including `DesignerUiScope` and both condition icons)
 have individual typed metadata, native Overview docs, and supported examples.
-The API page documents all **31** nonvisual runtime exports and public types without
+The API page documents all **39** nonvisual runtime exports and public types without
 inventing UI for helpers or metrics. Add/collapse/selection/dismissal examples
 show visible local state; they are not workflow execution or a fake backend.
 
@@ -130,6 +130,8 @@ All added props are optional; omitted values retain the previous behavior.
 | `NodeRunAfterIndicator` | Required `statuses` uses `succeeded`, `timedOut`, `skipped`, `failed`; fixed dot order is preserved. `collapsedCount` defaults to none (dots); when supplied it renders `×N`. `strings` defaults to `defaultNodeRunAfterStrings`, including the accessible summary. |
 | `NodeLine` | `variant='solid'`, `length=85`, `orientation='horizontal'`, `state='default'`. `NodeLineState` is `default`, `taken`, `notTaken`, `highlighted`, `running`. Only canonical solid owns an arrow; running dashes become static under reduced motion. `getNodeLineStroke(variant, { state? } = {})` composes static state over `nodeLineStrokes`; it does not animate or infer evidence. |
 | `NodeBranchLabel` | Required literal `label`; `tone='neutral'` (also success/danger); `state` omitted leaves it undimmed (also taken/notTaken); `action` defaults to none; `strings.taken` defaults to `defaultBranchTakenString`. Taken text is announced, not color-only. Position and action behavior belong to the host. |
+| `NodeBranchShell` / `NodeBranchActions` | A lane header surface and optional compact buttons. The host supplies the tone, selection, disabled state, localized labels, and callbacks. Commands and confirmation belong to the host. |
+| `LoopBodyJoin` | An arrowless decoration at host-supplied `x` and `y` with the given vertical `length`. Use `useLoopBodyHoverClass` to paint the header and body when the host marks the group active. |
 | `NodeBranchOutputs` | `labels` defaults to English True/False; `slots` defaults to none; `activeIndex` omitted leaves all outputs undimmed; `takenLabel=defaultBranchTakenString`. These are host-provided branch captions, port slots and evidence. |
 | `ConditionNodeCard` | `mode='multiOutput'`; trunk is opt-in for Switch only and has one visual tick with semantic slots retained. `caseCount=4`, `takenOutput` omitted; `action`, `inputSlot`, `outputSlots` default to none; `inputVariant` defaults to the neutral input handle. If preserves success/danger exits. |
 | `NodeFrame` | `tone='neutral'`, `collapsed=false`, `subtitlePlacement='inline'`, `handles=false`, `handleAxis='horizontal'`, `showInputHandle=true`, `inputVariant='neutral'`, `headerAppearance='default'`, `motion='none'`. `actionCount`, `action`, `inputSlot`, `outputSlot`, `handleTop`, `handleLeft` default to none. Slots imply handles; hiding input does not remove output. Title omitted/empty means no header. Host-supplied border-relative offsets are compensated once for the thin border. `strings.frame` defaults to `defaultNodeFrameStrings`. |

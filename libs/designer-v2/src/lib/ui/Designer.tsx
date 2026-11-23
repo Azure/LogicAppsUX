@@ -66,8 +66,10 @@ export const Designer = (props: DesignerProps) => {
 
   const isVSCode = useIsVSCode();
   const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
   const extractionOpen = useSelector((state: RootState) => !!state.designerView.workflowExtractionDialogOpen);
   const isReadOnly = readOnly || extractionOpen;
+  const canEdit = !isReadOnly && !isMonitoringView;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
@@ -115,7 +117,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(onUndoClick());
     },
-    { enabled: !isReadOnly && canUndo }
+    { enabled: canEdit && canUndo }
   );
 
   useHotkeys(
@@ -124,7 +126,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(onRedoClick());
     },
-    { enabled: !isReadOnly && canRedo }
+    { enabled: canEdit && canRedo }
   );
 
   const selectedNodeId = useOperationPanelSelectedNodeId();
@@ -143,7 +145,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(setShowDeleteModalNodeId(selectedNodeId));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+D: duplicate the selected node(s) directly below themselves.
@@ -156,7 +158,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(duplicateOperations({ nodeIds: idsToDuplicate }));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+C: copy selected node(s) to clipboard.
@@ -184,7 +186,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(cutOperations({ nodeIds: [selectedNodeId] }));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+A: select all actions on the canvas.
@@ -198,8 +200,6 @@ export const Designer = (props: DesignerProps) => {
     },
     { enabled: !isReadOnly }
   );
-
-  const isMonitoringView = useMonitoringView();
 
   const DND_OPTIONS: any = {
     backends: [

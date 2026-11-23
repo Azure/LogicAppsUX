@@ -5,6 +5,7 @@ import { nodeHoverCardTiming, nodeMetrics } from '../metrics';
 import { NodeHoverCardActiveContext } from '../primitives/NodeText';
 import { useDesignerUiOutlet } from '../../theme/DesignerUiScope';
 import { useNodeHoverCardGroup } from './nodeHoverCardGroup';
+import { getClearHoverSide } from './nodeHoverPlacement';
 
 /**
  * Opt-out marker for interactive descendants (tool rows, add/expand buttons) embedded in a hover trigger.
@@ -62,6 +63,8 @@ export interface NodeHoverCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
    * with vertical flows do not cover the upstream node or its incoming edge.
    */
   placement?: 'above' | 'side';
+  /** The host identifies neighboring content to keep visible. Measured only for an open side popover. */
+  getObstacles?: (trigger: HTMLElement) => DOMRectReadOnly[];
 }
 export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(function NodeHoverCard(
   {
@@ -73,6 +76,7 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
     externalFocusTarget,
     triggerRef,
     placement = 'above',
+    getObstacles,
     className,
     ...rest
   },
@@ -87,6 +91,25 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
   const [open, setOpen] = useState(false);
   const [target, setTarget] = useState<HTMLDivElement | null>(null);
   const surface = useRef<HTMLDivElement>(null);
+  const [clearSide, setClearSide] = useState<ReturnType<typeof getClearHoverSide>>();
+  const avoidObstacles = useCallback(() => {
+    const doc = target?.ownerDocument;
+    if (!target || !surface.current || !doc?.defaultView || !getObstacles) {
+      return;
+    }
+    // Fluent calls this after measuring the real card, including wrapped headings and localized text.
+    const { clientWidth: width, clientHeight: height } = doc.documentElement;
+    setClearSide(
+      getClearHoverSide(
+        target.getBoundingClientRect(),
+        surface.current.getBoundingClientRect(),
+        { width, height },
+        getObstacles(target),
+        doc.defaultView.getComputedStyle(target).direction === 'rtl'
+      )
+    );
+  }, [getObstacles, target]);
+  const side = getObstacles ? clearSide : undefined;
   // Timers are created and cleared through the trigger's owner window so iframe-hosted designers stay isolated.
   const timer = useRef<{ owner: Window; id: number }>();
   // Direction of the pending timer: true = opening, false = closing, undefined = none. Repeated events in the same
@@ -167,6 +190,7 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
         return;
       }
       openRef.current = true;
+      setClearSide(undefined);
       setOpen(true);
     });
   }, [cancelLocalPending, clearTimer, closeNow, group, openDelay, owner, startTimer, target]);
@@ -398,10 +422,11 @@ export const NodeHoverCard = forwardRef<HTMLDivElement, NodeHoverCardProps>(func
           placement === 'side'
             ? {
                 target,
-                position: 'after',
-                align: 'top',
+                position: side ?? 'after',
+                align: side === 'above' || side === 'below' ? 'start' : 'top',
                 offset: nodeMetrics.hoverCard.offset,
                 fallbackPositions: ['before', 'below', 'above'],
+                onPositioningEnd: getObstacles ? avoidObstacles : undefined,
               }
             : { target, position: 'above', align: 'start', offset: nodeMetrics.hoverCard.offset }
         }

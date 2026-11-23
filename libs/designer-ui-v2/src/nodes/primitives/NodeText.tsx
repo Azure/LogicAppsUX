@@ -13,8 +13,9 @@ const useStyles = makeStyles({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     paddingInlineEnd: `var(${nodeCardVars.textEndReserve}, 0)`,
-    fontSize: tokens.fontSizeBase300,
-    fontWeight: tokens.fontWeightSemibold,
+    fontFamily: `var(${nodeCardVars.titleFamily}, inherit)`,
+    fontSize: `var(${nodeCardVars.titleSize}, ${tokens.fontSizeBase300})`,
+    fontWeight: `var(${nodeCardVars.titleWeight}, ${tokens.fontWeightSemibold})`,
     lineHeight: tokens.lineHeightBase300,
     color: tokens.colorNeutralForeground1,
   },
@@ -25,6 +26,11 @@ const useStyles = makeStyles({
     WebkitLineClamp: 2,
     whiteSpace: 'normal',
     overflowWrap: 'anywhere',
+  },
+  titleFirst: {
+    // Reuse the wrapped card's subtitle space without growing its accepted layout bounds.
+    WebkitLineClamp: 3,
+    lineHeight: `calc(${tokens.lineHeightBase300} - ${tokens.spacingVerticalXXS})`,
   },
   subtitle: {
     overflow: 'hidden',
@@ -87,6 +93,8 @@ export interface NodeTextProps extends HTMLAttributes<HTMLSpanElement> {
   subtitleKind?: 'default' | 'status';
   /** Maximum title lines; defaults to a single ellipsized line. */
   titleLines?: 1 | 2;
+  /** In a wrapped card, let the title use the decorative caption's row. Status and counts keep their row. */
+  prioritizeTitle?: boolean;
   /** Preformatted count (for example "3 actions") shown after the subtitle on collapsed container cards. */
   count?: string;
   countUnit?: NodeFrameCountUnit;
@@ -95,7 +103,7 @@ export interface NodeTextProps extends HTMLAttributes<HTMLSpanElement> {
 }
 export const NodeHoverCardActiveContext = createContext(false);
 export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function NodeText(
-  { title, subtitle, subtitleKind = 'default', titleLines = 1, count, countUnit, countId, className, ...rest },
+  { title, subtitle, subtitleKind = 'default', titleLines = 1, prioritizeTitle, count, countUnit, countId, className, ...rest },
   ref
 ) {
   const styles = useStyles();
@@ -103,15 +111,22 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
   const statusContext = useContext(NodeCardStatusContext);
   const statusSubtitle = subtitleKind === 'status' ? statusContext : undefined;
   const statusTitle = statusSubtitle ? [statusSubtitle.statusLabel, statusSubtitle.statusDetail].filter(Boolean).join(' ') : undefined;
+  const useCaptionRow = prioritizeTitle && titleLines === 2 && subtitleKind !== 'status' && !count;
   return (
     <span {...rest} ref={ref} className={mergeClasses(styles.root, className)}>
-      <span className={mergeClasses(styles.title, titleLines === 2 && styles.titleTwoLines)} title={hover ? undefined : title}>
+      <span
+        data-node-title
+        className={mergeClasses(styles.title, titleLines === 2 && styles.titleTwoLines, useCaptionRow && styles.titleFirst)}
+        title={hover ? undefined : title}
+      >
         {title}
       </span>
       {statusSubtitle ? (
         <span className={styles.statusRow}>
           <span className={styles.statusGroup} data-node-subtitle-kind="status" title={hover ? undefined : statusTitle}>
-            <span className={styles.statusIcon}>{getNodeStatusIcon(statusSubtitle.status, styles.statusIcon)}</span>
+            <span className={styles.statusIcon} data-node-status-icon>
+              {getNodeStatusIcon(statusSubtitle.status, styles.statusIcon)}
+            </span>
             <span className={styles.statusLabel}>{statusSubtitle.statusLabel}</span>
             {statusSubtitle.statusDetail ? <bdi className={styles.statusDuration}>{statusSubtitle.statusDetail}</bdi> : null}
           </span>
@@ -129,7 +144,7 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
       ) : count ? (
         <span className={styles.detailRow}>
           {subtitle ? (
-            <span className={styles.detailSubtitle} title={hover ? undefined : subtitle}>
+            <span className={styles.detailSubtitle} data-node-caption title={hover ? undefined : subtitle}>
               <span className={styles.detailSubtitleText}>{subtitle}</span>
               <span className={styles.countDot} aria-hidden="true">
                 ·
@@ -141,8 +156,8 @@ export const NodeText = forwardRef<HTMLSpanElement, NodeTextProps>(function Node
             {count}
           </span>
         </span>
-      ) : subtitle ? (
-        <span className={styles.subtitle} title={hover ? undefined : subtitle}>
+      ) : subtitle && !useCaptionRow ? (
+        <span className={styles.subtitle} data-node-caption title={hover ? undefined : subtitle}>
           {subtitle}
         </span>
       ) : null}

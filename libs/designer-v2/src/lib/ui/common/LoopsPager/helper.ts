@@ -3,39 +3,10 @@ import type { NodeOperation } from '../../../core/state/operation/operationMetad
 import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
 import type { RootState } from '../../../core/store';
 import { getAllParentsForNode } from '../../../core/utils/graph';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
-/**
- * Gets number of loops for loop nodes.
- * @param {LogicAppsV2.WorkflowRunAction} action - Node run metadata.
- * @returns {number | undefined} Number of loops if metadata has the property otherwise undefined.
- */
-export const getLoopsCount = (action: LogicAppsV2.WorkflowRunAction): number | undefined => {
-  const { inputsLink, iterationCount, repetitionCount } = action || {};
-
-  // Until actions have an iterationCount property when using the 2016-10-01 or later API.
-  if (typeof iterationCount === 'number') {
-    return iterationCount;
-  }
-
-  // Foreach actions have a foreachItemsCount property in its inputsLink's metadata object when using the 2016-06-01 or later API.
-  if (inputsLink) {
-    const { metadata } = inputsLink;
-    if (metadata) {
-      const { foreachItemsCount } = metadata;
-      if (typeof foreachItemsCount === 'number') {
-        return foreachItemsCount;
-      }
-    }
-  }
-
-  if (typeof repetitionCount === 'number') {
-    return repetitionCount;
-  }
-
-  return undefined;
-};
+export { getLoopsCount } from '../../../core/utils/loopRepetitions';
 
 /**
  * Gets repetition name for API call.
@@ -71,6 +42,32 @@ export const getRepetitionName = (
  */
 export const getScopeRepetitionName = (index: number | undefined): string => {
   return String(index).padStart(6, '0');
+};
+
+interface AgentRepetitionIdentityParams {
+  runId: string | undefined;
+  ownerNodeId: string | undefined;
+  repetitionName: string | undefined;
+  repetitionIndex: number | undefined;
+  parentStatus: string | undefined;
+}
+
+/**
+ * Builds the authoritative identity used to scope agent monitoring data to a specific selected iteration.
+ * If the run identity is unavailable (legacy/synthetic paths), we intentionally skip scoping and keep
+ * existing behavior unchanged.
+ */
+export const getAgentRepetitionIdentity = ({
+  runId,
+  ownerNodeId,
+  repetitionName,
+  repetitionIndex,
+  parentStatus,
+}: AgentRepetitionIdentityParams): string | undefined => {
+  if (!runId || !ownerNodeId || repetitionName === undefined || repetitionIndex === undefined) {
+    return undefined;
+  }
+  return [runId, ownerNodeId, repetitionName, String(repetitionIndex), parentStatus ?? ''].join('|');
 };
 
 /**

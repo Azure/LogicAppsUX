@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
@@ -35,6 +35,7 @@ import { AddFilled } from '@fluentui/react-icons';
 import { terminalConnectionLength, useConnectionStyles } from './connections.styles';
 import { mergeClasses, Tooltip } from '@fluentui/react-components';
 import type { PositioningShorthand } from '@fluentui/react-components';
+import { MergeHoverContext } from './mergeHover';
 
 // Side placement keeps the label off the vertical flow axis so it does not cover the upstream card.
 const sideTooltipPositioning: PositioningShorthand = { position: 'after', fallbackPositions: ['before', 'below', 'above'] };
@@ -48,10 +49,22 @@ export interface DropZoneProps {
   isRevealed?: boolean;
   sharedPresentation?: boolean;
   axis?: 'vertical' | 'horizontal';
+  /** The canonical source-side Add; sibling controls on a fan-out must not also reveal. */
+  followsMerge?: boolean;
 }
 
 export const DropZone: React.FC<DropZoneProps> = memo(
-  ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0, isRevealed, sharedPresentation, axis = 'vertical' }) => {
+  ({
+    graphId,
+    parentId,
+    childId,
+    isLeaf = false,
+    tabIndex = 0,
+    isRevealed,
+    sharedPresentation,
+    axis = 'vertical',
+    followsMerge = false,
+  }) => {
     const intl = useIntl();
     const dispatch = useDispatch<AppDispatch>();
     const isA2AWorkflow = useIsA2AWorkflow();
@@ -70,7 +83,9 @@ export const DropZone: React.FC<DropZoneProps> = memo(
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const terminal = isRevealed === undefined;
-    const revealed = terminal || isRevealed || hovered || focused;
+    const hoveredMerge = useContext(MergeHoverContext);
+    const activeFromMerge = shared && !locked && followsMerge && hoveredMerge !== undefined && hoveredMerge === parentId;
+    const revealed = terminal || (!locked && (isRevealed || hovered || focused || activeFromMerge));
     const terminalControlSize = Math.max(nodeMetrics.actionAdd.buttonWidth, nodeMetrics.actionAdd.buttonHeight);
     const controlSize = terminal ? terminalControlSize : nodeMetrics.edgeControl.hitTargetSize;
 
@@ -212,6 +227,9 @@ export const DropZone: React.FC<DropZoneProps> = memo(
             }
           );
 
+    const buttonId = normalizeAutomationId(
+      `msla-edge-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${replaceWhiteSpaceWithUnderscore(childName) || 'undefined'}`
+    );
     const openMenu = useCallback(() => {
       if (locked) {
         return;
@@ -223,13 +241,14 @@ export const DropZone: React.FC<DropZoneProps> = memo(
           parentId,
           childId,
           isLeaf,
+          ...(shared && { focusReturnElementId: buttonId }),
           location: {
             x: (rect?.left ?? 0) + (rect?.width ?? 0),
             y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
           },
         })
       );
-    }, [dispatch, graphId, parentId, childId, isLeaf, locked]);
+    }, [dispatch, graphId, parentId, childId, isLeaf, locked, shared, buttonId]);
     const actionButtonClick = useCallback(
       (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -237,10 +256,6 @@ export const DropZone: React.FC<DropZoneProps> = memo(
         openMenu();
       },
       [openMenu]
-    );
-
-    const buttonId = normalizeAutomationId(
-      `msla-edge-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${replaceWhiteSpaceWithUnderscore(childName) || 'undefined'}`
     );
 
     const automationId = useCallback(
@@ -254,6 +269,10 @@ export const DropZone: React.FC<DropZoneProps> = memo(
     );
 
     const buttonRef = useRef<HTMLDivElement>(null);
+
+    if (shared && monitoring && terminal) {
+      return null;
+    }
 
     return (
       <div ref={(node) => (hotkeyRef.current = node)}>
@@ -273,6 +292,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
               className={styles.control}
               data-edge-control={terminal ? 'terminal' : 'insertion'}
               data-revealed={revealed}
+              data-active-from-merge={activeFromMerge || undefined}
               style={{ width: controlSize, height: controlSize }}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
@@ -300,6 +320,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(
                       onClick={actionButtonClick}
                       onContextMenu={actionButtonClick}
                       disabled={locked}
+                      active={activeFromMerge}
                       onMouseDown={(event) => event.stopPropagation()}
                       onKeyDown={(event) => {
                         if (event.key === 'Enter' || event.key === ' ') {

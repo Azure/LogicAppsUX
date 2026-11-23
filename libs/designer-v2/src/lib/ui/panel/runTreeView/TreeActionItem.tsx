@@ -19,12 +19,15 @@ import {
   useNodeMetadata,
   useParentRunIndexes,
   useRunInstance,
+  useParentNodeId,
+  useToolRunIndex,
 } from '../../../core/state/workflow/workflowSelectors';
 import {
   collapseGraphsToShowNode,
   clearAllRepetitionRunData,
   updateAgenticMetadata,
   setRunIndex,
+  setToolRunIndex,
   updateAgenticGraph,
 } from '../../../core/state/workflow/workflowSlice';
 import { fetchBuiltInToolRunData } from '../../../core/actions/bjsworkflow/monitoring';
@@ -36,6 +39,9 @@ import StatusIndicator from './StatusIndicator';
 import { ChatFilled, WrenchFilled, CodeFilled } from '@fluentui/react-icons';
 import HandoffIcon from '../../../common/images/handoff_icon.svg';
 import Markdown from 'react-markdown';
+import { useSharedNodeUi } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { getAgentRepetitionIdentity, getScopeRepetitionName } from '../../common/LoopsPager/helper';
 
 export interface TreeActionItemProps {
   id: string;
@@ -55,16 +61,35 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
 
   const selectedRun = useRunInstance() as LogicAppsV2.RunInstanceDefinition | undefined;
   const rawRunData = useRunData(id);
+  const shared = useSharedNodeUi();
+  const isA2AWorkflow = useIsA2AWorkflow();
+  const useScopedAgentData = shared && !isA2AWorkflow;
 
   const ref = useRef(null);
 
   const parentRunIndex = useParentRunIndex(id);
   const itemRunIndex = useMemo(() => data.repIndex ?? 0, [data.repIndex]);
-  const selectedRunIndexForItem = useRunIndex(id);
-
   const subgraphType = useNodeMetadata(id)?.subgraphType;
+  const useToolPage = useScopedAgentData && subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+  const runPage = useRunIndex(id);
+  const toolPage = useToolRunIndex(id);
+  const selectedRunIndexForItem = useToolPage ? toolPage : runPage;
 
   const isAgentRepetition = useMemo(() => data?.repetition?.type === 'workflows/runs/actions/agentRepetitions', [data?.repetition?.type]);
+  const agentOwnerId = isAgentRepetition ? id : data?.repetition?.properties?.repetitionIndexes?.[0]?.scopeName;
+  const agentParentId = useParentNodeId(agentOwnerId);
+  const agentParentStatus = useRunData(agentParentId ?? '')?.status;
+  const getSelectionIdentity = useCallback(
+    (index: number | undefined) =>
+      getAgentRepetitionIdentity({
+        runId: useScopedAgentData ? selectedRun?.id : undefined,
+        ownerNodeId: agentOwnerId,
+        repetitionName: getScopeRepetitionName(index),
+        repetitionIndex: index,
+        parentStatus: agentParentStatus,
+      }),
+    [agentOwnerId, agentParentStatus, selectedRun?.id, useScopedAgentData]
+  );
 
   const selectedNodeId = useOperationPanelSelectedNodeId();
   const selectedParentRunIndexes = useParentRunIndexes(selectedNodeId);
@@ -74,7 +99,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
       return false;
     }
     if (itemRunIndex !== selectedRunIndexForItem) {
-      if (subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
+      if (subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || useToolPage) {
         return false;
       }
       if (isAgentRepetition) {
@@ -97,6 +122,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
     selectedRunIndexForItem,
     subgraphType,
     isAgentRepetition,
+    useToolPage,
   ]);
 
   useEffect(() => {
@@ -145,6 +171,7 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
           dispatch(clearAllRepetitionRunData());
           const updatePayload = {
             nodeId: id,
+            agentRepetitionIdentity: getSelectionIdentity(itemRunIndex),
             scopeRepetitionRunData: {
               ...data?.repetition?.properties,
               agentRepetitionName: _repetitionName,
@@ -167,10 +194,12 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
         // Only update parent if the parent repetition index has changed
         const repetitionIndex = data?.repetition?.properties?.repetitionIndexes?.[0];
         const parentRepetition = data?.parentRepetition;
-        if (parentRunIndex !== Number(parentRepetition?.name)) {
+        const parentChanged = parentRunIndex !== Number(parentRepetition?.name);
+        if (parentChanged) {
           dispatch(clearAllRepetitionRunData());
           const updatePayload = {
             nodeId: repetitionIndex?.scopeName ?? '',
+            agentRepetitionIdentity: getSelectionIdentity(repetitionIndex?.itemIndex),
             scopeRepetitionRunData: {
               ...parentRepetition?.properties,
               agentRepetitionName: String(repetitionIndex?.itemIndex).padStart(6, '0'),
@@ -182,9 +211,9 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
 
         if (data?.repetition?.type === 'workflows/runs/actions/agentRepetitions/tools') {
           // Only update tool if the tool repetition index has changed
-          if (itemRunIndex !== selectedRunIndexForItem) {
+          if (itemRunIndex !== selectedRunIndexForItem || (useScopedAgentData && parentChanged)) {
             dispatch(
-              setRunIndex({
+              (useToolPage ? setToolRunIndex : setRunIndex)({
                 nodeId: id,
                 page: itemRunIndex ?? 0,
               })
@@ -217,7 +246,19 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
         dispatch(setRunIndex({ nodeId: element.scopeName, page: element.itemIndex }));
       });
     },
-    [itemRunIndex, parentRunIndex, selected, dispatch, data, selectedRunIndexForItem, isAgentRepetition, selectedRun]
+    [
+      itemRunIndex,
+      parentRunIndex,
+      selected,
+      dispatch,
+      data,
+      selectedRunIndexForItem,
+      isAgentRepetition,
+      selectedRun,
+      getSelectionIdentity,
+      useScopedAgentData,
+      useToolPage,
+    ]
   );
 
   const shortTime = useMemo(() => {

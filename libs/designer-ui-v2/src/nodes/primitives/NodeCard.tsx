@@ -16,7 +16,12 @@ const footerBg = nodeCardVars.footerBackground;
 const useStyles = makeStyles({
   root: { position: 'relative', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', fontFamily: 'inherit' },
   compact: { width: `${nodeMetrics.cards.condition.width}px` },
-  standardCompact: { width: `${compactNodeMetrics.card.width}px` },
+  standardCompact: {
+    width: `${compactNodeMetrics.card.width}px`,
+    [nodeCardVars.titleFamily]: compactNodeMetrics.titleFont.family,
+    [nodeCardVars.titleSize]: `${compactNodeMetrics.titleFont.size}px`,
+    [nodeCardVars.titleWeight]: `${compactNodeMetrics.titleFont.weight}`,
+  },
   standard: { width: `${nodeMetrics.cards.action.width}px` },
   wide: { width: `${nodeMetrics.cards.agent.width}px` },
   fill: { width: '100%' },
@@ -85,7 +90,10 @@ const useStyles = makeStyles({
     outlineOffset: '-2px',
     '@media (forced-colors: active)': { ...shorthands.borderColor('Highlight'), outlineColor: 'Highlight' },
   },
-  focus: { ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' } },
+  focus: {
+    ':focus-visible': { outline: `${tokens.strokeWidthThick} solid ${tokens.colorStrokeFocus2}`, outlineOffset: '2px' },
+    '@media (forced-colors: active)': { ':focus-visible': { outlineColor: 'CanvasText' } },
+  },
   badge: { position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1 },
   // Vertical-axis cards centre their input handle on the top edge. The badge starts past that handle and grows away
   // from it, so no label length can cover the handle (right anchoring grew labels leftward across the centreline).
@@ -102,7 +110,7 @@ const useStyles = makeStyles({
     ...shorthands.border('2px', 'solid', 'transparent'),
     pointerEvents: 'none',
     zIndex: 1,
-    '@media (forced-colors: active)': { ...shorthands.borderColor('CanvasText') },
+    '@media (forced-colors: active)': { ...shorthands.borderColor('CanvasText'), ...shorthands.borderStyle('dashed') },
   },
   perimeterSuccess: { ...shorthands.borderColor(tokens.colorStatusSuccessBorder2) },
   perimeterDanger: { ...shorthands.borderColor(tokens.colorStatusDangerBorder2) },
@@ -245,6 +253,7 @@ export const NodeCard = forwardRef<HTMLDivElement, NodeCardProps>(function NodeC
         />
       ) : null}
       <div
+        data-node-surface
         style={bodyHeight === undefined ? undefined : { minHeight: bodyHeight }}
         className={mergeClasses(
           styles.card,

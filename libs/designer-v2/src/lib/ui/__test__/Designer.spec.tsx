@@ -248,6 +248,16 @@ describe('Designer', () => {
     expect(redoRegistration).toBeDefined();
   });
 
+  it.each(['ctrl+d', 'ctrl+x', 'ctrl+z', 'ctrl+y'])('disables %s in monitoring even when the host omits readOnly', (key) => {
+    mockIsMonitoringView = true;
+    mockIsReadOnly = false;
+    mockCanUndo = true;
+    mockCanRedo = true;
+    render(<Designer />);
+
+    expect(hotkeysRegistrations.find((registration) => registration.keys.includes(key))?.options.enabled).toBe(false);
+  });
+
   it('should enable undo hotkey when canUndo is true and not readOnly', () => {
     mockCanUndo = true;
     mockIsReadOnly = false;

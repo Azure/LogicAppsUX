@@ -63,6 +63,20 @@ describe('Standard compact preset', () => {
     expect(title.whiteSpace).toBe('normal');
   });
 
+  it('lets a long title replace a decorative caption without hiding a status or count', () => {
+    const title = 'Validate every line item before authorizing payment';
+    const shared = { title, titleLines: 2 as const, density: 'compact' as const, prioritizeTitle: true };
+    const { rerender } = render(<ActionNodeCard {...shared} subtitle="Internal operation" />);
+    expect(screen.queryByText('Internal operation')).not.toBeInTheDocument();
+
+    rerender(<ActionNodeCard {...shared} subtitle="Internal operation" countLabel={{ count: 2, unit: 'actions' }} />);
+    expect(screen.getByText('2 actions')).toBeVisible();
+
+    rerender(<ActionNodeCard {...shared} status="failed" statusDetail="1 s" statusDisplay="contained" subtitleKind="status" />);
+    expect(screen.getByText('Failed')).toBeVisible();
+    expect(screen.getByText('1 s')).toBeVisible();
+  });
+
   it('keeps compact trigger pills semicircular at either height', () => {
     const { unmount } = render(<TriggerNodeCard title="When a request is received" density="compact" />);
     expect(getComputedStyle(surfaceOf('trigger').surface).borderTopLeftRadius).toBe(`${compactNodeMetrics.card.height / 2}px`);

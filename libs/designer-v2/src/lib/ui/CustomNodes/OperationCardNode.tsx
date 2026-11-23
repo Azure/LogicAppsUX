@@ -6,6 +6,7 @@ import { StaticResultOption } from '../../core/actions/bjsworkflow/staticresults
 import {
   useMonitoringView,
   useNodeSelectAdditionalCallback,
+  usePanelTabHideKeys,
   useReadOnly,
   useSharedNodeUi,
   useSuppressDefaultNodeSelectFunctionality,
@@ -26,7 +27,14 @@ import {
   useIsNodeInMultiSelection,
   useIsNodePinnedToOperationPanel,
 } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../core/state/panel/panelSlice';
+import {
+  changePanelNode,
+  setPinnedPanelActiveTab,
+  setSelectedNodeId,
+  setSelectedPanelActiveTab,
+  toggleNodeSelection,
+} from '../../core/state/panel/panelSlice';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -49,7 +57,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
-import { useRepetitionName } from '../common/LoopsPager/helper';
+import { getAgentRepetitionIdentity, getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { DropZone } from '../connections/dropzone';
@@ -119,7 +127,10 @@ const NodeRunDataSync = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
-      if (selfActionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+      if (
+        !isNullOrUndefined(selfActionTrackingId) &&
+        selfActionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId
+      ) {
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
@@ -172,13 +183,44 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
   const graphId = metadata?.graphId ?? '';
   const selfRunData = useRunData(id);
+  const runInstance = useRunInstance();
   const isA2AWorkflow = useIsA2AWorkflow();
+  const ownerParentNodeId = useParentNodeId(graphId);
+  const ownerParentRunData = useRunData(ownerParentNodeId ?? '');
+  const ownerRunIndex = useRunIndex(graphId);
+  const ownerRepetitionName = useMemo(() => getScopeRepetitionName(ownerRunIndex), [ownerRunIndex]);
   const [isRepetitionFetching, setIsRepetitionFetching] = useState(false);
 
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isAgentTool = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
-
-  const shouldShowPager = hasMcpToolPager(metadata, parentActionMetadata?.type, isMonitoringView);
+  // Actions inside a conditional tool also name the Agent as parent, but have their own repetition data.
+  const isDirectAgentTool = isAgentTool && graphId === parentNodeId;
+  const isMcpClientSubgraph = metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT;
+  const agentRepetitionIdentity = useMemo(
+    () =>
+      getAgentRepetitionIdentity({
+        runId: runInstance?.id,
+        ownerNodeId: graphId,
+        repetitionName: ownerRepetitionName,
+        repetitionIndex: ownerRunIndex,
+        parentStatus: ownerParentRunData?.status,
+      }),
+    [runInstance?.id, graphId, ownerRepetitionName, ownerRunIndex, ownerParentRunData?.status]
+  );
+  const useScopedToolMonitoringData =
+    shared && isMonitoringView && !isA2AWorkflow && !!agentRepetitionIdentity && (isDirectAgentTool || isMcpClientSubgraph);
+  const hasCurrentToolMonitoringData = !useScopedToolMonitoringData || metadata?.agentRepetitionIdentity === agentRepetitionIdentity;
+  const shouldShowPager =
+    hasMcpToolPager(metadata, parentActionMetadata?.type, isMonitoringView) &&
+    (!useScopedToolMonitoringData || hasCurrentToolMonitoringData);
+  // The direct MCP renderer owns a separate tool run from the underlying operation run.
+  const scopedRunData = useScopedToolMonitoringData
+    ? hasCurrentToolMonitoringData
+      ? isMcpClientSubgraph
+        ? metadata?.toolRunData
+        : selfRunData
+      : undefined
+    : selfRunData;
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
@@ -369,17 +411,32 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
+  const hasTestDataSchema = useHasSchema(operationInfo.connectorId, operationInfo.operationId);
+  const hiddenPanelTabs = usePanelTabHideKeys();
+  const canEditTestData =
+    shared &&
+    !isTrigger &&
+    !readOnly &&
+    !isMonitoringView &&
+    !suppressDefaultNodeSelect &&
+    hasTestDataSchema &&
+    !hiddenPanelTabs.some((tab) => tab === Constants.PANEL_TAB_NAMES.TESTING);
+  const openTesting = useCallback(() => {
+    // Use the same selected/pinned panel state as the existing Testing tab.
+    dispatch(changePanelNode(id));
+    dispatch((isPinned ? setPinnedPanelActiveTab : setSelectedPanelActiveTab)(Constants.PANEL_TAB_NAMES.TESTING));
+  }, [dispatch, id, isPinned]);
   const nodeComment = useNodeDescription(id);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
 
   const nodeIndex = useNodeIndex(id);
-  const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(scopedRunData?.status) : true;
   const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
   const toolKind = data?.presentation
     ? data.presentation.toolKind
     : isMcpClient
       ? 'mcp'
-      : isAgentTool && graphId === parentNodeId
+      : isDirectAgentTool
         ? operationInfo.type.toLowerCase() === 'workflow'
           ? 'subWorkflow'
           : 'action'
@@ -411,14 +468,15 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
           isLoading={isLoading}
           isSelected={isSelected || isMultiSelected}
           isPinned={isPinned}
-          runData={selfRunData}
+          runData={scopedRunData}
           readOnly={readOnly}
           onClick={nodeClick}
           onContextMenu={onContextMenu}
-          onDeleteClick={deleteClick}
+          onDeleteClick={readOnly || isMonitoringView ? undefined : deleteClick}
           onCopyClick={copyClick}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
+          onEditTestData={canEditTestData ? openTesting : undefined}
           comment={nodeComment}
           isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}

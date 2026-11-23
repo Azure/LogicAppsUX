@@ -49,6 +49,8 @@ export interface CompactNodeCardProps {
   density?: NodeCardDensity;
   /** Compact only: hosts pass the same line count they used to size layout (see getCompactTitleLines). */
   titleLines?: 1 | 2;
+  /** Opt-in to use the decorative caption row for a wrapped title. */
+  prioritizeTitle?: boolean;
 }
 export const resolveCardDensity = ({ density = 'default', titleLines = 1 }: CompactNodeCardProps) =>
   density === 'compact'

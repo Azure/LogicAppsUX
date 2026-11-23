@@ -569,7 +569,14 @@ export const EdgeContextualMenu = () => {
     <>
       <div ref={ref} style={{ position: 'fixed', top: location?.y, left: location?.x }} />
       <Popover
-        onOpenChange={(_, data) => setOpen(data.open)}
+        onOpenChange={(event, data) => {
+          setOpen(data.open);
+          const returnId = menuData?.focusReturnElementId;
+          if (!data.open && returnId && 'key' in event && event.key === 'Escape') {
+            // Wait until Fluent releases the focus trap; the edge may have unmounted by then.
+            requestAnimationFrame(() => document.getElementById(returnId)?.focus({ preventScroll: true }));
+          }
+        }}
         trapFocus
         open={open}
         withArrow={true}

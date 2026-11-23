@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
-import { copyOperations, extendUpstreamNodeIdsForScopePaste } from '../copypaste';
+import { copyOperations, cutOperations, extendUpstreamNodeIdsForScopePaste } from '../copypaste';
 import * as serializer from '../serializer';
 import type { RootState } from '../../..';
 import { createWorkflowEdge, createWorkflowNode } from '../../../utils/graph';
@@ -237,6 +237,24 @@ describe('copyOperations clipboard payload', () => {
       .unwrap();
 
     expect(localStorage.getItem(LOCAL_STORAGE_KEYS.CLIPBOARD)).toBe('previous clipboard');
+  });
+
+  it('does not delete the copied selection if the host enters monitoring before Copy settles', async () => {
+    const authoring = createState();
+    const monitoring = { ...authoring, designerOptions: { ...authoring.designerOptions, readOnly: false, isMonitoringView: true } };
+    let currentState = authoring;
+    let finishCopy!: () => void;
+    const copyPending = new Promise<void>((resolve) => {
+      finishCopy = resolve;
+    });
+    const dispatch = vi.fn(() => copyPending);
+    const cutPending = cutOperations({ nodeIds: ['Follow'] })(dispatch, () => currentState, undefined);
+    currentState = monitoring;
+    finishCopy();
+    await cutPending;
+
+    expect(dispatch).toHaveBeenCalledTimes(3); // Cut pending, Copy thunk, Cut fulfilled. No Delete thunk.
+    expect(dispatch).toHaveBeenLastCalledWith(expect.objectContaining({ type: cutOperations.fulfilled.type }));
   });
 
   it('writes the same multi-node envelope to the native clipboard when that API is available', async () => {

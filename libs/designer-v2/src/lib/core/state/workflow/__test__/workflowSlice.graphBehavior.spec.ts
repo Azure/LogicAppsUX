@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RUN_AFTER_STATUS, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_STATUS, SUBGRAPH_TYPES, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import { reassignEdgeSources, reassignEdgeTargets } from '../../../parsers/restructuringHelpers';
 import { createWorkflowEdge } from '../../../utils/graph';
@@ -283,6 +283,88 @@ describe('workflow graph mutations preserve authoring topology', () => {
     expect(state.operations.Agent).toMatchObject({ tools: { Tool: { actions: {} } } });
     state = reducer(state, actions.deleteAgentTool({ agentId: 'Agent', toolId: 'Tool' }));
     expect(state.operations.Agent).toMatchObject({ tools: {} });
+  });
+
+  it('clears stale tool monitoring data for tools that are absent in the selected agent iteration', () => {
+    const state = {
+      ...initialWorkflowState,
+      graph: {
+        id: 'root',
+        type: 'GRAPH_NODE',
+        children: [
+          {
+            id: 'Agent',
+            type: 'SUBGRAPH_NODE',
+            children: [
+              { id: 'toolA', type: 'SUBGRAPH_NODE', children: [], edges: [] },
+              { id: 'toolB', type: 'SUBGRAPH_NODE', children: [], edges: [] },
+            ],
+            edges: [],
+          },
+        ],
+        edges: [],
+      },
+      nodesMetadata: {
+        Agent: { graphId: 'root', runData: { status: 'Succeeded' } },
+        toolA: { graphId: 'Agent', parentNodeId: 'Agent', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, runData: { status: 'Succeeded' } },
+        toolB: {
+          graphId: 'Agent',
+          parentNodeId: 'Agent',
+          subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+          runData: { status: 'Succeeded', duration: '5s' },
+          runIndex: 1,
+          toolRunData: { status: 'Succeeded', repetitionCount: 3 },
+          toolRunIndex: 1,
+        },
+      },
+    } as unknown as WorkflowState;
+
+    const next = reducer(
+      state,
+      actions.updateAgenticMetadata({
+        nodeId: 'Agent',
+        scopeRepetitionRunData: {
+          status: 'Failed',
+          startTime: '2026-01-01T00:00:00Z',
+          endTime: '2026-01-01T00:00:01Z',
+          tools: {
+            toolA: { status: 'Failed', iterations: 1 },
+          },
+        },
+        agentRepetitionIdentity: 'run-1|Agent|000002|2|Succeeded',
+      })
+    );
+
+    expect(next.nodesMetadata.toolA.runData).toMatchObject({ status: 'Failed', repetitionCount: 1 });
+    expect(next.nodesMetadata.toolA.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+    expect(next.nodesMetadata.toolB.toolRunData).toBeUndefined();
+    expect(next.nodesMetadata.toolB.toolRunIndex).toBeUndefined();
+    expect(next.nodesMetadata.toolB.runData).toBeUndefined();
+    expect(next.nodesMetadata.toolB.runIndex).toBeUndefined();
+    expect(next.nodesMetadata.toolB.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+    expect(next.nodesMetadata.Agent.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+
+    const refresh = (current: WorkflowState, identity?: string) =>
+      reducer(
+        current,
+        actions.updateAgenticMetadata({
+          nodeId: 'Agent',
+          scopeRepetitionRunData: {
+            tools: { toolA: { status: 'Failed', iterations: 3 }, toolB: { status: 'Succeeded', iterations: 3 } },
+          },
+          agentRepetitionIdentity: identity,
+        })
+      );
+    const identity = next.nodesMetadata.Agent.agentRepetitionIdentity;
+    const toolPages = reducer(
+      reducer(next, actions.setRunIndex({ nodeId: 'toolA', page: 2 })),
+      actions.setToolRunIndex({ nodeId: 'toolB', page: 1 })
+    );
+    const refreshed = refresh(toolPages, identity);
+    expect(refreshed.nodesMetadata.toolA.runIndex).toBe(2);
+    expect(refreshed.nodesMetadata.toolB.toolRunIndex).toBe(1);
+    expect(refresh(refreshed, 'run-1|Agent|000003|3|Succeeded').nodesMetadata.toolB.toolRunIndex).toBe(0);
+    expect(reducer(refreshed, actions.clearAllRepetitionRunData()).nodesMetadata.toolB.toolRunData).toBeUndefined();
   });
 
   it('collapses and expands nested graph descendants independently from collapsed action branches', () => {

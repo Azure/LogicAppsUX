@@ -7,9 +7,11 @@ const mockDispatch = vi.fn();
 const mockToggleCollapse = vi.fn();
 let mockSelectedNodeIds = ['first', 'second'];
 let mockCanWrap = true;
+let mockMonitoring = false;
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
+  useSelector: (selector: (state: unknown) => unknown) => selector({ designerOptions: { isMonitoringView: mockMonitoring } }),
 }));
 
 vi.mock('react-intl', () => ({
@@ -180,9 +182,20 @@ describe('MultiSelectPanel', () => {
     vi.clearAllMocks();
     mockSelectedNodeIds = ['first', 'second'];
     mockCanWrap = true;
+    mockMonitoring = false;
   });
 
   afterEach(cleanup);
+
+  it('keeps Copy but prevents cutting, grouping, and deleting a selection in monitoring', () => {
+    mockMonitoring = true;
+    renderPanel();
+
+    expect(screen.getByRole('button', { name: 'Cut' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Group' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeEnabled();
+  });
 
   it('renders selected actions, count, visuals, extraction action, and the requested panel side', () => {
     const { container } = renderPanel('Left');

@@ -11,6 +11,7 @@ import * as operationInfoHook from '../../../../core/state/selectors/actionMetad
 import { RUN_AFTER_PANEL_TAB } from '../../../../ui/CustomNodes/constants';
 
 const mocks = vi.hoisted(() => ({
+  isMonitoringView: false,
   dispatch: vi.fn(),
   screenToFlowPosition: vi.fn(({ x, y }: { x: number; y: number }) => ({ x: x / 2, y: y / 2 })),
   getRecordEntry: vi.fn(() => ({})),
@@ -31,7 +32,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mocks.dispatch,
-  useSelector: (selector: any) => selector({ workflow: { operations: {} } }),
+  useSelector: (selector: any) => selector({ workflow: { operations: {} }, designerOptions: { isMonitoringView: mocks.isMonitoringView } }),
 }));
 
 vi.mock('@xyflow/react', () => ({
@@ -231,6 +232,7 @@ describe('DesignerContextualMenu', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
+    mocks.isMonitoringView = false;
     mocks.rawInputsOutputs = { data: { inputs: {}, outputs: {} } };
 
     vi.spyOn(designerViewSelectors, 'useNodeContextMenuData').mockReturnValue({
@@ -400,6 +402,16 @@ describe('DesignerContextualMenu', () => {
     expect(tree.root.findByProps({ 'data-testid': 'card-context-menu' }).props['data-open']).toBe(false);
   });
 
+  it('does not offer active bulk edit commands while inspecting a run', () => {
+    mocks.isMonitoringView = true;
+    vi.spyOn(panelSelectors, 'useOperationPanelSelectedNodeIds').mockReturnValue(['test-node', 'second-node']);
+    const tree = renderMenu();
+
+    expect(tree.root.findByProps({ 'data-automation-id': 'msla-bulk-cut-menu-option' }).props.disabled).toBe(true);
+    expect(tree.root.findByProps({ 'data-automation-id': 'msla-bulk-delete-menu-option' }).props.disabled).toBe(true);
+    expect(tree.root.findByProps({ 'data-automation-id': 'msla-bulk-copy-menu-option' }).props.disabled).toBeFalsy();
+  });
+
   it('does not show bulk extraction when the clicked node is outside the multi-selection', () => {
     vi.spyOn(panelSelectors, 'useOperationPanelSelectedNodeIds').mockReturnValue(['first-node', 'second-node']);
 
@@ -407,6 +419,42 @@ describe('DesignerContextualMenu', () => {
 
     expect(tree.root.findAllByProps({ 'data-testid': 'workflow-extraction-action' })).toHaveLength(0);
     expect(tree.root.findAllByProps({ 'data-testid': 'copy-menu-item' })).toHaveLength(1);
+  });
+
+  it('keeps legacy switch-case right-click menus free of host lane commands', () => {
+    mocks.isUiInteractionsServiceEnabled.mockReturnValue(true);
+    mocks.getNodeContextMenuItems.mockReturnValue([{ priority: 50, text: 'Host command' }]);
+    vi.spyOn(workflowSelectors, 'useNodeMetadata').mockReturnValue({
+      graphId: 'graph-a',
+      subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
+    } as any);
+
+    const tree = renderMenu();
+
+    expect(tree.root.findAllByProps({ 'data-testid': 'custom-menu-item' })).toHaveLength(0);
+    expect(tree.root.findAllByProps({ 'data-testid': 'delete-menu-item' })).toHaveLength(1);
+  });
+
+  it('shows host lane commands from shared lane-more entrypoint and bypasses multi-select bulk menus', () => {
+    mocks.isUiInteractionsServiceEnabled.mockReturnValue(true);
+    mocks.getNodeContextMenuItems.mockReturnValue([{ priority: 50, text: 'Host command' }]);
+    vi.spyOn(designerViewSelectors, 'useNodeContextMenuData').mockReturnValue({
+      nodeId: 'test-node',
+      entryPoint: 'shared-lane-more',
+      location: { x: 100, y: 80 },
+    });
+    vi.spyOn(workflowSelectors, 'useNodeMetadata').mockReturnValue({
+      graphId: 'graph-a',
+      subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
+    } as any);
+    vi.spyOn(panelSelectors, 'useOperationPanelSelectedNodeIds').mockReturnValue(['test-node', 'second-node']);
+
+    const tree = renderMenu();
+
+    expect(tree.root.findByProps({ 'data-testid': 'custom-menu-item' }).children).toEqual(['Host command']);
+    expect(tree.root.findAllByProps({ 'data-automation-id': 'msla-bulk-copy-menu-option' })).toHaveLength(0);
+    expect(tree.root.findAllByProps({ 'data-testid': 'workflow-extraction-action' })).toHaveLength(0);
+    expect(tree.root.findAllByProps({ 'data-testid': 'delete-menu-item' })).toHaveLength(1);
   });
 
   it('shows delete and graph commands for a switch-case subgraph', () => {

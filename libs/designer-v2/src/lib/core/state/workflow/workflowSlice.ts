@@ -537,9 +537,36 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const { scopeRepetitionRunData, nodeId } = action.payload;
+      const { scopeRepetitionRunData, nodeId, agentRepetitionIdentity } = action.payload;
       const { tools = {} } = scopeRepetitionRunData ?? {};
       const agentGraph = getWorkflowNodeFromGraphState(state, nodeId);
+
+      // Agent monitoring is scoped to the selected repetition. When a tool is missing in that
+      // repetition (or the run failed before invocation), clear the previous iteration's tool
+      // status so shared cards and pagers never render stale badges/counts.
+      const toolIdsInSelectedRepetition = new Set(Object.keys(tools));
+      const originalAgent: WorkflowNode | undefined = getRecordEntry(state.agentsGraph, nodeId) ?? agentGraph;
+      (agentRepetitionIdentity ? (originalAgent?.children ?? []) : [])
+        .map((child) => child.id)
+        .filter((toolId) => !containsIdTag(toolId) && !containsCaseTag(toolId))
+        .forEach((toolId) => {
+          if (toolIdsInSelectedRepetition.has(toolId)) {
+            return;
+          }
+          const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
+          if (!nodeMetadata) {
+            return;
+          }
+          const clearedNodeData = {
+            ...nodeMetadata,
+            agentRepetitionIdentity,
+          };
+          delete clearedNodeData.toolRunData;
+          delete clearedNodeData.toolRunIndex;
+          delete clearedNodeData.runData;
+          delete clearedNodeData.runIndex;
+          state.nodesMetadata[toolId] = clearedNodeData as NodeMetadata;
+        });
 
       Object.keys(tools).forEach((toolId: any) => {
         const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
@@ -547,6 +574,8 @@ export const workflowSlice = createSlice({
           return;
         }
 
+        // A refresh of the current selection must not reset a tool page chosen in the run tree or canvas.
+        const sameSelection = !!agentRepetitionIdentity && nodeMetadata.agentRepetitionIdentity === agentRepetitionIdentity;
         if (nodeMetadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
           // MCP client action does not have a tool, so save the "tool" runData in a dedicated toolRunData.
           const nodeData = {
@@ -555,23 +584,31 @@ export const workflowSlice = createSlice({
               status: tools[toolId].status,
               repetitionCount: tools[toolId].iterations,
             },
-            toolRunIndex: 0,
+            toolRunIndex: sameSelection ? (nodeMetadata.toolRunIndex ?? 0) : 0,
+            agentRepetitionIdentity,
           };
+          if (agentRepetitionIdentity && !sameSelection) {
+            delete nodeData.runData;
+            delete nodeData.runIndex;
+          }
           state.nodesMetadata[toolId] = nodeData as NodeMetadata;
         } else {
+          const preserveToolDetails = sameSelection && nodeMetadata.runData;
           const nodeData = {
             ...nodeMetadata,
             runData: {
+              ...(preserveToolDetails || {}),
               status: tools[toolId].status,
               repetitionCount: tools[toolId].iterations,
-              ...(isBuiltInAgentTool(toolId)
+              ...(isBuiltInAgentTool(toolId) && !preserveToolDetails
                 ? {
                     inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
                     outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
                   }
                 : {}),
             },
-            runIndex: 0,
+            runIndex: sameSelection ? (nodeMetadata.runIndex ?? 0) : 0,
+            agentRepetitionIdentity,
           };
           state.nodesMetadata[toolId] = nodeData as NodeMetadata;
         }
@@ -592,6 +629,7 @@ export const workflowSlice = createSlice({
         ),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+      nodeMetadata.agentRepetitionIdentity = agentRepetitionIdentity;
       nodeMetadata.actionCount =
         (agentGraph?.children ?? []).filter((node) => !containsIdTag(node.id) && !containsCaseTag(node.id))?.length ?? -1;
 
@@ -828,6 +866,11 @@ export const workflowSlice = createSlice({
     },
     clearAllRepetitionRunData: (state: WorkflowState) => {
       for (const node of Object.values(state.nodesMetadata)) {
+        if (node.agentRepetitionIdentity) {
+          delete node.agentRepetitionIdentity;
+          delete node.toolRunData;
+          delete node.toolRunIndex;
+        }
         // Preserve run data for root nodes, except when they are agent condition subgraphs and their children.
         // This is because root nodes typically represent the main workflow and their run data is needed for display for a2a agents
         if (shouldClearNodeRunData(node)) {

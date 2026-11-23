@@ -33,6 +33,9 @@ const visualExports = [
   'NodeLabeledHandle',
   'NodeBranchOutputs',
   'NodeBranchLabel',
+  'NodeBranchActions',
+  'NodeBranchShell',
+  'LoopBodyJoin',
   'NodeLine',
   'NodeActionAdd',
   'IfIconRegular',
@@ -83,6 +86,9 @@ const nonvisualExports = [
   'useEdgeActiveState',
   'useNodeHeaderButtonStyles',
   'NODE_HOVER_CARD_IGNORE_ATTRIBUTE',
+  'NODE_BRANCH_ACTIONS_MAX_RESERVE_PX',
+  'useLoopBodyHoverClass',
+  'useNodeOverviewStyles',
 ];
 
 function assertPublicValueInventory(actual, visual, nonvisual) {

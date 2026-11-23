@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { ActionNodeCard, LoopNodeCard, TriggerNodeCard } from '@microsoft/designer-ui-v2';
 import { IntlProvider } from 'react-intl';
 import { describe, expect, it, vi } from 'vitest';
 import type { Workflow } from '../../../../common/models/workflow';
@@ -118,6 +119,44 @@ const renderCard = (data: SharedExtractionPreviewNode) =>
   );
 
 describe('preview presentation reuses the main metadata policy', () => {
+  it.each([
+    { title: 'Build message', titleLines: 1 as const },
+    { title: 'Build the localized notification message before publishing the latest design changes', titleLines: 2 as const },
+  ])('matches Standard compact action geometry for $title', ({ title, titleLines }) => {
+    const { container } = render(
+      <IntlProvider locale="en">
+        <PreviewOperationCard node={{ ...node('Compose'), label: title }} domId="preview-card" />
+        <ActionNodeCard id="editor-card" title={title} density="compact" prioritizeTitle titleLines={titleLines} handles={false} />
+      </IntlProvider>
+    );
+    const preview = container.querySelector('#preview-card');
+    const editor = container.querySelector('#editor-card');
+    expect(preview).toBeInTheDocument();
+    expect(editor).toBeInTheDocument();
+    expect(preview?.className).toBe(editor?.className);
+    expect(preview?.firstElementChild?.className).toBe(editor?.firstElementChild?.className);
+    const [previewTitle, editorTitle] = screen.getAllByText(title);
+    expect(previewTitle.className).toBe(editorTitle.className);
+  });
+
+  it.each([
+    { type: 'Request', isTrigger: true, Card: TriggerNodeCard },
+    { type: 'Foreach', isTrigger: false, Card: LoopNodeCard },
+  ])('uses the compact editor title treatment for a wrapped $type preview', ({ type, isTrigger, Card }) => {
+    const title = 'Build the localized notification message before publishing the latest design changes';
+    const { container } = render(
+      <IntlProvider locale="en">
+        <PreviewOperationCard node={{ ...node(type), label: title, isTrigger }} domId="preview-card" />
+        <Card id="editor-card" title={title} density="compact" prioritizeTitle titleLines={2} handles={false} />
+      </IntlProvider>
+    );
+    const [previewTitle, editorTitle] = screen.getAllByText(title);
+    expect(previewTitle.className).toBe(editorTitle.className);
+    expect(container.querySelector('#preview-card')?.firstElementChild?.className).toBe(
+      container.querySelector('#editor-card')?.firstElementChild?.className
+    );
+  });
+
   const renderConnectedCard = (data: SharedExtractionPreviewNode) => {
     const props: NodeProps<SharedPreviewFlowNode> = {
       id: data.id,

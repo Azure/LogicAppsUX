@@ -37,6 +37,8 @@ import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/b
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, getNodePresentation } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
+import { useLoopGroupHover } from './CustomNodes/useLoopGroupHover';
+import { MergeHoverContext } from './connections/mergeHover';
 import { useIsDarkMode, useReadOnly, useSharedNodeUi } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
@@ -58,7 +60,7 @@ import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
 import { OnlyEdge } from './connections/onlyEdge';
 import { NodeNavigation } from './NodeNavigation';
-import { designerUiTokens } from '@microsoft/designer-ui-v2';
+import { designerUiTokens, useNodeOverviewStyles } from '@microsoft/designer-ui-v2';
 import { DESIGNER_MIN_ZOOM, fitSharedDesignerViewport } from './designerViewport';
 
 const DesignerReactFlow = (props: any) => {
@@ -69,6 +71,8 @@ const DesignerReactFlow = (props: any) => {
 
   const isReadOnly = useReadOnly();
   const sharedOption = useSharedNodeUi();
+  const loopGroupHover = useLoopGroupHover(sharedOption);
+  const [hoveredMerge, setHoveredMerge] = useState<string>();
   const isEmpty = useIsGraphEmpty();
 
   type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
@@ -674,66 +678,97 @@ const DesignerReactFlow = (props: any) => {
   );
 
   const isDarkMode = useIsDarkMode();
+  const overviewStyles = useNodeOverviewStyles();
+  // Switch only paint at overview zoom. Keeping node dimensions fixed preserves the fitted viewport and port positions.
+  const overview = sharedOption && zoom < 0.5;
 
   return (
-    <ReactFlow
-      colorMode={isDarkMode ? 'dark' : 'light'}
-      // The flow root, xy variable and <Background> share one canvas role so the pane never shows two tones;
-      // outside DesignerUiScope the role falls back to Background1.
-      style={sharedOption ? { backgroundColor: designerUiTokens.canvasBackground } : undefined}
-      ref={canvasRef}
-      onInit={onInit}
-      nodeTypes={nodeTypes}
-      nodes={allNodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      nodesConnectable={true}
-      nodesDraggable={false}
-      nodesFocusable={false}
-      edgesFocusable={false}
-      edgeTypes={edgeTypes}
-      elementsSelectable={true}
-      selectionOnDrag={isSelectionKeyHeld}
-      selectionMode={SelectionMode.Full}
-      selectionKeyCode={null}
-      multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
-      panOnDrag={!isSelectionKeyHeld}
-      onSelectionChange={onSelectionChange}
-      onSelectionStart={onSelectionStart}
-      onSelectionEnd={onSelectionEnd}
-      panOnScroll={true}
-      deleteKeyCode={null}
-      zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-      translateExtent={clampPan ? translateExtent : undefined}
-      onMove={(_e, viewport) => setZoom(viewport.zoom)}
-      connectionLineComponent={DraftEdge}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
-      isValidConnection={isValidConnection}
-      connectionRadius={0}
-      minZoom={DESIGNER_MIN_ZOOM}
-      snapGrid={[20, 20]}
-      snapToGrid={true}
-      onPaneClick={onPaneClick}
-      onPaneContextMenu={onPaneContextMenu}
-      disableKeyboardA11y={true}
-      onlyRenderVisibleElements={!userInferredTabNavigation}
-      proOptions={{
-        account: 'paid-sponsor',
-        hideAttribution: true,
-      }}
-    >
-      <NodeNavigation
-        canvasRef={canvasRef}
-        onNavigate={() => {
-          if (!userInferredTabNavigation) {
-            // Mount off-screen cards before dispatching the one-shot canvas focus request.
-            flushSync(() => setUserInferredTabNavigation(true));
-          }
+    <MergeHoverContext.Provider value={sharedOption ? hoveredMerge : undefined}>
+      <ReactFlow
+        className={overview ? overviewStyles.canvas : undefined}
+        data-node-overview={overview || undefined}
+        colorMode={isDarkMode ? 'dark' : 'light'}
+        // The flow root, xy variable and <Background> share one canvas role so the pane never shows two tones;
+        // outside DesignerUiScope the role falls back to Background1.
+        style={sharedOption ? { backgroundColor: designerUiTokens.canvasBackground } : undefined}
+        ref={canvasRef}
+        {...loopGroupHover}
+        onPointerMoveCapture={
+          sharedOption
+            ? (event) => {
+                loopGroupHover?.onPointerMoveCapture(event);
+                const ownerWindow = event.currentTarget.ownerDocument.defaultView;
+                const merge =
+                  event.buttons === 0 && event.pointerType !== 'touch' && ownerWindow && event.target instanceof ownerWindow.Element
+                    ? event.target.closest('[data-merge-add-source]')
+                    : null;
+                setHoveredMerge(
+                  merge && event.currentTarget.contains(merge) ? (merge.getAttribute('data-merge-add-source') ?? undefined) : undefined
+                );
+              }
+            : undefined
+        }
+        onPointerLeave={() => {
+          loopGroupHover?.onPointerLeave();
+          setHoveredMerge(undefined);
         }}
-      />
-      {props.children}
-    </ReactFlow>
+        onPointerCancel={() => {
+          loopGroupHover?.onPointerCancel();
+          setHoveredMerge(undefined);
+        }}
+        onInit={onInit}
+        nodeTypes={nodeTypes}
+        nodes={allNodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        nodesConnectable={true}
+        nodesDraggable={false}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        edgeTypes={edgeTypes}
+        elementsSelectable={true}
+        selectionOnDrag={isSelectionKeyHeld}
+        selectionMode={SelectionMode.Full}
+        selectionKeyCode={null}
+        multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
+        panOnDrag={!isSelectionKeyHeld}
+        onSelectionChange={onSelectionChange}
+        onSelectionStart={onSelectionStart}
+        onSelectionEnd={onSelectionEnd}
+        panOnScroll={true}
+        deleteKeyCode={null}
+        zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+        translateExtent={clampPan ? translateExtent : undefined}
+        onMove={(_e, viewport) => setZoom(viewport.zoom)}
+        connectionLineComponent={DraftEdge}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
+        isValidConnection={isValidConnection}
+        connectionRadius={0}
+        minZoom={DESIGNER_MIN_ZOOM}
+        snapGrid={[20, 20]}
+        snapToGrid={true}
+        onPaneClick={onPaneClick}
+        onPaneContextMenu={onPaneContextMenu}
+        disableKeyboardA11y={true}
+        onlyRenderVisibleElements={!userInferredTabNavigation}
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+      >
+        <NodeNavigation
+          canvasRef={canvasRef}
+          onNavigate={() => {
+            if (!userInferredTabNavigation) {
+              // Mount off-screen cards before dispatching the one-shot canvas focus request.
+              flushSync(() => setUserInferredTabNavigation(true));
+            }
+          }}
+        />
+        {props.children}
+      </ReactFlow>
+    </MergeHoverContext.Provider>
   );
 };
 

@@ -28,4 +28,7 @@ export const nodeCardVars = {
   background: '--designer-ui-v2-node-card-background',
   footerBackground: '--designer-ui-v2-node-card-footer-background',
   textEndReserve: '--designer-ui-v2-node-text-end-reserve',
+  titleFamily: '--designer-ui-v2-node-title-family',
+  titleSize: '--designer-ui-v2-node-title-size',
+  titleWeight: '--designer-ui-v2-node-title-weight',
 } as const;

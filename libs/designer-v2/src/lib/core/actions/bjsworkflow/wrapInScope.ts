@@ -1,5 +1,6 @@
 import constants from '../../../common/constants';
 import type { RootState, AppDispatch } from '../../store';
+import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
 import { getNewNodeId } from '../../utils/graph';
 import { getOrderedSelectedChain, getCommonGraphId, getTopLevelSelectedNodes } from '../../utils/multiselect';
 import { initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
@@ -57,6 +58,9 @@ export const wrapSelectedNodesInScope = createAsyncThunk(
   async (payload: WrapSelectedNodesPayload, { dispatch, getState }): Promise<string | undefined> => {
     const { nodeIds: rawNodeIds, scopeType } = payload;
     const state = getState() as RootState;
+    if (isWorkflowEditLocked(state.designerOptions)) {
+      return;
+    }
 
     // Filter to top-level nodes only — children nested inside a selected scope stay put.
     const nodeIds = getTopLevelSelectedNodes(state.workflow, rawNodeIds);
