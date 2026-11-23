@@ -70,15 +70,18 @@ for (const flag of ['false', 'true'] as const) {
       await expect(page.getByRole('menuitem', { name: 'Add a parallel branch', exact: true })).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(addAction).not.toBeVisible();
-      // Legacy parity: the edge menu is anchored to a detached point, so Escape lands focus on the
-      // upstream card and a single Tab returns to the same insert button.
-      await expect(page.locator('#msla-node-Init_all')).toBeFocused();
-      await page.keyboard.press('Tab');
+      if (!shared) {
+        await expect(page.locator('#msla-node-Init_all')).toBeFocused();
+        await page.keyboard.press('Tab');
+      }
       await expect(insert).toBeFocused();
       await page.keyboard.press('Space');
       await expect(addAction).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(addAction).not.toBeVisible();
+      if (shared) {
+        await expect(insert).toBeFocused();
+      }
     });
 
     test('pastes a copied action through the edge insert with unchanged workflow semantics', async ({ page }) => {
@@ -171,6 +174,33 @@ for (const flag of ['false', 'true'] as const) {
       expect(overlaps(await boxOf(tooltip), await boxOf(page.locator('#msla-node-Init_all')))).toBe(false);
       expect(overlaps(await boxOf(tooltip), await boxOf(insert))).toBe(false);
     });
+
+    test('keeps the full authored title accessible after renaming an action', async ({ page }, testInfo) => {
+      await openSharedWorkflow(page, 'General Run After', flag);
+      const card = page.locator('#msla-node-Compose');
+      const longTitle = 'Validate every line item before authorizing payment to the vendor';
+      await card.press('Enter');
+      const titleEditor = page.getByRole('textbox', { name: 'Card title', exact: true });
+      await titleEditor.fill(longTitle);
+      await titleEditor.press('Tab');
+      await expect(card).toHaveAccessibleName(new RegExp(longTitle));
+      if (shared) {
+        const title = card.getByText(longTitle, { exact: true });
+        await expect(title).toHaveCSS('-webkit-line-clamp', '3');
+        expect(await card.evaluate((element) => element.offsetHeight)).toBe(68);
+        await page.locator('#msla-panel-header-close-nav').click();
+        await tabTo(page, card);
+        const heading = page.getByRole('heading', { name: longTitle, exact: true });
+        await expect(heading).toBeVisible();
+        await expect(heading).toHaveCSS('white-space', 'normal');
+        expect(await heading.evaluate(({ scrollHeight, clientHeight }) => scrollHeight - clientHeight)).toBe(0);
+        await testInfo.attach('keyboard-full-title', { body: await page.screenshot(), contentType: 'image/png' });
+        await page.keyboard.press('Escape');
+        await expect(heading).not.toBeVisible();
+      } else {
+        await expect(card).not.toHaveAttribute('data-node-card');
+      }
+    });
   });
 }
 
@@ -186,6 +216,24 @@ test.describe('Shared redesign direction and hover affordances', { tag: ['@mock'
     const card = await boxOf(info);
     expect(overlaps(card, await boxOf(page.locator('#msla-node-Init_all')))).toBe(false);
     expect(overlaps(card, await boxOf(compose))).toBe(false);
+  });
+
+  test('keeps a parallel card uncovered and lets the pointer enter the hover card', async ({ page }, testInfo) => {
+    await openSharedWorkflow(page, 'General Run After');
+    const compose = page.locator('#msla-node-Compose');
+    const navigation = page.locator('#msla-node-Execute_a_navigation_plan');
+    const [composeBox, navigationBox] = await Promise.all([boxOf(compose), boxOf(navigation)]);
+    const [anchor, sibling] = composeBox.x < navigationBox.x ? [compose, navigation] : [navigation, compose];
+    await anchor.hover();
+    const info = page.locator('[data-node-info-card="action"]');
+    await expect(info).toBeVisible();
+    const [anchorBox, siblingBox] = await Promise.all([boxOf(anchor), boxOf(sibling)]);
+    await expect.poll(async () => overlaps(await boxOf(info), siblingBox) || overlaps(await boxOf(info), anchorBox)).toBe(false);
+    await testInfo.attach('parallel-hover-placement', { body: await page.screenshot(), contentType: 'image/png' });
+    await info.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(info).not.toBeVisible();
+    await sibling.hover();
+    await expect(info).toBeVisible();
   });
 
   test('gives editable source ports visible hover feedback without moving them', async ({ page }) => {

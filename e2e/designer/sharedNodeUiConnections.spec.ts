@@ -60,6 +60,40 @@ for (const flag of ['true', 'false'] as const) {
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
     });
 
+    test('blocks node mutations in monitoring even when the host omits readOnly', async ({ page }) => {
+      await openSharedWorkflow(page, 'General Run After', flag);
+      const compose = page.locator('#msla-node-Compose');
+      await compose.press('Enter');
+      await compose.focus();
+      const undo = page.getByRole('button', { name: 'Undo', exact: true });
+      await page.keyboard.press('ControlOrMeta+d');
+      await expect(undo).toBeEnabled();
+      await page.evaluate(() => {
+        const store = window.DesignerStoreV2;
+        store.dispatch({
+          type: 'designerOptions/initDesignerOptions',
+          payload: { ...store.getState().designerOptions, isMonitoringView: true, readOnly: false },
+        });
+      });
+      const history = page.getByRole('heading', { name: 'Run history', exact: true });
+      await expect(history).toBeVisible();
+      await page.locator('.fui-DrawerHeaderNavigation button').click();
+      await expect(history).toBeHidden();
+      await expect(undo).toBeDisabled();
+      await compose.press('Enter');
+      await compose.focus();
+      // Entering monitoring reloads the workflow from the host, discarding unsaved edits.
+      const before = (await getSerializedWorkflowFromStateV2(page)).definition.actions;
+      await page.keyboard.press('ControlOrMeta+c');
+      await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain('"nodeId":"Compose-copy"');
+      await page.keyboard.press('ControlOrMeta+d');
+      await page.keyboard.press('ControlOrMeta+z');
+      await page.keyboard.press('ControlOrMeta+x');
+      await page.keyboard.press('Delete');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before);
+    });
+
     test('cuts an actual multi-selection through its context menu without losing clipboard operations', async ({ page }) => {
       await openSharedWorkflow(page, 'General Run After', flag);
       const before = await getSerializedWorkflowFromStateV2(page);

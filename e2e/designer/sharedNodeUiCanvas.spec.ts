@@ -50,6 +50,10 @@ for (const dark of [false, true]) {
         if (dark) {
           await setContextSetting(page, 'Dark Mode', true);
         }
+        // Changing layout can move Compose under a stationary mouse; don't compare its rest paint to its hover paint.
+        await page.mouse.move(0, 0);
+        const compose = page.locator('#msla-node-Compose');
+        await expect(compose.and(page.locator(':hover'))).toHaveCount(0);
         const before = await getSerializedWorkflowFromStateV2(page);
         let previous = '';
         await expect
@@ -80,12 +84,12 @@ for (const dark of [false, true]) {
           expect(paint.backgroundOverFlow).toBe(paint.background1);
         } else {
           await setSharedNodeUi(page, true);
-          await expect(page.locator('#msla-node-Compose')).toHaveAttribute('data-node-card', 'action');
+          await expect(compose).toHaveAttribute('data-node-card', 'action');
           await setSharedNodeUi(page, false);
-          await expect(page.locator('#msla-node-Compose')).not.toHaveAttribute('data-node-card', 'action');
+          await expect(compose).not.toHaveAttribute('data-node-card', 'action');
           await waitForViewport(page);
-          const restored = await readPaint(page);
-          expect({ ...restored, pattern: undefined }).toEqual({ ...paint, pattern: undefined });
+          await expect(compose.and(page.locator(':hover'))).toHaveCount(0);
+          await expect.poll(async () => ({ ...(await readPaint(page)), pattern: undefined })).toEqual({ ...paint, pattern: undefined });
         }
         expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
       }

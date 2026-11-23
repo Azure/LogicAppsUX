@@ -15,6 +15,29 @@ async function readNodePosition(node: Locator) {
 
 for (const flag of ['true', 'false'] as const) {
   test.describe(`Shared node UI structural and canvas commands, flag ${flag}`, { tag: ['@mock', '@shared-node-ui'] }, () => {
+    test('opens the existing Testing tab from a supported Shared action hover card only', async ({ page }) => {
+      await openSharedWorkflow(page, 'Panel', flag);
+      await page.evaluate(() => {
+        const store = window.DesignerStoreV2;
+        const { connectorId, operationId } = store.getState().operations.operationInfo.HTTP;
+        store.dispatch({
+          type: 'staticResults/addResultSchema',
+          payload: { id: `${connectorId}-${operationId}`, schema: { type: 'object', properties: {} } },
+        });
+      });
+      const node = page.locator('#msla-node-HTTP');
+      await node.hover();
+      const edit = page.getByRole('button', { name: 'Edit test data', exact: true });
+      if (flag === 'true') {
+        await edit.click();
+        await expect(page.getByRole('tab', { name: 'Testing', exact: true })).toHaveAttribute('aria-selected', 'true');
+      } else {
+        await node.click();
+        await expect(page.getByRole('tab', { name: 'Testing', exact: true })).toBeVisible();
+        await expect(edit).toHaveCount(0);
+      }
+    });
+
     test('keeps trigger and scope context commands on their actual graph identities', async ({ page }) => {
       await openSharedWorkflow(page, 'Scope', flag);
       const before = await getSerializedWorkflowFromStateV2(page);
@@ -34,6 +57,19 @@ for (const flag of ['true', 'false'] as const) {
         .toMatchObject({ nodeId: 'Scope-copy', isScopeNode: true, serializedOperation: before.definition.actions.Scope });
       expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before.definition);
       await expect(page.locator('.react-flow__edgeupdater')).toHaveCount(0);
+    });
+
+    test('offers parallel insertion only on an existing edge', async ({ page }) => {
+      await openSharedWorkflow(page, 'Scope', flag);
+      const insertion = page.getByRole('button', { name: 'Insert a new step between manual and Initialize variable', exact: true });
+      await insertion.click();
+      await expect(page.getByRole('menuitem', { name: 'Add an action', exact: true })).toBeVisible();
+      await expect(page.getByRole('menuitem', { name: 'Add a parallel branch', exact: true })).toBeVisible();
+      await page.keyboard.press('Escape');
+
+      await page.getByRole('button', { name: 'Insert a new step after Response', exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: 'Add an action', exact: true })).toBeVisible();
+      await expect(page.getByRole('menuitem', { name: 'Add a parallel branch', exact: true })).toHaveCount(0);
     });
 
     test('preserves actual operation drag and drop with the original metadata and new run-after order', async ({ page }) => {
@@ -158,6 +194,51 @@ for (const flag of ['true', 'false'] as const) {
       await expect(search).not.toBeVisible();
       await expect(page.getByRole('button', { name: 'Search workflow actions', exact: true })).toBeFocused();
       expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(definitionBefore.definition);
+    });
+
+    test('selects the matching operation from node search and opens its details', async ({ page }) => {
+      await openSharedWorkflow(page, 'Conditionals (Complex)', flag);
+      await page.getByRole('button', { name: 'Search workflow actions', exact: true }).click();
+      const search = page.getByRole('dialog', { name: 'Go to operation', exact: true });
+      await search.getByPlaceholder('Search for operation', { exact: true }).fill('Verify property changes');
+      await search.getByText('Verify property changes', { exact: true }).click();
+      await expect(search).toBeHidden();
+      await expect
+        .poll(() => page.evaluate(() => window.DesignerStoreV2.getState().panel.operationContent.selectedNodeIds))
+        .toContain('Verify_property_changes');
+      const settings = page.getByRole('tab', { name: /^Settings/ });
+      await settings.click();
+      await expect(settings).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('keeps selected and pinned node tabs independent', async ({ page }) => {
+      await openSharedWorkflow(page, 'Panel', flag);
+      await page.locator('#msla-node-Initialize_ArrayVariable').click({ button: 'right' });
+      await page.getByTestId('msla-pin-menu-option').click();
+      await page.locator('#msla-node-Parse_JSON').click();
+
+      const pinned = page.locator('#msla-node-details-panel-Initialize_ArrayVariable');
+      const selected = page.locator('#msla-node-details-panel-Parse_JSON');
+      const about = pinned.getByRole('tab', { name: 'About', exact: true });
+      const settings = selected.getByRole('tab', { name: /^Settings/ });
+      if (await about.isVisible()) {
+        await about.click();
+      } else {
+        await pinned.getByRole('tab', { name: /more tabs$/ }).click();
+        await page.getByRole('menuitem', { name: 'About', exact: true }).click();
+      }
+      if (await settings.isVisible()) {
+        await settings.click();
+      } else {
+        await selected.getByRole('tab', { name: /more tabs$/ }).click();
+        await page.getByRole('menuitem', { name: 'Settings', exact: true }).click();
+      }
+      await expect(about).toHaveAttribute('aria-selected', 'true');
+      await expect(settings).toHaveAttribute('aria-selected', 'true');
+      const parameters = selected.getByRole('tab', { name: 'Parameters', exact: true });
+      await parameters.click();
+      await expect(about).toHaveAttribute('aria-selected', 'true');
+      await expect(parameters).toHaveAttribute('aria-selected', 'true');
     });
   });
 }
