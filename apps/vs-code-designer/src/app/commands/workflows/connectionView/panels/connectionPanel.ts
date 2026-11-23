@@ -94,14 +94,13 @@ export default class ConnectionPanel extends DesignerPanel {
     // Show loading state in webview
     this.panel.webview.html = this.getLoadingHtml();
 
-    // Start design time API and load metadata in parallel
     const startDesignTimePromise = callWithTelemetryAndErrorHandling(
       'ConnectionPanel.create.startDesignTimeApi',
       async (actionContext: IActionContext) => {
         await startDesignTimeApi(actionContext, this.projectPath!);
       }
     );
-    const [_, panelMetadata] = await Promise.all([startDesignTimePromise, this.getConnectionPanelMetadata()]);
+    const [_, panelMetadata] = await Promise.all([startDesignTimePromise, this.getConnectionPanelMetadata(startDesignTimePromise)]);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
@@ -347,7 +346,7 @@ export default class ConnectionPanel extends DesignerPanel {
     });
   }
 
-  private async getConnectionPanelMetadata(): Promise<ConnectionPanelMetadata> {
+  private async getConnectionPanelMetadata(designTimeReady: Promise<unknown> = Promise.resolve()): Promise<ConnectionPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!projectPath) {
@@ -358,7 +357,7 @@ export default class ConnectionPanel extends DesignerPanel {
       getConnectionsFromFile(this.context, this.workflowFilePath),
       getParametersFromFile(this.context, this.workflowFilePath),
       getArtifactsInLocalProject(projectPath),
-      getDesignTimeBundleVersion(projectPath),
+      designTimeReady.then(() => getDesignTimeBundleVersion(projectPath)),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
     ]);
 

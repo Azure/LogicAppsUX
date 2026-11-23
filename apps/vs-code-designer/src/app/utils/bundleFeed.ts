@@ -1390,16 +1390,21 @@ export async function getBundleVersionNumber(workingDirectory?: string): Promise
 
 /**
  * Gets the extension bundle version used by a project's design-time host.
- * Falls back to bundle discovery from workflow-designtime when the host has
- * not yet recorded its selected version.
+ * Falls back to bundle discovery from workflow-designtime when available,
+ * then to the extension's default bundle version.
  */
-export async function getDesignTimeBundleVersion(projectPath: string): Promise<string> {
+export async function getDesignTimeBundleVersion(projectPath: string): Promise<string | undefined> {
   const currentBundleVersion = ext.currentBundleVersion.get(projectPath);
   if (currentBundleVersion) {
     return currentBundleVersion;
   }
 
-  return getBundleVersionNumber(path.join(projectPath, designTimeDirectoryName));
+  const designTimeDirectory = path.join(projectPath, designTimeDirectoryName);
+  if (await fse.pathExists(designTimeDirectory)) {
+    return getBundleVersionNumber(designTimeDirectory);
+  }
+
+  return ext.defaultBundleVersion;
 }
 
 /**
