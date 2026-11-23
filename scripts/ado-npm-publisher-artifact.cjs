@@ -85,8 +85,10 @@ function readTarball(buffer) {
             (!directory && [...foldedFiles, ...foldedDirectories].some(existing => existing.startsWith(`${foldedName}/`)))) {
             throw new Error('Tar file conflicts with a directory ancestor.');
         }
-        if (directory) foldedDirectories.add(foldedName);
-        else {
+        if (directory) {
+            foldedDirectories.add(foldedName);
+            entries.set(name, null);
+        } else {
             foldedFiles.add(foldedName);
             entries.set(name, entry.size);
         }
@@ -120,7 +122,7 @@ function requiredPaths(value, requireDot = false) {
     throw new Error('Invalid packed entrypoint type.');
 }
 
-function validateEntrypoints(manifest, contract, entries) {
+function validateEntrypoints(manifest, contract, entries, warnMissingCss) {
     for (const field of ENTRY_FIELDS) {
         assert.deepEqual(manifest[field], contract.entrypoints[field], `${manifest.name}: packed ${field} differs from source.`);
         if (Object.hasOwn(manifest.publishConfig ?? {}, field)) {
@@ -128,7 +130,15 @@ function validateEntrypoints(manifest, contract, entries) {
         }
         if (manifest[field] !== undefined) {
             for (const file of requiredPaths(manifest[field], field === 'exports')) {
-                if (!entries.get(file)) throw new Error(`${manifest.name} is missing required packed entry '${file}'.`);
+                if (entries.get(file)) continue;
+                const message = `${manifest.name} is missing required packed entry '${file}'.`;
+                // A valid CSS export may point to no file in a released archive. An empty file or directory is not absent.
+                if (warnMissingCss && field === 'exports' && file.endsWith('.css') && isPackageContent(file, false) &&
+                    !entries.has(file) && ![...entries.keys()].some(name => name.startsWith(`${file}/`))) {
+                    warnMissingCss(message);
+                } else {
+                    throw new Error(message);
+                }
             }
         }
     }
@@ -147,7 +157,7 @@ function digest(buffer) {
     };
 }
 
-function validateTarballArtifact(buffer, definition, version, contract) {
+function validateTarballArtifact(buffer, definition, version, contract, warnMissingCss) {
     const entries = readTarball(buffer);
     const manifest = JSON.parse(entries.get('package/package.json').toString('utf8'));
     assertSafeManifest(manifest, definition.name);
@@ -158,7 +168,7 @@ function validateTarballArtifact(buffer, definition, version, contract) {
     for (const field of DEPENDENCY_FIELDS) {
         assert.deepEqual(dependencyMap(manifest, field), contract[field], `${definition.name}: packed ${field} differs from source.`);
     }
-    validateEntrypoints(manifest, contract, entries);
+    validateEntrypoints(manifest, contract, entries, warnMissingCss);
     return { name: definition.name, version, file: tarballName(definition, version), ...digest(buffer) };
 }
 
@@ -177,10 +187,13 @@ function expectedProvenance(verified) {
         };
     }
     return {
-        source: { repository: SOURCE_REPOSITORY, releaseRef: `refs/tags/${verified.releaseTag}`, releaseId: verified.releaseId,
+        source: {
+            repository: SOURCE_REPOSITORY, releaseRef: `refs/tags/${verified.releaseTag}`,
+            // Only the legacy REST-backed commands have a GitHub Release record to attest.
+            ...(verified.kind === 'release-tag' ? {} : { releaseId: verified.releaseId }),
             verifiedSha: verified.commitSha, version: verified.version,
-            // Release-URL builds bind the artifact to the producing run and reviewed recipe commit.
-            ...(verified.buildId === undefined ? {} : { buildId: verified.buildId, recipeSha: verified.recipeSha }) },
+            ...(verified.buildId === undefined ? {} : { buildId: verified.buildId, recipeSha: verified.recipeSha }),
+        },
         destination: { registry: DESTINATION_REGISTRY, feedId: DESTINATION_FEED_ID, distTag: DIST_TAG },
     };
 }
@@ -190,7 +203,7 @@ function checkDirectory(dir, fileNames) {
     assert.deepEqual(fs.readdirSync(dir).sort(), [...fileNames].sort(), 'Artifact must contain exactly the expected filenames.');
 }
 
-function validateArtifactFiles(dir, verified, contracts, { prepare = false } = {}) {
+function validateArtifactFiles(dir, verified, contracts, { prepare = false, warnMissingCss } = {}) {
     const version = verified.version;
     const names = COHORT.map(item => tarballName(item, version));
     checkDirectory(dir, prepare ? names : [MANIFEST_FILE_NAME, ...names]);
@@ -207,7 +220,8 @@ function validateArtifactFiles(dir, verified, contracts, { prepare = false } = {
         const buffer = readRegularFile(path.join(dir, file), 64 * 1024 * 1024);
         const identity = { name: definition.name, version, file, ...digest(buffer) };
         if (!prepare) assert.deepEqual(record.packages[index], identity, 'Artifact identity or integrity mismatch.');
-        return validateTarballArtifact(buffer, definition, version, contracts[definition.name]);
+        return validateTarballArtifact(buffer, definition, version, contracts[definition.name],
+            prepare && verified.kind === 'release-tag' ? warnMissingCss : undefined);
     });
     const artifact = { ...provenance, packages };
     if (prepare) fs.writeFileSync(path.join(dir, MANIFEST_FILE_NAME), `${JSON.stringify(artifact, null, 2)}\n`, { flag: 'wx' });

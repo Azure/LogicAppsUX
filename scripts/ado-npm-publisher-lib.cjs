@@ -63,30 +63,23 @@ function parseReleaseRef(releaseRef) {
     return { tag: `v${match[1]}.${match[2]}.${match[3]}`, version: `${match[1]}.${match[2]}.${match[3]}` };
 }
 
-const RELEASE_PAGE_PREFIX = `https://github.com/${SOURCE_REPOSITORY}/releases/tag/`;
-
-// The only release input is the canonical GitHub Release page URL; "latest", other repositories,
-// query strings, fragments, encodings and prerelease tags are rejected before any network read.
-function parseReleaseUrl(releaseUrl) {
-    if (typeof releaseUrl !== 'string' || !releaseUrl.startsWith(RELEASE_PAGE_PREFIX) || releaseUrl.length > 200) {
-        throw new Error(`Invalid releaseUrl. Expected ${RELEASE_PAGE_PREFIX}v<major>.<minor>.<patch>.`);
+function parseReleaseVersion(releaseVersion) {
+    const expected = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
+    if (typeof releaseVersion !== 'string' || releaseVersion.length > 40 || expected.exec(releaseVersion)?.[0] !== releaseVersion) {
+        throw new Error('Invalid releaseVersion. Enter a stable version such as 5.1024.0 (without the v prefix).');
     }
-    const releaseRef = `refs/tags/${releaseUrl.slice(RELEASE_PAGE_PREFIX.length)}`;
-    try {
-        return { releaseUrl, releaseRef, ...parseReleaseRef(releaseRef) };
-    } catch {
-        throw new Error(`Invalid releaseUrl. Expected ${RELEASE_PAGE_PREFIX}v<major>.<minor>.<patch>.`);
-    }
+    return releaseVersion;
 }
 
-// The pipeline runs from a reviewed recipe ref; the release source is resolved separately from the URL.
+// The pipeline runs from a reviewed recipe ref; source is resolved from local tags in the checked-out repository.
 function releaseRunSource(env) {
     assert.equal(env.BUILD_REASON, 'Manual', 'Release builds must be queued manually.');
     assert.equal(env.SOURCE_REPOSITORY, SOURCE_REPOSITORY, 'Expected the LogicAppsUX GitHub repository.');
-    const release = parseReleaseUrl(env.RELEASE_URL);
+    const version = parseReleaseVersion(env.RELEASE_VERSION);
+    const releaseTag = `v${version}`;
     const buildId = env.BUILD_ID;
     assert(typeof buildId === 'string' && /^[1-9]\d{0,14}$/.test(buildId), 'Expected a positive Azure Pipelines build ID.');
-    return { ...release, buildId, recipeSha: normalizeSha(env.RECIPE_SHA) };
+    return { version, releaseTag, releaseRef: `refs/tags/${releaseTag}`, buildId, recipeSha: normalizeSha(env.RECIPE_SHA) };
 }
 
 function normalizeSha(input) {
@@ -215,7 +208,17 @@ function runGit(args, cwd) {
         encoding: 'utf8',
         cwd,
         timeout: 180_000,
-        env: { PATH: process.env.PATH, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_TERMINAL_PROMPT: '0' },
+        env: {
+            PATH: process.env.PATH,
+            GIT_CONFIG_NOSYSTEM: '1',
+            GIT_CONFIG_GLOBAL: '/dev/null',
+            GIT_TERMINAL_PROMPT: '0',
+            // Source objects must already be present from the native checkout.
+            GIT_ALLOW_PROTOCOL: '',
+            GIT_NO_LAZY_FETCH: '1',
+            GIT_NO_REPLACE_OBJECTS: '1',
+            GIT_LFS_SKIP_SMUDGE: '1',
+        },
     });
     if (result.status !== 0) {
         // Report the git subcommand, not leading `-c key=value` options.
@@ -223,6 +226,30 @@ function runGit(args, cwd) {
         throw new Error(`Git ${command} failed (exit ${result.status ?? 'unavailable'}).`);
     }
     return result.stdout;
+}
+
+function resolveLocalReleaseTag(recipeRoot, releaseRef) {
+    const { tag } = parseReleaseRef(releaseRef);
+    let tagSha;
+    try {
+        // Match the ref by full name, without Git's revision-name fallback to branches.
+        tagSha = runGit(['show-ref', '--verify', '--hash', '--', releaseRef], recipeRoot).trim();
+    } catch {
+        throw new Error(`Release tag '${tag}' is missing from the local checkout.`);
+    }
+    try {
+        return normalizeSha(runGit(['rev-parse', '--verify', `${normalizeSha(tagSha)}^{commit}`], recipeRoot).trim());
+    } catch {
+        throw new Error(`Release tag '${tag}' must peel to a commit.`);
+    }
+}
+
+function materializeDetachedSourceWorktree(recipeRoot, sourceRoot, commitSha) {
+    const sha = normalizeSha(commitSha);
+    fs.mkdirSync(sourceRoot);
+    // An owned, empty directory keeps the recipe checkout untouched. Snapshotting checks HEAD and cleanliness.
+    runGit(['-c', 'submodule.recurse=false', 'worktree', 'add', '--quiet', '--detach', sourceRoot, sha], recipeRoot);
+    return () => runGit(['worktree', 'remove', '--force', sourceRoot], recipeRoot);
 }
 
 function verifyCheckoutHead(sourceRoot, expectedSha) {
@@ -237,23 +264,6 @@ function verifyCleanCheckout(sourceRoot) {
     if (runGit(['status', '--porcelain=v1', '--untracked-files=all'], sourceRoot)) {
         throw new Error('Source checkout contains modified or untracked files.');
     }
-}
-
-// Fetches exactly one released commit into a new directory without credentials, hooks, tags or
-// global config. The recipe stays in the pipeline checkout; only the source content comes from here.
-// `remote` is a code-level seam for local fixtures; it is never read from the environment.
-function fetchReleaseSource(sourceRoot, commitSha, remote = `https://github.com/${SOURCE_REPOSITORY}.git`) {
-    const sha = normalizeSha(commitSha);
-    fs.mkdirSync(sourceRoot);
-    const protocol = remote.startsWith('https://') ? 'https' : 'file';
-    runGit(['init', '--quiet'], sourceRoot);
-    runGit(['-c', 'protocol.allow=never', '-c', `protocol.${protocol}.allow=always`, '-c', 'credential.helper=',
-        'fetch', '--quiet', '--no-tags', '--no-recurse-submodules', '--depth=1', remote, sha], sourceRoot);
-    const fetched = runGit(['rev-parse', 'FETCH_HEAD^{commit}'], sourceRoot).trim().toLowerCase();
-    if (fetched !== sha) throw new Error(`Fetched commit '${fetched}' does not match '${sha}'.`);
-    runGit(['-c', 'advice.detachedHead=false', 'checkout', '--quiet', '--detach', sha], sourceRoot);
-    verifyCheckoutHead(sourceRoot, sha);
-    verifyCleanCheckout(sourceRoot);
 }
 
 function isObject(value) {
@@ -368,13 +378,14 @@ module.exports = {
     dependencyMap,
     fetchJson,
     fetchReleaseJson,
-    fetchReleaseSource,
     isObject,
+    materializeDetachedSourceWorktree,
     normalizeSha,
     parseReleaseRef,
-    parseReleaseUrl,
+    parseReleaseVersion,
     readVerifiedContracts,
     releaseRunSource,
+    resolveLocalReleaseTag,
     resolveReleaseMetadata,
     snapshotCheckout,
     verifyBuildPrerequisites,

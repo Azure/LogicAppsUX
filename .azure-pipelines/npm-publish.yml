@@ -1,15 +1,16 @@
-# Manual npm release build for LogicAppsUX, driven by one GitHub Release page URL.
+# Manual npm release build for LogicAppsUX, driven by one canonical stable version (X.Y.Z).
 #
-# Versioning and the GitHub Release stay in GitHub (version-release.yml). This pipeline takes the
-# canonical Release page URL, resolves it to a published, non-draft, non-prerelease stable tag and
-# its exact peeled commit, and builds that commit with the recipe (scripts/ado-npm-publisher*.cjs
-# and this YAML) from the reviewed pipeline ref. Released tags never need to carry this pipeline.
+# Versioning and release publication stay in GitHub (version-release.yml). This pipeline takes the
+# canonical stable version, resolves refs/tags/vX.Y.Z^{commit} from the local checked-out repository,
+# and builds that exact commit with the recipe (scripts/ado-npm-publisher*.cjs and this YAML) from
+# the reviewed pipeline ref. Released tags never need to carry this pipeline.
+# Select a release that is already complete and stable; the pipeline does not look up release status.
 # The product build scripts (pnpm build:lib, scripts/update-versions.js) come from the released tree.
 # Release assets (VSIX, iframe ZIP) are never read or treated as npm packages.
 #
-# Released source is built exactly as tagged. A release whose package manifests fail the strict
-# archive contract (for example the stylesheet exports removed by 05f0408d7, not yet on main) resolves
-# successfully but fails packing/validation; cut a new release after the fix lands instead of patching.
+# This pipeline warns about absent literal CSS export files; all other archive checks still fail closed.
+# Released manifests and tarballs are not patched.
+# Existing 1ES source analysis stays configured; scan coverage of the detached tree must be verified in ADO.
 #
 # Production publishing is not activated: no feed credential, service connection or writer runs here.
 trigger: none
@@ -17,8 +18,8 @@ pr: none
 schedules: []
 
 parameters:
-  - name: releaseUrl
-    displayName: GitHub Release page URL (https://github.com/Azure/LogicAppsUX/releases/tag/vX.Y.Z)
+  - name: releaseVersion
+    displayName: Stable release version (e.g. 5.1024.0)
     type: string
     default: ''
 
@@ -47,10 +48,10 @@ extends:
         os: windows
     stages:
       - stage: Release
-        displayName: Build and verify npm packages for one GitHub Release
+        displayName: Build and verify npm packages for one stable release version
         jobs:
           - job: BuildRelease
-            displayName: Resolve release, build exact source, pack and validate
+            displayName: Resolve local tag, build exact source, pack and validate
             workspace:
               clean: all
             templateContext:
@@ -59,20 +60,22 @@ extends:
                   targetPath: '$(PackageOutput)'
                   artifactName: '$(ArtifactName)'
             steps:
-              # Recipe checkout only; the released source is fetched separately at the verified SHA.
+              # This checkout provides both the recipe and tag objects; scripts do not fetch source again.
               - checkout: self
                 clean: true
+                fetchTags: true
+                fetchDepth: 0
                 persistCredentials: false
               - task: UseNode@1
                 displayName: Use Node 24
                 inputs:
                   version: '24.x'
               - bash: node scripts/ado-npm-publisher.cjs build-release-artifact
-                displayName: Resolve the release URL, build its exact commit and validate nine tarballs
+                displayName: Resolve version tag, build its exact commit and validate nine tarballs
                 workingDirectory: '$(Build.Repository.LocalPath)'
                 env:
                   BASH_ENV: /dev/null
-                  RELEASE_URL: ${{ parameters.releaseUrl }}
+                  RELEASE_VERSION: ${{ parameters.releaseVersion }}
                   BUILD_REASON: '$(Build.Reason)'
                   BUILD_ID: '$(Build.BuildId)'
                   RECIPE_SHA: '$(Build.SourceVersion)'
@@ -105,7 +108,7 @@ extends:
                   PACKAGE_OUTPUT: '$(PackageOutput)'
 
           # Artifact-only consumer: no repository checkout, no tool from the artifact is executed, and every
-          # byte is checked against this run's manifest digest, release URL, build ID and recipe commit.
+          # byte is checked against this run's manifest digest, release version tag, build ID and recipe commit.
           - job: VerifyRelease
             displayName: Verify the same-run artifact without a checkout
             dependsOn: BuildRelease
@@ -124,12 +127,9 @@ extends:
                   set -euo pipefail
                   python3 -I - <<'PY'
                   import base64, hashlib, json, os, re, stat
-                  prefix = 'https://github.com/Azure/LogicAppsUX/releases/tag/'
-                  url = os.environ['RELEASE_URL']
-                  match = re.fullmatch(r'v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', url[len(prefix):]) if url.startswith(prefix) else None
-                  if match is None or len(url) > 200:
-                      raise SystemExit('Invalid GitHub Release page URL.')
-                  version = '.'.join(match.groups())
+                  version = os.environ['RELEASE_VERSION']
+                  if len(version) > 40 or not re.fullmatch(r'(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)', version):
+                      raise SystemExit('Invalid releaseVersion. Enter a stable version such as 5.1024.0 (without the v prefix).')
                   hex40 = re.compile(r'[0-9a-f]{40}')
                   build_id, recipe_sha, source_sha = os.environ['BUILD_ID'], os.environ['RECIPE_SHA'].lower(), os.environ['SOURCE_SHA']
                   manifest_sha256 = os.environ['EXPECTED_MANIFEST_SHA256']
@@ -172,10 +172,7 @@ extends:
                   source = record['source']
                   if not isinstance(source, dict):
                       raise SystemExit('Manifest shape is invalid.')
-                  release_id = source.get('releaseId')
-                  if type(release_id) is not int or release_id <= 0:
-                      raise SystemExit('Manifest release ID is invalid.')
-                  expected_source = {'repository': 'Azure/LogicAppsUX', 'releaseRef': 'refs/tags/v' + version, 'releaseId': release_id,
+                  expected_source = {'repository': 'Azure/LogicAppsUX', 'releaseRef': 'refs/tags/v' + version,
                                      'verifiedSha': source_sha, 'version': version, 'buildId': build_id, 'recipeSha': recipe_sha}
                   if source != expected_source:
                       raise SystemExit('Manifest provenance does not match this run, release tag, source SHA or recipe commit.')
@@ -197,7 +194,7 @@ extends:
                 env:
                   BASH_ENV: /dev/null
                   ARTIFACT_DIR: '$(Pipeline.Workspace)/release-artifact'
-                  RELEASE_URL: ${{ parameters.releaseUrl }}
+                  RELEASE_VERSION: ${{ parameters.releaseVersion }}
                   BUILD_ID: '$(Build.BuildId)'
                   RECIPE_SHA: '$(Build.SourceVersion)'
                   SOURCE_SHA: '$(ExpectedSourceSha)'

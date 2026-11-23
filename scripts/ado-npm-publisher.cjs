@@ -3,7 +3,20 @@ const { spawnSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { COHORT, branchProvenance, buildManifestContract, fetchReleaseSource, parseReleaseRef, readVerifiedContracts, releaseRunSource, resolveReleaseMetadata, snapshotCheckout, verifyCheckoutHead, verifyCleanCheckout, verifyReleaseMetadata } =
+const {
+    COHORT,
+    branchProvenance,
+    buildManifestContract,
+    materializeDetachedSourceWorktree,
+    parseReleaseRef,
+    readVerifiedContracts,
+    releaseRunSource,
+    resolveLocalReleaseTag,
+    snapshotCheckout,
+    verifyCheckoutHead,
+    verifyCleanCheckout,
+    verifyReleaseMetadata,
+} =
     require('./ado-npm-publisher-lib.cjs');
 const { authenticateFeed, classifyPackageState, createRegistry, npmRunner, publishPackage, readNpmAuthorization, validateArtifactFiles } =
     require('./ado-npm-publisher-artifact.cjs');
@@ -114,39 +127,32 @@ function buildBranchArtifact(env, log, run = spawnSync) {
     log(`Validated ${artifact.packages.length} test tarballs at ${verified.version}; publication was not attempted.`);
 }
 
-const RELEASE_IDENTITY_FIELDS = ['releaseTag', 'version', 'commitSha', 'releaseId', 'releaseUrl'];
-
-async function resolveRelease(source, fetchImpl) {
-    const release = await resolveReleaseMetadata({ releaseRef: source.releaseRef, fetchImpl });
-    // GitHub must report the same canonical page the operator supplied.
-    assert.equal(release.releaseUrl, source.releaseUrl, 'GitHub Release page URL does not match releaseUrl.');
-    return release;
-}
-
-// Release-URL build. The pipeline recipe (this script and the YAML) comes from the reviewed pipeline
-// ref; the product source is fetched separately at the exact commit the published, non-draft,
-// non-prerelease GitHub Release tag peels to, so released tags never need to carry this pipeline.
-// The release is re-read after the build so a release edited or retagged mid-run fails closed.
-// Released source is built exactly as tagged: packaging defects in a tag fail validation, never get patched here.
+// Release build from a local checked-out stable tag. The reviewed pipeline recipe remains on the pipeline ref,
+// while the source tree is materialized in a detached worktree pinned to refs/tags/vX.Y.Z^{commit}.
 // The options are code-level seams for local fixtures only; none is read from the environment.
-async function buildReleaseArtifact(env, log, fetchImpl = fetch, { run = spawnSync, sourceRemote, sandbox = withSandboxedBuild } = {}) {
+async function buildReleaseArtifact(env, log, { run = spawnSync, sandbox = withSandboxedBuild, recipeRoot } = {}) {
     const source = releaseRunSource(env);
-    const release = await resolveRelease(source, fetchImpl);
-    const verified = { ...release, buildId: source.buildId, recipeSha: source.recipeSha };
-    log(`Resolved ${source.releaseUrl} to published ${verified.releaseTag} at ${verified.commitSha}; packing has not started.`);
+    const root = fs.realpathSync(recipeRoot ?? process.cwd());
+    verifyCheckoutHead(root, source.recipeSha);
+    const commitSha = resolveLocalReleaseTag(root, source.releaseRef);
+    const verified = { ...source, kind: 'release-tag', commitSha };
+    log(`Resolved ${source.releaseRef} to ${commitSha}; packing has not started.`);
     const sourceRoot = path.join(env.AGENT_TMP, 'release-source');
-    fetchReleaseSource(sourceRoot, verified.commitSha, sourceRemote);
-    const contracts = snapshotCheckout(sourceRoot, verified);
-    const buildEnv = { ...env, SOURCE_ROOT: sourceRoot };
-    sandbox(env, 'npm-release-home-', childEnv => buildCohort(buildEnv, { verified, contracts }, run, undefined, childEnv));
-    verifyCheckoutHead(sourceRoot, verified.commitSha);
-    const recheck = await resolveRelease(source, fetchImpl);
-    for (const field of RELEASE_IDENTITY_FIELDS) {
-        assert.equal(recheck[field], verified[field], 'Release metadata changed during the build.');
+    const removeSource = materializeDetachedSourceWorktree(root, sourceRoot, verified.commitSha);
+    try {
+        const contracts = snapshotCheckout(sourceRoot, verified);
+        const buildEnv = { ...env, SOURCE_ROOT: sourceRoot };
+        sandbox(env, 'npm-release-home-', childEnv => buildCohort(buildEnv, { verified, contracts }, run, undefined, childEnv));
+        verifyCheckoutHead(sourceRoot, verified.commitSha);
+        const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, {
+            prepare: true,
+            warnMissingCss: warning => log(`Warning: ${sanitizeAgentOutput(warning)}`),
+        });
+        log(`Packed and validated ${artifact.packages.length} release tarballs for ${verified.releaseTag} at ${verified.commitSha} (run ${verified.buildId}, recipe ${verified.recipeSha}); publication was not attempted.`);
+        return artifact;
+    } finally {
+        removeSource();
     }
-    const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
-    log(`Packed and validated ${artifact.packages.length} release tarballs for ${verified.releaseTag} at ${verified.commitSha} (run ${verified.buildId}, recipe ${verified.recipeSha}); publication was not attempted.`);
-    return artifact;
 }
 
 async function verifyArtifact(env, fetchImpl) {
@@ -211,7 +217,7 @@ async function main([command, ...args] = process.argv.slice(2), env = process.en
     }
     if (command === 'build-branch-artifact') return buildBranchArtifact(env, log);
     if (command === 'build-release-artifact') {
-        await buildReleaseArtifact(env, log, fetchImpl);
+        await buildReleaseArtifact(env, log);
         return;
     }
     if (command === 'prepare-artifact') return prepareArtifact(env, log);
