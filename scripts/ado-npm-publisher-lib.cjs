@@ -252,6 +252,12 @@ function materializeDetachedSourceWorktree(recipeRoot, sourceRoot, commitSha) {
     return () => runGit(['worktree', 'remove', '--force', sourceRoot], recipeRoot);
 }
 
+function restoreTrackedReleaseSource(sourceRoot, commitSha) {
+    // Restore the committed scanner inputs without removing dependencies and other untracked build outputs.
+    runGit(['restore', '--source', normalizeSha(commitSha), '--staged', '--worktree', '--no-recurse-submodules', '--', '.'], sourceRoot);
+    runGit(['diff', '--quiet', 'HEAD', '--', '.'], sourceRoot);
+}
+
 function verifyCheckoutHead(sourceRoot, expectedSha) {
     const head = runGit(['rev-parse', 'HEAD'], sourceRoot).trim().toLowerCase();
     if (head !== normalizeSha(expectedSha)) {
@@ -387,6 +393,7 @@ module.exports = {
     releaseRunSource,
     resolveLocalReleaseTag,
     resolveReleaseMetadata,
+    restoreTrackedReleaseSource,
     snapshotCheckout,
     verifyBuildPrerequisites,
     verifyCheckoutHead,

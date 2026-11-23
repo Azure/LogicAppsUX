@@ -288,15 +288,18 @@ function releaseRepoFixture({ tagType = 'annotated' } = {}) {
     return { repo, sha };
 }
 
-// Extracts an inline python verifier from the pipeline YAML so the tests run the exact hosted code.
+// Run the exact inline pipeline code without loading any hosted services.
 const pipelineFile = path.join(__dirname, '..', '.azure-pipelines', 'npm-publish.yml');
-function pipelinePython(index) {
-    const yaml = fs.readFileSync(pipelineFile, 'utf8');
+const verifierFile = path.join(path.dirname(pipelineFile), 'npm-verify-release.steps.yml');
+function pipelinePython(file, index = 0) {
+    const yaml = fs.readFileSync(file, 'utf8');
     const block = [...yaml.matchAll(/python3 -I - <<'PY'\n([\s\S]*?)\n *PY\n/g)][index][1].split('\n');
     const indent = Math.min(...block.filter(line => line.trim()).map(line => /^ */.exec(line)[0].length));
     return block.map(line => line.slice(indent)).join('\n');
 }
-const runPython = (index, env) => spawnSync('python3', ['-I', '-'], { input: pipelinePython(index), encoding: 'utf8', env: { PATH: process.env.PATH, ...env } });
+const runPython = (file, env, options = {}) => spawnSync(options.executable ?? 'python3', ['-I', '-'], {
+    input: pipelinePython(file, options.index), encoding: 'utf8', env: { PATH: process.env.PATH, ...env }, cwd: options.cwd, timeout: 30_000,
+});
 
 test('rejects whitespace, non-stable refs and queue macro text before any request', async () => {
     assert.deepEqual(parseReleaseRef(releaseRef), { version, tag: 'v5.1022.0' });
@@ -1080,27 +1083,45 @@ test('branch fixture rejects a reserved test version already in upstream invento
 });
 
 
-test('release pipeline takes only the releaseVersion and keeps every job credential-free', () => {
+test('only the separate protected Publish stage can authenticate after verifying the current run', () => {
     const yaml = fs.readFileSync(pipelineFile, 'utf8');
+    const [release, publish] = yaml.split(/(?= {6}- stage: Publish\n)/);
+    const verifier = fs.readFileSync(verifierFile, 'utf8');
     assert.match(yaml, /^trigger: none\npr: none\nschedules: \[\]$/m);
     assert.deepEqual([...yaml.matchAll(/^ {2}- name: (\w+)/gm)].map(match => match[1]), ['releaseVersion']);
-    assert.doesNotMatch(yaml, /npmAuthenticate|System\.AccessToken|serviceConnection|workloadIdentity|type: boolean/i);
+    assert.doesNotMatch(release, /npmAuthenticate|System\.AccessToken|serviceConnection|workloadIdentity|type: boolean/i);
     assert.match(yaml, /name: Azure-Pipelines-1ESPT-ExDShared\s+image: ubuntu-latest\s+os: linux/);
     assert.match(yaml, /fetchTags: true/);
     assert.match(yaml, /fetchDepth: 0/);
-    const verify = yaml.slice(yaml.indexOf('- job: VerifyRelease'), yaml.indexOf('- job: ProductionPublishNotActivated'));
+    assert.match(yaml, /persistCredentials: false/);
+    assert.match(release, /componentgovernance:\s+useAgentBuildDirectory: true/);
+    assert.match(release, /RELEASE_SCAN_ROOT: '\$\(Agent\.BuildDirectory\)'/);
+    const verify = release.slice(release.indexOf('- job: VerifyRelease'), release.indexOf('- job: ProductionPublishNotActivated'));
     assert.match(verify, /buildType: current/);
     assert.match(verify, /steps:\s+- checkout: none/);
     assert.equal((yaml.match(/- checkout: self/g) ?? []).length, 1);
-    assert.match(yaml.slice(yaml.indexOf('- job: ProductionPublishNotActivated')), /checkout: none/);
+    assert.match(release.slice(release.indexOf('- job: ProductionPublishNotActivated')), /checkout: none/);
+    assert.doesNotMatch(publish, /trigger: manual/);
+    assert.match(publish, /dependsOn: Release/);
+    assert.match(publish, /^ {8}lockBehavior: sequential$/m);
+    assert.match(publish, /eq\(dependencies\.Release\.result, 'Succeeded'\)/);
+    assert.match(publish, /eq\(dependencies\.Release\.outputs\['VerifyRelease\.verification\.ArtifactVerified'\], 'true'\)/);
+    assert.match(publish, /eq\(variables\['Build\.Reason'\], 'Manual'\)/);
+    assert.match(publish, /eq\(variables\['Build\.SourceBranch'\], 'refs\/heads\/krmitta\/ado-npm-publish-pipeline'\)/);
+    assert.match(publish, /stageDependencies\.Release\.BuildRelease\.outputs\['manifest\.ManifestSha256'\]/);
+    assert.match(publish, /stageDependencies\.Release\.BuildRelease\.outputs\['manifest\.SourceSha'\]/);
+    assert.match(publish, /buildType: current/);
+    assert.match(publish, /steps:\s+- checkout: none\s+- template: .*npm-verify-release\.steps\.yml[\s\S]+npmAuthenticate@0/);
+    assert.match(publish, /workloadIdentityServiceConnection: 21d5a1d8-11d3-425c-8d3a-e7f088725481/);
+    assert.doesNotMatch(publish, /build-release-artifact|npm (?:install|ci)|System\.AccessToken/);
     // The verifier restates the cohort independently of the producer; it must still name the same nine packages in order.
-    const listed = /packages = \[([^\]]+)\]/.exec(verify)[1].match(/'[^']+'/g).map(name => `@microsoft/${name.slice(1, -1)}`);
+    const listed = /packages = \[([^\]]+)\]/.exec(verifier)[1].match(/'[^']+'/g).map(name => `@microsoft/${name.slice(1, -1)}`);
     assert.deepEqual(listed, COHORT.map(item => item.name));
 });
 
 test('inline verifiers accept the same-run artifact and reject changed bytes, wrong runs and unexpected entries', () => {
     const { dir } = artifactFixture(releaseProvenance);
-    const recorded = runPython(0, { PACKAGE_OUTPUT: dir });
+    const recorded = runPython(pipelineFile, { PACKAGE_OUTPUT: dir });
     assert.equal(recorded.status, 0, recorded.stderr);
     const outputs = Object.fromEntries([...recorded.stdout.matchAll(/variable=(\w+);isOutput=true\](\S+)/g)].map(match => match.slice(1)));
     const manifestBytes = fs.readFileSync(path.join(dir, 'publisher-artifact.json'));
@@ -1108,7 +1129,7 @@ test('inline verifiers accept the same-run artifact and reject changed bytes, wr
 
     const env = { ARTIFACT_DIR: dir, RELEASE_VERSION: releaseVersion, BUILD_ID: releaseEnv.BUILD_ID, RECIPE_SHA: recipeSha,
         SOURCE_SHA: outputs.SourceSha, EXPECTED_MANIFEST_SHA256: outputs.ManifestSha256 };
-    const verify = (overrides = {}) => runPython(1, { ...env, ...overrides });
+    const verify = (overrides = {}) => runPython(verifierFile, { ...env, PREPARE_WRITER: 'false', ...overrides });
     const good = verify();
     assert.equal(good.status, 0, good.stderr);
     assert.match(good.stdout, /Verified nine packages for v5\.1022\.0/);
@@ -1163,6 +1184,247 @@ test('inline verifiers accept the same-run artifact and reject changed bytes, wr
     fs.rmSync(tarball);
     fs.symlinkSync(outside, tarball);
     rejects({}, /not a regular file/);
+});
+
+const writerRegistry = 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/';
+const legacyWriterRegistry = 'https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/';
+const testTokenLine = `//${new URL(writerRegistry).host}${new URL(writerRegistry).pathname}:_authToken=fixture-only`;
+
+function writerAttachment(name, registry = writerRegistry) {
+    return `${registry}${name}/-/${name.split('/')[1]}-${version}.tgz`;
+}
+
+function writerFixture() {
+    const { dir, record } = artifactFixture(releaseProvenance);
+    const scratch = workspace();
+    const cwd = path.join(scratch, 'writer');
+    const manifest = fs.readFileSync(path.join(dir, 'publisher-artifact.json'));
+    const prepare = (writerDir = cwd) => runPython(verifierFile, {
+        ARTIFACT_DIR: dir, RELEASE_VERSION: releaseVersion, BUILD_ID: releaseEnv.BUILD_ID, RECIPE_SHA: recipeSha,
+        SOURCE_SHA: commitSha, EXPECTED_MANIFEST_SHA256: crypto.createHash('sha256').update(manifest).digest('hex'),
+        PREPARE_WRITER: 'true', WRITER_DIR: writerDir, REGISTRY: writerRegistry,
+    });
+    const interpreter = spawnSync('python3', ['-I', '-c', 'import sys; print(sys.executable)'], { encoding: 'utf8' });
+    assert.equal(interpreter.status, 0, interpreter.stderr);
+    const executable = interpreter.stdout.trim();
+    const statePath = path.join(scratch, 'registry.json');
+    const callsPath = path.join(scratch, 'calls.jsonl');
+    const state = Object.fromEntries(record.packages.map(entry => [entry.name, {
+        ...entry, latest: previousVersion, previousVersion, tarball: writerAttachment(entry.name),
+    }]));
+    // No real npm on PATH, even if the writer asks for an unexpected command.
+    fs.writeFileSync(path.join(scratch, 'npm'), `#!${executable}
+import json, os, pathlib, shutil, sys
+root = pathlib.Path(__file__).resolve().parent
+args = sys.argv[1:]
+command, target = args[:2]
+def flag(name):
+    return args[args.index(name) + 1]
+assert flag('--registry') == ${JSON.stringify(writerRegistry)}
+assert '--ignore-scripts' in args and flag('--globalconfig') == '/dev/null'
+assert command == 'publish' or '--prefer-online' in args
+assert pathlib.Path(flag('--userconfig')).resolve() == pathlib.Path.cwd() / '.npmrc'
+assert 'SYSTEM_ACCESSTOKEN' not in os.environ and 'NPM_CONFIG_REGISTRY' not in os.environ
+state_path = root / 'registry.json'
+state = json.loads(state_path.read_text())
+if command == 'publish':
+    name = next(n for n, e in state.items() if e['file'] == pathlib.Path(target).name)
+elif command == 'pack':
+    name = next(n for n, e in state.items()
+                if target == flag('--registry') + n + '/-/' + n.split('/')[1] + '-' + e['version'] + '.tgz')
+else:
+    name = '@' + target[1:].partition('@')[0]
+entry = state[name]
+version = entry['version']
+with (root / 'calls.jsonl').open('a') as log:
+    log.write(json.dumps([command, name, flag('--cache')]) + '\\n')
+if command == 'view' and target == name:
+    if entry.get('metadata') == 'unavailable':
+        print('untrusted npm output fixture-only', file=sys.stderr)
+        sys.exit(1)
+    if entry.get('metadata') == 'malformed':
+        print('{"dist-tags":')
+        sys.exit(0)
+    latest = entry['latest']
+    versions = sorted({entry['previousVersion'], latest} | ({version} if entry.get('present') else set()) | set(entry.get('extraVersions', [])))
+    print(json.dumps({'name': name, 'version': latest, 'versions': versions, 'dist-tags': {'latest': latest}}))
+elif command == 'view' and target == name + '@' + version:
+    assert args[2:6] == ['name', 'version', 'dist.integrity', 'dist.tarball']
+    print(json.dumps({'name': name, 'version': version, 'dist.integrity': entry.get('registryIntegrity', entry['integrity']),
+                      'dist.tarball': entry['tarball']}))
+elif command == 'publish':
+    assert flag('--tag') == 'latest' and target.startswith('./')
+    assert not entry.get('present')
+    if not entry.get('dropWrite'):
+        entry.update({'present': True, 'latest': version})
+        if entry.get('moveLatestFor'):
+            other = state[entry['moveLatestFor']]
+            other['latest'] = other['previousVersion']
+        state_path.write_text(json.dumps(state))
+    sys.exit(1 if entry.get('nonzeroWrite') else 0)
+elif command == 'pack':
+    dest = pathlib.Path(flag('--pack-destination')) / entry['file']
+    if entry.get('wrongBytes'):
+        dest.write_bytes(b'not the published attachment')
+    else:
+        shutil.copyfile(entry['file'], dest)
+else:
+    sys.exit(13)
+`, { mode: 0o700 });
+    return {
+        dir, cwd, prepare, state, record,
+        run() {
+            fs.writeFileSync(statePath, JSON.stringify(state));
+            fs.writeFileSync(callsPath, '');
+            const result = runPython(pipelineFile, { PATH: scratch, DIR: cwd, REGISTRY: writerRegistry, RELEASE_VERSION: releaseVersion,
+                SYSTEM_ACCESSTOKEN: 'not-for-npm', NPM_CONFIG_REGISTRY: 'https://not-the-feed.invalid/' },
+            { executable, cwd, index: 1 });
+            const calls = fs.readFileSync(callsPath, 'utf8').trim().split('\n').filter(Boolean).map(line => JSON.parse(line));
+            const persisted = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+            Object.assign(state, persisted);
+            return { ...result, calls, writes: calls.filter(([command]) => command === 'publish').map(([, name]) => name) };
+        },
+    };
+}
+
+function prepareWriter(fixture, authenticate = true) {
+    const prepared = fixture.prepare();
+    assert.equal(prepared.status, 0, prepared.stderr);
+    if (authenticate) fs.appendFileSync(path.join(fixture.cwd, '.npmrc'), `${testTokenLine}\n`);
+}
+
+test('writer copies only verified bytes to private scratch and will not use a missing WIF token', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture, false);
+    assert.equal(fs.statSync(fixture.cwd).mode & 0o777, 0o700);
+    const { file } = fixture.record.packages[0];
+    const original = fs.readFileSync(path.join(fixture.dir, file));
+    fs.writeFileSync(path.join(fixture.dir, file), 'tampered');
+    assert.deepEqual(fs.readFileSync(path.join(fixture.cwd, file)), original);
+    const tampered = fixture.prepare(path.join(workspace(), 'writer'));
+    assert.notEqual(tampered.status, 0);
+    assert.match(tampered.stderr, /identity or integrity mismatch/);
+    const result = fixture.run();
+    assert.notEqual(result.status, 0);
+    assert.deepEqual(result.calls, []);
+});
+
+test('writer preflights the full cohort, reads back every publication and makes an exact retry a no-op', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const names = fixture.record.packages.map(item => item.name);
+    fixture.state[names[0]].tarball = writerAttachment(names[0], legacyWriterRegistry);
+    fixture.state[names[1]].tarball = writerAttachment(names[1]).replace('@microsoft/', '%40microsoft%2f');
+    const result = fixture.run();
+    assert.equal(result.status, 0, result.stderr);
+    const firstWrite = result.calls.findIndex(([command]) => command === 'publish');
+    assert.deepEqual([...new Set(result.calls.slice(0, firstWrite).map(([, name]) => name))], names);
+    assert.deepEqual(result.writes, names);
+    const packs = result.calls.filter(([command]) => command === 'pack');
+    assert.deepEqual(packs.map(([, name]) => name), names);
+    assert.equal(new Set(packs.map(([, , cache]) => cache)).size, 9);
+    assert.ok(packs.every(([, , cache]) => !result.calls.some(([command, , writeCache]) => command === 'publish' && cache === writeCache)));
+    const retry = fixture.run();
+    assert.equal(retry.status, 0, retry.stderr);
+    assert.deepEqual(retry.writes, []);
+    assert.deepEqual(retry.calls.filter(([command]) => command === 'pack').map(([, name]) => name), names);
+});
+
+test('a changed private tarball blocks publishing the entire cohort', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const privateTarball = path.join(fixture.cwd, fixture.record.packages.at(-1).file);
+    fs.chmodSync(privateTarball, 0o600);
+    fs.appendFileSync(privateTarball, 'changed');
+    const result = fixture.run();
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /does not match the verified artifact/);
+    assert.deepEqual(result.writes, []);
+});
+
+test('the last package blocks all writes if latest is newer, bytes conflict, or registry reads are inconclusive', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const name = fixture.record.packages.at(-1).name;
+    const defaults = fixture.state[name];
+    for (const change of [
+        { latest: '5.1023.0' },
+        { extraVersions: [`${version}+ambiguous`] },
+        { present: true, latest: version, registryIntegrity: 'sha512-conflicting' },
+        { present: true, latest: version, wrongBytes: true },
+        { present: true },
+        { metadata: 'unavailable' },
+        { metadata: 'malformed' },
+    ]) {
+        fixture.state[name] = { ...defaults, ...change };
+        const result = fixture.run();
+        assert.notEqual(result.status, 0, JSON.stringify(change));
+        assert.deepEqual(result.writes, []);
+        assert.doesNotMatch(result.stderr + result.stdout, /fixture-only/);
+    }
+});
+
+test('writer rejects attachments outside the exact feed, package and version before packing or writing', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const { name } = fixture.record.packages.at(-1);
+    const approved = writerAttachment(name);
+    const otherName = fixture.record.packages[0].name;
+    Object.assign(fixture.state[name], { present: true, latest: version });
+    for (const tarball of [
+        null,
+        approved.replace('https:', 'http:'),
+        approved.replace('pkgs.dev.azure.com', 'other.invalid'),
+        approved.replace('/One/_packaging/', '/other/_packaging/'),
+        approved.replace('/microsoft-logic-apps/', '/other-feed/'),
+        writerAttachment(otherName),
+        approved.replace(`-${version}.tgz`, `-${previousVersion}.tgz`),
+        `${approved}?unexpected=1`,
+    ]) {
+        fixture.state[name].tarball = tarball;
+        const result = fixture.run();
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /Unapproved registry attachment/);
+        assert.ok(result.calls.every(([command]) => command === 'view'));
+    }
+});
+
+test('writer reconciles a nonzero response with exact bytes, stops on an unproved result and resumes safely', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const [first, second, ...rest] = fixture.record.packages.map(item => item.name);
+    fixture.state[first].nonzeroWrite = true;
+    fixture.state[second].dropWrite = true;
+    const result = fixture.run();
+    assert.notEqual(result.status, 0);
+    assert.deepEqual(result.writes, [first, second]);
+    assert.ok(result.calls.some(([command, name]) => command === 'pack' && name === first));
+    fixture.state[second].dropWrite = false;
+    const retry = fixture.run();
+    assert.equal(retry.status, 0, retry.stderr);
+    assert.deepEqual(retry.writes, [second, ...rest]);
+});
+
+test('writer stops after the first publish when registry readback differs despite matching metadata', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const [first] = fixture.record.packages;
+    fixture.state[first.name].wrongBytes = true;
+    const result = fixture.run();
+    assert.notEqual(result.status, 0);
+    assert.deepEqual(result.writes, [first.name]);
+    assert.ok(result.calls.some(([command, name]) => command === 'pack' && name === first.name));
+});
+
+test('writer fails if an earlier package is no longer latest at the end of publication', () => {
+    const fixture = writerFixture();
+    prepareWriter(fixture);
+    const names = fixture.record.packages.map(item => item.name);
+    fixture.state[names.at(-1)].moveLatestFor = names[0];
+    const result = fixture.run();
+    assert.notEqual(result.status, 0);
+    assert.deepEqual(result.writes, names);
+    assert.match(result.stderr, /Final registry latest is not/);
 });
 
 test('accepts only canonical ASCII stable releaseVersion', () => {
@@ -1241,19 +1503,24 @@ test('release reads close each connection, refuse redirects and sanitize failure
 });
 
 // Builds from a local repository checkout: no network source fetch is available to this path.
-function releaseBuild({ repo, env: overrides = {} }) {
+function releaseBuild({ repo, env: overrides = {}, failBuild = false }) {
     const tmp = workspace();
     const env = { ...releaseEnv, RECIPE_SHA: gitFixture(repo, 'rev-parse', 'HEAD'), ...overrides,
         AGENT_TMP: tmp, ARTIFACT_ROOT: path.join(tmp, 'out'), PATH: process.env.PATH };
-    const sourceRoot = path.join(tmp, 'release-source');
+    const sourceRoot = path.join(overrides.RELEASE_SCAN_ROOT ?? tmp, 'release-source');
     const calls = [];
     const run = (command, args, { cwd }) => {
         assert.equal(cwd, sourceRoot);
         if (calls.length === 0) {
             assert.equal(fs.readFileSync(path.join(cwd, 'release-source.txt'), 'utf8'), 'tagged bytes\n');
             assert.equal(gitFixture(cwd, 'rev-parse', 'HEAD'), gitFixture(repo, 'rev-parse', `${releaseRef}^{commit}`));
+            fs.mkdirSync(path.join(cwd, 'node_modules'));
+            fs.writeFileSync(path.join(cwd, 'node_modules', '.modules.yaml'), 'fixture dependency metadata\n');
         }
         calls.push(args);
+        if (failBuild && args.includes('build:lib')) {
+            return { status: 1, stdout: '', stderr: '' };
+        }
         if (command === process.execPath) {
             for (const item of COHORT) {
                 const file = path.join(sourceRoot, item.directory, 'package.json');
@@ -1293,9 +1560,30 @@ test('release build uses the annotated tag bytes rather than the recipe and veri
     assert.equal(fs.readFileSync(marker, 'utf8'), 'updated recipe bytes\n');
     // The manifest goes through the inline verifier exactly as the hosted consumer job would see it.
     const manifestPath = path.join(env.ARTIFACT_ROOT, 'publisher-artifact.json');
-    const verify = runPython(1, { ARTIFACT_DIR: env.ARTIFACT_ROOT, RELEASE_VERSION: releaseVersion, BUILD_ID: env.BUILD_ID, RECIPE_SHA: recipeHead, SOURCE_SHA: sha,
+    const verify = runPython(verifierFile, { ARTIFACT_DIR: env.ARTIFACT_ROOT, RELEASE_VERSION: releaseVersion, BUILD_ID: env.BUILD_ID,
+        RECIPE_SHA: recipeHead, SOURCE_SHA: sha, PREPARE_WRITER: 'false',
         EXPECTED_MANIFEST_SHA256: crypto.createHash('sha256').update(fs.readFileSync(manifestPath)).digest('hex') });
     assert.equal(verify.status, 0, verify.stderr);
+});
+
+test('hosted release keeps the exact tagged worktree and restores tracked manifests for Component Governance', async () => {
+    const { repo, sha } = releaseRepoFixture();
+    const scanRoot = workspace();
+    const { result, logs } = releaseBuild({ repo, env: { RELEASE_SCAN_ROOT: scanRoot } });
+    assert.equal((await result).source.verifiedSha, sha);
+    const sourceRoot = path.join(scanRoot, 'release-source');
+    assert.equal(gitFixture(sourceRoot, 'rev-parse', 'HEAD'), sha);
+    assert.equal(gitFixture(sourceRoot, 'status', '--porcelain', '--untracked-files=no'), '');
+    assert.equal(fs.readFileSync(path.join(sourceRoot, 'node_modules', '.modules.yaml'), 'utf8'), 'fixture dependency metadata\n');
+    assert.match(logs.at(-1), /Retaining tagged source .* for Component Governance/);
+});
+
+test('failed hosted release cleans the scan worktree', async () => {
+    const { repo } = releaseRepoFixture();
+    const scanRoot = workspace();
+    const { result } = releaseBuild({ repo, env: { RELEASE_SCAN_ROOT: scanRoot }, failBuild: true });
+    await assert.rejects(result, /corepack failed: exit 1/);
+    assert.equal(fs.existsSync(path.join(scanRoot, 'release-source')), false);
 });
 
 test('release build accepts a lightweight local tag without GitHub API access', async (t) => {

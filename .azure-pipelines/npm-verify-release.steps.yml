@@ -1,0 +1,169 @@
+parameters:
+  - name: releaseVersion
+    type: string
+    default: ''
+  - name: prepareWriter
+    type: boolean
+    default: false
+
+steps:
+  - bash: |
+      set -euo pipefail
+      python3 -I - <<'PY'
+      import base64
+      import hashlib
+      import json
+      import os
+      import re
+      import stat
+      from pathlib import Path
+
+      version = os.environ['RELEASE_VERSION']
+      if len(version) > 40 or not re.fullmatch(r'(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)', version):
+          raise SystemExit('Invalid releaseVersion. Enter a stable version such as 5.1024.0 (without the v prefix).')
+
+      hex40 = re.compile(r'[0-9a-f]{40}')
+      build_id = os.environ['BUILD_ID']
+      recipe_sha = os.environ['RECIPE_SHA'].lower()
+      source_sha = os.environ['SOURCE_SHA']
+      manifest_sha256 = os.environ['EXPECTED_MANIFEST_SHA256']
+      if not re.fullmatch(r'[1-9]\d{0,14}', build_id) or not hex40.fullmatch(recipe_sha) or not hex40.fullmatch(source_sha):
+          raise SystemExit('Run identity is invalid.')
+      if not re.fullmatch(r'[0-9a-f]{64}', manifest_sha256):
+          raise SystemExit('Expected manifest digest is missing.')
+
+      packages = [
+          'logic-apps-shared',
+          'designer-ui',
+          'designer-ui-v2',
+          'logic-apps-chatbot',
+          'logic-apps-designer',
+          'logic-apps-designer-v2',
+          'logic-apps-data-mapper',
+          'logic-apps-data-mapper-v2',
+          'vscode-extension-logic-apps',
+      ]
+      files = ['microsoft-%s-%s.tgz' % (name, version) for name in packages]
+      root = os.environ['ARTIFACT_DIR']
+      if not stat.S_ISDIR(os.lstat(root).st_mode) or os.path.realpath(root) != os.path.abspath(root):
+          raise SystemExit('Artifact directory is not confined.')
+
+      entries = os.listdir(root)
+      if '_manifest' in entries:
+          if not stat.S_ISDIR(os.lstat(os.path.join(root, '_manifest')).st_mode):
+              raise SystemExit('Reserved _manifest entry is not a directory.')
+          entries.remove('_manifest')
+      if sorted(entries) != sorted(files + ['publisher-artifact.json']):
+          raise SystemExit('Artifact must contain exactly the nine tarballs and the manifest.')
+
+      nofollow = getattr(os, 'O_NOFOLLOW', 0)
+      nonblock = getattr(os, 'O_NONBLOCK', 0)
+
+      def read_regular(name, limit):
+          path = os.path.join(root, name)
+          try:
+              fd = os.open(path, os.O_RDONLY | nofollow | nonblock)
+          except OSError:
+              raise SystemExit('Artifact entry is not a regular file: ' + name)
+          with os.fdopen(fd, 'rb') as handle:
+              if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                  raise SystemExit('Artifact entry is not a regular file: ' + name)
+              data = handle.read(limit + 1)
+          if len(data) > limit:
+              raise SystemExit('Artifact entry is too large: ' + name)
+          return data
+
+      manifest = read_regular('publisher-artifact.json', 128 * 1024)
+      if hashlib.sha256(manifest).hexdigest() != manifest_sha256:
+          raise SystemExit('Manifest digest does not match the producing job.')
+
+      record = json.loads(manifest)
+      if not isinstance(record, dict) or sorted(record) != ['destination', 'packages', 'source']:
+          raise SystemExit('Manifest shape is invalid.')
+
+      source = record['source']
+      if not isinstance(source, dict):
+          raise SystemExit('Manifest shape is invalid.')
+
+      expected_source = {
+          'repository': 'Azure/LogicAppsUX',
+          'releaseRef': 'refs/tags/v' + version,
+          'verifiedSha': source_sha,
+          'version': version,
+          'buildId': build_id,
+          'recipeSha': recipe_sha,
+      }
+      if source != expected_source:
+          raise SystemExit('Manifest provenance does not match this run, release tag, source SHA or recipe commit.')
+
+      expected_destination = {
+          'registry': 'https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/',
+          'feedId': '44fc6edc-394a-403a-86cd-700a15978af1',
+          'distTag': 'latest',
+      }
+      if record['destination'] != expected_destination:
+          raise SystemExit('Manifest destination is invalid.')
+
+      writer_path = None
+      if os.environ['PREPARE_WRITER'] == 'true':
+          writer_dir = os.environ['WRITER_DIR']
+          registry = os.environ['REGISTRY']
+          if registry != 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/':
+              raise SystemExit('Writer registry must use the approved modern endpoint.')
+          if not os.path.isabs(writer_dir) or os.path.realpath(writer_dir) != os.path.abspath(writer_dir):
+              raise SystemExit('Writer directory is not confined.')
+          writer_path = Path(writer_dir)
+          writer_path.mkdir(mode=0o700, exist_ok=False)
+
+      expected_packages = []
+      for name, file in zip(packages, files):
+          data = read_regular(file, 64 * 1024 * 1024)
+          expected_packages.append(
+              {
+                  'name': '@microsoft/' + name,
+                  'version': version,
+                  'file': file,
+                  'integrity': 'sha512-' + base64.b64encode(hashlib.sha512(data).digest()).decode(),
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'bytes': len(data),
+              }
+          )
+          # Copy the same bytes just hashed; never reopen the downloaded file for publishing.
+          if writer_path is not None:
+              fd = os.open(writer_path / file, os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow, 0o400)
+              with os.fdopen(fd, 'wb') as handle:
+                  handle.write(data)
+
+      if record['packages'] != expected_packages:
+          raise SystemExit('Package identity or integrity mismatch.')
+
+      if writer_path is not None:
+          cohort_path = writer_path / 'cohort.json'
+          fd = os.open(str(cohort_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow, 0o600)
+          with os.fdopen(fd, 'w', encoding='utf-8') as handle:
+              json.dump({'packages': expected_packages}, handle, separators=(',', ':'))
+
+          npmrc_path = writer_path / '.npmrc'
+          fd = os.open(str(npmrc_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL | nofollow, 0o600)
+          with os.fdopen(fd, 'w', encoding='utf-8') as handle:
+              handle.write('registry=' + registry + '\n')
+
+      print('Verified nine packages for v%s at %s from build %s.' % (version, source_sha, build_id))
+      print('##vso[task.setvariable variable=ArtifactVerified;isOutput=true]true')
+      PY
+    name: verification
+    displayName: Verify manifest digest, provenance and nine tarballs
+    env:
+      BASH_ENV: /dev/null
+      ARTIFACT_DIR: '$(ArtifactDir)'
+      RELEASE_VERSION: ${{ parameters.releaseVersion }}
+      BUILD_ID: '$(Build.BuildId)'
+      RECIPE_SHA: '$(Build.SourceVersion)'
+      SOURCE_SHA: '$(ExpectedSourceSha)'
+      EXPECTED_MANIFEST_SHA256: '$(ExpectedManifestSha256)'
+      ${{ if eq(parameters.prepareWriter, true) }}:
+        PREPARE_WRITER: 'true'
+        WRITER_DIR: '$(NpmWriter)'
+        REGISTRY: '$(NpmRegistry)'
+      ${{ if ne(parameters.prepareWriter, true) }}:
+        PREPARE_WRITER: 'false'
