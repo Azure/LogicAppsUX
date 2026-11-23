@@ -28,7 +28,7 @@ import { getLocalSettingsJson } from '../../../../utils/appSettings/localSetting
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../utils/bundleFeed';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { enableAzureConnectors } from '../../../azureConnectors/enableAzureConnectors';
 
@@ -358,7 +358,7 @@ export default class ConnectionPanel extends DesignerPanel {
       getConnectionsFromFile(this.context, this.workflowFilePath),
       getParametersFromFile(this.context, this.workflowFilePath),
       getArtifactsInLocalProject(projectPath),
-      getBundleVersionNumber(),
+      getDesignTimeBundleVersion(projectPath),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
     ]);
 

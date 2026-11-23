@@ -44,7 +44,7 @@ vi.mock('../../../../../utils/appSettings/localSettings', () => ({
 }));
 
 vi.mock('../../../../../utils/bundleFeed', () => ({
-  getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
+  getDesignTimeBundleVersion: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
 vi.mock('../../../designer/panels/designerPanel', () => {
