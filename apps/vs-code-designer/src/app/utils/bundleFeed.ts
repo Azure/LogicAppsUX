@@ -1395,7 +1395,7 @@ export async function getBundleVersionNumber(workingDirectory?: string): Promise
  */
 export async function getDesignTimeBundleVersion(projectPath: string): Promise<string | undefined> {
   const currentBundleVersion = ext.currentBundleVersion.get(projectPath);
-  if (currentBundleVersion) {
+  if (currentBundleVersion && isBundleVersion(currentBundleVersion)) {
     return currentBundleVersion;
   }
 

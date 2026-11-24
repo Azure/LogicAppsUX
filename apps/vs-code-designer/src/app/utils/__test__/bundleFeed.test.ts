@@ -600,6 +600,19 @@ describe('getDesignTimeBundleVersion', () => {
     );
   });
 
+  it.each(['[1.197.13]', '[1.197.0.13]', '[1.170.0, 2.0.0)'])(
+    'ignores invalid cached value %s and uses existing bundle discovery',
+    async (cachedVersion) => {
+      ext.currentBundleVersion.set('/workspace/logicapp', cachedVersion);
+      mockedFse.pathExists.mockResolvedValue(true);
+      mockedExecuteCommand.mockResolvedValue(`C:\\mock\\ExtensionBundles\\${extensionBundleId}\\1.197.13\n`);
+      mockedFse.readdir.mockResolvedValue(['1.170.0', '1.197.13'] as any);
+      mockedFse.stat.mockResolvedValue({ isDirectory: () => true } as any);
+
+      await expect(getDesignTimeBundleVersion('/workspace/logicapp')).resolves.toBe('1.197.13');
+    }
+  );
+
   it('falls back to the default bundle when workflow-designtime does not exist', async () => {
     mockedFse.pathExists.mockResolvedValue(false);
     ext.defaultBundleVersion = '1.198.0';
