@@ -42,7 +42,7 @@ production files.
 
 ## Current decisions and acceptance
 
-Evidence checked **2026-11-11**. The earlier accepted code baseline is
+Evidence checked **2026-11-17**. The earlier accepted code baseline is
 `82477dc0e56a010baa4d03318915cae313fc51f6`, containing D3 durable-storage
 removal, D7 diagnostic-attribute removal, D8 original Run After names and E1
 minimal-activation early-return removal. Six affected families on both OSes
@@ -80,6 +80,34 @@ the other 21 lanes produced on attempt 1. Initial failures and their separate
 containment/product-proof verdicts are preserved in E10 below. This is not
 first-attempt stability or native acceptance of the subsequent E11 candidate.
 
+The E11 removal and workspace-regeneration prompt recovery are accepted at exact
+source `27123d86ca515b418a59132e92d1a2d5dc6f8a7d`, tree
+`4537729cc8224327f76e0f72e8748bf2f89d48ba`, in canonical both-OS
+[full23 run 16058353](https://dev.azure.com/devdiv/DevDiv/_build/results?buildId=16058353).
+All **11 Linux** and **12 Windows** latest suite attempts and the protected
+rollup were accepted from source-bound producing artifacts. The accepted
+regeneration strategy prefers the exact owned-project foreground warning, then
+uses one Notification Center reveal within the original deadline, continues
+through unrelated clutter and live insertion, reveals a clipped exact action at
+most once, and sends trusted input only to the revalidated real UI action.
+Retained-warning parsing remains local to the regeneration observer. The
+separate overwrite confirmation, exact file contracts, non-target immutability,
+fresh reopen, no-repeat prompt, lifecycle, cleanup, and ordered-evidence gates
+remain unchanged.
+
+This acceptance does not prove first-attempt stability, establish that every
+`showWarningMessage` is retained, or generalize retained-notification handling
+to modal dialogs or unrelated prompt families. Linux regeneration required one
+same-run retry after an unrelated incomplete JSON read, and Windows HTTP timeout
+required one retry after lifecycle identity changed during teardown. The
+overall ADO badge remained red because the independent managed Guardian
+`SDL Sources Analysis` job failed while installing Guardian's injected ESLint
+package bundle; the VS Code E2E consumer and protected 23-lane rollup passed.
+At this accepted source, the repository SDL configuration did not select that
+ESLint version. Installing the same bundle through an approved Microsoft proxy
+established package compatibility only; the silent managed install did not
+expose enough evidence to identify the ADO internal-feed response.
+
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
 | Not required; removal accepted | D3 durable `getState()/setState()` alert storage | Keep removed; recompute fresh-file errors and preserve local Code-save source precedence | D3-only accepted at `11680614`; latest full23 also includes D7 removal and D8 restoration. This is not removal of all D3 validation behavior |
@@ -101,7 +129,7 @@ first-attempt stability or native acceptance of the subsequent E11 candidate.
 | Provenance/race questions remain open | E5 activation catch-up; remaining E6 platform-specific prerequisites | Establish the actual race and each supported platform's real package contents | An ARM64 archive also lacks mandatory `in-proc8/func`; current E6 changes do not fix that pre-existing requirement |
 | Not required; removal accepted | E8 feed retries/deadline cleanup | Keep single-request/configured-timeout behavior and preserved error causes | Canonical full23 run `15993682` accepted at source `41ceef4aa`, tree `38e0717840c42e2591abbf3fc81d272845039709`; all 23 original producing artifacts were attempt 1, with protected rollup verified |
 | Not required; removal accepted | E10 writer diagnostics | Keep direct string write/native copy; retain E9 and all functional/evidence gates | Exact source `71084a53d` and canonical full23 `15994233` accepted; both regeneration producers used attempt 2. Exact internal attribution is retired optional diagnostics; watcher events remain `unknown-writer` |
-| Isolated removal candidate; native acceptance pending | E11 task/debug diagnostics | Remove only optional product observations and unused adapter; preserve functional task/debug behavior | Supported events/logs are not equivalent internal task/map/candidate attribution. Full-file functional regressions remain; clean exact-source and canonical gates are still required |
+| Not required; removal accepted | E11 task/debug diagnostics | Keep optional product observations and the unused adapter removed; preserve functional task/debug behavior | Exact source `27123d86c`, tree `4537729cc8`, and canonical full23 run `16058353` accepted all 23 latest suite attempts and the protected rollup. Retained regeneration handling is a test-observer fallback, not replacement product task/debug instrumentation |
 | Observation candidate; not removed | E12 design-time/spawn diagnostics | Justify any minimal original-identity hook separately | Preserve race-safe birth/ownership proof; do not claim a watcher can reconstruct an already-exited leader |
 | Tooling versus unrelated churn | E14 scripts, mechanical source edits and lint-staged | Keep required build/test tooling; assess unrelated cleanup separately | No blanket runtime-necessity claim. E3's auth upgrade is not mechanical |
 | Already restored | Designer API timeout override | Keep original fixed product timeout; no new E2E product override | Historical restoration predates these removals; it is not a remaining product cleanup |
@@ -1726,7 +1754,7 @@ boundary if that level of attribution is still required.
 **Disposition:** Move/minimize into test/recorder diagnostics; do not call the
 underlying activation-fixture problem a product defect.
 
-**Authorized isolated removal implemented; native acceptance pending:** Remove
+**Authorized isolated removal implemented; later native acceptance:** Remove
 the two product imports/callers and delete the now-unused
 `funcTaskDiagnostics.ts` adapter. Remove only observations, diagnostic state
 and counts, and diagnostic-only catch/rethrow wrappers. No replacement product
@@ -1825,8 +1853,23 @@ presentation/detection, or establish E11 causation.
 
 The diagnostic run retained original process closure and clean infrastructure,
 with no recovery, product proof unverified and acceptance false. It is not a
-canonical full23 run or a reset of exhausted run 15994921. E10 remains the last
-accepted baseline; E11 and further removals remain gated on native proof.
+canonical full23 run or a reset of exhausted run 15994921. At that point, E10
+remained the last accepted baseline; E11 and further removals remained gated
+until the subsequent native proof below.
+
+**Subsequent acceptance:** Exact source
+`27123d86ca515b418a59132e92d1a2d5dc6f8a7d`, tree
+`4537729cc8224327f76e0f72e8748bf2f89d48ba`, retains the isolated E11 removal
+and passed canonical both-OS
+[full23 run 16058353](https://dev.azure.com/devdiv/DevDiv/_build/results?buildId=16058353).
+All 11 Linux and 12 Windows latest suite attempts and the protected rollup
+passed. The accepted test-side regeneration fallback proved and handled a
+distinct VS Code presentation state: the exact initialization warning can be
+retained in Notification Center without appearing as a foreground toast. It
+does not restore E11 product instrumentation or establish that E11 caused the
+earlier prompt failures. Regeneration-specific retained-row parsing remains
+isolated from the shared workbench prompt parser after the first canonical
+candidate exposed cross-suite Azure prompt regressions.
 
 ### E12. Design-time diagnostics and native spawn identity
 

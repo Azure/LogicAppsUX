@@ -30,6 +30,16 @@ Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` nat
 
 ## Current Learnings
 
+### Workspace regeneration warnings need a foreground-first retained fallback
+
+- Learning: A `showWarningMessage` call does not prove that VS Code displayed a foreground toast. For CLI-native workspace regeneration, prefer the exact owned-project foreground warning. If it remains absent through the bounded foreground-primary window, reveal Notification Center once under the original phase deadline and select only one exact, enabled, hit-tested owned-project action through trusted UI input. Ignore unrelated notifications and progress rows while continuing through live insertion. A clipped exact action may be revealed once, but never invoked through DOM click or command dispatch.
+- Architecture: Keep retained Notification Center parsing and classification owned by the regeneration observer. Shared prompt helpers may provide generic foreground selection or trusted-input primitives, but must not absorb regeneration-specific clutter, insertion, clipping, ambiguity, and deadline semantics.
+- Preserve: The separate overwrite confirmation, exact regenerated files, non-target immutability, fresh reopen, no-repeat prompt, lifecycle closure, cleanup, and ordered-evidence proofs remain authoritative.
+- Why it matters: Native runs proved that the exact warning could be retained without a foreground toast. Immediate or repeated center interaction introduced presentation races and unsafe selection risks.
+- Source: `27123d86ca515b418a59132e92d1a2d5dc6f8a7d`; canonical [full23 run 16058353](https://dev.azure.com/devdiv/DevDiv/_build/results?buildId=16058353); `docs/testing/vscode-cli-authoring.md` section 5; `apps/vs-code-designer/src/test/e2e/README.md` workspace-regeneration contract.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `senior-swe-reviewer`.
+- Status: verified at the accepted source-bound SHA. The protected rollup accepted all 11 Linux and 12 Windows suites.
+
 ### Exact executable ownership does not require a frozen runtime cache
 
 - Learning: Fully verify the immutable prepared dependency seed, then hash the exact physical installed C# Roslyn executable against its known manifest entry. Retain native PID/creation/full-command/path binding and reject links, foreign/modified executables, unavailable metadata and observed hash-read races. Added `.roslyn/cache/*.mef-composition` files are not executable identity changes. The former whole-installed-inventory prerequisite and added warmup/freeze/provisioning subsystem are superseded and removed.

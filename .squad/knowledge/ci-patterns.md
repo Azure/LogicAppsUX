@@ -61,6 +61,15 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`, `release-scribe`.
 - Status: verified.
 
+### Separate managed Guardian setup failures from native test verdicts
+
+- Learning: In 1ES pipelines, `SDL Sources Analysis` is a managed Guardian gate. Its injected ESLint package bundle can differ from the repository's ESLint, and a failure while installing that managed bundle is not evidence that repository linting, product code, or the VS Code E2E matrix failed.
+- Why it matters: The canonical VS Code E2E consumer and protected rollup can be accepted even when the overall pipeline is red because an independent SDL setup step failed.
+- Pattern: Compare the source, package/lock files, pipeline inputs, task configuration, and last successful run. If they are unchanged and the failure occurs before analysis while fetching Guardian-owned packages, classify it as managed SDL setup/feed infrastructure. Do not change the repository's ESLint or product code to match the injected bundle. Successful installation through another approved Microsoft proxy proves package compatibility, not the ADO internal-feed response; retain the first unsuppressed package-manager error when available and use the support path emitted by the task.
+- Source: `.config/vscode-e2e-cli.1es.yml` (`sdl` currently configures CredScan and CodeQL only), root `package.json`, and repeated source-identical ADO runs where only `SDL Sources Analysis` failed while the canonical 23-lane rollup passed.
+- Applies to: `ci-sentinel`, `chief-engineer`, `vscode-test-specialist`, `release-scribe`.
+- Status: verified classification; exact internal-feed cause unresolved.
+
 ### Preserve actionable stacks through suite-prefixed logs
 
 - Learning: Diagnostic serialization should retain `Error.stack`. Summarizers should remove one or more `[suite]` prefixes only for classifying error headers and contiguous `at ...` frames, while preserving the original prefixed lines in failure excerpts.
