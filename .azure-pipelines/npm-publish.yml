@@ -157,7 +157,7 @@ extends:
           eq(dependencies.Release.result, 'Succeeded'),
           eq(dependencies.Release.outputs['VerifyRelease.verification.ArtifactVerified'], 'true'),
           eq(variables['Build.Reason'], 'Manual'),
-          eq(variables['Build.SourceBranch'], 'refs/heads/krmitta/ado-npm-publish-pipeline')
+          eq(variables['Build.SourceBranch'], 'refs/heads/hotfix/v1.23123')
           )
         jobs:
           - job: PublishRelease

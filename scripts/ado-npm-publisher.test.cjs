@@ -1107,7 +1107,7 @@ test('only the separate protected Publish stage can authenticate after verifying
     assert.match(publish, /eq\(dependencies\.Release\.result, 'Succeeded'\)/);
     assert.match(publish, /eq\(dependencies\.Release\.outputs\['VerifyRelease\.verification\.ArtifactVerified'\], 'true'\)/);
     assert.match(publish, /eq\(variables\['Build\.Reason'\], 'Manual'\)/);
-    assert.match(publish, /eq\(variables\['Build\.SourceBranch'\], 'refs\/heads\/krmitta\/ado-npm-publish-pipeline'\)/);
+    assert.match(publish, /eq\(variables\['Build\.SourceBranch'\], 'refs\/heads\/hotfix\/v1\.23123'\)/);
     assert.match(publish, /stageDependencies\.Release\.BuildRelease\.outputs\['manifest\.ManifestSha256'\]/);
     assert.match(publish, /stageDependencies\.Release\.BuildRelease\.outputs\['manifest\.SourceSha'\]/);
     assert.match(publish, /buildType: current/);
