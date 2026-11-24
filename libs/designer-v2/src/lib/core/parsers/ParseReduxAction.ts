@@ -174,6 +174,9 @@ export function updateChildrenDimensions(currentChildren: WorkflowNode[], previo
     if (previousNode?.height && previousNode?.width) {
       node.height = previousNode.height;
       node.width = previousNode.width;
+      if (previousNode.dimensionsObserved) {
+        node.dimensionsObserved = true;
+      }
     }
     updateChildrenDimensions(node.children || [], previousChildren);
   }

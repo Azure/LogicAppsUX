@@ -5,6 +5,7 @@ import { runProjectConsistencyCheck } from '../runProjectConsistencyCheck';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { ensureVSCodeFiles } from '../../projectConsistency/vscodeConsistency';
 import { getWorkspaceLogicAppRoots } from '../../utils/workspace';
+import { isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
 
 const probeEvents = vi.hoisted(() => ({ record: vi.fn() }));
 
@@ -24,6 +25,10 @@ vi.mock('../../utils/regenerationProbe', () => ({
   recordRegenerationEvent: probeEvents.record,
 }));
 
+vi.mock('../../utils/vsCodeConfig/settings', () => ({
+  isProjectConsistencyCheckEnabled: vi.fn(),
+}));
+
 vi.mock('vscode', () => ({
   workspace: {
     workspaceFolders: [],
@@ -38,6 +43,18 @@ describe('runProjectConsistencyCheck', () => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:\\workspace' }, name: 'workspace', index: 0 }];
     vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(projectPaths);
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(true);
+  });
+
+  it('skips project and VS Code consistency checks when disabled', async () => {
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(false);
+
+    await runProjectConsistencyCheck(context);
+
+    expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
+    expect(ensureProjectFiles).not.toHaveBeenCalled();
+    expect(ensureVSCodeFiles).not.toHaveBeenCalled();
+    expect(probeEvents.record).toHaveBeenCalledWith({ event: 'consistency-check-skipped', reason: 'disabled' });
   });
 
   it('forwards the workspace invocation origin without serializing existing checks', async () => {

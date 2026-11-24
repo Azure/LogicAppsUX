@@ -471,7 +471,7 @@ export const loadDynamicOutputsInNode = async (
     const info = outputDependencies[outputKey];
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, true /* shouldProcessSettings */);
+        await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, true /* shouldProcessSettings */);
       } else {
         try {
           const outputSchema = await getDynamicSchema(

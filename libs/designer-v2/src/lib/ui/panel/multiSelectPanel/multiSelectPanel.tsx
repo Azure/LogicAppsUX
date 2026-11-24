@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Button, Menu, MenuButton, MenuItem, MenuList, MenuPopover, MenuTrigger, Tag, TagGroup, Tooltip } from '@fluentui/react-components';
 import type { TagDismissData } from '@fluentui/react-components';
 import { Copy24Regular, Cut24Regular, Delete24Regular, Group24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps, PanelNodeData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelHeader, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import type { AppDispatch } from '../../../core';
+import type { AppDispatch, RootState } from '../../../core';
+import { isWorkflowEditLocked } from '../../../core/state/designerOptions/workflowEditLock';
 import { useNodeDisplayName } from '../../../core/state/workflow/workflowSelectors';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
 import { useCanWrapSelectedNodes, useOperationPanelSelectedNodeIds } from '../../../core/state/panel/panelSelectors';
@@ -16,6 +17,7 @@ import { wrapSelectedNodesInScope } from '../../../core/actions/bjsworkflow/wrap
 import { copyOperations, cutOperations } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from '../../common/DesignerContextualMenu/CopyTooltip';
 import { useMultiSelectPanelStyles } from './multiSelectPanel.styles';
+import { WorkflowExtractionAction } from './workflowExtraction';
 
 const MultiSelectTag = ({ nodeId }: { nodeId: string }): JSX.Element => {
   const styles = useMultiSelectPanelStyles();
@@ -48,6 +50,7 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
 
   const selectedNodeIds = useOperationPanelSelectedNodeIds();
   const canWrap = useCanWrapSelectedNodes();
+  const editLocked = useSelector((state: RootState) => isWorkflowEditLocked(state.designerOptions));
 
   const copyButtonRef = useRef<HTMLButtonElement>(null);
   const [showCopyCallout, setShowCopyCallout] = useState(false);
@@ -215,14 +218,14 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
                 <MultiSelectTag key={nodeId} nodeId={nodeId} />
               ))}
             </TagGroup>
-            <div className={styles.actionButtons}>
-              <Button icon={<Cut24Regular />} onClick={onCut}>
+            <div className={styles.actionButtons} data-automation-id="multi-select-action-buttons">
+              <Button icon={<Cut24Regular />} disabled={editLocked} onClick={onCut}>
                 {intlText.cutLabel}
               </Button>
               <Button ref={copyButtonRef} icon={<Copy24Regular />} onClick={onCopy}>
                 {intlText.copyLabel}
               </Button>
-              {canWrap ? (
+              {editLocked ? null : canWrap ? (
                 <Menu>
                   <MenuTrigger disableButtonEnhancement>
                     <MenuButton icon={<Group24Regular />}>{intlText.groupLabel}</MenuButton>
@@ -304,7 +307,8 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
                   </MenuButton>
                 </Tooltip>
               )}
-              <Button icon={<Delete24Regular />} onClick={onDelete}>
+              <WorkflowExtractionAction />
+              <Button icon={<Delete24Regular />} disabled={editLocked} onClick={onDelete}>
                 {intlText.deleteLabel}
               </Button>
             </div>

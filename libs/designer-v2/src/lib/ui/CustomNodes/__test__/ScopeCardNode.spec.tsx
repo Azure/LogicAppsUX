@@ -30,18 +30,26 @@ vi.mock('../../../core/actions/bjsworkflow/move', () => ({
   moveOperation: vi.fn((payload) => ({ type: 'moveOperation', payload })),
 }));
 
+const mockUseNodeRepetition = vi.fn();
+const mockUseAgentRepetition = vi.fn();
+const mockUseAgentActionsRepetition = vi.fn();
+const mockUseConditionOutputs = vi.fn();
+
 vi.mock('../../../core/queries/runs', () => ({
-  useNodeRepetition: () => ({ isFetching: false, data: undefined }),
-  useAgentRepetition: () => ({ isFetching: false, data: undefined }),
-  useAgentActionsRepetition: () => ({ isFetching: false, data: undefined }),
+  useNodeRepetition: () => mockUseNodeRepetition(),
+  useConditionOutputs: () => mockUseConditionOutputs(),
+  useAgentRepetition: () => mockUseAgentRepetition(),
+  useAgentActionsRepetition: () => mockUseAgentActionsRepetition(),
 }));
 
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
+const mockUseSharedNodeUi = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
+  useSharedNodeUi: () => mockUseSharedNodeUi(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -71,6 +79,7 @@ vi.mock('../../../core/state/operation/operationSelector', () => ({
   useOperationErrorInfo: (...args: any[]) => mockUseOperationErrorInfo(...args),
   useParameterValidationErrors: (...args: any[]) => mockUseParameterValidationErrors(...args),
   useTokenDependencies: (...args: any[]) => mockUseTokenDependencies(...args),
+  useOperationParameterByName: () => undefined,
 }));
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
@@ -148,9 +157,30 @@ vi.mock('../../../core/state/workflow/workflowSlice', () => ({
 }));
 
 vi.mock('../../common/LoopsPager/helper', () => ({
+  getAgentRepetitionIdentity: vi.fn((...args: any[]) => {
+    const first = args[0];
+    const params =
+      typeof first === 'object' && first !== null
+        ? first
+        : {
+            runId: args[0],
+            ownerNodeId: args[1],
+            repetitionName: args[2],
+            repetitionIndex: args[3],
+            parentStatus: args[4],
+          };
+    const { runId, ownerNodeId, repetitionName, repetitionIndex, parentStatus } = params;
+    return runId && ownerNodeId && repetitionName !== undefined && repetitionIndex !== undefined
+      ? [runId, ownerNodeId, repetitionName, String(repetitionIndex), parentStatus ?? ''].join('|')
+      : undefined;
+  }),
   getRepetitionName: vi.fn().mockReturnValue('000000'),
-  getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
+  getScopeRepetitionName: vi.fn((index) => String(index).padStart(6, '0')),
   useRepetitionName: vi.fn().mockReturnValue(''),
+}));
+
+vi.mock('../../common/LoopsPager/SharedLoopsPager', () => ({
+  SharedLoopsPager: ({ scopeId }: any) => <div data-testid={`shared-loops-pager-${scopeId}`}>SharedLoopsPager</div>,
 }));
 
 vi.mock('../../common/LoopsPager/LoopsPager', () => ({
@@ -158,7 +188,11 @@ vi.mock('../../common/LoopsPager/LoopsPager', () => ({
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -189,10 +223,22 @@ vi.mock('../components/handles/EdgeDrawTargetHandle', () => ({
 }));
 
 vi.mock('../components/card', () => ({
-  ActionCard: ({ id, title, isSelected, onClick, onContextMenu, onDeleteClick, errorMessages, collapsed, handleCollapse }: any) => (
+  ActionCard: ({
+    id,
+    title,
+    isSelected,
+    onClick,
+    onContextMenu,
+    onDeleteClick,
+    onCopyClick,
+    errorMessages,
+    collapsed,
+    handleCollapse,
+  }: any) => (
     <div
       data-testid={`action-card-${id}`}
       data-selected={isSelected}
+      data-has-copy-callback={typeof onCopyClick === 'function'}
       onClick={(e) => onClick?.(e)}
       onContextMenu={(e) => onContextMenu?.(e)}
     >
@@ -228,6 +274,11 @@ describe('ScopeCardNode (v2)', () => {
   const defaultProps = { id: 'testScope-#scope' } as NodeProps;
 
   beforeEach(() => {
+    mockUseNodeRepetition.mockReturnValue({ isFetching: false, data: undefined });
+    mockUseAgentRepetition.mockReturnValue({ isFetching: false, data: undefined });
+    mockUseAgentActionsRepetition.mockReturnValue({ isFetching: false, data: undefined });
+    mockUseConditionOutputs.mockReturnValue(undefined);
+    mockUseSharedNodeUi.mockReturnValue(false);
     vi.clearAllMocks();
     cleanup();
     mockUseReadOnly.mockReturnValue(false);
@@ -263,6 +314,321 @@ describe('ScopeCardNode (v2)', () => {
   it('should render without crashing', () => {
     const { container } = render(<ScopeCardNode {...defaultProps} />);
     expect(container).toBeTruthy();
+  });
+
+  it.each([
+    ['Scope', 'action'],
+    ['If', 'if'],
+    ['Switch', 'switch'],
+    ['Foreach', 'foreach'],
+    ['Until', 'foreach'],
+    ['Agent', 'agent'],
+  ])('adopts the real %s host without changing its editor identity', (type, surface) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({
+      type,
+      runAfter: {},
+      inputs: { parameters: { deploymentId: 'actual-model' } },
+    });
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const card = container.querySelector(`[data-node-card="${surface}"]`)!;
+    expect(card).toHaveAttribute('id', 'msla-node-testScope');
+    expect(card.querySelector('img')).toBeNull();
+    fireEvent.click(card);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/changePanelNode',
+        payload: 'testScope',
+      })
+    );
+    if (type === 'Agent') expect(screen.getByText('actual-model')).toBeInTheDocument();
+  });
+
+  it('maps a shared If takenOutput only from authoritative expressionResult for the selected repetition', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'If', runAfter: {} });
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', outputs: { expressionResult: true } });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{
+          presentation: { shared: true, family: 'if' },
+          branchPorts: [
+            { id: 'testScope-actions', subgraphType: 'CONDITIONAL_TRUE' },
+            { id: 'testScope-elseActions', subgraphType: 'CONDITIONAL_FALSE' },
+          ],
+        }}
+      />
+    );
+    expect(container.querySelector('[data-branch="true"][data-taken="true"]')).not.toBeNull();
+    expect(container.querySelector('[data-branch="false"][data-taken="true"]')).toBeNull();
+    expect(screen.getByText('True, branch taken')).toBeInTheDocument();
+  });
+
+  it('suppresses shared If takenOutput when no authoritative expressionResult is present', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'If', runAfter: {} });
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', outputs: {} });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{
+          presentation: { shared: true, family: 'if' },
+          branchPorts: [
+            { id: 'testScope-actions', subgraphType: 'CONDITIONAL_TRUE' },
+            { id: 'testScope-elseActions', subgraphType: 'CONDITIONAL_FALSE' },
+          ],
+        }}
+      />
+    );
+    expect(container.querySelector('[data-branch][data-taken="true"]')).toBeNull();
+    expect(screen.queryByText(/branch taken/)).toBeNull();
+  });
+
+  it('does not show a previous If outcome while the selected repetition is loading', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'If', runAfter: {} });
+    mockUseRunInstance.mockReturnValue({ id: 'run' });
+    mockUseParentRunIndex.mockReturnValue(1);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(true);
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', outputs: { expressionResult: true } });
+    mockUseNodeRepetition.mockReturnValue({ isFetching: true });
+    const props = {
+      ...defaultProps,
+      data: {
+        presentation: { shared: true, family: 'if' },
+        branchPorts: [
+          { id: 'testScope-actions', subgraphType: 'CONDITIONAL_TRUE' },
+          { id: 'testScope-elseActions', subgraphType: 'CONDITIONAL_FALSE' },
+        ],
+      },
+    };
+    const { rerender } = render(<ScopeCardNode {...props} />);
+    expect(screen.queryByText(/branch taken/)).not.toBeInTheDocument();
+
+    mockUseNodeRepetition.mockReturnValue({
+      isFetching: false,
+      data: { properties: { status: 'Succeeded', outputs: { expressionResult: false } } },
+    });
+    rerender(<ScopeCardNode {...props} data={{ ...props.data }} />);
+    expect(screen.getByText('False, branch taken')).toBeInTheDocument();
+    expect(screen.queryByText('True, branch taken')).not.toBeInTheDocument();
+  });
+
+  it('maps shared Switch takenOutput from expressionResult when it matches a declared case value', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({
+      type: 'Switch',
+      runAfter: {},
+      cases: {
+        firstCase: { case: 'first' },
+        secondCase: { case: 'second' },
+      },
+    });
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', outputs: { expressionResult: 'second' } });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{
+          presentation: { shared: true, family: 'switch' },
+          branchPorts: [
+            { id: 'firstCase', subgraphType: 'SWITCH_CASE' },
+            { id: 'secondCase', subgraphType: 'SWITCH_CASE' },
+            { id: 'testScope-defaultCase', subgraphType: 'SWITCH_DEFAULT' },
+          ],
+        }}
+      />
+    );
+    const handles = container.querySelectorAll('[data-testid="node-output-handles"] [data-handle]');
+    expect(handles).toHaveLength(3);
+    expect(handles[0]).toHaveAttribute('data-inactive', 'true');
+    expect(handles[1]).not.toHaveAttribute('data-inactive');
+    expect(handles[2]).toHaveAttribute('data-inactive', 'true');
+  });
+
+  it('does not infer a shared Switch takenOutput when expressionResult does not map to a declared case', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({
+      type: 'Switch',
+      runAfter: {},
+      cases: {
+        firstCase: { case: 'first' },
+      },
+    });
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', outputs: { expressionResult: 'firstCase' } });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{
+          presentation: { shared: true, family: 'switch' },
+          branchPorts: [
+            { id: 'firstCase', subgraphType: 'SWITCH_CASE' },
+            { id: 'testScope-defaultCase', subgraphType: 'SWITCH_DEFAULT' },
+          ],
+        }}
+      />
+    );
+    const handles = container.querySelectorAll('[data-testid="node-output-handles"] [data-handle]');
+    expect(handles).toHaveLength(2);
+    expect(handles[0]).not.toHaveAttribute('data-inactive');
+    expect(handles[1]).not.toHaveAttribute('data-inactive');
+  });
+
+  it.each([
+    [false, 'loops-pager-testScope', 'shared-loops-pager-testScope'],
+    [true, 'shared-loops-pager-testScope', 'loops-pager-testScope'],
+  ])('selects the foreach pager by the shared flag (%s)', (shared, present, absent) => {
+    mockUseSharedNodeUi.mockReturnValue(shared);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Foreach', runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 2, runData: { status: 'Succeeded', repetitionCount: 3 } });
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared, family: 'loop', hasLoopPager: shared } }} />);
+    expect(screen.getByTestId(present)).toBeInTheDocument();
+    expect(screen.queryByTestId(absent)).toBeNull();
+  });
+
+  it('only admits the selected Agent response, even when both inputs links are missing', () => {
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('parentScope');
+    mockUseRunData.mockImplementation((id: string) => {
+      if (id === 'parentScope') {
+        return { status: 'Succeeded' };
+      }
+      if (id === 'testScope') {
+        return { status: 'Succeeded', inputsLink: null, outputsLink: null, repetitionCount: 3 };
+      }
+      return undefined;
+    });
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'root',
+      actionCount: 2,
+      runData: { status: 'Succeeded', inputsLink: null, outputsLink: null, repetitionCount: 3 },
+      agentRepetitionIdentity: 'run-1|testScope|000001|1|Succeeded',
+    });
+    const properties = { status: 'Failed', tools: {}, inputsLink: null, outputsLink: null };
+    const card = () => <ScopeCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'agent' } }} />;
+    const metadataDispatch = () => mockDispatch.mock.calls.find(([action]) => action?.type === 'workflow/updateAgenticMetadata');
+    mockUseAgentRepetition.mockReturnValue({ isFetching: false, data: { name: '000001', properties } });
+    const { rerender } = render(card());
+    expect(metadataDispatch()).toBeUndefined();
+
+    mockUseAgentRepetition.mockReturnValue({ isFetching: true, data: { name: '000002', properties } });
+    rerender(card());
+    expect(metadataDispatch()).toBeUndefined();
+
+    mockUseAgentRepetition.mockReturnValue({ isFetching: false, data: { name: '000002', properties } });
+    rerender(card());
+    expect(metadataDispatch()?.[0]?.payload).toEqual(
+      expect.objectContaining({
+        nodeId: 'testScope',
+        agentRepetitionIdentity: 'run-1|testScope|000002|2|Succeeded',
+      })
+    );
+  });
+
+  it.each([
+    [undefined, 'Test Scope, Running'],
+    [0, 'Test Scope'],
+  ])('keeps an Agent summary separate from stale repetition status (parent index %s)', (parentIndex, expectedName) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    mockUseRunInstance.mockReturnValue({ id: 'run-1', properties: { actions: { testScope: { status: 'Running' } } } });
+    mockUseParentRunIndex.mockReturnValue(parentIndex);
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(true);
+    const previousPage = { status: 'Failed', repetitionCount: 3 };
+    mockUseRunData.mockReturnValue(previousPage);
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'root',
+      actionCount: 2,
+      runData: previousPage,
+      agentRepetitionIdentity: 'run-1|testScope|000001|1|',
+    });
+
+    const { container } = render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'agent' } }} />);
+
+    expect(container.querySelector('#msla-node-testScope')).toHaveAccessibleName(expectedName);
+  });
+
+  it('keeps the Agent iteration selector usable while new tool metadata loads', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(true);
+    mockUseParentNodeId.mockReturnValue('parentScope');
+    mockUseRunData.mockImplementation((id: string) => {
+      if (id === 'parentScope') {
+        return { status: 'Succeeded' };
+      }
+      if (id === 'testScope') {
+        return { status: 'Succeeded', repetitionCount: 3 };
+      }
+      return undefined;
+    });
+    const metadataBase = {
+      graphId: 'root',
+      actionCount: 2,
+      runData: { status: 'Succeeded', repetitionCount: 3 },
+    };
+    mockUseNodeMetadata.mockImplementation((id: string) =>
+      id === 'testScope'
+        ? { ...metadataBase, agentRepetitionIdentity: 'run-1|testScope|000001|1|Succeeded' }
+        : { graphId: 'root', actionCount: 0 }
+    );
+
+    const { rerender } = render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'agent' } }} />);
+    expect(screen.getByTestId('shared-loops-pager-testScope')).toBeInTheDocument();
+
+    mockUseNodeMetadata.mockImplementation((id: string) =>
+      id === 'testScope'
+        ? { ...metadataBase, agentRepetitionIdentity: 'run-1|testScope|000002|2|Succeeded' }
+        : { graphId: 'root', actionCount: 0 }
+    );
+    rerender(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'agent' } }} />);
+    expect(screen.getByTestId('shared-loops-pager-testScope')).toBeInTheDocument();
+  });
+
+  it('keeps legacy no-runId agent pager behavior unchanged', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    mockUseRunInstance.mockReturnValue(undefined);
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseIsActionInSelectedTimelineRepetition.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({
+      graphId: 'root',
+      actionCount: 2,
+      runData: { status: 'Succeeded', repetitionCount: 3 },
+    });
+    mockUseRunData.mockReturnValue({ status: 'Succeeded', repetitionCount: 3 });
+
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'agent' } }} />);
+    expect(screen.getByTestId('shared-loops-pager-testScope')).toBeInTheDocument();
+  });
+
+  it('keeps the accepted legacy scope renderer during a pending shared toggle', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(screen.getByTestId('action-card-testScope')).toBeInTheDocument();
+  });
+
+  it.each([false, true])('does not add a duplicate legacy copy callback when the live shared option is %s', (sharedOption) => {
+    mockUseSharedNodeUi.mockReturnValue(sharedOption);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(screen.getByTestId('action-card-testScope')).toHaveAttribute('data-has-copy-callback', 'false');
   });
 
   it('should return null when node metadata is not found', () => {
@@ -421,6 +787,56 @@ describe('ScopeCardNode (v2)', () => {
     expect(noActionsText).toBeInTheDocument();
   });
 
+  it.each([
+    ['Scope', 'actions'],
+    ['Foreach', 'actions'],
+    ['Switch', 'cases'],
+    ['Agent', 'tools'],
+  ])('moves the collapsed %s count into the shared card as %s', (type, unit) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type, runAfter: {} });
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 3 });
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const count = container.querySelector('[data-node-count]');
+    expect(count).toHaveAttribute('data-node-count', unit);
+    expect(count).toHaveTextContent('3');
+    expect(container.querySelector('.no-actions-text')).toBeNull();
+  });
+
+  it('counts the actions in both branches of a collapsed shared If instead of its fixed branch count', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'If', runAfter: {} });
+    const branchCounts: Record<string, number> = { testScope: 2, 'testScope-actions': 3, 'testScope-elseActions': 1 };
+    mockUseNodeMetadata.mockImplementation((id: string) => ({ graphId: 'root', actionCount: branchCounts[id] }));
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const count = container.querySelector('[data-node-count]');
+    expect(count).toHaveAttribute('data-node-count', 'actions');
+    expect(count).toHaveTextContent('4');
+  });
+
+  it('keeps the host collapsed count on the legacy path', () => {
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    expect(container.querySelector('.no-actions-text')).toBeInTheDocument();
+    expect(container.querySelector('[data-node-count]')).toBeNull();
+  });
+
+  it('does not repeat the tool count on a collapsed Agent whose tools panel already states it', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseIsGraphCollapsed.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ type: 'Agent', runAfter: {} });
+    const { container } = render(
+      <ScopeCardNode
+        {...defaultProps}
+        data={{ toolsPanel: { width: 300, height: 120, bottomPadding: 0, collapsed: true, items: [{ id: 'tool1' }] } }}
+      />
+    );
+    expect(container.querySelector('[data-node-count]')).toBeNull();
+    expect(container.querySelector('.no-actions-text')).toBeNull();
+  });
+
   it('should not show collapsed text for footer nodes even when collapsed', () => {
     mockUseIsGraphCollapsed.mockReturnValue(true);
     const footerProps = { id: 'testScope-#footer' } as NodeProps;
@@ -435,6 +851,45 @@ describe('ScopeCardNode (v2)', () => {
 
     render(<ScopeCardNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-testScope')).toBeInTheDocument();
+  });
+
+  it('places the accepted RIGHT terminal after an empty Scope header while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 0 });
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-testScope');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN Scope terminal placement while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 0 });
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-testScope');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('keeps an accepted RIGHT empty Scope read-only without an insertion control', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'root', actionCount: 0 });
+    mockUseReadOnly.mockReturnValue(true);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-testScope')).not.toBeInTheDocument();
+    expect(screen.getByText('No actions')).toBeInTheDocument();
   });
 
   it('should not show DropZone in read-only mode for leaf nodes', () => {

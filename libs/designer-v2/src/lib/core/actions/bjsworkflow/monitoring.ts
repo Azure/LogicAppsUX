@@ -25,6 +25,7 @@ import type { NodeOperation } from '../../state/operation/operationMetadataSlice
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
 import { getAgentActionsRepetition, getAgentRepetition } from '../../queries/runs';
+import type { AgentToolInvocation } from '../../state/workflow/workflowInterfaces';
 
 /**
  * Converts raw JSON data into BoundParameters format for display in ValuesPanel.
@@ -155,15 +156,31 @@ export const fetchBuiltInToolRunData = createAsyncThunk(
     repetitionName: string;
     inputsLink?: ContentLink;
     outputsLink?: ContentLink;
+    agentToolInvocation?: AgentToolInvocation;
   }) => {
-    const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
+    const { toolNodeId, agentNodeId, runId, repetitionName, agentToolInvocation } = payload;
 
     // Use action-level links if provided, otherwise fetch them from getAgentActionsRepetition
     let actionInputsLink = payload.inputsLink;
     let actionOutputsLink = payload.outputsLink;
     let repetitionProperties: any = {};
 
-    if (actionInputsLink || actionOutputsLink) {
+    if (agentToolInvocation) {
+      // Links alone carry no status or duration. Read the same invocation for both content and card details.
+      const actionsRepetitions = await getAgentActionsRepetition(agentNodeId, runId, repetitionName, 0);
+      const results = actionsRepetitions.flatMap((repetition) => {
+        const actions = (repetition.properties as { actionResults?: (LogicAppsV2.WorkflowRunAction & { name?: string })[] }).actionResults;
+        return (actions ?? []).filter((action) => (action?.name ?? repetition.name) === toolNodeId);
+      });
+      const selected = results[agentToolInvocation.page];
+      if (!selected) {
+        // An aggregate or a different invocation is not a substitute for a missing page.
+        return undefined;
+      }
+      repetitionProperties = selected;
+      actionInputsLink = selected.inputsLink as ContentLink | undefined;
+      actionOutputsLink = selected.outputsLink as ContentLink | undefined;
+    } else if (actionInputsLink || actionOutputsLink) {
       // We have action-level links — no need to fetch
       repetitionProperties = {};
     } else {

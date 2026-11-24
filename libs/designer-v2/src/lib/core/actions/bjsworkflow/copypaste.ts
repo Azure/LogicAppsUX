@@ -41,6 +41,7 @@ import { getConnectionReferenceForNodeId } from '../../state/connection/connecti
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
 import { storeStateToUndoRedoHistory } from './undoRedo';
+import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -208,9 +209,9 @@ export const copyOperations = createAsyncThunk('copyOperations', async (payload:
 });
 
 // Cut = copy to clipboard then delete. Re-uses copyOperations logic, then dispatches deleteOperations.
-export const cutOperations = createAsyncThunk('cutOperations', async (payload: CopyOperationsPayload, { dispatch }) => {
+export const cutOperations = createAsyncThunk('cutOperations', async (payload: CopyOperationsPayload, { dispatch, getState }) => {
   const { nodeIds } = payload;
-  if (!nodeIds || nodeIds.length === 0) {
+  if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked((getState() as RootState).designerOptions)) {
     return;
   }
 
@@ -219,6 +220,10 @@ export const cutOperations = createAsyncThunk('cutOperations', async (payload: C
 
   // Then delete — import is inline to avoid circular dependency
   const { deleteOperations } = await import('./delete');
+  // The host can enter monitoring while the selection is being serialized for Copy.
+  if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+    return;
+  }
   dispatch(storeStateToUndoRedoHistory({ type: cutOperations.pending } as any));
   await dispatch(deleteOperations({ nodeIds }));
 });
@@ -535,7 +540,7 @@ export const duplicateOperations = createAsyncThunk(
   'duplicateOperations',
   async (payload: DuplicateOperationsPayload, { dispatch, getState }) => {
     const { nodeIds } = payload;
-    if (!nodeIds || nodeIds.length === 0) {
+    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked((getState() as RootState).designerOptions)) {
       return;
     }
 
@@ -544,6 +549,9 @@ export const duplicateOperations = createAsyncThunk(
     for (const nodeId of nodeIds) {
       // Re-read state each iteration because prior pastes mutate the workflow graph.
       const state = getState() as RootState;
+      if (isWorkflowEditLocked(state.designerOptions)) {
+        return;
+      }
       const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
       if (!graphId) {
         continue;
@@ -555,6 +563,9 @@ export const duplicateOperations = createAsyncThunk(
 
       if (isScopeOperation(operationInfo?.type ?? '')) {
         const entry = await buildScopeClipboardEntry(state, nodeId);
+        if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+          return;
+        }
         const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
         await dispatch(
           pasteScopeOperation({

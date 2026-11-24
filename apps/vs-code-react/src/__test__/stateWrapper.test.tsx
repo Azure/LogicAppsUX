@@ -52,7 +52,7 @@ describe('StateWrapper', () => {
     [ProjectName.createLogicApp, undefined, `/${ProjectName.createLogicApp}`],
     [ProjectName.createWorkflow, undefined, `/${ProjectName.createWorkflow}`],
     [ProjectName.createWorkspaceStructure, undefined, `/${ProjectName.createWorkspaceStructure}`],
-    [ProjectName.languageServer, RouteName.connectionView, `/${RouteName.languageServer}/${RouteName.connectionView}`],
+    [ProjectName.connectionView, RouteName.connectionView, `/${RouteName.connectionView}`],
   ])('navigates initialized %s projects to %s', (project, route, expectedPath) => {
     renderStateWrapper({
       initialized: true,
@@ -71,10 +71,10 @@ describe('StateWrapper', () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  it('does not navigate language server projects without a supported route', () => {
+  it('does not navigate connection view projects without a supported route', () => {
     renderStateWrapper({
       initialized: true,
-      project: ProjectName.languageServer,
+      project: ProjectName.connectionView,
     });
 
     expect(navigate).not.toHaveBeenCalled();

@@ -7,7 +7,11 @@ import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelIsAddingTrigger,
+  useDiscoveryPanelRelationshipIds,
+  useIsAddingAgentTool,
+} from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
@@ -36,6 +40,7 @@ export const SearchView: FC<SearchViewProps> = ({
   displayRuntimeInfo,
 }) => {
   const isAgenticWorkflow = useIsAgenticWorkflow();
+  const isAddingTrigger = useDiscoveryPanelIsAddingTrigger();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgentTool = useIsAddingAgentTool();
@@ -139,14 +144,19 @@ export const SearchView: FC<SearchViewProps> = ({
   useDebouncedEffect(
     () => {
       const operations = isAgentTool ? [...allOperations, ...mcpServers] : allOperations;
-      const searchResultsPromise = new DefaultSearchOperationsService(operations).searchOperations(searchTerm, filterAgenticLoops);
+      // Exclude actions before Fuse applies its result limit so they cannot crowd out matching triggers.
+      const searchableOperations = isAddingTrigger ? operations.filter((operation) => !!operation.properties?.trigger) : operations;
+      const searchResultsPromise = new DefaultSearchOperationsService(searchableOperations).searchOperations(
+        searchTerm,
+        filterAgenticLoops
+      );
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filterAgenticLoops, isAgentTool, mcpServers],
+    [searchTerm, allOperations, filterAgenticLoops, isAddingTrigger, isAgentTool, mcpServers],
     200
   );
 

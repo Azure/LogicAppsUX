@@ -1,6 +1,9 @@
 import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isTriggerNode } from '../graph';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import * as graphUtils from '../graph';
+import { getTestIntl } from '../../../__test__/intl-test-helper';
+import { WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 describe('Graph Utilities', () => {
   const graph = {
     id: 'root',
@@ -99,6 +102,145 @@ describe('Graph Utilities', () => {
     Compose_8: 'Compose_8',
     Compose_9: 'Compose_9',
   };
+
+  it('uses renderer-authoritative operation sizes without overriding other measured node kinds', () => {
+    expect(graphUtils.getNodePresentation(undefined, true)).toEqual({ shared: true, titleLines: 1, size: { width: 208, height: 52 } });
+    expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, false)).toEqual({
+      shared: false,
+    });
+    expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true)).toEqual({ shared: false, size: undefined });
+  });
+
+  it('estimates compact scope titles against the column left beside the collapse chevron', () => {
+    const scope = (title: string) =>
+      graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: 'Scope', title });
+    // Fits an action's full column but wraps once the scope header reserves room for the chevron.
+    expect(graphUtils.getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: 'Update order info' })).toMatchObject({
+      titleLines: 1,
+    });
+    expect(scope('Update order info')).toEqual({ shared: true, family: 'scope', titleLines: 2, size: { width: 208, height: 68 } });
+    expect(scope('Scope')).toMatchObject({ titleLines: 1, size: { width: 208, height: 52 } });
+  });
+
+  it('defaults parser nodes to the rendered card size for each node type and subgraph variant', () => {
+    const { getDefaultNodeSize } = graphUtils;
+    expect(getDefaultNodeSize()).toEqual({ width: 200, height: 44 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.OPERATION_NODE)).toEqual({ width: 200, height: 44 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)).toEqual({ width: 200, height: 44 });
+    for (const subgraphType of [SUBGRAPH_TYPES.SWITCH_CASE, SUBGRAPH_TYPES.AGENT_CONDITION, SUBGRAPH_TYPES.MCP_CLIENT, undefined]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 200, height: 44 });
+    }
+    for (const subgraphType of [
+      SUBGRAPH_TYPES.CONDITIONAL_TRUE,
+      SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+      SUBGRAPH_TYPES.SWITCH_DEFAULT,
+      SUBGRAPH_TYPES.UNTIL_DO,
+    ]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 120, height: 32 });
+    }
+    for (const subgraphType of [SUBGRAPH_TYPES.SWITCH_ADD_CASE, SUBGRAPH_TYPES.AGENT_ADD_CONDITON]) {
+      expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, subgraphType)).toEqual({ width: 20, height: 44 });
+    }
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE)).toEqual({ width: 64, height: 96 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.COLLAPSED_NODE)).toEqual({ width: 200, height: 50 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.HIDDEN_NODE)).toEqual({ width: 200, height: 40 });
+    expect(getDefaultNodeSize(WORKFLOW_NODE_TYPES.GRAPH_NODE)).toEqual({ width: 200, height: 40 });
+    expect(createWorkflowNode('case', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, SUBGRAPH_TYPES.SWITCH_DEFAULT)).toEqual({
+      id: 'case',
+      type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+      width: 120,
+      height: 32,
+    });
+  });
+
+  it('keeps graph and ELK factories aligned and excludes hidden edges from leaf detection', () => {
+    expect(graphUtils.createElkNode('action')).toMatchObject({
+      id: 'action',
+      width: 200,
+      height: 44,
+      layoutOptions: { nodeType: WORKFLOW_NODE_TYPES.OPERATION_NODE },
+    });
+    expect(graphUtils.createElkEdge('one', 'two')).toMatchObject({
+      sources: ['one'],
+      targets: ['two'],
+      layoutOptions: { edgeType: WORKFLOW_EDGE_TYPES.BUTTON_EDGE },
+    });
+    expect(graphUtils.isLeafNodeFromEdges([createWorkflowEdge('one', 'two', WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)])).toBe(true);
+    expect(graphUtils.isLeafNodeFromEdges([createWorkflowEdge('one', 'two')])).toBe(false);
+  });
+
+  it('distinguishes edge endpoints containing hyphens and escape-like characters', () => {
+    const pairs = [
+      ['A', 'B-C'],
+      ['A-B', 'C'],
+      ['A%2DB', 'C'],
+      ['A%', 'B-C'],
+    ] as const;
+    const edges = pairs.map(([source, target]) => createWorkflowEdge(source, target));
+    expect(new Set(edges.map(({ id }) => id)).size).toBe(pairs.length);
+    for (const [source, target] of pairs) {
+      expect(graphUtils.createElkEdge(source, target).id).toBe(createWorkflowEdge(source, target).id);
+    }
+  });
+
+  it('finds the actual root trigger and tolerates a graph with no trigger', () => {
+    const state = { graph, nodesMetadata } as Parameters<typeof graphUtils.getTriggerNode>[0];
+    expect(graphUtils.getTriggerNode(state)?.id).toBe('manual');
+    expect(graphUtils.getTriggerNodeId(state)).toBe('manual');
+    expect(graphUtils.getTriggerNodeId({ ...state, graph: { ...graph, children: [] } })).toBeUndefined();
+  });
+
+  it('resolves metadata and does not invent a containing graph for an unknown node', () => {
+    expect(graphUtils.getGraphNode('Compose_8', graph, nodesMetadata)?.id).toBe('Scope_2');
+    expect(graphUtils.getGraphNode('missing', graph, nodesMetadata)).toBeUndefined();
+    expect(graphUtils.getNode('absent', graph)).toBeUndefined();
+    expect(graphUtils.getImmediateSourceNodeIds({ id: 'empty' }, 'node')).toEqual([]);
+    expect(
+      graphUtils.getImmediateSourceNodeIds(
+        {
+          id: 'nested',
+          edges: [createWorkflowEdge('real', 'node'), createWorkflowEdge('fake#scope', 'node')],
+        },
+        'node'
+      )
+    ).toEqual(['real']);
+  });
+
+  it('avoids existing operation ID collisions when finding a new ID', () => {
+    expect(
+      graphUtils.getNewNodeId({ operations: { action: {}, action_1: {} } } as Parameters<typeof graphUtils.getNewNodeId>[0], 'action')
+    ).toBe('action_2');
+  });
+
+  it('includes graph parents and handoff parents without dropping ordinary ancestry', () => {
+    const metadata = { ...nodesMetadata, Handoff: { graphId: 'root', handoffs: { tool: 'Compose_8' } } };
+    expect(graphUtils.getAllParentsForNode('Compose_8', metadata)).toEqual(['Scope_2', 'Scope', 'Handoff']);
+    expect(graphUtils.getAllParentsForNode('Compose_8', metadata, true)).toEqual(['Scope_2', 'Scope', 'root', 'Handoff']);
+  });
+
+  it.each(['', 'internal.reserved', '@{variables("x")}', 'x'.repeat(81), 'bad:name', 'bad/name'])(
+    'rejects invalid operation title %s before rename',
+    (name) => {
+      expect(graphUtils.isOperationNameValid('new', name, false, nodesMetadata, {}, getTestIntl()).isValid).toBe(false);
+    }
+  );
+
+  it('rejects renamed collisions but permits valid trigger names and title normalization', () => {
+    expect(
+      graphUtils.isOperationNameValid('new', 'updated name', false, nodesMetadata, { Compose: 'Updated_Name' }, getTestIntl()).isValid
+    ).toBe(false);
+    expect(graphUtils.isOperationNameValid('new', 'internal.trigger', true, nodesMetadata, {}, getTestIntl())).toEqual({
+      isValid: true,
+      message: '',
+    });
+    expect(graphUtils.transformOperationTitle('A new name')).toBe('A_new_name');
+  });
+
+  it.each(['1tool', 'bad-tool', 'a'.repeat(49)])('rejects invalid agent tool identifier %s', (name) => {
+    const metadata = { tool: { graphId: 'root', subgraphType: 'AGENT_CONDITION' } };
+    expect(graphUtils.isOperationNameValid('tool', name, false, metadata, {}, getTestIntl()).isValid).toBe(false);
+    expect(graphUtils.isOperationNameValid('tool', 'valid_tool', false, metadata, {}, getTestIntl()).isValid).toBe(true);
+  });
 
   describe('isRootNode', () => {
     it('should return true for a trigger node in root graph', () => {

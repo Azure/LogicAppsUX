@@ -1,0 +1,29 @@
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace <%= logicAppNamespace %>
+{
+    using Microsoft.Azure.Workflows.Sdk;
+
+    /// <summary>
+    /// <%= flowName %> Stateless Workflow.
+    /// </summary>
+    public class <%= flowNameClass %> : IWorkflowProvider
+    {
+        /// <summary>
+        /// Gets the HTTP request/response workflow definition.
+        /// </summary>
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger().WithName("HttpTrigger");
+
+            var compose = WorkflowActions.BuiltIn.Compose(inputs: () => "hello").WithName("Compose");
+
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => compose.Output).WithName("Response");
+            var workflow = trigger.Then(compose).Then(response);
+
+            return new[] { WorkflowFactory.CreateStatelessWorkflow(<%= flowName %>, workflow) };
+        }
+    }
+}

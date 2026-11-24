@@ -1,5 +1,6 @@
 import type { OperationManifest } from '../../../../utils/src';
 import { SettingScope } from '../../../../utils/src';
+import { getIntl } from '../../../../intl/src';
 import { frequencyValues } from './schedule';
 
 const timeZones = [
@@ -70,6 +71,10 @@ const timeZones = [
   {
     value: 'Central Standard Time (Mexico)',
     displayName: '(UTC-06:00) Guadalajara, Mexico City, Monterrey',
+  },
+  {
+    value: 'Alberta Standard Time',
+    displayName: '(UTC-06:00) Mountain Time (Alberta)',
   },
   {
     value: 'Canada Central Standard Time',
@@ -677,11 +682,27 @@ export const convertTimezoneManifest = {
           type: 'string',
           title: 'Base time',
           description: 'The time to convert.',
+          get 'x-ms-help-text'() {
+            return getIntl().formatMessage({
+              defaultMessage:
+                'Local times can be ambiguous or nonexistent during daylight-saving transitions and may fail conversion. To identify an exact instant, normalize the timestamp to UTC and select UTC as the source time zone.',
+              id: 'fQkDaG',
+              description: 'Help for the Convert time zone Base time parameter explaining daylight-saving transitions.',
+            });
+          },
         },
         sourceTimeZone: {
           type: 'string',
           title: 'Source time zone',
           description: 'The time zone the base time is in.',
+          get 'x-ms-help-text'() {
+            return getIntl().formatMessage({
+              defaultMessage:
+                'Time zones automatically apply daylight-saving rules for the supplied date. For example, Eastern Standard Time includes both standard and daylight time; it is not a fixed UTC-5 offset.',
+              id: '3AK7g8',
+              description: 'Help for the Convert time zone Source time zone parameter explaining automatic daylight-saving rules.',
+            });
+          },
           'x-ms-editor': 'combobox',
           'x-ms-editor-options': {
             options: timeZones,

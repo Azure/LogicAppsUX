@@ -12,7 +12,7 @@ import {
   Delete24Filled,
   Delete24Regular,
 } from '@fluentui/react-icons';
-import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   SUBGRAPH_TYPES,
   UiInteractionsService,
@@ -64,6 +64,8 @@ import { addNote } from '../../../core/state/notes/notesSlice';
 import { useReactFlow } from '@xyflow/react';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from '../../panel/nodeDetailsPanel/childWorkflowHelpers';
 import { useRawInputsOutputs } from '../../panel/nodeDetailsPanel/useRawInputsOutputs';
+import { WorkflowExtractionAction } from '../../panel/multiSelectPanel/workflowExtraction';
+import { isWorkflowEditLocked } from '../../../core/state/designerOptions/workflowEditLock';
 
 const BulkDeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const BulkCopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
@@ -72,6 +74,7 @@ const BulkCutIcon = bundleIcon(Cut24Filled, Cut24Regular);
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
   const nodeId = useMemo(() => menuData?.nodeId ?? '', [menuData?.nodeId]);
+  const isSharedLaneMoreEntryPoint = menuData?.entryPoint === 'shared-lane-more';
   const isNodeCollapsed = useIsActionCollapsed(nodeId);
 
   const title = useNodeDisplayName(nodeId);
@@ -83,6 +86,7 @@ export const DesignerContextualMenu = () => {
   const intl = useIntl();
 
   const rootState = useSelector((state: RootState) => state);
+  const editLocked = isWorkflowEditLocked(rootState.designerOptions);
   const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
 
   const selectedNodeIds = useOperationPanelSelectedNodeIds();
@@ -182,12 +186,16 @@ export const DesignerContextualMenu = () => {
     }
   }, [dispatch, menuData?.location, screenToFlowPosition]);
 
-  const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
-    return items.map((item) => ({
-      priority: item?.priority,
-      renderCustomComponent: () => <CustomMenu item={item} />,
-    }));
-  };
+  const hostNodeContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
+    () =>
+      isUiInteractionsServiceEnabled()
+        ? (UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? []).map((item) => ({
+            priority: item?.priority,
+            renderCustomComponent: () => <CustomMenu item={item} />,
+          }))
+        : [],
+    [metadata?.graphId, nodeId]
+  );
 
   const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(() => {
     isNodeCollapsed;
@@ -202,9 +210,7 @@ export const DesignerContextualMenu = () => {
     }
 
     return [
-      ...(isUiInteractionsServiceEnabled()
-        ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
-        : []),
+      ...hostNodeContextMenuOptions,
       {
         priority: NodeMenuPriorities.Delete,
         renderCustomComponent: () => (
@@ -261,6 +267,7 @@ export const DesignerContextualMenu = () => {
     showLogicAppRunClick,
     runAfterClick,
     runMode,
+    hostNodeContextMenuOptions,
   ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
@@ -269,13 +276,17 @@ export const DesignerContextualMenu = () => {
 
   const subgraphMenuItems: JSX.Element[] = useMemo(
     () => [
+      ...(isSharedLaneMoreEntryPoint ? hostNodeContextMenuOptions : [])
+        .slice()
+        .sort((a, b) => (a?.priority ?? NodeMenuPriorities.Default) - (b?.priority ?? NodeMenuPriorities.Default))
+        .map((option) => option.renderCustomComponent() as JSX.Element),
       ...(metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ||
       metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ||
       metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
         ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
         : []),
     ],
-    [deleteClick, metadata?.subgraphType]
+    [deleteClick, metadata?.subgraphType, hostNodeContextMenuOptions, isSharedLaneMoreEntryPoint]
   );
 
   const graphMenuItems: JSX.Element[] = useMemo(
@@ -332,17 +343,30 @@ export const DesignerContextualMenu = () => {
       { count: selectedNodeIds.length }
     );
     return [
-      <MenuItem key={'bulk-cut'} icon={<BulkCutIcon />} onClick={bulkCutClick} data-automation-id={'msla-bulk-cut-menu-option'}>
+      <MenuItem
+        key={'bulk-cut'}
+        icon={<BulkCutIcon />}
+        disabled={editLocked}
+        onClick={bulkCutClick}
+        data-automation-id={'msla-bulk-cut-menu-option'}
+      >
         {cutText}
       </MenuItem>,
       <MenuItem key={'bulk-copy'} icon={<BulkCopyIcon />} onClick={bulkCopyClick} data-automation-id={'msla-bulk-copy-menu-option'}>
         {copyText}
       </MenuItem>,
-      <MenuItem key={'bulk-delete'} icon={<BulkDeleteIcon />} onClick={bulkDeleteClick} data-automation-id={'msla-bulk-delete-menu-option'}>
+      <WorkflowExtractionAction key="bulk-extract" variant="menuItem" onClick={() => setOpen(false)} />,
+      <MenuItem
+        key={'bulk-delete'}
+        icon={<BulkDeleteIcon />}
+        disabled={editLocked}
+        onClick={bulkDeleteClick}
+        data-automation-id={'msla-bulk-delete-menu-option'}
+      >
         {deleteText}
       </MenuItem>,
     ];
-  }, [intl, selectedNodeIds.length, bulkDeleteClick, bulkCopyClick, bulkCutClick]);
+  }, [intl, selectedNodeIds.length, bulkDeleteClick, bulkCopyClick, bulkCutClick, editLocked]);
 
   const menuItems = useMemo(() => {
     // If no node id, show canvas menu items
@@ -351,7 +375,7 @@ export const DesignerContextualMenu = () => {
     }
 
     // If the right-clicked node is part of a multi-selection, show bulk actions
-    if (isMultiSelect) {
+    if (isMultiSelect && !isSharedLaneMoreEntryPoint) {
       return bulkMenuItems;
     }
 
@@ -375,6 +399,7 @@ export const DesignerContextualMenu = () => {
     nodeId,
     canvasMenuItems,
     isMultiSelect,
+    isSharedLaneMoreEntryPoint,
     bulkMenuItems,
     metadata?.subgraphType,
     isScopeNode,

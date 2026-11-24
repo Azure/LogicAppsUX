@@ -8,6 +8,7 @@ import { TreeActionItem, type TreeActionItemProps } from '../TreeActionItem';
 import { FlatTree } from '@fluentui/react-components';
 import * as Core from '../../../../core';
 import * as WorkflowSelectors from '../../../../core/state/workflow/workflowSelectors';
+import { setRunIndex, setToolRunIndex, updateAgenticMetadata } from '../../../../core/state/workflow/workflowSlice';
 
 // Mock scrollIntoView which doesn't exist in JSDOM
 beforeAll(() => {
@@ -34,30 +35,20 @@ vi.mock('../../../../core/state/workflow/workflowSelectors', async (importOrigin
     useRunIndex: vi.fn(),
     useNodeMetadata: vi.fn(),
     useParentRunIndexes: vi.fn(),
-  };
-});
-
-vi.mock('../../../../core/state/workflow/workflowSlice', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../../core/state/workflow/workflowSlice')>();
-  return {
-    ...actual,
-    collapseGraphsToShowNode: vi.fn(() => ({ type: 'COLLAPSE_GRAPHS', payload: undefined })),
-    clearAllRepetitionRunData: vi.fn(() => ({ type: 'CLEAR_REPETITION_DATA', payload: undefined })),
-    updateAgenticMetadata: vi.fn(() => ({ type: 'UPDATE_AGENTIC_METADATA', payload: undefined })),
-    setRunIndex: vi.fn(() => ({ type: 'SET_RUN_INDEX', payload: undefined })),
-    updateAgenticGraph: vi.fn(() => ({ type: 'UPDATE_AGENTIC_GRAPH', payload: undefined })),
+    useRunInstance: vi.fn(),
   };
 });
 
 describe('TreeActionItem', () => {
   let mockStore: EnhancedStore;
 
-  const createMockStore = () => {
+  const createMockStore = (useSharedNodeUi = false) => {
     return configureStore({
       reducer: {
         operations: (state = {}) => state,
         workflow: (state = { nodesMetadata: {} }) => state,
         designerView: (state = {}) => state,
+        designerOptions: (state = { useSharedNodeUi }) => state,
         panel: (state = {}) => state,
       },
     });
@@ -94,7 +85,10 @@ describe('TreeActionItem', () => {
     mockStore = createMockStore();
 
     // Default mock implementations
+    (Core.changePanelNode as Mock).mockReturnValue({ type: 'CHANGE_PANEL_NODE' });
+    (Core.setFocusNode as Mock).mockReturnValue({ type: 'SET_FOCUS_NODE' });
     (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue(null);
+    vi.mocked(WorkflowSelectors.useRunInstance).mockReturnValue(undefined);
     (WorkflowSelectors.useRunData as Mock).mockReturnValue(null);
     (WorkflowSelectors.useParentRunIndex as Mock).mockReturnValue(0);
     (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(0);
@@ -338,6 +332,37 @@ describe('TreeActionItem', () => {
   });
 
   describe('Agent Repetitions', () => {
+    it.each([true, false])('selects the MCP tool iteration under its owning Agent with Shared=%s', (shared) => {
+      mockStore = createMockStore(shared);
+      const dispatch = vi.spyOn(mockStore, 'dispatch');
+      vi.mocked(WorkflowSelectors.useParentRunIndex).mockReturnValue(0);
+      vi.mocked(WorkflowSelectors.useRunInstance).mockReturnValue({ id: 'run-1' } as ReturnType<typeof WorkflowSelectors.useRunInstance>);
+      (WorkflowSelectors.useNodeMetadata as Mock).mockReturnValue({ subgraphType: 'MCP_CLIENT' });
+      renderWithProviders({
+        ...defaultProps,
+        repetitionName: '000001-000002',
+        data: {
+          repIndex: 2,
+          repetition: {
+            type: 'workflows/runs/actions/agentRepetitions/tools',
+            properties: { repetitionIndexes: [{ scopeName: 'Agent', itemIndex: 1 }] },
+          },
+          parentRepetition: { name: '000001', properties: { status: 'Succeeded' } },
+        },
+      });
+
+      fireEvent.click(screen.getByText('Test Action'));
+
+      expect(dispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: updateAgenticMetadata.type,
+          payload: expect.objectContaining({ nodeId: 'Agent', agentRepetitionIdentity: shared ? 'run-1|Agent|000001|1|' : undefined }),
+        })
+      );
+      expect(dispatch).toHaveBeenCalledWith((shared ? setToolRunIndex : setRunIndex)({ nodeId: 'test-action', page: 2 }));
+      expect(dispatch).toHaveBeenCalledWith(setRunIndex({ nodeId: 'Agent', page: 1 }));
+    });
+
     it('should handle agent repetition data', () => {
       const agentRepetitionProps = {
         ...defaultProps,

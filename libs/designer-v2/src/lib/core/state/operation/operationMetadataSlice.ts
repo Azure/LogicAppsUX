@@ -22,6 +22,9 @@ import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { delimiter } from '../../configuretemplate/utils/helper';
+import { ErrorLevel } from './errorLevel';
+
+export { ErrorLevel } from './errorLevel';
 
 export interface ParameterGroup {
   id: string;
@@ -103,15 +106,6 @@ export interface OperationMetadata {
   description?: string;
   summary?: string;
 }
-
-export const ErrorLevel = {
-  Critical: 0,
-  Connection: 1,
-  DynamicInputs: 2,
-  DynamicOutputs: 3,
-  Default: 4,
-} as const;
-export type ErrorLevel = (typeof ErrorLevel)[keyof typeof ErrorLevel];
 
 export interface ErrorInfo {
   error?: any;
@@ -744,14 +738,29 @@ export const operationMetadataSlice = createSlice({
         id: string;
         errorInfo?: ErrorInfo;
         clear?: boolean;
+        clearLevels?: ErrorLevel[];
       }>
     ) => {
-      const { id, errorInfo, clear } = action.payload;
+      const { id, errorInfo, clear, clearLevels } = action.payload;
       if (errorInfo) {
         state.errors[id] = {
           ...(getRecordEntry(state.errors, id) as any),
           [errorInfo.level]: errorInfo,
         };
+      } else if (clearLevels?.length) {
+        const nodeErrors = getRecordEntry(state.errors, id);
+        if (!nodeErrors) {
+          return;
+        }
+        const remainingErrors = { ...nodeErrors };
+        for (const level of clearLevels) {
+          delete remainingErrors[level];
+        }
+        if (Object.keys(remainingErrors).length) {
+          state.errors[id] = remainingErrors;
+        } else {
+          delete state.errors[id];
+        }
       } else if (clear) {
         delete state.errors[id];
       }

@@ -1,0 +1,789 @@
+import { createRef } from 'react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  ActionNodeCard,
+  AgentNodeCard,
+  AgentToolsDecoration,
+  AgentToolsPanel,
+  ConditionNodeCard,
+  DesignerUiScope,
+  LoopNodeCard,
+  NodeHoverCard,
+  NodeInfoCard,
+  NodeStatusBadge,
+  NodeFrame,
+  NodeActionAdd,
+  NodeLabeledHandle,
+  NodeLine,
+  NodeToolConnector,
+  TriggerNodeCard,
+  ToolItemCard,
+  defaultNodeStrings,
+  getNodeStatusLabel,
+} from '../..';
+import { nodeMetrics } from '../../metrics';
+
+afterEach(() => vi.useRealTimers());
+
+const parseCssColor = (value: string): [number, number, number] => {
+  const color = value.trim().toLowerCase();
+  const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (rgbMatch) {
+    return [Number(rgbMatch[1]), Number(rgbMatch[2]), Number(rgbMatch[3])];
+  }
+
+  const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
+  if (hexMatch) {
+    const hex = hexMatch[1];
+    return [Number.parseInt(hex.slice(0, 2), 16), Number.parseInt(hex.slice(2, 4), 16), Number.parseInt(hex.slice(4, 6), 16)];
+  }
+
+  throw new Error(`Unsupported color format: ${value}`);
+};
+
+const relativeLuminance = ([red, green, blue]: [number, number, number]): number => {
+  const normalize = (channel: number) => {
+    const linear = channel / 255;
+    return linear <= 0.04045 ? linear / 12.92 : ((linear + 0.055) / 1.055) ** 2.4;
+  };
+
+  const r = normalize(red);
+  const g = normalize(green);
+  const b = normalize(blue);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const contrastRatio = (foreground: string, background: string): number => {
+  const foregroundLuminance = relativeLuminance(parseCssColor(foreground));
+  const backgroundLuminance = relativeLuminance(parseCssColor(background));
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+};
+
+const getBoundColorSemanticToken = (element: HTMLElement): string => {
+  const classNames = element.className.split(/\s+/).filter(Boolean);
+  const hasMatchingClass = (selectorText: string) =>
+    classNames.some(
+      (className) =>
+        selectorText === `.${className}` || selectorText.startsWith(`.${className}:`) || selectorText.includes(`.${className}.`)
+    );
+  const findInRules = (rules: CSSRuleList): string | undefined => {
+    for (const rule of Array.from(rules)) {
+      if (rule instanceof CSSStyleRule) {
+        const selectors = rule.selectorText.split(',').map((selector) => selector.trim());
+        if (!selectors.some(hasMatchingClass)) {
+          continue;
+        }
+
+        const colorValue = rule.style.color?.trim();
+        if (!colorValue) {
+          continue;
+        }
+
+        const semanticTokenMatch = colorValue.match(/^var\((--[A-Za-z0-9-]+)\)$/);
+        if (semanticTokenMatch?.[1]) {
+          return semanticTokenMatch[1];
+        }
+      } else if (rule instanceof CSSMediaRule) {
+        const nested = findInRules(rule.cssRules);
+        if (nested) {
+          return nested;
+        }
+      }
+    }
+
+    return undefined;
+  };
+
+  for (const styleSheet of Array.from(document.styleSheets)) {
+    const token = findInRules(styleSheet.cssRules);
+    if (token) {
+      return token;
+    }
+  }
+
+  throw new Error('Unable to resolve bound subtitle color semantic token from CSS rules');
+};
+
+const resolveThemeColor = (theme: Record<string, string>, semanticToken: string): string => {
+  const themeToken = semanticToken.replace('--', '');
+  const resolved = theme[themeToken];
+  if (!resolved) {
+    throw new Error(`Unable to resolve theme token: ${themeToken}`);
+  }
+
+  return resolved;
+};
+
+const getMatchedStyleRules = (element: HTMLElement): CSSStyleRule[] => {
+  const classNames = new Set(element.className.split(/\s+/).filter(Boolean));
+  if (!classNames.size) {
+    return [];
+  }
+
+  return Array.from(document.styleSheets).flatMap((sheet) => {
+    let cssRules: CSSRule[] = [];
+    try {
+      cssRules = Array.from(sheet.cssRules);
+    } catch {
+      return [];
+    }
+
+    return cssRules
+      .filter((rule): rule is CSSStyleRule => rule instanceof CSSStyleRule)
+      .filter((rule) =>
+        rule.selectorText
+          .split(',')
+          .map((selector) => selector.trim())
+          .some((selector) => {
+            const className = selector.startsWith('.') ? selector.slice(1).split(/[:\s.[#>+~]/)[0] : '';
+            return className ? classNames.has(className) : false;
+          })
+      );
+  });
+};
+
+describe('shared node presentation', () => {
+  it('keeps children and focus mounted when the scope activates and deactivates', () => {
+    const tree = (enabled: boolean) => (
+      <DesignerUiScope enabled={enabled}>
+        <input aria-label="Scope draft" defaultValue="draft" />
+      </DesignerUiScope>
+    );
+    const { rerender, container } = render(tree(false));
+    const input = screen.getByRole('textbox');
+    input.focus();
+    expect(input.closest('[data-designer-ui-v2]')).toBeNull();
+    expect(container.firstElementChild).not.toHaveAttribute('style', expect.stringContaining('--designer-ui-v2'));
+    rerender(tree(true));
+    expect(screen.getByRole('textbox')).toBe(input);
+    expect(input).toHaveFocus();
+    expect(input.closest('[data-designer-ui-v2]')).not.toBeNull();
+    rerender(tree(false));
+    expect(screen.getByRole('textbox')).toBe(input);
+    expect(input).toHaveValue('draft');
+    expect(input).toHaveFocus();
+    expect(input.closest('[data-designer-ui-v2]')).toBeNull();
+  });
+
+  it('uses the selected condition glyph without dropping the branch label', () => {
+    const { container } = render(<ConditionNodeCard title="Selected condition" kind="if" selected />);
+    expect(screen.getByText('Selected condition')).toBeInTheDocument();
+    expect(container.querySelector('[data-icon-name="BranchForkFilled"]')).toBeInTheDocument();
+  });
+  it('forwards canvas ref, keyboard, ARIA and host badges without rewriting literal titles', () => {
+    const ref = createRef<HTMLDivElement>();
+    const onKeyDown = vi.fn();
+    render(
+      <ActionNodeCard
+        ref={ref}
+        title="HTTP_a-b"
+        role="button"
+        tabIndex={4}
+        aria-label="Localized"
+        onKeyDown={onKeyDown}
+        after={<span>Host badge</span>}
+      />
+    );
+    expect(ref.current).toBe(screen.getByRole('button'));
+    expect(ref.current).toHaveAttribute('tabindex', '4');
+    expect(ref.current).toHaveAccessibleName('Localized');
+    expect(screen.getByText('HTTP_a-b')).toBeInTheDocument();
+    expect(screen.getByText('Host badge')).toBeInTheDocument();
+    fireEvent.keyDown(ref.current!, { key: 'Enter' });
+    expect(onKeyDown).toHaveBeenCalledOnce();
+  });
+
+  it('keeps the default live-region element mounted across running to succeeded', () => {
+    const { rerender } = render(<NodeStatusBadge status="running" />);
+    const status = screen.getByRole('status');
+    rerender(<NodeStatusBadge status="succeeded" strings={{ ...defaultNodeStrings.status, succeeded: 'Réussi' }} />);
+    expect(screen.getByRole('status')).toBe(status);
+    expect(status).toHaveTextContent('Réussi');
+  });
+
+  it('preserves the standalone live default, explicit opt-out and explicit role precedence', () => {
+    const { rerender } = render(<NodeStatusBadge status="failed" />);
+    expect(screen.getByRole('status')).toHaveAttribute('data-badge-status', 'failed');
+    rerender(<NodeStatusBadge status="failed" live={false} />);
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(document.querySelector('[data-badge-status="failed"]')).not.toHaveAttribute('role');
+    rerender(<NodeStatusBadge status="failed" role="img" live />);
+    expect(screen.getByRole('img')).toHaveAttribute('data-badge-status', 'failed');
+  });
+
+  it.each([
+    ['action', <ActionNodeCard key="action" title="Action" status="succeeded" />],
+    ['trigger', <TriggerNodeCard key="trigger" title="Trigger" status="succeeded" />],
+    ['condition', <ConditionNodeCard key="condition" title="Condition" kind="if" status="succeeded" />],
+    ['loop', <LoopNodeCard key="loop" title="Loop" status="succeeded" />],
+    ['agent', <AgentNodeCard key="agent" title="Agent" status="succeeded" />],
+    ['tool', <ToolItemCard key="tool" title="Tool" status="succeeded" />],
+    ['frame', <NodeFrame key="frame" kind="scope" title="Frame" status="succeeded" />],
+  ])('keeps the %s canvas composite quiet without removing its status pill', (_family, card) => {
+    const { container } = render(card);
+    expect(container.querySelector('.fui-Badge[data-badge-status="succeeded"]')).toBeInTheDocument();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+  });
+
+  it('preserves intentionally empty translated strings and uses the beaker instead of a duplicate mock status pill', () => {
+    render(<ActionNodeCard title="Mock" status="mock" strings={{ status: { ...defaultNodeStrings.status, mock: '' } }} />);
+    expect(document.querySelector('.fui-Badge[data-badge-status]')).not.toBeInTheDocument();
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', '');
+  });
+
+  it('keeps existing card dimensions unchanged when admitting canonical structural metrics', () => {
+    expect(nodeMetrics.cards.action).toEqual({ width: 232, height: 74 });
+    expect(nodeMetrics.cards.condition).toEqual({ width: 160, height: 74 });
+    expect(nodeMetrics.cards.switch).toEqual({ width: 160, height: 103, outputGap: 8, borderWidth: 1 });
+    expect(nodeMetrics.cards.loop).toEqual({ width: 160, height: 74 });
+    expect(nodeMetrics.frame).toEqual({ minWidth: 232, minBodyHeight: 106 });
+    expect(nodeMetrics.mergePoint).toEqual({ size: 16, dot: 6 });
+  });
+
+  it('keeps controlled tools expansion and add actions from selecting the canvas', () => {
+    const parent = vi.fn();
+    const onToggleTools = vi.fn();
+    const onAddTool = vi.fn();
+    const { rerender } = render(
+      <div onClick={parent}>
+        <AgentNodeCard
+          title="Agent"
+          tools={<ToolItemCard title="Tool" size="small" />}
+          toolsExpanded={false}
+          onToggleTools={onToggleTools}
+          onAddTool={onAddTool}
+        />
+      </div>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Expand tools' }));
+    expect(onToggleTools).toHaveBeenCalledOnce();
+    expect(screen.queryByText('Tool')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add tools' }));
+    expect(onAddTool).toHaveBeenCalledOnce();
+    expect(parent).not.toHaveBeenCalled();
+    rerender(<AgentNodeCard title="Agent" tools={<ToolItemCard title="Tool" size="small" />} toolsExpanded />);
+    expect(screen.getByText('Tool')).toBeInTheDocument();
+  });
+
+  it('keeps the default Agent tools surface opaque and forwards refs and panel events', () => {
+    const ref = createRef<HTMLElement>();
+    const parent = vi.fn();
+    const onAddTool = vi.fn();
+    const onToggleExpanded = vi.fn();
+    render(
+      <div onClick={parent}>
+        <AgentToolsPanel ref={ref} onAddTool={onAddTool} onToggleExpanded={onToggleExpanded}>
+          <ToolItemCard title="Tool" size="small" />
+        </AgentToolsPanel>
+      </div>
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    expect(ref.current).toBe(panel);
+    expect(panel).toHaveTextContent('Tools (1)');
+    const matched = getMatchedStyleRules(panel);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Add tools' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse tools' }));
+    expect(onAddTool).toHaveBeenCalledOnce();
+    expect(onToggleExpanded).toHaveBeenCalledOnce();
+    expect(parent).not.toHaveBeenCalled();
+  });
+
+  it('supports a transparent Agent tools surface without foreground opaque declarations', () => {
+    render(
+      <AgentToolsPanel surface="transparent" aria-owns="tool-id">
+        <ToolItemCard title="Tool" size="small" />
+      </AgentToolsPanel>
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    expect(panel).toHaveAttribute('aria-owns', 'tool-id');
+    expect(panel).toHaveTextContent('Tools (1)');
+    const matched = getMatchedStyleRules(panel);
+    expect(matched.some((rule) => rule.style.getPropertyValue('box-sizing').trim() === 'border-box')).toBe(true);
+    expect(
+      matched.some((rule) => {
+        const borderColor = rule.style.getPropertyValue('border-color').trim();
+        const borderTopColor = rule.style.getPropertyValue('border-top-color').trim();
+        const borderLeftColor = rule.style.getPropertyValue('border-left-color').trim();
+        const borderRightColor = rule.style.getPropertyValue('border-right-color').trim();
+        const borderBottomColor = rule.style.getPropertyValue('border-bottom-color').trim();
+        return [borderColor, borderTopColor, borderLeftColor, borderRightColor, borderBottomColor].includes('transparent');
+      })
+    ).toBe(true);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(false);
+  });
+
+  it('renders AgentToolsDecoration as an opaque pointer-inert surface and forwards html attrs/ref', () => {
+    const ref = createRef<HTMLElement>();
+    render(
+      <AgentToolsDecoration
+        ref={ref}
+        data-testid="agent-tools-decoration"
+        data-agent-tools-decoration="WorkflowAgent"
+        aria-hidden="true"
+        role="presentation"
+        style={{ width: 304, height: 300 }}
+      />
+    );
+    const decoration = screen.getByTestId('agent-tools-decoration');
+    expect(ref.current).toBe(decoration);
+    expect(decoration).toHaveAttribute('data-agent-tools-decoration', 'WorkflowAgent');
+    expect(decoration).toHaveAttribute('aria-hidden', 'true');
+    expect(decoration).toHaveAttribute('role', 'presentation');
+    expect(decoration).toHaveStyle({ width: '304px', height: '300px' });
+    const matched = getMatchedStyleRules(decoration);
+    expect(matched.some((rule) => rule.style.getPropertyValue('pointer-events').trim() === 'none')).toBe(true);
+    expect(matched.some((rule) => rule.style.getPropertyValue('box-sizing').trim() === 'border-box')).toBe(true);
+    expect(matched.some((rule) => /--designer-ui-v2-node-agent-surface/.test(rule.style.getPropertyValue('background-color')))).toBe(true);
+  });
+
+  it('places a supplied tools panel before the vertical output without an empty-agent add button or copied tool rows', () => {
+    const ref = createRef<HTMLDivElement>();
+    const add = vi.fn();
+    const toggle = vi.fn();
+    const canvas = vi.fn();
+    const { container } = render(
+      <div onClick={canvas}>
+        <AgentNodeCard
+          ref={ref}
+          title="Agent"
+          handleAxis="vertical"
+          onAddTool={add}
+          toolsPanelSlot={
+            <AgentToolsPanel aria-owns="real-tool" onAddTool={add} onToggleExpanded={toggle}>
+              <input aria-label="Panel draft" defaultValue="preserved" />
+            </AgentToolsPanel>
+          }
+          outputSlot={<button type="button">Real source</button>}
+          after={<span>Host bottom reserve</span>}
+        />
+        <div id="real-tool">External tool</div>
+      </div>
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    const connector = screen.getByTestId('node-tool-connector');
+    const output = screen.getByTestId('node-output-handles');
+    expect(ref.current).toContainElement(panel);
+    expect(panel).toHaveAttribute('aria-owns', 'real-tool');
+    expect(panel).not.toContainElement(screen.getByText('External tool'));
+    expect(connector.querySelector('button')).toBeNull();
+    expect(connector.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(panel.compareDocumentPosition(output) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(output).toContainElement(screen.getByRole('button', { name: 'Real source' }));
+    expect(output.nextElementSibling).toBe(screen.getByText('Host bottom reserve'));
+    expect(container.querySelectorAll('[data-testid="node-output-handles"]')).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Add tools' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse tools' }));
+    expect(add).toHaveBeenCalledOnce();
+    expect(toggle).toHaveBeenCalledOnce();
+    expect(canvas).not.toHaveBeenCalled();
+  });
+
+  it('replaces rather than duplicates the built-in tools panel and retains supplied panel state across card updates', () => {
+    const panel = (
+      <AgentToolsPanel>
+        <input aria-label="Panel draft" defaultValue="preserved" />
+      </AgentToolsPanel>
+    );
+    const { rerender } = render(<AgentNodeCard title="Agent" tools={<ToolItemCard title="Not copied" />} toolsPanelSlot={panel} />);
+    const draft = screen.getByRole('textbox', { name: 'Panel draft' });
+    draft.focus();
+    fireEvent.change(draft, { target: { value: 'edited' } });
+    expect(screen.queryByText('Not copied')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('agent-tools-panel')).toHaveLength(1);
+    rerender(<AgentNodeCard title="Renamed" selected tools={<ToolItemCard title="Not copied" />} toolsPanelSlot={panel} />);
+    expect(screen.getByRole('textbox', { name: 'Panel draft' })).toBe(draft);
+    expect(draft).toHaveValue('edited');
+    expect(draft).toHaveFocus();
+  });
+
+  it.each([undefined, null, false])('keeps built-in tools composition for an absent panel slot (%s)', (toolsPanelSlot) => {
+    render(
+      <AgentNodeCard title="Agent" tools={<ToolItemCard title="Built-in row" />} toolsPanelSlot={toolsPanelSlot} handleAxis="vertical" />
+    );
+    const panel = screen.getByTestId('agent-tools-panel');
+    expect(panel).toContainElement(screen.getByText('Built-in row'));
+    expect(panel.compareDocumentPosition(screen.getByTestId('node-output-handles')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('sanitizes nonfinite switch counts and leaves interactive host handle slots accessible', () => {
+    const { container } = render(
+      <ConditionNodeCard
+        title="Switch"
+        kind="switch"
+        caseCount={Number.NaN}
+        handleAxis="vertical"
+        inputSlot={<button type="button">Connect</button>}
+      />
+    );
+    expect(screen.getByRole('button', { name: 'Connect' }).closest('[data-handle]')).not.toHaveAttribute('aria-hidden');
+    expect(container.querySelectorAll('[data-testid="node-output-handles"] [data-handle]')).toHaveLength(1);
+  });
+
+  it('keeps differently themed scopes isolated and inherits the host font', () => {
+    render(
+      <>
+        <DesignerUiScope mode="light" data-testid="light">
+          <ActionNodeCard title="Light" />
+        </DesignerUiScope>
+        <DesignerUiScope mode="dark" data-testid="dark">
+          <ActionNodeCard title="Dark" />
+        </DesignerUiScope>
+      </>
+    );
+    expect(screen.getByTestId('light').style.getPropertyValue('--designer-ui-v2-node-surface')).not.toBe(
+      screen.getByTestId('dark').style.getPropertyValue('--designer-ui-v2-node-surface')
+    );
+    expect(document.documentElement.style.getPropertyValue('--designer-ui-v2-node-surface')).toBe('');
+    expect(screen.getByTestId('light').style.fontFamily).toBe('');
+  });
+
+  it.each(['javascript:alert(1)', 'data:text/html,hi', '/relative'])('rejects unsafe documentation href %s', (href) => {
+    render(<NodeInfoCard category="action" icon={null} title="Info" learnMoreHref={href} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  });
+
+  it('keeps a safe documentation link, descriptions and host info-card actions', () => {
+    render(
+      <NodeInfoCard
+        category="action"
+        icon={null}
+        title="Info"
+        learnMoreHref="https://example.com/doc"
+        description="Description"
+        configured
+        actions={<button type="button">Edit</button>}
+      />
+    );
+    expect(screen.getByRole('link')).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getByText('Configured')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+  });
+
+  it('opens on focus in the scoped outlet without stealing focus and closes with Escape', async () => {
+    vi.useFakeTimers();
+    render(
+      <FluentProvider theme={webLightTheme}>
+        <DesignerUiScope mode="dark" data-testid="scope">
+          <NodeHoverCard card={<NodeInfoCard category="action" icon={null} title="Details" />}>
+            <ActionNodeCard title="Focus me" role="button" tabIndex={0} aria-describedby="existing" />
+          </NodeHoverCard>
+        </DesignerUiScope>
+      </FluentProvider>
+    );
+    const button = screen.getByRole('button', { name: 'Focus me' });
+    // Only keyboard-visible focus opens; jsdom has no keyboard modality, so mark it the way Fluent does.
+    button.setAttribute('data-fui-focus-visible', '');
+    act(() => button.focus());
+    act(() => vi.advanceTimersByTime(600));
+    expect(button).toHaveFocus();
+    expect(button.getAttribute('aria-describedby')).toContain('existing');
+    expect(screen.getByTestId('scope')).toContainElement(screen.getByText('Details'));
+    fireEvent.keyDown(button, { key: 'Escape' });
+    expect(screen.queryByText('Details')).not.toBeInTheDocument();
+    expect(button).toHaveAttribute('aria-describedby', 'existing');
+  });
+
+  it('respects OS and host reduced-motion settings for running status and transitions', () => {
+    render(<ActionNodeCard title="Running" status="running" />);
+    const css = Array.from(document.styleSheets)
+      .flatMap((sheet) => Array.from(sheet.cssRules))
+      .map((rule) => rule.cssText)
+      .join('\n');
+    expect(css).toContain('prefers-reduced-motion: reduce');
+    expect(css).toContain('data-reduce-motion="true"');
+    expect(css).toMatch(/animation-name:\s*none/);
+  });
+
+  it('retains tool row identity across reordering keyed children', () => {
+    const { rerender } = render(
+      <AgentNodeCard title="Agent" tools={[<ToolItemCard key="one" title="One" />, <ToolItemCard key="two" title="Two" />]} />
+    );
+    const one = screen.getByText('One');
+    rerender(<AgentNodeCard title="Agent" tools={[<ToolItemCard key="two" title="Two" />, <ToolItemCard key="one" title="One" />]} />);
+    expect(screen.getByText('One')).toBe(one);
+  });
+
+  it.each([
+    ['light', webLightTheme],
+    ['dark', webDarkTheme],
+  ] as const)('keeps the Agent subtitle caption at WCAG AA contrast in %s stock surfaces', (mode, theme) => {
+    const { container } = render(
+      <FluentProvider theme={theme}>
+        <DesignerUiScope mode={mode}>
+          <AgentNodeCard title="Triage assistant" subtitle="Agent" />
+        </DesignerUiScope>
+      </FluentProvider>
+    );
+
+    const subtitle = screen.getByText('Agent');
+    const scope = container.querySelector('[data-designer-ui-v2]');
+    expect(scope).not.toBeNull();
+
+    const subtitleSemanticToken = getBoundColorSemanticToken(subtitle);
+    expect(subtitleSemanticToken).toBe('--colorNeutralForeground2');
+    const subtitleColor = resolveThemeColor(theme as Record<string, string>, subtitleSemanticToken);
+
+    const backgroundColor = (scope as HTMLElement).style.getPropertyValue('--designer-ui-v2-node-agent-surface').trim();
+    expect(backgroundColor).toBeTruthy();
+    expect(contrastRatio(subtitleColor, backgroundColor)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('cleans external focus descriptions and cancels pending hover when disabled', () => {
+    vi.useFakeTimers();
+    const external = document.createElement('button');
+    external.setAttribute('aria-describedby', 'host-description');
+    document.body.append(external);
+    const { rerender, unmount } = render(
+      <DesignerUiScope>
+        <NodeHoverCard externalFocusTarget={external} card="External details">
+          <ActionNodeCard title="Card" />
+        </NodeHoverCard>
+      </DesignerUiScope>
+    );
+    external.setAttribute('data-fui-focus-visible', '');
+    fireEvent.focusIn(external);
+    act(() => vi.advanceTimersByTime(600));
+    expect(external.getAttribute('aria-describedby')).toContain('host-description');
+    expect(screen.getByText('External details')).toBeInTheDocument();
+    rerender(
+      <DesignerUiScope>
+        <NodeHoverCard externalFocusTarget={external} card="External details" disabled>
+          <ActionNodeCard title="Card" />
+        </NodeHoverCard>
+      </DesignerUiScope>
+    );
+    expect(external).toHaveAttribute('aria-describedby', 'host-description');
+    expect(screen.queryByText('External details')).toBeNull();
+    unmount();
+    external.remove();
+  });
+
+  it('mounts a hover portal in its iframe scope rather than the global document', async () => {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const owner = iframe.contentDocument!;
+    const container = owner.createElement('div');
+    owner.body.append(container);
+    const result = render(
+      <DesignerUiScope data-testid="iframe-scope">
+        <NodeHoverCard openDelay={0} card="Iframe details">
+          <ActionNodeCard title="Iframe card" role="button" tabIndex={0} />
+        </NodeHoverCard>
+      </DesignerUiScope>,
+      { container }
+    );
+    const iframeButton = within(container).getByRole('button');
+    iframeButton.setAttribute('data-fui-focus-visible', '');
+    fireEvent.focus(iframeButton);
+    const details = await within(container).findByText('Iframe details');
+    expect(details.ownerDocument).toBe(owner);
+    expect(within(container).getByTestId('iframe-scope')).toContainElement(details);
+    expect(screen.queryByText('Iframe details')).toBeNull();
+    result.unmount();
+    iframe.remove();
+  });
+
+  it('forwards trigger refs and suppresses only decorative handles when the host supplies real handles', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { rerender } = render(<TriggerNodeCard ref={ref} title="Request" role="button" status="mock" />);
+    expect(ref.current).toBe(screen.getByRole('button'));
+    expect(ref.current).toHaveAttribute('data-node-card', 'trigger');
+    expect(ref.current?.querySelector('[data-handle]')).not.toBeNull();
+    // Trigger sample input is not an output mock: status is forwarded but the action-only beaker paint is absent.
+    expect(ref.current).toHaveAttribute('data-status', 'mock');
+    expect(screen.queryByRole('img', { name: 'Using test data' })).toBeNull();
+    expect(ref.current?.querySelector('[data-test-data]')).toBeNull();
+    rerender(<TriggerNodeCard ref={ref} title="Request" role="button" handles={false} selected status="succeeded" />);
+    expect(ref.current?.querySelector('[data-handle]')).toBeNull();
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!).toHaveTextContent('Succeeded');
+  });
+
+  it('retains the disabled insertion affordance without a callback and respects canvas propagation', () => {
+    const onClick = vi.fn();
+    const canvas = vi.fn();
+    const ref = createRef<HTMLSpanElement>();
+    const { rerender } = render(<NodeActionAdd ref={ref} data-testid="add" />);
+    expect(ref.current).toBe(screen.getByTestId('add'));
+    expect(screen.getByRole('button', { name: 'Add action' })).toBeDisabled();
+    rerender(
+      <div onClick={canvas}>
+        <NodeActionAdd onClick={onClick} label="Ajouter" disabled />
+      </div>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter' }));
+    expect(onClick).not.toHaveBeenCalled();
+    canvas.mockClear();
+    rerender(
+      <div onClick={canvas}>
+        <NodeActionAdd onClick={onClick} label="Ajouter" />
+      </div>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter' }));
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(canvas).not.toHaveBeenCalled();
+  });
+
+  it('keeps the empty tool-connector add action out of canvas click and drag handlers', () => {
+    const onAddTool = vi.fn();
+    const canvasClick = vi.fn();
+    const canvasDrag = vi.fn();
+    const { rerender } = render(
+      <div onClick={canvasClick} onMouseDown={canvasDrag}>
+        <NodeToolConnector onAddTool={onAddTool} label="Outils" addToolLabel="Ajouter un outil" />
+      </div>
+    );
+    const button = screen.getByRole('button', { name: 'Ajouter un outil' });
+    fireEvent.mouseDown(button);
+    fireEvent.click(button);
+    expect(onAddTool).toHaveBeenCalledOnce();
+    expect(canvasClick).not.toHaveBeenCalled();
+    expect(canvasDrag).not.toHaveBeenCalled();
+    rerender(<NodeToolConnector hasTools onAddTool={onAddTool} />);
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('preserves branch-label overrides and exact vertical connector geometry with forwarded refs', () => {
+    const ref = createRef<SVGSVGElement>();
+    render(
+      <>
+        <ConditionNodeCard title="Condition" kind="if" />
+        <NodeLabeledHandle branch="true" label="" data-testid="true-handle" />
+        <NodeLabeledHandle branch="false" label="Non" />
+        <NodeLine ref={ref} orientation="vertical" length={37} />
+      </>
+    );
+    expect(screen.getByText('Non')).toBeInTheDocument();
+    expect(screen.getByTestId('true-handle')).toHaveTextContent('');
+    expect(ref.current).toHaveAttribute('viewBox', '0 0 20 37');
+    expect(ref.current?.querySelector('path')).toHaveAttribute('d', 'M10 0 V37 M 13.18 33.82 L 10 37 L 6.82 33.82');
+    expect(ref.current).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('cancels a pending hover and cancels delayed close when the pointer returns', () => {
+    vi.useFakeTimers();
+    render(
+      <DesignerUiScope>
+        <NodeHoverCard openDelay={100} closeDelay={100} card="Hover details" data-testid="hover-trigger">
+          <ActionNodeCard title="Hover target" />
+        </NodeHoverCard>
+      </DesignerUiScope>
+    );
+    const trigger = screen.getByTestId('hover-trigger');
+    fireEvent.mouseOver(trigger);
+    act(() => vi.advanceTimersByTime(50));
+    fireEvent.mouseLeave(trigger);
+    act(() => vi.advanceTimersByTime(100));
+    expect(screen.queryByText('Hover details')).toBeNull();
+    fireEvent.mouseOver(trigger);
+    act(() => vi.advanceTimersByTime(100));
+    expect(screen.getByText('Hover details')).toBeInTheDocument();
+    fireEvent.mouseLeave(trigger);
+    act(() => vi.advanceTimersByTime(50));
+    fireEvent.mouseOver(trigger);
+    act(() => vi.advanceTimersByTime(100));
+    expect(screen.getByText('Hover details')).toBeInTheDocument();
+    fireEvent.mouseLeave(trigger);
+    act(() => vi.advanceTimersByTime(100));
+    expect(screen.queryByText('Hover details')).toBeNull();
+  });
+});
+
+describe('status label contracts', () => {
+  const statuses = Object.keys(defaultNodeStrings.status) as (keyof typeof defaultNodeStrings.status)[];
+
+  it.each(statuses)('keeps the frozen %s tone and default text when no label override is given', (status) => {
+    render(<NodeStatusBadge status={status} />);
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', status);
+    expect(badge).toHaveTextContent(defaultNodeStrings.status[status]);
+    expect(getNodeStatusLabel(status)).toBe(defaultNodeStrings.status[status]);
+  });
+
+  it('overrides only the visible text while preserving the tone, including empty labels', () => {
+    const { rerender } = render(<NodeStatusBadge status="failed" label="Timed out" detail="2s" />);
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', 'failed');
+    expect(badge).toHaveTextContent('Timed out 2s');
+    rerender(<NodeStatusBadge status="failed" label="" />);
+    expect(document.querySelector<HTMLElement>('[data-badge-status]')!.textContent).toBe('');
+  });
+
+  it('keeps legacy two-argument getNodeStatusLabel calls and honors label/detail overrides', () => {
+    const strings = { ...defaultNodeStrings.status, failed: 'Echec' };
+    expect(getNodeStatusLabel('failed', strings)).toBe('Echec');
+    expect(getNodeStatusLabel('failed', strings, '3s')).toBe('Echec 3s');
+    expect(getNodeStatusLabel('failed', strings, undefined, 'Timed out')).toBe('Timed out');
+    expect(getNodeStatusLabel('failed', strings, '3s', '')).toBe(' 3s');
+  });
+
+  it('forwards statusLabel and statusAriaLabel from every card through NodeCard to the badge', () => {
+    render(
+      <ActionNodeCard
+        title="HTTP"
+        status="pending"
+        statusLabel="Waiting"
+        statusAriaLabel="HTTP is waiting"
+        statusDetail="1m"
+        data-testid="card"
+      />
+    );
+    const badge = document.querySelector<HTMLElement>('[data-badge-status]')!;
+    expect(badge).toHaveAttribute('data-badge-status', 'pending');
+    expect(badge).toHaveTextContent('Waiting 1m');
+    expect(badge).toHaveAttribute('aria-label', 'HTTP is waiting');
+  });
+
+  it('defaults the card root to role=group but lets hosts override the role', () => {
+    const { rerender } = render(<ActionNodeCard title="HTTP" data-testid="card" />);
+    expect(screen.getByTestId('card')).toHaveAttribute('role', 'group');
+    rerender(<ActionNodeCard title="HTTP" role="button" data-testid="card" />);
+    expect(screen.getByTestId('card')).toHaveAttribute('role', 'button');
+  });
+
+  it('marks inactive cards with data-inactive while keeping refs, focus and interaction', () => {
+    const ref = createRef<HTMLDivElement>();
+    const onClick = vi.fn();
+    const { rerender } = render(<ActionNodeCard ref={ref} title="HTTP" inactive tabIndex={0} onClick={onClick} data-testid="card" />);
+    const card = screen.getByTestId('card');
+    expect(ref.current).toBe(card);
+    expect(card).toHaveAttribute('data-inactive', 'true');
+    card.focus();
+    expect(card).toHaveFocus();
+    fireEvent.click(card);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    rerender(<ActionNodeCard ref={ref} title="HTTP" tabIndex={0} data-testid="card" />);
+    expect(card).not.toHaveAttribute('data-inactive');
+  });
+
+  it('exposes inactive opacity as a shared metric', () => {
+    expect(nodeMetrics.inactiveOpacity).toBe(0.4);
+  });
+});
+
+describe('status contract forwarding across every card family', () => {
+  // Hosts adapt run status once and pass it to whichever family renders; a card that drops these
+  // props would silently show the generic tone label or keep an inactive node fully opaque.
+  const cards = [
+    ['ActionNodeCard', (p: object) => <ActionNodeCard title="Card" {...p} />],
+    ['TriggerNodeCard', (p: object) => <TriggerNodeCard title="Card" {...p} />],
+    ['ConditionNodeCard', (p: object) => <ConditionNodeCard kind="if" title="Card" {...p} />],
+    ['LoopNodeCard', (p: object) => <LoopNodeCard title="Card" {...p} />],
+    ['AgentNodeCard', (p: object) => <AgentNodeCard title="Card" {...p} />],
+    ['ToolItemCard', (p: object) => <ToolItemCard title="Card" {...p} />],
+  ] as const;
+
+  it.each(cards)('%s forwards statusLabel, statusAriaLabel, and inactive', (_, renderCard) => {
+    const { container } = render(
+      renderCard({ status: 'failed', statusLabel: 'Timed out', statusAriaLabel: 'Run timed out', inactive: true, 'data-testid': 'card' })
+    );
+    const card = screen.getByTestId('card');
+    expect(card).toHaveAttribute('data-inactive', 'true');
+    expect(container.querySelector('[aria-label="Run timed out"]')).not.toBeNull();
+    expect(screen.queryByText('Timed out')).not.toBeNull();
+  });
+});

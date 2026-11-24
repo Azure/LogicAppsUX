@@ -8,6 +8,7 @@ import { ensureVSCodeFiles } from '../projectConsistency/vscodeConsistency';
 import * as vscode from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
 import { type EnsureVSCodeFilesOrigin, recordRegenerationEvent } from '../utils/regenerationProbe';
+import { isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
 
 export async function runProjectConsistencyCheck(
   context: IActionContext,
@@ -16,6 +17,10 @@ export async function runProjectConsistencyCheck(
   recordRegenerationEvent({ event: 'consistency-check-entered' });
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-workspace' });
+    return;
+  }
+  if (!isProjectConsistencyCheckEnabled()) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
     return;
   }
   const projectPaths = await getWorkspaceLogicAppRoots();

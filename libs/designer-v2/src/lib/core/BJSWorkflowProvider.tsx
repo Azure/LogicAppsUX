@@ -1,5 +1,6 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { initializeDynamicDataInNodes } from './actions/bjsworkflow/operationdeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initCustomCode } from './state/customcode/customcodeSlice';
 import {
@@ -11,15 +12,15 @@ import {
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { resetWorkflowState } from './state/global';
 import { setWorkflowKind, setRunInstance, setHasUnsupportedMultipleTriggers, initWorkflowSpec } from './state/workflow/workflowSlice';
-import type { AppDispatch } from './store';
+import type { AppDispatch, RootState } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { hasMultipleTriggers } from '@microsoft/logic-apps-shared';
+import { hasMultipleTriggers, LoggerService, LogEntryLevel } from '@microsoft/logic-apps-shared';
 import { useCustomCompareEffect } from '@react-hookz/web';
 import isEqual from 'lodash.isequal';
 import type React from 'react';
-import { createContext, useContext, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { isCancelledError, useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
 import { initializeDiscoveryPanelFavoriteOperations } from './actions/bjsworkflow/initialize';
@@ -45,6 +46,8 @@ export interface BJSWorkflowProviderProps {
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
   isMultiVariableEnabled?: boolean;
+  /** A host acknowledgement of a workflow already hydrated and applied to this editor. */
+  externallyAppliedWorkflow?: Workflow;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
@@ -55,11 +58,16 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   customCode,
   appSettings,
   isMultiVariableEnabled,
+  externallyAppliedWorkflow,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const connectionService = useContext(ProviderWrappedContext)?.connectionService;
 
   const isReadOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const initialized = useRef(false);
+  const acknowledgedWorkflow = useRef<Workflow>();
+  const lastValidatedConnectionService = useRef(connectionService);
 
   // Computed synchronously during render (not in the effect below) and exposed via context so
   // Designer can pick the fallback on its very first render for this workflow -- see
@@ -69,6 +77,20 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   // Workflow schemas may define a non-callable property named toString, which breaks the default deep comparator.
   useCustomCompareEffect(
     () => {
+      const alreadyApplied =
+        initialized.current &&
+        !isUnsupportedMultipleTriggers &&
+        externallyAppliedWorkflow &&
+        acknowledgedWorkflow.current !== externallyAppliedWorkflow &&
+        workflow.definition === externallyAppliedWorkflow.definition;
+      initialized.current = true;
+      acknowledgedWorkflow.current = externallyAppliedWorkflow;
+      if (alreadyApplied) {
+        return;
+      }
+      // Graph initialization already validates this service; do not repeat it in the service-only effect.
+      lastValidatedConnectionService.current = connectionService;
+
       // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
       // with more than one trigger. Detect this before initializing any graph/designer state so the
       // canvas is never rendered against unsupported data (see BJSDeserializer's RENDER_MULTIPLE_TRIGGERS
@@ -96,9 +118,34 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
         dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
       }
     },
-    [workflowId, runInstance, workflow, customCode, isReadOnly, isMonitoringView, isUnsupportedMultipleTriggers],
+    [workflowId, runInstance, workflow, customCode, isReadOnly, isMonitoringView, isUnsupportedMultipleTriggers, externallyAppliedWorkflow],
     isEqual
   );
+
+  useEffect(() => {
+    if (lastValidatedConnectionService.current === connectionService) {
+      return;
+    }
+    lastValidatedConnectionService.current = connectionService;
+    if (isUnsupportedMultipleTriggers) {
+      return;
+    }
+
+    // Revalidate current nodes without rebuilding the graph or discarding unsaved inputs.
+    dispatch(async (innerDispatch, getState) => {
+      try {
+        await initializeDynamicDataInNodes(getState as () => RootState, innerDispatch);
+      } catch (error) {
+        if (!isCancelledError(error)) {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: 'BJSWorkflowProvider:ConnectionValidation',
+            message: `Failed to refresh connection validation: ${error instanceof Error ? error.message : String(error)}`,
+          });
+        }
+      }
+    });
+  }, [dispatch, connectionService, isUnsupportedMultipleTriggers]);
 
   // Store app settings in query to access outside of functional components
   useQuery({
@@ -122,7 +169,8 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
   }
 
-  useEffect(() => {
+  // Register services in a layout effect so replacement happens before child passive graph initialization effects run.
+  useLayoutEffect(() => {
     dispatch(initializeServices(wrapped));
   }, [dispatch, wrapped]);
 

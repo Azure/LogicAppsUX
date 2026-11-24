@@ -10,8 +10,8 @@ import {
   hostFileName,
   localSettingsFileName,
   workflowFileName,
-  CodefulSDKs,
-  CodefulSdkVersions,
+  CodefulSdk,
+  CodefulSdkVersion,
   artifactsDirectory,
   libDirectory,
 } from '../../../constants';
@@ -235,7 +235,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     functionsVersion
   );
 
-  await copyBundleProjectFiles(node);
+  await finalizeConvertedProjectFiles(node);
   await updateBuildFile(context, node, dotnetVersion, isCodeful);
   if (useBinaries && dotnetLocalVersion) {
     await createGlobalJsonFile(dotnetLocalVersion, node.fsPath);
@@ -282,13 +282,9 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   let xmlBuildFile: any = await getDotnetBuildFile(context, target.fsPath);
   xmlBuildFile = JSON.parse(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.DurableTask, CodefulSdkVersions[CodefulSDKs.DurableTask]);
-    xmlBuildFile = addNugetPackagesToBuildFileByName(
-      xmlBuildFile,
-      CodefulSDKs.WorkflowsWebJobs,
-      CodefulSdkVersions[CodefulSDKs.WorkflowsWebJobs]
-    );
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.WorkflowsSDK, CodefulSdkVersions[CodefulSDKs.WorkflowsSDK]);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.DurableTask, CodefulSdkVersion.DurableTask);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsWebJobs, CodefulSdkVersion.WorkflowsWebJobs);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsSDK, CodefulSdkVersion.WorkflowsSDK);
     xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
   } else {
     xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile); // adds Microsoft.Azure.Workflows.WebJobs.Extension
@@ -348,16 +344,30 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
   await fse.rename(fileName, newFileName);
 }
 
-async function copyBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesToBeCopied: string[] = [hostFileName, localSettingsFileName];
-  for (const fileName of filesToBeCopied) {
-    if (
-      (await fse.pathExists(path.join(target.fsPath, fileName))) &&
-      (await fse.pathExists(path.join(target.fsPath, `${fileName}-copy`)))
-    ) {
-      await deleteFile(path.join(target.fsPath, fileName));
-      await renameFile(path.join(target.fsPath, `${fileName}-copy`), path.join(target.fsPath, fileName));
+async function finalizeConvertedProjectFiles(target: vscode.Uri): Promise<void> {
+  const hostFilePath = path.join(target.fsPath, hostFileName);
+  const hostFileBackupPath = path.join(target.fsPath, `${hostFileName}-copy`);
+  const localSettingsFilePath = path.join(target.fsPath, localSettingsFileName);
+  const localSettingsBackupPath = path.join(target.fsPath, `${localSettingsFileName}-copy`);
+  const hostFileMissing = !(await fse.pathExists(hostFilePath));
+
+  if (hostFileMissing) {
+    if (await fse.pathExists(hostFileBackupPath)) {
+      await renameFile(hostFileBackupPath, hostFilePath);
     }
+  } else if (await fse.pathExists(hostFileBackupPath)) {
+    await deleteFile(hostFileBackupPath);
+  }
+
+  if (await fse.pathExists(localSettingsBackupPath)) {
+    if (await fse.pathExists(localSettingsFilePath)) {
+      await deleteFile(localSettingsFilePath);
+    }
+    await renameFile(localSettingsBackupPath, localSettingsFilePath);
+  }
+
+  if (hostFileMissing) {
+    throw new Error(localize('nugetHostFileNotGenerated', 'NuGet project template did not generate host.json.'));
   }
 }
 

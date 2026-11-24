@@ -7,6 +7,7 @@ import {
   useHostOptions,
   useIsVSCode,
   useIsDarkMode,
+  useSharedNodeUi,
 } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
@@ -44,6 +45,8 @@ import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
+import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
+import { designerUiTokens } from '@microsoft/designer-ui-v2';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -62,10 +65,15 @@ export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const isVSCode = useIsVSCode();
-  const isReadOnly = useReadOnly();
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
+  const extractionOpen = useSelector((state: RootState) => !!state.designerView.workflowExtractionDialogOpen);
+  const isReadOnly = readOnly || extractionOpen;
+  const canEdit = !isReadOnly && !isMonitoringView;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
+  const sharedOption = useSharedNodeUi();
 
   const styles = useDesignerStyles();
 
@@ -88,7 +96,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: !isVSCode }
+    { enabled: !isVSCode && !extractionOpen }
   );
 
   useHotkeys(
@@ -97,7 +105,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: isVSCode }
+    { enabled: isVSCode && !extractionOpen }
   );
 
   const canUndo = useCanUndo();
@@ -109,7 +117,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(onUndoClick());
     },
-    { enabled: !isReadOnly && canUndo }
+    { enabled: canEdit && canUndo }
   );
 
   useHotkeys(
@@ -118,7 +126,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(onRedoClick());
     },
-    { enabled: !isReadOnly && canRedo }
+    { enabled: canEdit && canRedo }
   );
 
   const selectedNodeId = useOperationPanelSelectedNodeId();
@@ -137,7 +145,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(setShowDeleteModalNodeId(selectedNodeId));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+D: duplicate the selected node(s) directly below themselves.
@@ -150,7 +158,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(duplicateOperations({ nodeIds: idsToDuplicate }));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+C: copy selected node(s) to clipboard.
@@ -178,7 +186,7 @@ export const Designer = (props: DesignerProps) => {
         dispatch(cutOperations({ nodeIds: [selectedNodeId] }));
       }
     },
-    { enabled: !isReadOnly }
+    { enabled: canEdit }
   );
 
   // Ctrl/Cmd+A: select all actions on the canvas.
@@ -192,8 +200,6 @@ export const Designer = (props: DesignerProps) => {
     },
     { enabled: !isReadOnly }
   );
-
-  const isMonitoringView = useMonitoringView();
 
   const DND_OPTIONS: any = {
     backends: [
@@ -262,6 +268,10 @@ export const Designer = (props: DesignerProps) => {
               <DesignerReactFlow canvasRef={canvasRef}>
                 {backgroundProps ? (
                   <Background {...backgroundProps} />
+                ) : sharedOption ? (
+                  // The shared canvas role resolves inside DesignerUiScope and falls back to Background1 outside it,
+                  // so hosts that do not mount the scope keep the previous flag-on color.
+                  <Background bgColor={designerUiTokens.canvasBackground} />
                 ) : (
                   <Background
                     bgColor={isReadOnly ? '#80808010' : undefined}
@@ -279,7 +289,7 @@ export const Designer = (props: DesignerProps) => {
                 <EdgeContextualMenu />
                 <RunDisplay />
                 <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-                  <Controls />
+                  <Controls canvasRef={canvasRef} />
                   <Minimap />
                 </div>
               </DesignerReactFlow>
@@ -296,6 +306,7 @@ export const Designer = (props: DesignerProps) => {
           <CanvasSizeMonitor canvasRef={canvasRef} />
           <DragPanMonitor canvasRef={canvasRef} />
           <KindChangeDialog />
+          <WorkflowExtractionDialog />
         </ReactFlowProvider>
         <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>

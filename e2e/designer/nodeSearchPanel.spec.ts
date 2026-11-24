@@ -16,8 +16,11 @@ test.describe(
       expect(await page.getByText('Terminate', { exact: true }).isVisible()).toBeTruthy();
 
       // Open node search panel and select action
-      await page.getByLabel('Search workflow actions').click();
-      await page.getByTestId('msla-op-search-result-verify_property_changes').click();
+      await page.getByRole('button', { name: 'Search workflow actions', exact: true }).click();
+      const search = page.getByRole('dialog', { name: 'Go to operation', exact: true });
+      await search.getByPlaceholder('Search for operation', { exact: true }).fill('Verify property changes');
+      await search.getByText('Verify property changes', { exact: true }).click();
+      await expect(search).toBeHidden();
 
       // node panel tab is open with terminate action
       expect(await page.getByText('Terminate', { exact: true }).isVisible()).toBeTruthy();

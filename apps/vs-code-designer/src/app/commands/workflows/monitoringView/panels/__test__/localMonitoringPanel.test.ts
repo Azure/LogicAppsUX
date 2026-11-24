@@ -60,7 +60,7 @@ vi.mock('../../../../../utils/codeless/artifacts', () => ({
 }));
 
 vi.mock('../../../../../utils/bundleFeed', () => ({
-  getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
+  getDesignTimeBundleVersion: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
 vi.mock('../../../unitTest/createUnitTestFromRun', () => ({
@@ -73,7 +73,7 @@ vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
 
 import { promises } from 'fs';
 import LocalMonitoringPanel from '../localMonitoringPanel';
-import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
@@ -105,7 +105,7 @@ describe('LocalMonitoringPanel', () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: 'token', enabled: false } as any);
     vi.mocked(getArtifactsInLocalProject).mockResolvedValue({ maps: {}, schemas: [] } as any);
-    vi.mocked(getBundleVersionNumber).mockResolvedValue('1.0.0');
+    vi.mocked(getDesignTimeBundleVersion).mockResolvedValue('1.0.0');
     vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
   });
@@ -150,7 +150,7 @@ describe('LocalMonitoringPanel', () => {
 
       const metadata = await (instance as any).getDesignerPanelMetadata();
 
-      expect(getBundleVersionNumber).toHaveBeenCalledWith('/test/project');
+      expect(getDesignTimeBundleVersion).toHaveBeenCalledWith('/test/project');
       expect(metadata.workflowName).toBe('test-workflow');
       expect(metadata.extensionBundleVersion).toBe('1.0.0');
       expect(metadata.workflowDetails).toEqual({});

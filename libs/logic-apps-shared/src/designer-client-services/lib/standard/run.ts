@@ -1,6 +1,5 @@
-import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { IRunService, RunFilterOptions } from '../run';
+import type { IRunService, RunFilterOptions, RunServiceDevData } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
@@ -16,6 +15,7 @@ import {
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
+import { isStandardManagementError, StandardManagementError, type StandardManagementHttpClient } from './management';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -24,6 +24,9 @@ export interface RunServiceOptions {
   updateCors?: () => void;
   workflowName: string;
   isDev?: boolean;
+  /** Required by getActionLinks when isDev is true. */
+  devData?: RunServiceDevData;
+  standardManagement?: StandardManagementHttpClient;
 }
 
 export class StandardRunService implements IRunService {
@@ -70,16 +73,49 @@ export class StandardRunService implements IRunService {
   }
 
   async getMoreRuns(continuationToken: string): Promise<Runs> {
-    const { httpClient } = this.options;
+    const { baseUrl, httpClient, standardManagement } = this.options;
 
     try {
-      const response = await httpClient.get<ArmResources<Run>>({
+      const request = {
         uri: continuationToken,
-      });
+      };
+      const directContinuation = standardManagement?.isDirectManagementUrl(continuationToken) === true;
+      if (standardManagement && !directContinuation) {
+        // A replacement client may not remember an endpoint that issued this continuation.
+        let isArmContinuation = false;
+        try {
+          const armUrl = new URL(baseUrl);
+          const continuationUrl = new URL(continuationToken, armUrl);
+          isArmContinuation = (armUrl.protocol === 'https:' || armUrl.protocol === 'http:') && continuationUrl.origin === armUrl.origin;
+        } catch {
+          // Invalid URLs cannot be safely passed to the legacy transport.
+        }
+        if (!isArmContinuation) {
+          throw new StandardManagementError(
+            'InvalidManagementContinuation',
+            'The run history continuation is no longer available. Refresh run history to continue.'
+          );
+        }
+      }
+      const legacyRequest = () => {
+        if (directContinuation) {
+          throw new StandardManagementError(
+            'InvalidManagementContinuation',
+            'Direct management run history is no longer available. Refresh run history to continue.'
+          );
+        }
+        return httpClient.get<ArmResources<Run>>(request);
+      };
+      const response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listRuns<ArmResources<Run>>(request, directContinuation ? undefined : legacyRequest)
+        : legacyRequest());
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
       return { nextLink, runs };
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       throw new Error(e.message);
     }
   }
@@ -109,11 +145,17 @@ export class StandardRunService implements IRunService {
         uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
         return this.fetchHybridLogicAppRunRepetitions<Run>(uri, 'GET', httpClient);
       }
-      const response = await httpClient.get<Run>({
-        uri,
-      });
+      const request = { uri };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<Run>(request);
+      const response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.getRun<Run>(request, legacyRequest)
+        : legacyRequest());
       return response;
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       throw new Error(e.message);
     }
   }
@@ -145,13 +187,19 @@ export class StandardRunService implements IRunService {
     const filterParam = filterString ? `&$filter=${encodeURIComponent(filterString)}` : '';
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}${filterParam}`;
     try {
-      const response = await httpClient.get<ArmResources<Run>>({
-        uri,
-      });
+      const request = { uri };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<ArmResources<Run>>(request);
+      const response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listRuns<ArmResources<Run>>(request, legacyRequest)
+        : legacyRequest());
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
       return { nextLink, runs };
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       throw new Error(e.message);
     }
   }
@@ -454,15 +502,23 @@ export class StandardRunService implements IRunService {
         }
       }
 
-      return await this.getHttpRequestByMethod(httpClient, method, {
+      const request = {
         uri: baseUri,
         noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
         content: bodyContent,
-      });
+      };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => this.getHttpRequestByMethod(httpClient, method, request);
+      return await (method.toLowerCase() === 'post' && standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.runTrigger(request, legacyRequest)
+        : legacyRequest());
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       throw new Error(parseErrorMessage(e));
     }
   }
@@ -480,9 +536,14 @@ export class StandardRunService implements IRunService {
     let outputs: Record<string, any> = {};
 
     if (this._isDev) {
-      inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
-      outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
-      return Promise.resolve({ inputs, outputs });
+      const { devData } = this.options;
+      if (!devData) {
+        throw new Error('Run service devData is required by getActionLinks when isDev is true');
+      }
+      return {
+        inputs: getRecordEntry(devData.inputs, nodeId) ?? {},
+        outputs: getRecordEntry(devData.outputs, nodeId) ?? {},
+      };
     }
 
     try {
@@ -640,12 +701,20 @@ export class StandardRunService implements IRunService {
       };
       const headers = isHybrid ? hybridHeaders : { 'If-Match': '*' };
 
-      const response = await httpClient.post({
+      const request = {
         uri: resubmitUrl,
         headers,
-      });
+      };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      const response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.resubmitTrigger(request, legacyRequest)
+        : legacyRequest());
       return response;
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       return new Error(e.message);
     }
   }
@@ -660,11 +729,17 @@ export class StandardRunService implements IRunService {
 
         return this.fetchHybridLogicAppRunRepetitions(uri, 'POST', httpClient);
       }
-      const response = await httpClient.post({
-        uri,
-      });
+      const request = { uri };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      const response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.cancelRun(request, legacyRequest)
+        : legacyRequest());
       return response;
     } catch (e: any) {
+      if (isStandardManagementError(e)) {
+        throw e;
+      }
       return new Error(e.message);
     }
   }

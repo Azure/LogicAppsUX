@@ -7,6 +7,7 @@ import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
 export interface UpdateAgenticGraphPayload {
   nodeId: string;
   scopeRepetitionRunData: Record<string, any>;
+  agentRepetitionIdentity?: string;
 }
 
 export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentGraph: WorkflowNode, state: WorkflowState) => {
@@ -39,7 +40,11 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentG
 
       // Create graph node only if it doesn't exist yet
       if (!existingChildIds.has(toolId)) {
-        const subgraphCardNode = createWorkflowNode(`${toolId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+        const subgraphCardNode = createWorkflowNode(
+          `${toolId}-#subgraph`,
+          WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
+          SUBGRAPH_TYPES.AGENT_CONDITION
+        );
         const toolGraph: WorkflowNode = {
           id: toolId,
           children: [subgraphCardNode],

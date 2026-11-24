@@ -14,6 +14,18 @@ type PayloadPopoverProps = {
   isDraftMode?: boolean;
 };
 
+const getBodyLanguage = (headers?: Record<string, string>) => {
+  const contentType = Object.entries(headers ?? {}).find(([name]) => name.toLowerCase() === 'content-type')?.[1];
+  const mediaType = contentType?.split(';', 1)[0].trim().toLowerCase();
+  if (mediaType === 'application/json' || mediaType?.endsWith('+json')) {
+    return 'json';
+  }
+  if (mediaType === 'application/xml' || mediaType === 'text/xml' || mediaType?.endsWith('+xml')) {
+    return 'xml';
+  }
+  return undefined;
+};
+
 export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode }: PayloadPopoverProps) => {
   const styles = usePayloadPopoverStyles();
 
@@ -47,37 +59,24 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
   });
 
   const [bodyValue, setBodyValue] = useState<string | undefined>(undefined);
-  const [bodyError, setBodyError] = useState<string | undefined>(undefined);
+  const bodyLanguage = useMemo(() => getBodyLanguage(headersValue), [headersValue]);
   const bodyLabel = intl.formatMessage({
     defaultMessage: 'Body',
     id: 'aFZRms',
     description: 'HTTP body label',
   });
 
-  const validateJson = useCallback((value: string | undefined): boolean => {
-    if (!value || value.trim() === '') {
-      setBodyError(undefined);
-      return true;
+  const bodyError = useMemo(() => {
+    if (bodyLanguage !== 'json' || !bodyValue?.trim()) {
+      return undefined;
     }
     try {
-      JSON.parse(value);
-      setBodyError(undefined);
-      return true;
+      JSON.parse(bodyValue);
     } catch (error) {
-      setBodyError((error as Error).message);
-      return false;
+      return (error as SyntaxError).message;
     }
-  }, []);
-
-  const onBodyValueChange = useCallback(
-    (value: string | undefined) => {
-      setBodyValue(value);
-      if (headersValue?.['Content-Type'] === 'application/json') {
-        validateJson(value);
-      }
-    },
-    [headersValue, validateJson]
-  );
+    return undefined;
+  }, [bodyLanguage, bodyValue]);
 
   const resetPayload = useCallback(() => {
     setMethod('POST');
@@ -86,7 +85,6 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
     });
     setQueriesValue(undefined);
     setBodyValue(undefined);
-    setBodyError(undefined);
   }, []);
 
   useEffect(() => {
@@ -164,10 +162,10 @@ export const PayloadPopover = ({ open, setOpen, buttonRef, onSubmit, isDraftMode
             <MonacoEditor
               key={'body-editor'}
               height={'200px'}
-              language={'json'}
+              language={bodyLanguage}
               value={bodyValue}
               folding={true}
-              onContentChanged={(e) => onBodyValueChange(e.value)}
+              onContentChanged={(e) => setBodyValue(e.value)}
               lineNumbersMinChars={3}
             />
           </Field>

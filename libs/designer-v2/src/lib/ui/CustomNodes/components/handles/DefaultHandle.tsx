@@ -1,17 +1,77 @@
 import type { HandleType } from '@xyflow/react';
 import { Position, Handle } from '@xyflow/react';
-import { useHandleStyles } from './handles.styles';
+import { containedHandleStyle, useHandleStyles } from './handles.styles';
 import { mergeClasses } from '@fluentui/react-components';
+import { NodeMergePoint } from '@microsoft/designer-ui-v2';
+import { useHandlePresentation } from './useHandlePresentation';
+import { useIntl } from 'react-intl';
 
-export const DefaultHandle = (props: { type: HandleType }) => {
+export const DefaultHandle = (props: {
+  type: HandleType;
+  id?: string;
+  contained?: boolean;
+  presentation?: 'structural' | 'merge';
+  label?: string;
+  axis?: 'vertical' | 'horizontal';
+  /** Only read by the shared merge presentation; structural handles have no visible surface to dim. */
+  inactive?: boolean;
+  mergeAddSource?: string;
+}) => {
   const styles = useHandleStyles();
+  const shared = useHandlePresentation();
+  const intl = useIntl();
+  const merge = shared && props.presentation === 'merge';
+  const horizontal = props.axis === 'horizontal';
+  const contained = shared && (props.contained || merge);
 
-  return (
+  const handle = (
     <Handle
-      className={mergeClasses(styles.nodeHandle, props.type === 'source' ? styles.bottom : styles.top)}
+      className={mergeClasses(
+        styles.nodeHandle,
+        contained
+          ? styles.sharedPort
+          : horizontal
+            ? props.type === 'source'
+              ? styles.right
+              : styles.left
+            : props.type === 'source'
+              ? styles.bottom
+              : styles.top,
+        // Structural sources stay hidden; the shared offset must not replace their perimeter styling.
+        shared && !contained && props.type === 'source' && (horizontal ? styles.sharedSourceHorizontal : styles.sharedSource)
+      )}
       type={props.type}
-      position={props.type === 'source' ? Position.Bottom : Position.Top}
+      id={props.id}
+      position={
+        horizontal ? (props.type === 'source' ? Position.Right : Position.Left) : props.type === 'source' ? Position.Bottom : Position.Top
+      }
       isConnectable={false}
+      style={contained ? containedHandleStyle : undefined}
+      data-port-contained={contained || undefined}
     />
+  );
+
+  return merge ? (
+    <NodeMergePoint
+      className={mergeClasses(styles.merge, horizontal && styles.mergeHorizontal)}
+      label={props.label ?? ''}
+      inactive={props.inactive}
+      data-merge-add-source={props.mergeAddSource}
+      strings={{
+        label: (label) =>
+          intl.formatMessage(
+            {
+              defaultMessage: 'Merge point for {label}',
+              id: 'lQswd7',
+              description: 'Accessible name for a control-flow branch convergence point',
+            },
+            { label }
+          ),
+      }}
+    >
+      {handle}
+    </NodeMergePoint>
+  ) : (
+    handle
   );
 };

@@ -3,6 +3,8 @@ export interface DesignerViewState {
   clampPan?: boolean;
   showDeleteModalNodeId?: string;
   showMultiSelectDeleteModal?: boolean;
+  workflowExtractionDialogOpen?: boolean;
+  workflowExtractionBusy?: boolean;
   nodeContextMenuData?: NodeContextMenuObject;
   edgeContextMenuData?: EdgeContextMenuObject;
 }
@@ -10,6 +12,7 @@ export interface DesignerViewState {
 export interface NodeContextMenuObject {
   nodeId?: string;
   location: { x: number; y: number };
+  entryPoint?: 'shared-lane-more';
 }
 
 export interface EdgeContextMenuObject {
@@ -19,4 +22,5 @@ export interface EdgeContextMenuObject {
   isLeaf?: boolean;
   location: { x: number; y: number };
   isHandoff?: boolean;
+  focusReturnElementId?: string;
 }

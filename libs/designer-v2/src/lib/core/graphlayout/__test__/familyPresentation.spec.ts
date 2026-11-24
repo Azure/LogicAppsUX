@@ -1,0 +1,866 @@
+import { describe, expect, it } from 'vitest';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, buildSvgSpline } from '@microsoft/logic-apps-shared';
+import type { ElkExtendedEdge, ElkNode } from '@microsoft/logic-apps-graph-layout';
+import { getNodePresentation } from '../../utils/graph';
+import { exportForTesting } from '../elklayout';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import {
+  agentMcpWorkflowDefinitionInput,
+  expectedAgentMcpWorkflowDefinitionOutput,
+} from '../../parsers/BJSWorkflow/__test__/agentMcpWorkflowDefinition';
+import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import { getLayoutRelevantData, getWorkflowNodePresentationContext } from '../helpers';
+import { createElement } from 'react';
+import { renderHook } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { initialWorkflowState } from '../../state/workflow/workflowSlice';
+import { useRootWorkflowGraphForLayout } from '../../state/workflow/workflowSelectors';
+import Constants from '../../../common/constants';
+
+describe('family admission and matching geometry', () => {
+  it.each([
+    ['Scope', 'scope', 208, 52],
+    ['If', 'if', 160, 74],
+    ['Switch', 'switch', 160, 74],
+    ['Foreach', 'loop', 160, 52],
+    ['Until', 'loop', 160, 52],
+    ['Agent', 'agent', 280, 181],
+  ])('admits renamed %s by definition, not display name', (operationType, family, width, height) => {
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType })).toMatchObject({
+      shared: true,
+      family,
+      size: { width, height },
+    });
+  });
+
+  it('uses explicit branch roles and never promotes hidden structure or notes to cards', () => {
+    expect(
+      getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, { subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE })
+    ).toMatchObject({ shared: true, family: 'branch' });
+    expect(
+      getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, true, { subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION })
+    ).toMatchObject({ shared: true, family: 'tool' });
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.HIDDEN_NODE, true).shared).toBe(false);
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.NOTE_NODE, true).shared).toBe(false);
+  });
+
+  it('admits only actual direct Agent/MCP tool rows at canonical small height, not their multi-action descendants', () => {
+    const context = {
+      operations: { agent: { type: 'Agent' }, direct: { type: 'Workflow' }, descendant: { type: 'Http' } },
+      nodesMetadata: {
+        direct: { graphId: 'agent', parentNodeId: 'agent' },
+        mcp: { graphId: 'agent', parentNodeId: 'agent', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT },
+        descendant: { graphId: 'named-tool', parentNodeId: 'agent' },
+      },
+    };
+    for (const [id, toolKind] of [
+      ['direct', 'subWorkflow'],
+      ['mcp', 'mcp'],
+    ] as const) {
+      const actual = getWorkflowNodePresentationContext({ id, type: 'OPERATION_NODE' }, context);
+      expect(getNodePresentation('OPERATION_NODE', true, actual)).toMatchObject({
+        family: 'tool',
+        toolKind,
+        size: { width: 232, height: 56 },
+      });
+    }
+    const nested = getWorkflowNodePresentationContext({ id: 'descendant', type: 'OPERATION_NODE' }, context);
+    expect(getNodePresentation('OPERATION_NODE', true, nested)).toMatchObject({ size: { width: 208, height: 52 } });
+  });
+
+  it('keeps canonical small-tool height when actual tool run data appears', () => {
+    const node: WorkflowNode = { id: 'mcp', type: 'OPERATION_NODE' };
+    const actual = getWorkflowNodePresentationContext(node, {
+      nodesMetadata: { mcp: { graphId: 'agent', subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, toolRunData: { status: 'Succeeded' } } },
+    });
+    expect(getNodePresentation(node.type, true, actual).size).toEqual({ width: 232, height: 56 });
+  });
+
+  it('reserves the Foreach pager on the Shared monitoring header only', () => {
+    const header = { id: 'loop-#scope', type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE };
+    const context = {
+      isMonitoringView: true,
+      operations: { loop: { type: 'Foreach' } },
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 4 } } },
+    };
+    const present = (node: WorkflowNode, options = context, shared = true) =>
+      getNodePresentation(node.type, shared, getWorkflowNodePresentationContext(node, options));
+    expect(present(header)).toMatchObject({ hasLoopPager: true, size: { width: 160, height: 76 } });
+    expect(present(header, { ...context, isMonitoringView: false })).toMatchObject({ size: { width: 160, height: 52 } });
+    expect(present({ ...header, id: 'loop-#footer' })).not.toHaveProperty('hasLoopPager');
+    expect(present(header, context, false)).not.toHaveProperty('hasLoopPager');
+    for (const [status, repetitionCount] of [
+      ['InProgress', 4],
+      ['Succeeded', 0],
+    ] as const) {
+      const options = { ...context, nodesMetadata: { loop: { graphId: 'root', runData: { status, repetitionCount } } } };
+      expect(present(header, options)).not.toHaveProperty('hasLoopPager');
+    }
+  });
+
+  it.each([true, false])('sizes a collapsed Foreach like an unpaged loop (shared: %s)', async (shared) => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      children: [
+        {
+          id: 'loop',
+          type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+          children: [{ id: 'loop-#scope', type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE }],
+        },
+      ],
+    };
+    const context = {
+      operations: { loop: { type: 'Foreach' } },
+      isMonitoringView: true,
+      collapsedGraphIds: { loop: true },
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 4 } } },
+    };
+    const measure = async (input: typeof context) => {
+      const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, shared, input);
+      const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted, true, shared), shared);
+      const header = nodes.find(({ id }) => id === 'loop-#scope')!;
+      const frame = nodes.find(({ id }) => id === 'loop')!;
+      return { headerHeight: header.height ?? header.initialHeight, frame: frame.data.bodyFrame, frameHeight: frame.data.size };
+    };
+    const unpaged = await measure({
+      ...context,
+      nodesMetadata: { loop: { graphId: 'root', runData: { status: 'Succeeded', repetitionCount: 0 } } },
+    });
+    const collapsed = await measure(context);
+    expect(collapsed).toEqual(unpaged);
+    const reexpanded = await measure({ ...context, collapsedGraphIds: { loop: false } });
+    expect(reexpanded.headerHeight! - collapsed.headerHeight!).toBe(shared ? 24 : 0);
+    if (shared) {
+      expect((reexpanded.frame as { y: number }).y - (collapsed.frame as { y: number }).y).toBe(24);
+    }
+  });
+
+  it('reserves the MCP pager only for a multi-iteration monitoring run, before packing the next tool', async () => {
+    const { graph, actionData: operations, nodesMetadata } = expectedAgentMcpWorkflowDefinitionOutput;
+    const mcpId = 'McpFileServer';
+    const context = {
+      operations,
+      isMonitoringView: true,
+      nodesMetadata: { ...nodesMetadata, [mcpId]: { ...nodesMetadata[mcpId], toolRunData: { repetitionCount: 1 } } },
+    };
+    const withPager = {
+      ...context,
+      nodesMetadata: { ...context.nodesMetadata, [mcpId]: { ...context.nodesMetadata[mcpId], toolRunData: { repetitionCount: 4 } } },
+    };
+    const layout = async (presentationContext: typeof context, shared = true) => {
+      const input = exportForTesting.convertWorkflowGraphToElkGraph(graph as WorkflowNode, shared, presentationContext);
+      const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(input, true), shared);
+      return nodes;
+    };
+    const pagedNodes = await layout(withPager);
+    const mcp = pagedNodes.find(({ id }) => id === mcpId)!;
+    const followingTool = pagedNodes.find((node) => node.parentId === mcp.parentId && node.position.y > mcp.position.y)!;
+    expect(mcp.height).toBe(80);
+    expect(followingTool.position.y - mcp.position.y).toBeGreaterThanOrEqual(92);
+    expect((await layout(context)).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect((await layout({ ...withPager, isMonitoringView: false })).find(({ id }) => id === mcpId)?.height).toBe(56);
+    expect(await layout(withPager, false)).toEqual(await layout(context, false));
+    expect(getLayoutRelevantData(graph as WorkflowNode, withPager)).not.toEqual(getLayoutRelevantData(graph as WorkflowNode, context));
+  });
+  it('keeps one real named tool row and distinct ordinary inner operations from actual Agent deserialization', async () => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          ...agentMcpWorkflowDefinitionInput.actions,
+          WorkflowAgent: {
+            ...sourceAgent,
+            tools: {
+              ...sourceAgent.tools,
+              NamedTool: {
+                type: 'AgentCondition',
+                actions: {
+                  CallWorkflow: { type: 'Workflow', inputs: { host: { workflow: { id: 'real-workflow' } } }, runAfter: {} },
+                  InnerCompose: { type: 'Compose', inputs: 'real-result', runAfter: { CallWorkflow: ['SUCCEEDED'] } },
+                },
+              },
+            },
+          },
+        },
+      },
+      null
+    );
+    expect(parsed.nodesMetadata.CallWorkflow).toMatchObject({ graphId: 'NamedTool', parentNodeId: 'WorkflowAgent' });
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const layout = await exportForTesting.elkLayout(exportForTesting.convertWorkflowGraphToElkGraph(parsed.graph!, true, context));
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    const tool = nodes.find(({ id }) => id === 'NamedTool-#subgraph')!;
+    expect(tool.data.presentation).toMatchObject({ family: 'tool', toolKind: 'subWorkflow', size: { width: 232, height: 56 } });
+    for (const id of ['CallWorkflow', 'InnerCompose']) {
+      const bodyAction = nodes.find((node) => node.id === id)!;
+      expect(bodyAction.parentId).toBe('NamedTool');
+      expect(bodyAction.data.presentation).toMatchObject({ shared: true, titleLines: 1, size: { width: 208, height: 52 } });
+      expect(bodyAction.data.presentation).not.toHaveProperty('toolKind');
+    }
+    expect(
+      (nodes.find(({ id }) => id === 'WorkflowAgent')!.data.toolsPanel as { items: { id: string }[] }).items.map(({ id }) => id)
+    ).toEqual(['McpFileServer', 'NamedTool']);
+  });
+
+  it('reserves the real canonical port-group overhang for a wide Switch without growing its compact card', () => {
+    expect(getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, true, { operationType: 'Switch', caseCount: 20 }).size).toEqual({
+      width: 424,
+      height: 74,
+    });
+  });
+
+  it.each([false, true])('preserves dependencies with ambiguous hyphenated names through layout (shared UI: %s)', async (shared) => {
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          A: { type: 'Compose', inputs: 'first', runAfter: {} },
+          'A-B': { type: 'Compose', inputs: 'second', runAfter: {} },
+          'B-C': { type: 'Compose', inputs: 'third', runAfter: { A: ['Succeeded'] } },
+          C: { type: 'Compose', inputs: 'fourth', runAfter: { 'A-B': ['Succeeded'] } },
+        },
+      },
+      null
+    );
+    const dependencies = parsed.graph.edges!.filter(
+      (edge) => (edge.source === 'A' && edge.target === 'B-C') || (edge.source === 'A-B' && edge.target === 'C')
+    );
+    expect(dependencies).toHaveLength(2);
+
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const layout = await exportForTesting.elkLayout(exportForTesting.convertWorkflowGraphToElkGraph(parsed.graph, shared, context));
+    const [, edges] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
+    for (const dependency of dependencies) {
+      expect(edges).toContainEqual(
+        expect.objectContaining({ id: dependency.id, source: dependency.source, target: dependency.target, type: dependency.type })
+      );
+    }
+    expect(new Set(dependencies.map(({ id }) => id)).size).toBe(2);
+  });
+
+  it('uses actual definitions for nested family layout and retains accepted presentation on XYFlow nodes', async () => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [
+        {
+          id: 'renamed',
+          type: 'GRAPH_NODE',
+          children: [
+            { id: 'renamed-#scope', type: 'SCOPE_CARD_NODE', width: 200, height: 40 },
+            { id: 'child', type: 'OPERATION_NODE', width: 200, height: 40 },
+          ],
+          edges: [{ id: 'body', source: 'renamed-#scope', target: 'child', type: 'HEADING_EDGE' }],
+        },
+      ],
+    };
+    const context = { operations: { renamed: { type: 'Foreach' } }, nodesMetadata: {} };
+    const elkGraph = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, context);
+    expect(elkGraph.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 52 });
+    const layout = await exportForTesting.elkLayout(elkGraph);
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.presentation).toMatchObject({
+      shared: true,
+      family: 'loop',
+      size: { width: 160, height: 52 },
+    });
+    expect(nodes.find(({ id }) => id === 'renamed')?.width).toBeGreaterThan(232);
+    expect(graph.children?.[0].children?.[0].width).toBe(200);
+  });
+
+  it('preserves actual branch edge identities while mapping named ports in definition order', async () => {
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [
+        {
+          id: 'renamed',
+          type: 'GRAPH_NODE',
+          children: [
+            { id: 'renamed-#scope', type: 'SCOPE_CARD_NODE' },
+            { id: 'actual-true', type: 'SUBGRAPH_NODE', children: [{ id: 'actual-true-#subgraph', type: 'SUBGRAPH_CARD_NODE' }] },
+            { id: 'actual-false', type: 'SUBGRAPH_NODE', children: [{ id: 'actual-false-#subgraph', type: 'SUBGRAPH_CARD_NODE' }] },
+          ],
+          edges: [
+            { id: 'true-edge', source: 'renamed-#scope', target: 'actual-true', type: 'ONLY_EDGE' },
+            { id: 'false-edge', source: 'renamed-#scope', target: 'actual-false', type: 'ONLY_EDGE' },
+          ],
+        },
+      ],
+    };
+    const context = {
+      operations: { renamed: { type: 'If' } },
+      nodesMetadata: {
+        'actual-true': { graphId: 'renamed', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
+        'actual-false': { graphId: 'renamed', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
+      },
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, context);
+    expect(converted.children?.[0].children?.[0].ports).toHaveLength(2);
+    const layout = await exportForTesting.elkLayout(converted);
+    const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    const header = nodes.find(({ id }) => id === 'renamed-#scope')!;
+    const branchGroup = nodes.find(({ id }) => id === 'renamed')?.data.branchGroup;
+    expect(branchGroup).toEqual({
+      start: header.position.y + header.height!,
+      exits: expect.arrayContaining(
+        nodes
+          .filter(({ id }) => id === 'actual-true' || id === 'actual-false')
+          .map((branch) => ({
+            x: branch.position.x + branch.width! / 2,
+            y: branch.position.y + branch.height!,
+          }))
+      ),
+    });
+    expect(edges).toHaveLength(2);
+    expect(nodes.find(({ id }) => id === 'renamed-#scope')?.data.branchPorts).toEqual([
+      { id: 'actual-true', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
+      { id: 'actual-false', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
+    ]);
+    expect(edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'true-edge', source: 'renamed-#scope', target: 'actual-true', sourceHandle: 'actual-true' }),
+        expect.objectContaining({ id: 'false-edge', source: 'renamed-#scope', target: 'actual-false', sourceHandle: 'actual-false' }),
+      ])
+    );
+    expect(edges.every((edge) => edge.data?.presentation)).toBe(true);
+  });
+
+  it('reserves an empty loop body frame rather than overlapping the header with its minimum body', async () => {
+    const graph: WorkflowNode = {
+      id: 'empty-loop',
+      type: 'GRAPH_NODE',
+      children: [{ id: 'empty-loop-#scope', type: 'SCOPE_CARD_NODE' }],
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: { 'empty-loop': { type: 'Foreach' } },
+    });
+    const layout = await exportForTesting.elkLayout(converted);
+    expect(layout.width).toBeGreaterThanOrEqual(232);
+    expect(layout.height).toBeGreaterThanOrEqual(198);
+  });
+
+  it.each([
+    ['ForEach_nested', 'Foreach', '#scope'],
+    ['ForEach_empty', 'Foreach', '#scope'],
+    ['Until_Nested', 'Until', '#footer'],
+  ] as const)('uses the same wrapped geometry for %s in ELK and React Flow', async (id, type, tag) => {
+    const headerId = `${id}-${tag}`;
+    const graph: WorkflowNode = {
+      id: 'root',
+      type: 'GRAPH_NODE',
+      children: [{ id, type: 'GRAPH_NODE', children: [{ id: headerId, type: 'SCOPE_CARD_NODE' }] }],
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, { operations: { [id]: { type } } });
+    expect(converted.children?.[0].children?.[0]).toMatchObject({ width: 160, height: 68 });
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    expect(nodes.find((node) => node.id === headerId)).toMatchObject({
+      width: 160,
+      height: 68,
+      data: { presentation: { titleLines: 2 } },
+    });
+  });
+
+  it('packs real Agent tool graphs vertically without leaking layout-only identities or duplicating MCP editor nodes', async () => {
+    const fixture = expectedAgentMcpWorkflowDefinitionOutput;
+    const graph = structuredClone(fixture.graph) as WorkflowNode;
+    const agent = graph.children![1];
+    agent.children!.splice(2, 0, {
+      id: 'real-multi-action-tool',
+      type: 'SUBGRAPH_NODE',
+      children: [
+        { id: 'real-multi-action-tool-#subgraph', type: 'SUBGRAPH_CARD_NODE' },
+        { id: 'first-action', type: 'OPERATION_NODE' },
+        { id: 'second-action', type: 'OPERATION_NODE' },
+      ],
+      edges: [
+        { id: 'tool-body', source: 'real-multi-action-tool-#subgraph', target: 'first-action', type: 'ONLY_EDGE' },
+        { id: 'tool-sequence', source: 'first-action', target: 'second-action', type: 'BUTTON_EDGE' },
+      ],
+    });
+    agent.edges!.splice(1, 0, {
+      id: 'real-tool-association',
+      source: 'WorkflowAgent-#scope',
+      target: 'real-multi-action-tool',
+      type: 'ONLY_EDGE',
+    });
+    const baseline = structuredClone(graph);
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: fixture.actionData,
+      nodesMetadata: {
+        ...fixture.nodesMetadata,
+        'real-multi-action-tool': { graphId: 'WorkflowAgent', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION },
+      },
+    });
+    const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    const mcp = nodes.find(({ id }) => id === 'McpFileServer')!;
+    const nested = nodes.find(({ id }) => id === 'real-multi-action-tool')!;
+    const add = nodes.find(({ id }) => id === 'WorkflowAgent-addCase')!;
+    const panel = nodes.find(({ id }) => id === 'WorkflowAgent')!.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      items: { id: string }[];
+    };
+    const header = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!;
+    expect(header.width).toBe(panel.width);
+    expect(header.height).toBe(nodes.find(({ id }) => id === 'WorkflowAgent')!.height);
+    expect(header.position.x).toBe(panel.x);
+    expect(header.data.toolsPanel).toMatchObject({ width: panel.width, height: panel.height });
+    expect(header.data.toolsPanel).toMatchObject({ bottomPadding: 0 });
+    expect(header.data.presentation).toMatchObject({ size: { width: header.width, height: header.height } });
+    expect(nodes.filter(({ id }) => id === mcp.id)).toHaveLength(1);
+    expect(mcp.parentId).toBe('WorkflowAgent');
+    expect(nested.parentId).toBe('WorkflowAgent');
+    expect(nodes.find(({ id }) => id === 'first-action')!.parentId).toBe(nested.id);
+    expect(nodes.find(({ id }) => id === 'second-action')!.parentId).toBe(nested.id);
+    expect(nested.position.y).toBeGreaterThanOrEqual(mcp.position.y + mcp.height! + 12);
+    expect(add.position.y).toBeGreaterThanOrEqual(nested.position.y + nested.height! + 12);
+    expect(panel.y).toBe(181);
+    for (const tool of [mcp, nested, add]) {
+      expect(tool.position.x).toBeGreaterThanOrEqual(panel.x + 16);
+      const height = tool.height ?? (tool.data.size as { height: number }).height;
+      expect(tool.position.y + height).toBeLessThanOrEqual(panel.y + panel.height - 16);
+    }
+    expect(panel.items.map(({ id }) => id)).toEqual(['McpFileServer', 'real-multi-action-tool']);
+    expect(edges.find(({ id }) => id === 'real-tool-association')).toMatchObject({
+      source: 'WorkflowAgent-#scope',
+      target: nested.id,
+      hidden: true,
+    });
+    const toolSequence = edges.find(({ id }) => id === 'tool-sequence');
+    const addEdge = edges.find(({ id }) => id === 'WorkflowAgent%2D#scope-WorkflowAgent%2DaddCase');
+    expect(toolSequence).toBeDefined();
+    expect(toolSequence?.hidden).not.toBe(true);
+    expect(addEdge).toBeDefined();
+    expect(addEdge?.hidden).not.toBe(true);
+    expect(nodes.some(({ id }) => id.includes('::tools'))).toBe(false);
+    expect(edges.some(({ id }) => id.includes('::layout') || id.includes('::tools-layout'))).toBe(false);
+    expect(graph).toEqual(baseline);
+  });
+
+  it('keeps tool inventory vertical while laying expanded multi-action tool continuations to the right', async () => {
+    const fixture = Deserialize(agentMcpWorkflowDefinitionInput, null);
+    const graph = structuredClone(fixture.graph!);
+    const agent = graph.children![1];
+    agent.children!.splice(2, 0, {
+      id: 'real-multi-action-tool',
+      type: 'SUBGRAPH_NODE',
+      children: [
+        { id: 'real-multi-action-tool-#subgraph', type: 'SUBGRAPH_CARD_NODE' },
+        { id: 'first-action', type: 'OPERATION_NODE' },
+        { id: 'second-action', type: 'OPERATION_NODE' },
+        { id: 'third-action', type: 'OPERATION_NODE' },
+      ],
+      edges: [
+        { id: 'tool-body', source: 'real-multi-action-tool-#subgraph', target: 'first-action', type: 'ONLY_EDGE' },
+        { id: 'tool-sequence-1', source: 'first-action', target: 'second-action', type: 'BUTTON_EDGE' },
+        { id: 'tool-sequence-2', source: 'second-action', target: 'third-action', type: 'BUTTON_EDGE' },
+      ],
+    });
+    agent.edges!.splice(1, 0, {
+      id: 'real-tool-association',
+      source: 'WorkflowAgent-#scope',
+      target: 'real-multi-action-tool',
+      type: 'ONLY_EDGE',
+    });
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: fixture.actionData,
+      nodesMetadata: {
+        ...fixture.nodesMetadata,
+        'real-multi-action-tool': { graphId: 'WorkflowAgent', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION },
+      },
+    });
+    const findNode = (root: ElkNode, id: string): ElkNode | undefined => {
+      if (root.id === id) {
+        return root;
+      }
+      for (const child of root.children ?? []) {
+        const found = findNode(child, id);
+        if (found) {
+          return found;
+        }
+      }
+      return undefined;
+    };
+    expect(findNode(converted, 'real-multi-action-tool')?.layoutOptions?.['elk.direction']).toBe('RIGHT');
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+
+    const mcp = nodes.find(({ id }) => id === 'McpFileServer')!;
+    const nested = nodes.find(({ id }) => id === 'real-multi-action-tool')!;
+    const add = nodes.find(({ id }) => id === 'WorkflowAgent-addCase')!;
+    expect(nested.position.y).toBeGreaterThanOrEqual(mcp.position.y + mcp.height! + 12);
+    expect(add.position.y).toBeGreaterThanOrEqual(nested.position.y + nested.height! + 12);
+
+    const toolCard = nodes.find(({ id }) => id === 'real-multi-action-tool-#subgraph')!;
+    const first = nodes.find(({ id }) => id === 'first-action')!;
+    const second = nodes.find(({ id }) => id === 'second-action')!;
+    const third = nodes.find(({ id }) => id === 'third-action')!;
+    expect(first.parentId).toBe(nested.id);
+    expect(second.parentId).toBe(nested.id);
+    expect(third.parentId).toBe(nested.id);
+    expect(first.position.x).toBeGreaterThanOrEqual((toolCard.position.x ?? 0) + (toolCard.width ?? 0) + 12);
+    expect(second.position.x).toBeGreaterThanOrEqual((first.position.x ?? 0) + (first.width ?? 0) + 12);
+    expect(third.position.x).toBeGreaterThanOrEqual((second.position.x ?? 0) + (second.width ?? 0) + 12);
+    expect(Math.abs(first.position.y - toolCard.position.y)).toBeLessThanOrEqual(20);
+    expect(Math.abs(second.position.y - first.position.y)).toBeLessThanOrEqual(20);
+    expect(Math.abs(third.position.y - second.position.y)).toBeLessThanOrEqual(20);
+  });
+
+  it('keeps the canonical collapsed Agent panel/count while the real tool nodes are absent from layout', async () => {
+    const fixture = expectedAgentMcpWorkflowDefinitionOutput;
+    const graph = structuredClone(fixture.graph) as WorkflowNode;
+    const agent = graph.children![1];
+    agent.children = agent.children!.filter((child) => child.type === 'SCOPE_CARD_NODE');
+    agent.edges = [];
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: fixture.actionData,
+      nodesMetadata: fixture.nodesMetadata,
+    });
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    const container = nodes.find(({ id }) => id === 'WorkflowAgent')!;
+    const header = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!;
+    expect(header.data.toolsPanel).toMatchObject({
+      height: 54,
+      collapsed: true,
+      items: [{ id: 'McpFileServer' }],
+      bottomPadding: 0,
+    });
+    expect(header.height).toBe(181 + 54);
+    expect(container.height).toBe(header.height);
+    expect(nodes.some(({ id }) => id === 'McpFileServer')).toBe(false);
+  });
+
+  it.each([false, true])('excludes Handoff-only tools but retains mixed-action tools when collapsed=%s', async (collapsed) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          ...agentMcpWorkflowDefinitionInput.actions,
+          WorkflowAgent: {
+            ...sourceAgent,
+            tools: {
+              ...sourceAgent.tools,
+              HandoffOnly: {
+                type: 'AgentCondition',
+                actions: { Transfer: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'other-agent' }, runAfter: {} } },
+              },
+              MixedTool: {
+                type: 'AgentCondition',
+                actions: {
+                  TransferAndContinue: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'other-agent' }, runAfter: {} },
+                  Continue: { type: 'Compose', inputs: 'real-result', runAfter: { TransferAndContinue: ['Succeeded'] } },
+                },
+              },
+            },
+          },
+        },
+      },
+      null
+    );
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+          collapsedGraphIds: collapsed ? { WorkflowAgent: true } : {},
+        },
+        operations: {},
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const elkGraph = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, true, context);
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(elkGraph), true);
+    const panel = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!.data.toolsPanel as {
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    expect(panel.collapsed).toBe(collapsed);
+    expect(panel.items.map(({ id }) => id)).toEqual(['McpFileServer', 'MixedTool']);
+    expect(nodes.some(({ id }) => id === 'HandoffOnly' || id === 'Transfer')).toBe(false);
+    expect(nodes.some(({ id }) => id === 'MixedTool')).toBe(!collapsed);
+  });
+
+  it.each([false, true])('lays out repeated handoffs alongside a normal dependency with shared=%s', async (shared) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          WorkflowAgent: {
+            ...sourceAgent,
+            tools: {
+              HandoffOne: {
+                type: 'AgentCondition',
+                actions: { TransferOne: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'OtherAgent' }, runAfter: {} } },
+              },
+              HandoffTwo: {
+                type: 'AgentCondition',
+                actions: { TransferTwo: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'OtherAgent' }, runAfter: {} } },
+              },
+            },
+          },
+          OtherAgent: { ...sourceAgent, tools: {}, runAfter: { WorkflowAgent: ['Succeeded'] } },
+        },
+      },
+      null
+    );
+    const sourceGraph = parsed.graph.children!.find((child) => child.id === 'WorkflowAgent')!;
+    const nestedEdge = sourceGraph.edges!.find((edge) => edge.target === 'WorkflowAgent-addCase')!;
+    nestedEdge.id = 'WorkflowAgent-OtherAgent::handoff:1';
+    const inputParameters = Object.fromEntries(
+      ['TransferOne', 'TransferTwo'].map((id) => [
+        id,
+        { parameterGroups: { default: { parameters: [{ parameterName: 'name', value: [{ value: 'OtherAgent' }] }] } } },
+      ])
+    );
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+        },
+        operations: { inputParameters },
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const relation = result.current!.edges!.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'OtherAgent');
+    expect(relation.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    expect(relation.map((edge) => edge.id)).toEqual(['WorkflowAgent-OtherAgent', 'WorkflowAgent-OtherAgent::handoff:2']);
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, shared, {
+      operations: parsed.actionData,
+      nodesMetadata: parsed.nodesMetadata,
+    });
+    const [, edges] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), shared);
+    expect(edges.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'OtherAgent').map((edge) => edge.type)).toEqual([
+      WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
+      WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+    ]);
+  });
+
+  it.each([false, true])('retains imported self-dependencies and self-targeted handoffs with shared=%s', async (shared) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          WorkflowAgent: {
+            ...sourceAgent,
+            runAfter: { WorkflowAgent: ['Succeeded'] },
+            tools: {
+              HandoffSelf: {
+                type: 'AgentCondition',
+                actions: { Transfer: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'WorkflowAgent' }, runAfter: {} } },
+              },
+            },
+          },
+        },
+      },
+      null
+    );
+    expect(parsed.nodesMetadata.WorkflowAgent.handoffs).toEqual({ HandoffSelf: 'WorkflowAgent' });
+    const inputParameters = {
+      Transfer: { parameterGroups: { default: { parameters: [{ parameterName: 'name', value: [{ value: 'WorkflowAgent' }] }] } } },
+    };
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+        },
+        operations: { inputParameters },
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const selfEdges = result.current!.edges!.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'WorkflowAgent');
+    expect(selfEdges.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, shared, {
+      operations: parsed.actionData,
+      nodesMetadata: parsed.nodesMetadata,
+    });
+    const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), shared);
+    expect(nodes.some(({ id }) => id === 'WorkflowAgent')).toBe(true);
+    const selfEdgesInLayout = edges.filter((edge) => edge.source === 'WorkflowAgent' && edge.target === 'WorkflowAgent');
+    expect(selfEdgesInLayout.map((edge) => edge.type)).toEqual([WORKFLOW_EDGE_TYPES.BUTTON_EDGE, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE]);
+    const handoff = selfEdgesInLayout.find((edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)!;
+    const section = (handoff.data!.elkEdge as ElkExtendedEdge).sections![0];
+    expect(section.startPoint).not.toEqual(section.endPoint);
+    expect(buildSvgSpline([section.startPoint, ...(section.bendPoints ?? []), section.endPoint])).toMatch(/^M .* C /);
+  });
+
+  it.each([
+    ['root', false],
+    ['root', true],
+    ['Scope', false],
+    ['Scope', true],
+    ['Foreach', false],
+    ['Foreach', true],
+  ] as const)('keeps represented Handoff tool counts at placement=%s collapsed=%s', async (placement, collapsed) => {
+    const sourceAgent = agentMcpWorkflowDefinitionInput.actions.WorkflowAgent;
+    const actualAgent = {
+      ...sourceAgent,
+      tools: {
+        ...sourceAgent.tools,
+        HandoffOnly: {
+          type: 'AgentCondition',
+          actions: {
+            Transfer: { type: Constants.NODE.TYPE.HANDOFF, inputs: { name: 'OtherAgent' }, runAfter: {} },
+          },
+        },
+      },
+    };
+    const nested = placement !== 'root';
+    const actualActions = nested
+      ? {
+          Enclosing: {
+            type: placement,
+            ...(placement === 'Foreach' ? { foreach: '@createArray(1)' } : {}),
+            actions: { WorkflowAgent: actualAgent },
+            runAfter: {},
+          },
+        }
+      : { WorkflowAgent: actualAgent };
+    const parsed = Deserialize(
+      {
+        ...agentMcpWorkflowDefinitionInput,
+        actions: {
+          ...actualActions,
+          OtherAgent: { ...sourceAgent, tools: {}, runAfter: {} },
+        },
+      },
+      null
+    );
+    expect(parsed.nodesMetadata.WorkflowAgent.graphId).toBe(nested ? 'Enclosing' : 'root');
+    expect(parsed.nodesMetadata.WorkflowAgent.parentNodeId).toBe(nested ? 'Enclosing' : undefined);
+    const store = configureStore({
+      reducer: () => ({
+        workflow: {
+          ...initialWorkflowState,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+          collapsedGraphIds: collapsed ? { WorkflowAgent: true } : {},
+        },
+        operations: {
+          inputParameters: {
+            Transfer: {
+              parameterGroups: {
+                default: {
+                  parameters: [{ parameterName: 'name', value: [{ value: 'OtherAgent' }] }],
+                },
+              },
+            },
+          },
+        },
+      }),
+    });
+    const { result } = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }) => createElement(Provider, { store, children }),
+    });
+    const context = { operations: parsed.actionData, nodesMetadata: parsed.nodesMetadata };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(result.current!, true, context);
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(await exportForTesting.elkLayout(converted), true);
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const absolutePosition = (id: string) => {
+      const node = nodeById.get(id)!;
+      let x = node.position.x;
+      let y = node.position.y;
+      let parent = node.parentId ? nodeById.get(node.parentId) : undefined;
+      while (parent) {
+        x += parent.position.x;
+        y += parent.position.y;
+        parent = parent.parentId ? nodeById.get(parent.parentId) : undefined;
+      }
+      return { x, y };
+    };
+    const container = nodes.find(({ id }) => id === 'WorkflowAgent')!;
+    const header = nodes.find(({ id }) => id === 'WorkflowAgent-#scope')!;
+    const headerParent = nodeById.get(header.parentId ?? '');
+    expect(headerParent?.id).toBe(container.id);
+    expect(container.type).toBe(WORKFLOW_NODE_TYPES.GRAPH_NODE);
+    expect(container.data.presentation).toMatchObject({ shared: true, family: 'frame' });
+    expect(typeof container.width).toBe('number');
+    expect(typeof container.height).toBe('number');
+    const panelBounds = container.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    for (const value of [panelBounds.x, panelBounds.y, panelBounds.width, panelBounds.height]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+    expect(panelBounds.x).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.y).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.width).toBeGreaterThan(0);
+    expect(panelBounds.height).toBeGreaterThan(0);
+    expect(panelBounds.x + panelBounds.width).toBeLessThanOrEqual(container.width as number);
+    expect(panelBounds.y + panelBounds.height).toBeLessThanOrEqual(container.height as number);
+    expect(header.data.presentation).toMatchObject({ shared: true, family: 'agent' });
+    expect(header.width).toBe(panelBounds.width);
+    expect(header.height).toBe(container.height);
+    const panel = header.data.toolsPanel as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      collapsed: boolean;
+      items: { id: string }[];
+    };
+    const containerAbsolute = absolutePosition(container.id);
+    const headerParentAbsolute = absolutePosition(headerParent!.id);
+    const backgroundAbsolute = {
+      x: containerAbsolute.x + panelBounds.x,
+      y: containerAbsolute.y + panelBounds.y,
+      width: panelBounds.width,
+      height: panelBounds.height,
+    };
+    const foregroundAbsolute = {
+      x: headerParentAbsolute.x + panel.x,
+      y: headerParentAbsolute.y + panel.y,
+      width: panel.width,
+      height: panel.height,
+    };
+    expect(foregroundAbsolute).toEqual(backgroundAbsolute);
+    expect(panel.collapsed).toBe(collapsed);
+    expect(nodes.some(({ id }) => id === 'HandoffOnly')).toBe(nested && !collapsed);
+    expect(nodes.some(({ id }) => id === 'Transfer')).toBe(nested && !collapsed);
+    expect(panel.items.map(({ id }) => id)).toEqual(nested ? ['McpFileServer', 'HandoffOnly'] : ['McpFileServer']);
+  });
+
+  it('matches the unattached connector bounds for a genuinely empty Agent without an add-tool structural node', async () => {
+    const graph: WorkflowNode = {
+      id: 'empty-agent',
+      type: 'GRAPH_NODE',
+      children: [{ id: 'empty-agent-#scope', type: 'SCOPE_CARD_NODE' }],
+    };
+    const converted = exportForTesting.convertWorkflowGraphToElkGraph(graph, true, {
+      operations: { 'empty-agent': { type: 'Agent', tools: {} } },
+    });
+    const layout = await exportForTesting.elkLayout(converted);
+    const [nodes] = exportForTesting.convertElkGraphToReactFlow(layout, true);
+    expect(nodes.find(({ id }) => id === 'empty-agent-#scope')?.height).toBe(187);
+    expect(layout.height).toBe(187);
+    expect(nodes.find(({ id }) => id === 'empty-agent-#scope')?.data.toolsPanel).toBeUndefined();
+  });
+});

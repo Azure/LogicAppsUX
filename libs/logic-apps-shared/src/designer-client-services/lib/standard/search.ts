@@ -5,8 +5,7 @@ import type {
   Connector,
   SomeKindOfAzureOperationDiscovery,
 } from '../../../utils/src';
-import { connectorsSearchResultsMock, validateRequiredServiceArguments } from '../../../utils/src';
-import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
+import { validateRequiredServiceArguments } from '../../../utils/src';
 import { BaseSearchService } from '../base';
 import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../base/search';
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
@@ -14,10 +13,12 @@ import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import * as ClientOperationsData from '../base/operations';
+import type { StandardManagementHttpClient } from './management';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
 interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
+  standardManagement?: StandardManagementHttpClient;
   apiVersion: string;
   baseUrl: string;
   showStatefulOperations?: boolean;
@@ -46,7 +47,7 @@ export class StandardSearchService extends BaseSearchService {
     const filterOperation = (operation: DiscoveryOperation<BuiltInOperation>) =>
       filterStateful(operation, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(filterOperation)]);
+      return [...this.getDevData('builtInOperations'), ...getClientBuiltInOperations(filterOperation)];
     }
     const { apiVersion, baseUrl, httpClient, showStatefulOperations, locale } = this.options;
     const uri = `${baseUrl}/operations`;
@@ -68,7 +69,12 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters, headers });
+      const request = { uri, queryParameters, headers };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<AzureOperationsFetchResponse>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listOperations<AzureOperationsFetchResponse>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
@@ -142,7 +148,7 @@ export class StandardSearchService extends BaseSearchService {
   public async getBuiltInConnectors(): Promise<Connector[]> {
     const filterConnector = (connector: Connector) => filterStateful(connector, !!this.options.showStatefulOperations);
     if (this._isDev) {
-      return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(filterConnector)]);
+      return [...this.getDevData('builtInConnectors'), ...getClientBuiltInConnectors(filterConnector)];
     }
     const { apiVersion, baseUrl, httpClient, locale } = this.options;
     const uri = `${baseUrl}/operationGroups`;
@@ -161,7 +167,12 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters, headers });
+      const request = { uri, queryParameters, headers };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<{ value: Connector[] }>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listConnectorGroups<{ value: Connector[] }>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;

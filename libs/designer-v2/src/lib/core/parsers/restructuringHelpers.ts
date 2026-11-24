@@ -1,21 +1,16 @@
-/* eslint-disable no-param-reassign */
 import constants from '../../common/constants';
 import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { createWorkflowEdge, getWorkflowEdgeId } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
+import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 
 ///////////////////////////////////////////////////////////
 // EDGES
 
 export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode, addRunAfter = true) => {
-  const workflowEdge: WorkflowEdge = {
-    id: `${source}-${target}`,
-    source,
-    target,
-    type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
-  };
+  const workflowEdge = createWorkflowEdge(source, target);
   if (!graph?.edges) {
     graph.edges = [];
   }
@@ -39,12 +34,12 @@ export const removeEdge = (state: WorkflowState, sourceId: string, targetId: str
 };
 
 const setEdgeSource = (edge: WorkflowEdge, newSource: string) => {
-  edge.id = `${newSource}-${edge.target}`;
+  edge.id = getWorkflowEdgeId(newSource, edge.target);
   edge.source = newSource;
 };
 
 const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
-  edge.id = `${edge.source}-${newTarget}`;
+  edge.id = getWorkflowEdgeId(edge.source, newTarget);
   edge.target = newTarget;
 };
 

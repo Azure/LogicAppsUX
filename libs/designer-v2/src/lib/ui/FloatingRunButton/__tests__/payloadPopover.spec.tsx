@@ -7,9 +7,14 @@ import { createRef, useRef } from 'react';
 
 // Mock MonacoEditor since it's a complex component
 vi.mock('@microsoft/designer-ui', () => ({
-  MonacoEditor: ({ value, onContentChanged }: { value?: string; onContentChanged: (e: { value: string }) => void }) => (
+  MonacoEditor: ({
+    language,
+    value,
+    onContentChanged,
+  }: { language?: string; value?: string; onContentChanged: (e: { value: string }) => void }) => (
     <textarea
       data-testid="monaco-editor"
+      data-language={language}
       aria-label="Body editor"
       value={value ?? ''}
       onChange={(e) => onContentChanged({ value: e.target.value })}
@@ -65,9 +70,6 @@ vi.mock('@microsoft/designer-ui', () => ({
             </button>
             <button data-testid="set-text-content-type" type="button" onClick={() => onChange({ 'Content-Type': 'text/plain' })}>
               Set Text Content-Type
-            </button>
-            <button data-testid="set-json-content-type" type="button" onClick={() => onChange({ 'Content-Type': 'application/json' })}>
-              Set JSON Content-Type
             </button>
           </>
         )}
@@ -259,36 +261,45 @@ describe('PayloadPopover', () => {
   });
 
   describe('Body JSON Validation when Content-Type is changed', () => {
-    it('should validate JSON when Content-Type is changed back to application/json', async () => {
+    it('should validate the existing body when Content-Type changes to JSON', () => {
       renderWithIntl();
 
-      // First, remove Content-Type
-      const removeContentTypeButton = screen.getByTestId('remove-content-type');
-      fireEvent.click(removeContentTypeButton);
-
-      // Enter invalid JSON (no validation yet)
+      fireEvent.click(screen.getByTestId('set-text-content-type'));
       const editor = screen.getByTestId('monaco-editor');
       fireEvent.change(editor, { target: { value: '{ invalid' } });
+      const runButton = screen.getByRole('button', { name: 'Run with payload' });
+      expect(runButton).toBeEnabled();
 
-      // Button should be enabled (no validation)
-      await waitFor(() => {
-        const runButton = screen.getByText('Run with payload');
-        expect(runButton).not.toBeDisabled();
+      fireEvent.change(screen.getByTestId('headers-input'), {
+        target: { value: JSON.stringify({ 'content-type': 'Application/JSON; charset=utf-8' }) },
       });
 
-      // Now set Content-Type back to application/json
-      const setJsonContentTypeButton = screen.getByTestId('set-json-content-type');
-      fireEvent.click(setJsonContentTypeButton);
-
-      // Trigger body change to re-validate
-      fireEvent.change(editor, { target: { value: '{ still invalid' } });
-
-      // Now validation should kick in and button should be disabled
-      await waitFor(() => {
-        const runButton = screen.getByText('Run with payload');
-        expect(runButton).toBeDisabled();
-      });
+      expect(editor).toHaveAttribute('data-language', 'json');
+      expect(runButton).toBeDisabled();
     });
+  });
+
+  describe('XML draft payloads', () => {
+    it.each(['application/xml', 'text/xml', 'Application/SOAP+XML; charset=utf-8'])(
+      'switches the editor to XML and submits the unchanged body for %s',
+      (contentType) => {
+        renderWithIntl({ ...defaultProps, isDraftMode: true });
+
+        const editor = screen.getByTestId('monaco-editor');
+        const body = '<message>\n  <value>café</value>\n</message>';
+        const runButton = screen.getByRole('button', { name: 'Run draft with payload' });
+        fireEvent.change(editor, { target: { value: body } });
+        expect(runButton).toBeDisabled();
+
+        const headers = { 'content-type': contentType, SOAPAction: 'urn:submit' };
+        fireEvent.change(screen.getByTestId('headers-input'), { target: { value: JSON.stringify(headers) } });
+
+        expect(editor).toHaveAttribute('data-language', 'xml');
+        expect(runButton).toBeEnabled();
+        fireEvent.click(runButton);
+        expect(mockOnSubmit).toHaveBeenCalledWith({ method: 'POST', headers, queries: undefined, body });
+      }
+    );
   });
 
   describe('Form Submission', () => {

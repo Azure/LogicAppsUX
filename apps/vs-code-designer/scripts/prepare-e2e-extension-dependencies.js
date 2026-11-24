@@ -58,13 +58,18 @@ function getDownloadPlatform(platform = process.platform, arch = process.arch) {
 function readSourceContract(sourceManifestPath = SOURCE_MANIFEST_PATH) {
   const raw = fs.readFileSync(sourceManifestPath);
   const manifest = JSON.parse(raw.toString('utf8'));
-  const directDependencies = Array.isArray(manifest.extensionDependencies) ? manifest.extensionDependencies.map(normalizeExtensionId) : [];
+  const directDependencies = [
+    ...(Array.isArray(manifest.extensionDependencies) ? manifest.extensionDependencies : []),
+    ...(Array.isArray(manifest.extensionPack) ? manifest.extensionPack : []),
+  ]
+    .map(normalizeExtensionId)
+    .sort();
 
   if (directDependencies.includes(FORBIDDEN_EXTENSION)) {
-    throw new Error(`${FORBIDDEN_EXTENSION} must not be listed in extensionDependencies.`);
+    throw new Error(`${FORBIDDEN_EXTENSION} must not be listed in extensionDependencies or extensionPack.`);
   }
   if (!directDependencies.includes('ms-dotnettools.csdevkit')) {
-    throw new Error('ms-dotnettools.csdevkit must be listed in src/package.json extensionDependencies.');
+    throw new Error('ms-dotnettools.csdevkit must be listed in src/package.json extensionDependencies or extensionPack.');
   }
 
   const requiredDependencies = [...new Set([DOTNET_RUNTIME_EXTENSION, ...directDependencies])];

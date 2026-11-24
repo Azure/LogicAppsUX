@@ -150,7 +150,7 @@ export const Designer = (props: DesignerProps) => {
             role="toolbar"
             aria-label="Designer controls"
           >
-            <Controls />
+            <Controls canvasRef={canvasRef} />
             <Minimap />
           </div>
           {isMonitoringView && isA2AWorkflow && <MonitoringTimeline />}

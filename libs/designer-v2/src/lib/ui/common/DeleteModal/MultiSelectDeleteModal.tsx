@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import {
@@ -21,6 +21,7 @@ import { useOperationPanelSelectedNodeIds } from '../../../core/state/panel/pane
 import { setNodeSelection } from '../../../core/state/panel/panelSlice';
 import { useShowMultiSelectDeleteModal } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowMultiSelectDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { deleteOperations } from '../../../core/actions/bjsworkflow/delete';
 import { useMultiSelectDeleteModalStyles } from './MultiSelectDeleteModal.styles';
 
@@ -47,6 +48,9 @@ export const MultiSelectDeleteModal = (): JSX.Element | null => {
   const styles = useMultiSelectDeleteModalStyles();
 
   const isOpen = useShowMultiSelectDeleteModal();
+  const readOnly = useReadOnly();
+  const monitoring = useMonitoringView();
+  const canDelete = !readOnly && !monitoring;
   const selectedNodeIds = useOperationPanelSelectedNodeIds();
 
   const intlText = useMemo(
@@ -85,17 +89,26 @@ export const MultiSelectDeleteModal = (): JSX.Element | null => {
 
   const onClose = useMemo(() => () => dispatch(setShowMultiSelectDeleteModal(false)), [dispatch]);
 
+  useEffect(() => {
+    if (isOpen && !canDelete) {
+      onClose();
+    }
+  }, [canDelete, isOpen, onClose]);
+
   const onConfirm = useMemo(
     () => () => {
+      if (!canDelete) {
+        return;
+      }
       dispatch(setShowMultiSelectDeleteModal(false));
       dispatch(storeStateToUndoRedoHistory({ type: deleteOperations.pending }));
       dispatch(deleteOperations({ nodeIds: selectedNodeIds }));
       dispatch(setNodeSelection([]));
     },
-    [dispatch, selectedNodeIds]
+    [canDelete, dispatch, selectedNodeIds]
   );
 
-  if (!isOpen) {
+  if (!isOpen || !canDelete) {
     return null;
   }
 

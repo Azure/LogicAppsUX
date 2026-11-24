@@ -70,7 +70,7 @@ const restoreStrippedFields = (sliceName: UndoRedoSliceName, snapshotSlice: unkn
       const current = currentSlice as Record<string, unknown>;
       return {
         ...(snapshotSlice as Record<string, unknown>),
-        originalDefinition: current.originalDefinition,
+        originalDefinition: (snapshotSlice as Record<string, unknown>).originalDefinition ?? current.originalDefinition,
         runInstance: current.runInstance,
         collapsedGraphIds: current.collapsedGraphIds,
         collapsedActionIds: current.collapsedActionIds,
@@ -117,7 +117,7 @@ const restoreStrippedFields = (sliceName: UndoRedoSliceName, snapshotSlice: unkn
  * Uses reference equality (from Immer) to skip unchanged slices and reuses
  * their compressed bytes from the previous capture.
  */
-export const getCompressedSlicesFromRootState = (rootState: RootState): CompressedSliceMap => {
+export const getCompressedSlicesFromRootState = (rootState: RootState, includeDefinition = false): CompressedSliceMap => {
   const result: CompressedSliceMap = {};
   let totalUncompressedBytes = 0;
   let totalCompressedBytes = 0;
@@ -130,10 +130,18 @@ export const getCompressedSlicesFromRootState = (rootState: RootState): Compress
       continue;
     }
 
-    if (currentSlice === previousSliceRefs[sliceName] && previousCompressedSlices[sliceName]) {
+    if (
+      !(includeDefinition && sliceName === 'workflow') &&
+      currentSlice === previousSliceRefs[sliceName] &&
+      previousCompressedSlices[sliceName]
+    ) {
       result[sliceName] = previousCompressedSlices[sliceName];
     } else {
-      const stripped = stripSliceForSnapshot(sliceName, currentSlice);
+      const strippedSlice = stripSliceForSnapshot(sliceName, currentSlice);
+      const stripped =
+        includeDefinition && sliceName === 'workflow'
+          ? { ...(strippedSlice as Record<string, unknown>), originalDefinition: rootState.workflow.originalDefinition }
+          : strippedSlice;
       const json = JSON.stringify(stripped);
       const compressed = deflate(json);
       result[sliceName] = compressed;

@@ -7,6 +7,10 @@ import { useDispatch } from 'react-redux';
 import { ControlButton, Controls, useReactFlow } from '@xyflow/react';
 import CollapseExpandControl from './common/controls/collapseExpandControl';
 import { ZoomInRegular, ZoomOutRegular, MapFilled, MapRegular, SearchRegular, ZoomFitRegular } from '@fluentui/react-icons';
+import type { RefObject } from 'react';
+import { useLayout } from '../core/graphlayout';
+import { fitNativeDesignerViewport, fitSharedDesignerViewport } from './designerViewport';
+import { useSharedNodeUi } from '../core/state/designerOptions/designerOptionsSelectors';
 
 export const searchControlId = 'control-search-button';
 export const minimapControlId = 'control-minimap-button';
@@ -14,13 +18,16 @@ export const zoomFitControlId = 'control-zoom-fit-button';
 export const zoomInControlId = 'control-zoom-in-button';
 export const zoomOutControlId = 'control-zoom-out-button';
 
-const CustomControls = () => {
+const CustomControls = ({ canvasRef }: { canvasRef?: RefObject<HTMLDivElement> }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const showMinimap = useShowMinimap();
   const searchId = 'control-search-button';
 
-  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  const flow = useReactFlow();
+  const { zoomIn, zoomOut } = flow;
+  const [nodes, , flowSize] = useLayout();
+  const sharedOption = useSharedNodeUi();
   const minimapToggleClick = () => {
     LoggerService().log({
       area: 'CustomControls:onToggleMiniMapClick',
@@ -73,7 +80,18 @@ const CustomControls = () => {
       level: LogEntryLevel.Verbose,
       message: 'Canvas control clicked.',
     });
-    fitView();
+    const shared = nodes.length ? nodes.some((node) => (node.data.presentation as { shared?: boolean } | undefined)?.shared) : sharedOption;
+    if (canvasRef?.current && shared) {
+      fitSharedDesignerViewport(flow, canvasRef.current, flowSize);
+    } else if (canvasRef?.current) {
+      fitNativeDesignerViewport(flow, canvasRef.current);
+    } else {
+      // fitView ignores unmeasured, culled nodes; public bounds also include their initial dimensions.
+      const visibleNodes = flow.getNodes().filter((node) => !node.hidden);
+      if (visibleNodes.length) {
+        flow.fitBounds(flow.getNodesBounds(visibleNodes));
+      }
+    }
   };
 
   const zoomInClick = () => {

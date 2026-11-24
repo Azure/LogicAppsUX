@@ -1,4 +1,4 @@
-/* global __dirname, process, require, setTimeout */
+/* global process, require, setTimeout */
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
@@ -14,8 +14,7 @@ const {
   _test: { resolveOwnedWorkspacePath, runVscodeTest, readContainmentReceipt, cleanupDeferredWorkspaceAfterCancel, spawnContainedProcess },
 } = require('./run-e2e-cli');
 
-const controlsRoot = path.join(__dirname, '..', '.vscode-test', 'launch-cleanup-controls');
-fs.mkdirSync(controlsRoot, { recursive: true });
+const controlsRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-launch-cleanup-controls-'));
 
 test('owned paths reject links and sibling escapes, including already-removed workspaces', () => {
   const root = fs.mkdtempSync(path.join(controlsRoot, 'paths-'));

@@ -90,7 +90,7 @@ vi.mock('../../../../../utils/codeless/artifacts', () => ({
 }));
 
 vi.mock('../../../../../utils/bundleFeed', () => ({
-  getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
+  getDesignTimeBundleVersion: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
 vi.mock('../../../../../utils/appSettings/localSettings', () => ({
@@ -126,7 +126,7 @@ import LocalDesignerPanel from '../localDesignerPanel';
 import { createDataMap } from '../../../../dataMapper/dataMapper';
 import { createUnitTest } from '../../../unitTest/createUnitTest';
 import { getMigrationOptions } from '../../utils/migration';
-import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
@@ -169,7 +169,7 @@ describe('LocalDesignerPanel', () => {
     vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: 'token', enabled: false } as any);
     vi.mocked(getManualWorkflowsInLocalProject).mockResolvedValue({} as any);
     vi.mocked(getArtifactsInLocalProject).mockResolvedValue({ maps: {}, schemas: [] } as any);
-    vi.mocked(getBundleVersionNumber).mockResolvedValue('1.0.0');
+    vi.mocked(getDesignTimeBundleVersion).mockResolvedValue('1.0.0');
     vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
     vi.mocked(startDesignTimeApi).mockResolvedValue(undefined);
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
@@ -258,7 +258,7 @@ describe('LocalDesignerPanel', () => {
       };
       const metadata = await (instance as any).getDesignerPanelMetadata(migrationOptions);
 
-      expect(getBundleVersionNumber).toHaveBeenCalledWith('/test/project');
+      expect(getDesignTimeBundleVersion).toHaveBeenCalledWith('/test/project');
       expect(metadata.workflowName).toBe('myWorkflow');
       expect(metadata.extensionBundleVersion).toBe('1.0.0');
       expect(migrateWorkflow).toHaveBeenCalledWith(expect.any(Object), migrationOptions);

@@ -38,7 +38,7 @@ import { createAzureSubscriptionProvider } from './app/utils/services/VSCodeAzur
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServer } from './app/languageServer/languageServer';
+import { startLogicAppsLanguageClient } from './app/languageServer/languageClient';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
@@ -49,6 +49,7 @@ import { parameterizeAllConnections } from './app/commands/parameterizeConnectio
 import {
   getWorkspaceSetting,
   isManagedIdentityAuthEnabled,
+  isProjectConsistencyCheckEnabled,
   shouldParameterizeConnections,
   updateGlobalSetting,
 } from './app/utils/vsCodeConfig/settings';
@@ -125,33 +126,39 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       });
 
-      recordRegenerationEvent({ event: 'activation-project-discovery-start' });
-      const projectPaths = await getWorkspaceLogicAppRoots();
-      recordRegenerationEvent({ event: 'activation-project-discovery-returned', projectCount: projectPaths.length });
+      const consistencyEnabled = isProjectConsistencyCheckEnabled();
+      recordRegenerationEvent({ event: 'consistency-setting', enabled: consistencyEnabled });
+      if (consistencyEnabled) {
+        recordRegenerationEvent({ event: 'activation-project-discovery-start' });
+        const projectPaths = await getWorkspaceLogicAppRoots();
+        recordRegenerationEvent({ event: 'activation-project-discovery-returned', projectCount: projectPaths.length });
 
-      activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
-      recordRegenerationEvent({ event: 'activation-project-files-start' });
-      const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
-        await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
-          actionContext.telemetry.properties.isActivationEvent = 'true';
-          await ensureProjectFiles(actionContext, projectPath);
+        activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+        recordRegenerationEvent({ event: 'activation-project-files-start' });
+        const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
+          await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
+            actionContext.telemetry.properties.isActivationEvent = 'true';
+            await ensureProjectFiles(actionContext, projectPath);
+          });
         });
-      });
-      await Promise.all(ensureProjectFilesTasks);
-      recordRegenerationEvent({ event: 'activation-project-files-returned' });
+        await Promise.all(ensureProjectFilesTasks);
+        recordRegenerationEvent({ event: 'activation-project-files-returned' });
 
-      activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-      recordRegenerationEvent({ event: 'activation-vscode-check-scheduled' });
-      activationInitialInvocationState = 'pending';
-      callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
-        actionContext.telemetry.properties.isActivationEvent = 'true';
-        recordRegenerationEvent({ event: 'activation-vscode-check-entered' });
-        try {
-          await ensureVSCodeFiles(actionContext, projectPaths, 'activation-initial');
-        } finally {
-          activationInitialInvocationState = 'settled';
-        }
-      });
+        activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+        recordRegenerationEvent({ event: 'activation-vscode-check-scheduled' });
+        activationInitialInvocationState = 'pending';
+        callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
+          actionContext.telemetry.properties.isActivationEvent = 'true';
+          recordRegenerationEvent({ event: 'activation-vscode-check-entered' });
+          try {
+            await ensureVSCodeFiles(actionContext, projectPaths, 'activation-initial');
+          } finally {
+            activationInitialInvocationState = 'settled';
+          }
+        });
+      } else {
+        recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
+      }
     }
 
     activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';
@@ -230,10 +237,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    activateContext.telemetry.properties.lastStep = 'startLanguageServer';
+    activateContext.telemetry.properties.lastStep = 'startLogicAppsLanguageClient';
     const hasCodefulProjects = await codefulProjectsExist();
     if (hasCodefulProjects) {
-      startLanguageServer();
+      startLogicAppsLanguageClient();
     }
 
     ext.rgApi = await getResourceGroupsApi();

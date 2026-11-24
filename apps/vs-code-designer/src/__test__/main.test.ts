@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import * as binaries from '../app/utils/binaries';
+import { ensureProjectFiles } from '../app/projectConsistency/projectFilesConsistency';
+import { ensureVSCodeFiles } from '../app/projectConsistency/vscodeConsistency';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
 import {
   getWorkspaceSetting,
+  isProjectConsistencyCheckEnabled,
   shouldParameterizeConnections,
   shouldValidateAndInstallRuntimeDependencies,
   updateGlobalSetting,
@@ -17,8 +20,6 @@ import * as path from 'node:path';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
 import { ensureWorkspace } from '../app/commands/ensureWorkspace';
 import { parameterizeAllConnections } from '../app/commands/parameterizeConnections';
-import { ensureProjectFiles } from '../app/projectConsistency/projectFilesConsistency';
-import { ensureVSCodeFiles } from '../app/projectConsistency/vscodeConsistency';
 import { registerFuncHostTaskEvents } from '../app/utils/funcCoreTools/funcHostTask';
 import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import {
@@ -39,6 +40,8 @@ const mocks = vi.hoisted(() => ({
   getWorkspaceLogicAppRoots: vi.fn(),
   isAutoStartDesignTimeNotificationSuppressed: vi.fn(),
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
+  ensureProjectFiles: vi.fn(),
+  ensureVSCodeFiles: vi.fn(),
   recordRegenerationEvent: vi.fn(),
   registerEvent: vi.fn(),
   runProjectConsistencyCheck: vi.fn(),
@@ -93,6 +96,7 @@ vi.mock('../app/utils/vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
   isManagedIdentityAuthEnabled: vi.fn(() => true),
   shouldParameterizeConnections: vi.fn(() => false),
+  isProjectConsistencyCheckEnabled: vi.fn(() => true),
   updateGlobalSetting: vi.fn(),
   shouldValidateAndInstallRuntimeDependencies: vi.fn(),
 }));
@@ -121,16 +125,16 @@ vi.mock('../app/commands/runProjectConsistencyCheck', () => ({
   runProjectConsistencyCheck: mocks.runProjectConsistencyCheck,
 }));
 
-vi.mock('../app/languageServer/languageServer', () => ({
-  startLanguageServer: vi.fn(),
+vi.mock('../app/languageServer/languageClient', () => ({
+  startLogicAppsLanguageClient: vi.fn(),
 }));
 
 vi.mock('../app/projectConsistency/projectFilesConsistency', () => ({
-  ensureProjectFiles: vi.fn(),
+  ensureProjectFiles: mocks.ensureProjectFiles,
 }));
 
 vi.mock('../app/projectConsistency/vscodeConsistency', () => ({
-  ensureVSCodeFiles: vi.fn(),
+  ensureVSCodeFiles: mocks.ensureVSCodeFiles,
 }));
 
 vi.mock('../app/resourcesExtension/getExtensionApi', () => ({
@@ -308,6 +312,7 @@ describe('activate design-time startup', () => {
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(false);
     vi.mocked(shouldParameterizeConnections).mockReturnValue(false);
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(true);
     vi.mocked(getWorkspaceSetting).mockReturnValue(false);
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
 
@@ -446,6 +451,20 @@ describe('activate design-time startup', () => {
     resolvePrompt(undefined);
     await flushPromises();
     await Promise.all(backgroundOperations);
+  });
+
+  it('skips startup project consistency checks when the setting is disabled', async () => {
+    (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:\\workspace' }, name: 'workspace', index: 0 }];
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
+    vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(false);
+    mocks.isAutoStartDesignTimeNotificationSuppressed.mockReturnValue(true);
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(ensureProjectFiles).not.toHaveBeenCalled();
+    expect(ensureVSCodeFiles).not.toHaveBeenCalled();
   });
 
   it('starts all workspace projects before waiting for any startup to finish', async () => {

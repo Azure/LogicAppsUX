@@ -1,24 +1,21 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { lspDirectory } from '../../../constants';
+import { CodefulSdk } from '../../../constants';
 import {
   codefulProjectsExist,
   detectAgentCodefulWorkflow,
   detectCodefulWorkflow,
-  invalidateCodefulSdkCacheIfNeeded,
+  detectStatelessCodefulWorkflow,
+  hasCodefulSdkReference,
   parseCsprojCopyToCodefulInfo,
 } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
-  ensureDir: vi.fn(),
-  getGlobalSetting: vi.fn(),
   pathExists: vi.fn(),
   readdir: vi.fn(),
   readFile: vi.fn(),
-  remove: vi.fn(),
   statSync: vi.fn(),
   workspaceFolders: undefined as { uri: { fsPath: string } }[] | undefined,
-  writeFile: vi.fn(),
 }));
 
 vi.mock('vscode', () => ({
@@ -30,139 +27,45 @@ vi.mock('vscode', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
-  ensureDir: mocks.ensureDir,
   pathExists: mocks.pathExists,
   readdir: mocks.readdir,
   readFile: mocks.readFile,
-  remove: mocks.remove,
   statSync: mocks.statSync,
-  writeFile: mocks.writeFile,
 }));
 
-vi.mock('../vsCodeConfig/settings', () => ({
-  getGlobalSetting: mocks.getGlobalSetting,
-}));
-
-vi.mock('../../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
-}));
-
-describe('invalidateCodefulSdkCacheIfNeeded', () => {
-  const projectPath = 'D:\\workspace\\CodefulLogicApp';
-  const runtimeDependenciesPath = 'D:\\runtime-dependencies';
-  const lspDirectoryPath = path.join(runtimeDependenciesPath, lspDirectory);
-  const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkHashMarkerPath = path.join(runtimeDependenciesPath, '.lspsdk-hash');
-  const projectSdkHashMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-hash');
-  const projectSdkPackagePath = path.join(projectPath, '.nuget', 'packages', 'microsoft.azure.workflows.sdk', '1.0.0-preview.1');
-  const projectAssetsPath = path.join(projectPath, 'obj', 'project.assets.json');
-  const projectNugetCachePath = path.join(projectPath, 'obj', 'project.nuget.cache');
-  const localSettingsPath = path.join(projectPath, 'local.settings.json');
-  const codefulLocalSettings = JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
-  const currentSdkHash = 'current-sdk-hash';
-  const codefulNugetConfig = `
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <config>
-    <add key="globalPackagesFolder" value=".nuget\\packages" />
-  </config>
-  <packageSources>
-    <add key="current" value="${lspDirectoryPath}" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-  </packageSources>
-</configuration>`;
-
+describe('hasCodefulSdkReference', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getGlobalSetting.mockReturnValue(runtimeDependenciesPath);
-    mocks.ensureDir.mockResolvedValue(undefined);
-    mocks.remove.mockResolvedValue(undefined);
-    mocks.writeFile.mockResolvedValue(undefined);
-    mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj']);
     mocks.statSync.mockReturnValue({ isDirectory: () => true });
-    setExistingPaths([
-      localSettingsPath,
-      nugetConfigPath,
-      installedSdkHashMarkerPath,
-      projectSdkPackagePath,
-      projectAssetsPath,
-      projectNugetCachePath,
-    ]);
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig;
-      }
-      if (filePath === installedSdkHashMarkerPath) {
-        return currentSdkHash;
-      }
-      return '';
-    });
+    mocks.readdir.mockResolvedValue(['LogicApp.csproj']);
   });
 
-  function setExistingPaths(paths: string[]): void {
-    const existingPaths = new Set(paths);
-    mocks.pathExists.mockImplementation(async (filePath: string) => existingPaths.has(filePath));
-  }
+  it.each(['net8', 'net10.0', 'net12.0'])('detects the codeful SDK independently of target framework %s', async (targetFramework) => {
+    mocks.readFile.mockResolvedValue(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>${targetFramework}</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Version="1.0.0" Include="${CodefulSdk.WorkflowsSDK.toLowerCase()}" />
+  </ItemGroup>
+</Project>`);
 
-  it('removes only the stale project-local SDK package when the installed VSIX SDK hash changes', async () => {
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(true);
-    expect(mocks.remove).toHaveBeenCalledWith(projectSdkPackagePath);
-    expect(mocks.remove).toHaveBeenCalledWith(projectAssetsPath);
-    expect(mocks.remove).toHaveBeenCalledWith(projectNugetCachePath);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(path.join(projectPath, '.nuget'));
-    expect(mocks.writeFile).toHaveBeenCalledWith(projectSdkHashMarkerPath, currentSdkHash);
+    await expect(hasCodefulSdkReference('codeful-project')).resolves.toBe(true);
   });
 
-  it('keeps the project cache when its marker already matches the installed SDK hash', async () => {
-    setExistingPaths([localSettingsPath, nugetConfigPath, installedSdkHashMarkerPath, projectSdkHashMarkerPath, projectSdkPackagePath]);
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig;
-      }
-      if (filePath === installedSdkHashMarkerPath || filePath === projectSdkHashMarkerPath) {
-        return currentSdkHash;
-      }
-      return '';
-    });
+  it('returns false when the project does not reference the codeful SDK package ID', async () => {
+    mocks.readFile.mockResolvedValue(`
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
+  </ItemGroup>
+</Project>`);
 
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(false);
-    expect(mocks.remove).not.toHaveBeenCalled();
-    expect(mocks.writeFile).not.toHaveBeenCalled();
-  });
-
-  it('does not touch caches for projects that do not use the extension local SDK source and project-local packages folder', async () => {
-    mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === localSettingsPath) {
-        return codefulLocalSettings;
-      }
-      if (filePath === nugetConfigPath) {
-        return codefulNugetConfig.replace(lspDirectoryPath, 'https://api.nuget.org/v3/index.json');
-      }
-      if (filePath === installedSdkHashMarkerPath) {
-        return currentSdkHash;
-      }
-      return '';
-    });
-
-    const invalidated = await invalidateCodefulSdkCacheIfNeeded(projectPath);
-
-    expect(invalidated).toBe(false);
-    expect(mocks.remove).not.toHaveBeenCalled();
-    expect(mocks.writeFile).not.toHaveBeenCalled();
+    await expect(hasCodefulSdkReference('regular-project')).resolves.toBe(false);
   });
 });
 
@@ -273,6 +176,27 @@ namespace TestProject
 }`);
 
     expect(workflow).toEqual({ workflowName: 'MultilineWorkflow', workflowType: 'agent' });
+  });
+});
+
+describe('detectStatelessCodefulWorkflow', () => {
+  it('detects a provider-based stateless workflow', () => {
+    const source = `
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+      var workflow = trigger.Then(response);
+      return new[]
+      {
+          WorkflowFactory.CreateStatelessWorkflow(
+              "StatelessWorkflow",
+              workflow)
+      };
+    `;
+
+    expect(detectStatelessCodefulWorkflow(source)).toBe('StatelessWorkflow');
+    expect(detectCodefulWorkflow(source)).toEqual({
+      workflowName: 'StatelessWorkflow',
+      workflowType: 'stateless',
+    });
   });
 });
 

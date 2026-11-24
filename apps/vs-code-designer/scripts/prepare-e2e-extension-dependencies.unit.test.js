@@ -39,7 +39,8 @@ function writeSourceManifest(root) {
       name: 'vscode-azurelogicapps',
       publisher: 'ms-azuretools',
       version: '1.0.0',
-      extensionDependencies: REQUIRED_DEPENDENCIES,
+      extensionDependencies: ['ms-azuretools.vscode-azureresourcegroups'],
+      extensionPack: ['azurite.azurite', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit'],
     })
   );
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: 'package-management-manifest' }));
@@ -289,7 +290,7 @@ test('reads extension dependencies only from the extension source manifest', () 
   try {
     const sourceManifestPath = writeSourceManifest(root);
     const contract = readSourceContract(sourceManifestPath);
-    assert.deepStrictEqual(contract.directDependencies, REQUIRED_DEPENDENCIES);
+    assert.deepStrictEqual(contract.directDependencies, [...REQUIRED_DEPENDENCIES].sort());
     assert.ok(contract.requiredDependencies.includes('ms-dotnettools.vscode-dotnet-runtime'));
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

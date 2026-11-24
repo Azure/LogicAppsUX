@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Math Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- Functoid input links -->
+      <Link LinkID="10" SourceID="/Root/Num1" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="11" SourceID="/Root/Num2" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="12" SourceID="/Root/Num1" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="13" SourceID="/Root/Num2" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="14" SourceID="/Root/Num1" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="15" SourceID="/Root/Num2" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="16" SourceID="/Root/Num1" TargetID="4" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="17" SourceID="/Root/Num2" TargetID="4" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="18" SourceID="/Root/Num1" TargetID="5" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="19" SourceID="/Root/Num2" TargetID="5" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <!-- Functoid output links to destination -->
+      <Link LinkID="20" SourceID="1" TargetID="/Root/Sum" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Sum"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/Diff" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Diff"/>
+      <Link LinkID="22" SourceID="3" TargetID="/Root/Product" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Product"/>
+      <Link LinkID="23" SourceID="4" TargetID="/Root/Quotient" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Quotient"/>
+      <Link LinkID="24" SourceID="5" TargetID="/Root/Remainder" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Remainder"/>
+      <Functoid FunctoidID="1" TypeID="118" Name="Addition" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="119" Name="Subtraction" X="240" Y="260"/>
+      <Functoid FunctoidID="3" TypeID="120" Name="Multiplication" X="240" Y="280"/>
+      <Functoid FunctoidID="4" TypeID="121" Name="Division" X="240" Y="300"/>
+      <Functoid FunctoidID="5" TypeID="115" Name="Modulo" X="240" Y="320"/>
+    </Page>
+  </Pages>
+</mapsource>

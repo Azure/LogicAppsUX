@@ -5,7 +5,7 @@
 import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../utils/binaries';
+import { binariesExist, getLatestNodeJsVersion } from '../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { isNodeJsWarningSuppressed, suppressNodeJsWarning } from '../../state/notifications';
@@ -22,25 +22,24 @@ export async function validateNodeJsIsLatest(context: IActionContext, majorVersi
   await setNodeJsCommand();
   const binaries = await binariesExist(nodeJsDependencyName);
   context.telemetry.properties.binariesExist = `${binaries}`;
-  // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
-  // install (e.g. a removed file) forces a wipe + reinstall instead of silently failing at runtime.
-  const integrityValid = binaries ? await verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
-  context.telemetry.properties.integrityValid = `${integrityValid}`;
 
-  if (!binaries || !integrityValid) {
+  if (!binaries) {
     await installNodeJs(context, majorVersion);
     context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
-  } else if (showNodeJsWarning) {
-    context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
-    const localVersion: string | null = await getLocalNodeJsVersion(context);
-    context.telemetry.properties.localVersion = localVersion;
-    logNodeJsVersionState(localVersion, majorVersion);
+    return;
+  }
 
-    if (localVersion === null) {
-      context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
-      await installNodeJs(context, majorVersion);
-      logNodeJsWarningDecision(context);
-    } else if (shouldCheckForDependencyUpdates()) {
+  context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
+  const localVersion: string | null = await getLocalNodeJsVersion(context);
+  context.telemetry.properties.localVersion = localVersion;
+  logNodeJsVersionState(localVersion, majorVersion);
+
+  if (localVersion === null) {
+    context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
+    await installNodeJs(context, majorVersion);
+    logNodeJsWarningDecision(context);
+  } else if (showNodeJsWarning) {
+    if (shouldCheckForDependencyUpdates()) {
       // Throttle: only re-check the newest published version once per window (see
       // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
       const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
@@ -57,7 +56,7 @@ export async function validateNodeJsIsLatest(context: IActionContext, majorVersi
       logNodeJsWarningDecision(context);
     }
   } else {
-    context.telemetry.properties.nodeJsWarningDecision = showNodeJsWarning ? 'binariesMissing' : 'disabled';
+    context.telemetry.properties.nodeJsWarningDecision = 'disabled';
     logNodeJsWarningDecision(context);
   }
 }
@@ -74,18 +73,22 @@ function logNodeJsWarningDecision(context: IActionContext): void {
     localize(
       'nodeJsResolvedNewestVersionLog',
       'NodeJs resolved newest version: {0}',
-      context.telemetry.properties.newestVersion ?? 'unknown'
+      String(context.telemetry.properties.newestVersion ?? 'unknown')
     )
   );
   ext.outputChannel.appendLog(
     localize(
       'nodeJsLatestVersionSourceLog',
       'NodeJs latest version source: {0}',
-      context.telemetry.properties.latestVersionSource ?? 'unknown'
+      String(context.telemetry.properties.latestVersionSource ?? 'unknown')
     )
   );
   ext.outputChannel.appendLog(
-    localize('nodeJsWarningDecisionLog', 'NodeJs warning decision: {0}', context.telemetry.properties.nodeJsWarningDecision ?? 'unknown')
+    localize(
+      'nodeJsWarningDecisionLog',
+      'NodeJs warning decision: {0}',
+      String(context.telemetry.properties.nodeJsWarningDecision ?? 'unknown')
+    )
   );
 }
 
@@ -154,8 +157,7 @@ function showOutdatedNodeJsWarning(
   );
   const update: MessageItem = { title: 'Update' };
 
-  window
-    .showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain)
+  Promise.resolve(window.showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain))
     .then(async (result: MessageItem | undefined) => {
       if (result === DialogResponses.learnMore) {
         await openUrl('https://nodejs.org/en/download');

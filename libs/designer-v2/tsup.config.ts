@@ -13,10 +13,13 @@ export default defineConfig({
   tsconfig: 'tsconfig.json',
   format: ['esm'],
   external: [
+    // @microsoft/logic-apps-graph-layout is a private devDependency and is intentionally bundled.
     'react',
     'react-dom',
     '@microsoft/logic-apps-shared',
     '@microsoft/designer-ui',
+    '@microsoft/designer-ui-v2',
+    '@microsoft/designer-ui-v2/metrics',
     '@microsoft/logic-apps-chatbot',
     '@fluentui/azure-themes',
     '@fluentui/react',
@@ -29,7 +32,6 @@ export default defineConfig({
     '@reduxjs/toolkit',
     '@xyflow/react',
     '@xyflow/react/dist/style.css',
-    'elkjs',
     'file-saver',
     'fuse.js',
     'immer',

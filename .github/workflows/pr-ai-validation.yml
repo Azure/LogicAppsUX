@@ -63,7 +63,15 @@ jobs:
       - name: Checkout for prompt access
         uses: actions/checkout@v5
         with:
-          sparse-checkout: prompts/copilot-pr-desc-check.md
+          # Keep the workflow and its regression test on the existing trusted event ref, never the PR head.
+          sparse-checkout: |
+            prompts/copilot-pr-desc-check.md
+            .github/workflows/pr-ai-validation.yml
+            scripts/pr-ai-validation.test.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Test PR validation data gathering
+        run: node --test scripts/pr-ai-validation.test.mjs
 
       - name: Cache Copilot CLI download
         uses: actions/cache@v4
@@ -119,12 +127,45 @@ jobs:
             };
             fs.writeFileSync('/tmp/pr-meta.json', JSON.stringify(prData, null, 2));
 
-            const { data: diff } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              mediaType: { format: 'diff' }
-            });
+            let diff;
+            try {
+              ({ data: diff } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                mediaType: { format: 'diff' }
+              }));
+            } catch (error) {
+              const errors = error?.response?.data?.errors;
+              if (error?.status !== 406 || !Array.isArray(errors) || !errors.some(
+                item => item?.resource === 'PullRequest' && item?.field === 'diff' && item?.code === 'too_large'
+              )) {
+                throw error;
+              }
+              // GitHub rejects oversized raw diffs before local sampling; use API patches, never execute PR code.
+              core.warning('Raw PR diff exceeds GitHub limits; sampling paginated file patches instead.');
+              const lines = [];
+              pages: for await (const { data: files } of github.paginate.iterator(github.rest.pulls.listFiles, {
+                owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number, per_page: 100
+              })) {
+                for (const file of files) {
+                  const unavailable = `[Patch unavailable: ${file.filename} (${file.status}, +${file.additions}/-${file.deletions})]`;
+                  if (!file.patch) {
+                    core.warning(unavailable);
+                  }
+                  const header = `diff --git a/${file.previous_filename || file.filename} b/${file.filename}`;
+                  lines.push(...`${header}\n${file.patch || unavailable}`.split('\n').slice(0, 4000 - lines.length));
+                  // Stop requesting pages as soon as the existing sample budget is filled.
+                  if (lines.length === 4000) {
+                    break pages;
+                  }
+                }
+              }
+              if (!lines.length) {
+                throw new Error('No files returned for the oversized PR diff.');
+              }
+              diff = lines.join('\n');
+            }
             const diffLines = (typeof diff === 'string' ? diff : '').split('\n').slice(0, 4000).join('\n');
             fs.writeFileSync('/tmp/pr-diff.txt', diffLines);
             console.log(`PR #${pr.number}: ${pr.title} (${prData.labels.join(', ')})`);
@@ -140,7 +181,11 @@ jobs:
           # Cap the diff sample by BYTES as well as lines: `head -2000` bounds line count but not
           # size, and recompiled/generated files can have very long single lines that bloat the
           # prompt (token cost + latency). 100 KB keeps the full prompt comfortably bounded.
-          PR_DIFF=$(head -2000 /tmp/pr-diff.txt | head -c 100000)
+          # Separate reads avoid producer SIGPIPE under Actions' strict Bash pipefail handling.
+          PR_DIFF_LINES=$(mktemp "$RUNNER_TEMP/pr-diff-lines.XXXXXX")
+          head -2000 /tmp/pr-diff.txt > "$PR_DIFF_LINES"
+          PR_DIFF=$(head -c 100000 "$PR_DIFF_LINES")
+          rm "$PR_DIFF_LINES"
 
           # Write combined prompt to file (avoids shell escaping issues)
           {

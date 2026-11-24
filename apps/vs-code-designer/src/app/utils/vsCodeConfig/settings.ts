@@ -211,7 +211,7 @@ export function isManagedIdentityAuthEnabled(): boolean {
  */
 export function isProjectConsistencyCheckEnabled(): boolean {
   try {
-    return getGlobalSetting<boolean>(enableProjectConsistencyChecksSetting) !== false;
+    return getWorkspaceSetting<boolean>(enableProjectConsistencyChecksSetting) !== false;
   } catch {
     return true;
   }

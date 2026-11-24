@@ -5,17 +5,28 @@ import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from './workflowGraphTraversal';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
+import {
+  containsIdTag,
+  labelCase,
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  getRecordEntry,
+  SUBGRAPH_TYPES,
+  equals,
+  isBuiltInAgentTool,
+} from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
-import { collapseFlowTree } from './helper';
+import { collapseFlowTree, isSingleHandoffAction } from './helper';
 import { useEdges } from '@xyflow/react';
+import { ErrorLevel } from '../operation/errorLevel';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
+import { getAgentRepetitionIdentity, getScopeRepetitionName } from '../../utils/loopRepetitions';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -235,6 +246,11 @@ const handoffToolAdjustment = (
   rootState: { workflow: WorkflowState; operations: OperationMetadataState }
 ): WorkflowNode => {
   const operations = rootState.workflow.operations;
+  const edges = [...(graph.edges ?? [])];
+  let edgeIds: Set<string> | undefined;
+  const handoffPairs = new Set(
+    edges.filter((edge) => edge.type === WORKFLOW_EDGE_TYPES.HANDOFF_EDGE).map((edge) => JSON.stringify([edge.source, edge.target]))
+  );
 
   // Iterate over graph, if any agent action tools only have a single handoff action, log it
   const handoffToolIds: string[] = [];
@@ -245,7 +261,7 @@ const handoffToolAdjustment = (
       for (const tool of tools ?? []) {
         const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
         // If the tool only has a single handoff action, add it to the list to be removed
-        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
+        if (isSingleHandoffAction(toolActions.map((action) => operations[action.id]))) {
           handoffToolIds.push(tool.id);
         }
         // If the tool has a handoff action at all, add a handoff edge to the graph
@@ -253,13 +269,36 @@ const handoffToolAdjustment = (
         if (firstHandoffAction) {
           const inputParameters = rootState.operations?.inputParameters?.[firstHandoffAction.id]?.parameterGroups?.default?.parameters;
           const handoffTarget = inputParameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
-          graph = {
-            ...graph,
-            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
-          };
+          const pair = JSON.stringify([child.id, handoffTarget]);
+          if (!handoffPairs.has(pair)) {
+            if (!edgeIds) {
+              edgeIds = new Set<string>();
+              const pending = [graph];
+              while (pending.length > 0) {
+                const node = pending.pop()!;
+                for (const existing of node.edges ?? []) {
+                  edgeIds.add(existing.id);
+                }
+                pending.push(...(node.children ?? []));
+              }
+            }
+            const edge = createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE);
+            let id = edge.id;
+            let suffix = 1;
+            while (edgeIds.has(id)) {
+              id = `${edge.id}::handoff:${suffix++}`;
+            }
+            edges.push({ ...edge, id });
+            edgeIds.add(id);
+            handoffPairs.add(pair);
+          }
         }
       }
     }
+  }
+
+  if (edges.length !== (graph.edges?.length ?? 0)) {
+    graph = { ...graph, edges };
   }
 
   // Remove handoff tools from graph
@@ -352,6 +391,49 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
 
 // Memoized index of all workflow nodes by ID — only rebuilds when graph reference changes
 const selectNodeIndex = createSelector([(state: RootState) => state.workflow.graph], buildNodeIndex);
+
+export const useBranchValidationCount = (branchId: string | undefined) => {
+  const selectCount = useMemo(
+    () =>
+      createSelector(
+        [
+          (state: RootState) => (branchId === undefined ? undefined : selectNodeIndex(state).get(branchId)),
+          (state: RootState) => state.workflow.flowErrors,
+          (state: RootState) => state.operations.errors,
+          (state: RootState) => state.operations.inputParameters,
+          (state: RootState) => state.settings.validationErrors,
+        ],
+        (branch, flowErrors, operationErrors, inputs, settings) => {
+          // Use the unpruned tree so collapse does not hide validation. Ignore synthetic headers/footers
+          // and count each real descendant once, even if several validation sources flag it.
+          const pending = [...(branch?.children ?? [])];
+          let count = 0;
+          while (pending.length) {
+            const child = pending.pop()!;
+            if (child.type === WORKFLOW_NODE_TYPES.HIDDEN_NODE || containsIdTag(child.id)) {
+              continue;
+            }
+            const id = child.id;
+            const errors = getRecordEntry(operationErrors, id);
+            if (
+              getRecordEntry(flowErrors, id)?.length ||
+              getRecordEntry(settings, id)?.length ||
+              Object.values(errors ?? {}).some((error) => error && error.level !== ErrorLevel.DynamicOutputs) ||
+              Object.values(getRecordEntry(inputs, id)?.parameterGroups ?? {}).some(({ parameters }) =>
+                parameters.some((parameter) => parameter.validationErrors?.some(Boolean))
+              )
+            ) {
+              count++;
+            }
+            pending.push(...(child.children ?? []));
+          }
+          return count;
+        }
+      ),
+    [branchId]
+  );
+  return useSelector(selectCount);
+};
 
 export const useWorkflowNode = (actionId?: string) => {
   return useSelector((state: RootState) => {
@@ -569,10 +651,21 @@ export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefi
     )
   );
 
-export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
-  useSelector(
-    useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData), [id])
-  );
+export const getNodeRunData = (state: WorkflowState, id: string): NodesMetadata[string]['runData'] => {
+  const node = getRecordEntry(state.nodesMetadata, id);
+  // Keep the previous tool result in state for a return to its cached repetition, but not in the open details panel.
+  if (
+    node?.agentRepetitionIdentity &&
+    isBuiltInAgentTool(id) &&
+    node.agentRepetitionIdentity !== getSelectedAgentRepetitionIdentity(state, node.graphId)
+  ) {
+    return undefined;
+  }
+  return node?.runData;
+};
+
+export const useRunData = (id: string): NodesMetadata[string]['runData'] =>
+  useSelector(useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getNodeRunData(state, id)), [id]));
 
 export const useToolRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(
@@ -678,22 +771,28 @@ export const useToolRunIndex = (id: string | undefined): number | undefined => {
   );
 };
 
+const getParentNodeId = (nodesMetadata: NodesMetadata, id: string | undefined): string | undefined => {
+  const parentId = getRecordEntry(nodesMetadata, id)?.parentNodeId;
+  return parentId?.includes('elseActions') || parentId?.includes('actions')
+    ? getRecordEntry(nodesMetadata, parentId)?.parentNodeId
+    : parentId;
+};
+
+export const getSelectedAgentRepetitionIdentity = (state: WorkflowState, agentNodeId: string): string | undefined => {
+  const repetitionIndex = getRecordEntry(state.nodesMetadata, agentNodeId)?.runIndex;
+  const parentId = getParentNodeId(state.nodesMetadata, agentNodeId);
+  return getAgentRepetitionIdentity({
+    runId: state.runInstance?.id,
+    ownerNodeId: agentNodeId,
+    repetitionName: getScopeRepetitionName(repetitionIndex),
+    repetitionIndex,
+    parentStatus: getRecordEntry(state.nodesMetadata, parentId)?.runData?.status,
+  });
+};
+
 export const useParentNodeId = (id: string | undefined): string | undefined => {
   return useSelector(
-    useMemo(
-      () =>
-        createSelector(getWorkflowState, (state: WorkflowState) => {
-          if (!id) {
-            return undefined;
-          }
-          const parentId = getRecordEntry(state.nodesMetadata, id)?.parentNodeId;
-          if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
-            return getRecordEntry(state.nodesMetadata, parentId)?.parentNodeId;
-          }
-          return parentId;
-        }),
-      [id]
-    )
+    useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getParentNodeId(state.nodesMetadata, id)), [id])
   );
 };
 
@@ -870,12 +969,7 @@ const selectHandoffEdges = createSelector([(state: RootState) => state.workflow.
   const handoffEdges: WorkflowEdge[] = [];
   for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
     for (const agent of Object.values(metadata.handoffs ?? {})) {
-      handoffEdges.push({
-        id: `${nodeId}-${agent}`,
-        source: nodeId,
-        target: agent,
-        type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-      });
+      handoffEdges.push(createWorkflowEdge(nodeId, agent, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE));
     }
   }
   return handoffEdges;

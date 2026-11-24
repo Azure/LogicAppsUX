@@ -1,5 +1,8 @@
 # Skill: ExTester UI E2E Tests for VS Code Logic Apps Extension
 
+The extension provisions .NET 10 for new custom-code projects (fallback SDK `10.0.403`).
+Bundle-feed SDK requirements are retained alongside .NET 10 so existing .NET 8 workspaces remain supported.
+
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
 > **Last updated**: 2026-11-09 (shared authoring guidance; the ExTester status above was not revalidated)
@@ -215,7 +218,6 @@ Current manifest-backed scenarios:
 | `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
 | `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
 | `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
-| `p412-bundlerepair` | Standard Stateful `.code-workspace` |
 
 No Phase 4.1 fixture manifest required: `p40-nonlogicapp`, `p41a-fixtures`, `p41b-createworkspace-behavior`, `p48b-conversioncreate`, and standalone `p48d-conversionyes`. The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
 
@@ -275,7 +277,7 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 | `src/test/ui/extesterRuntime.test.ts` | Local-only pure Mocha controls for the owned ExTester cache layout, missing/ambiguous CLI paths, CLI environment sanitization, and seeded Code/ChromeDriver setup wiring. `E2E_MODE=extesterruntimeonly` short-circuits before setup; no downloads or native launch. Not a native lifecycle/CI acceptance verdict. |
 | `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
 | `src/test/ui/customCodeDotNetVersionCreate.test.ts` | Custom-code .NET picker/create phase. The `net10` target drives the real Create Workspace webview and creates a Stateful workspace; the `net8` target asserts `.NET 8` is hidden from the picker. Phase 4.15A / `E2E_MODE=customcodedotnetonly`. See §20. |
-| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building while Workflows SDK 1.4.0 is pending release. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
+| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building or running the project. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -327,7 +329,7 @@ You can also use the root VS Code Run and Debug menu:
 
 - `E2E: p49 NuGet debug conversion` runs `E2E_MODE=nugetdebugonly`.
 - `E2E: Select mode (run-e2e)` opens a picker for supported `E2E_MODE` values.
-- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, `bundlerepaironly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
+- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
 
 ### Build Scripts
 
@@ -454,10 +456,10 @@ And `run-e2e.ts` removes any stale auto-updated versions of our extension on sta
 dist/test-extensions/
 ├── extensions.json                              ← VS Code reads this
 ├── ms-azuretools.vscode-azurelogicapps-5.110.0/ ← OUR extension (copied from dist/)
-├── azurite.azurite-3.35.0/                      ← dependency
+├── azurite.azurite-3.35.0/                      ← extension pack member
 ├── ms-azuretools.vscode-azureresourcegroups-.../ ← dependency
-├── ms-dotnettools.csharp-.../                   ← dependency
-└── ms-dotnettools.csdevkit-.../                  ← dependency
+├── ms-dotnettools.csharp-.../                   ← extension pack member
+└── ms-dotnettools.csdevkit-.../                  ← extension pack member
 ```
 
 ## 5. Known Issues & Pitfalls (Debugging Guide)
@@ -690,13 +692,13 @@ Fluent UI Dropdown renders a `<button role="combobox">` as the trigger. Options 
 ### Webview iframe switching
 Must call `webview.switchToFrame(timeout)` before any element interaction. Must call `webview.switchBack()` before interacting with VS Code chrome.
 
-## 8. Extension Dependencies
+## 8. Extension Dependencies and Pack Members
 
 These are installed from the marketplace into `test-extensions/`:
-1. `azurite.azurite`
-2. `ms-azuretools.vscode-azureresourcegroups`
-3. `ms-dotnettools.csharp`
-4. `ms-dotnettools.csdevkit`
+1. `azurite.azurite` (`extensionPack`)
+2. `ms-azuretools.vscode-azureresourcegroups` (`extensionDependencies`)
+3. `ms-dotnettools.csharp` (`extensionPack`)
+4. `ms-dotnettools.csdevkit` (`extensionPack`)
 
 ## 9. Timing Constants
 
@@ -1303,8 +1305,8 @@ not in `timeout-minutes`.
 
 Phase 4.15 covers the CustomCode wizard's framework availability and .NET 10 workspace
 generation. The `net10` target verifies the Logic App root `local.settings.json`, generated
-project template, and workflow shape. It intentionally does not build or run the project
-while `Microsoft.Azure.Workflows.WebJobs.Sdk` 1.4.0 is pending release. The `net8` target
+project template, and workflow shape. It intentionally does not build or run the project;
+.NET 10 build/run lifecycle coverage is outside this phase's scope. The `net8` target
 verifies that `.NET 8` does not appear in the custom-code framework picker. Existing .NET 8
 project detection and compatibility behavior remains covered outside the new-project wizard.
 
@@ -1313,9 +1315,8 @@ project detection and compatibility behavior remains covered outside the new-pro
   workspace. For `net8`, it opens the framework dropdown and asserts `.NET 8` is absent.
 - `src/test/ui/customCodeDotNetVersionAssert.test.ts` (4.15B) independently recomputes the
   generated net10 workspace layout and asserts the dotnet-version setting, `net10.0`
-  target framework, Workflows SDK 1.4.0 package reference, Request trigger, and generated
-  InvokeFunction action. It does not build or start the workspace until Workflows SDK
-  1.4.0 is released.
+  target framework, Workflows SDK 1.4.1 package reference, Request trigger, and generated
+  InvokeFunction action. It does not build or start the workspace.
 
 **No shared manifest.** Unlike the declarative `scenarios[]` table entries, this pair (like
 Azurite and Codeful debug before it) uses **fixed, deterministic temp paths**
@@ -1332,8 +1333,9 @@ The separate Phase 4.1 shared CustomCode fixture is still consumed by
 `p42-customcode` and `p43-customcode` for existing-project debug/run compatibility.
 `createWorkspace.fixtures.test.ts` creates it through the public .NET 10 wizard option,
 then `run-e2e.ts` normalizes only that shared fixture to the existing .NET 8 project
-template and setting before downstream scenarios consume it. Remove that normalization
-when Workflows SDK 1.4.0 is released and the runtime lifecycle moves to .NET 10.
+template and setting before downstream scenarios consume it. That normalization preserves
+existing-project .NET 8 lifecycle coverage; moving runtime lifecycle coverage to .NET 10
+is a separate change.
 
 **Orchestration**: `runCustomCodeDotNetPhasesForTarget()` / `runCustomCodeDotNetPhases()`
 in `run-e2e.ts` mirror `runAzuriteReadinessPhasesForKind()` / `runAzuriteReadinessPhases()`

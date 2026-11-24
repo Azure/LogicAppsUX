@@ -1,0 +1,75 @@
+.sb-preview {
+	box-sizing: border-box;
+	min-height: 12rem;
+	padding: 2rem;
+	background: var(--colorNeutralBackground1);
+	color: var(--colorNeutralForeground1);
+}
+
+.sb-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1.5rem;
+	max-width: 100%;
+}
+
+.sb-grid {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 2rem;
+	max-width: 100%;
+}
+
+.sb-example {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1rem;
+	margin: 0;
+	padding-block: 0.75rem;
+}
+
+.sb-caption,
+.sb-note {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--colorNeutralForeground2);
+}
+
+.sb-caption {
+	font-weight: 600;
+}
+
+.sb-bounded {
+	width: min(100%, 24rem);
+}
+
+.sb-slot {
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+}
+
+.sb-glyph {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 1.5rem;
+}
+
+.sb-frame-body {
+	padding-block: 1rem;
+}
+
+.sb-hover-stage {
+	padding-block-start: 12rem;
+}
+
+.sb-preview button:focus-visible {
+	outline: 2px solid var(--colorStrokeFocus2);
+	outline-offset: 3px;
+}

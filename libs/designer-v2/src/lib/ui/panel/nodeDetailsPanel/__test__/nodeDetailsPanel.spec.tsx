@@ -175,7 +175,7 @@ describe('NodeDetailsPanel', () => {
     mocks.hostAvailable = true;
     mocks.monitorAvailable = true;
     mocks.state.workflow.operations.Action.type = 'Http';
-    mocks.state.operations.operationInfo.Action.type = 'Http';
+    mocks.state.operations.operationInfo = { Action: { type: 'Http' } };
     mocks.state.operations.inputParameters = {};
     vi.mocked(useRawInputsOutputs, { partial: true }).mockReturnValue({ data: undefined });
     vi.mocked(usePanelNodeData).mockImplementation((nodeId) => (nodeId ? nodeData(nodeId) : undefined));
@@ -183,6 +183,27 @@ describe('NodeDetailsPanel', () => {
   });
 
   afterEach(cleanup);
+
+  it.each([false, true])('opens before operation info loads and updates when it arrives (isTrigger=%s)', (isTrigger) => {
+    mocks.isTrigger = isTrigger;
+    mocks.state.operations.operationInfo = {} as typeof mocks.state.operations.operationInfo;
+    const { rerender } = mountPanel();
+
+    expect(panelProps()).toMatchObject({ node: { nodeId: 'Action' }, isTrigger, showTriggerInfo: false });
+    expect(within(screen.getByTestId('selected-menu')).getByText('Delete')).toBeTruthy();
+    expect(panelProps().nodeHeaderItems?.find((item) => item.key === 'delete')?.props.operationType).toBeUndefined();
+
+    const operationType = isTrigger ? 'Request' : 'Http';
+    mocks.state.operations.operationInfo = { Action: { type: operationType } };
+    rerender(
+      <IntlProvider locale="en">
+        <NodeDetailsPanel {...props} />
+      </IntlProvider>
+    );
+
+    expect(panelProps().showTriggerInfo).toBe(isTrigger);
+    expect(panelProps().nodeHeaderItems?.find((item) => item.key === 'delete')?.props.operationType).toBe(operationType);
+  });
 
   it('opts v2 into navigation and passes selected/pinned data and panel options', () => {
     mocks.alternate = { nodeId: 'Pinned', persistence: 'pinned' };

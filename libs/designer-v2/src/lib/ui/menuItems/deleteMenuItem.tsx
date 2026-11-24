@@ -1,4 +1,4 @@
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Delete24Filled, Delete24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -17,6 +17,7 @@ export const DeleteMenuItem = (props: DeleteMenuItemProps) => {
 
   const intl = useIntl();
   const readOnly = useReadOnly();
+  const monitoring = useMonitoringView();
 
   const deleteText = intl.formatMessage({
     defaultMessage: 'Delete',
@@ -30,7 +31,7 @@ export const DeleteMenuItem = (props: DeleteMenuItemProps) => {
     description: '"Delete" keyboard command text',
   });
 
-  const isDisabled = readOnly;
+  const isDisabled = readOnly || monitoring;
 
   const menuItem = (
     <MenuItem

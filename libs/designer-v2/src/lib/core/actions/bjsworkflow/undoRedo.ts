@@ -5,6 +5,7 @@ import { setStateAfterUndoRedo } from '../../state/global';
 import { changePanelNode, setSelectedPanelActiveTab } from '../../state/panel/panelSlice';
 import { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../../state/undoRedo/undoRedoSlice';
 import type { RootState } from '../../store';
+import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
 import {
   getCompressedSlicesFromRootState,
   getEditedPanelNode,
@@ -47,6 +48,9 @@ export const storeStateToUndoRedoHistory = createAsyncThunk(
 
 export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch, getState }): Promise<void> => {
   const currentRootState = getState() as RootState;
+  if (isWorkflowEditLocked(currentRootState.designerOptions)) {
+    return;
+  }
   const undoRedoState = currentRootState.undoRedo;
   if (undoRedoState.past.length < 1) {
     // Undo is not possible, button should not have been enabled
@@ -60,7 +64,7 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
 
   const previousStateHistoryItem = undoRedoState.past[undoRedoState.past.length - 1];
   const previousDecompressedState = getRootStateFromCompressedSlices(previousStateHistoryItem.compressedSlices, currentRootState);
-  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState, true);
 
   // Change current state to previous state
   dispatch(setStateAfterUndoRedo(previousDecompressedState));
@@ -85,6 +89,9 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
 
 export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch, getState }): Promise<void> => {
   const currentRootState = getState() as RootState;
+  if (isWorkflowEditLocked(currentRootState.designerOptions)) {
+    return;
+  }
   const undoRedoState = currentRootState.undoRedo;
   if (undoRedoState.future.length < 1) {
     // Redo is not possible, button should not have been enabled.
@@ -98,7 +105,7 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
 
   const nextStateHistoryItem = undoRedoState.future[0];
   const nextDecompressedState = getRootStateFromCompressedSlices(nextStateHistoryItem.compressedSlices, currentRootState);
-  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState, true);
 
   // Change current state to next state
   dispatch(setStateAfterUndoRedo(nextDecompressedState));

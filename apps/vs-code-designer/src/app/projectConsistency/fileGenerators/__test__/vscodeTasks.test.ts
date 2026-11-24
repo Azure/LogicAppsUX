@@ -130,12 +130,12 @@ describe('generateTasksJson', () => {
       targetFramework: TargetFramework.Net8,
     };
 
-    it('should generate dotnet tasks with generateDebugSymbols', () => {
+    it('should generate dotnet tasks without the bundle-based debug symbol task', () => {
       const result = generateTasksJson(baseConfig);
 
-      expect(result.tasks).toHaveLength(6);
+      expect(result.tasks).toHaveLength(5);
       const labels = result.tasks.map((t) => t.label);
-      expect(labels).toEqual(['generateDebugSymbols', 'clean', 'build', 'clean release', 'publish', 'func: host start']);
+      expect(labels).toEqual(['clean', 'build', 'clean release', 'publish', 'func: host start']);
     });
 
     it('should have correct clean release args with clean subcommand', () => {
@@ -192,21 +192,8 @@ describe('generateTasksJson', () => {
         targetFramework: 'net8.0' as TargetFramework,
       });
 
-      expect(result.tasks.map((task) => task.label)).toEqual([
-        'generateDebugSymbols',
-        'clean',
-        'build',
-        'clean release',
-        'publish',
-        'func: host start',
-      ]);
-      expect(result.inputs).toEqual([
-        {
-          id: 'getDebugSymbolDll',
-          type: 'command',
-          command: 'azureLogicAppsStandard.getDebugSymbolDll',
-        },
-      ]);
+      expect(result.tasks.map((task) => task.label)).toEqual(['clean', 'build', 'clean release', 'publish', 'func: host start']);
+      expect(result.inputs).toBeUndefined();
       const funcTask = result.tasks.find((task) => task.label === 'func: host start');
       expect(funcTask).toMatchObject({
         type: 'shell',
@@ -241,11 +228,11 @@ describe('generateTasksJson', () => {
       });
     });
 
-    it('should include inputs with getDebugSymbolDll', () => {
+    it('should rely on the NuGet package build target for debug symbols', () => {
       const result = generateTasksJson(baseConfig);
 
-      expect(result.inputs).toHaveLength(1);
-      expect(result.inputs[0].id).toBe('getDebugSymbolDll');
+      expect(result.tasks.some((task) => task.label === 'generateDebugSymbols')).toBe(false);
+      expect(result.inputs).toBeUndefined();
     });
   });
 
@@ -255,12 +242,20 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: TargetFramework.Net8,
+        targetFramework: TargetFramework.Net10,
       });
 
       expect(result.tasks).toHaveLength(5);
       const labels = result.tasks.map((t) => t.label);
       expect(labels).toEqual(['clean', 'build', 'clean release', 'publish', 'func: host start']);
+      const funcTask = result.tasks.find((task) => task.label === 'func: host start');
+      expect(funcTask).toMatchObject({
+        dependsOn: 'build',
+        options: { cwd: '${workspaceFolder}/bin/Debug/net10.0' },
+        windows: { options: { cwd: 'bin/Debug/net10.0' } },
+        linux: { options: { cwd: 'bin/Debug/net10.0' } },
+        osx: { options: { cwd: 'bin/Debug/net10.0' } },
+      });
     });
 
     it('should not include inputs for codeful projects', () => {
@@ -268,7 +263,7 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: TargetFramework.Net8,
+        targetFramework: TargetFramework.Net10,
       });
 
       expect(result.inputs).toBeUndefined();

@@ -31,6 +31,7 @@ import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactio
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
 import { Label } from '../../label';
+import { InfoDot } from '../../infoDot';
 import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
@@ -72,6 +73,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   agentUrlMetadata?: AgentUrlMetadata;
   defaultValue?: string;
   placeholder?: string;
+  helpText?: string;
   label: string;
   readOnly?: boolean;
   tokenEditor: true;
@@ -126,7 +128,10 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
     <>
       {!hideLabel && (
         <div className="msla-input-parameter-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Label id={labelId} isRequiredField={props.required} text={props.label} />
+          <div className={styles.labelWithHelp}>
+            <Label id={labelId} isRequiredField={props.required} text={props.label} />
+            {props.helpText ? <InfoDot title={props.label} description={props.helpText} /> : null}
+          </div>
           {props.subMenu && cloneElement(props.subMenu, { setShowSubComponent })}
         </div>
       )}

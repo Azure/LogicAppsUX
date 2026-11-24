@@ -96,6 +96,8 @@ export const ReviewCreateStep: React.FC = () => {
         return intlText.AGENT_TITLE;
       case 'Stateful-Codeful':
         return intlText.STATEFUL_TITLE;
+      case 'Stateless-Codeful':
+        return intlText.STATELESS_TITLE;
       default:
         return type || intlText.NOT_SPECIFIED;
     }

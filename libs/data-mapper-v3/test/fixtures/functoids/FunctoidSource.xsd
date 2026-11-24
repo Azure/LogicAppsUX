@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://Test.FunctoidSource" xmlns:b="http://schemas.microsoft.com/BizTalk/2003" targetNamespace="http://Test.FunctoidSource" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Num1" type="xs:int" />
+        <xs:element name="Num2" type="xs:int" />
+        <xs:element name="Text1" type="xs:string" />
+        <xs:element name="Text2" type="xs:string" />
+        <xs:element name="Angle" type="xs:double" />
+        <xs:element name="Code" type="xs:int" />
+        <xs:element name="Ch" type="xs:string" />
+        <xs:element name="HexNum" type="xs:int" />
+        <xs:element name="StartDate" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="Items">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Value" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

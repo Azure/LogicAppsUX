@@ -1,0 +1,141 @@
+import { forwardRef } from 'react';
+import type { ReactNode } from 'react';
+import { makeStyles } from '@fluentui/react-components';
+import { ArrowRepeatAllFilled, ArrowRepeatAllRegular } from '@fluentui/react-icons';
+import { NodeCard } from '../primitives/NodeCard';
+import { NodeCardBody } from '../primitives/NodeCardBody';
+import { NodeHandle, NodeInputHandle, NodeOutputHandles } from '../primitives/NodeHandle';
+import { NodeIconTile } from '../primitives/NodeIconTile';
+import { NodeText } from '../primitives/NodeText';
+import type { LoopNodeCardStrings } from '../strings';
+import { defaultNodeStrings } from '../strings';
+import type { NodeHandleVariant } from '../types';
+import { resolveCardDensity, resolveNodeIcons } from './shared';
+import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
+import { useNodeCount } from '../countLabel';
+import { nodeMetrics } from '../metrics';
+
+const END_OUTPUTS = ['neutral', 'neutral'] as const;
+const NEXT_OUTPUT = ['neutral'] as const;
+const DEFAULT_ICONS = { icon: <ArrowRepeatAllRegular />, selectedIcon: <ArrowRepeatAllFilled /> };
+const useStyles = makeStyles({
+  bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 1 },
+  pagerRow: {
+    position: 'relative',
+    height: `${nodeMetrics.iterationPager.height}px`,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'start',
+  },
+});
+
+/** end: body/done outputs; bottom: body below and next trailing; none: next only. */
+export type LoopBodyPlacement = 'end' | 'bottom' | 'none';
+export interface LoopNodeCardProps extends Omit<BaseNodeCardProps, 'strings'>, CompactNodeCardProps {
+  handles?: boolean;
+  bodyPlacement?: LoopBodyPlacement;
+  inputVariant?: NodeHandleVariant;
+  inputSlot?: ReactNode;
+  /** [body, done] for end; [next] otherwise. */
+  outputSlots?: readonly ReactNode[];
+  bodySlot?: ReactNode;
+  /** Host control on the bottom edge, replacing the bottom body dot. */
+  bodyToggle?: ReactNode;
+  /** Optional vertical monitoring row; the next port belongs below the controls. */
+  iterationPager?: ReactNode;
+  strings?: LoopNodeCardStrings;
+}
+
+/** Canonical loop card; the host supplies body contents and optional run paging. */
+export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(function LoopNodeCard(
+  {
+    title,
+    subtitle,
+    subtitleKind,
+    countLabel,
+    icon,
+    selectedIcon,
+    iconTone,
+    iconArtwork,
+    selected,
+    status,
+    statusDetail,
+    bodyPlacement = 'end',
+    inputVariant,
+    inputSlot,
+    outputSlots,
+    bodySlot,
+    bodyToggle,
+    iterationPager,
+    strings = defaultNodeStrings,
+    handles = true,
+    density,
+    titleLines,
+    prioritizeTitle,
+    ...rest
+  },
+  ref
+) {
+  const styles = useStyles();
+  const testData = status === 'mock';
+  const layout = resolveCardDensity({ density, titleLines });
+  const bottom =
+    bodyToggle != null ? (
+      <span className={styles.bottom}>{bodyToggle}</span>
+    ) : bodyPlacement === 'bottom' ? (
+      <NodeHandle className={styles.bottom}>{bodySlot}</NodeHandle>
+    ) : null;
+  const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
+  const outputs = handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null;
+  return (
+    <NodeCard
+      {...rest}
+      aria-describedby={nodeCount.describedBy}
+      ref={ref}
+      width="compact"
+      {...(density === 'compact' && { size: layout.size })}
+      selected={selected}
+      status={status}
+      statusDetail={statusDetail}
+      strings={strings}
+      data-node-card="foreach"
+      data-body-placement={bodyPlacement}
+      after={
+        iterationPager ? (
+          <>
+            {rest.after}
+            <div className={styles.pagerRow} data-loop-pager-row>
+              {iterationPager}
+              {outputs}
+            </div>
+          </>
+        ) : (
+          rest.after
+        )
+      }
+    >
+      <NodeCardBody density={layout.body} testData={testData} testDataLabel={strings.status.mock}>
+        {handles ? <NodeInputHandle variant={inputVariant}>{inputSlot}</NodeInputHandle> : null}
+        <NodeIconTile
+          category="control"
+          size={layout.tile}
+          selected={selected}
+          testData={testData}
+          tone={iconTone}
+          artwork={iconArtwork}
+          {...resolveNodeIcons({ icon, selectedIcon }, DEFAULT_ICONS)}
+        />
+        <NodeText
+          title={title}
+          subtitle={subtitle ?? strings.loop.foreach}
+          subtitleKind={subtitleKind}
+          titleLines={layout.titleLines}
+          prioritizeTitle={prioritizeTitle}
+          {...nodeCount.textProps}
+        />
+        {iterationPager ? null : outputs}
+      </NodeCardBody>
+      {handles ? bottom : null}
+    </NodeCard>
+  );
+});

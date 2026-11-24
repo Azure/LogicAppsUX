@@ -10,7 +10,7 @@ import type {
   XYPosition,
   OnSelectionChangeParams,
 } from '@xyflow/react';
-import { BezierEdge, ReactFlow, SelectionMode } from '@xyflow/react';
+import { ReactFlow, SelectionMode, useUpdateNodeInternals } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import {
@@ -35,9 +35,11 @@ import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/stat
 import { useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE, getNodePresentation } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
-import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useLoopGroupHover } from './CustomNodes/useLoopGroupHover';
+import { MergeHoverContext } from './connections/mergeHover';
+import { useIsDarkMode, useReadOnly, useSharedNodeUi } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
@@ -56,7 +58,10 @@ import NoteNode from './CustomNodes/NoteNode';
 import ButtonEdge from './connections/edge';
 import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
+import { OnlyEdge } from './connections/onlyEdge';
 import { NodeNavigation } from './NodeNavigation';
+import { designerUiTokens, useNodeOverviewStyles } from '@microsoft/designer-ui-v2';
+import { DESIGNER_MIN_ZOOM, fitSharedDesignerViewport } from './designerViewport';
 
 const DesignerReactFlow = (props: any) => {
   const { canvasRef } = props;
@@ -65,6 +70,9 @@ const DesignerReactFlow = (props: any) => {
   const isInitialized = useNodesInitialized();
 
   const isReadOnly = useReadOnly();
+  const sharedOption = useSharedNodeUi();
+  const loopGroupHover = useLoopGroupHover(sharedOption);
+  const [hoveredMerge, setHoveredMerge] = useState<string>();
   const isEmpty = useIsGraphEmpty();
 
   type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
@@ -84,11 +92,16 @@ const DesignerReactFlow = (props: any) => {
     BUTTON_EDGE: ButtonEdge,
     HEADING_EDGE: ButtonEdge,
     HANDOFF_EDGE: HandoffEdge,
-    ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
+    ONLY_EDGE: OnlyEdge,
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
   const [actionNodes, edges, flowSize] = useLayout();
+  const updateNodeInternals = useUpdateNodeInternals();
+  useEffect(() => {
+    // XYFlow caches real port rectangles; accepted family extents and lane order can move them.
+    updateNodeInternals(actionNodes.map((node) => node.id));
+  }, [actionNodes, updateNodeInternals]);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
@@ -111,6 +124,11 @@ const DesignerReactFlow = (props: any) => {
     }
     if (!hasFitViewRun.current && actionNodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
+        if (canvasRef.current && actionNodes.some((node) => (node.data.presentation as { shared?: boolean } | undefined)?.shared)) {
+          fitSharedDesignerViewport(reactFlowInstance, canvasRef.current, flowSize);
+          hasFitViewRun.current = true;
+          return;
+        }
         const defaultZoom = 1.0;
         const topNode = actionNodes.reduce((top, node) => ((node.position?.y ?? 0) < (top.position?.y ?? 0) ? node : top));
 
@@ -126,7 +144,7 @@ const DesignerReactFlow = (props: any) => {
         hasFitViewRun.current = true;
       });
     }
-  }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions]);
+  }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions, canvasRef, flowSize]);
 
   const emptyWorkflowPlaceholderNodes = useMemo(
     () => [
@@ -136,10 +154,10 @@ const DesignerReactFlow = (props: any) => {
         data: { label: 'newWorkflowTrigger' },
         parentId: undefined,
         type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-        style: DEFAULT_NODE_SIZE,
+        style: getNodePresentation(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE, sharedOption).size ?? DEFAULT_NODE_SIZE,
       } as Node,
     ],
-    []
+    [sharedOption]
   );
 
   /// Position dispatch debounce (Only applicable for notes currently)
@@ -611,7 +629,8 @@ const DesignerReactFlow = (props: any) => {
               },
             })
           );
-        } else {
+        } else if (!(actionNodes.find((node) => node.id === change.id)?.data.presentation as { shared?: boolean } | undefined)?.shared) {
+          // Shared geometry is derived, not workflow state. Persisting it would leak into rollback.
           actionChanges.push(change);
         }
       }
@@ -619,7 +638,7 @@ const DesignerReactFlow = (props: any) => {
         dispatch(updateNodeSizes(actionChanges));
       }
     },
-    [dispatch, notes]
+    [dispatch, notes, actionNodes]
   );
 
   const handlePositionChanges = useCallback(
@@ -659,63 +678,97 @@ const DesignerReactFlow = (props: any) => {
   );
 
   const isDarkMode = useIsDarkMode();
+  const overviewStyles = useNodeOverviewStyles();
+  // Switch only paint at overview zoom. Keeping node dimensions fixed preserves the fitted viewport and port positions.
+  const overview = sharedOption && zoom < 0.5;
 
   return (
-    <ReactFlow
-      colorMode={isDarkMode ? 'dark' : 'light'}
-      ref={canvasRef}
-      onInit={onInit}
-      nodeTypes={nodeTypes}
-      nodes={allNodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      nodesConnectable={true}
-      nodesDraggable={false}
-      nodesFocusable={false}
-      edgesFocusable={false}
-      edgeTypes={edgeTypes}
-      elementsSelectable={true}
-      selectionOnDrag={isSelectionKeyHeld}
-      selectionMode={SelectionMode.Full}
-      selectionKeyCode={null}
-      multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
-      panOnDrag={!isSelectionKeyHeld}
-      onSelectionChange={onSelectionChange}
-      onSelectionStart={onSelectionStart}
-      onSelectionEnd={onSelectionEnd}
-      panOnScroll={true}
-      deleteKeyCode={null}
-      zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-      translateExtent={clampPan ? translateExtent : undefined}
-      onMove={(_e, viewport) => setZoom(viewport.zoom)}
-      connectionLineComponent={DraftEdge}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
-      isValidConnection={isValidConnection}
-      connectionRadius={0}
-      minZoom={0.05}
-      snapGrid={[20, 20]}
-      snapToGrid={true}
-      onPaneClick={onPaneClick}
-      onPaneContextMenu={onPaneContextMenu}
-      disableKeyboardA11y={true}
-      onlyRenderVisibleElements={!userInferredTabNavigation}
-      proOptions={{
-        account: 'paid-sponsor',
-        hideAttribution: true,
-      }}
-    >
-      <NodeNavigation
-        canvasRef={canvasRef}
-        onNavigate={() => {
-          if (!userInferredTabNavigation) {
-            // Mount off-screen cards before dispatching the one-shot canvas focus request.
-            flushSync(() => setUserInferredTabNavigation(true));
-          }
+    <MergeHoverContext.Provider value={sharedOption ? hoveredMerge : undefined}>
+      <ReactFlow
+        className={overview ? overviewStyles.canvas : undefined}
+        data-node-overview={overview || undefined}
+        colorMode={isDarkMode ? 'dark' : 'light'}
+        // The flow root, xy variable and <Background> share one canvas role so the pane never shows two tones;
+        // outside DesignerUiScope the role falls back to Background1.
+        style={sharedOption ? { backgroundColor: designerUiTokens.canvasBackground } : undefined}
+        ref={canvasRef}
+        {...loopGroupHover}
+        onPointerMoveCapture={
+          sharedOption
+            ? (event) => {
+                loopGroupHover?.onPointerMoveCapture(event);
+                const ownerWindow = event.currentTarget.ownerDocument.defaultView;
+                const merge =
+                  event.buttons === 0 && event.pointerType !== 'touch' && ownerWindow && event.target instanceof ownerWindow.Element
+                    ? event.target.closest('[data-merge-add-source]')
+                    : null;
+                setHoveredMerge(
+                  merge && event.currentTarget.contains(merge) ? (merge.getAttribute('data-merge-add-source') ?? undefined) : undefined
+                );
+              }
+            : undefined
+        }
+        onPointerLeave={() => {
+          loopGroupHover?.onPointerLeave();
+          setHoveredMerge(undefined);
         }}
-      />
-      {props.children}
-    </ReactFlow>
+        onPointerCancel={() => {
+          loopGroupHover?.onPointerCancel();
+          setHoveredMerge(undefined);
+        }}
+        onInit={onInit}
+        nodeTypes={nodeTypes}
+        nodes={allNodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        nodesConnectable={true}
+        nodesDraggable={false}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        edgeTypes={edgeTypes}
+        elementsSelectable={true}
+        selectionOnDrag={isSelectionKeyHeld}
+        selectionMode={SelectionMode.Full}
+        selectionKeyCode={null}
+        multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
+        panOnDrag={!isSelectionKeyHeld}
+        onSelectionChange={onSelectionChange}
+        onSelectionStart={onSelectionStart}
+        onSelectionEnd={onSelectionEnd}
+        panOnScroll={true}
+        deleteKeyCode={null}
+        zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+        translateExtent={clampPan ? translateExtent : undefined}
+        onMove={(_e, viewport) => setZoom(viewport.zoom)}
+        connectionLineComponent={DraftEdge}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
+        isValidConnection={isValidConnection}
+        connectionRadius={0}
+        minZoom={DESIGNER_MIN_ZOOM}
+        snapGrid={[20, 20]}
+        snapToGrid={true}
+        onPaneClick={onPaneClick}
+        onPaneContextMenu={onPaneContextMenu}
+        disableKeyboardA11y={true}
+        onlyRenderVisibleElements={!userInferredTabNavigation}
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+      >
+        <NodeNavigation
+          canvasRef={canvasRef}
+          onNavigate={() => {
+            if (!userInferredTabNavigation) {
+              // Mount off-screen cards before dispatching the one-shot canvas focus request.
+              flushSync(() => setUserInferredTabNavigation(true));
+            }
+          }}
+        />
+        {props.children}
+      </ReactFlow>
+    </MergeHoverContext.Provider>
   );
 };
 

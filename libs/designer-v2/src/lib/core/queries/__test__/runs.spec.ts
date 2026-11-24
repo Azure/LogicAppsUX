@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useScopeFailedRepetitions, useAgentActionsRepetition, parseFailedRepetitions } from '../runs';
+import { useScopeFailedRepetitions, useAgentActionsRepetition, useConditionOutputs, parseFailedRepetitions } from '../runs';
 import { RunService, InitRunService } from '@microsoft/logic-apps-shared';
 import constants from '../../../common/constants';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -35,6 +35,7 @@ describe('runs queries', () => {
       getMoreScopeRepetitions: vi.fn(),
       getAgentActionsRepetition: vi.fn(),
       getMoreAgentActionsRepetition: vi.fn(),
+      getActionLinks: vi.fn(),
     };
 
     vi.mocked(RunService).mockReturnValue(mockRunService);
@@ -47,6 +48,34 @@ describe('runs queries', () => {
 
   const createWrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
+
+  test('loads only linked condition outputs and keeps different repetitions isolated', async () => {
+    const outputsLink = { uri: 'fixture-condition-outputs', contentSize: 32 };
+    const runData = { outputsLink, correlation: null, startTime: 'start', endTime: 'end' };
+    mockRunService.getActionLinks.mockResolvedValueOnce({ outputs: { expressionResult: true } });
+    const { result, rerender } = renderHook(({ repetition }) => useConditionOutputs('Condition', 'run', repetition, runData, true), {
+      initialProps: { repetition: '000000' },
+      wrapper: createWrapper,
+    });
+    await waitFor(() => expect(result.current).toEqual({ expressionResult: true }));
+    expect(mockRunService.getActionLinks).toHaveBeenCalledWith({ outputsLink }, 'Condition');
+
+    mockRunService.getActionLinks.mockResolvedValueOnce({ outputs: { expressionResult: false } });
+    rerender({ repetition: '000001' });
+    expect(result.current).toBeUndefined();
+    await waitFor(() => expect(result.current).toEqual({ expressionResult: false }));
+  });
+
+  test('does not request secured condition outputs', () => {
+    const outputsLink = { uri: 'fixture-condition-outputs', contentSize: 32, secureData: { properties: ['outputs'] } };
+    const { result } = renderHook(
+      () =>
+        useConditionOutputs('Condition', 'run', undefined, { outputsLink, correlation: null, startTime: 'start', endTime: 'end' }, true),
+      { wrapper: createWrapper }
+    );
+    expect(result.current).toBeUndefined();
+    expect(mockRunService.getActionLinks).not.toHaveBeenCalled();
+  });
 
   describe('useScopeFailedRepetitions', () => {
     const mockFailedRepetitions: LogicAppsV2.RunRepetition[] = [

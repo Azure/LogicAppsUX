@@ -112,6 +112,18 @@ describe('ReviewCreateStep', () => {
       expect(screen.getByText('Autonomous agents (Preview)')).toBeInTheDocument();
     });
 
+    it('should display stateless codeful workflow details', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        logicAppType: ProjectType.codeful,
+        workflowName: 'stateless-workflow',
+        workflowType: 'Stateless-Codeful',
+      });
+
+      expect(screen.getByText('stateless-workflow')).toBeInTheDocument();
+      expect(screen.getByText('Stateless')).toBeInTheDocument();
+    });
+
     it('should render workspace file and folder paths', () => {
       renderWithStore({
         flowType: 'createWorkspace',

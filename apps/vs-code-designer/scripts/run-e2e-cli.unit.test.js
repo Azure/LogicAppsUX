@@ -607,8 +607,9 @@ function testCliProfilePreservesPreparedExtensionCohort() {
   assert.strictEqual(settings['extensions.autoCheckUpdates'], false);
   assert.strictEqual(settings['extensions.allowed'], undefined, 'Required product activation dependencies stay enabled');
   const product = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'src', 'package.json'), 'utf8'));
-  assert.ok(product.extensionDependencies.includes('ms-dotnettools.csharp'));
-  assert.ok(product.extensionDependencies.includes('ms-dotnettools.csdevkit'));
+  const declaredExtensions = [...(product.extensionDependencies ?? []), ...(product.extensionPack ?? [])];
+  assert.ok(declaredExtensions.includes('ms-dotnettools.csharp'));
+  assert.ok(declaredExtensions.includes('ms-dotnettools.csdevkit'));
   for (const args of [[], ['--coverage'], ['--label', 'lifecycleStartupProof'], ['--label=lifecycleStartupProof']]) {
     execFileSync(
       process.execPath,

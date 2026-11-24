@@ -13,9 +13,10 @@ import { OperationsAccordion } from './operationsAccordion';
 type ConnectorDetailsViewProps = {
   connector?: Connector;
   onOperationClick: (id: string, apiId?: string, forceAsTrigger?: boolean) => void;
+  showActions: boolean;
 };
 
-export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorDetailsViewProps) => {
+export const ConnectorDetailsView = ({ connector, onOperationClick, showActions }: ConnectorDetailsViewProps) => {
   const classes = useConnectorDetailsViewStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
@@ -74,7 +75,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick }: ConnectorD
   }, [groupOperations, filterItems]);
 
   const triggers = useMemo(() => allOperations.filter((op) => op.isTrigger), [allOperations]);
-  const actions = useMemo(() => allOperations.filter((op) => !op.isTrigger), [allOperations]);
+  const actions = useMemo(() => (showActions ? allOperations.filter((op) => !op.isTrigger) : []), [allOperations, showActions]);
 
   const connectorName = connector?.properties?.displayName ?? 'Connector';
   const connectorDescription = connector?.properties?.description;
