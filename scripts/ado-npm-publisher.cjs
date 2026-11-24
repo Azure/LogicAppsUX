@@ -12,6 +12,7 @@ const {
     readVerifiedContracts,
     releaseRunSource,
     resolveLocalReleaseTag,
+    restoreTrackedReleaseSource,
     snapshotCheckout,
     verifyCheckoutHead,
     verifyCleanCheckout,
@@ -137,8 +138,11 @@ async function buildReleaseArtifact(env, log, { run = spawnSync, sandbox = withS
     const commitSha = resolveLocalReleaseTag(root, source.releaseRef);
     const verified = { ...source, kind: 'release-tag', commitSha };
     log(`Resolved ${source.releaseRef} to ${commitSha}; packing has not started.`);
-    const sourceRoot = path.join(env.AGENT_TMP, 'release-source');
+    const scanRoot = env.RELEASE_SCAN_ROOT;
+    assert(scanRoot === undefined || path.isAbsolute(scanRoot), 'Expected an absolute release scan root.');
+    const sourceRoot = path.join(scanRoot === undefined ? env.AGENT_TMP : fs.realpathSync(scanRoot), 'release-source');
     const removeSource = materializeDetachedSourceWorktree(root, sourceRoot, verified.commitSha);
+    let retainForScan = false;
     try {
         const contracts = snapshotCheckout(sourceRoot, verified);
         const buildEnv = { ...env, SOURCE_ROOT: sourceRoot };
@@ -149,9 +153,16 @@ async function buildReleaseArtifact(env, log, { run = spawnSync, sandbox = withS
             warnMissingCss: warning => log(`Warning: ${sanitizeAgentOutput(warning)}`),
         });
         log(`Packed and validated ${artifact.packages.length} release tarballs for ${verified.releaseTag} at ${verified.commitSha} (run ${verified.buildId}, recipe ${verified.recipeSha}); publication was not attempted.`);
+        if (scanRoot !== undefined) {
+            restoreTrackedReleaseSource(sourceRoot, verified.commitSha);
+            log(`Retaining tagged source ${verified.commitSha} for Component Governance at ${sanitizeAgentOutput(sourceRoot)}.`);
+            retainForScan = true; // The injected task runs after this step; workspace cleanup owns the tree.
+        }
         return artifact;
     } finally {
-        removeSource();
+        if (!retainForScan) {
+            removeSource();
+        }
     }
 }
 
