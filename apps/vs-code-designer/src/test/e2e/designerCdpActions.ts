@@ -835,6 +835,104 @@ export class MsnDesignerCdpActions {
     }
   }
 
+  private async clickElementBrowserRouted(
+    selectors: string[],
+    textToFind: string,
+    options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
+  ): Promise<MsnDesignerClickResult> {
+    const result = await this.cdp.evaluate<MsnDesignerClickResult>(
+      this.contextId,
+      `(() => {
+        const selectors = ${JSON.stringify(selectors)};
+        const textToFind = ${JSON.stringify(textToFind.toLowerCase())};
+        const requireTextMatch = ${JSON.stringify(options.requireTextMatch !== false)};
+        const useLastMatch = ${JSON.stringify(options.useLastMatch === true)};
+        const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+        const visible = (element) => {
+          if (!(element instanceof HTMLElement) || !element.isConnected) return false;
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+        };
+        const matchesText = (element) => {
+          const text = normalize(element.textContent).toLowerCase();
+          const ariaLabel = normalize(element.getAttribute('aria-label')).toLowerCase();
+          const title = normalize(element.getAttribute('title')).toLowerCase();
+          return !requireTextMatch || !textToFind || text.includes(textToFind) || ariaLabel.includes(textToFind) || title.includes(textToFind);
+        };
+        const candidates = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+          .filter(visible)
+          .filter(matchesText);
+        const element = useLastMatch ? candidates.at(-1) : candidates[0];
+        if (!(element instanceof HTMLElement)) {
+          return { ok: false, reason: 'Element not found', text: document.body?.innerText || '' };
+        }
+        element.scrollIntoView({ block: 'center', inline: 'center' });
+        window.__laDiscoveryClickTarget = element;
+        const rect = element.getBoundingClientRect();
+        return {
+          ok: true,
+          rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+          text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
+        };
+      })()`
+    );
+    assert.ok(result.ok, `Expected browser-routed designer element "${textToFind}". Reason=${result.reason}`);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const objectGroup = `discovery-geometry-${this.contextId}-${Date.now()}-${Math.random()}`;
+    try {
+      const target = (await this.cdp.send('Runtime.evaluate', {
+        contextId: this.contextId,
+        expression: 'window.__laDiscoveryClickTarget',
+        objectGroup,
+        returnByValue: false,
+      })) as { result?: { result?: { objectId?: string } } };
+      const objectId = target.result?.result?.objectId;
+      assert.ok(objectId, `Unable to retain browser-routed designer element "${textToFind}"`);
+
+      const quads = (await this.cdp.send('DOM.getContentQuads', { objectId })) as { result?: { quads?: number[][] } };
+      const quad = quads.result?.quads;
+      assert.ok(quad?.length === 1 && quad[0].length === 8 && quad[0].every(Number.isFinite), 'Expected one finite browser content quad');
+      const point = {
+        x: (quad[0][0] + quad[0][2] + quad[0][4] + quad[0][6]) / 4,
+        y: (quad[0][1] + quad[0][3] + quad[0][5] + quad[0][7]) / 4,
+      };
+
+      const hit = (await this.cdp.send('DOM.getNodeForLocation', {
+        x: Math.floor(point.x),
+        y: Math.floor(point.y),
+      })) as { result?: { backendNodeId?: number } };
+      assert.ok(hit.result?.backendNodeId, 'Browser could not hit-test the discovery action point');
+      const resolved = (await this.cdp.send('DOM.resolveNode', {
+        backendNodeId: hit.result.backendNodeId,
+        executionContextId: this.contextId,
+        objectGroup,
+      })) as { result?: { object?: { objectId?: string } } };
+      assert.ok(resolved.result?.object?.objectId, 'Unable to resolve the discovery action hit target');
+      const matches = (await this.cdp.send('Runtime.callFunctionOn', {
+        objectId: resolved.result.object.objectId,
+        functionDeclaration:
+          'function() { const target = window.__laDiscoveryClickTarget; return !!target && (target === this || target.contains(this)); }',
+        returnByValue: true,
+      })) as { result?: { result?: { value?: boolean } } };
+      assert.equal(matches.result?.result?.value, true, 'Browser discovery action point did not hit the retained element');
+      const current = (await this.cdp.send('Runtime.callFunctionOn', {
+        objectId,
+        functionDeclaration:
+          "function() { return this === window.__laDiscoveryClickTarget && this.isConnected && this.getAttribute('aria-disabled') !== 'true'; }",
+        returnByValue: true,
+      })) as { result?: { result?: { value?: boolean } } };
+      assert.equal(current.result?.result?.value, true, 'Discovery action changed before trusted input');
+
+      await clickPoint(this.cdp, point);
+      return { ...result, point };
+    } finally {
+      await this.cdp.evaluate(this.contextId, 'delete window.__laDiscoveryClickTarget', { timeoutMs: 1000 }).catch(() => undefined);
+      await this.cdp.send('Runtime.releaseObjectGroup', { objectGroup }, { timeoutMs: 1000 }).catch(() => undefined);
+    }
+  }
+
   async hasDiscoveryPanel(): Promise<boolean> {
     return this.cdp.evaluate<boolean>(
       this.contextId,
@@ -1072,7 +1170,7 @@ export class MsnDesignerCdpActions {
     await this.closePanel(`${label} existing details panel`);
     let actionPanelOpened = false;
     for (let attempt = 1; attempt <= 3; attempt++) {
-      const plusClick = await this.clickElement(
+      const plusClick = await this.clickElementBrowserRouted(
         [
           '[data-automation-id^="msla-plus-button-"]',
           '[id^="msla-edge-button-"]',
@@ -1090,7 +1188,13 @@ export class MsnDesignerCdpActions {
         break;
       }
 
-      const menuClick = await this.tryClickElement(['[data-automation-id^="msla-add-button-"]', '[role="menuitem"]'], 'Add an action');
+      const menuClick = await this.clickElementBrowserRouted(
+        ['[data-automation-id^="msla-add-button-"]', '[role="menuitem"]'],
+        'Add an action'
+      ).catch((error) => {
+        console.log(`[workspace-lifecycle] Optional designer element "Add an action" was not clickable: ${String(error)}`);
+        return undefined;
+      });
       if (menuClick) {
         await logDiagnostics(`after Add Action menu click attempt ${attempt}`, menuClick.point);
         if (await this.waitForOptionalDiscoveryPanel(7500)) {

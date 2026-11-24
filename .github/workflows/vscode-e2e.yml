@@ -795,6 +795,7 @@ jobs:
           exit "$status"
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+          LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ matrix.label == 'createWorkspaceCoreMatrix' }}
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
 

@@ -46,6 +46,7 @@ async function main(): Promise<void> {
   testGeneralizedHelperIsIsolated();
   testRecursiveDesignerTextCollection();
   testRenderedVisibilityAndDiagnosticOnlyHitTarget();
+  testDiscoveryUsesBrowserRoutedGeometry();
   testDiscoveryAndSearchParity();
   testSearchResultsAndOperationParity();
   testActionMenuParity();
@@ -1957,6 +1958,26 @@ function testRenderedVisibilityAndDiagnosticOnlyHitTarget(): void {
   assert.doesNotMatch(source, /hitTarget[\s\S]{0,120}return \{ ok: false/);
 }
 
+function testDiscoveryUsesBrowserRoutedGeometry(): void {
+  const routed = getMethod('MsnDesignerCdpActions', 'clickElementBrowserRouted');
+  assert.match(routed, /window\.__laDiscoveryClickTarget = element/);
+  assert.match(routed, /useLastMatch \? candidates\.at\(-1\) : candidates\[0\]/);
+  assert.match(routed, /DOM\.getContentQuads/);
+  assert.match(routed, /DOM\.getNodeForLocation/);
+  assert.match(routed, /DOM\.resolveNode/);
+  assert.match(routed, /target === this \|\| target\.contains\(this\)/);
+  assert.match(routed, /Discovery action changed before trusted input/);
+  assertOrdered(
+    routed,
+    ['DOM.getContentQuads', 'DOM.getNodeForLocation', 'Runtime.callFunctionOn', 'clickPoint(this.cdp, point)'],
+    'Discovery browser-routed input'
+  );
+
+  const discovery = getMethod('MsnDesignerCdpActions', 'openActionDiscovery');
+  assert.match(discovery, /this\.clickElementBrowserRouted/);
+  assert.match(discovery, /requireTextMatch: false, useLastMatch: true/);
+}
+
 function testDiscoveryAndSearchParity(): void {
   const discovery = getMethod('MsnDesignerCdpActions', 'hasDiscoveryPanel');
   assertOrdered(
@@ -2062,6 +2083,7 @@ function testActionMenuParity(): void {
     ],
     'Action-menu flow'
   );
+  assert.match(source, /clickElementBrowserRouted/);
   assert.match(source, /requireTextMatch: false, useLastMatch: true/);
   assert.match(source, /after Add Action failed attempt/);
 }

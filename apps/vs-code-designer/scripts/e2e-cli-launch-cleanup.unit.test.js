@@ -57,7 +57,7 @@ test('Windows aliases resolve both sides without weakening physical containment'
     // Deterministically reproduce the asymmetric physical spelling even when
     // 8.3 naming is disabled. No ownership observer/receipt is substituted.
     fs.realpathSync.native = (candidate) => realpath(candidate).toUpperCase();
-    assert.equal(resolveOwnedWorkspacePath(workspaceRoot, parent).toLowerCase(), parent.toLowerCase());
+    assert.equal(resolveOwnedWorkspacePath(workspaceRoot, parent).toLowerCase(), realpath(parent).toLowerCase());
   } finally {
     fs.realpathSync.native = realpath;
     fs.rmSync(root, { force: true, recursive: true });

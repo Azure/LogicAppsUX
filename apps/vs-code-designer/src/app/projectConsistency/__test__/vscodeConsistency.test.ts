@@ -374,7 +374,7 @@ describe('vscodeConsistency', () => {
     expect(writeFormattedJson).not.toHaveBeenCalled();
   });
 
-  it('rewrites all .vscode files when drift is detected and the user confirms', async () => {
+  it('rewrites only the stale .vscode file when drift is detected and the user confirms', async () => {
     const folder = createWorkspaceFolder(projectPath, 'logicapp');
     vi.mocked(fse.readJson).mockImplementation(async (filePath) => {
       const fileName = String(filePath);
@@ -417,7 +417,7 @@ describe('vscodeConsistency', () => {
       DialogResponses.dontWarnAgain
     );
     expect(fse.ensureDir).toHaveBeenCalledWith(path.join(projectPath, vscodeFolderName));
-    expect(writeFormattedJson).toHaveBeenCalledTimes(4);
+    expect(writeFormattedJson).toHaveBeenCalledExactlyOnceWith(path.join(projectPath, vscodeFolderName, tasksFileName), expect.any(Object));
   });
 
   it('disables future freshness prompts when the user selects dont ask again', async () => {

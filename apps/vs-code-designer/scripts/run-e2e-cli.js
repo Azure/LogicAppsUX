@@ -1833,6 +1833,9 @@ async function runCreateWorkspaceMatrixCases(args, visibleDelayMs) {
       visibleDelayMs,
       extraEnv: {
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: caseLabel,
+        ...(getLabelArg(args) === 'createWorkspaceCoreMatrix' && caseLabel === 'standard-stateful'
+          ? { LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '1' }
+          : {}),
         LA_E2E_CLI_USER_DATA_SUFFIX: `cw-${index + 1}-${Date.now().toString(36)}`,
       },
     });

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { Provider } from 'react-redux';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -155,6 +155,27 @@ describe('LogicAppTypeStep', () => {
 
     expect(store.getState().createWorkspace.logicAppType).toBe(ProjectType.rulesEngine);
     expect(store.getState().createWorkspace.targetFramework).toBe('net472');
+  });
+
+  it('translates a codeless workflow type when codeful is selected', () => {
+    const store = renderLogicAppType({ workflowType: WorkflowType.stateful });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Codeful' }));
+
+    expect(store.getState().createWorkspace.logicAppType).toBe(ProjectType.codeful);
+    expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.statefulCodeful);
+  });
+
+  it('translates a codeful workflow type when Standard is selected', () => {
+    const store = renderLogicAppType({
+      logicAppType: ProjectType.codeful,
+      workflowType: WorkflowType.statelessCodeful,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Standard' }));
+
+    expect(store.getState().createWorkspace.logicAppType).toBe(ProjectType.logicApp);
+    expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.stateless);
   });
 
   it('uses the existing logic app combobox for custom code projects', () => {

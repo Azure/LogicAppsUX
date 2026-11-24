@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ProjectPackageType, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, ProjectType, TargetFramework, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { workspace } from 'vscode';
 import * as fse from 'fs-extra';
 import {
@@ -13,6 +13,7 @@ import {
   azureWebJobsFeatureFlagsKey,
   azureWebJobsSecretStorageTypeKey,
   azureWebJobsStorageKey,
+  customCodeDotNetVersionSettingKey,
   defaultVersionRange,
   extensionBundleId,
   functionsInprocNet8Enabled,
@@ -199,6 +200,7 @@ describe('projectFilesConsistency', () => {
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
       expect(settingsAdded.APP_KIND).toBe('workflowapp');
       expect(settingsAdded.FUNCTIONS_WORKER_RUNTIME).toBeDefined();
+      expect(settingsAdded[customCodeDotNetVersionSettingKey]).toBe(TargetFramework.Net10);
     });
 
     it('adds the full codeful baseline (incl. WORKFLOW_CODEFUL_ENABLED and AzureWebJobsFeatureFlags) when missing for a codeful project', async () => {
@@ -392,7 +394,10 @@ describe('projectFilesConsistency', () => {
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
-      expect(settingsAdded).toEqual(codelessBaseline);
+      expect(settingsAdded).toEqual({
+        ...codelessBaseline,
+        [customCodeDotNetVersionSettingKey]: TargetFramework.Net10,
+      });
       expect(settingsAdded).not.toHaveProperty(azureWebJobsFeatureFlagsKey);
       expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabledKey);
     });

@@ -6,6 +6,8 @@ import { InitProjectStep } from '../initProjectStep';
 import { detectCustomCodeTargetFramework } from '../../../utils/customCodeUtils';
 import { getOrCreateDesignTimeDirectory } from '../../../utils/codeless/startDesignTimeApi';
 import { removeFromGitIgnore } from '../../../utils/git';
+import { writeFormattedJson } from '../../../utils/fs';
+import { DialogResponses } from '@microsoft/vscode-azext-utils';
 
 const probeEvents = vi.hoisted(() => ({ record: vi.fn() }));
 
@@ -112,5 +114,15 @@ describe('InitProjectStep regeneration diagnostics', () => {
       errorKind: 'user-cancelled',
       durationMs: expect.any(Number),
     });
+  });
+
+  it('writes only the missing VS Code artifact after overwrite confirmation', async () => {
+    vi.mocked(fse.pathExists).mockImplementation(async (filePath) => !String(filePath).endsWith('tasks.json'));
+    showWarningMessage.mockResolvedValue(DialogResponses.yes);
+
+    await new InitProjectStep(42).execute(context);
+
+    expect(writeFormattedJson).toHaveBeenCalledTimes(1);
+    expect(writeFormattedJson).toHaveBeenCalledWith(path.join(projectPath, '.vscode', 'tasks.json'), undefined);
   });
 });

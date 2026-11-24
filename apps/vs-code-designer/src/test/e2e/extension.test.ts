@@ -27,11 +27,14 @@ suite('Extension Activation Tests', () => {
 
   suiteTeardown(async () => {
     try {
-      // DIAGNOSTIC unitTests-only experiment: finish already-started C# startup
-      // before host finalization. This does not prove dependency quiescence.
-      logActivationEvidence('DIAGNOSTIC C# capture/disposal readiness barrier starting (90000ms absolute budget)');
-      await observeCSharpReadiness(vscode.extensions.getExtension('ms-dotnettools.csharp'), 90_000);
-      logActivationEvidence('DIAGNOSTIC C# capture disposed before host finalization; quiescence not established');
+      const csharp = vscode.extensions.getExtension('ms-dotnettools.csharp');
+      if (csharp?.isActive) {
+        logActivationEvidence('DIAGNOSTIC C# capture/disposal readiness barrier starting (90000ms absolute budget)');
+        await observeCSharpReadiness(csharp, 90_000);
+        logActivationEvidence('DIAGNOSTIC C# capture disposed before host finalization; quiescence not established');
+      } else {
+        logActivationEvidence('C# is installed but inactive; no readiness barrier is required');
+      }
     } catch (error) {
       console.error('[dependency-readiness] DIAGNOSTIC unitTests finalization barrier failed', error);
       throw error;
@@ -73,8 +76,8 @@ suite('Extension Activation Tests', () => {
   test('Logic Apps extension dependencies are installed and visible to VS Code', () => {
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
 
-    const extensionDependencies = getExtensionDependencies(extension);
-    assert.ok(extensionDependencies.length, `${logicAppsExtensionId} should declare extensionDependencies`);
+    const extensionDependencies = getDeclaredExtensions(extension);
+    assert.ok(extensionDependencies.length, `${logicAppsExtensionId} should declare extensionDependencies or extensionPack members`);
 
     const missingDependencies = extensionDependencies.filter((extensionId) => !vscode.extensions.getExtension(extensionId));
     assert.deepStrictEqual(missingDependencies, [], `Missing extension dependencies: ${missingDependencies.join(', ')}`);
@@ -125,10 +128,11 @@ suite('Extension Activation Tests', () => {
     activationChannel?.appendLine(line);
   }
 
-  function getExtensionDependencies(logicAppsExtension: vscode.Extension<unknown>): string[] {
-    const extensionDependencies = logicAppsExtension.packageJSON.extensionDependencies;
-
-    assert.ok(Array.isArray(extensionDependencies), `${logicAppsExtensionId} should declare extensionDependencies`);
-    return extensionDependencies;
+  function getDeclaredExtensions(logicAppsExtension: vscode.Extension<unknown>): string[] {
+    const extensionDependencies = Array.isArray(logicAppsExtension.packageJSON.extensionDependencies)
+      ? logicAppsExtension.packageJSON.extensionDependencies
+      : [];
+    const extensionPack = Array.isArray(logicAppsExtension.packageJSON.extensionPack) ? logicAppsExtension.packageJSON.extensionPack : [];
+    return [...new Set([...extensionDependencies, ...extensionPack])];
   }
 });

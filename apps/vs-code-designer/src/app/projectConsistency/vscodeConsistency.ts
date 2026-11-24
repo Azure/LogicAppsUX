@@ -311,16 +311,29 @@ async function promptToRegenerateVSCodeFiles(
     await fse.ensureDir(vscodeFolderPath);
 
     const [tasksJsonPath, launchJsonPath, settingsJsonPath, extensionsJsonPath] = getVSCodeFilePaths(projectPath);
-    await writeFormattedJson(tasksJsonPath, config.tasksJson);
-    await writeFormattedJson(launchJsonPath, config.launchJson);
-    await writeFormattedJson(settingsJsonPath, config.settingsJson);
-    await writeFormattedJson(extensionsJsonPath, config.extensionsJson);
+    await writeConfigIfInvalid(tasksJsonPath, config.tasksJson, (actual) => isDeepEqual(config.tasksJson, actual));
+    await writeConfigIfInvalid(launchJsonPath, config.launchJson, (actual) => isDeepEqual(config.launchJson, actual));
+    await writeConfigIfInvalid(settingsJsonPath, config.settingsJson, (actual) => isExpectedSubset(config.settingsJson, actual));
+    await writeConfigIfInvalid(extensionsJsonPath, config.extensionsJson, (actual) =>
+      containsExpectedExtensions(config.extensionsJson, actual)
+    );
   } else if (result === DialogResponses.dontWarnAgain) {
     await updateGlobalSetting(enableProjectConsistencyChecksSetting, false);
     return false;
   }
 
   return true;
+}
+
+async function writeConfigIfInvalid(filePath: string, expected: unknown, isValid: (actual: unknown) => boolean): Promise<void> {
+  try {
+    if (isValid(await fse.readJson(filePath))) {
+      return;
+    }
+  } catch {
+    // Missing or malformed files are regenerated below.
+  }
+  await writeFormattedJson(filePath, expected);
 }
 
 async function getExpectedVSCodeConfigJson(projectPath: string): Promise<VSCodeConfigJson> {

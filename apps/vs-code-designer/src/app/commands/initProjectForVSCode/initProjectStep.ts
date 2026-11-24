@@ -150,10 +150,16 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
     const settingsContent = generateSettingsJson(projectConfig);
     const extensionsContent = generateExtensionsJson();
 
-    await writeFormattedJson(tasksJsonPath, tasksContent);
-    await writeFormattedJson(launchJsonPath, launchContent);
-    await writeFormattedJson(settingsJsonPath, settingsContent);
-    await writeFormattedJson(extensionsJsonPath, extensionsContent);
+    await writeMissingJson(tasksJsonPath, tasksContent);
+    await writeMissingJson(launchJsonPath, launchContent);
+    await writeMissingJson(settingsJsonPath, settingsContent);
+    await writeMissingJson(extensionsJsonPath, extensionsContent);
+  }
+}
+
+async function writeMissingJson(filePath: string, content: unknown): Promise<void> {
+  if (!(await fse.pathExists(filePath))) {
+    await writeFormattedJson(filePath, content);
   }
 }
 
