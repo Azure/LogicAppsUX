@@ -37,8 +37,8 @@ const cases: Case[] = [
     btm: 'Functoid_Math',
     expect: ['userCSharp:MathAdd', 'userCSharp:MathSubtract', 'userCSharp:MathMultiply', 'userCSharp:MathDivide', 'userCSharp:MathMod'],
   },
-  { btm: 'Functoid_Logical', expect: ['<ns0:IsGreater', '<ns0:AreEqual', '<ns0:BothPositive', '<ns0:Picked'] },
-  { btm: 'Functoid_Cumulative', expect: ['<ns0:Total', '<ns0:Average'] },
+  { btm: 'Functoid_Logical', expect: ['<IsGreater', '<AreEqual', '<BothPositive', '<Picked'] },
+  { btm: 'Functoid_Cumulative', expect: ['<Total', '<Average'] },
   { btm: 'Functoid_String', expect: ['concat(', 'translate('] },
   { btm: 'Functoid_Scientific', expect: ['userCSharp:MathSin', 'userCSharp:MathPow', 'userCSharp:MathLogn', 'msxsl:script'] },
   {

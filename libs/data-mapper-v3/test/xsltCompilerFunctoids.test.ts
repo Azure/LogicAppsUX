@@ -898,7 +898,7 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.errors).toEqual([]);
     expect(result.success).toBe(true);
     expect(xslt).toContain('<xsl:for-each select="Items">');
-    expect(xslt.match(/<ns0:Line>/g)).toHaveLength(3);
+    expect(xslt.match(/<Line>/g)).toHaveLength(3);
     expect(xslt).toContain('select="Value/text()"');
     expect(xslt).toContain('select="\'fixed\'"');
     expect(xslt).toContain('select="\'Value\'"');
@@ -1074,7 +1074,7 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.success).toBe(true);
     expect(XMLValidator.validate(result.xslt as string)).toBe(true);
     expect(result.xslt).toContain('<xsl:text>raw-output</xsl:text>');
-    expect(result.xslt).toContain('<ns0:Total>');
+    expect(result.xslt).toContain('<Total>');
     expect(result.xslt).toContain('xsl:copy-of select="$var:');
   });
 
@@ -1403,7 +1403,7 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.success).toBe(true);
     expect(xslt).toContain(`select="*[local-name()='A' and namespace-uri()='']"`);
     expect(xslt).toContain(`select="*[local-name()='B' and namespace-uri()='']"`);
-    expect(xslt.match(/<ns0:Line>/g)).toHaveLength(2);
+    expect(xslt.match(/<Line>/g)).toHaveLength(2);
     expect(xslt).not.toContain('../B');
     expect(xslt).not.toContain('../A');
   });

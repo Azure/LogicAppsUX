@@ -1779,7 +1779,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       (l) => l.targetType === LinkEndpointType.SchemaNode && l.targetPath === node.path && this.linkAllowedInActiveLoop(l, page)
     );
     // Determine element name with namespace prefix
-    const elemName = this.targetQualifiedName(node.name, node.namespace || this.targetNamespace);
+    const elemName = this.targetQualifiedName(node.name, node.namespace);
 
     // Check if any descendant has a mapping
     const hasMappedDescendants = this.hasAnyMapping(node, page);
@@ -2005,7 +2005,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
 
     // For leaf nodes with a direct link, emit value-of directly (BizTalk style)
     if (directLinks.length > 0 && this.isEffectiveLeaf(node)) {
-      const elemName = this.targetQualifiedName(node.name, node.namespace || this.targetNamespace);
+      const elemName = this.targetQualifiedName(node.name, node.namespace);
       let result = '';
       const valueLinks = directLinks.filter((link) => !this.isFunctoidSource(link, page, 376));
       result += this.compileVariablesForLinks(directLinks, page, linkGraph, contextPath, indent);
@@ -2066,7 +2066,8 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       if (link.sourceLinkOption === SourceLinkOption.MixedCopy) {
         return this.pathToNodeXPath(link.sourcePath, contextPath);
       }
-      return this.pathToXPath(link.sourcePath, contextPath);
+      const sourceXPath = this.pathToXPath(link.sourcePath, contextPath);
+      return this.isContainerSourcePath(link.sourcePath) ? `${sourceXPath}/text()` : sourceXPath;
     }
     if (link.sourceType === LinkEndpointType.Functoid) {
       const functoid = page.functoids.find((f) => f.id === link.sourceId);
@@ -2659,6 +2660,22 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
       return this.findLoopingInputLinks(loopFunctoid, page)
         .map((link) => link.sourcePath)
         .filter((path): path is string => !!path);
+    }
+
+    // A direct record link identifies the loop level even when descendants repeat more deeply.
+    const directRecordPaths = page.links
+      .filter(
+        (link) =>
+          link.targetType === LinkEndpointType.SchemaNode &&
+          link.targetPath === node.path &&
+          link.sourceType === LinkEndpointType.SchemaNode &&
+          link.sourcePath &&
+          this.isContainerSourcePath(link.sourcePath) &&
+          this.linkAllowedInActiveLoop(link, page)
+      )
+      .map((link) => link.sourcePath!);
+    if (directRecordPaths.length > 0) {
+      return [...new Set(directRecordPaths)];
     }
 
     const descendantLinks = page.links.filter(
