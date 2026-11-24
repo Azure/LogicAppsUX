@@ -23,7 +23,8 @@ import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceLogicAppRoots } from '../workspace';
-import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
+import { ensureDesignTimeFiles, ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
+import { isProjectConsistencyCheckEnabled } from '../vsCodeConfig/settings';
 import { delay } from '../delay';
 import { type IActionContext, type IAzExtOutputChannel, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
@@ -245,7 +246,11 @@ async function startDesignTimeApiInternal(
     try {
       ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
-      await ensureProjectFiles(context, projectPath);
+      if (isProjectConsistencyCheckEnabled()) {
+        await ensureProjectFiles(context, projectPath);
+      } else {
+        await ensureDesignTimeFiles(context, projectPath);
+      }
 
       warnIfJdbcJavaRuntimeMissing(context, projectPath).catch(() => undefined);
 

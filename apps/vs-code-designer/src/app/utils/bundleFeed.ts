@@ -11,6 +11,7 @@ import {
   experimentalExtensionBundleSourceUriSettingKey,
   experimentalExtensionBundleVersionSettingKey,
   legacyBundleInstallMarkerFile,
+  designTimeDirectoryName,
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
@@ -1385,6 +1386,25 @@ export async function getBundleVersionNumber(workingDirectory?: string): Promise
   cachedBundleVersion = bundleVersionNumber;
   ext.outputChannel?.appendLog(`Highest cached Logic Apps extension bundle folder: ${bundleVersionNumber} (not loaded-host verification).`);
   return bundleVersionNumber;
+}
+
+/**
+ * Gets the extension bundle version used by a project's design-time host.
+ * Falls back to bundle discovery from workflow-designtime when available,
+ * then to the extension's default bundle version.
+ */
+export async function getDesignTimeBundleVersion(projectPath: string): Promise<string | undefined> {
+  const currentBundleVersion = ext.currentBundleVersion.get(projectPath);
+  if (currentBundleVersion && isBundleVersion(currentBundleVersion)) {
+    return currentBundleVersion;
+  }
+
+  const designTimeDirectory = path.join(projectPath, designTimeDirectoryName);
+  if (await fse.pathExists(designTimeDirectory)) {
+    return getBundleVersionNumber(designTimeDirectory);
+  }
+
+  return ext.defaultBundleVersion;
 }
 
 /**

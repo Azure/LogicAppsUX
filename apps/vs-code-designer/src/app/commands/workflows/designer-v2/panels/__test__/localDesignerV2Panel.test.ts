@@ -76,7 +76,7 @@ vi.mock('../../../../../utils/codeless/artifacts', () => ({
 }));
 
 vi.mock('../../../../../utils/bundleFeed', () => ({
-  getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
+  getDesignTimeBundleVersion: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
 vi.mock('../../../../../utils/appSettings/localSettings', () => ({
@@ -108,7 +108,7 @@ import { sendRequest } from '../../../../../utils/requestUtils';
 import { startDesignTimeApi } from '../../../../../utils/codeless/startDesignTimeApi';
 import { getLogicAppProjectRoot } from '../../../../../utils/codeless/connection';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
-import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
@@ -134,7 +134,7 @@ describe('LocalDesignerV2Panel', () => {
     vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: 'token', enabled: false } as any);
     vi.mocked(getManualWorkflowsInLocalProject).mockResolvedValue({} as any);
     vi.mocked(getArtifactsInLocalProject).mockResolvedValue({ maps: {}, schemas: [] } as any);
-    vi.mocked(getBundleVersionNumber).mockResolvedValue('1.0.0');
+    vi.mocked(getDesignTimeBundleVersion).mockResolvedValue('1.0.0');
     vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
     vi.mocked(startDesignTimeApi).mockResolvedValue(undefined);
     vi.mocked(axios.get).mockResolvedValue({ data: { properties: { manifest: {} } } });

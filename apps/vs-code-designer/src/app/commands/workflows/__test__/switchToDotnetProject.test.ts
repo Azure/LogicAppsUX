@@ -97,6 +97,16 @@ vi.mock('../../../../extensionVariables', () => ({
   ext: { showError: vi.fn(), outputChannel: { appendLog: vi.fn() } },
 }));
 
+vi.mock('fs-extra', () => ({
+  pathExists: vi.fn(),
+  readdir: vi.fn(),
+  stat: vi.fn(),
+  statSync: vi.fn(() => ({ isDirectory: () => false })),
+  unlink: vi.fn(),
+  rename: vi.fn(),
+  writeFileSync: vi.fn(),
+}));
+
 vi.mock('path', async () => {
   const actual = await vi.importActual<typeof import('path')>('path');
   return {
@@ -187,7 +197,7 @@ describe('switchToDotnetProject', () => {
     vi.mocked(getTemplateKeyFromProjFile).mockResolvedValue('testKey');
     vi.mocked(getContainingWorkspaceFolder).mockReturnValue(undefined);
     vscode.workspace.workspaceFolders = [{ uri: { fsPath: '/workspace' } } as vscode.WorkspaceFolder];
-    (fse.pathExists as unknown as Mock).mockResolvedValue(false);
+    (fse.pathExists as unknown as Mock).mockImplementation(async (filePath: string) => filePath.endsWith('/host.json'));
     (fse.readdir as unknown as Mock).mockResolvedValue([]);
     (fse.stat as unknown as Mock).mockResolvedValue({ isDirectory: () => false });
     // writeFileSync is used by createGlobalJsonFile but not in the global test-setup mock
@@ -366,6 +376,49 @@ describe('switchToDotnetProject', () => {
 
       expect(stopFuncTaskForWorkspace).toHaveBeenCalledWith(workspaceFolder);
       expect(events).toEqual(['stop-func', 'init-vscode']);
+    });
+
+    it('should retain the generated host.json and restore local.settings.json', async () => {
+      const existingPaths = new Set([
+        '/test/project/host.json',
+        '/test/project/host.json-copy',
+        '/test/project/local.settings.json',
+        '/test/project/local.settings.json-copy',
+      ]);
+      (fse.pathExists as unknown as Mock).mockImplementation(async (filePath: string) => existingPaths.has(filePath));
+
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(fse.unlink).toHaveBeenCalledWith('/test/project/host.json-copy');
+      expect(fse.unlink).not.toHaveBeenCalledWith('/test/project/host.json');
+      expect(fse.unlink).toHaveBeenCalledWith('/test/project/local.settings.json');
+      expect(fse.rename).toHaveBeenCalledWith('/test/project/local.settings.json-copy', '/test/project/local.settings.json');
+      expect(fse.rename).not.toHaveBeenCalledWith('/test/project/host.json-copy', '/test/project/host.json');
+    });
+
+    it('should restore the original host.json and fail when the template does not generate one', async () => {
+      let templateExecuted = false;
+      vi.mocked(executeDotnetTemplateCommand).mockImplementation(async () => {
+        templateExecuted = true;
+        return undefined;
+      });
+      (fse.pathExists as unknown as Mock).mockImplementation(async (filePath: string) => {
+        if (filePath === '/test/project/host.json') {
+          return !templateExecuted;
+        }
+        return (
+          filePath === '/test/project/host.json-copy' ||
+          filePath === '/test/project/local.settings.json' ||
+          filePath === '/test/project/local.settings.json-copy'
+        );
+      });
+
+      await expect(switchToDotnetProject(mockContext, mockTarget)).rejects.toThrow('NuGet project template did not generate host.json.');
+
+      expect(fse.rename).toHaveBeenCalledWith('/test/project/host.json-copy', '/test/project/host.json');
+      expect(fse.unlink).toHaveBeenCalledWith('/test/project/local.settings.json');
+      expect(fse.rename).toHaveBeenCalledWith('/test/project/local.settings.json-copy', '/test/project/local.settings.json');
+      expect(initDotnetExecute).not.toHaveBeenCalled();
     });
   });
 

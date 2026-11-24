@@ -49,7 +49,7 @@ import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscod
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
 import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
-import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../utils/bundleFeed';
 
 export default class LocalDesignerV2Panel extends DesignerV2Panel {
   private readonly workflowFilePath: string;
@@ -458,7 +458,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
         getCustomCodeFromFiles(this.workflowFilePath),
         getManualWorkflowsInLocalProject(projectPath, this.workflowName),
         getArtifactsInLocalProject(projectPath),
-        getBundleVersionNumber(projectPath),
+        getDesignTimeBundleVersion(projectPath),
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),
       ]);
 

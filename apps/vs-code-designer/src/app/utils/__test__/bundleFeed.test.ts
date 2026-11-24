@@ -1,5 +1,6 @@
 import {
   getBundleVersionNumber,
+  getDesignTimeBundleVersion,
   getLatestBundleVersion,
   getBundleDependencyFeed,
   getExtensionBundleFolder,
@@ -91,6 +92,7 @@ vi.mock('../../../extensionVariables', () => ({
         update: vi.fn().mockResolvedValue(undefined),
       },
     },
+    currentBundleVersion: new Map<string, string>(),
   },
 }));
 
@@ -566,6 +568,57 @@ describe('getBundleVersionNumber', () => {
     await getBundleVersionNumber();
 
     expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/mock/workspace', 'func', 'GetExtensionBundlePath');
+  });
+});
+
+describe('getDesignTimeBundleVersion', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCachedBundleVersion();
+    ext.currentBundleVersion.clear();
+  });
+
+  it('returns the version recorded by the project design-time host', async () => {
+    ext.currentBundleVersion.set('/workspace/logicapp', '1.197.0.13');
+
+    await expect(getDesignTimeBundleVersion('/workspace/logicapp')).resolves.toBe('1.197.0.13');
+    expect(mockedExecuteCommand).not.toHaveBeenCalled();
+  });
+
+  it('falls back to bundle discovery from workflow-designtime', async () => {
+    mockedFse.pathExists.mockResolvedValue(true);
+    mockedExecuteCommand.mockResolvedValue(`C:\\mock\\ExtensionBundles\\${extensionBundleId}\\1.197.13\n`);
+    mockedFse.readdir.mockResolvedValue(['1.197.13'] as any);
+    mockedFse.stat.mockResolvedValue({ isDirectory: () => true } as any);
+
+    await expect(getDesignTimeBundleVersion('C:\\workspace\\logicapp')).resolves.toBe('1.197.13');
+    expect(mockedExecuteCommand).toHaveBeenCalledWith(
+      expect.anything(),
+      path.join('C:\\workspace\\logicapp', 'workflow-designtime'),
+      'func',
+      'GetExtensionBundlePath'
+    );
+  });
+
+  it.each(['[1.197.13]', '[1.197.0.13]', '[1.170.0, 2.0.0)'])(
+    'ignores invalid cached value %s and uses existing bundle discovery',
+    async (cachedVersion) => {
+      ext.currentBundleVersion.set('/workspace/logicapp', cachedVersion);
+      mockedFse.pathExists.mockResolvedValue(true);
+      mockedExecuteCommand.mockResolvedValue(`C:\\mock\\ExtensionBundles\\${extensionBundleId}\\1.197.13\n`);
+      mockedFse.readdir.mockResolvedValue(['1.170.0', '1.197.13'] as any);
+      mockedFse.stat.mockResolvedValue({ isDirectory: () => true } as any);
+
+      await expect(getDesignTimeBundleVersion('/workspace/logicapp')).resolves.toBe('1.197.13');
+    }
+  );
+
+  it('falls back to the default bundle when workflow-designtime does not exist', async () => {
+    mockedFse.pathExists.mockResolvedValue(false);
+    ext.defaultBundleVersion = '1.198.0';
+
+    await expect(getDesignTimeBundleVersion('C:\\workspace\\logicapp')).resolves.toBe('1.198.0');
+    expect(mockedExecuteCommand).not.toHaveBeenCalled();
   });
 });
 

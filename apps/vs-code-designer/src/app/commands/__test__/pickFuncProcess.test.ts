@@ -890,7 +890,7 @@ describe('pickFuncProcessInternal', () => {
     );
   });
 
-  it('starts generateDebugSymbols for codeless NuGet launch configurations', async () => {
+  it('does not start a stale bundle-based generateDebugSymbols task for codeless NuGet launch configurations', async () => {
     (vscode.tasks.fetchTasks as any).mockResolvedValue([funcTask, debugTask]);
     (vscode.tasks.executeTask as any).mockResolvedValue(undefined);
     (vscode.tasks.onDidEndTaskProcess as any).mockImplementation((callback: (event: any) => void) => {
@@ -906,7 +906,7 @@ describe('pickFuncProcessInternal', () => {
     );
 
     expect(result).toBe('1234');
-    expect(vscode.tasks.executeTask).toHaveBeenCalledWith(debugTask);
+    expect(vscode.tasks.executeTask).not.toHaveBeenCalledWith(debugTask);
     expect(executeIfNotActive).toHaveBeenCalledWith(funcTask);
   });
 

@@ -27,7 +27,7 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
-import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getDesignTimeBundleVersion } from '../../../../utils/bundleFeed';
 
 export default class LocalMonitoringPanel extends MonitoringPanel {
   private projectPath: string | undefined;
@@ -201,7 +201,7 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
         getConnectionsFromFile(this.context, this.workflowFilePath),
         getParametersFromFile(this.context, this.workflowFilePath),
         getCustomCodeFromFiles(this.workflowFilePath),
-        getBundleVersionNumber(projectPath),
+        getDesignTimeBundleVersion(projectPath),
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),
         getArtifactsInLocalProject(projectPath),
         this.getWorkflowContent(),

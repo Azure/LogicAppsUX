@@ -44,7 +44,7 @@ vi.mock('../../../../../utils/appSettings/localSettings', () => ({
 }));
 
 vi.mock('../../../../../utils/bundleFeed', () => ({
-  getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
+  getDesignTimeBundleVersion: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
 vi.mock('../../../designer/panels/designerPanel', () => {
@@ -61,6 +61,12 @@ vi.mock('../../../designer/panels/designerPanel', () => {
 // ── Import the module under test (after all mocks are configured) ──────────
 const mod = await import('../connectionPanel');
 const OpenConnectionView = mod.default;
+const { ext } = await import('../../../../../../extensionVariables');
+const { startDesignTimeApi } = await import('../../../../../utils/codeless/startDesignTimeApi');
+const { getDesignTimeBundleVersion } = await import('../../../../../utils/bundleFeed');
+const { getLocalSettingsJson } = await import('../../../../../utils/appSettings/localSettings');
+const { getArtifactsInLocalProject } = await import('../../../../../utils/codeless/artifacts');
+const { getAzureConnectorDetailsForLocalProject } = await import('../../../../azureConnectors/azureConnectorDetails');
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -209,6 +215,55 @@ describe('ConnectionView – insert_connection handles local and managed connect
 
       expect(callOrder).toEqual(['addConnection', 'saveConnection', 'dispose']);
     });
+  });
+});
+
+describe('ConnectionPanel – design-time startup ordering', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetLogicAppProjectRoot.mockResolvedValue('/test/project');
+    mockGetConnectionsFromFile.mockResolvedValue('{}');
+    mockGetParametersFromFile.mockResolvedValue({});
+    vi.mocked(getDesignTimeBundleVersion).mockResolvedValue('1.0.0');
+    vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
+    vi.mocked(getArtifactsInLocalProject).mockResolvedValue({ maps: {}, schemas: [] } as any);
+    vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: '', enabled: false } as any);
+    (ext as any).context = { extensionPath: '/extension', subscriptions: [] };
+    ext.designTimeInstances.clear();
+  });
+
+  it('waits for design-time startup before resolving bundle-dependent metadata', async () => {
+    let resolveDesignTime!: () => void;
+    vi.mocked(startDesignTimeApi).mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveDesignTime = resolve;
+        })
+    );
+
+    const instance = Object.create(OpenConnectionView.prototype) as any;
+    instance.workflowFilePath = '/test/workflow.cs';
+    instance.panelGroupKey = 'connection';
+    instance.panelName = 'connection-panel';
+    instance.workflowName = 'workflow';
+    instance.context = { telemetry: { properties: {} } };
+    instance.schemaArtifacts = [];
+    instance.mapArtifacts = {};
+    instance.getExistingPanel = vi.fn().mockReturnValue(undefined);
+    instance.getPanelOptions = vi.fn().mockReturnValue({});
+    instance.getLoadingHtml = vi.fn().mockReturnValue('<html>loading</html>');
+    instance.getWebviewContent = vi.fn().mockResolvedValue('<html>ready</html>');
+
+    const createPromise = instance.create();
+    await vi.waitFor(() => expect(startDesignTimeApi).toHaveBeenCalled());
+    expect(mockGetConnectionsFromFile).toHaveBeenCalled();
+    expect(getDesignTimeBundleVersion).not.toHaveBeenCalled();
+
+    ext.designTimeInstances.set('/test/project', { port: 8000 });
+    resolveDesignTime();
+    await createPromise;
+
+    expect(getDesignTimeBundleVersion).toHaveBeenCalledWith('/test/project');
   });
 });
 

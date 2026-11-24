@@ -7,9 +7,10 @@ import { ensureProjectFiles } from '../projectConsistency/projectFilesConsistenc
 import { ensureVSCodeFiles } from '../projectConsistency/vscodeConsistency';
 import * as vscode from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
 
 export async function runProjectConsistencyCheck(context: IActionContext): Promise<void> {
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0 || !isProjectConsistencyCheckEnabled()) {
     return;
   }
   const projectPaths = await getWorkspaceLogicAppRoots();

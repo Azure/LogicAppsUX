@@ -41,8 +41,7 @@ function generateCodefulTasksJson(config: VSCodeProjectConfig): TasksJsonContent
 function generateNugetTasksJson(config: VSCodeProjectConfig): TasksJsonContent {
   return {
     version: TASKS_VERSION,
-    tasks: [getDebugSymbolsTask(), ...getDotnetBuildTasks(), getFuncHostStartTask(config, { dependsOn: 'build' })],
-    inputs: [getDebugSymbolDllInput()],
+    tasks: [...getDotnetBuildTasks(), getFuncHostStartTask(config, { dependsOn: 'build' })],
   };
 }
 
