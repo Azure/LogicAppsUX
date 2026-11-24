@@ -36,6 +36,7 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
     inputVariant,
     density,
     titleLines,
+    prioritizeTitle,
     ...rest
   },
   ref
@@ -67,7 +68,14 @@ export const ActionNodeCard = forwardRef<HTMLDivElement, ActionNodeCardProps>(fu
           artwork={iconArtwork}
           {...resolveNodeIcons({ icon, selectedIcon }, categoryNodeIcons.action)}
         />
-        <NodeText title={title} subtitle={subtitle} subtitleKind={subtitleKind} titleLines={layout.titleLines} {...nodeCount.textProps} />
+        <NodeText
+          title={title}
+          subtitle={subtitle}
+          subtitleKind={subtitleKind}
+          titleLines={layout.titleLines}
+          prioritizeTitle={prioritizeTitle}
+          {...nodeCount.textProps}
+        />
         {handles ? <NodeOutputHandles handles={OUTPUTS} /> : null}
       </NodeCardBody>
     </NodeCard>

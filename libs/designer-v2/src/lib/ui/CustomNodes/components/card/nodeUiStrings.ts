@@ -137,6 +137,19 @@ export const mapConditionNodeStrings = (intl: IntlShape) => ({
     if: intl.formatMessage({ defaultMessage: 'Condition', id: 'Zo2BOK', description: 'Conditional action title' }),
     switch: intl.formatMessage({ defaultMessage: 'Switch', id: 'JZQ6CL', description: 'Switch action title' }),
   },
+  branch: {
+    true: intl.formatMessage({ defaultMessage: 'True', id: 'Zwdunb', description: 'True branch label' }),
+    false: intl.formatMessage({ defaultMessage: 'False', id: '/oWzBF', description: 'False branch label' }),
+    taken: (label: string) =>
+      intl.formatMessage(
+        {
+          defaultMessage: '{label}, branch taken',
+          id: '7smF3w',
+          description: 'Announced phrase for the branch that ran in monitoring',
+        },
+        { label }
+      ),
+  },
 });
 
 export const mapLoopNodeStrings = (intl: IntlShape, type?: string) => ({

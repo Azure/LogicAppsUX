@@ -3,15 +3,19 @@ import { useNodeMetadata, useNodeDisplayName, storeStateToUndoRedoHistory } from
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteAgentTool, deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const DeleteModal = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const readOnly = useReadOnly();
+  const monitoring = useMonitoringView();
+  const canDelete = !readOnly && !monitoring;
 
   const nodeId = useShowDeleteModalNodeId();
   const nodeName = useNodeDisplayName(nodeId);
@@ -24,8 +28,15 @@ const DeleteModal = () => {
 
   const onDismiss = useCallback(() => dispatch(setShowDeleteModalNodeId(undefined)), [dispatch]);
 
+  // Don't restore a pending authoring confirmation after a trip through a run view.
+  useEffect(() => {
+    if (!canDelete && nodeId) {
+      onDismiss();
+    }
+  }, [canDelete, nodeId, onDismiss]);
+
   const handleDelete = useCallback(() => {
-    if (!nodeId || !nodeData) {
+    if (!canDelete || !nodeId || !nodeData) {
       return;
     }
     const { type, subGraphLocation } = nodeData;
@@ -68,7 +79,7 @@ const DeleteModal = () => {
     }
 
     onDismiss();
-  }, [nodeData, dispatch, nodeId, isTrigger, graphId, onDismiss]);
+  }, [canDelete, nodeData, dispatch, nodeId, isTrigger, graphId, onDismiss]);
 
   return (
     <DeleteNodeModal
@@ -77,7 +88,7 @@ const DeleteModal = () => {
       nodeType={nodeData?.type}
       subgraphType={metadata?.subgraphType}
       operationType={operationMetadata?.type}
-      isOpen={!!nodeId}
+      isOpen={!!nodeId && canDelete}
       onDismiss={onDismiss}
       onConfirm={handleDelete}
     />

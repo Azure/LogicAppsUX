@@ -67,6 +67,7 @@ export interface SharedEdgeArrowCapProps {
   direction: NodeLineArrowDirection;
   /** Line variant echoed as `data-line-cap` for probes; omitted for transient draft lines. */
   variant?: string;
+  highlighted?: boolean;
   /** Chevron half-extent; defaults to the designer edge size, not the Otto library size. */
   size?: number;
   className?: string;
@@ -94,6 +95,7 @@ export const SharedEdgeArrowCap = ({
   y,
   direction,
   variant,
+  highlighted,
   size = SHARED_EDGE_ARROW_SIZE,
   className,
   style,
@@ -113,6 +115,7 @@ export const SharedEdgeArrowCap = ({
           strokeLinecap="round"
           strokeLinejoin="round"
           data-line-cap={variant}
+          data-line-highlighted={highlighted ? '' : undefined}
         />
       </marker>
     </defs>

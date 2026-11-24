@@ -1,43 +1,52 @@
 import { compactNodeMetrics, type CompactTitleLines } from './metrics';
 
-const compactTitleLineCache = new Map<string, CompactTitleLines>();
-let measureContext: CanvasRenderingContext2D | null | undefined;
-const compactTitleFontFamily =
-  "'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif";
-// Average 14px semibold Segoe UI advance; used when canvas text metrics are unavailable (SSR, jsdom).
+const maxCachedTitles = 512;
 const fallbackCharWidth = 7.4;
+const { weight, size, family } = compactNodeMetrics.titleFont;
+const measurements = new WeakMap<Document, (title: string) => number>();
 
-const measureTitleWidth = (title: string): number => {
-  if (measureContext === undefined) {
-    try {
-      measureContext = typeof document === 'undefined' ? null : document.createElement('canvas').getContext('2d');
-    } catch {
-      measureContext = null;
-    }
-    if (measureContext) {
-      const { weight, size } = compactNodeMetrics.titleFont;
-      measureContext.font = `${weight} ${size}px ${compactTitleFontFamily}`;
-    }
+function createTitleMeasurer(document: Document) {
+  const widths = new Map<string, number>();
+  const context = document.createElement('canvas').getContext('2d');
+  if (!context) {
+    return fallbackWidth;
   }
-  const measured = measureContext?.measureText(title).width;
-  return typeof measured === 'number' && measured > 0 ? measured : title.length * fallbackCharWidth;
-};
+  context.font = `${weight} ${size}px ${family}`;
+  // Font loading can replace fallback glyphs without changing the CSS font string.
+  document.fonts?.addEventListener('loadingdone', () => widths.clear());
+  return (title: string) => {
+    const cached = widths.get(title);
+    if (cached !== undefined) {
+      widths.delete(title);
+      widths.set(title, cached);
+      return cached;
+    }
+    const width = context.measureText(title).width || fallbackWidth(title);
+    if (widths.size === maxCachedTitles) {
+      const oldest = widths.keys().next();
+      if (!oldest.done) {
+        widths.delete(oldest.value);
+      }
+    }
+    widths.set(title, width);
+    return width;
+  };
+}
+
+const fallbackWidth = (title: string) => title.length * fallbackCharWidth;
 
 /**
- * Hosts compute this once per title and feed the same value to layout (height) and the card (line clamp),
- * so a misestimate can only cost an ellipsis or spare space, never a handle/edge misalignment.
+ * Hosts feed this result to both layout and the rendered card. Width measurements are shared
+ * across reservations: a corner control reduces available space, not the width of the text.
  */
-export const getCompactTitleLines = (title: string | undefined, textEndReserve = 0): CompactTitleLines => {
+export function getCompactTitleLines(title: string | undefined, textEndReserve = 0): CompactTitleLines {
   if (!title) {
     return 1;
   }
-  // The reserve narrows the column (e.g. a host's corner control), so it is part of the cache identity.
-  const cacheKey = `${textEndReserve}|${title}`;
-  const cached = compactTitleLineCache.get(cacheKey);
-  if (cached) {
-    return cached;
+  let measure = fallbackWidth;
+  if (typeof document !== 'undefined') {
+    measure = measurements.get(document) ?? createTitleMeasurer(document);
+    measurements.set(document, measure);
   }
-  const lines: CompactTitleLines = measureTitleWidth(title) > compactNodeMetrics.textWidth - textEndReserve ? 2 : 1;
-  compactTitleLineCache.set(cacheKey, lines);
-  return lines;
-};
+  return measure(title) > compactNodeMetrics.textWidth - textEndReserve ? 2 : 1;
+}

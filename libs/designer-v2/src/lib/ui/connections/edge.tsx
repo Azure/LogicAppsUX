@@ -36,6 +36,7 @@ interface EdgeContentProps {
   tabIndex?: number;
   isRevealed?: boolean;
   sharedPresentation: boolean;
+  followsMerge?: boolean;
   controlProps?: HTMLAttributes<HTMLDivElement>;
 }
 
@@ -61,6 +62,7 @@ const EdgeContent = (props: EdgeContentProps) => (
         tabIndex={props.tabIndex}
         isRevealed={props.isRevealed}
         sharedPresentation={props.sharedPresentation}
+        followsMerge={props.followsMerge}
       />
     </div>
   </EdgeLabelRenderer>
@@ -249,6 +251,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             : css('react-flow__edge-path', highlighted ? 'highlighted' : '')
         }
         data-line={shared ? variant : undefined}
+        data-line-highlighted={shared && highlighted ? '' : undefined}
         d={d}
         strokeDasharray={shared ? undefined : showRunAfter ? '4 6' : '0'}
         strokeWidth={shared ? undefined : 2}
@@ -266,6 +269,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             y={endpoint.y}
             direction={getSharedEdgeArrowDirection(targetPosition)}
             variant={variant}
+            highlighted={highlighted}
             style={{
               ...style,
               stroke: stroke.stroke,
@@ -298,6 +302,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               tabIndex={tabIndex}
               isRevealed={hovered}
               sharedPresentation={shared}
+              followsMerge={!multipleTargets || showSourceButton}
               controlProps={shared ? activeState.wrapperProps : undefined}
             />
           )}
@@ -313,6 +318,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               tabIndex={tabIndex}
               isRevealed={hovered}
               sharedPresentation={shared}
+              followsMerge={onlyEdge}
               controlProps={shared ? activeState.wrapperProps : undefined}
             />
           )}

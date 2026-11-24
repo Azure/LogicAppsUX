@@ -54,8 +54,13 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useSharedNodeUi: () => mockUseSharedNodeUi(),
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
+  usePanelTabHideKeys: () => [],
   useSuppressDefaultNodeSelectFunctionality: () => mockUseSuppressDefault(),
   useNodeSelectAdditionalCallback: () => mockUseNodeSelectCallback(),
+}));
+
+vi.mock('../../../core/state/staticresultschema/staitcresultsSelector', () => ({
+  useHasSchema: () => false,
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -167,8 +172,25 @@ vi.mock('../../../core/state/workflow/workflowSlice', () => ({
 }));
 
 vi.mock('../../common/LoopsPager/helper', () => ({
+  getAgentRepetitionIdentity: vi.fn((...args: any[]) => {
+    const first = args[0];
+    const params =
+      typeof first === 'object' && first !== null
+        ? first
+        : {
+            runId: args[0],
+            ownerNodeId: args[1],
+            repetitionName: args[2],
+            repetitionIndex: args[3],
+            parentStatus: args[4],
+          };
+    const { runId, ownerNodeId, repetitionName, repetitionIndex, parentStatus } = params;
+    return runId && ownerNodeId && repetitionName !== undefined && repetitionIndex !== undefined
+      ? [runId, ownerNodeId, repetitionName, String(repetitionIndex), parentStatus ?? ''].join('|')
+      : undefined;
+  }),
   getRepetitionName: vi.fn().mockReturnValue('000000'),
-  getScopeRepetitionName: vi.fn().mockReturnValue('000000'),
+  getScopeRepetitionName: vi.fn((index) => String(index).padStart(6, '0')),
   useRepetitionName: vi.fn().mockReturnValue(''),
 }));
 
@@ -360,6 +382,128 @@ describe('OperationCardNode (v2)', () => {
     expect(screen.queryByTestId(absent)).toBeNull();
   });
 
+  it('hides the shared MCP tool pager while metadata is for a different selected iteration', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseParentNodeId.mockImplementation((id?: string) => {
+      if (id === 'testNode') {
+        return 'actual-agent';
+      }
+      if (id === 'actual-agent') {
+        return 'agent-parent';
+      }
+      return undefined;
+    });
+    mockUseRunData.mockImplementation((id?: string) => {
+      if (id === 'agent-parent') {
+        return { status: 'Succeeded' };
+      }
+      return undefined;
+    });
+    mockUseActionMetadata.mockImplementation((id?: string) => (id === 'actual-agent' ? { type: 'Agent' } : undefined));
+    const staleMetadata = {
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { repetitionCount: 2 },
+      agentRepetitionIdentity: 'run-1|actual-agent|000001|1|Succeeded',
+    };
+    mockUseNodeMetadata.mockReturnValue(staleMetadata);
+
+    const { rerender } = render(<DefaultNode {...defaultProps} />);
+    expect(screen.queryByTestId('shared-loops-pager-testNode')).toBeNull();
+
+    mockUseNodeMetadata.mockReturnValue({
+      ...staleMetadata,
+      agentRepetitionIdentity: 'run-1|actual-agent|000002|2|Succeeded',
+    });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
+
+    mockUseRunData.mockImplementation((id?: string) => (id === 'testNode' || id === 'agent-parent' ? { status: 'Succeeded' } : undefined));
+    mockUseNodeMetadata.mockReturnValue({
+      ...staleMetadata,
+      toolRunData: undefined,
+      agentRepetitionIdentity: 'run-1|actual-agent|000002|2|Succeeded',
+    });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-status', 'succeeded');
+  });
+
+  it('uses the action status inside a conditional Agent tool rather than requiring a direct tool stamp', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseParentNodeId.mockReturnValue('actual-agent');
+    mockUseActionMetadata.mockImplementation((id?: string) => (id === 'actual-agent' ? { type: 'Agent' } : undefined));
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'conditional-tool', parentNodeId: 'actual-agent' });
+    mockUseRunData.mockImplementation((id?: string) => (id === 'testNode' ? { status: 'Succeeded' } : undefined));
+
+    render(<DefaultNode {...defaultProps} />);
+
+    expect(screen.getByRole('button')).toHaveAttribute('data-status', 'succeeded');
+  });
+
+  it('renders only the current shared MCP invocation and keeps the aggregate pager count', () => {
+    const identity = 'run-1|actual-agent|000002|2|';
+    const runData = { status: 'Succeeded', duration: '2s' };
+    const metadata = {
+      graphId: 'actual-agent',
+      parentNodeId: 'actual-agent',
+      subgraphType: 'MCP_CLIENT',
+      toolRunData: { status: 'Failed', repetitionCount: 3 },
+      toolRunIndex: 1,
+      agentRepetitionIdentity: identity,
+      agentToolInvocation: { agentRepetitionIdentity: identity, page: 1 },
+      runData,
+    };
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseRunIndex.mockReturnValue(2);
+    mockUseParentNodeId.mockImplementation((id?: string) => (id === 'testNode' ? 'actual-agent' : undefined));
+    mockUseActionMetadata.mockImplementation((id?: string) => (id === 'actual-agent' ? { type: 'Agent' } : undefined));
+    mockUseRunData.mockImplementation((id?: string) => (id === 'testNode' ? runData : undefined));
+    mockUseNodeMetadata.mockReturnValue(metadata);
+
+    const { rerender } = render(<DefaultNode {...defaultProps} />);
+    expect(screen.getByRole('button', { name: /Succeeded.*2s/i })).toHaveAttribute('data-status', 'succeeded');
+    expect(screen.getByTestId('shared-loops-pager-testNode')).toBeInTheDocument();
+
+    mockUseNodeMetadata.mockReturnValue({ ...metadata, toolRunIndex: 2 });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByRole('button', { name: /Failed/i })).toHaveAttribute('data-status', 'failed');
+    expect(screen.queryByText('2s')).not.toBeInTheDocument();
+
+    mockUseRunInstance.mockReturnValue({ id: 'run-2' });
+    rerender(<DefaultNode {...defaultProps} data={{}} />);
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-status');
+    expect(screen.queryByTestId('shared-loops-pager-testNode')).not.toBeInTheDocument();
+  });
+
+  it('updates run data when the selected repetition response has no actionTrackingId', () => {
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: 'run-1' });
+    mockUseParentRunIndex.mockReturnValue(0);
+    mockUseNodeRepetition.mockReturnValue({
+      isFetching: false,
+      data: { properties: { status: 'Succeeded', inputsLink: null, outputsLink: null } },
+    });
+    mockUseRunData.mockReturnValue(undefined);
+
+    render(<DefaultNode {...defaultProps} />);
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'workflow/setRepetitionRunData',
+        payload: expect.objectContaining({ nodeId: 'testNode' }),
+      })
+    );
+  });
+
   it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {
     mockUseSharedNodeUi.mockReturnValue(true);
     mockUseParentNodeId.mockReturnValue('actual-agent');
@@ -541,6 +685,24 @@ describe('OperationCardNode (v2)', () => {
         type: 'designerView/setShowDeleteModalNodeId',
       })
     );
+  });
+
+  it.each([false, true])('does not request Delete from a focused monitoring operation (Shared: %s)', (sharedOption) => {
+    mockUseReadOnly.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    const { container } = render(<DefaultNode {...defaultProps} data={{ presentation: { shared: sharedOption } }} />);
+    if (sharedOption) {
+      const card = container.querySelector('#msla-node-testNode');
+      expect(card).toBeInTheDocument();
+      if (card) {
+        fireEvent.keyDown(card, { key: 'Delete' });
+      }
+    } else {
+      // The Legacy card test double exposes the same callback as the real Delete-key handler.
+      expect(screen.queryByTestId('delete-btn')).not.toBeInTheDocument();
+    }
+
+    expect(mockDispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'designerView/setShowDeleteModalNodeId' }));
   });
 
   it('defers the leaf DropZone until initial mount settles without changing accepted shared geometry', () => {

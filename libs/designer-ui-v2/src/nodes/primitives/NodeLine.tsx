@@ -52,13 +52,13 @@ const useNodeLineStateStyles = makeStyles({
   default: {},
   taken: {
     strokeWidth: nodeLineStateOverrides.taken.strokeWidth,
-    '@media (forced-colors: active)': { stroke: 'Highlight' },
+    '@media (forced-colors: active)': { stroke: 'Highlight !important' },
   },
   notTaken: { opacity: nodeLineStateOverrides.notTaken.opacity },
   highlighted: {
     stroke: nodeLineStateOverrides.highlighted.stroke,
     strokeWidth: nodeLineStateOverrides.highlighted.strokeWidth,
-    '@media (forced-colors: active)': { stroke: 'Highlight' },
+    '@media (forced-colors: active)': { stroke: 'Highlight !important' },
   },
   running: {
     stroke: nodeLineStateOverrides.running.stroke,
@@ -74,7 +74,14 @@ const useNodeLineStateStyles = makeStyles({
 });
 
 export const useNodeLineStyles = makeStyles({
-  base: { fill: 'none', strokeWidth: tokens.strokeWidthThin, '@media (forced-colors: active)': { stroke: 'CanvasText' } },
+  base: {
+    fill: 'none',
+    strokeWidth: tokens.strokeWidthThin,
+    '@media (forced-colors: active)': {
+      stroke: 'CanvasText !important',
+      '&[data-line-highlighted]': { stroke: 'Highlight !important' },
+    },
+  },
   solid: { stroke: nodeLineStrokes.solid.stroke },
   solidSuccess: {
     stroke: nodeLineStrokes.solidSuccess.stroke,
@@ -129,7 +136,11 @@ export const NodeLine = forwardRef<SVGSVGElement, NodeLineProps>(function NodeLi
       data-state={state === 'default' ? undefined : state}
       data-arrow={variant === 'solid' && !showArrow ? 'false' : undefined}
     >
-      <path className={mergeClasses(line.base, line[variant], lineState[state])} d={`${shaft}${arrow}`} />
+      <path
+        className={mergeClasses(line.base, line[variant], lineState[state])}
+        data-line-highlighted={state === 'taken' || state === 'highlighted' ? '' : undefined}
+        d={`${shaft}${arrow}`}
+      />
     </svg>
   );
 });

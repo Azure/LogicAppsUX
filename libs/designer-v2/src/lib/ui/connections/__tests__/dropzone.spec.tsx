@@ -265,12 +265,8 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     expect(container.querySelector('[data-edge-control]')).toBeNull();
   });
 
-  it.each([
-    { boundary: 'read-only', readOnly: true, monitoring: false },
-    { boundary: 'monitoring', readOnly: false, monitoring: true },
-  ])('disables the real accepted horizontal terminal control on a $boundary canvas', ({ readOnly, monitoring }) => {
-    state.readOnly = readOnly;
-    state.monitoring = monitoring;
+  it('disables the real accepted horizontal terminal control on a read-only authoring canvas', () => {
+    state.readOnly = true;
     const { container } = render(<DropZone graphId="nested" parentId="last" isLeaf axis="horizontal" sharedPresentation />);
     expect(container.querySelector('[data-line="dashedNeutral"] path')).toHaveAttribute('d', 'M0 10 H8');
     expect(screen.getByRole('button')).toBeDisabled();
@@ -278,15 +274,39 @@ describe('shared insertion uses the real host menu and DnD boundary', () => {
     expect(state.dispatch).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { boundary: 'read-only', readOnly: true, monitoring: false },
-    { boundary: 'monitoring', readOnly: false, monitoring: true },
-  ])('disables the flagged mutation surface on a $boundary canvas and never dispatches', ({ readOnly, monitoring }) => {
-    state.readOnly = readOnly;
-    state.monitoring = monitoring;
+  it('omits the terminal control in Shared monitoring without changing Legacy', () => {
+    state.monitoring = true;
+    const { rerender } = render(<DropZone graphId="nested" parentId="last" isLeaf sharedPresentation />);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+
+    rerender(<DropZone graphId="nested" parentId="last" isLeaf sharedPresentation={false} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('disables the flagged mutation surface on a read-only canvas and never dispatches', () => {
+    state.readOnly = true;
     render(<DropZone {...props} />);
     expect(screen.getByRole('button')).toBeDisabled();
     fireEvent.click(screen.getByRole('button'));
+    expect(state.dispatch).not.toHaveBeenCalled();
+  });
+
+  it('does not render a Shared terminal Add on a monitoring canvas', () => {
+    state.monitoring = true;
+    render(<DropZone {...props} />);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(state.dispatch).not.toHaveBeenCalled();
+  });
+
+  it.each([false, true])('keeps a Shared monitoring insertion hidden when edge hover is %s', (isRevealed) => {
+    state.monitoring = true;
+    const { container } = render(<DropZone {...props} isRevealed={isRevealed} />);
+    const control = container.querySelector('[data-edge-control="insertion"]')!;
+    fireEvent.mouseEnter(control);
+    expect(control).toHaveAttribute('data-revealed', 'false');
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
     expect(state.dispatch).not.toHaveBeenCalled();
   });
 

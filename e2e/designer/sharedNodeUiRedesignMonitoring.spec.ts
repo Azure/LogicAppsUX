@@ -48,6 +48,20 @@ async function toggleGraph(page: Page, cardId: string, flag: Flag) {
 
 for (const flag of ['true', 'false'] as const) {
   test.describe(`Standard node redesign, flag ${flag}`, { tag: ['@mock', '@shared-node-ui'] }, () => {
+    test('keeps the monitored definition read-only when Delete is pressed on a card', async ({ page }) => {
+      await openSharedWorkflow(page, 'Monitoring view conditional', flag);
+      await LoadRunFile(page, 'normalState');
+      const delay = card(page, 'Delay');
+      const action = delay.locator('[id="msla-node-Delay"]');
+      const before = (await getSerializedWorkflowFromStateV2(page)).definition;
+      await action.focus();
+      await expect(action).toBeFocused();
+      await page.keyboard.press('Delete');
+      await expect(page.getByRole('dialog').filter({ hasText: /Are you sure you want to delete/ })).toHaveCount(0);
+      await expect(action).toBeVisible();
+      expect((await getSerializedWorkflowFromStateV2(page)).definition).toEqual(before);
+    });
+
     test('captures the conditional monitoring run at fit and measures its canvas zoom', async ({ page }, testInfo) => {
       await page.setViewportSize({ width: 1600, height: 1000 });
       await openSharedWorkflow(page, 'Monitoring view conditional', flag);

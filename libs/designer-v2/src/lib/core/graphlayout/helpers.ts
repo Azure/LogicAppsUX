@@ -9,6 +9,7 @@ import {
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import { hasMcpToolPager, type NodePresentationContext } from '../utils/graph';
+import { getLoopsCount } from '../utils/loopRepetitions';
 import type { ElkNode } from '@microsoft/logic-apps-graph-layout';
 
 export const footerMarker = '#footer';
@@ -41,6 +42,7 @@ export interface GraphPresentationContext {
   /** Renamed node captions; titles feed compact card height, matching useNodeDisplayName. */
   idReplacements?: Record<string, string>;
   isMonitoringView?: boolean;
+  collapsedGraphIds?: Readonly<Record<string, boolean>>;
 }
 
 export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: GraphPresentationContext = {}): NodePresentationContext => {
@@ -60,11 +62,23 @@ export const getWorkflowNodePresentationContext = (node: WorkflowNode, context: 
     metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && definition && 'actions' in definition
       ? Object.values(definition.actions ?? {})[0]
       : definition;
+  const run = metadata?.runData;
+  // Only an expanded Foreach header gets a pager, and never reserve space before repetitions are available.
+  const hasLoopPager =
+    context.isMonitoringView &&
+    !context.collapsedGraphIds?.[id] &&
+    node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE &&
+    node.id.endsWith('#scope') &&
+    operation?.type?.toLowerCase() === 'foreach' &&
+    run?.status &&
+    run.status.toLowerCase() !== 'inprogress' &&
+    (getLoopsCount(run) ?? 0) > 0;
   return {
     operationType: operation?.type,
     title: labelCase(getRecordEntry(context.idReplacements, id) ?? id),
     subgraphType: metadata?.subgraphType,
     caseCount: operation && 'cases' in operation ? Object.keys(operation.cases ?? {}).length + 1 : undefined,
+    ...(hasLoopPager && { hasLoopPager: true }),
     ...(node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE &&
       hasMcpToolPager(metadata, parent?.type, context.isMonitoringView) && { hasToolPager: true }),
     ...(toolRow && {

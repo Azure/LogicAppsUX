@@ -130,6 +130,7 @@ export const useHandleStyles = makeStyles({
     bottom: `${-nodeMetrics.mergePoint.size / 2}px`,
     transform: 'translateX(-50%)',
     zIndex: 3,
+    '&[data-merge-add-source]': { pointerEvents: 'auto' },
   },
   mergeHorizontal: {
     left: 'auto',

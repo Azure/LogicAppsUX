@@ -84,7 +84,9 @@ export const NodeIconTile = forwardRef<HTMLSpanElement, NodeIconTileProps>(funct
       data-artwork={artwork || undefined}
       aria-hidden="true"
     >
-      <span className={styles.icon}>{selected ? (selectedIcon ?? icon) : icon}</span>
+      <span className={styles.icon} data-node-glyph>
+        {selected ? (selectedIcon ?? icon) : icon}
+      </span>
     </span>
   );
 });

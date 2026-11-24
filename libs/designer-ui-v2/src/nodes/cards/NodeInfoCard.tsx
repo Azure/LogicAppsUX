@@ -51,6 +51,7 @@ const useStyles = makeStyles({
     lineHeight: tokens.lineHeightBase300,
     color: tokens.colorNeutralForeground1,
   },
+  wrappedTitle: { whiteSpace: 'normal', overflowWrap: 'anywhere' },
   header: {
     gridTemplateColumns: 'min-content minmax(0, 1fr) auto',
     '& .fui-CardHeader__header, & .fui-CardHeader__description': { minWidth: 0 },
@@ -116,6 +117,8 @@ export interface NodeInfoCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   category: NodeCategory;
   icon: ReactNode;
   title: string;
+  /** Allow the full title to wrap rather than relying on a mouse-only native tooltip. */
+  wrapTitle?: boolean;
   subtitle?: string;
   configured?: boolean;
   description?: ReactNode;
@@ -136,6 +139,7 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
     category,
     icon,
     title,
+    wrapTitle,
     subtitle,
     configured,
     description,
@@ -182,7 +186,7 @@ export const NodeInfoCard = forwardRef<HTMLDivElement, NodeInfoCardProps>(functi
           />
         }
         header={
-          <h3 className={styles.title} title={title}>
+          <h3 className={mergeClasses(styles.title, wrapTitle && styles.wrappedTitle)} title={title}>
             {title}
           </h3>
         }

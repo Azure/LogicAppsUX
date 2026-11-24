@@ -4,6 +4,7 @@ import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
+import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
 import { deinitializeNodes, deinitializeOperationInfo, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
 import { clearPanel, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
@@ -179,7 +180,7 @@ export const deleteOperations = createAsyncThunk(
   'deleteOperations',
   async (deletePayload: DeleteOperationsPayload, { getState, dispatch }) => {
     const { nodeIds } = deletePayload;
-    if (!nodeIds || nodeIds.length === 0) {
+    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked((getState() as RootState).designerOptions)) {
       return;
     }
 

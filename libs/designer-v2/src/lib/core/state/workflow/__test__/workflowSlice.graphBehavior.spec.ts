@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RUN_AFTER_STATUS, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_STATUS, SUBGRAPH_TYPES, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import { reassignEdgeSources, reassignEdgeTargets } from '../../../parsers/restructuringHelpers';
 import { createWorkflowEdge } from '../../../utils/graph';
@@ -283,6 +283,194 @@ describe('workflow graph mutations preserve authoring topology', () => {
     expect(state.operations.Agent).toMatchObject({ tools: { Tool: { actions: {} } } });
     state = reducer(state, actions.deleteAgentTool({ agentId: 'Agent', toolId: 'Tool' }));
     expect(state.operations.Agent).toMatchObject({ tools: {} });
+  });
+
+  it('clears stale tool monitoring data for tools that are absent in the selected agent iteration', () => {
+    const state = {
+      ...initialWorkflowState,
+      graph: {
+        id: 'root',
+        type: 'GRAPH_NODE',
+        children: [
+          {
+            id: 'Agent',
+            type: 'SUBGRAPH_NODE',
+            children: [
+              { id: 'toolA', type: 'SUBGRAPH_NODE', children: [], edges: [] },
+              { id: 'toolB', type: 'SUBGRAPH_NODE', children: [], edges: [] },
+            ],
+            edges: [],
+          },
+        ],
+        edges: [],
+      },
+      nodesMetadata: {
+        Agent: { graphId: 'root', runData: { status: 'Succeeded' } },
+        toolA: { graphId: 'Agent', parentNodeId: 'Agent', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, runData: { status: 'Succeeded' } },
+        toolB: {
+          graphId: 'Agent',
+          parentNodeId: 'Agent',
+          subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
+          runData: { status: 'Succeeded', duration: '5s' },
+          runIndex: 1,
+          toolRunData: { status: 'Succeeded', repetitionCount: 3 },
+          toolRunIndex: 1,
+        },
+      },
+    } as unknown as WorkflowState;
+
+    const next = reducer(
+      state,
+      actions.updateAgenticMetadata({
+        nodeId: 'Agent',
+        scopeRepetitionRunData: {
+          status: 'Failed',
+          startTime: '2026-01-01T00:00:00Z',
+          endTime: '2026-01-01T00:00:01Z',
+          tools: {
+            toolA: { status: 'Failed', iterations: 1 },
+          },
+        },
+        agentRepetitionIdentity: 'run-1|Agent|000002|2|Succeeded',
+      })
+    );
+
+    expect(next.nodesMetadata.toolA.runData).toMatchObject({ status: 'Failed', repetitionCount: 1 });
+    expect(next.nodesMetadata.toolA.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+    expect(next.nodesMetadata.toolB.toolRunData).toBeUndefined();
+    expect(next.nodesMetadata.toolB.toolRunIndex).toBeUndefined();
+    expect(next.nodesMetadata.toolB.runData).toBeUndefined();
+    expect(next.nodesMetadata.toolB.runIndex).toBeUndefined();
+    expect(next.nodesMetadata.toolB.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+    expect(next.nodesMetadata.Agent.agentRepetitionIdentity).toBe('run-1|Agent|000002|2|Succeeded');
+
+    const refresh = (current: WorkflowState, identity?: string) =>
+      reducer(
+        current,
+        actions.updateAgenticMetadata({
+          nodeId: 'Agent',
+          scopeRepetitionRunData: {
+            tools: { toolA: { status: 'Failed', iterations: 3 }, toolB: { status: 'Succeeded', iterations: 3 } },
+          },
+          agentRepetitionIdentity: identity,
+        })
+      );
+    const identity = next.nodesMetadata.Agent.agentRepetitionIdentity;
+    const toolPages = reducer(
+      reducer(next, actions.setRunIndex({ nodeId: 'toolA', page: 2 })),
+      actions.setToolRunIndex({ nodeId: 'toolB', page: 1 })
+    );
+    const refreshed = refresh(toolPages, identity);
+    expect(refreshed.nodesMetadata.toolA.runIndex).toBe(2);
+    expect(refreshed.nodesMetadata.toolB.toolRunIndex).toBe(1);
+    expect(refresh(refreshed, 'run-1|Agent|000003|3|Succeeded').nodesMetadata.toolB.toolRunIndex).toBe(0);
+    expect(reducer(refreshed, actions.clearAllRepetitionRunData()).nodesMetadata.toolB.toolRunData).toBeUndefined();
+  });
+
+  it.each([undefined, SUBGRAPH_TYPES.MCP_CLIENT])(
+    'refreshes tool aggregates without losing the selected invocation (%s)',
+    (subgraphType) => {
+      const identity = 'run-1|Agent|000001|1|Succeeded';
+      const state: WorkflowState = {
+        ...initialWorkflowState,
+        graph: { id: 'root', type: 'GRAPH_NODE', children: [], edges: [] },
+        nodesMetadata: {
+          Agent: { graphId: 'root' },
+          Tool: { graphId: 'Agent', subgraphType },
+        },
+      };
+      const refresh = (current: WorkflowState, iterations: number, agentRepetitionIdentity = identity) =>
+        reducer(
+          current,
+          actions.updateAgenticMetadata({
+            nodeId: 'Agent',
+            agentRepetitionIdentity,
+            scopeRepetitionRunData: { tools: { Tool: { status: 'Failed', iterations } } },
+          })
+        );
+      const changePage = (current: WorkflowState, page: number) =>
+        reducer(current, (subgraphType ? actions.setToolRunIndex : actions.setRunIndex)({ nodeId: 'Tool', page }));
+      const aggregate = refresh(state, 2);
+      const invocation = {
+        nodeId: 'Tool',
+        runData: {
+          status: 'Succeeded',
+          startTime: '2026-01-01T00:00:00Z',
+          endTime: '2026-01-01T00:00:02Z',
+          inputsLink: { uri: '/selected-inputs', contentSize: 1 },
+          outputsLink: { contentSize: 0 },
+          retryHistory: [],
+          correlation: { actionTrackingId: 'invocation', clientTrackingId: 'run-1' },
+          code: 'OK',
+        },
+        agentToolInvocation: { agentRepetitionIdentity: identity, page: 1 },
+      };
+      const selected = reducer(changePage(aggregate, 1), actions.setRepetitionRunData(invocation));
+      const refreshed = refresh(selected, 3);
+
+      expect(refreshed.nodesMetadata.Tool.runData).toMatchObject({
+        status: 'Succeeded',
+        duration: '2s',
+        inputsLink: { uri: '/selected-inputs' },
+      });
+      expect(subgraphType ? refreshed.nodesMetadata.Tool.toolRunData : refreshed.nodesMetadata.Tool.runData).toMatchObject({
+        repetitionCount: 3,
+      });
+      expect(refresh(changePage(refreshed, 2), 3).nodesMetadata.Tool.runData?.status).not.toBe('Succeeded');
+      expect(reducer(changePage(refreshed, 2), actions.setRepetitionRunData(invocation)).nodesMetadata.Tool.runData?.status).not.toBe(
+        'Succeeded'
+      );
+      expect(refresh(refreshed, 2, 'run-2|Agent|000001|1|Succeeded').nodesMetadata.Tool.runData?.status).not.toBe('Succeeded');
+    }
+  );
+
+  it.each([
+    { subgraphType: undefined, count: 2, page: 1 },
+    { subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, count: 2, page: 1 },
+    { subgraphType: undefined, count: 1, page: 0 },
+    { subgraphType: SUBGRAPH_TYPES.MCP_CLIENT, count: 0, page: 0 },
+  ])('clamps a $subgraphType tool to page $page when the count shrinks to $count', ({ subgraphType, count, page }) => {
+    const agentRepetitionIdentity = 'run-1|Agent|000001|1|Succeeded';
+    const selection = subgraphType ? { toolRunIndex: 2 } : { runIndex: 2 };
+    const aggregate = { status: 'Failed', repetitionCount: 3 } as LogicAppsV2.WorkflowRunAction;
+    const state: WorkflowState = {
+      ...initialWorkflowState,
+      graph: { id: 'root', type: 'GRAPH_NODE', children: [], edges: [] },
+      nodesMetadata: {
+        Agent: { graphId: 'root' },
+        Tool: {
+          graphId: 'Agent',
+          subgraphType,
+          ...selection,
+          agentRepetitionIdentity,
+          agentToolInvocation: { agentRepetitionIdentity, page: 2, aggregate: subgraphType ? undefined : aggregate },
+          runData: {
+            status: 'Succeeded',
+            repetitionCount: 3,
+            duration: '2s',
+            inputsLink: { uri: '/removed-invocation', contentSize: 1 },
+          } as LogicAppsV2.WorkflowRunAction,
+          toolRunData: subgraphType ? aggregate : undefined,
+        },
+      },
+    };
+    const refreshed = reducer(
+      state,
+      actions.updateAgenticMetadata({
+        nodeId: 'Agent',
+        agentRepetitionIdentity,
+        scopeRepetitionRunData: { tools: { Tool: { status: 'Failed', iterations: count } } },
+      })
+    );
+    const tool = refreshed.nodesMetadata.Tool;
+    expect(subgraphType ? tool.toolRunIndex : tool.runIndex).toBe(page);
+    expect(tool.agentToolInvocation).toBeUndefined();
+    if (subgraphType) {
+      expect(tool.runData).toBeUndefined();
+      expect(tool.toolRunData).toEqual({ status: 'Failed', repetitionCount: count });
+    } else {
+      expect(tool.runData).toEqual({ status: 'Failed', repetitionCount: count });
+    }
   });
 
   it('collapses and expands nested graph descendants independently from collapsed action branches', () => {

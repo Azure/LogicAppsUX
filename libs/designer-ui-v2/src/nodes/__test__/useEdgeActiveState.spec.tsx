@@ -28,14 +28,14 @@ const renderProbe = () =>
   );
 
 describe('useEdgeActiveState', () => {
-  it.each(['line', 'wrapper'])('activates only while the %s is hovered', async (target) => {
-    const user = userEvent.setup();
+  it.each(['line', 'wrapper'])('activates only while the %s is hovered', (target) => {
     renderProbe();
+    const surface = screen.getByTestId(target);
     expect(screen.getByTestId('active')).toHaveTextContent('false');
-    await user.hover(screen.getByTestId(target));
+    fireEvent.mouseOver(surface);
     expect(screen.getByTestId('hovered')).toHaveTextContent('true');
     expect(screen.getByTestId('active')).toHaveTextContent('true');
-    await user.unhover(screen.getByTestId(target));
+    fireEvent.mouseOut(surface);
     expect(screen.getByTestId('hovered')).toHaveTextContent('false');
     expect(screen.getByTestId('active')).toHaveTextContent('false');
   });

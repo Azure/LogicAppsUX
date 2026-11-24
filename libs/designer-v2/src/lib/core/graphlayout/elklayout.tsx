@@ -257,6 +257,10 @@ const convertElkGraphToReactFlow = (
             if (header) {
               const top = (header.y ?? 0) + (header.height ?? 0) + TERMINAL_ADD_PADDING;
               nodeObject.data.bodyFrame = { y: top, height: n.height - top };
+              // An empty read-only loop puts its "No actions" caption in this gap instead of a flow connection.
+              if (!readOnly || n.children.some((child) => child !== header)) {
+                nodeObject.data.loopJoin = { x: (header.x ?? 0) + (header.width ?? 0) / 2, y: top - TERMINAL_ADD_PADDING };
+              }
             }
           }
           const type = n.layoutOptions?.operationType;
@@ -568,12 +572,14 @@ export const LayoutProvider = ({ children }: any) => {
   const operations = useSelector((state: RootState) => state.workflow.operations);
   const nodesMetadata = useSelector((state: RootState) => state.workflow.nodesMetadata);
   const workflowIdReplacements = useSelector((state: RootState) => state.workflow.idReplacements);
+  const workflowCollapsedGraphIds = useSelector((state: RootState) => state.workflow.collapsedGraphIds);
   const readOnly = useReadOnly();
   const useSharedNodeUiOption = useSharedNodeUi();
   const isMonitoringView = useMonitoringView();
   const sharedMonitoring = useSharedNodeUiOption && (isMonitoringView ?? false);
   // Titles only size shared compact cards; legacy layout must not be invalidated by renames.
   const idReplacements = useSharedNodeUiOption ? workflowIdReplacements : undefined;
+  const collapsedGraphIds = sharedMonitoring ? workflowCollapsedGraphIds : undefined;
   const prevLayoutRelevantDataRef = useRef<LayoutRelevantData>();
   const previousOptions = useRef({ readOnly, useSharedNodeUi: useSharedNodeUiOption, sharedMonitoring });
   const lastAcceptedShared = useRef<boolean>();
@@ -585,6 +591,7 @@ export const LayoutProvider = ({ children }: any) => {
     operations: typeof operations;
     nodesMetadata: typeof nodesMetadata;
     idReplacements: typeof idReplacements;
+    collapsedGraphIds: typeof collapsedGraphIds;
   }>();
 
   useLayoutEffect(() => {
@@ -597,6 +604,7 @@ export const LayoutProvider = ({ children }: any) => {
       operations,
       nodesMetadata,
       idReplacements,
+      collapsedGraphIds,
     };
     if (!workflowGraph) {
       prevLayoutRelevantDataRef.current = undefined;
@@ -608,7 +616,7 @@ export const LayoutProvider = ({ children }: any) => {
     return () => {
       activeRequest.current = undefined;
     };
-  }, [workflowGraph, readOnly, sharedMonitoring, useSharedNodeUiOption, operations, nodesMetadata, idReplacements]);
+  }, [workflowGraph, readOnly, sharedMonitoring, useSharedNodeUiOption, operations, nodesMetadata, idReplacements, collapsedGraphIds]);
 
   useThrottledEffect(
     () => {
@@ -621,12 +629,15 @@ export const LayoutProvider = ({ children }: any) => {
         request.useSharedNodeUi !== useSharedNodeUiOption ||
         request.operations !== operations ||
         request.nodesMetadata !== nodesMetadata ||
-        request.idReplacements !== idReplacements
+        request.idReplacements !== idReplacements ||
+        request.collapsedGraphIds !== collapsedGraphIds
       ) {
         return;
       }
 
-      const context = useSharedNodeUiOption ? { operations, nodesMetadata, idReplacements, isMonitoringView: sharedMonitoring } : undefined;
+      const context = useSharedNodeUiOption
+        ? { operations, nodesMetadata, idReplacements, isMonitoringView: sharedMonitoring, collapsedGraphIds }
+        : undefined;
       const currentLayoutRelevantData = getLayoutRelevantData(workflowGraph, context);
       // If layout-relevant data hasn't changed, skip elk processing
       const currentOptions = { readOnly, useSharedNodeUi: useSharedNodeUiOption, sharedMonitoring };
@@ -673,7 +684,7 @@ export const LayoutProvider = ({ children }: any) => {
           });
         });
     },
-    [readOnly, sharedMonitoring, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements],
+    [readOnly, sharedMonitoring, workflowGraph, useSharedNodeUiOption, operations, nodesMetadata, idReplacements, collapsedGraphIds],
     200
   );
 

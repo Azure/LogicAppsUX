@@ -13,12 +13,20 @@ import type { NodeHandleVariant } from '../types';
 import { resolveCardDensity, resolveNodeIcons } from './shared';
 import type { BaseNodeCardProps, CompactNodeCardProps } from './shared';
 import { useNodeCount } from '../countLabel';
+import { nodeMetrics } from '../metrics';
 
 const END_OUTPUTS = ['neutral', 'neutral'] as const;
 const NEXT_OUTPUT = ['neutral'] as const;
 const DEFAULT_ICONS = { icon: <ArrowRepeatAllRegular />, selectedIcon: <ArrowRepeatAllFilled /> };
 const useStyles = makeStyles({
   bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translate(-50%, 50%)', zIndex: 1 },
+  pagerRow: {
+    position: 'relative',
+    height: `${nodeMetrics.iterationPager.height}px`,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'start',
+  },
 });
 
 /** end: body/done outputs; bottom: body below and next trailing; none: next only. */
@@ -33,10 +41,12 @@ export interface LoopNodeCardProps extends Omit<BaseNodeCardProps, 'strings'>, C
   bodySlot?: ReactNode;
   /** Host control on the bottom edge, replacing the bottom body dot. */
   bodyToggle?: ReactNode;
+  /** Optional vertical monitoring row; the next port belongs below the controls. */
+  iterationPager?: ReactNode;
   strings?: LoopNodeCardStrings;
 }
 
-/** Canonical Otto loop card; body contents and run paging belong in the host's frame. */
+/** Canonical loop card; the host supplies body contents and optional run paging. */
 export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(function LoopNodeCard(
   {
     title,
@@ -56,10 +66,12 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
     outputSlots,
     bodySlot,
     bodyToggle,
+    iterationPager,
     strings = defaultNodeStrings,
     handles = true,
     density,
     titleLines,
+    prioritizeTitle,
     ...rest
   },
   ref
@@ -74,6 +86,7 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
       <NodeHandle className={styles.bottom}>{bodySlot}</NodeHandle>
     ) : null;
   const nodeCount = useNodeCount(countLabel, strings, rest['aria-describedby']);
+  const outputs = handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null;
   return (
     <NodeCard
       {...rest}
@@ -87,6 +100,19 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
       strings={strings}
       data-node-card="foreach"
       data-body-placement={bodyPlacement}
+      after={
+        iterationPager ? (
+          <>
+            {rest.after}
+            <div className={styles.pagerRow} data-loop-pager-row>
+              {iterationPager}
+              {outputs}
+            </div>
+          </>
+        ) : (
+          rest.after
+        )
+      }
     >
       <NodeCardBody density={layout.body} testData={testData} testDataLabel={strings.status.mock}>
         {handles ? <NodeInputHandle variant={inputVariant}>{inputSlot}</NodeInputHandle> : null}
@@ -104,9 +130,10 @@ export const LoopNodeCard = forwardRef<HTMLDivElement, LoopNodeCardProps>(functi
           subtitle={subtitle ?? strings.loop.foreach}
           subtitleKind={subtitleKind}
           titleLines={layout.titleLines}
+          prioritizeTitle={prioritizeTitle}
           {...nodeCount.textProps}
         />
-        {handles ? <NodeOutputHandles handles={bodyPlacement === 'end' ? END_OUTPUTS : NEXT_OUTPUT} slots={outputSlots} /> : null}
+        {iterationPager ? null : outputs}
       </NodeCardBody>
       {handles ? bottom : null}
     </NodeCard>

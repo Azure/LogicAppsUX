@@ -13,6 +13,7 @@ import {
   getRecordEntry,
   SUBGRAPH_TYPES,
   equals,
+  isBuiltInAgentTool,
 } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
@@ -25,6 +26,7 @@ import { useEdges } from '@xyflow/react';
 import { ErrorLevel } from '../operation/errorLevel';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
+import { getAgentRepetitionIdentity, getScopeRepetitionName } from '../../utils/loopRepetitions';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -649,10 +651,21 @@ export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefi
     )
   );
 
-export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
-  useSelector(
-    useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData), [id])
-  );
+export const getNodeRunData = (state: WorkflowState, id: string): NodesMetadata[string]['runData'] => {
+  const node = getRecordEntry(state.nodesMetadata, id);
+  // Keep the previous tool result in state for a return to its cached repetition, but not in the open details panel.
+  if (
+    node?.agentRepetitionIdentity &&
+    isBuiltInAgentTool(id) &&
+    node.agentRepetitionIdentity !== getSelectedAgentRepetitionIdentity(state, node.graphId)
+  ) {
+    return undefined;
+  }
+  return node?.runData;
+};
+
+export const useRunData = (id: string): NodesMetadata[string]['runData'] =>
+  useSelector(useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getNodeRunData(state, id)), [id]));
 
 export const useToolRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(
@@ -758,22 +771,28 @@ export const useToolRunIndex = (id: string | undefined): number | undefined => {
   );
 };
 
+const getParentNodeId = (nodesMetadata: NodesMetadata, id: string | undefined): string | undefined => {
+  const parentId = getRecordEntry(nodesMetadata, id)?.parentNodeId;
+  return parentId?.includes('elseActions') || parentId?.includes('actions')
+    ? getRecordEntry(nodesMetadata, parentId)?.parentNodeId
+    : parentId;
+};
+
+export const getSelectedAgentRepetitionIdentity = (state: WorkflowState, agentNodeId: string): string | undefined => {
+  const repetitionIndex = getRecordEntry(state.nodesMetadata, agentNodeId)?.runIndex;
+  const parentId = getParentNodeId(state.nodesMetadata, agentNodeId);
+  return getAgentRepetitionIdentity({
+    runId: state.runInstance?.id,
+    ownerNodeId: agentNodeId,
+    repetitionName: getScopeRepetitionName(repetitionIndex),
+    repetitionIndex,
+    parentStatus: getRecordEntry(state.nodesMetadata, parentId)?.runData?.status,
+  });
+};
+
 export const useParentNodeId = (id: string | undefined): string | undefined => {
   return useSelector(
-    useMemo(
-      () =>
-        createSelector(getWorkflowState, (state: WorkflowState) => {
-          if (!id) {
-            return undefined;
-          }
-          const parentId = getRecordEntry(state.nodesMetadata, id)?.parentNodeId;
-          if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
-            return getRecordEntry(state.nodesMetadata, parentId)?.parentNodeId;
-          }
-          return parentId;
-        }),
-      [id]
-    )
+    useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getParentNodeId(state.nodesMetadata, id)), [id])
   );
 };
 

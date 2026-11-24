@@ -4,6 +4,11 @@ import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
+export interface AgentToolInvocation {
+  agentRepetitionIdentity: string;
+  page: number;
+}
+
 export interface NodeMetadata {
   graphId: string;
   parentNodeId?: string;
@@ -14,10 +19,19 @@ export interface NodeMetadata {
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   actionMetadata?: Record<string, any>;
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
+  subgraphRunDataIdentity?: string;
   runIndex?: number;
   handoffs?: Record<string, string>;
   toolRunIndex?: number;
   toolRunData?: LogicAppsV2.WorkflowRunAction;
+  agentRepetitionIdentity?: string;
+  agentToolInvocation?: AgentToolInvocation & { aggregate?: LogicAppsV2.WorkflowRunAction };
+  pendingBuiltInTool?: {
+    toolNodeId: string;
+    invocation: AgentToolInvocation;
+    requestId: string;
+    runData?: Partial<LogicAppsV2.WorkflowRunAction>;
+  };
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;

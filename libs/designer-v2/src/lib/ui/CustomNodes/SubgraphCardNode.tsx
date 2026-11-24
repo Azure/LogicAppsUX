@@ -3,6 +3,7 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelectedInOperationPanel, useIsNodePinnedToOperationPanel } from '../../core/state/panel/panelSelectors';
@@ -17,18 +18,35 @@ import {
   useNodeDisplayName,
   useNodeMetadata,
   useParentNodeId,
+  useReplacedIds,
   useRunData,
   useRunIndex,
   useRunInstance,
   useWorkflowNode,
+  useNodesMetadata,
 } from '../../core/state/workflow/workflowSelectors';
-import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addSwitchCase, replaceId, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitoring';
-import { getScopeRepetitionName } from '../common/LoopsPager/helper';
+import { getAgentRepetitionIdentity, getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { horizontalTerminalStyle } from '../connections/connections.styles';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  Field,
+  Input,
+  type DialogOpenChangeData,
+  type DialogOpenChangeEvent,
+  type InputOnChangeData,
+  type InputProps,
+} from '@fluentui/react-components';
 import {
   WORKFLOW_NODE_TYPES,
   isBuiltInAgentTool,
@@ -38,7 +56,7 @@ import {
   removeIdTag,
   useNodeIndex,
 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
@@ -47,7 +65,7 @@ import { SubgraphCard } from './components/card/subgraphCard';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import { useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
-import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
+import { getNodePresentation, isOperationNameValid, type NodePresentation } from '../../core/utils/graph';
 import { SharedBranchCard } from './components/card/SharedFamilyCards';
 import { useOperationNodeIcon } from './components/card/useOperationNodeIcon';
 import { NodeAddButton } from '@microsoft/designer-ui-v2';
@@ -78,17 +96,42 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);
   const operationInfo = useOperationInfo(graphId);
+  const nodesMetadata = useNodesMetadata();
+  const idReplacements = useReplacedIds();
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
   const parentNodeId = useParentNodeId(subgraphId);
   const runData = useRunData(parentNodeId ?? subgraphId);
-  const effectiveToolRunData = metadata?.toolRunData ?? metadata?.runData;
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
   const title = useNodeDisplayName(subgraphId);
   const runInstance = useRunInstance();
+  const isA2AWorkflow = useIsA2AWorkflow();
   const agentRunIndex = useRunIndex(graphId);
+  const ownerParentNodeId = useParentNodeId(graphId);
+  const ownerParentRunData = useRunData(ownerParentNodeId ?? '');
+  const scopeRepetitionName = useMemo(() => getScopeRepetitionName(agentRunIndex), [agentRunIndex]);
+  const agentRepetitionIdentity = useMemo(
+    () =>
+      getAgentRepetitionIdentity({
+        runId: runInstance?.id,
+        ownerNodeId: graphId,
+        repetitionName: scopeRepetitionName,
+        repetitionIndex: agentRunIndex,
+        parentStatus: ownerParentRunData?.status,
+      }),
+    [runInstance?.id, graphId, scopeRepetitionName, agentRunIndex, ownerParentRunData?.status]
+  );
+  const useScopedToolMonitoringData = shared && sharedTool && isMonitoringView && !isA2AWorkflow && !!agentRepetitionIdentity;
+  const hasCurrentToolMonitoringData = !useScopedToolMonitoringData || metadata?.agentRepetitionIdentity === agentRepetitionIdentity;
+  const pendingTool = nodesMetadata[graphId]?.pendingBuiltInTool;
+  const hasPendingToolSelection =
+    useScopedToolMonitoringData &&
+    pendingTool?.toolNodeId === subgraphId &&
+    pendingTool.invocation.agentRepetitionIdentity === agentRepetitionIdentity;
+  const effectiveToolRunData =
+    useScopedToolMonitoringData && !hasCurrentToolMonitoringData ? undefined : (metadata?.toolRunData ?? metadata?.runData);
 
   const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
   const isAgentAddTool = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
@@ -99,6 +142,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const sharedOwnsCount = sharedTool;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
+  const [isRenameCaseDialogOpen, setIsRenameCaseDialogOpen] = useState(false);
+  const [renameCaseDraft, setRenameCaseDraft] = useState('');
+  const [renameCaseError, setRenameCaseError] = useState<string | undefined>(undefined);
 
   const intlText = useMemo(
     () => ({
@@ -147,6 +193,31 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
         id: 'PoPO/T',
         description: 'Text to explain that there are flow structure errors for this node',
       }),
+      renameCaseTitle: intl.formatMessage({
+        defaultMessage: 'Rename case',
+        id: 'MBA7Al',
+        description: 'Dialog title shown when renaming a switch-case lane',
+      }),
+      renameCaseInputLabel: intl.formatMessage({
+        defaultMessage: 'Case name',
+        id: 'j6+gS9',
+        description: 'Input label for renaming a switch-case key',
+      }),
+      renameCaseSave: intl.formatMessage({
+        defaultMessage: 'Save',
+        id: 'mBHY52',
+        description: 'Button text to confirm renaming a switch-case key',
+      }),
+      renameCaseCancel: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: 'hu8PnM',
+        description: 'Button text to dismiss switch-case rename dialog',
+      }),
+      renameCaseValidationError: intl.formatMessage({
+        defaultMessage: 'Enter a unique case name.',
+        id: '1MO/b/',
+        description: 'Validation message when a switch-case key rename is invalid',
+      }),
     }),
     [actionCount, intl]
   );
@@ -183,14 +254,25 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
         dispatch(setFocusNode(newAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
-        // For built-in tools in monitoring view, fetch inputs/outputs if not already loaded
-        if (isMonitoringView && isBuiltInAgentTool(_id) && !metadata?.runData?.inputs && runInstance?.id && graphId) {
+        // Opening the card must not replace a chat-selected invocation with the fallback page while its summary loads.
+        if (
+          isMonitoringView &&
+          isBuiltInAgentTool(_id) &&
+          !hasPendingToolSelection &&
+          (!hasCurrentToolMonitoringData || !metadata?.runData?.inputs) &&
+          runInstance?.id &&
+          graphId
+        ) {
           dispatch(
             fetchBuiltInToolRunData({
               toolNodeId: _id,
               agentNodeId: graphId,
               runId: runInstance.id,
-              repetitionName: getScopeRepetitionName(agentRunIndex),
+              repetitionName: scopeRepetitionName,
+              ...(useScopedToolMonitoringData &&
+                agentRepetitionIdentity && {
+                  agentToolInvocation: { agentRepetitionIdentity, page: hasCurrentToolMonitoringData ? (metadata?.runIndex ?? 0) : 0 },
+                }),
             })
           );
         }
@@ -208,7 +290,11 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
       isMonitoringView,
       metadata,
       runInstance,
-      agentRunIndex,
+      scopeRepetitionName,
+      agentRepetitionIdentity,
+      hasCurrentToolMonitoringData,
+      hasPendingToolSelection,
+      useScopedToolMonitoringData,
     ]
   );
 
@@ -240,6 +326,90 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
       );
     },
     [dispatch, subgraphId]
+  );
+
+  const openContextMenuAtElement = useCallback(
+    (anchor: HTMLElement) => {
+      const bounds = anchor.getBoundingClientRect();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: subgraphId,
+          entryPoint: 'shared-lane-more',
+          location: {
+            x: Math.round(bounds.left + bounds.width / 2),
+            y: Math.round(bounds.bottom),
+          },
+        })
+      );
+    },
+    [dispatch, subgraphId]
+  );
+
+  const closeRenameCaseDialog = useCallback(() => {
+    setIsRenameCaseDialogOpen(false);
+    setRenameCaseError(undefined);
+  }, []);
+
+  const submitRenameCase = useCallback(() => {
+    if (readOnly || isMonitoringView || metadata?.subgraphType !== SUBGRAPH_TYPES.SWITCH_CASE) {
+      return;
+    }
+    // Rename only the switch-case node identifier; the runtime match expression and branch children remain untouched.
+    const validation = isOperationNameValid(subgraphId, renameCaseDraft.trim(), false, nodesMetadata, idReplacements, intl);
+    if (!validation.isValid) {
+      setRenameCaseError(validation.message || intlText.renameCaseValidationError);
+      return;
+    }
+    dispatch(replaceId({ originalId: subgraphId, newId: renameCaseDraft.trim() }));
+    closeRenameCaseDialog();
+  }, [
+    readOnly,
+    isMonitoringView,
+    metadata?.subgraphType,
+    subgraphId,
+    renameCaseDraft,
+    nodesMetadata,
+    idReplacements,
+    intl,
+    intlText.renameCaseValidationError,
+    dispatch,
+    closeRenameCaseDialog,
+  ]);
+
+  const renameCase = useCallback(() => {
+    if (readOnly || isMonitoringView || metadata?.subgraphType !== SUBGRAPH_TYPES.SWITCH_CASE) {
+      return;
+    }
+    setRenameCaseDraft(subgraphId);
+    setRenameCaseError(undefined);
+    setIsRenameCaseDialogOpen(true);
+  }, [readOnly, isMonitoringView, metadata?.subgraphType, subgraphId]);
+
+  const onRenameCaseOpenChange = useCallback(
+    (_event: DialogOpenChangeEvent, data: DialogOpenChangeData) => {
+      if (!data.open) {
+        closeRenameCaseDialog();
+      }
+    },
+    [closeRenameCaseDialog]
+  );
+
+  const onRenameCaseDraftChange = useCallback((_event: unknown, data: InputOnChangeData) => {
+    setRenameCaseDraft(data.value);
+    setRenameCaseError(undefined);
+  }, []);
+
+  const onRenameCaseDraftKeyDown = useCallback<NonNullable<InputProps['onKeyDown']>>(
+    (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitRenameCase();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeRenameCaseDialog();
+      }
+    },
+    [submitRenameCase, closeRenameCaseDialog]
   );
 
   const opQuery = useOperationQuery(subgraphId);
@@ -292,7 +462,9 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
 
   const nodeIndex = useNodeIndex(subgraphId);
   const shouldShowPager =
-    isMonitoringView && (normalizedType === constants.NODE.TYPE.UNTIL || (isParentAgent && (metadata?.runData?.repetitionCount ?? 0) > 1));
+    isMonitoringView &&
+    (normalizedType === constants.NODE.TYPE.UNTIL || (isParentAgent && (metadata?.runData?.repetitionCount ?? 0) > 1)) &&
+    (!sharedTool || hasCurrentToolMonitoringData);
   const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
 
   return (
@@ -357,6 +529,17 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
                   description={opQuery.data?.properties?.description}
                   isMonitoringView={isMonitoringView}
                   countLabel={sharedOwnsCount && graphCollapsed ? { count: actionCount, unit: 'actions' } : undefined}
+                  falseBranchGlyph={
+                    metadata.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_FALSE || metadata.subgraphType === SUBGRAPH_TYPES.CONDITIONAL_TRUE
+                      ? 'neutral'
+                      : undefined
+                  }
+                  onRenameClick={metadata.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? renameCase : undefined}
+                  onMoreClick={
+                    metadata.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE && !readOnly && !isMonitoringView
+                      ? openContextMenuAtElement
+                      : undefined
+                  }
                 />
               ) : (
                 <SubgraphCard
@@ -410,6 +593,30 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
           </div>
         )
       ) : null}
+      <Dialog open={isRenameCaseDialogOpen} onOpenChange={onRenameCaseOpenChange}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{intlText.renameCaseTitle}</DialogTitle>
+            <DialogContent>
+              <Field
+                label={intlText.renameCaseInputLabel}
+                validationState={renameCaseError ? 'error' : undefined}
+                validationMessage={renameCaseError}
+              >
+                <Input autoFocus value={renameCaseDraft} onChange={onRenameCaseDraftChange} onKeyDown={onRenameCaseDraftKeyDown} />
+              </Field>
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={closeRenameCaseDialog}>
+                {intlText.renameCaseCancel}
+              </Button>
+              <Button appearance="primary" onClick={submitRenameCase}>
+                {intlText.renameCaseSave}
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 };

@@ -24,6 +24,7 @@ export const runsQueriesKeys = {
   run: 'run',
   allRuns: 'allRuns',
   useNodeRepetition: 'useNodeRepetition',
+  useConditionOutputs: 'useConditionOutputs',
   useNodeRepetitions: 'useNodeRepetitions',
   useScopeFailedRepetitions: 'useScopeFailedRepetitions',
   useAgentRepetition: 'useAgentRepetition',
@@ -220,6 +221,38 @@ export const useNodeRepetition = (
       enabled: repetitionName !== undefined && parentRunIndex !== undefined && isEnabled && !isWithinAgenticLoop,
     }
   );
+};
+
+export const useConditionOutputs = (
+  nodeId: string,
+  runId: string | undefined,
+  repetitionName: string | undefined,
+  runData:
+    | Pick<LogicAppsV2.WorkflowRunAction, 'outputsLink' | 'correlation' | 'startTime' | 'endTime'>
+    | { outputsLink: null; correlation: null; startTime: null; endTime: null }
+    | undefined,
+  enabled: boolean
+) => {
+  const outputsLink = runData?.outputsLink;
+  const canFetch = enabled && !!runId && !!outputsLink?.uri && !outputsLink.secureData;
+  const { data } = useQuery<unknown>(
+    [
+      runsQueriesKeys.useConditionOutputs,
+      runId,
+      nodeId,
+      repetitionName,
+      runData?.correlation?.actionTrackingId,
+      runData?.startTime,
+      runData?.endTime,
+    ],
+    async () => (await RunService().getActionLinks({ outputsLink }, nodeId)).outputs ?? null,
+    {
+      ...queryOpts,
+      enabled: canFetch,
+      retry: false,
+    }
+  );
+  return canFetch ? data : undefined;
 };
 
 export const getRunRepetition = async (nodeId: string, runId: string, repetitionName: string) => {

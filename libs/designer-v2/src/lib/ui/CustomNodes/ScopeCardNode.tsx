@@ -45,10 +45,18 @@ import {
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { SharedLoopsPager } from '../common/LoopsPager/SharedLoopsPager';
-import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
+import { getAgentRepetitionIdentity, getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { horizontalTerminalStyle } from '../connections/connections.styles';
-import { WORKFLOW_NODE_TYPES, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import {
+  SUBGRAPH_TYPES,
+  WORKFLOW_NODE_TYPES,
+  equals,
+  getRecordEntry,
+  isNullOrUndefined,
+  removeIdTag,
+  useNodeIndex,
+} from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -58,7 +66,7 @@ import type { NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
+import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition, useConditionOutputs } from '../../core/queries/runs';
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
 import { DefaultHandle } from './components/handles/DefaultHandle';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
@@ -70,6 +78,90 @@ import type { ComponentProps } from 'react';
 import type { NodeFrameCountLabel } from '@microsoft/designer-ui-v2';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { getScopeModel } from './components/card/scopeNodePresentation';
+
+type BranchPort = { id: string; subgraphType?: string };
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  value !== null && typeof value === 'object' ? (value as Record<string, unknown>) : undefined;
+
+const unwrapBoundValue = (value: unknown): unknown => {
+  const record = asRecord(value);
+  if (!record || !Object.prototype.hasOwnProperty.call(record, 'value')) {
+    return value;
+  }
+  return record.value;
+};
+
+const getExpressionResultFromOutputs = (outputs: unknown): unknown => {
+  const outputRecord = asRecord(outputs);
+  if (!outputRecord) {
+    return undefined;
+  }
+  const direct = unwrapBoundValue(outputRecord.expressionResult);
+  if (!isNullOrUndefined(direct)) {
+    return direct;
+  }
+  const bodyRecord = asRecord(unwrapBoundValue(outputRecord.body));
+  if (!bodyRecord) {
+    return undefined;
+  }
+  return unwrapBoundValue(bodyRecord.expressionResult);
+};
+
+const getIfTakenOutput = (expressionResult: unknown, branchPorts: readonly BranchPort[]): number | undefined => {
+  const normalized =
+    typeof expressionResult === 'boolean'
+      ? expressionResult
+      : typeof expressionResult === 'string'
+        ? expressionResult.trim().toLowerCase() === 'true'
+          ? true
+          : expressionResult.trim().toLowerCase() === 'false'
+            ? false
+            : undefined
+        : undefined;
+  if (isNullOrUndefined(normalized)) {
+    return undefined;
+  }
+  const expectedType = normalized ? SUBGRAPH_TYPES.CONDITIONAL_TRUE : SUBGRAPH_TYPES.CONDITIONAL_FALSE;
+  const index = branchPorts.findIndex((port) => port.subgraphType === expectedType);
+  return index >= 0 ? index : undefined;
+};
+
+const getSwitchTakenOutput = (
+  expressionResult: unknown,
+  operation: LogicAppsV2.OperationDefinition | undefined,
+  branchPorts: readonly BranchPort[]
+): number | undefined => {
+  if (!operation || !('cases' in operation) || !operation.cases) {
+    return undefined;
+  }
+
+  // The result is a value, not a lane ID. Do not select Default from an unmapped value.
+  const cases = operation.cases;
+  const index = branchPorts.findIndex((port) => Object.is(cases[port.id]?.case, expressionResult));
+  return index >= 0 ? index : undefined;
+};
+
+const getConditionTakenOutput = (
+  operationType: string | undefined,
+  expressionResult: unknown,
+  operation: LogicAppsV2.OperationDefinition | undefined,
+  branchPorts: readonly BranchPort[]
+): number | undefined => {
+  // Guardrail: only runtime-provided expressionResult is treated as branch evidence for the selected repetition.
+  // We intentionally do not infer from downstream skipped/succeeded statuses.
+  if (isNullOrUndefined(expressionResult) || branchPorts.length === 0) {
+    return undefined;
+  }
+
+  if (equals(operationType, constants.NODE.TYPE.IF)) {
+    return getIfTakenOutput(expressionResult, branchPorts);
+  }
+  if (equals(operationType, constants.NODE.TYPE.SWITCH)) {
+    return getSwitchTakenOutput(expressionResult, operation, branchPorts);
+  }
+  return undefined;
+};
 
 const ScopeCardNode = ({ id, data }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
@@ -116,6 +208,19 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(scopeId);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const selectedAgentRunId = isTimelineRepetitionSelected ? runInstance?.id : undefined;
+  const agentRepetitionIdentity = useMemo(
+    () =>
+      getAgentRepetitionIdentity({
+        runId: shared && !isA2AWorkflow ? selectedAgentRunId : undefined,
+        ownerNodeId: scopeId,
+        repetitionName: scopeRepetitionName,
+        repetitionIndex: runIndex,
+        parentStatus: parentRunData?.status,
+      }),
+    [shared, isA2AWorkflow, selectedAgentRunId, scopeId, scopeRepetitionName, runIndex, parentRunData?.status]
+  );
+  const admittedAgentRepetition = useRef<{ identity: string; data: LogicAppsV2.RunRepetition }>();
   const repetitionName = useRepetitionName(parentRunIndex, scopeId, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
@@ -127,11 +232,24 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     parentRunIndex,
     false
   );
+  // A nested condition can still have the previous iteration's runData in Redux while the new query loads.
+  const usesRepetition = !!runInstance && parentRunIndex !== undefined;
+  const showConditionOutcome = !!(shared && !id.endsWith('#footer') && isMonitoringView && (isConditional || isSwitch));
+  const outcomeRun = usesRepetition ? (isTimelineRepetitionSelected ? repetitionRunData?.properties : undefined) : runData;
+  const inlineResult =
+    showConditionOutcome && outcomeRun && 'outputs' in outcomeRun ? getExpressionResultFromOutputs(outcomeRun.outputs) : undefined;
+  const linkedOutputs = useConditionOutputs(
+    scopeId,
+    runInstance?.id,
+    repetitionName,
+    outcomeRun,
+    showConditionOutcome && isNullOrUndefined(inlineResult)
+  );
 
   const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
     !!isMonitoringView && !!runInstance && runIndex !== undefined && isAgent && !isA2AWorkflow,
     scopeId,
-    isTimelineRepetitionSelected ? runInstance?.id : undefined,
+    selectedAgentRunId,
     scopeRepetitionName,
     parentRunData?.status,
     runIndex
@@ -149,22 +267,44 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     if (isNullOrUndefined(agentActionsRepetitionData)) {
       return;
     }
-    const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData as LogicAppsV2.RunRepetition[] };
+    // Child cards must not apply these results to a different Agent repetition's tool pages.
+    const updatePayload = {
+      nodeId: scopeId,
+      runData: agentActionsRepetitionData,
+      ...(agentRepetitionIdentity && { agentRepetitionIdentity }),
+    };
     dispatch(setSubgraphRunData(updatePayload));
-  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView]);
+  }, [dispatch, agentRepetitionRunData, scopeId, agentActionsRepetitionData, isMonitoringView, agentRepetitionIdentity]);
 
   useEffect(() => {
     if (isMonitoringView && !isTimelineRepetitionSelected) {
       return;
     }
-    if (isNullOrUndefined(agentRepetitionRunData)) {
+    if (!agentRepetitionRunData?.properties) {
       return;
     }
-    if (metadata?.runData?.inputsLink?.uri === agentRepetitionRunData?.properties?.inputsLink?.uri) {
-      // if the inputsLink uri is the same, we don't need to update the repetition run data
+    if (agentRepetitionIdentity) {
+      // The response must match the selected iteration, even during a refresh.
+      if (isAgentRepetitionFetching || agentRepetitionRunData.name !== scopeRepetitionName) {
+        return;
+      }
+      // The same selection can refresh as a run progresses. Only skip the exact response already in Redux.
+      if (
+        metadata?.agentRepetitionIdentity === agentRepetitionIdentity &&
+        admittedAgentRepetition.current?.identity === agentRepetitionIdentity &&
+        admittedAgentRepetition.current.data === agentRepetitionRunData
+      ) {
+        return;
+      }
+      admittedAgentRepetition.current = { identity: agentRepetitionIdentity, data: agentRepetitionRunData };
+    } else if (metadata?.runData?.inputsLink?.uri === agentRepetitionRunData.properties.inputsLink?.uri) {
       return;
     }
-    const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: agentRepetitionRunData.properties } as any;
+    const updatePayload = {
+      nodeId: scopeId,
+      scopeRepetitionRunData: agentRepetitionRunData.properties,
+      agentRepetitionIdentity,
+    } as any;
     dispatch(updateAgenticGraph(updatePayload));
     dispatch(updateAgenticMetadata(updatePayload));
   }, [
@@ -175,6 +315,9 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     isMonitoringView,
     isTimelineRepetitionSelected,
     metadata,
+    agentRepetitionIdentity,
+    isAgentRepetitionFetching,
+    scopeRepetitionName,
   ]);
 
   useEffect(() => {
@@ -414,7 +557,18 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     intlText.flowErrorText,
   ]);
 
+  const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
+  const useScopedAgentMonitoringData = shared && isMonitoringView && isAgent && isTimelineRepetitionSelected && !!agentRepetitionIdentity;
+  const hasCurrentAgentMonitoringData = !useScopedAgentMonitoringData || metadata?.agentRepetitionIdentity === agentRepetitionIdentity;
+  // The run summary belongs to the top-level Agent, not to a previous page or a different parent iteration.
+  const scopedRunData = hasCurrentAgentMonitoringData
+    ? runData
+    : parentRunIndex === undefined
+      ? getRecordEntry(runInstance?.properties?.actions, scopeId)
+      : undefined;
+
   const renderLoopsPager = useMemo(() => {
+    // The Agent's own pager selects repetitions; keep it usable while the tool cards wait for the requested page.
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
       const focusElement = (index: number, id: string) => {
         dispatch(setFocusElement(`${id}-${index}-0`));
@@ -450,10 +604,12 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
       : undefined;
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
 
-  const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
-  const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(scopedRunData?.status) : true;
   const handleAxis = data?.handleAxis === 'horizontal' ? 'horizontal' : 'vertical';
-  const branchPorts = (data?.branchPorts ?? []) as { id: string }[];
+  const branchPorts = (data?.branchPorts ?? []) as BranchPort[];
+  const takenOutput = showConditionOutcome
+    ? getConditionTakenOutput(normalizedType, inlineResult ?? getExpressionResultFromOutputs(linkedOutputs), node, branchPorts)
+    : undefined;
   const inputSlot = <EdgeDrawTargetHandle contained axis={handleAxis} />;
   const sourceSlot = isFooter ? (
     <EdgeDrawSourceHandle axis={handleAxis} contained highlighted={selected || isMultiSelected} />
@@ -485,7 +641,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
             isLoading={isLoading}
             isSelected={selected || isMultiSelected}
             isPinned={isPinned}
-            runData={runData}
+            runData={scopedRunData}
             readOnly={readOnly}
             onContextMenu={onContextMenu}
             onClick={nodeClick}
@@ -504,16 +660,17 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
                 : [sourceSlot],
               caseCount: branchPorts.length || undefined,
               model: typeof model === 'string' && model.length > 0 ? model : undefined,
-              footerAction: shouldShowPager ? renderLoopsPager : undefined,
+              footerAction: shouldShowPager && (isAgent || (presentation.hasLoopPager && !graphCollapsed)) ? renderLoopsPager : undefined,
               description: opQuery.data?.properties?.description,
               isMonitoringView,
               toolsPanel: data?.toolsPanel as ComponentProps<typeof SharedScopeCard>['toolsPanel'],
               titleLines: presentation.titleLines,
               countLabel: sharedCountLabel,
+              takenOutput,
             })}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {shouldShowPager && (!shared || !isAgent) ? renderLoopsPager : null}
+          {shouldShowPager && !shared ? renderLoopsPager : null}
           {!shared || presentation.family === 'scope' ? (
             isFooter ? (
               <EdgeDrawSourceHandle axis={handleAxis} highlighted={selected || isMultiSelected} />

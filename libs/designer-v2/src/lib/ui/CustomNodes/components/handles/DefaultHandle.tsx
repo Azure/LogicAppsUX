@@ -15,6 +15,7 @@ export const DefaultHandle = (props: {
   axis?: 'vertical' | 'horizontal';
   /** Only read by the shared merge presentation; structural handles have no visible surface to dim. */
   inactive?: boolean;
+  mergeAddSource?: string;
 }) => {
   const styles = useHandleStyles();
   const shared = useHandlePresentation();
@@ -55,6 +56,7 @@ export const DefaultHandle = (props: {
       className={mergeClasses(styles.merge, horizontal && styles.mergeHorizontal)}
       label={props.label ?? ''}
       inactive={props.inactive}
+      data-merge-add-source={props.mergeAddSource}
       strings={{
         label: (label) =>
           intl.formatMessage(

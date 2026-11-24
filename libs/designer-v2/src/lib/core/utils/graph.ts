@@ -78,6 +78,7 @@ export interface NodePresentationContext {
   handleAxis?: 'horizontal' | 'vertical';
   toolKind?: 'action' | 'mcp' | 'subWorkflow';
   hasToolPager?: boolean;
+  hasLoopPager?: boolean;
   /** Display title; Standard compact cards grow to two lines when it overflows the text column. */
   title?: string;
 }
@@ -87,6 +88,7 @@ export interface NodePresentation {
   size?: { width: number; height: number };
   family?: 'scope' | 'if' | 'switch' | 'loop' | 'agent' | 'branch' | 'tool' | 'add' | 'frame' | 'placeholder' | 'collapsed';
   toolKind?: NodePresentationContext['toolKind'];
+  hasLoopPager?: boolean;
   /** Standard compact title clamp; the renderer must apply the same count ELK sized for. */
   titleLines?: CompactTitleLines;
 }
@@ -143,12 +145,18 @@ export const getNodePresentation = (
           size: getSwitchNodeSize(context.caseCount, context.handleAxis),
         };
       case 'foreach':
-      case 'until':
+      case 'until': {
+        const compact = getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE, nodeMetrics.cards.loop.width);
         return {
           shared: true,
           family: 'loop',
-          ...getCompactCardPresentation(context.title, SHARED_SCOPE_TITLE_RESERVE, nodeMetrics.cards.loop.width),
+          ...compact,
+          ...(context.hasLoopPager && {
+            hasLoopPager: true,
+            size: { ...compact.size, height: compact.size.height + nodeMetrics.iterationPager.height },
+          }),
         };
+      }
       case 'agent':
         return {
           shared: true,

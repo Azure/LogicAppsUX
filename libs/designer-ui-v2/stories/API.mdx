@@ -28,7 +28,7 @@ components or hooks. `/package.json` exposes manifest metadata. Source/build
 deep imports and a package `/nodes` subpath are unsupported. Storybook's exact
 source aliases do not change the package export map.
 
-## All 31 nonvisual runtime exports
+## All 39 nonvisual runtime exports
 
 <table aria-label="Nonvisual runtime exports">
   <thead>
@@ -132,13 +132,14 @@ source aliases do not change the package export map.
   </tbody>
 </table>
 
-The additional 13 Phase 1a/1b runtime exports are:
+Other nonvisual exports:
 
 | Export | Contract |
 |---|---|
 | `NodeInactiveContext` | Boolean presentation context (default false); nested cards/ports avoid applying opacity twice. |
 | `defaultBranchTakenString` | `(label) => "<label>, branch taken"`; hosts may localize it. |
 | `defaultNodeFrameStrings` | English `actionCount(count)` formatter; old frame dictionaries remain valid. |
+| `defaultNodeFrameCountStrings` | English singular and plural labels for action, case, tool, and hidden-item counts. |
 | `defaultNodeIterationPagerStrings` | English pager labels, input range and one-based position formatter. |
 | `defaultNodeRunAfterStrings` | Four status labels, full summary and collapsed-count formatter. |
 | `COLLAPSE_REVEAL_EXPAND_MS` | 240ms presentation-only reveal duration. |
@@ -148,12 +149,26 @@ The additional 13 Phase 1a/1b runtime exports are:
 | `useCollapseReveal` | Required expanded/collapsedHeight/measureFull/apply/clear; enabled defaults true, motionRoot is optional. Returns mounted/open/hidden; reduced motion settles instantly. |
 | `useEdgeActiveState` | No arguments; returns isHovered/isActive/reset/wrapperProps/lineProps for immediate pointer/keyboard-visible focus. Host attaches handlers. |
 | `useNodeHeaderButtonStyles` | No arguments; 20×20 header buttons, 16px icons and extended hit areas. No menus. |
+| `compactNodeMetrics` | Compact card dimensions, text width, typography, and tile dimensions. Exported from the root and `/metrics`. |
+| `getCompactNodeHeight` | Returns 52 px for one title line (the default), or 68 px for two. Exported from the root and `/metrics`. |
+| `getCompactTitleLines` | Estimates one or two lines using the title and optional trailing space reserve in pixels. |
+| `resolveCardDensity` | Resolves `density` and `titleLines` into card width, size, body, and tile variants. Defaults to standard density and one line. |
+| `NODE_BRANCH_ACTIONS_MAX_RESERVE_PX` | Horizontal space to reserve for two compact lane commands, separate from the collapse button. |
+| `useLoopBodyHoverClass` | Pass `'header'` or `'body'` to style the matching half of an active loop group. The host owns pointer state. |
+| `useNodeOverviewStyles` | Returns the `canvas` class for low-zoom node paint. The host chooses when to apply it; it does not change graph geometry. |
 | `NODE_HOVER_CARD_IGNORE_ATTRIBUTE` | Presence-only `data-node-hover-card-ignore` marker on ignored trigger descendants, including an empty value. |
 
 `getSwitchNodeSize(caseCount=1, axis='vertical')` is a `/metrics`-only helper,
-not an additional root runtime export. The root visual inventory has 37 entries
+not an additional root runtime export. The root visual inventory has 40 entries
 and includes `NodeBranchLabel`, `NodeIterationPager`, `NodeRunAfterIndicator`
 and `AgentToolsDecoration`, each with its own typed metadata.
+
+`NodeBranchShell` accepts a tone and optional selection, inactivity, and
+action-reserve flags. Nest `NodeBranchActions` inside the shell and supply the
+available commands as labeled icon buttons. The library passes the button
+element to each callback so the host can anchor a menu; it does not perform
+graph commands. `LoopBodyJoin` draws an arrowless vertical line at the host's
+`x` and `y` with the given `length`.
 
 ### Glyph vocabulary
 

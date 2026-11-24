@@ -40,10 +40,15 @@ export const PreviewOperationCard = ({
     handleAxis: 'vertical' as const,
     handles: false,
   };
+  const compact = { density: 'compact' as const, prioritizeTitle: true };
+  const operationTitleLines = getNodePresentation(WORKFLOW_NODE_TYPES.OPERATION_NODE, true, { title: node.label }).titleLines;
+  const scopeTextStyle = { '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties;
   if (node.isTrigger) {
     return (
       <TriggerNodeCard
         {...common}
+        {...compact}
+        titleLines={operationTitleLines}
         icon={glyph.icon}
         selectedIcon={glyph.selectedIcon}
         iconTone={glyph.tone}
@@ -58,26 +63,35 @@ export const PreviewOperationCard = ({
   }
   if (family === 'loop') {
     const strings = mapLoopNodeStrings(intl, type);
-    return <LoopNodeCard {...common} bodyPlacement="none" strings={strings} subtitle={strings.loop.foreach} />;
+    return (
+      <LoopNodeCard
+        {...common}
+        {...compact}
+        titleLines={titleLines}
+        style={scopeTextStyle}
+        bodyPlacement="none"
+        strings={strings}
+        subtitle={strings.loop.foreach}
+      />
+    );
   }
   if (family === 'agent') {
     return <AgentNodeCard {...common} iconTone={agentNodeTone} model={getScopeModel(node.operation)} strings={mapAgentNodeStrings(intl)} />;
   }
+  // Unknown scope families are ordinary actions in the editor; use its title sizing policy here too.
   return (
     <ActionNodeCard
       {...common}
+      {...compact}
       icon={family === 'scope' ? scopeNodeIcon : glyph.icon}
       selectedIcon={family === 'scope' ? undefined : glyph.selectedIcon}
       iconTone={family === 'scope' ? undefined : glyph.tone}
       iconArtwork={family !== 'scope' && glyph.artwork}
       strings={mapActionNodeStrings(intl)}
       subtitle={family === 'scope' ? undefined : getOperationNodeSubtitle(intl, type, kind, connectorName, false, false)}
-      density={family === 'scope' ? 'compact' : undefined}
-      titleLines={family === 'scope' ? titleLines : undefined}
+      titleLines={family === 'scope' ? titleLines : operationTitleLines}
       // Keep the editor's title column width even though the preview has no collapse button.
-      style={
-        family === 'scope' ? ({ '--designer-ui-v2-node-text-end-reserve': `${SHARED_SCOPE_TITLE_RESERVE}px` } as CSSProperties) : undefined
-      }
+      style={family === 'scope' ? scopeTextStyle : undefined}
     />
   );
 };
