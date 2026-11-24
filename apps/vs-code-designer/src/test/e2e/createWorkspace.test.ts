@@ -2112,7 +2112,7 @@ function verifyCodefulProject(appDir: string, creationCase: WorkspaceCreationCas
 
   const csprojPath = getCodefulCsprojPath(appDir);
   const csprojContent = fs.readFileSync(csprojPath, 'utf-8');
-  assert.ok(csprojContent.includes('<TargetFramework>net8</TargetFramework>'), `Codeful .csproj should target net8: ${csprojPath}`);
+  assert.ok(csprojContent.includes('<TargetFramework>net10.0</TargetFramework>'), `Codeful .csproj should target net10.0: ${csprojPath}`);
   assert.ok(csprojContent.includes('Microsoft.Azure.Workflows.Sdk'), `Codeful .csproj should reference Workflows SDK: ${csprojPath}`);
 
   const expectedControlVariant = creationCase.codefulControlVariant ?? 'modern-control';

@@ -835,7 +835,7 @@ export class MsnDesignerCdpActions {
     }
   }
 
-  private async clickElementBrowserRouted(
+  async clickElementBrowserRouted(
     selectors: string[],
     textToFind: string,
     options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
@@ -1210,7 +1210,7 @@ export class MsnDesignerCdpActions {
     await this.waitForDiscoveryPanel(60000, `${label} action discovery panel`);
   }
 
-  async clickNode(title: string): Promise<string> {
+  async clickNode(title: string, options: { browserRouted?: boolean } = {}): Promise<string> {
     const result = await this.cdp.evaluate<{
       ok: boolean;
       id?: string;
@@ -1259,8 +1259,36 @@ export class MsnDesignerCdpActions {
     );
 
     console.log(`[workspace-lifecycle] Clicking designer node "${title}" (${result.text ?? ''})`);
-    await clickPoint(this.cdp, result.point);
+    if (options.browserRouted) {
+      await this.clickElementBrowserRouted([`[id="${result.id}"]`], title, { requireTextMatch: false });
+      await this.waitForExactDetailsPanel(result.id);
+    } else {
+      await clickPoint(this.cdp, result.point);
+    }
     return result.id;
+  }
+
+  private async waitForExactDetailsPanel(nodeElementId: string): Promise<void> {
+    const nodeId = nodeElementId.replace(/^msla-node-/, '');
+    await this.waitUntil(
+      async () =>
+        this.cdp.evaluate<boolean>(
+          this.contextId,
+          `(() => {
+            const visible = (element) => {
+              if (!(element instanceof HTMLElement) || !element.isConnected) return false;
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+            };
+            const expectedId = ${JSON.stringify(`msla-node-details-panel-${nodeId}`)};
+            const panels = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(visible);
+            return panels.length === 1 && panels[0].id === expectedId;
+          })()`
+        ),
+      30000,
+      `details panel owned by Designer node ${nodeId}`
+    );
   }
 
   async hasDetailsPanel(): Promise<boolean> {
@@ -1339,22 +1367,38 @@ export class MsnDesignerCdpActions {
   }
 
   async fillParameter(labels: string[], value: string, description: string): Promise<void> {
-    const focusResult = await this.cdp.evaluate<{
-      ok: boolean;
-      reason?: string;
-      point?: Point;
-      candidates?: string[];
-      text?: string;
-    }>(
-      this.contextId,
-      `(() => {
+    let focusResult:
+      | {
+          ok: boolean;
+          reason?: string;
+          point?: Point;
+          candidates?: string[];
+          text?: string;
+        }
+      | undefined;
+    await this.waitUntil(
+      async () => {
+        focusResult = await this.cdp.evaluate<{
+          ok: boolean;
+          reason?: string;
+          point?: Point;
+          candidates?: string[];
+          text?: string;
+        }>(
+          this.contextId,
+          `(() => {
         const labels = ${JSON.stringify(labels.map((label) => label.toLowerCase()))};
         const normalize = (input) => (input || '').replace(/\\s+/g, ' ').trim();
         const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
         const editableSelectors = ['input:not([type="hidden"])', 'textarea', '[contenteditable="true"]'];
         const isEditable = (element) =>
           element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element.getAttribute('contenteditable') === 'true';
-        const editables = () => editableSelectors.flatMap((selector) => Array.from(document.querySelectorAll(selector))).filter(isVisible).filter(isEditable);
+        const panels = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(isVisible);
+        if (panels.length !== 1) {
+          return { ok: false, reason: 'Expected one visible node details panel', candidates: [], text: document.body?.innerText || '' };
+        }
+        const root = panels[0];
+        const editables = () => editableSelectors.flatMap((selector) => Array.from(root.querySelectorAll(selector))).filter(isVisible).filter(isEditable);
         const elementText = (element) =>
           [
             element.textContent,
@@ -1378,7 +1422,7 @@ export class MsnDesignerCdpActions {
           return { ok: true, point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } };
         }
 
-        const labelCandidates = Array.from(document.querySelectorAll('label, span, div, p, [data-automation-id], [data-testid]'))
+        const labelCandidates = Array.from(root.querySelectorAll('label, span, div, p, [data-automation-id], [data-testid]'))
           .filter(isVisible)
           .filter((element) => {
             const text = elementText(element);
@@ -1409,8 +1453,14 @@ export class MsnDesignerCdpActions {
           text: document.body?.innerText || '',
         };
       })()`
+        );
+        return focusResult.ok === true;
+      },
+      30000,
+      `${description} parameter editor`
     );
 
+    assert.ok(focusResult, `Expected ${description} parameter observation`);
     assert.ok(
       focusResult.ok && focusResult.point,
       `Expected ${description} parameter editor. Reason=${focusResult.reason} candidates=${JSON.stringify(
@@ -2403,23 +2453,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   async clickNodeById(nodeId: string): Promise<DesignerNodeIdentity> {
     const identity = await this.readNodeIdentity(nodeId);
-    const point = await this.waitForPoint(
-      `(() => {
-        ${visibleDom}
-        ${exactVisibleElementByIdDom}
-        const nodeId = ${JSON.stringify(nodeId)};
-        const element = exactVisibleElementById('msla-node-' + nodeId);
-        if (!(element instanceof HTMLElement) || !visible(element)) return null;
-        if (element.getAttribute('aria-disabled') === 'true') return null;
-        element.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = element.getBoundingClientRect();
-        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(point.x, point.y);
-        return hit && (hit === element || element.contains(hit)) ? point : null;
-      })()`,
-      `exact Designer node ${nodeId}`
-    );
-    await this.dispatchTrustedPoint(point);
+    await this.proven.clickElementBrowserRouted([`[id="${`msla-node-${nodeId}`}"]`], identity.title, { requireTextMatch: false });
     await this.waitForCondition(
       `(() => {
         ${visibleDom}

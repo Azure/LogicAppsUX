@@ -2039,7 +2039,7 @@ async function clickDesignerNodeByTitle(
   profile: DesignerActionProfile = 'generalized'
 ): Promise<void> {
   if (profile === 'msn') {
-    await getMsnDesignerActions(cdp, contextId).clickNode(title);
+    await getMsnDesignerActions(cdp, contextId).clickNode(title, { browserRouted: true });
   } else {
     await getDesignerActions(cdp, contextId, 60_000).clickNode([title]);
   }
@@ -3981,7 +3981,12 @@ function getCustomCodeDiagnosticFiles(appDir: string): string[] {
 
 async function startDebuggingGeneratedWorkspace(
   createdWorkspace: CreatedWorkspace,
-  options: { cleanupBeforeDebug?: boolean; requireHostRunning?: boolean; useAzureConnectors?: boolean } = {}
+  options: {
+    cleanupBeforeDebug?: boolean;
+    evidencePrefix?: string;
+    requireHostRunning?: boolean;
+    useAzureConnectors?: boolean;
+  } = {}
 ): Promise<void> {
   const cleanupBeforeDebug = options.cleanupBeforeDebug !== false;
   const requireHostRunning = options.requireHostRunning !== false;
@@ -4053,9 +4058,14 @@ async function startDebuggingGeneratedWorkspace(
 
     // Diagnostics must never hold up required prompt handling during F5.
     await Promise.all([
-      captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-starting`, {
-        diagnostic: true,
-      }),
+      captureLifecycleScreenshot(
+        options.evidencePrefix
+          ? `${options.evidencePrefix}-debug-starting`
+          : `workspace-lifecycle-${createdWorkspace.label}-debug-starting`,
+        {
+          diagnostic: true,
+        }
+      ),
       handleWorkbenchPrompts([
         affirmativeAzureConnectorPrompt,
         { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
@@ -4068,11 +4078,16 @@ async function startDebuggingGeneratedWorkspace(
     });
     await startDebuggingMonitor;
     startupSpan.end({ settled: true, liveOwnedSessions: liveDebugSessions.size });
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`, {
-      expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
-      diagnostic: true,
-      diagnosticTimeoutMs: 5000,
-    });
+    await captureLifecycleScreenshot(
+      options.evidencePrefix
+        ? `${options.evidencePrefix}-debug-prompts-handled`
+        : `workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`,
+      {
+        expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
+        diagnostic: true,
+        diagnosticTimeoutMs: 5000,
+      }
+    );
   } catch (error) {
     startupSpan.fail(error, {
       launchPending: !startDebuggingOutcome,

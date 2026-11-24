@@ -50,13 +50,13 @@ test('producer plans preserve the expected finite checkpoint counts', () => {
     createWorkspaceCodeful: 10,
     createWorkspaceBehaviorSmoke: 42,
     msnWeatherLifecycle: 36,
-    httpTimeoutLifecycle: 38,
+    httpTimeoutLifecycle: 40,
     statelessVariablesLifecycle: 25,
     runAfterPersistenceLifecycle: 35,
     workspaceArtifactRegeneration: 19,
     workspaceMultiRoot: 3,
   });
-  assert.equal(httpCatalogGroups.flatMap((group) => group.steps).length, 38);
+  assert.equal(httpCatalogGroups.flatMap((group) => group.steps).length, 40);
 });
 
 test('core matrix places Cancel evidence immediately after Standard Stateful', () => {
@@ -372,7 +372,7 @@ test('HTTP compatibility aliases derive from the canonical producer manifest', (
       evidenceManifest: path.join(artifactRoot, manifestFileName),
     });
     assert.ok(report.compatibility);
-    assert.equal(report.compatibility.manifest.canonicalStepCount, 38);
+    assert.equal(report.compatibility.manifest.canonicalStepCount, 40);
     assert.deepEqual(
       report.compatibility.manifest.groups.flatMap((group) => group.steps.map((step) => step.checkpoint)),
       httpCatalogGroups.flatMap((group) => group.steps.map((step) => step.checkpoint))

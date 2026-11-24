@@ -95,7 +95,11 @@ function adaptCancelHandoff(handoff, context) {
   if (context.requestedVersion !== 'stable') {
     assert.equal(launch.version, context.requestedVersion, 'Creation host Code version differs from admitted version');
   }
-  assert.equal(fs.realpathSync(launch.extensionsDir), fs.realpathSync(context.extensionsDir), 'Prepared extensions directory changed');
+  if (context.extensionsDir) {
+    assert.equal(fs.realpathSync(launch.extensionsDir), fs.realpathSync(context.extensionsDir), 'Prepared extensions directory changed');
+  } else {
+    assert.ok(fs.statSync(launch.extensionsDir).isDirectory(), 'Creation host extensions directory must exist');
+  }
   return { workspace, launch };
 }
 

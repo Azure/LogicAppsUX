@@ -127,6 +127,20 @@ const httpCatalogGroups = Object.freeze([
         'The Designer save completes with the expected Request + HTTP state.'
       ),
       step(
+        'http-timeout-request-pt1s-debug-starting',
+        'Scenario 1 execution',
+        'Start debugging for the PT1S run while prompt handling runs in parallel.',
+        'The retained lifecycle diagnostic records the transient workbench state for the PT1S debug start.',
+        'diagnostic'
+      ),
+      step(
+        'http-timeout-request-pt1s-debug-prompts-handled',
+        'Scenario 1 execution',
+        'Complete the known prompts for the PT1S debug start.',
+        'The retained lifecycle diagnostic records the workbench after PT1S prompt handling.',
+        'diagnostic'
+      ),
+      step(
         'http-timeout-request-pt1s-overview-empty',
         'Scenario 1 execution',
         'Open Overview before invoking the trigger.',

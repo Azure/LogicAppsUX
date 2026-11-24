@@ -1474,10 +1474,9 @@ function testRunAfterIdentityAndStatusContracts(): void {
   );
 
   const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
-  assert.match(exactNode, /exactVisibleElementById\('msla-node-' \+ nodeId\)/);
+  assert.match(exactNode, /this\.proven\.clickElementBrowserRouted/);
   assert.match(exactNode, /visiblePanels\.length === 1/);
   assert.match(exactNode, /visiblePanels\[0\]\.id === expectedId/);
-  assert.match(exactNode, /elementFromPoint/);
 
   const nodeIdentity = getMethod('ProvenDesignerCdpActions', 'readNodeIdentity');
   assert.match(nodeIdentity, /exactVisibleElementById\('msla-node-' \+ nodeId\)/);
@@ -2100,7 +2099,7 @@ function testNodeAndPanelParity(): void {
     ],
     'Node ID preference'
   );
-  assert.match(node, /async clickNode\(title: string\): Promise<string>/);
+  assert.match(node, /async clickNode\(title: string, options: \{ browserRouted\?: boolean \} = \{\}\): Promise<string>/);
   assert.match(node, /id: element\.id/);
   assert.match(node, /return result\.id/);
 
@@ -2152,6 +2151,13 @@ async function testExactNodeIdentity(): Promise<void> {
     },
     7
   );
+  (actions as any).clickElementBrowserRouted = async (selectors: string[]) => {
+    assert.deepStrictEqual(selectors, ['[id="msla-node-HTTP"]']);
+    return { ok: true, point: { x: 60, y: 45 } };
+  };
+  (actions as any).waitForExactDetailsPanel = async (nodeId: string) => {
+    assert.strictEqual(nodeId, httpAction.id);
+  };
 
   assert.strictEqual(await actions.clickNode('HTTP'), httpAction.id);
 }
@@ -2214,6 +2220,10 @@ async function testExactPanelRebinding(): Promise<void> {
     7,
     Date.now() + 5000
   );
+  (cardFallback as any).proven.clickElementBrowserRouted = async () => {
+    cardClicks = 3;
+    return { ok: true, point: { x: 25, y: 30 } };
+  };
   assert.deepStrictEqual(await cardFallback.ensureNodePanelOpen(identity), identity);
   assert.strictEqual(panelRead, true);
   assert.strictEqual(cardClicks, 3, 'No visible panel must fall back to one trusted moved/pressed/released card click');
@@ -2270,6 +2280,7 @@ async function testDeleteWaitsForExactClickedNode(): Promise<void> {
     7,
     Date.now() + 5000
   );
+  (actions as any).proven.clickNode = async () => 'msla-node-HTTP';
 
   await actions.deleteNode(['HTTP']);
   assert.strictEqual(

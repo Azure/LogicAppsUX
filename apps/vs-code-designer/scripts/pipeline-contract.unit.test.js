@@ -3298,7 +3298,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       assert.ok(fs.existsSync(reportPath), 'HTTP timeout Markdown evidence must be retained at the artifact root');
       assert.ok(fs.existsSync(manifestPath), 'HTTP timeout machine-readable evidence must be retained at the artifact root');
       const evidenceManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      assert.strictEqual(evidenceManifest.canonicalStepCount, 38);
+      assert.strictEqual(evidenceManifest.canonicalStepCount, 40);
       assert.strictEqual(evidenceManifest.summary.testResult.outcome, 'failure');
       assert.strictEqual(evidenceManifest.groups[0].steps[0].status, 'not-reached');
       assert.strictEqual(evidenceManifest.diagnosticExtras.length, 1);

@@ -195,7 +195,7 @@ async function provePt1sExecution(
   await runWithOrderedCleanup(
     async () => {
       historyLease.assertInstalled();
-      await helpers.startDebuggingGeneratedWorkspace(entry);
+      await helpers.startDebuggingGeneratedWorkspace(entry, { evidencePrefix: 'http-timeout-request-pt1s' });
       await helpers.waitForWorkflowHealthy(entry.wfName, Math.min(120_000, httpTimeoutComposeRemaining(deadline)));
       await processCleanup?.capture();
       const previousRunName = await helpers.waitForRunHistoryBaseline(

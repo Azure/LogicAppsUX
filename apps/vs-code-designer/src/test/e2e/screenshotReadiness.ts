@@ -2018,9 +2018,23 @@ export const screenshotReadinessDomScript = `
               !valueText.includes('error loading outputs')
           );
         const hasValueEvidence = valueContainers.length > 0;
+        const selectedCard = document.getElementById('msla-node-' + selectedPanel.nodeId);
+        const statusElement = selectedCard?.querySelector('[role="status"]');
+        const selectedCardStatus = normalize(
+          [
+            selectedCard?.getAttribute('aria-label'),
+            statusElement?.getAttribute('aria-label'),
+            statusElement?.textContent,
+          ]
+            .filter(Boolean)
+            .join(' ')
+        ).toLowerCase();
         ready = hasActionIdentity && hasValueEvidence;
         if (expectation.expectedStatus) {
-          ready = ready && panelText.includes(expectation.expectedStatus.toLowerCase());
+          ready =
+            ready &&
+            (panelText.includes(expectation.expectedStatus.toLowerCase()) ||
+              selectedCardStatus.includes(expectation.expectedStatus.toLowerCase()));
         } else {
           ready = ready && statusLabels.some((status) => panelText.includes(status));
         }
