@@ -380,3 +380,66 @@ test('npm-publish.yml keeps 1ES Official template, WIF auth, branch gate, and si
   assert.match(yaml, /- job:\s*BuildAndPublish/);
   assert.doesNotMatch(yaml, /VerifyRelease|ProductionPublishNotActivated|npm-verify-release/);
 });
+
+test('version-release.yml triggers Otto ADO npm publish, guards Azure login, and removes legacy npm steps', () => {
+  const workflowPath = path.join(__dirname, '..', '.github', 'workflows', 'version-release.yml');
+  const yaml = fs.readFileSync(workflowPath, 'utf8');
+
+  // Legacy npm publishing steps must be removed from build-and-publish
+  assert.doesNotMatch(yaml, /Generate NPMRC|Publish to NPM|productionNpmRCCreator\.js/);
+  assert.doesNotMatch(yaml, /# NPM Publishing/);
+
+  // No hardcoded SAS tokens or Otto Container Apps URLs anywhere in the workflow
+  assert.doesNotMatch(yaml, /sig=/i);
+  assert.doesNotMatch(yaml, /azurecontainerapps\.io/i);
+
+  // Azure login in build-and-publish must be gated on enable_blob_upload == 'true'
+  const azureLoginBlock = yaml.match(/- name:\s*'Azure login'[\s\S]*?(?=\n\s*- name:|\n  [a-z-]+:|$)/);
+  assert.ok(azureLoginBlock, 'Expected Azure login step in version-release.yml');
+  assert.match(azureLoginBlock[0], /if:\s*\$\{\{\s*github\.event\.inputs\.enable_blob_upload\s*==\s*'true'\s*\}\}/);
+
+  // publish-npm job invariants
+  const publishNpmIndex = yaml.indexOf('\n  publish-npm:\n');
+  assert.notEqual(publishNpmIndex, -1, 'Expected publish-npm job in version-release.yml');
+  const publishNpmSection = yaml.slice(publishNpmIndex);
+
+  assert.match(publishNpmSection, /needs:\s*create-release/);
+  assert.match(publishNpmSection, /runs-on:\s*ubuntu-latest/);
+  assert.match(publishNpmSection, /environment:\s*E2ETesting/);
+  assert.match(publishNpmSection, /permissions:\s*\n\s*contents:\s*read/);
+  assert.match(publishNpmSection, /OTTO_WORKFLOW_URL:\s*\$\{\{\s*secrets\.OTTO_NPM_PUBLISH_WORKFLOW_URL\s*\}\}/);
+  assert.match(publishNpmSection, /dryRun:\s*false/);
+
+  // All GitHub expressions in publish-npm must be bound via env:, never interpolated in run:
+  assert.match(publishNpmSection, /RELEASE_VERSION:\s*\$\{\{\s*needs\.create-release\.outputs\.new_version\s*\}\}/);
+  assert.match(publishNpmSection, /TAG_NAME:\s*\$\{\{\s*needs\.create-release\.outputs\.tag_name\s*\}\}/);
+  assert.match(publishNpmSection, /SOURCE_BRANCH:\s*\$\{\{\s*github\.ref\s*\}\}/);
+  assert.match(publishNpmSection, /REPOSITORY:\s*\$\{\{\s*github\.repository\s*\}\}/);
+  assert.match(
+    publishNpmSection,
+    /GITHUB_RUN_URL:\s*\$\{\{\s*github\.server_url\s*\}\}\/\$\{\{\s*github\.repository\s*\}\}\/actions\/runs\/\$\{\{\s*github\.run_id\s*\}\}/
+  );
+
+  // Single step in publish-npm
+  const publishNpmSteps = publishNpmSection.match(/\n      - name:/g) || [];
+  assert.equal(publishNpmSteps.length, 1, 'Expected exactly one step in publish-npm job');
+  assert.match(publishNpmSection, /- name:\s*'Trigger ADO npm publish via Otto'/);
+
+  const runBlockIndex = publishNpmSection.indexOf('\n        run: |');
+  assert.notEqual(runBlockIndex, -1, 'Expected run block in publish-npm job');
+  const runBlock = publishNpmSection.slice(runBlockIndex);
+  assert.doesNotMatch(runBlock, /\$\{\{/);
+  assert.match(runBlock, /trap 'rm -f "\$RESP_FILE"' EXIT/);
+
+  // curl must POST silently with retry/timeout flags and without -S/--show-error or -v/--verbose
+  const curlInvocation = runBlock.match(/curl[\s\S]*?"\$OTTO_WORKFLOW_URL"/);
+  assert.ok(curlInvocation, 'Expected curl invocation targeting "$OTTO_WORKFLOW_URL"');
+  assert.match(curlInvocation[0], /(?:^|\s)-s(?:\s|$)/);
+  assert.match(curlInvocation[0], /-X POST/);
+  assert.match(curlInvocation[0], /--connect-timeout 15/);
+  assert.match(curlInvocation[0], /--max-time 60/);
+  assert.match(curlInvocation[0], /--retry 2/);
+  assert.match(curlInvocation[0], /--retry-delay 5/);
+  assert.match(curlInvocation[0], /--retry-connrefused/);
+  assert.doesNotMatch(curlInvocation[0], /(?:^|\s)(?:-[A-Za-z]*[Sv]|--verbose|--show-error)(?:\s|$)/);
+});

@@ -239,8 +239,9 @@ jobs:
         run: |
           gh release upload ${{ needs.create-release.outputs.tag_name }} AgentChatIFrames-${IFRAME_VERSION}.zip --clobber
 
-      # NPM Publishing
+      # Iframe App Azure Blob Upload
       - name: 'Azure login'
+        if: ${{ github.event.inputs.enable_blob_upload == 'true' }}
         uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
@@ -292,12 +293,105 @@ jobs:
           
           echo "Uploaded zip file and folder contents to container: $CONTAINER_NAME"
 
-      - name: 'Generate NPMRC'
+  publish-npm:
+    needs: create-release
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+      contents: read
+    steps:
+      - name: 'Trigger ADO npm publish via Otto'
         shell: bash
+        env:
+          OTTO_WORKFLOW_URL: ${{ secrets.OTTO_NPM_PUBLISH_WORKFLOW_URL }}
+          RELEASE_VERSION: ${{ needs.create-release.outputs.new_version }}
+          TAG_NAME: ${{ needs.create-release.outputs.tag_name }}
+          SOURCE_BRANCH: ${{ github.ref }}
+          REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          token=`az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 | jq -r .accessToken`
-          export ADO_TOKEN=$token
-          node ./productionNpmRCCreator.js
+          set -euo pipefail
 
-      - name: 'Publish to NPM'
-        run: pnpm run publish --no-git-checks --access public --tag latest
+          # Fail fast if the Otto webhook URL secret is not configured.
+          if [[ -z "${OTTO_WORKFLOW_URL:-}" ]]; then
+            echo "::error::OTTO_NPM_PUBLISH_WORKFLOW_URL secret is not configured in environment E2ETesting."
+            exit 1
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg releaseVersion "$RELEASE_VERSION" \
+            --arg tagName "$TAG_NAME" \
+            --arg sourceBranch "$SOURCE_BRANCH" \
+            --arg repository "$REPOSITORY" \
+            --arg githubRunUrl "$GITHUB_RUN_URL" \
+            '{
+              releaseVersion: $releaseVersion,
+              tagName: $tagName,
+              sourceBranch: $sourceBranch,
+              repository: $repository,
+              githubRunUrl: $githubRunUrl,
+              dryRun: false
+            }')
+
+          RESP_FILE=$(mktemp)
+          trap 'rm -f "$RESP_FILE"' EXIT
+
+          # Invoke Otto silently without -S/-v so the signed webhook URL is never printed to logs.
+          CURL_EXIT=0
+          HTTP_STATUS=$(curl -s \
+            --connect-timeout 15 \
+            --max-time 60 \
+            --retry 2 \
+            --retry-delay 5 \
+            --retry-connrefused \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            --data "$PAYLOAD" \
+            -o "$RESP_FILE" \
+            -w '%{http_code}' \
+            "$OTTO_WORKFLOW_URL") || CURL_EXIT=$?
+
+          if [[ "$CURL_EXIT" -ne 0 ]]; then
+            echo "::error::Failed to invoke Otto npm publish workflow (curl exit code: $CURL_EXIT)."
+            exit "$CURL_EXIT"
+          fi
+
+          # Otto returns 200 when a matching publish is skipped/deduplicated and 202 when queued.
+          if [[ "$HTTP_STATUS" != "200" && "$HTTP_STATUS" != "202" ]]; then
+            echo "::error::Otto npm publish workflow returned HTTP $HTTP_STATUS."
+            if jq -e 'type == "object"' "$RESP_FILE" >/dev/null 2>&1; then
+              jq 'del(.url, .webhookUrl, .sasUrl, .token, .sig, .authorization, .headers)' "$RESP_FILE"
+            fi
+            exit 1
+          fi
+
+          if ! jq -e 'type == "object"' "$RESP_FILE" >/dev/null 2>&1; then
+            echo "::error::Otto npm publish workflow returned HTTP $HTTP_STATUS with an empty or non-JSON response."
+            exit 1
+          fi
+
+          PUBLISH_STATUS=$(jq -r '.status // "unknown"' "$RESP_FILE")
+          BUILD_ID=$(jq -r '.buildId // .existingBuildId // empty' "$RESP_FILE")
+          BUILD_URL=$(jq -r '.buildUrl // .existingBuildUrl // empty' "$RESP_FILE")
+
+          echo "Otto npm publish status: $PUBLISH_STATUS (HTTP $HTTP_STATUS)"
+          if [[ -n "$BUILD_ID" ]]; then
+            echo "ADO build ID: $BUILD_ID"
+          fi
+          if [[ -n "$BUILD_URL" ]]; then
+            echo "ADO build URL: $BUILD_URL"
+          fi
+
+          {
+            echo "### ADO npm Publish"
+            echo ""
+            echo "- **Version:** \`$RELEASE_VERSION\` (\`$TAG_NAME\`)"
+            echo "- **Status:** \`$PUBLISH_STATUS\` (HTTP \`$HTTP_STATUS\`)"
+            if [[ -n "$BUILD_ID" && -n "$BUILD_URL" ]]; then
+              echo "- **ADO Build:** [#$BUILD_ID]($BUILD_URL)"
+            elif [[ -n "$BUILD_ID" ]]; then
+              echo "- **ADO Build ID:** \`$BUILD_ID\`"
+            elif [[ -n "$BUILD_URL" ]]; then
+              echo "- **ADO Build URL:** $BUILD_URL"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
