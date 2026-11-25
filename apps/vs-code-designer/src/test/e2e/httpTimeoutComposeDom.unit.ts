@@ -403,7 +403,9 @@ async function httpSettingsPanelDomFixture(options: {
   let asyncPatternScrolled = false;
   let methodOwnershipObservationCount = 0;
   let nextHandle = 0;
+  let nextBackendNode = 0;
   const handles = new Map<string, any>();
+  const backendNodes = new Map<number, any>();
   const mouseEvents: Array<{
     type: string;
     x: number;
@@ -1028,6 +1030,39 @@ async function httpSettingsPanelDomFixture(options: {
           return { result: { result: { objectId } } };
         }
         return { result: { result: { value } } };
+      }
+      if (method === 'DOM.getContentQuads') {
+        const target = handles.get(String(params.objectId));
+        if (!(target instanceof window.HTMLElement)) {
+          return { result: { quads: [] } };
+        }
+        const bounds = layout(target);
+        return {
+          result: {
+            quads: [[bounds.left, bounds.top, bounds.right, bounds.top, bounds.right, bounds.bottom, bounds.left, bounds.bottom]],
+          },
+        };
+      }
+      if (method === 'DOM.getNodeForLocation') {
+        const target = window.document.elementFromPoint(Number(params.x), Number(params.y));
+        if (!(target instanceof window.HTMLElement)) {
+          return { result: {} };
+        }
+        const backendNodeId = ++nextBackendNode;
+        backendNodes.set(backendNodeId, target);
+        return { result: { backendNodeId, frameId: 'http-settings-frame' } };
+      }
+      if (method === 'DOM.resolveNode') {
+        const target = backendNodes.get(Number(params.backendNodeId));
+        if (!target) {
+          return { result: {} };
+        }
+        const objectId = `http-settings-dom-${++nextHandle}`;
+        handles.set(objectId, target);
+        return { result: { object: { objectId } } };
+      }
+      if (method === 'Runtime.releaseObjectGroup') {
+        return {};
       }
       if (method === 'Runtime.releaseObject') {
         const objectId = String(params.objectId);
@@ -2684,7 +2719,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'const localCdp = boundedCdp(this.cdp, deadline);',
       'new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive)',
       'this.httpSettingsPanelObservation(localCdp)',
-      "await localActions.clickNode(['HTTP']);",
+      "await localActions.clickNodeBrowserRouted(['HTTP']);",
       'await clickPoint(localCdp, observation.settingsPoint);',
     ]) {
       assert.ok(source.includes(boundedOperation), `HTTP panel operation lost local CDP bound: ${boundedOperation}`);

@@ -5404,55 +5404,7 @@ async function openMonitoringActionResultThroughOverview(
 }
 
 async function clickMonitoringActionCardByTitle(cdp: CdpEvaluator, contextId: number, actionTitle: string): Promise<void> {
-  const expectedNodeId = actionTitle.replace(/\W+/g, '_').replace(/^_+|_+$/g, '');
-  const result = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    text?: string;
-    point?: { x: number; y: number };
-    candidates?: string[];
-  }>(
-    contextId,
-    `(() => {
-      const actionTitle = ${JSON.stringify(actionTitle.toLowerCase())};
-      const exactId = 'msla-node-' + ${JSON.stringify(expectedNodeId)};
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const exactNode = document.getElementById(exactId);
-      const nodes = Array.from(document.querySelectorAll('.react-flow__node, [id^="msla-node-"]')).filter(isVisible);
-      const candidates = exactNode instanceof HTMLElement && isVisible(exactNode)
-        ? [exactNode]
-        : nodes
-        .filter((element) => {
-          const title = element.querySelector('.msla-card-title, [data-automation-id^="card-"]');
-          return normalize(title?.textContent || element.getAttribute('aria-label')).toLowerCase() === actionTitle;
-        });
-
-      const element = candidates.at(-1);
-      const debugCandidates = nodes.slice(0, 20).map((candidate) => candidate.id + ' | ' + normalize(candidate.textContent).slice(0, 120));
-      if (!(element instanceof HTMLElement)) {
-        return { ok: false, reason: 'Monitoring action card not found', candidates: debugCandidates, text: document.body?.innerText || '' };
-      }
-
-      element.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = element.getBoundingClientRect();
-      return {
-        ok: true,
-        point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-        text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
-      };
-    })()`
-  );
-
-  assert.ok(
-    result.ok && result.point,
-    `Expected monitoring action card "${actionTitle}". Reason=${result.reason} candidates=${JSON.stringify(result.candidates)} text=${String(
-      result.text
-    ).slice(0, 1000)}`
-  );
-
-  console.log(`[workspace-lifecycle] Opening monitoring action result "${actionTitle}" (${result.text ?? ''})`);
-  await clickPoint(cdp, result.point);
+  await getMsnDesignerActions(cdp, contextId).clickNode(actionTitle, { browserRouted: true });
 }
 
 async function waitForMonitoringActionDetails(

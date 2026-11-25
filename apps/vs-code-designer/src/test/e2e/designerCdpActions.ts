@@ -1180,7 +1180,14 @@ export class MsnDesignerCdpActions {
         ],
         'Add an action',
         { requireTextMatch: false, useLastMatch: true }
-      );
+      ).catch((error) => {
+        console.log(`[workspace-lifecycle] ${label}: Add Action geometry was not stable on attempt ${attempt}: ${String(error)}`);
+        return undefined;
+      });
+      if (!plusClick) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        continue;
+      }
       await logDiagnostics(`after Add Action click attempt ${attempt}`, plusClick.point);
 
       if (await this.waitForOptionalDiscoveryPanel(7500)) {
@@ -2961,6 +2968,11 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   override async clickNode(titles: string[]): Promise<void> {
     assert.ok(titles.length > 0, 'Expected at least one Designer node title');
     await this.proven.clickNode(titles[0]);
+  }
+
+  async clickNodeBrowserRouted(titles: string[]): Promise<void> {
+    assert.ok(titles.length > 0, 'Expected at least one Designer node title');
+    await this.proven.clickNode(titles[0], { browserRouted: true });
   }
 
   async deleteNode(titles: string[]): Promise<void> {

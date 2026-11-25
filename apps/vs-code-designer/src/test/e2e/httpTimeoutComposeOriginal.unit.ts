@@ -105,9 +105,7 @@ async function main(): Promise<void> {
     assert.ok(source.includes('await helpers.clickOverviewRunTrigger(overviewCdp, overviewContextId, entry)'));
     assert.ok(source.includes("targetName: 'HTTP timeout Overview webview after Run trigger'"));
     assert.ok(source.includes('overviewCdp = reboundOverview.cdp'));
-    assert.ok(sharedSource.includes("const expectedNodeId = actionTitle.replace(/\\W+/g, '_').replace(/^_+|_+$/g, '');"));
-    assert.ok(sharedSource.includes("const exactId = 'msla-node-' + ${JSON.stringify(expectedNodeId)};"));
-    assert.ok(sharedSource.includes('const exactNode = document.getElementById(exactId)'));
+    assert.ok(sharedSource.includes('getMsnDesignerActions(cdp, contextId).clickNode(actionTitle, { browserRouted: true })'));
     assert.ok(source.includes('await helpers.waitForWorkflowHealthy(entry.wfName'));
     assert.ok(source.includes('await helpers.waitForRunHistoryBaseline('));
     assert.ok(source.includes('await helpers.waitForNewRunStarted(entry.wfName, previousRunName, 60_000)'));

@@ -1600,7 +1600,7 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
             console.log('[http-timeout][http-panel] HTTP node-details panel is already open; preserving current selection');
           } else {
             console.log('[http-timeout][http-panel] HTTP node-details panel is closed; opening HTTP through proven CDP node interaction');
-            await localActions.clickNode(['HTTP']);
+            await localActions.clickNodeBrowserRouted(['HTTP']);
             continue;
           }
         }

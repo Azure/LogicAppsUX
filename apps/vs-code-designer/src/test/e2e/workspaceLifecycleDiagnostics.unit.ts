@@ -662,18 +662,18 @@ function loadMonitoringActionHarness() {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
   }).outputText;
 
-  const clickedPoints: Array<{ x: number; y: number }> = [];
+  const clickedNodes: Array<{ title: string; browserRouted: boolean }> = [];
   const exported: Record<string, any> = {};
   vm.runInNewContext(implementation, {
     exports: exported,
-    assert,
-    console,
-    clickPoint: async (_cdp: unknown, point: { x: number; y: number }) => {
-      clickedPoints.push({ x: Number(point.x), y: Number(point.y) });
-    },
+    getMsnDesignerActions: () => ({
+      clickNode: async (title: string, options: { browserRouted?: boolean }) => {
+        clickedNodes.push({ title, browserRouted: options?.browserRouted === true });
+      },
+    }),
   });
 
-  return { exported, clickedPoints };
+  return { exported, clickedNodes };
 }
 
 function loadRuntimeHarness(status: string, options: { malformedActions?: boolean } = {}) {
@@ -860,51 +860,16 @@ function runPickerExpression(expression: string, pickerText: string): { visible:
 }
 
 async function testMonitoringActionCardUsesStableNodeIdentity(): Promise<void> {
-  const { exported, clickedPoints } = loadMonitoringActionHarness();
+  const { exported, clickedNodes } = loadMonitoringActionHarness();
   for (const duration of ['0.9s', '3s']) {
-    const dom = new JSDOM(
-      `<html><body><div class="react-flow__node" id="msla-node-Get_current_weather">${duration}Get current weather</div></body></html>`,
-      { runScripts: 'outside-only' }
-    );
-    configureElementGeometry(dom.window, {
-      'msla-node-Get_current_weather': { left: 20, top: 40, width: 200, height: 80 },
-    });
-    await exported.clickMonitoringActionCardByTitle(
-      { evaluate: async (_contextId: number, expression: string) => dom.window.eval(expression) },
-      1,
-      'Get current weather'
-    );
+    await exported.clickMonitoringActionCardByTitle({}, 1, duration === '0.9s' ? 'Get current weather' : 'Get current weather');
   }
-  assert.deepStrictEqual(clickedPoints, [
-    { x: 120, y: 80 },
-    { x: 120, y: 80 },
+  await exported.clickMonitoringActionCardByTitle({}, 1, 'Response');
+  assert.deepStrictEqual(clickedNodes, [
+    { title: 'Get current weather', browserRouted: true },
+    { title: 'Get current weather', browserRouted: true },
+    { title: 'Response', browserRouted: true },
   ]);
-
-  const collisionDom = new JSDOM(
-    '<html><body><div class="react-flow__node" id="msla-node-Get_current_weather_2">Get current weather</div></body></html>',
-    { runScripts: 'outside-only' }
-  );
-  configureElementGeometry(collisionDom.window, {});
-  await assert.rejects(
-    exported.clickMonitoringActionCardByTitle(
-      { evaluate: async (_contextId: number, expression: string) => collisionDom.window.eval(expression) },
-      1,
-      'Get current weather'
-    ),
-    /Monitoring action card not found/
-  );
-
-  const fallbackDom = new JSDOM(
-    '<html><body><div class="react-flow__node"><span class="msla-card-title">Response</span></div></body></html>',
-    { runScripts: 'outside-only' }
-  );
-  configureElementGeometry(fallbackDom.window, {});
-  await exported.clickMonitoringActionCardByTitle(
-    { evaluate: async (_contextId: number, expression: string) => fallbackDom.window.eval(expression) },
-    1,
-    'Response'
-  );
-  assert.strictEqual(clickedPoints.length, 3, 'Expected the existing exact-title fallback to remain supported');
 }
 
 async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Promise<void> {
