@@ -1180,6 +1180,28 @@ export class MsnDesignerCdpActions {
   async openActionDiscovery(label: string, logDiagnostics: (stage: string, point?: Point) => Promise<void>): Promise<void> {
     console.log(`[workspace-lifecycle] ${label}: clicking Add an action`);
     await this.closePanel(`${label} existing details panel`);
+    const fitButtonVisible = await this.cdp.evaluate<boolean>(
+      this.contextId,
+      `(() => {
+        const visible = (element) => {
+          if (!(element instanceof HTMLElement) || !element.isConnected) return false;
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+        };
+        return ['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]']
+          .some((selector) => Array.from(document.querySelectorAll(selector)).some(visible));
+      })()`
+    );
+    if (fitButtonVisible) {
+      const fitClick = await this.clickElementBrowserRouted(
+        ['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]'],
+        'Fit view',
+        { requireTextMatch: false }
+      );
+      await logDiagnostics('after Fit view click', fitClick.point);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
     const plusClick = await this.clickElementBrowserRouted(
       [
         '[data-automation-id^="msla-plus-button-"]',

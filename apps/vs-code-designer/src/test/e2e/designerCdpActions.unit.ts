@@ -2073,6 +2073,9 @@ function testActionMenuParity(): void {
   assertOrdered(
     source,
     [
+      '#control-zoom-fit-button',
+      '[data-testid="control-zoom-fit-button"]',
+      "await logDiagnostics('after Fit view click'",
       '[data-automation-id^="msla-plus-button-"]',
       '[id^="msla-edge-button-"]',
       '[data-testid="card-Add an action"]',
@@ -2088,6 +2091,7 @@ function testActionMenuParity(): void {
   );
   assert.match(source, /clickElementBrowserRouted/);
   assert.match(source, /requireTextMatch: false, useLastMatch: true/);
+  assert.doesNotMatch(source, /fitButton\.click\(\)/);
   assert.match(source, /after Add Action failed/);
 }
 
