@@ -5,6 +5,7 @@ import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
 import {
   Button,
+  makeStyles,
   Menu,
   MenuList,
   MenuPopover,
@@ -70,6 +71,13 @@ const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
 const ChevronRightIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
+
+const useStyles = makeStyles({
+  operationIcon: {
+    marginRight: '4px',
+    flexShrink: 0,
+  },
+});
 
 const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element => {
   const { nodeId, onClose, enableNodeNavigation = false } = props;
@@ -150,6 +158,7 @@ const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
 };
 
 export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
+  const styles = useStyles();
   const {
     nodeData,
     suppressDefaultNodeSelectFunctionality,
@@ -170,7 +179,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     customIcon,
   } = props;
 
-  const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
+  const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId, operationIcon } = nodeData;
 
   const intl = useIntl();
   const [isTriggerInfoDismissed, setIsTriggerInfoDismissed] = useState(false);
@@ -232,7 +241,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     <>
       <div className="msla-panel-header" id={title}>
         <div className={'msla-panel-card-header'}>
-          {customIcon ?? iconComponent}
+          {customIcon ??
+            (!isLoading && !isError && operationIcon ? <span className={styles.operationIcon}>{operationIcon}</span> : iconComponent)}
           <div className={'msla-panel-card-title-container'}>
             <PanelHeaderTitle
               key={nodeId}

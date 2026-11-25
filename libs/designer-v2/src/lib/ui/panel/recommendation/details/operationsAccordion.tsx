@@ -8,6 +8,8 @@ import { useOperationsAccordionStyles } from './styles/OperationsAccordion.style
 import { recurrenceOperation, requestOperation } from '@microsoft/logic-apps-shared';
 import { OperationAccordionItem } from './operationAccordionItem';
 import type { OperationActionData } from '@microsoft/designer-ui';
+import { getPickerOperationGlyph } from '../../../sharedNodeGlyph';
+import { useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface OperationsAccordionProps {
   triggers: OperationActionData[];
@@ -30,6 +32,7 @@ export const OperationsAccordion = ({
   const dispatch = useDispatch<AppDispatch>();
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const intl = useIntl();
+  const sharedNodeUi = useSharedNodeUi();
 
   const handleSuggestedTriggerClick = useCallback(
     (operation: any) => {
@@ -79,26 +82,20 @@ export const OperationsAccordion = ({
   });
 
   // Suggested triggers as OperationActionData for Grid component
-  const suggestedTriggers = [
-    {
-      id: recurrenceOperation.id,
-      title: recurrenceOperation.properties.summary,
-      description: recurrenceOperation.properties.description,
-      iconUri: recurrenceOperation.properties.iconUri,
-      brandColor: recurrenceOperation.properties.brandColor,
-      isTrigger: true,
-      apiId: recurrenceOperation.properties?.api?.id,
-    },
-    {
-      id: requestOperation.id,
-      title: requestOperation.properties.summary,
-      description: requestOperation.properties.description,
-      iconUri: requestOperation.properties.iconUri,
-      brandColor: requestOperation.properties.brandColor,
-      isTrigger: true,
-      apiId: requestOperation.properties?.api?.id,
-    },
-  ];
+  const suggestedTriggers = useMemo(
+    () =>
+      [recurrenceOperation, requestOperation].map((operation) => ({
+        id: operation.id,
+        title: operation.properties.summary,
+        description: operation.properties.description,
+        iconUri: operation.properties.iconUri,
+        brandColor: operation.properties.brandColor,
+        isTrigger: true,
+        apiId: operation.properties.api.id,
+        icon: sharedNodeUi ? getPickerOperationGlyph(operation) : undefined,
+      })),
+    [sharedNodeUi]
+  );
 
   const handleSuggestedTriggerGridClick = useCallback(
     (operationId: string) => {

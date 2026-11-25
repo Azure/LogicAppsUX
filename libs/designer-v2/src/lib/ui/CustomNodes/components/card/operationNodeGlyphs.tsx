@@ -1,7 +1,15 @@
 import type { ReactNode } from 'react';
-import { getNodeGlyph, type NodeIconTone, type NodeVisualKind } from '@microsoft/designer-ui-v2';
+import { getNodeGlyph, IfIconRegular, IfIconFilled, type NodeIconTone, type NodeVisualKind } from '@microsoft/designer-ui-v2';
 import { isBuiltInOperation } from '@microsoft/logic-apps-shared';
-import { AgentsFilled, AgentsRegular, BoxMultipleRegular } from '@fluentui/react-icons';
+import {
+  AgentsFilled,
+  AgentsRegular,
+  ArrowRepeatAllFilled,
+  ArrowRepeatAllRegular,
+  ArrowTurnRightFilled,
+  ArrowTurnRightRegular,
+  BoxMultipleRegular,
+} from '@fluentui/react-icons';
 
 export const scopeNodeIcon = <BoxMultipleRegular />;
 /** Agent headers render the card's own Agent glyph, so adapters pass this family tone directly. */
@@ -13,6 +21,17 @@ export interface OperationNodeGlyph {
   /** Family color for the fallback glyph; only applied when no connector art is shown. */
   tone?: NodeIconTone;
 }
+
+const loopGlyph = { icon: <ArrowRepeatAllRegular />, selectedIcon: <ArrowRepeatAllFilled /> };
+const controlGlyphs = new Map<string, OperationNodeGlyph>([
+  ['if', { icon: <IfIconRegular />, selectedIcon: <IfIconFilled /> }],
+  ['switch', { icon: <ArrowTurnRightRegular />, selectedIcon: <ArrowTurnRightFilled /> }],
+  ['foreach', loopGlyph],
+  ['until', loopGlyph],
+  ['scope', { icon: scopeNodeIcon, selectedIcon: scopeNodeIcon }],
+]);
+
+export const getControlOperationGlyph = (type: string) => controlGlyphs.get(type.toLowerCase());
 
 // Tones mirror the legacy designer's brand colors per family (Request teal, HTTP green, variables purple,
 // data operations violet, Terminate red) so built-ins stay recognizable without per-operation artwork.
@@ -45,7 +64,16 @@ const groups: { types: readonly string[]; visualKind: NodeVisualKind; tone: Node
     tone: 'blue',
   },
   {
-    types: ['javascriptcode', 'inlinejavascript', 'pythoncode', 'executepythoncode', 'inlinepython', 'powershellcode', 'csharpscriptcode'],
+    types: [
+      'javascriptcode',
+      'inlinejavascript',
+      'pythoncode',
+      'executepythoncode',
+      'inlinepython',
+      'powershellcode',
+      'csharpscriptcode',
+      'csharpcode',
+    ],
     visualKind: 'inlineCode',
     tone: 'blue',
   },

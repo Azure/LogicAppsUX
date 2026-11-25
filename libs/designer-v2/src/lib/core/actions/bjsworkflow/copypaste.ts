@@ -41,7 +41,9 @@ import { getConnectionReferenceForNodeId } from '../../state/connection/connecti
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
 import { storeStateToUndoRedoHistory } from './undoRedo';
+import { beginHistoryTransaction, endHistoryTransaction } from '../../state/undoRedo/undoRedoSlice';
 import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
+import { withHistoryTransaction } from '../../utils/middleware';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -237,7 +239,12 @@ interface PasteOperationPayload {
   connectionData?: ConnectionMapping[string];
   comment?: string;
   isParallelBranch?: boolean;
+  skipUndoSnapshot?: boolean;
 }
+
+// Tracks standalone (non-transaction) paste operations awaiting async metadata so Shared Duplicate
+// does not start a history transaction mid-paste and drop the earlier paste's follow-up dispatches.
+let activeStandalonePastes = 0;
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
   const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment, isParallelBranch } = payload;
@@ -245,58 +252,70 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     throw new Error('Operation does not exist');
   }
 
-  const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
-
-  dispatch(setIsPanelLoading(true));
-
-  // update workflow
-  dispatch(
-    pasteNode({
-      nodeId: nodeId,
-      relationshipIds: relationshipIds,
-      operation: operationInfo,
-      isParallelBranch,
-    })
-  );
-
-  dispatch(setFocusNode(nodeId));
-  dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-  if (!isExpressionConnectionMapping(connectionData)) {
-    await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+  const isStandalonePaste = !payload.skipUndoSnapshot;
+  if (isStandalonePaste) {
+    activeStandalonePastes += 1;
   }
 
-  // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
+  try {
+    const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
 
-  const updatedTokens = (nodeTokenData?.tokens ?? []).map((token) => {
-    // Modify the actionName to a unique value
-    return {
-      ...token,
-      outputInfo: {
-        ...token.outputInfo,
-        actionName: nodeId,
-      },
-    };
-  });
+    dispatch(setIsPanelLoading(true));
 
-  dispatch(
-    addDynamicTokens({
-      nodeId,
-      tokens: updatedTokens,
-    })
-  );
+    // update workflow
+    dispatch(
+      pasteNode({
+        nodeId: nodeId,
+        relationshipIds: relationshipIds,
+        operation: operationInfo,
+        isParallelBranch,
+        ...(payload.skipUndoSnapshot && { skipUndoSnapshot: true }),
+      })
+    );
 
-  if (connectionData) {
-    dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
+    dispatch(setFocusNode(nodeId));
+    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+    if (!isExpressionConnectionMapping(connectionData)) {
+      await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+    }
+
+    // replace new nodeId if there exists a copy of the copied node
+    dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
+
+    const updatedTokens = (nodeTokenData?.tokens ?? []).map((token) => {
+      // Modify the actionName to a unique value
+      return {
+        ...token,
+        outputInfo: {
+          ...token.outputInfo,
+          actionName: nodeId,
+        },
+      };
+    });
+
+    dispatch(
+      addDynamicTokens({
+        nodeId,
+        tokens: updatedTokens,
+      })
+    );
+
+    if (connectionData) {
+      dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
+    }
+    if (comment) {
+      dispatch(setNodeDescription({ nodeId, description: comment }));
+    }
+
+    updateAllUpstreamNodes(getState() as RootState, dispatch);
+    dispatch(setIsPanelLoading(false));
+
+    return nodeId;
+  } finally {
+    if (isStandalonePaste) {
+      activeStandalonePastes = Math.max(0, activeStandalonePastes - 1);
+    }
   }
-  if (comment) {
-    dispatch(setNodeDescription({ nodeId, description: comment }));
-  }
-
-  updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(setIsPanelLoading(false));
-
-  return nodeId;
 });
 
 interface PasteScopeOperationPayload {
@@ -307,6 +326,7 @@ interface PasteScopeOperationPayload {
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
   isParallelBranch?: boolean;
+  skipUndoSnapshot?: boolean;
 }
 
 export const pasteScopeOperation = createAsyncThunk(
@@ -324,122 +344,132 @@ export const pasteScopeOperation = createAsyncThunk(
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
     }
-    const { graphId, parentId } = relationshipIds;
-    const state = getState() as RootState;
-    const idReplacements = state.workflow.idReplacements;
-    const existingNodesMetadata = replaceIdsOfExistingNodes(state.workflow.nodesMetadata, idReplacements);
-    const nodeId = getNonDuplicateNodeId(existingNodesMetadata, actionId);
+    const isStandalonePaste = !payload.skipUndoSnapshot;
+    if (isStandalonePaste) {
+      activeStandalonePastes += 1;
+    }
+    try {
+      const { graphId, parentId } = relationshipIds;
+      const state = getState() as RootState;
+      const idReplacements = state.workflow.idReplacements;
+      const existingNodesMetadata = replaceIdsOfExistingNodes(state.workflow.nodesMetadata, idReplacements);
+      const nodeId = getNonDuplicateNodeId(existingNodesMetadata, actionId);
 
-    const workflowActions = { [nodeId]: { ...serializedValue } as ActionDefinition };
-    const allActionNames = getAllActionNames(workflowActions, [], true);
+      const workflowActions = { [nodeId]: { ...serializedValue } as ActionDefinition };
+      const allActionNames = getAllActionNames(workflowActions, [], true);
 
-    const pasteParams = buildScopeParams(existingNodesMetadata, allActionNames);
-    const [nodes, _edges, actions, actionNodesMetadata] = buildGraphFromActions(
-      workflowActions,
-      graphId,
-      parentId,
-      Object.keys(existingNodesMetadata),
-      true /* shouldAppendAddCase */,
-      pasteParams
-    );
-    // parentNodeId must reference a nodesMetadata key (the containing graph/scope) so the
-    // parent-chain walk in getUpstreamNodeIds can climb to ancestor scopes. `parentId` from
-    // relationshipIds is an edge-placement node (e.g. a `<scope>-#subgraph` card) and is not a
-    // valid metadata key, so use `graphId` (the containing graph) instead, matching how
-    // pasteScopeInWorkflow finalizes this node's metadata.
-    const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
-    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
-    if (Object.keys(allConnectionData).length > 0) {
-      const copiedConnections = replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes);
-      for (const [id, data] of Object.entries(copiedConnections)) {
-        if (data.mapping) {
-          const action = actions[id];
-          const inputs = (action as LogicAppsV2.ServiceProvider)?.inputs;
-          if (inputs) {
-            actions[id] = { ...action, inputs: remapConnectionExpressionValue(inputs, pasteParams.renamedNodes) };
+      const pasteParams = buildScopeParams(existingNodesMetadata, allActionNames);
+      const [nodes, _edges, actions, actionNodesMetadata] = buildGraphFromActions(
+        workflowActions,
+        graphId,
+        parentId,
+        Object.keys(existingNodesMetadata),
+        true /* shouldAppendAddCase */,
+        pasteParams
+      );
+      // parentNodeId must reference a nodesMetadata key (the containing graph/scope) so the
+      // parent-chain walk in getUpstreamNodeIds can climb to ancestor scopes. `parentId` from
+      // relationshipIds is an edge-placement node (e.g. a `<scope>-#subgraph` card) and is not a
+      // valid metadata key, so use `graphId` (the containing graph) instead, matching how
+      // pasteScopeInWorkflow finalizes this node's metadata.
+      const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
+      actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
+      if (Object.keys(allConnectionData).length > 0) {
+        const copiedConnections = replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes);
+        for (const [id, data] of Object.entries(copiedConnections)) {
+          if (data.mapping) {
+            const action = actions[id];
+            const inputs = (action as LogicAppsV2.ServiceProvider)?.inputs;
+            if (inputs) {
+              actions[id] = { ...action, inputs: remapConnectionExpressionValue(inputs, pasteParams.renamedNodes) };
+            }
+            copiedConnections[id] = {
+              ...data,
+              mapping: { ...data.mapping, expression: remapConnectionExpression(data.mapping.expression, pasteParams.renamedNodes) },
+            };
           }
-          copiedConnections[id] = {
-            ...data,
-            mapping: { ...data.mapping, expression: remapConnectionExpression(data.mapping.expression, pasteParams.renamedNodes) },
-          };
+        }
+        dispatch(initScopeCopiedConnections(copiedConnections));
+      }
+      for (const [id, action] of Object.entries(actions)) {
+        const connectionName = (action as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
+        if (
+          action.type.toLowerCase() === 'serviceprovider' &&
+          typeof connectionName === 'string' &&
+          !(getState() as RootState).connections.connectionsMapping[id]
+        ) {
+          const mapping = getServiceProviderConnectionMapping(connectionName);
+          if (isExpressionConnectionMapping(mapping)) {
+            dispatch(
+              setNodeConnectionMapping({
+                nodeId: id,
+                mapping: { ...mapping, expression: remapConnectionExpression(mapping.expression, pasteParams.renamedNodes) },
+              })
+            );
+            actions[id] = {
+              ...action,
+              inputs: remapConnectionExpressionValue((action as LogicAppsV2.ServiceProvider).inputs, pasteParams.renamedNodes),
+            };
+          }
         }
       }
-      dispatch(initScopeCopiedConnections(copiedConnections));
-    }
-    for (const [id, action] of Object.entries(actions)) {
-      const connectionName = (action as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
-      if (
-        action.type.toLowerCase() === 'serviceprovider' &&
-        typeof connectionName === 'string' &&
-        !(getState() as RootState).connections.connectionsMapping[id]
-      ) {
-        const mapping = getServiceProviderConnectionMapping(connectionName);
-        if (isExpressionConnectionMapping(mapping)) {
-          dispatch(
-            setNodeConnectionMapping({
-              nodeId: id,
-              mapping: { ...mapping, expression: remapConnectionExpression(mapping.expression, pasteParams.renamedNodes) },
-            })
-          );
-          actions[id] = {
-            ...action,
-            inputs: remapConnectionExpressionValue((action as LogicAppsV2.ServiceProvider).inputs, pasteParams.renamedNodes),
-          };
-        }
+      if (Object.keys(staticResults).length > 0) {
+        dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, pasteParams.renamedNodes)));
       }
-    }
-    if (Object.keys(staticResults).length > 0) {
-      dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, pasteParams.renamedNodes)));
-    }
-    dispatch(
-      pasteScopeNode({
-        relationshipIds,
-        scopeNode: nodes[0],
-        operations: actions,
-        nodesMetadata: actionNodesMetadata,
-        allActions: allActionNames,
-        isParallelBranch,
-      })
-    );
-
-    dispatch(setIsPanelLoading(true));
-
-    dispatch(setFocusNode(nodeId));
-
-    const connectionReference = (getState() as RootState).connections.connectionReferences;
-    const workflowParameters = state.workflowParameters.definitions;
-    const workflowKind = state.workflow.workflowKind;
-    const operations = state.workflow.operations;
-    const nodeMap: Record<string, string> = {};
-    for (const id of Object.keys(operations)) {
-      nodeMap[id] = id;
-    }
-    const extendedIds = extendUpstreamNodeIdsForScopePaste(upstreamNodeIds, graphId, parentId, state, nodeMap);
-    const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, extendedIds), idReplacements);
-    const triggerId = getTriggerNodeId(state.workflow);
-
-    await Promise.all([
-      initializeOperationMetadata(
-        {
-          graph: nodes[0],
-          actionData: actions,
+      dispatch(
+        pasteScopeNode({
+          relationshipIds,
+          scopeNode: nodes[0],
+          operations: actions,
           nodesMetadata: actionNodesMetadata,
-          staticResults: staticResults,
-        },
-        connectionReference,
-        workflowParameters,
-        {},
-        workflowKind,
-        dispatch,
-        { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
-      ),
-    ]);
-    await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
+          allActions: allActionNames,
+          isParallelBranch,
+        })
+      );
 
-    updateAllUpstreamNodes(getState() as RootState, dispatch);
-    dispatch(setIsPanelLoading(false));
+      dispatch(setIsPanelLoading(true));
 
-    return nodeId;
+      dispatch(setFocusNode(nodeId));
+
+      const connectionReference = (getState() as RootState).connections.connectionReferences;
+      const workflowParameters = state.workflowParameters.definitions;
+      const workflowKind = state.workflow.workflowKind;
+      const operations = state.workflow.operations;
+      const nodeMap: Record<string, string> = {};
+      for (const id of Object.keys(operations)) {
+        nodeMap[id] = id;
+      }
+      const extendedIds = extendUpstreamNodeIdsForScopePaste(upstreamNodeIds, graphId, parentId, state, nodeMap);
+      const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, extendedIds), idReplacements);
+      const triggerId = getTriggerNodeId(state.workflow);
+
+      await Promise.all([
+        initializeOperationMetadata(
+          {
+            graph: nodes[0],
+            actionData: actions,
+            nodesMetadata: actionNodesMetadata,
+            staticResults: staticResults,
+          },
+          connectionReference,
+          workflowParameters,
+          {},
+          workflowKind,
+          dispatch,
+          { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
+        ),
+      ]);
+      await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
+
+      updateAllUpstreamNodes(getState() as RootState, dispatch);
+      dispatch(setIsPanelLoading(false));
+
+      return nodeId;
+    } finally {
+      if (isStandalonePaste) {
+        activeStandalonePastes = Math.max(0, activeStandalonePastes - 1);
+      }
+    }
   }
 );
 
@@ -538,58 +568,98 @@ type DuplicateOperationsPayload = {
 // copy/paste building blocks but keeps everything in-memory so the user's clipboard is untouched.
 export const duplicateOperations = createAsyncThunk(
   'duplicateOperations',
-  async (payload: DuplicateOperationsPayload, { dispatch, getState }) => {
+  async (payload: DuplicateOperationsPayload, { dispatch, getState, requestId }) => {
     const { nodeIds } = payload;
-    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+    const initialState = getState() as RootState;
+    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked(initialState.designerOptions)) {
       return;
     }
 
-    dispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+    const useSharedHistoryTransaction = !!initialState.designerOptions.useSharedNodeUi;
+    if (useSharedHistoryTransaction && (initialState.undoRedo.activeHistoryTransactions || activeStandalonePastes > 0)) {
+      // Do not interleave overlapping multi-step duplicate batches or drop an in-flight standalone paste's async writes.
+      return;
+    }
 
-    for (const nodeId of nodeIds) {
-      // Re-read state each iteration because prior pastes mutate the workflow graph.
-      const state = getState() as RootState;
-      if (isWorkflowEditLocked(state.designerOptions)) {
+    // Tag all dispatches owned by this transaction so historyTransactionGuardMiddleware permits its
+    // nested async paste/metadata actions while blocking unrelated mutations until it settles.
+    const txDispatch = (
+      useSharedHistoryTransaction ? (action: unknown) => dispatch(withHistoryTransaction(action, requestId) as any) : dispatch
+    ) as typeof dispatch;
+
+    let snapshotRecorded = false;
+    const ensureDuplicateSnapshot = () => {
+      if (snapshotRecorded) {
         return;
       }
-      const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
-      if (!graphId) {
-        continue;
-      }
+      snapshotRecorded = true;
+      txDispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+    };
 
-      // parentId set with no childId inserts the duplicate right below the source node.
-      const relationshipIds = { graphId, parentId: nodeId, childId: undefined };
-      const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (useSharedHistoryTransaction) {
+      txDispatch(beginHistoryTransaction());
+    } else {
+      ensureDuplicateSnapshot();
+    }
 
-      if (isScopeOperation(operationInfo?.type ?? '')) {
-        const entry = await buildScopeClipboardEntry(state, nodeId);
-        if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+    try {
+      for (const nodeId of nodeIds) {
+        // Re-read state each iteration because prior pastes mutate the workflow graph.
+        const state = getState() as RootState;
+        if (isWorkflowEditLocked(state.designerOptions)) {
           return;
         }
-        const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
-        await dispatch(
-          pasteScopeOperation({
-            relationshipIds,
-            nodeId: entry.nodeId,
-            serializedValue: entry.serializedOperation,
-            allConnectionData: entry.allConnectionData,
-            staticResults: entry.staticResults,
-            upstreamNodeIds,
-          })
-        );
-      } else {
-        const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
-        await dispatch(
-          pasteOperation({
-            relationshipIds,
-            nodeId: entry.nodeId,
-            nodeData: entry.nodeData,
-            nodeTokenData: entry.nodeTokenData,
-            operationInfo: entry.nodeOperationInfo,
-            connectionData: entry.nodeConnectionData,
-            comment: entry.nodeComment,
-          })
-        );
+        const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
+        if (!graphId) {
+          continue;
+        }
+
+        // parentId set with no childId inserts the duplicate right below the source node.
+        const relationshipIds = { graphId, parentId: nodeId, childId: undefined };
+        const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+        // The outer Duplicate owns one checkpoint for all of its internal pastes.
+        const undoOptions = useSharedHistoryTransaction ? { skipUndoSnapshot: true } : undefined;
+
+        if (isScopeOperation(operationInfo?.type ?? '')) {
+          const entry = await buildScopeClipboardEntry(state, nodeId);
+          if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+            return;
+          }
+          const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
+          // Record the single transaction checkpoint lazily right before the first real mutation
+          // so an aborted or empty duplicate never pushes a no-op entry or clears Redo history.
+          ensureDuplicateSnapshot();
+          await txDispatch(
+            pasteScopeOperation({
+              relationshipIds,
+              nodeId: entry.nodeId,
+              serializedValue: entry.serializedOperation,
+              allConnectionData: entry.allConnectionData,
+              staticResults: entry.staticResults,
+              upstreamNodeIds,
+              ...undoOptions,
+            })
+          );
+        } else {
+          const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
+          ensureDuplicateSnapshot();
+          await txDispatch(
+            pasteOperation({
+              relationshipIds,
+              nodeId: entry.nodeId,
+              nodeData: entry.nodeData,
+              nodeTokenData: entry.nodeTokenData,
+              operationInfo: entry.nodeOperationInfo,
+              connectionData: entry.nodeConnectionData,
+              comment: entry.nodeComment,
+              ...undoOptions,
+            })
+          );
+        }
+      }
+    } finally {
+      if (useSharedHistoryTransaction) {
+        txDispatch(endHistoryTransaction());
       }
     }
   }

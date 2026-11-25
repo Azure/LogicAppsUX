@@ -1,7 +1,13 @@
-import { forwardRef, useEffect, useState } from 'react';
-import type { HTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
-import { Button, makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
-import { ChevronDoubleLeftRegular, ChevronDoubleRightRegular, ChevronLeftRegular, ChevronRightRegular } from '@fluentui/react-icons';
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { ChangeEvent, HTMLAttributes, KeyboardEvent, MouseEvent } from 'react';
+import { Button, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
+import {
+  ChevronDoubleLeftRegular,
+  ChevronDoubleRightRegular,
+  ChevronLeftRegular,
+  ChevronRightRegular,
+  ErrorCircleRegular,
+} from '@fluentui/react-icons';
 import type { NodeIterationPagerStrings } from '../strings';
 import { defaultNodeIterationPagerStrings } from '../strings';
 
@@ -27,8 +33,80 @@ const useStyles = makeStyles({
     border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
     borderRadius: tokens.borderRadiusSmall,
   },
+  failedSelect: {
+    boxSizing: 'border-box',
+    width: '4.75em',
+    minWidth: 0,
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground1,
+    backgroundColor: tokens.colorNeutralBackground1,
+    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+    borderRadius: tokens.borderRadiusSmall,
+  },
   position: { whiteSpace: 'nowrap', paddingInline: tokens.spacingHorizontalXXS },
+  compact: { gap: 0, fontSize: tokens.fontSizeBase100, fontVariantNumeric: 'tabular-nums' },
+  compactInput: {
+    font: 'inherit',
+    // Fit six digits without reducing the three 24px button targets.
+    width: `calc(6ch + 2 * ${tokens.strokeWidthThin})`,
+    paddingInline: 0,
+  },
+  compactPosition: { paddingInline: 0, marginInlineStart: tokens.spacingHorizontalXXS },
+  compactArrow: { ':dir(rtl) svg': { transform: 'scaleX(-1)' } },
 });
+
+// Keep each Fluent menu small, including for lists too large for a single level of ranges.
+const failureMenuPageSize = 32;
+
+function FailureDestinationItems({
+  indexes,
+  strings,
+  onSelect,
+}: {
+  indexes: readonly number[];
+  strings: NodeIterationPagerStrings;
+  onSelect: (index: number) => void;
+}) {
+  if (indexes.length <= failureMenuPageSize) {
+    const label = strings.failedDestinationOption ?? defaultNodeIterationPagerStrings.failedDestinationOption;
+    return indexes.map((index) => (
+      <MenuItem key={index} onClick={() => onSelect(index)}>
+        {label?.(index + 1)}
+      </MenuItem>
+    ));
+  }
+
+  let rangeSize = failureMenuPageSize;
+  while (Math.ceil(indexes.length / rangeSize) > failureMenuPageSize) {
+    rangeSize *= failureMenuPageSize;
+  }
+  const optionLabel = strings.failedDestinationOption ?? defaultNodeIterationPagerStrings.failedDestinationOption;
+  const label = strings.failedDestinationRange ?? defaultNodeIterationPagerStrings.failedDestinationRange;
+  return Array.from({ length: Math.ceil(indexes.length / rangeSize) }, (_, rangeIndex) => {
+    const start = rangeIndex * rangeSize;
+    const end = Math.min(start + rangeSize, indexes.length);
+    // Avoid wrapping a single trailing failure in a redundant "N to N" submenu.
+    if (end - start === 1) {
+      return (
+        <MenuItem key={indexes[start]} onClick={() => onSelect(indexes[start])}>
+          {optionLabel?.(indexes[start] + 1)}
+        </MenuItem>
+      );
+    }
+    return (
+      <Menu key={indexes[start]}>
+        <MenuTrigger disableButtonEnhancement>
+          <MenuItem>{label?.(indexes[start] + 1, indexes[end - 1] + 1)}</MenuItem>
+        </MenuTrigger>
+        <MenuPopover>
+          <MenuList>
+            <FailureDestinationItems indexes={indexes.slice(start, end)} strings={strings} onSelect={onSelect} />
+          </MenuList>
+        </MenuPopover>
+      </Menu>
+    );
+  });
+}
 
 export interface NodeIterationPagerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Zero-based selected iteration. Out-of-range or non-finite values are clamped for display. */
@@ -39,6 +117,13 @@ export interface NodeIterationPagerProps extends Omit<HTMLAttributes<HTMLDivElem
   onChange: (index: number) => void;
   /** Zero-based failed iterations; enables the previous/next failed jumps. Out-of-range entries are ignored. */
   failed?: readonly number[];
+  /**
+   * Zero-based failed iterations that are safe to pick directly. Omitted keeps direct-selection UI hidden;
+   * out-of-range, duplicate, and current entries are ignored.
+   */
+  failedDestinations?: readonly number[];
+  /** Consolidates failure actions when direct destinations exist, for the constrained Foreach card row. */
+  compactFailureNavigation?: boolean;
   /** Renders a numeric input instead of read-only position text. */
   editable?: boolean;
   strings?: NodeIterationPagerStrings;
@@ -56,6 +141,8 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
     count,
     onChange,
     failed,
+    failedDestinations,
+    compactFailureNavigation = false,
     editable = false,
     strings = defaultNodeIterationPagerStrings,
     className,
@@ -68,14 +155,23 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
   const styles = useStyles();
   const total = Number.isFinite(count) ? Math.trunc(count) : 0;
   const index = total > 0 ? toIndex(current, total) : 0;
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const selectRef = useRef<HTMLSelectElement | null>(null);
+  const failureTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const failureMenuRef = useRef<HTMLDivElement | null>(null);
+  const restoreInputFocus = useRef(false);
   const [draft, setDraft] = useState(String(index + 1));
-  // Host updates (including a stale current that was clamped) replace any uncommitted draft.
-  useEffect(() => setDraft(String(index + 1)), [index]);
-
-  if (total <= 0) {
-    return null;
-  }
-
+  const validFailedDestinations = useMemo(
+    () =>
+      Array.from(new Set((failedDestinations ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total))).sort(
+        (a, b) => a - b
+      ),
+    [failedDestinations, total]
+  );
+  const failedDestinationIndexes = useMemo(
+    () => validFailedDestinations.filter((value) => value !== index),
+    [validFailedDestinations, index]
+  );
   // Failed jumps target the nearest valid failed iteration strictly before/after the selection.
   const validFailed = (failed ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total);
   const previousFailed = validFailed.reduce<number | undefined>(
@@ -87,6 +183,41 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
     undefined
   );
   const hasFailed = failed !== undefined;
+  // Keep compact layout whenever the loop has at least one valid failed destination, including when
+  // the user is viewing that sole failure, so jumping to it never re-expands the constrained Foreach
+  // row with the wider input and separate previous/next failed buttons.
+  const useCompactFailureLayout = editable && compactFailureNavigation && validFailedDestinations.length > 0;
+  const showCompactMenu =
+    useCompactFailureLayout && (failedDestinationIndexes.length > 0 || previousFailed !== undefined || nextFailed !== undefined);
+  const showFailedDestinationSelect = editable && !compactFailureNavigation && failedDestinationIndexes.length > 0;
+  const failedDestinationLabel = strings.failedDestinationSelect ?? defaultNodeIterationPagerStrings.failedDestinationSelect;
+  const setFailureTriggerRef = useCallback((trigger: HTMLButtonElement | null) => {
+    const previous = failureTriggerRef.current;
+    if (!trigger && previous) {
+      const focused = previous.ownerDocument.activeElement;
+      restoreInputFocus.current = focused === previous || !!failureMenuRef.current?.contains(focused);
+    }
+    failureTriggerRef.current = trigger;
+  }, []);
+  const setSelectRef = useCallback((select: HTMLSelectElement | null) => {
+    const previous = selectRef.current;
+    restoreInputFocus.current = !select && !!previous && previous.ownerDocument.activeElement === previous;
+    selectRef.current = select;
+  }, []);
+  // Only rescue focus when the focused chooser was removed but this pager survived, and the host didn't take focus.
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (restoreInputFocus.current && input && input.ownerDocument.activeElement === input.ownerDocument.body) {
+      input.focus();
+    }
+    restoreInputFocus.current = false;
+  }, [showFailedDestinationSelect, showCompactMenu]);
+  // Host updates (including a stale current that was clamped) replace any uncommitted draft.
+  useEffect(() => setDraft(String(index + 1)), [index]);
+
+  if (total <= 0) {
+    return null;
+  }
 
   const go = (target: number | undefined) => {
     if (target !== undefined && target !== index && target >= 0 && target < total) {
@@ -103,6 +234,15 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
     const target = Math.min(Math.max(parsed, 1), total) - 1;
     setDraft(String(target + 1));
     go(target);
+  };
+
+  const handleFailedDestinationSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    if (event.target.value !== '') {
+      const target = Number(event.target.value);
+      if (failedDestinationIndexes.includes(target)) {
+        go(target);
+      }
+    }
   };
 
   // The pager lives inside a draggable, keyboard-navigable canvas node; keys typed here must not
@@ -125,12 +265,12 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       ref={ref}
       role="group"
       aria-label={strings.label}
-      className={mergeClasses('nodrag', styles.root, className)}
+      className={mergeClasses('nodrag', styles.root, useCompactFailureLayout && styles.compact, className)}
       data-node-pager=""
       onKeyDown={isolateKeys}
       onClick={isolateClick}
     >
-      {hasFailed ? (
+      {hasFailed && !useCompactFailureLayout ? (
         <Button
           appearance="transparent"
           size="small"
@@ -149,6 +289,7 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       <Button
         appearance="transparent"
         size="small"
+        className={useCompactFailureLayout ? styles.compactArrow : undefined}
         icon={<ChevronLeftRegular />}
         aria-label={strings.previous}
         title={strings.previous}
@@ -161,7 +302,8 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       />
       {editable ? (
         <input
-          className={styles.input}
+          ref={inputRef}
+          className={mergeClasses(styles.input, useCompactFailureLayout && styles.compactInput)}
           type="text"
           inputMode="numeric"
           aria-label={strings.input(total)}
@@ -177,12 +319,17 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
           }}
         />
       ) : null}
-      <span className={styles.position} aria-live="off">
+      <span
+        className={mergeClasses(styles.position, useCompactFailureLayout && styles.compactPosition)}
+        aria-live="off"
+        dir={useCompactFailureLayout ? 'ltr' : undefined}
+      >
         {editable ? `/ ${total}` : strings.position(index + 1, total)}
       </span>
       <Button
         appearance="transparent"
         size="small"
+        className={useCompactFailureLayout ? styles.compactArrow : undefined}
         icon={<ChevronRightRegular />}
         aria-label={strings.next}
         title={strings.next}
@@ -193,7 +340,7 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
         }}
         data-pager-action="next"
       />
-      {hasFailed ? (
+      {hasFailed && !useCompactFailureLayout ? (
         <Button
           appearance="transparent"
           size="small"
@@ -208,6 +355,53 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
           }}
           data-pager-action="next-failed"
         />
+      ) : null}
+      {showCompactMenu ? (
+        <Menu>
+          <MenuTrigger disableButtonEnhancement>
+            <Button
+              ref={setFailureTriggerRef}
+              appearance="transparent"
+              size="small"
+              className={styles.failed}
+              icon={<ErrorCircleRegular />}
+              aria-label={failedDestinationLabel}
+              title={failedDestinationLabel}
+            />
+          </MenuTrigger>
+          <MenuPopover ref={failureMenuRef}>
+            <MenuList>
+              {hasFailed ? (
+                <>
+                  <MenuItem disabled={previousFailed === undefined} onClick={() => go(previousFailed)}>
+                    {strings.previousFailed}
+                  </MenuItem>
+                  <MenuItem disabled={nextFailed === undefined} onClick={() => go(nextFailed)}>
+                    {strings.nextFailed}
+                  </MenuItem>
+                </>
+              ) : null}
+              <FailureDestinationItems indexes={failedDestinationIndexes} strings={strings} onSelect={go} />
+            </MenuList>
+          </MenuPopover>
+        </Menu>
+      ) : null}
+      {showFailedDestinationSelect ? (
+        <select
+          ref={setSelectRef}
+          className={styles.failedSelect}
+          aria-label={failedDestinationLabel}
+          title={failedDestinationLabel}
+          value=""
+          onChange={handleFailedDestinationSelect}
+        >
+          <option value="">{strings.failedDestinationPrompt ?? defaultNodeIterationPagerStrings.failedDestinationPrompt}</option>
+          {failedDestinationIndexes.map((failedIndex) => (
+            <option key={failedIndex} value={failedIndex}>
+              {(strings.failedDestinationOption ?? defaultNodeIterationPagerStrings.failedDestinationOption)?.(failedIndex + 1)}
+            </option>
+          ))}
+        </select>
       ) : null}
     </div>
   );

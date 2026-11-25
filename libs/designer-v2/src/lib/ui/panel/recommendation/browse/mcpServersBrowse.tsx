@@ -229,7 +229,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick, searchTe
         </div>
       ) : (
         <Grid
-          items={filteredAndSortedServers.map(getOperationCardDataFromOperation)}
+          items={filteredAndSortedServers.map((operation) => getOperationCardDataFromOperation(operation))}
           onOperationSelected={(operationId) => {
             const server = filteredAndSortedServers.find((s) => s.id === operationId);
             if (server) {

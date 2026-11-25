@@ -46,7 +46,7 @@ import {
   mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
-import { agentNodeTone, scopeNodeIcon } from './operationNodeGlyphs';
+import { agentNodeTone, getControlOperationGlyph, scopeNodeIcon } from './operationNodeGlyphs';
 import { getNodePresentation, SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
@@ -225,12 +225,21 @@ export const SharedScopeCard = ({
       </>
     ),
   };
+  const hoverCategory = family === 'agent' ? 'agent' : family === 'scope' ? 'action' : 'control';
+  const hoverIcon =
+    family === 'if' || family === 'switch'
+      ? getControlOperationGlyph(family)?.icon
+      : family === 'loop'
+        ? getControlOperationGlyph('foreach')?.icon
+        : family === 'scope'
+          ? scopeNodeIcon
+          : undefined;
   const withHover = (card: ReactNode) => (
     <SharedNodeHoverCard
       // The fixed-width Agent header must center in its accepted frame, not a shrink-wrapped hover trigger.
       className={family === 'agent' && toolsPanel ? styles.acceptedFrame : undefined}
-      category={family === 'agent' ? 'agent' : 'control'}
-      icon={undefined}
+      category={hoverCategory}
+      icon={hoverIcon}
       title={props.title}
       subtitle={operationType}
       description={description}
@@ -244,6 +253,7 @@ export const SharedScopeCard = ({
     return withHover(
       <ConditionNodeCard
         {...common}
+        {...getControlOperationGlyph(family)}
         headerTint={family === 'if' ? 'condition' : 'switch'}
         kind={family}
         subtitleKind={containsStatus ? 'status' : undefined}
@@ -263,6 +273,7 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
+        {...getControlOperationGlyph('foreach')}
         className={mergeClasses(common.className, joined && loopHeaderHoverClass)}
         data-loop-group-header={joined ? props.id : undefined}
         headerTint="loop"

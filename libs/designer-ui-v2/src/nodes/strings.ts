@@ -51,6 +51,14 @@ export interface NodeIterationPagerStrings {
   nextFailed: string;
   input: (count: number) => string;
   position: (current: number, count: number) => string;
+  /** Optional so dictionaries written before failed-destination picking still compile. */
+  failedDestinationSelect?: string;
+  /** Optional visible collapsed select prompt; optional keeps old dictionaries assignable. */
+  failedDestinationPrompt?: string;
+  /** Optional so older dictionaries still compile; one-based number for display only. */
+  failedDestinationOption?: (iteration: number) => string;
+  /** Submenu label for the first and last one-based failure destinations in a range. */
+  failedDestinationRange?: (first: number, last: number) => string;
 }
 export type NodeRunAfterStatus = 'succeeded' | 'failed' | 'skipped' | 'timedOut';
 export interface NodeRunAfterStrings {
@@ -109,6 +117,10 @@ export const defaultNodeIterationPagerStrings: NodeIterationPagerStrings = {
   nextFailed: 'Next failed iteration',
   input: (count) => `Iteration number, 1 to ${count}`,
   position: (current, count) => `${current} of ${count}`,
+  failedDestinationSelect: 'Jump to failed iteration',
+  failedDestinationPrompt: 'Failed…',
+  failedDestinationOption: (iteration) => `Failed iteration ${iteration}`,
+  failedDestinationRange: (first, last) => `Failed iterations ${first} to ${last}`,
 };
 export const defaultNodeRunAfterStrings: NodeRunAfterStrings = {
   status: { succeeded: 'Is successful', failed: 'Has failed', skipped: 'Is skipped', timedOut: 'Timed out' },

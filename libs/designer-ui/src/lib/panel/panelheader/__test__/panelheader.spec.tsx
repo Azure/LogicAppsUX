@@ -152,4 +152,27 @@ describe('lib/panel/panelHeader/main', () => {
       .toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
+
+  it('renders operationIcon normally and suppresses it while loading or in error state', () => {
+    const icon = <span data-testid="shared-panel-glyph" />;
+    const renderHeader = (overrides: Partial<PanelHeaderProps['nodeData']>) => {
+      const tree = renderer.create(
+        <ThemeProvider theme={createTheme()}>
+          <PanelHeader
+            {...minimal}
+            nodeData={{
+              ...minimal.nodeData,
+              operationIcon: icon,
+              ...overrides,
+            }}
+          />
+        </ThemeProvider>
+      );
+      return tree.root.findAllByProps({ 'data-testid': 'shared-panel-glyph' });
+    };
+
+    expect(renderHeader({ isLoading: false, isError: false })).toHaveLength(1);
+    expect(renderHeader({ isLoading: true, isError: false })).toHaveLength(0);
+    expect(renderHeader({ isLoading: false, isError: true })).toHaveLength(0);
+  });
 });

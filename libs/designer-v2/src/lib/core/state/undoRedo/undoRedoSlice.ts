@@ -1,17 +1,25 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { resetWorkflowState } from '../global';
+import { initWorkflowSpec } from '../workflow/workflowSlice';
 import type { StateHistory, StateHistoryItem } from './undoRedoTypes';
 
 export const initialState: StateHistory = {
   past: [],
   future: [],
   undoRedoClickToggle: 0,
+  activeHistoryTransactions: 0,
 };
 
 export const undoRedoSlice = createSlice({
   name: 'undoRedo',
   initialState,
   reducers: {
+    beginHistoryTransaction: (state) => {
+      state.activeHistoryTransactions = (state.activeHistoryTransactions ?? 0) + 1;
+    },
+    endHistoryTransaction: (state) => {
+      state.activeHistoryTransactions = Math.max(0, (state.activeHistoryTransactions ?? 0) - 1);
+    },
     saveStateToHistory: (state, action: PayloadAction<{ stateHistoryItem: StateHistoryItem; limit: number }>) => {
       state.past = [
         ...(state.past.length < action.payload.limit ? state.past : state.past.slice(1, state.past.length)),
@@ -56,9 +64,20 @@ export const undoRedoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    // Host workflow reloads replace the graph without always dispatching resetWorkflowState;
+    // clear any in-flight history transaction counter so Undo/Redo/Duplicate cannot stay locked.
+    builder.addCase(initWorkflowSpec, (state) => {
+      state.activeHistoryTransactions = 0;
+    });
   },
 });
 
-export const { saveStateToHistory, updateStateHistoryOnUndoClick, updateStateHistoryOnRedoClick } = undoRedoSlice.actions;
+export const {
+  beginHistoryTransaction,
+  endHistoryTransaction,
+  saveStateToHistory,
+  updateStateHistoryOnUndoClick,
+  updateStateHistoryOnRedoClick,
+} = undoRedoSlice.actions;
 
 export default undoRedoSlice.reducer;

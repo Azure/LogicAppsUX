@@ -33,6 +33,7 @@ import {
   useIsActionInSelectedTimelineRepetition,
   useHandoffActionsForAgent,
   useFlowErrorsForNode,
+  useSelectedLoopRepetition,
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setFocusElement,
@@ -78,6 +79,7 @@ import type { ComponentProps } from 'react';
 import type { NodeFrameCountLabel } from '@microsoft/designer-ui-v2';
 import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
 import { getScopeModel } from './components/card/scopeNodePresentation';
+import { useLoopRepetitionAdmission } from '../../core/hooks/useLoopRepetitionAdmission';
 
 type BranchPort = { id: string; subgraphType?: string };
 
@@ -192,7 +194,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   const runData = useRunData(scopeId);
   const parentNodeId = useParentNodeId(scopeId);
   const parentRunData = useRunData(parentNodeId ?? '');
-  const selfRunData = useRunData(scopeId);
+  const loopRepetition = useSelectedLoopRepetition(scopeId);
   const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const isMultiSelected = useIsNodeInMultiSelection(scopeId);
   const isPinned = useIsNodePinnedToOperationPanel(scopeId);
@@ -221,10 +223,11 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     [shared, isA2AWorkflow, selectedAgentRunId, scopeId, scopeRepetitionName, runIndex, parentRunData?.status]
   );
   const admittedAgentRepetition = useRef<{ identity: string; data: LogicAppsV2.RunRepetition }>();
-  const repetitionName = useRepetitionName(parentRunIndex, scopeId, operationsInfo);
+  const legacyRepetitionName = useRepetitionName(parentRunIndex, scopeId, operationsInfo);
+  const repetitionName = loopRepetition ? (loopRepetition.isEmpty ? undefined : loopRepetition.name) : legacyRepetitionName;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!isMonitoringView && !!runInstance,
+    !!isMonitoringView && !!runInstance && !loopRepetition?.isEmpty,
     scopeId,
     runInstance?.id,
     repetitionName,
@@ -235,7 +238,11 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
   // A nested condition can still have the previous iteration's runData in Redux while the new query loads.
   const usesRepetition = !!runInstance && parentRunIndex !== undefined;
   const showConditionOutcome = !!(shared && !id.endsWith('#footer') && isMonitoringView && (isConditional || isSwitch));
-  const outcomeRun = usesRepetition ? (isTimelineRepetitionSelected ? repetitionRunData?.properties : undefined) : runData;
+  const outcomeRun = usesRepetition
+    ? isTimelineRepetitionSelected && !loopRepetition?.isEmpty
+      ? repetitionRunData?.properties
+      : undefined
+    : runData;
   const inlineResult =
     showConditionOutcome && outcomeRun && 'outputs' in outcomeRun ? getExpressionResultFromOutputs(outcomeRun.outputs) : undefined;
   const linkedOutputs = useConditionOutputs(
@@ -243,7 +250,8 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     runInstance?.id,
     repetitionName,
     outcomeRun,
-    showConditionOutcome && isNullOrUndefined(inlineResult)
+    showConditionOutcome && isNullOrUndefined(inlineResult),
+    usesRepetition ? repetitionRunData?.loopPayloadRevision : undefined
   );
 
   const { isFetching: isAgentRepetitionFetching, data: agentRepetitionRunData } = useAgentRepetition(
@@ -311,7 +319,7 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     dispatch,
     agentRepetitionRunData,
     scopeId,
-    selfRunData?.correlation?.actionTrackingId,
+    runData?.correlation?.actionTrackingId,
     isMonitoringView,
     isTimelineRepetitionSelected,
     metadata,
@@ -320,19 +328,26 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
     scopeRepetitionName,
   ]);
 
+  useLoopRepetitionAdmission(scopeId, isMonitoringView && isTimelineRepetitionSelected ? loopRepetition : undefined, repetitionRunData);
+  const legacyTrackingId = loopRepetition ? undefined : runData?.correlation?.actionTrackingId;
   useEffect(() => {
-    if (isMonitoringView && !isTimelineRepetitionSelected) {
+    if (loopRepetition || (isMonitoringView && !isTimelineRepetitionSelected)) {
       return;
     }
     if (isNullOrUndefined(repetitionRunData)) {
       return;
     }
-    if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+    if (legacyTrackingId === repetitionRunData.properties?.correlation?.actionTrackingId) {
       // if the correlation id is the same, we don't need to update the repetition run data
       return;
     }
-    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
-  }, [dispatch, isMonitoringView, isTimelineRepetitionSelected, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
+    dispatch(
+      setRepetitionRunData({
+        nodeId: scopeId,
+        runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction,
+      })
+    );
+  }, [dispatch, isMonitoringView, isTimelineRepetitionSelected, repetitionRunData, scopeId, legacyTrackingId, loopRepetition]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -569,16 +584,32 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
 
   const renderLoopsPager = useMemo(() => {
     // The Agent's own pager selects repetitions; keep it usable while the tool cards wait for the requested page.
-    if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
+    // Nested loop counts belong to the current outer repetition, just like the card status.
+    const pagerMetadata = loopRepetition && metadata ? { ...metadata, runData } : metadata;
+    if (
+      pagerMetadata &&
+      !Array.isArray(pagerMetadata.runData) &&
+      pagerMetadata.runData?.status &&
+      !equals(pagerMetadata.runData.status, 'InProgress')
+    ) {
       const focusElement = (index: number, id: string) => {
         dispatch(setFocusElement(`${id}-${index}-0`));
       };
       // Flag-on swaps only the pager presentation; run-index state and focus behavior stay identical.
-      const Pager = shared ? SharedLoopsPager : LoopsPager;
-      return <Pager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
+      return shared ? (
+        <SharedLoopsPager
+          metadata={pagerMetadata}
+          scopeId={scopeId}
+          collapsed={graphCollapsed}
+          focusElement={focusElement}
+          inLoopCardRow={presentation.family === 'loop'}
+        />
+      ) : (
+        <LoopsPager metadata={pagerMetadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />
+      );
     }
     return null;
-  }, [dispatch, graphCollapsed, metadata, scopeId, shared]);
+  }, [dispatch, graphCollapsed, loopRepetition, metadata, presentation.family, runData, scopeId, shared]);
 
   const nodeIndex = useNodeIndex(id);
 

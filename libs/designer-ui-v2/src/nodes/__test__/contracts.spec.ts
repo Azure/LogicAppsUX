@@ -87,6 +87,9 @@ describe('additive monitoring string contracts', () => {
     expect(defaultNodeStrings.pager).toBe(defaultNodeIterationPagerStrings);
     expect(defaultNodeStrings.runAfter).toBe(defaultNodeRunAfterStrings);
     expect(defaultNodeIterationPagerStrings.position(2, 5)).toBe('2 of 5');
+    expect(defaultNodeIterationPagerStrings.failedDestinationSelect).toBe('Jump to failed iteration');
+    expect(defaultNodeIterationPagerStrings.failedDestinationPrompt).toBe('Failed…');
+    expect(defaultNodeIterationPagerStrings.failedDestinationOption?.(3)).toBe('Failed iteration 3');
     expect(defaultNodeRunAfterStrings.collapsed(7)).toBe('Runs after 7 actions');
   });
 

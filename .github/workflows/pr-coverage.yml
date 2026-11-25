@@ -86,6 +86,8 @@ jobs:
             **/*Models.ts
             **/*Interface.ts
             **/*Interfaces.ts
+            **/interfaces.ts
+            **/interfaces.tsx
             **/types.ts
             **/types.tsx
             **/styles.ts

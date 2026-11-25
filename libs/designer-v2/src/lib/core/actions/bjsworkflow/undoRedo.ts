@@ -48,7 +48,7 @@ export const storeStateToUndoRedoHistory = createAsyncThunk(
 
 export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch, getState }): Promise<void> => {
   const currentRootState = getState() as RootState;
-  if (isWorkflowEditLocked(currentRootState.designerOptions)) {
+  if (isWorkflowEditLocked(currentRootState.designerOptions) || currentRootState.undoRedo.activeHistoryTransactions) {
     return;
   }
   const undoRedoState = currentRootState.undoRedo;
@@ -89,7 +89,7 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
 
 export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch, getState }): Promise<void> => {
   const currentRootState = getState() as RootState;
-  if (isWorkflowEditLocked(currentRootState.designerOptions)) {
+  if (isWorkflowEditLocked(currentRootState.designerOptions) || currentRootState.undoRedo.activeHistoryTransactions) {
     return;
   }
   const undoRedoState = currentRootState.undoRedo;

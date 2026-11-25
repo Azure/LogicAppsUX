@@ -92,6 +92,7 @@ vi.mock('../../../../core/utils/graph', () => ({
   isOperationNameValid: vi.fn(),
 }));
 vi.mock('../usePanelNodeData', () => ({ usePanelNodeData: vi.fn() }));
+vi.mock('../PanelLoopRunData', () => ({ PanelLoopRunData: () => null }));
 vi.mock('../useRawInputsOutputs', () => ({ useRawInputsOutputs: vi.fn() }));
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@microsoft/logic-apps-shared')>()),

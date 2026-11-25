@@ -19,6 +19,9 @@ export interface StateHistory {
   future: StateHistoryItem[];
   // Toggle whenever undo/redo is clicked. This is needed to re-render parameter panel on undo/redo
   undoRedoClickToggle: number;
+  // Counts in-flight multi-step mutations (e.g. Shared Duplicate) that own a single undo checkpoint,
+  // blocking Undo/Redo and overlapping batches until the transaction settles.
+  activeHistoryTransactions?: number;
   // On undo/redo, we don't want to lose track of what the edited panel was for past/future state when we change the current state
   currentEditedPanelTab?: string;
   currentEditedPanelNode?: string;

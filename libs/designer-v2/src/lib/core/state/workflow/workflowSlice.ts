@@ -32,7 +32,15 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
-import type { AgentToolInvocation, ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
+import type {
+  AgentToolInvocation,
+  ErrorMessage,
+  LoopRepetition,
+  SpecTypes,
+  WorkflowState,
+  WorkflowKind,
+  NodeMetadata,
+} from './workflowInterfaces';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { getParentsUncollapseFromGraphState, getSelectedAgentRepetitionIdentity, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
@@ -59,6 +67,34 @@ import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../a
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
 import { UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+import { getLoopRepetition, getLoopsCount, isSameLoopRepetition } from '../../utils/loopRepetitions';
+import isEqual from 'lodash.isequal';
+
+const isLoopNode = (state: WorkflowState, nodeId: string): boolean => {
+  const type = getRecordEntry(state.operations, nodeId)?.type?.toLowerCase();
+  return type === constants.NODE.TYPE.FOREACH || type === constants.NODE.TYPE.UNTIL;
+};
+
+const isDescendantOf = (nodesMetadata: WorkflowState['nodesMetadata'], nodeId: string, ancestorId: string): boolean => {
+  let parentId = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
+  while (parentId) {
+    if (parentId === ancestorId) {
+      return true;
+    }
+    parentId = getRecordEntry(nodesMetadata, parentId)?.parentNodeId;
+  }
+  return false;
+};
+
+// When an outer loop switches iterations (or clamps to a shorter repetition count), reset
+// nested loop pages to 0 so stale inner indices do not target out-of-range repetitions.
+const resetDescendantLoopRunIndices = (state: WorkflowState, ancestorId: string) => {
+  for (const [candidateId, candidateMetadata] of Object.entries(state.nodesMetadata)) {
+    if (candidateId !== ancestorId && isLoopNode(state, candidateId) && isDescendantOf(state.nodesMetadata, candidateId, ancestorId)) {
+      selectRunPage(candidateMetadata, 0);
+    }
+  }
+};
 
 const clampToolPage = (page: number, count: number | undefined): number =>
   Number.isInteger(count) ? Math.min(page, Math.max((count ?? 0) - 1, 0)) : page;
@@ -462,7 +498,13 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
+      action: PayloadAction<{
+        nodeId: string;
+        relationshipIds: RelationshipIds;
+        operation: NodeOperation;
+        isParallelBranch?: boolean;
+        skipUndoSnapshot?: boolean;
+      }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -908,7 +950,11 @@ export const workflowSlice = createSlice({
       if (!nodeMetadata) {
         return;
       }
+      const changed = nodeMetadata.runIndex !== page;
       selectRunPage(nodeMetadata, page);
+      if (changed && isLoopNode(state, nodeId)) {
+        resetDescendantLoopRunIndices(state, nodeId);
+      }
     },
     setToolRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
@@ -925,9 +971,17 @@ export const workflowSlice = createSlice({
     },
     setRepetitionRunData: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; agentToolInvocation?: AgentToolInvocation }>
+      {
+        payload,
+      }: PayloadAction<{
+        nodeId: string;
+        runData: LogicAppsV2.WorkflowRunAction;
+        agentToolInvocation?: AgentToolInvocation;
+        loopRepetition?: LoopRepetition;
+        loopPayloadRevision?: string;
+      }>
     ) => {
-      const { nodeId, runData, agentToolInvocation } = action.payload;
+      const { nodeId, runData, agentToolInvocation, loopRepetition, loopPayloadRevision } = payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
@@ -937,8 +991,43 @@ export const workflowSlice = createSlice({
         setToolInvocationRunData(nodeMetadata, agentToolInvocation, runData);
         return;
       }
+      if (loopRepetition && (!loopPayloadRevision || !isSameLoopRepetition(getLoopRepetition(state, nodeId), loopRepetition))) {
+        return;
+      }
+      const samePayload =
+        !!loopRepetition &&
+        isSameLoopRepetition(nodeMetadata.runDataRepetition, loopRepetition) &&
+        nodeMetadata.loopPayloadRevision === loopPayloadRevision;
+      if (samePayload && isEqual(nodeMetadata.runDataRepetitionSource, runData)) {
+        return;
+      }
+      const next = formatRepetitionRunData(runData);
+      if (loopRepetition) {
+        if (samePayload) {
+          // Status can refresh without changing the source of already-bound inputs and outputs.
+          next.inputs = nodeMetadata.runData?.inputs;
+          next.outputs = nodeMetadata.runData?.outputs;
+        }
+        nodeMetadata.loopPayloadRevision = loopPayloadRevision;
+        nodeMetadata.runDataRepetition = loopRepetition;
+        nodeMetadata.runDataRepetitionSource = runData;
+      } else {
+        delete nodeMetadata.runDataRepetition;
+        delete nodeMetadata.runDataRepetitionSource;
+        delete nodeMetadata.loopPayloadRevision;
+      }
       delete nodeMetadata.agentToolInvocation;
-      nodeMetadata.runData = formatRepetitionRunData(runData);
+      nodeMetadata.runData = next;
+      if (loopRepetition && isLoopNode(state, nodeId)) {
+        const count = getLoopsCount(next);
+        if (count !== undefined && count >= 0) {
+          const clampedPage = count === 0 ? 0 : Math.min(Math.max(0, nodeMetadata.runIndex ?? 0), count - 1);
+          if ((nodeMetadata.runIndex ?? 0) !== clampedPage) {
+            selectRunPage(nodeMetadata, clampedPage);
+            resetDescendantLoopRunIndices(state, nodeId);
+          }
+        }
+      }
     },
     clearAllRepetitionRunData: (state: WorkflowState) => {
       for (const node of Object.values(state.nodesMetadata)) {
@@ -953,6 +1042,9 @@ export const workflowSlice = createSlice({
         // This is because root nodes typically represent the main workflow and their run data is needed for display for a2a agents
         if (shouldClearNodeRunData(node)) {
           delete node.runData;
+          delete node.runDataRepetition;
+          delete node.runDataRepetitionSource;
+          delete node.loopPayloadRevision;
           delete node.runIndex;
         }
       }
@@ -1262,8 +1354,19 @@ export const workflowSlice = createSlice({
     }));
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
       const { nodeId, inputs, outputs } = action.payload;
+      const loopRepetition = action.meta?.arg?.loopRepetition;
+      const loopPayloadRevision = action.meta?.arg?.loopPayloadRevision;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
+        return;
+      }
+      if (
+        loopRepetition &&
+        (!isSameLoopRepetition(getLoopRepetition(state, nodeId), loopRepetition) ||
+          !isSameLoopRepetition(nodeMetadata.runDataRepetition, loopRepetition) ||
+          !loopPayloadRevision ||
+          nodeMetadata.loopPayloadRevision !== loopPayloadRevision)
+      ) {
         return;
       }
       const existingInputs = nodeMetadata.runData?.inputs;

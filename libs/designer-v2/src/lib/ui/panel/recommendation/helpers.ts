@@ -15,6 +15,8 @@ import {
   getIconUriFromConnector,
 } from '@microsoft/logic-apps-shared';
 
+import { getPickerOperationGlyph } from '../../sharedNodeGlyph';
+
 export const MCP_CLIENT_CONNECTOR_ID = 'connectionProviders/mcpclient';
 const MCP_CLIENT_BRAND_COLOR = '#000000';
 const BUILTIN_MCP_ADD_ICON_URI =
@@ -82,7 +84,10 @@ export const connectionToOperation = (connection: Connection): DiscoveryOperatio
   };
 };
 
-export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => {
+export const getOperationCardDataFromOperation = (
+  operation: DiscoveryOperation<DiscoveryResultTypes>,
+  sharedNodeUi = false
+): OperationActionData => {
   const isMcpClientTool = operation.properties.operationType === 'McpClientTool' && operation.id !== 'nativemcpclient';
   return {
     id: operation.id,
@@ -90,6 +95,7 @@ export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<
     description: operation.properties.description,
     brandColor: operation.properties.api.brandColor,
     iconUri: operation.properties.api.iconUri,
+    icon: sharedNodeUi ? getPickerOperationGlyph(operation) : undefined,
     connectorName: operation.properties.api.displayName,
     category: getConnectorCategoryString(operation.properties.api),
     isTrigger: !!operation.properties?.trigger,

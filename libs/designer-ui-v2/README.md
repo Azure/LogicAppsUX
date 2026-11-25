@@ -21,7 +21,7 @@ exports with explicit visual/nonvisual classifications; new unclassified values
 fail until classified. It also checks exact visual metadata coverage and
 supported public imports, while excluding type-only exports from runtime counts.
 
-Start with **Start here / Introduction** and **API and boundaries**. All **40**
+Start with **Start here / Introduction** and **API and boundaries**. All **41**
 public visual exports (including `DesignerUiScope` and both condition icons)
 have individual typed metadata, native Overview docs, and supported examples.
 The API page documents all **39** nonvisual runtime exports and public types without
@@ -70,6 +70,10 @@ below the 4.5:1 normal-text requirement. The corrected caption measures 6.9:1 in
 stock light and 12.4:1 in stock dark. Title color, typography, geometry and node
 surface values are unchanged. Custom host themes still require their own
 contrast verification.
+
+The Monitoring payload comparison story exercises the layout at a fixed browser
+viewport while resizing the content area. The shell accepts the host's existing
+Inputs, Outputs, and Properties sections; it does not render payloads or controls.
 
 Excluded: `NodeBodyToggle` (no verified runtime dependency), CoreAI code/assets/default hooks, Aptos, MCP SVG, Otto models/stores/aliases/services/real graph handles, layout engines, and application mutation/adapters. MCP preserves its canonical public Fluent Regular/Regular fallback and brand suppression. No Otto files were modified. Otto still consumes its local source; cross-repository migration is not complete until that host imports the shared package.
 
@@ -126,7 +130,7 @@ All added props are optional; omitted values retain the previous behavior.
 | `NodeStatusBadge` | `label` defaults to `strings[status]`; `detail` defaults to none; explicit empty `label` is preserved. `live=true` is the standalone default (`role="status"` with implicit polite semantics); `live=false` opts out. Explicit `role` takes precedence. Canvas composites opt out. Forwarded `aria-label` is host-supplied. The nine `NodeRunStatus` tones are frozen. |
 | Cards, `NodeCard`, `NodeFrame` | `statusDisplay='badge'`; `statusTone`/`statusTint` default to frozen tone and no tint; `statusLabel` defaults to dictionary text; `statusAriaLabel` defaults to no badge-name override; `statusDetail` defaults to none; `inactive=false`. For `statusDisplay='contained'`, `NodeCard` exposes status context to `NodeText`, so hosts set status once (on `NodeCard`) and use `subtitleKind='status'` without duplicating status subtitle strings through adapters. Inactive ancestors provide `NodeInactiveContext` so nested inactive cards/handles/branch outputs do not compound the 0.4 opacity. The host supplies the card's `aria-label`. |
 | `getNodeStatusLabel(status, strings?, detail?, label?)` | Returns `(label ?? strings[status])` plus a nonempty detail. Strings default to English; detail/label default to none. Hosts reuse this text when constructing the owning card's accessible name. |
-| `NodeIterationPager` | Required `current`, `count`, `onChange` use zero-based indices; display/input is one-based. `editable=false`; `failed` omitted means no failed-jump controls; `strings` defaults to `defaultNodeIterationPagerStrings`. Invalid/nonpositive totals render nothing; indices and input are bounded. Run dispatch and failure evidence stay host-owned. |
+| `NodeIterationPager` | Required `current`, `count`, `onChange` use zero-based indices; display/input is one-based. `editable=false`; `failed` omitted means no failed-jump controls. Optional `failedDestinations` adds a direct select in editable mode. For a constrained Foreach card row, `compactFailureNavigation` combines relative and direct jumps in one menu. Long lists group destinations by iteration range without dropping any. `strings` defaults to `defaultNodeIterationPagerStrings`, with optional `failedDestinationSelect`, `failedDestinationPrompt`, `failedDestinationOption`, and `failedDestinationRange`. Invalid/nonpositive totals render nothing; indices and input are bounded. Run dispatch and failure evidence stay host-owned. |
 | `NodeRunAfterIndicator` | Required `statuses` uses `succeeded`, `timedOut`, `skipped`, `failed`; fixed dot order is preserved. `collapsedCount` defaults to none (dots); when supplied it renders `×N`. `strings` defaults to `defaultNodeRunAfterStrings`, including the accessible summary. |
 | `NodeLine` | `variant='solid'`, `length=85`, `orientation='horizontal'`, `state='default'`. `NodeLineState` is `default`, `taken`, `notTaken`, `highlighted`, `running`. Only canonical solid owns an arrow; running dashes become static under reduced motion. `getNodeLineStroke(variant, { state? } = {})` composes static state over `nodeLineStrokes`; it does not animate or infer evidence. |
 | `NodeBranchLabel` | Required literal `label`; `tone='neutral'` (also success/danger); `state` omitted leaves it undimmed (also taken/notTaken); `action` defaults to none; `strings.taken` defaults to `defaultBranchTakenString`. Taken text is announced, not color-only. Position and action behavior belong to the host. |

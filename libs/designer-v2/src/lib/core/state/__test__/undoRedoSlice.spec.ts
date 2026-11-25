@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import reducer, { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../undoRedo/undoRedoSlice';
+import { renderHook } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import React from 'react';
+import { configureStore } from '@reduxjs/toolkit';
+import reducer, {
+  beginHistoryTransaction,
+  endHistoryTransaction,
+  saveStateToHistory,
+  updateStateHistoryOnRedoClick,
+  updateStateHistoryOnUndoClick,
+} from '../undoRedo/undoRedoSlice';
+import { useCanRedo, useCanUndo, useUndoRedoClickToggle } from '../undoRedo/undoRedoSelectors';
+import { initWorkflowSpec } from '../workflow/workflowSlice';
 import { StateHistory, StateHistoryItem } from '../undoRedo/undoRedoTypes';
 import constants from '../../../common/constants';
 
@@ -100,5 +112,48 @@ describe('undo redo slice reducers', () => {
     expect(state.undoRedoClickToggle).toEqual(0);
     expect(state.currentEditedPanelNode).toEqual(undefined);
     expect(state.currentEditedPanelTab).toEqual(undefined);
+  });
+
+  it('tracks active history transactions and clears them on initWorkflowSpec', () => {
+    let state: StateHistory = { past: [mockCompressedState1], future: [mockCompressedState2], undoRedoClickToggle: 0 };
+    state = reducer(state, beginHistoryTransaction());
+    expect(state.activeHistoryTransactions).toBe(1);
+    state = reducer(state, initWorkflowSpec('BJS'));
+    expect(state.activeHistoryTransactions).toBe(0);
+    state = reducer(state, endHistoryTransaction());
+    expect(state.activeHistoryTransactions).toBe(0);
+  });
+
+  it('disables useCanUndo and useCanRedo while a history transaction is active', () => {
+    const store = configureStore({
+      reducer: {
+        undoRedo: reducer,
+        designerOptions: (state = { readOnly: false, isMonitoringView: false }) => state,
+      },
+      preloadedState: {
+        undoRedo: {
+          past: [mockCompressedState1],
+          future: [mockCompressedState2],
+          undoRedoClickToggle: 1,
+          activeHistoryTransactions: 1,
+        },
+        designerOptions: { readOnly: false, isMonitoringView: false },
+      },
+    });
+    const wrapper = ({ children }: { children: React.ReactNode }) => React.createElement(Provider, { store }, children);
+
+    const canUndo = renderHook(() => useCanUndo(), { wrapper });
+    const canRedo = renderHook(() => useCanRedo(), { wrapper });
+    const toggle = renderHook(() => useUndoRedoClickToggle(), { wrapper });
+
+    expect(canUndo.result.current).toBe(false);
+    expect(canRedo.result.current).toBe(false);
+    expect(toggle.result.current).toBe(1);
+
+    store.dispatch(endHistoryTransaction());
+    canUndo.rerender();
+    canRedo.rerender();
+    expect(canUndo.result.current).toBe(true);
+    expect(canRedo.result.current).toBe(true);
   });
 });

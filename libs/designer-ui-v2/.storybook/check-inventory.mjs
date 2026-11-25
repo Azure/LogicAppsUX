@@ -38,6 +38,7 @@ const visualExports = [
   'LoopBodyJoin',
   'NodeLine',
   'NodeActionAdd',
+  'MonitoringPayloadComparison',
   'IfIconRegular',
   'IfIconFilled',
   'NodeFrame',

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Text, Spinner } from '@fluentui/react-components';
 import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationActionDataFromOperation, FavoriteButton } from '@microsoft/designer-ui';
+import { FavoriteButton, OperationActionDataFromOperation } from '@microsoft/designer-ui';
 import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
 import { useDiscoveryPanelIsAddingTrigger, useIsAddingAgentTool } from '../../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
@@ -9,6 +9,8 @@ import { useOperationsByConnector } from '../../../../core/queries/browse';
 import constants from '../../../../common/constants';
 import { useConnectorDetailsViewStyles } from './styles/ConnectorDetailsView.styles';
 import { OperationsAccordion } from './operationsAccordion';
+import { getPickerOperationGlyph } from '../../../sharedNodeGlyph';
+import { useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 type ConnectorDetailsViewProps = {
   connector?: Connector;
@@ -20,6 +22,7 @@ export const ConnectorDetailsView = ({ connector, onOperationClick, showActions 
   const classes = useConnectorDetailsViewStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const isAgentTool = useIsAddingAgentTool();
+  const sharedNodeUi = useSharedNodeUi();
 
   // Fetch operations for this connector
   const connectorId = connector?.id || '';
@@ -65,14 +68,17 @@ export const ConnectorDetailsView = ({ connector, onOperationClick, showActions 
     }
 
     return groupOperations
-      .map((operation) => OperationActionDataFromOperation(operation))
+      .map((operation) => ({
+        ...OperationActionDataFromOperation(operation),
+        icon: sharedNodeUi ? getPickerOperationGlyph(operation) : undefined,
+      }))
       .filter(filterItems)
       .sort((a, b) => {
         const aTitle = a.title ?? '';
         const bTitle = b.title ?? '';
         return aTitle.localeCompare(bTitle);
       });
-  }, [groupOperations, filterItems]);
+  }, [groupOperations, filterItems, sharedNodeUi]);
 
   const triggers = useMemo(() => allOperations.filter((op) => op.isTrigger), [allOperations]);
   const actions = useMemo(() => (showActions ? allOperations.filter((op) => !op.isTrigger) : []), [allOperations, showActions]);
