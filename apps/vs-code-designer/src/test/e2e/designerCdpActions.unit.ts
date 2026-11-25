@@ -1966,9 +1966,13 @@ function testDiscoveryUsesBrowserRoutedGeometry(): void {
   assert.match(routed, /DOM\.resolveNode/);
   assert.match(routed, /target === this \|\| target\.contains\(this\)/);
   assert.match(routed, /Discovery action changed before trusted input/);
+  assert.match(routed, /for \(let attempt = 1; attempt <= 2; attempt\+\+\)/);
+  assert.match(routed, /if \(inputStarted \|\| attempt === 2\)/);
+  assert.match(routed, /setTimeout\(resolve, 1000\)/);
+  assert.doesNotMatch(routed, /candidatePoints/);
   assertOrdered(
     routed,
-    ['DOM.getContentQuads', 'DOM.getNodeForLocation', 'Runtime.callFunctionOn', 'clickPoint(this.cdp, point)'],
+    ['DOM.getContentQuads', 'DOM.getNodeForLocation', 'Runtime.callFunctionOn', 'inputStarted = true', 'clickPoint(this.cdp, point)'],
     'Discovery browser-routed input'
   );
 
@@ -2065,7 +2069,7 @@ function testSearchResultsAndOperationParity(): void {
 
 function testActionMenuParity(): void {
   const source = getMethod('MsnDesignerCdpActions', 'openActionDiscovery');
-  assert.match(source, /for \(let attempt = 1; attempt <= 3; attempt\+\+\)/);
+  assert.doesNotMatch(source, /for \(let attempt = 1; attempt <= 3; attempt\+\+\)/);
   assertOrdered(
     source,
     [
@@ -2084,7 +2088,7 @@ function testActionMenuParity(): void {
   );
   assert.match(source, /clickElementBrowserRouted/);
   assert.match(source, /requireTextMatch: false, useLastMatch: true/);
-  assert.match(source, /after Add Action failed attempt/);
+  assert.match(source, /after Add Action failed/);
 }
 
 function testNodeAndPanelParity(): void {
