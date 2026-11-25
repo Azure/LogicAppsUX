@@ -11,10 +11,12 @@ const {
   PNPM_MIRROR_BASE,
   bootstrapPnpm,
   buildRelease,
+  compareSemver,
   isVersionInFeed,
   main,
   parseReleaseVersion,
   publishRelease,
+  resolvePublishDistTag,
   resolveReleaseTag,
   tarballName,
 } = require('./ado-npm-publisher.cjs');
@@ -80,6 +82,16 @@ test('parseReleaseVersion accepts valid semver and rejects invalid inputs', () =
   for (const bad of ['', 'v5.1024.0', '5.1024', '5.1024.0-beta.1', '01.2.3', null, undefined]) {
     assert.throws(() => parseReleaseVersion(bad), /Invalid releaseVersion/);
   }
+});
+
+test('compareSemver compares X.Y.Z versions numerically and rejects invalid inputs', () => {
+  assert.equal(compareSemver('5.1024.0', '5.1024.0'), 0);
+  assert.equal(compareSemver('5.1024.0', '5.999.0'), 1);
+  assert.equal(compareSemver('5.999.0', '5.1024.0'), -1);
+  assert.equal(compareSemver('2.9999.0', '5.1024.0'), -1);
+  assert.equal(compareSemver('5.1024.1', '5.1024.0'), 1);
+  assert.equal(compareSemver('5.1024.0', '5.1024.1'), -1);
+  assert.throws(() => compareSemver('5.1024.0', 'not-semver'), /Invalid releaseVersion/);
 });
 
 test('tarballName formats scoped package names as pnpm pack filenames', () => {
@@ -263,6 +275,134 @@ test('isVersionInFeed handles present, empty-stdout absent, 404 absent, and unex
   );
 });
 
+test('resolvePublishDistTag selects latest or hotfix and throws on unexpected feed errors', () => {
+  const pkgName = '@microsoft/logic-apps-shared';
+  const npmrc = '/tmp/.npmrc';
+
+  // version > currentLatest -> latest
+  const seenCalls = [];
+  assert.equal(
+    resolvePublishDistTag(pkgName, '5.1025.0', DEFAULT_REGISTRY, npmrc, (cmd, args) => {
+      seenCalls.push({ cmd, args });
+      return { status: 0, stdout: '5.1024.0\n', stderr: '' };
+    }),
+    'latest'
+  );
+  assert.equal(seenCalls[0].cmd, 'npm');
+  assert.deepEqual(seenCalls[0].args, [
+    'view',
+    pkgName,
+    'dist-tags.latest',
+    '--registry',
+    DEFAULT_REGISTRY,
+    '--userconfig',
+    npmrc,
+    '--prefer-online',
+    '--tag=latest',
+    '--json=false',
+  ]);
+
+  // version === currentLatest -> latest
+  assert.equal(
+    resolvePublishDistTag(pkgName, '5.1024.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '5.1024.0\n',
+      stderr: '',
+    })),
+    'latest'
+  );
+
+  // Prerelease tagged latest: same-base stable promotes latest, higher-base prerelease uses hotfix
+  assert.equal(
+    resolvePublishDistTag(pkgName, '5.1024.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '5.1024.0-rc.1\n',
+      stderr: '',
+    })),
+    'latest'
+  );
+  assert.equal(
+    resolvePublishDistTag(pkgName, '5.1024.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '5.1025.0-rc.1\n',
+      stderr: '',
+    })),
+    'hotfix'
+  );
+
+  // version < currentLatest -> hotfix (never downgrade latest)
+  assert.equal(
+    resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '5.1024.0\n',
+      stderr: '',
+    })),
+    'hotfix'
+  );
+  assert.equal(
+    resolvePublishDistTag(pkgName, '5.1023.1', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '5.1024.0\n',
+      stderr: '',
+    })),
+    'hotfix'
+  );
+
+  // Package not found (404) or missing dist-tags.latest (empty stdout) -> latest
+  assert.equal(
+    resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 1,
+      stdout: '',
+      stderr: 'npm error code E404\nnpm error 404 Not Found',
+    })),
+    'latest'
+  );
+  assert.equal(
+    resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+      status: 0,
+      stdout: '',
+      stderr: '',
+    })),
+    'latest'
+  );
+
+  // Non-404 feed error must throw instead of silently downgrading latest (including E502 mentioning 404 in body)
+  assert.throws(
+    () =>
+      resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+        status: 1,
+        stdout: '',
+        stderr: 'npm error code E401\nnpm error Unable to authenticate',
+      })),
+    /Failed to resolve dist-tags\.latest for @microsoft\/logic-apps-shared/
+  );
+  assert.throws(
+    () =>
+      resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+        status: 1,
+        stdout: '',
+        stderr: 'npm error code E502\nnpm error Upstream returned 404 Not Found',
+      })),
+    /Failed to resolve dist-tags\.latest for @microsoft\/logic-apps-shared/
+  );
+  assert.throws(
+    () =>
+      resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+        error: new Error('ETIMEDOUT'),
+      })),
+    /Failed to resolve dist-tags\.latest for @microsoft\/logic-apps-shared: ETIMEDOUT/
+  );
+  assert.throws(
+    () =>
+      resolvePublishDistTag(pkgName, '2.9999.0', DEFAULT_REGISTRY, npmrc, () => ({
+        status: 0,
+        stdout: '"5.1024.0"\n',
+        stderr: '',
+      })),
+    /Unexpected dist-tags\.latest value/
+  );
+});
+
 test('publishRelease skips packages already in feed and publishes missing packages without post-publish readback', () => {
   const version = '5.1024.0';
   const tarballDir = createTempDir('tarballs-');
@@ -283,11 +423,14 @@ test('publishRelease skips packages already in feed and publishes missing packag
 
   const run = (cmd, args, options) => {
     calls.push({ cmd, args, stdio: options?.stdio });
-    if (cmd === 'npm' && args[0] === 'view') {
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'version') {
       const pkgName = args[1].slice(0, args[1].lastIndexOf('@'));
       return alreadyInFeed.has(pkgName)
         ? { status: 0, stdout: `${version}\n`, stderr: '' }
         : { status: 0, stdout: '', stderr: '' };
+    }
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'dist-tags.latest') {
+      return { status: 0, stdout: '5.1023.0\n', stderr: '' };
     }
     if (cmd === 'npm' && args[0] === 'publish') {
       return { status: 0 };
@@ -307,11 +450,13 @@ test('publishRelease skips packages already in feed and publishes missing packag
 
   assert.deepEqual(result, { version, published: 6, skipped: 3 });
 
-  const viewCalls = calls.filter(c => c.args[0] === 'view');
+  const versionViewCalls = calls.filter(c => c.args[0] === 'view' && c.args[2] === 'version');
+  const distTagViewCalls = calls.filter(c => c.args[0] === 'view' && c.args[2] === 'dist-tags.latest');
   const publishCalls = calls.filter(c => c.args[0] === 'publish');
 
-  // Exactly one pre-publish view per package (no post-publish view or pack readback)
-  assert.equal(viewCalls.length, PACKAGES.length);
+  // Exactly one pre-publish version view per package, one dist-tag lookup per published package, and no post-publish readback
+  assert.equal(versionViewCalls.length, PACKAGES.length);
+  assert.equal(distTagViewCalls.length, PACKAGES.length - alreadyInFeed.size);
   assert.equal(publishCalls.length, PACKAGES.length - alreadyInFeed.size);
   assert.equal(calls.filter(c => c.args[0] === 'pack').length, 0);
 
@@ -323,6 +468,98 @@ test('publishRelease skips packages already in feed and publishes missing packag
     assert.equal(call.args[call.args.indexOf('--registry') + 1], DEFAULT_REGISTRY);
     assert.equal(call.args[call.args.indexOf('--userconfig') + 1], npmrc);
   }
+  assert.ok(logs.some(line => line.includes("dist-tag 'latest'")));
+});
+
+test('publishRelease uses --tag hotfix when version is older than feed latest and --tag latest on 404', () => {
+  const version = '2.9999.0';
+  const tarballDir = createTempDir('tarballs-hotfix-');
+  const npmrc = path.join(createTempDir('npmrc-hotfix-'), '.npmrc');
+  fs.writeFileSync(npmrc, `registry=${DEFAULT_REGISTRY}\n`);
+
+  for (const pkg of PACKAGES) {
+    fs.writeFileSync(path.join(tarballDir, tarballName(pkg.name, version)), 'tgz-bytes');
+  }
+
+  const brandNewPackage = '@microsoft/vscode-extension-logic-apps';
+  const publishTagsByTarball = new Map();
+  const logs = [];
+
+  const run = (cmd, args) => {
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'version') {
+      return { status: 0, stdout: '', stderr: '' };
+    }
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'dist-tags.latest') {
+      if (args[1] === brandNewPackage) {
+        return { status: 1, stdout: '', stderr: 'npm error code E404\nnpm error 404 Not Found' };
+      }
+      return { status: 0, stdout: '5.1024.0\n', stderr: '' };
+    }
+    if (cmd === 'npm' && args[0] === 'publish') {
+      publishTagsByTarball.set(path.basename(args[1]), args[args.indexOf('--tag') + 1]);
+      return { status: 0 };
+    }
+    throw new Error(`Unexpected command: ${cmd} ${args.join(' ')}`);
+  };
+
+  const result = publishRelease(
+    {
+      RELEASE_VERSION: version,
+      TARBALL_DIR: tarballDir,
+      PUBLISH_NPMRC: npmrc,
+      NPM_REGISTRY: DEFAULT_REGISTRY,
+    },
+    { run, log: msg => logs.push(msg) }
+  );
+
+  assert.deepEqual(result, { version, published: PACKAGES.length, skipped: 0 });
+  for (const pkg of PACKAGES) {
+    const expectedTag = pkg.name === brandNewPackage ? 'latest' : 'hotfix';
+    assert.equal(publishTagsByTarball.get(tarballName(pkg.name, version)), expectedTag);
+  }
+  assert.ok(logs.some(line => line.includes("dist-tag 'hotfix'")));
+  assert.ok(logs.some(line => line.includes("dist-tag 'latest'")));
+});
+
+test('publishRelease aborts before publishing if dist-tags.latest lookup fails with a non-404 error', () => {
+  const version = '2.9999.0';
+  const tarballDir = createTempDir('tarballs-tag-err-');
+  const npmrc = path.join(createTempDir('npmrc-tag-err-'), '.npmrc');
+  fs.writeFileSync(npmrc, `registry=${DEFAULT_REGISTRY}\n`);
+
+  for (const pkg of PACKAGES) {
+    fs.writeFileSync(path.join(tarballDir, tarballName(pkg.name, version)), 'tgz-bytes');
+  }
+
+  let publishCalled = false;
+  const run = (cmd, args) => {
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'version') {
+      return { status: 0, stdout: '', stderr: '' };
+    }
+    if (cmd === 'npm' && args[0] === 'view' && args[2] === 'dist-tags.latest') {
+      return { status: 1, stdout: '', stderr: 'npm error code E500\nnpm error Internal Server Error' };
+    }
+    if (cmd === 'npm' && args[0] === 'publish') {
+      publishCalled = true;
+      return { status: 0 };
+    }
+    throw new Error(`Unexpected command: ${cmd} ${args.join(' ')}`);
+  };
+
+  assert.throws(
+    () =>
+      publishRelease(
+        {
+          RELEASE_VERSION: version,
+          TARBALL_DIR: tarballDir,
+          PUBLISH_NPMRC: npmrc,
+          NPM_REGISTRY: DEFAULT_REGISTRY,
+        },
+        { run, log: () => {} }
+      ),
+    /Failed to resolve dist-tags\.latest/
+  );
+  assert.equal(publishCalled, false);
 });
 
 test('publishRelease fails clearly when npm publish exits non-zero or files are missing', () => {

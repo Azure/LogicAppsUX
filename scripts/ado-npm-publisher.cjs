@@ -6,6 +6,18 @@ const path = require('node:path');
 
 const DEFAULT_REGISTRY = 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/';
 const PNPM_MIRROR_BASE = 'https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry';
+const NPM_ERROR_CODE_PATTERN = /npm (?:ERR!|error) code ([A-Z0-9_]+)/i;
+const NOT_FOUND_FALLBACK_PATTERN = /\bE404\b|404 Not Found|is not in this registry/i;
+const FEED_SEMVER_PATTERN = /^((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+
+// Check npm's explicit error code first so non-404 errors (e.g. E502 with "404 Not Found" in upstream text) are never misclassified as missing packages.
+function isNotFoundError(combinedOutput) {
+  const codeMatch = NPM_ERROR_CODE_PATTERN.exec(combinedOutput);
+  if (codeMatch) {
+    return codeMatch[1].toUpperCase() === 'E404';
+  }
+  return NOT_FOUND_FALLBACK_PATTERN.test(combinedOutput);
+}
 
 // Publishable workspace libraries in dependency order (matches scripts/update-versions.js).
 const PACKAGES = [
@@ -26,6 +38,18 @@ function parseReleaseVersion(raw) {
     throw new Error(`Invalid releaseVersion '${value}'. Expected a version like 5.1024.0 (without the 'v' prefix).`);
   }
   return value;
+}
+
+// Numeric X.Y.Z semver comparison used to prevent historical hotfix releases from downgrading dist-tags.latest.
+function compareSemver(a, b) {
+  const partsA = parseReleaseVersion(a).split('.').map(Number);
+  const partsB = parseReleaseVersion(b).split('.').map(Number);
+  for (let i = 0; i < 3; i += 1) {
+    if (partsA[i] !== partsB[i]) {
+      return partsA[i] < partsB[i] ? -1 : 1;
+    }
+  }
+  return 0;
 }
 
 function tarballName(packageName, version) {
@@ -170,7 +194,7 @@ function isVersionInFeed(packageName, version, { registry, npmrc, cwd, run = spa
   const spec = `${packageName}@${version}`;
   const result = run(
     'npm',
-    ['view', spec, 'version', '--registry', registry, '--userconfig', npmrc, '--prefer-online'],
+    ['view', spec, 'version', '--registry', registry, '--userconfig', npmrc, '--prefer-online', '--json=false'],
     { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 60_000 }
   );
 
@@ -183,10 +207,60 @@ function isVersionInFeed(packageName, version, { registry, npmrc, cwd, run = spa
   }
 
   const combined = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
-  if (/\bE404\b|404 Not Found|is not in this registry/i.test(combined)) {
+  if (isNotFoundError(combined)) {
     return false;
   }
   throw new Error(`Failed to check ${spec} in feed (exit ${result.status}): ${combined.trim()}`);
+}
+
+// Determine which dist-tag to assign on publish so historical hotfix releases never downgrade `latest`.
+function resolvePublishDistTag(pkgName, version, registry, npmrc, run = spawnSync, { cwd } = {}) {
+  const targetVersion = parseReleaseVersion(version);
+  const viewOptions = { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 60_000 };
+  if (cwd) {
+    viewOptions.cwd = cwd;
+  }
+  const result = run(
+    'npm',
+    [
+      'view',
+      pkgName,
+      'dist-tags.latest',
+      '--registry',
+      registry,
+      '--userconfig',
+      npmrc,
+      '--prefer-online',
+      '--tag=latest',
+      '--json=false',
+    ],
+    viewOptions
+  );
+
+  if (result.error) {
+    throw new Error(`Failed to resolve dist-tags.latest for ${pkgName}: ${result.error.message}`);
+  }
+
+  if (result.status !== 0) {
+    const combined = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
+    if (isNotFoundError(combined)) {
+      return 'latest';
+    }
+    throw new Error(`Failed to resolve dist-tags.latest for ${pkgName} (exit ${result.status}): ${combined.trim()}`);
+  }
+
+  const currentLatest = (result.stdout ?? '').trim();
+  if (!currentLatest) {
+    return 'latest';
+  }
+
+  // Incoming release is always stable X.Y.Z; per SemVer 2.0.0, X.Y.Z >= X.Y.Z-prerelease and X.Y.Z < higherBase-prerelease.
+  const latestMatch = FEED_SEMVER_PATTERN.exec(currentLatest);
+  if (!latestMatch) {
+    throw new Error(`Unexpected dist-tags.latest value '${currentLatest}' for ${pkgName}.`);
+  }
+
+  return compareSemver(targetVersion, latestMatch[1]) < 0 ? 'hotfix' : 'latest';
 }
 
 function publishRelease(env, { run = spawnSync, log = console.log } = {}) {
@@ -218,14 +292,15 @@ function publishRelease(env, { run = spawnSync, log = console.log } = {}) {
       continue;
     }
 
-    log(`Publishing ${spec}...`);
+    const distTag = resolvePublishDistTag(pkg.name, version, registry, npmrc, run, { cwd: tarballDir });
+    log(`Publishing ${spec} with dist-tag '${distTag}'...`);
     runCommand(
       'npm',
-      ['publish', tarball, '--tag', 'latest', '--registry', registry, '--userconfig', npmrc],
+      ['publish', tarball, '--tag', distTag, '--registry', registry, '--userconfig', npmrc],
       { cwd: tarballDir, stdio: 'inherit', timeout: 180_000 },
       run
     );
-    log(`Published ${spec}.`);
+    log(`Published ${spec} with dist-tag '${distTag}'.`);
     published += 1;
   }
 
@@ -261,10 +336,12 @@ module.exports = {
   PNPM_MIRROR_BASE,
   bootstrapPnpm,
   buildRelease,
+  compareSemver,
   isVersionInFeed,
   main,
   parseReleaseVersion,
   publishRelease,
+  resolvePublishDistTag,
   resolveReleaseTag,
   tarballName,
 };
