@@ -1180,7 +1180,7 @@ export class MsnDesignerCdpActions {
   async openActionDiscovery(label: string, logDiagnostics: (stage: string, point?: Point) => Promise<void>): Promise<void> {
     console.log(`[workspace-lifecycle] ${label}: clicking Add an action`);
     await this.closePanel(`${label} existing details panel`);
-    const fitButtonVisible = await this.cdp.evaluate<boolean>(
+    const canvasControls = await this.cdp.evaluate<{ fitButtonVisible: boolean; zoomOutButtonVisible: boolean }>(
       this.contextId,
       `(() => {
         const visible = (element) => {
@@ -1189,18 +1189,32 @@ export class MsnDesignerCdpActions {
           const style = getComputedStyle(element);
           return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
         };
-        return ['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]']
-          .some((selector) => Array.from(document.querySelectorAll(selector)).some(visible));
+        const hasVisible = (selectors) => selectors.some(
+          (selector) => Array.from(document.querySelectorAll(selector)).some(visible)
+        );
+        return {
+          fitButtonVisible: hasVisible(['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]']),
+          zoomOutButtonVisible: hasVisible(['#control-zoom-out-button', '[data-testid="control-zoom-out-button"]']),
+        };
       })()`
     );
-    if (fitButtonVisible) {
+    if (canvasControls.fitButtonVisible) {
       const fitClick = await this.clickElementBrowserRouted(
         ['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]'],
         'Fit view',
         { requireTextMatch: false }
       );
       await logDiagnostics('after Fit view click', fitClick.point);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+    if (canvasControls.zoomOutButtonVisible) {
+      const zoomOutClick = await this.clickElementBrowserRouted(
+        ['#control-zoom-out-button', '[data-testid="control-zoom-out-button"]'],
+        'Zoom out',
+        { requireTextMatch: false }
+      );
+      await logDiagnostics('after Zoom out click', zoomOutClick.point);
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
     const plusClick = await this.clickElementBrowserRouted(
       [
@@ -2149,14 +2163,23 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           delete window.__laSelectedOperationCard;
           const card = selection?.card;
           const state = window.__laOperationClick = {
-            card, title, activity: false, routeChanged: false, dispatched: false, events: [], listeners: [],
+            card, title, automationId: card?.getAttribute('data-automation-id'),
+            testId: card?.getAttribute('data-testid'),
+            activity: false, routeChanged: false, dispatched: false, events: [], listeners: [],
             bounds: selection?.bounds, binding: 0, selectedPoint: point,
           };
           const record = (event) => {
+            const path = event.composedPath();
+            const eventCard = path.find((element) =>
+              element instanceof Element && operationCardSelectors.some((selector) => element.matches(selector)));
+            const matchesCard = eventCard instanceof Element &&
+              operationCardTitle(eventCard).toLowerCase() === state.title &&
+              (!state.automationId || eventCard.getAttribute('data-automation-id') === state.automationId) &&
+              (!state.testId || eventCard.getAttribute('data-testid') === state.testId);
             state.events.push({ type: event.type, trusted: event.isTrusted,
-              matchesCard: event.composedPath().includes(state.card),
+              matchesCard,
               recipient: event.target instanceof Element ? event.target.tagName + '#' + event.target.id + '.' + String(event.target.className).slice(0, 160) : String(event.target),
-              path: event.composedPath().slice(0, 12).map((element) => element instanceof Element
+              path: path.slice(0, 12).map((element) => element instanceof Element
                 ? element.tagName + '#' + element.id + '.' + String(element.className).slice(0, 100) : String(element)),
               x: event.clientX, y: event.clientY });
           };

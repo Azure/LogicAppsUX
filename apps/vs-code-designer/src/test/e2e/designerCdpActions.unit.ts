@@ -532,6 +532,12 @@ function testProductionOperationCardContracts(): void {
 async function testOperationClickRetryControls(): Promise<void> {
   // These are deterministic protocol/DOM controls. Mocked trusted receipts below
   // exercise retry policy only; they are not native trusted-event proof.
+  const acknowledgement = getMethod('ProvenDesignerCdpActions', 'selectActionWithAcknowledgement');
+  assert.match(acknowledgement, /const eventCard = path\.find/);
+  assert.match(acknowledgement, /operationCardTitle\(eventCard\)\.toLowerCase\(\) === state\.title/);
+  assert.match(acknowledgement, /data-automation-id'\) === state\.automationId/);
+  assert.match(acknowledgement, /data-testid'\) === state\.testId/);
+  assert.doesNotMatch(acknowledgement, /matchesCard: event\.composedPath\(\)\.includes\(state\.card\)/);
   const run = async (control: {
     name: string;
     insertOn?: number;
@@ -2076,6 +2082,9 @@ function testActionMenuParity(): void {
       '#control-zoom-fit-button',
       '[data-testid="control-zoom-fit-button"]',
       "await logDiagnostics('after Fit view click'",
+      '#control-zoom-out-button',
+      '[data-testid="control-zoom-out-button"]',
+      "await logDiagnostics('after Zoom out click'",
       '[data-automation-id^="msla-plus-button-"]',
       '[id^="msla-edge-button-"]',
       '[data-testid="card-Add an action"]',
@@ -2092,6 +2101,7 @@ function testActionMenuParity(): void {
   assert.match(source, /clickElementBrowserRouted/);
   assert.match(source, /requireTextMatch: false, useLastMatch: true/);
   assert.doesNotMatch(source, /fitButton\.click\(\)/);
+  assert.doesNotMatch(source, /zoomOutButton\.click\(\)/);
   assert.match(source, /after Add Action failed/);
 }
 
