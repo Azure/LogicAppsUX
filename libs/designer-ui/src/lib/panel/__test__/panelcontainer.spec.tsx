@@ -120,6 +120,27 @@ describe('ui/panel/panelContainer', () => {
     expect(nestedContainer(panel).props.className).not.toContain('msla-panel-container-nested-dual');
   });
 
+  it('keeps each icon with its own header when selection changes or closes', () => {
+    const selectedIcon = <span>Selected glyph</span>;
+    const pinnedIcon = <span>Pinned glyph</span>;
+    const props: PanelContainerProps = {
+      ...minimal,
+      node: { ...makeNode('selected'), operationIcon: selectedIcon },
+      alternateSelectedNode: { ...makeNode('pinned'), operationIcon: pinnedIcon },
+      alternateSelectedNodePersistence: 'pinned',
+    };
+    const iconsByNode = (node: PanelContainerProps['node']) => {
+      renderer.render(<PanelContainer {...props} node={node} />);
+      return Object.fromEntries(
+        findPanelHeaders(renderer.getRenderOutput()).map(({ props }) => [props.nodeData.nodeId, props.nodeData.operationIcon])
+      );
+    };
+
+    expect(iconsByNode(props.node)).toStrictEqual({ selected: selectedIcon, pinned: pinnedIcon });
+    expect(iconsByNode(makeNode('connector'))).toStrictEqual({ connector: undefined, pinned: pinnedIcon });
+    expect(iconsByNode(undefined)).toStrictEqual({ pinned: pinnedIcon });
+  });
+
   it('should close the selected pane instead of unpinning when the pinned node matches the selected node', () => {
     const onClose = vi.fn();
     const onUnpinAction = vi.fn();

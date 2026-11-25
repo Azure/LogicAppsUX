@@ -7,6 +7,7 @@ import { useFavoritesStyles } from './styles/Favorites.styles';
 import { useIntl } from 'react-intl';
 import { useIsAgenticWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { Grid } from '@microsoft/designer-ui';
+import { useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface FavoritesProps {
   onConnectorSelected: (connectorId: string, origin?: string) => void;
@@ -17,6 +18,7 @@ export const Favorites = ({ onConnectorSelected, onOperationSelected }: Favorite
   const intl = useIntl();
   const classes = useFavoritesStyles();
   const isAgenticWorkflow = useIsAgenticWorkflow();
+  const sharedNodeUi = useSharedNodeUi();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
   const {
@@ -32,10 +34,10 @@ export const Favorites = ({ onConnectorSelected, onOperationSelected }: Favorite
   const favoriteOperations = useMemo(() => {
     const favorites = [
       ...favoriteConnectorsData.map(getOperationGroupCardDataFromConnector),
-      ...favoriteActionsData.map(getOperationCardDataFromOperation),
+      ...favoriteActionsData.map((operation) => getOperationCardDataFromOperation(operation, sharedNodeUi)),
     ];
     return isAgenticWorkflow ? favorites : favorites.filter((f) => f.apiId !== 'connectionProviders/agent');
-  }, [favoriteConnectorsData, favoriteActionsData, isAgenticWorkflow]);
+  }, [favoriteConnectorsData, favoriteActionsData, isAgenticWorkflow, sharedNodeUi]);
 
   const loadingMoreText = intl.formatMessage({
     defaultMessage: 'Loading more...',

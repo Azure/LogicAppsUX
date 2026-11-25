@@ -3,7 +3,7 @@ import { isExpressionConnectionMapping } from '../../common/models/workflow';
 import { saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
 import { renameConnectionExpressionParameter } from '../state/connection/connectionSlice';
-import { setIsWorkflowDirty } from '../state/workflow/workflowSlice';
+import { pasteNode, setIsWorkflowDirty } from '../state/workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from '../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../store';
 import { getCompressedSlicesFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
@@ -84,6 +84,12 @@ export const storeStateHistoryMiddleware: Middleware =
       }
     }
     if (!undoableActionTypes.includes(action.type)) {
+      return next(action);
+    }
+    if (
+      (pasteNode.match(action) && action.payload?.skipUndoSnapshot) ||
+      (action.type === 'pasteScopeOperation/pending' && action.meta?.arg?.skipUndoSnapshot)
+    ) {
       return next(action);
     }
 

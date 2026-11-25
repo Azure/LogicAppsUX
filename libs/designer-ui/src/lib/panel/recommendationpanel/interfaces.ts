@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface OperationActionData {
   id: string;
   title: string;
@@ -12,6 +14,8 @@ export interface OperationActionData {
   isCustom?: boolean;
   apiId?: string;
   releaseStatus?: string;
+  // Optional host-rendered icon slot for operation rows; connectors keep ConnectorAvatar branding.
+  icon?: ReactNode;
 }
 
 export interface OperationGroupCardData {

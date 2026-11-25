@@ -1,11 +1,15 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, cleanup, waitFor, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { composeOperation, FavoriteContext, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { builtinMcpServerOperation } from '../helpers';
 import { SearchView } from '../searchView';
+
+let renderRealGrid = false;
 
 // Mock the selectors
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
@@ -29,6 +33,7 @@ vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useEnableNestedAgentLoops: vi.fn(() => false),
+  useSharedNodeUi: vi.fn(() => false),
 }));
 
 vi.mock('../../../../core/state/panel/panelSlice', () => ({
@@ -46,21 +51,28 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@microsoft/designer-ui')>();
   return {
     ...actual,
-    SearchResultsGridV2: vi.fn(({ searchTerm, operationSearchResults, isLoadingSearch, onOperationClick, onConnectorClick }) => (
-      <div data-testid="search-results-grid">
-        <span data-testid="search-term">{searchTerm}</span>
-        <span data-testid="loading-state">{isLoadingSearch ? 'loading' : 'loaded'}</span>
-        <span data-testid="results-count">{operationSearchResults?.length ?? 0}</span>
-        {operationSearchResults?.map((op: any) => (
-          <button key={op.id} data-testid={`result-${op.id}`} onClick={() => onOperationClick(op.id, op.properties?.api?.id)}>
-            {op.name}
+    SearchResultsGridV2: vi.fn((props: Parameters<typeof actual.SearchResultsGridV2>[0]) => {
+      // Keep the lightweight search/filter harness except when testing real row rendering.
+      if (renderRealGrid) {
+        return <actual.SearchResultsGridV2 {...props} />;
+      }
+      const { searchTerm, operationSearchResults, isLoadingSearch, onOperationClick, onConnectorClick } = props;
+      return (
+        <div data-testid="search-results-grid">
+          <span data-testid="search-term">{searchTerm}</span>
+          <span data-testid="loading-state">{isLoadingSearch ? 'loading' : 'loaded'}</span>
+          <span data-testid="results-count">{operationSearchResults?.length ?? 0}</span>
+          {operationSearchResults?.map((op) => (
+            <button key={op.id} data-testid={`result-${op.id}`} onClick={() => onOperationClick(op.id, op.properties?.api?.id)}>
+              {op.name}
+            </button>
+          ))}
+          <button data-testid="connector-click" onClick={() => onConnectorClick('test-connector')}>
+            Connector
           </button>
-        ))}
-        <button data-testid="connector-click" onClick={() => onConnectorClick('test-connector')}>
-          Connector
-        </button>
-      </div>
-    )),
+        </div>
+      );
+    }),
   };
 });
 
@@ -88,7 +100,7 @@ import {
 } from '../../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../../core/state/workflow/workflowSelectors';
 import { useIsAgenticWorkflow, useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
-import { useEnableNestedAgentLoops } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useEnableNestedAgentLoops, useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { selectOperationGroupId } from '../../../../core/state/panel/panelSlice';
 import { useMcpServersQuery } from '../../../../core/queries/browse';
 
@@ -98,6 +110,7 @@ const mockUseIsWithinAgenticLoop = vi.mocked(useIsWithinAgenticLoop);
 const mockUseIsAgenticWorkflow = vi.mocked(useIsAgenticWorkflow);
 const mockUseIsA2AWorkflow = vi.mocked(useIsA2AWorkflow);
 const mockUseEnableNestedAgentLoops = vi.mocked(useEnableNestedAgentLoops);
+const mockUseSharedNodeUi = vi.mocked(useSharedNodeUi);
 const mockSelectOperationGroupId = vi.mocked(selectOperationGroupId);
 const mockUseMcpServersQuery = vi.mocked(useMcpServersQuery);
 
@@ -132,6 +145,8 @@ const createWrapper = () => {
   );
 };
 
+const favoriteContext = { isOperationFavorited: () => false, onFavoriteClick: vi.fn() };
+
 describe('SearchView', () => {
   const mockOnOperationClick = vi.fn();
   const mockSetGroupByConnector = vi.fn();
@@ -163,6 +178,7 @@ describe('SearchView', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    renderRealGrid = false;
     vi.mocked(useDiscoveryPanelIsAddingTrigger).mockReturnValue(false);
     mockUseDiscoveryPanelRelationshipIds.mockReturnValue({
       graphId: 'root',
@@ -174,6 +190,7 @@ describe('SearchView', () => {
     mockUseIsAgenticWorkflow.mockReturnValue(false);
     mockUseIsA2AWorkflow.mockReturnValue(false);
     mockUseEnableNestedAgentLoops.mockReturnValue(false);
+    mockUseSharedNodeUi.mockReturnValue(false);
     mockUseMcpServersQuery.mockReturnValue({
       data: { data: [] },
       isLoading: false,
@@ -182,6 +199,73 @@ describe('SearchView', () => {
 
   afterEach(() => {
     cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  test.each([
+    { mode: 'flat', groupByConnector: false, mcpName: 'MCP server', mcpIcon: /^data:image\/svg\+xml/ },
+    { mode: 'grouped', groupByConnector: true, mcpName: 'MCP server (MCP)', mcpIcon: 'https://example.com/mcp.svg' },
+  ])('gates a built-in tile without changing the $mode MCP row', async ({ groupByConnector, mcpName, mcpIcon }) => {
+    renderRealGrid = true;
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+      }
+    );
+    const allOperations: DiscoveryOpArray = [
+      { ...composeOperation, name: 'match-compose' },
+      {
+        ...builtinMcpServerOperation,
+        id: 'mcp-connection',
+        name: 'match-mcp',
+        type: 'builtinMcpClientToolConnection',
+        properties: {
+          ...builtinMcpServerOperation.properties,
+          summary: 'MCP server',
+          api: { ...builtinMcpServerOperation.properties.api, iconUri: 'https://example.com/mcp.svg' },
+        },
+      },
+    ];
+    const search = () => (
+      <FluentProvider theme={webLightTheme}>
+        <FavoriteContext.Provider value={favoriteContext}>
+          <SearchView
+            searchTerm="match"
+            allOperations={allOperations}
+            groupByConnector={groupByConnector}
+            setGroupByConnector={mockSetGroupByConnector}
+            isLoading={false}
+            onOperationClick={mockOnOperationClick}
+            displayRuntimeInfo={false}
+          />
+        </FavoriteContext.Provider>
+      </FluentProvider>
+    );
+    const { rerender } = render(search(), { wrapper: createWrapper() });
+    const expectMcpArtwork = () => {
+      const row = screen.getByRole('button', { name: mcpName });
+      expect(row.querySelector('[data-node-glyph]')).not.toBeInTheDocument();
+      expect(row.querySelector('img')).toHaveAttribute('src', expect.stringMatching(mcpIcon));
+    };
+
+    const composeRow = await screen.findByRole('button', { name: 'Compose' });
+    expect(composeRow.querySelector('img')).toHaveAttribute('src', composeOperation.properties.api.iconUri);
+    expectMcpArtwork();
+
+    mockUseSharedNodeUi.mockReturnValue(true);
+    rerender(search());
+    const row = screen.getByRole('button', { name: 'Compose' });
+    const glyph = row.querySelector('[data-tone="violet"] [data-icon-name="BracesRegular"]');
+    expect(glyph).toBeInTheDocument();
+    expect(glyph?.closest('[aria-hidden]')).toHaveAttribute('aria-hidden', 'true');
+    expect(row).toHaveAttribute('tabindex', '0');
+    expect(row.querySelector('img')).not.toBeInTheDocument();
+    fireEvent.keyDown(row, { key: 'Enter' });
+    expect(mockOnOperationClick).toHaveBeenCalledWith(composeOperation.id, composeOperation.properties.api.id);
+
+    expectMcpArtwork();
   });
 
   describe('Rendering', () => {

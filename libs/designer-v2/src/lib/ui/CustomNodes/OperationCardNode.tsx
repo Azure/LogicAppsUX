@@ -54,6 +54,7 @@ import {
   useToolRunIndex,
   useActionMetadata,
   useIsCopilotModifiedNode,
+  useSelectedLoopRepetition,
 } from '../../core/state/workflow/workflowSelectors';
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
@@ -77,6 +78,7 @@ import { OperationNodeCard } from './components/card/OperationNodeCard';
 import { hasMcpToolPager, type NodePresentation } from '../../core/utils/graph';
 import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 import { useInitialMountSettled } from '../../core/hooks/useInitialMountSettled';
+import { useLoopRepetitionAdmission } from '../../core/hooks/useLoopRepetitionAdmission';
 
 type OperationGraphNode = Node<{ presentation?: NodePresentation; handleAxis?: 'vertical' | 'horizontal' }>;
 
@@ -91,7 +93,7 @@ interface NodeRunDataSyncProps {
 }
 
 /** Loads repetition and agent tool run data; mounted only in monitoring view so editing cards skip these subscriptions. */
-const NodeRunDataSync = ({
+export const NodeRunDataSync = ({
   id,
   graphId,
   parentNodeId,
@@ -106,6 +108,7 @@ const NodeRunDataSync = ({
   const runInstance = useRunInstance();
   const parentRunData = useRunData(parentNodeId ?? '');
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
+  const loopRepetition = useSelectedLoopRepetition(id);
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const parentSubgraphRunData = useSubgraphRunData(parentNodeId ?? '');
   const parentMetadata = useNodeMetadata(parentNodeId ?? '');
@@ -114,11 +117,12 @@ const NodeRunDataSync = ({
   const ownRunIndex = useRunIndex(id);
   const mcpToolRunIndex = useToolRunIndex(id);
 
+  const effectiveRepetitionName = loopRepetition ? (loopRepetition.isEmpty ? undefined : loopRepetition.name) : repetitionName;
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
-    !!runInstance,
+    !!runInstance && !loopRepetition?.isEmpty,
     id,
     runInstance?.id,
-    repetitionName,
+    effectiveRepetitionName,
     parentRunData?.status,
     parentRunIndex,
     isWithinAgenticLoop
@@ -130,18 +134,22 @@ const NodeRunDataSync = ({
 
   useEffect(() => () => onFetchingChange(false), [onFetchingChange]);
 
+  useLoopRepetitionAdmission(id, isWithinAgenticLoop ? undefined : loopRepetition, repetitionRunData);
+  const legacyTrackingId = loopRepetition ? undefined : selfActionTrackingId;
   useEffect(() => {
-    if (!isNullOrUndefined(repetitionRunData)) {
-      if (
-        !isNullOrUndefined(selfActionTrackingId) &&
-        selfActionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId
-      ) {
+    if (!loopRepetition && !isNullOrUndefined(repetitionRunData)) {
+      if (!isNullOrUndefined(legacyTrackingId) && legacyTrackingId === repetitionRunData.properties?.correlation?.actionTrackingId) {
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+      dispatch(
+        setRepetitionRunData({
+          nodeId: id,
+          runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction,
+        })
+      );
     }
-  }, [dispatch, repetitionRunData, id, selfActionTrackingId]);
+  }, [dispatch, repetitionRunData, id, legacyTrackingId, loopRepetition]);
 
   const actualToolRunIndex = isMcpClientSubgraph ? mcpToolRunIndex : scopedAgentRepetitionIdentity ? ownRunIndex : toolRunIndex;
   const hasCurrentToolResults =

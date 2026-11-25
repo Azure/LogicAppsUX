@@ -32,6 +32,7 @@ vi.mock('../../../../core/state/panel/panelSelectors', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useHostOptions: vi.fn(() => ({ displayRuntimeInfo: true })),
+  useSharedNodeUi: vi.fn(() => false),
 }));
 
 vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({

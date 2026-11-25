@@ -2,18 +2,20 @@ import type { AppDispatch } from '../../../core';
 import { useNodeDisplayName, useNodeMetadata } from '../../../core';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
+import { useSharedNodeUi as useSharedNodeUiSelector } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import {
   useIsNodePinnedToOperationPanel,
   useOperationPanelAlternateNodeActiveTabId,
   useOperationPanelSelectedNodeActiveTabId,
 } from '../../../core/state/panel/panelSelectors';
-import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
+import { useOperationInfo, useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
+import { useActionMetadata, useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';
 import type { PanelNodeData } from '@microsoft/designer-ui';
 import { isBuiltInAgentTool } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
+import { getPanelOperationGlyph } from '../../sharedNodeGlyph';
 
 // SVG icon for built-in agent tools (code brackets icon: </>)
 const BUILT_IN_TOOL_ICON_URI =
@@ -30,8 +32,11 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
   const errorInfo = useOperationErrorInfo(nonNullNodeId);
   const iconUri = useIconUri(nonNullNodeId);
   const nodeMetadata = useNodeMetadata(nonNullNodeId);
+  const operationInfo = useOperationInfo(nonNullNodeId);
+  const actionMetadata = useActionMetadata(nonNullNodeId);
   const runData = useRunData(nonNullNodeId);
   const tabs = usePanelTabs({ nodeId: nonNullNodeId });
+  const sharedNodeUi = useSharedNodeUiSelector();
 
   const opQuery = useOperationQuery(nonNullNodeId);
 
@@ -54,14 +59,22 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
   // Check if this is a built-in agent tool (like code_interpreter) and provide a default icon
   const isBuiltInTool = isBuiltInAgentTool(nonNullNodeId);
   const effectiveIconUri = iconUri || (isBuiltInTool ? BUILT_IN_TOOL_ICON_URI : '');
+  const isLoading = !isError && !subgraphType && !hasRunDataOnly ? opQuery.isLoading : false;
+  const operationType = operationInfo?.type || actionMetadata?.type;
+  const operationKind = operationInfo?.type ? operationInfo.kind : actionMetadata?.kind;
+  const operationIcon =
+    sharedNodeUi && !isError && !isLoading && !isBuiltInTool
+      ? getPanelOperationGlyph(operationType, operationKind, nodeMetadata?.isTrigger ? 'trigger' : 'action')
+      : undefined;
 
   return {
     comment,
+    operationIcon,
     displayName,
     errorMessage: errorInfo?.message,
     iconUri: effectiveIconUri,
     isError,
-    isLoading: !isError && !subgraphType && !hasRunDataOnly ? opQuery.isLoading : false,
+    isLoading,
     nodeId,
     onSelectTab: (tabId) => {
       dispatch(selectTab(tabId));

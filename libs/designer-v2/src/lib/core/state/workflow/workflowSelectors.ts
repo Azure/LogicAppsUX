@@ -2,7 +2,7 @@ import commonConstants from '../../../common/constants';
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
-import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
+import type { LoopRepetition, NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from './workflowGraphTraversal';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
@@ -17,7 +17,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
@@ -26,7 +26,7 @@ import { useEdges } from '@xyflow/react';
 import { ErrorLevel } from '../operation/errorLevel';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
-import { getAgentRepetitionIdentity, getScopeRepetitionName } from '../../utils/loopRepetitions';
+import { getAgentRepetitionIdentity, getLoopRepetition, getScopeRepetitionName, isSameLoopRepetition } from '../../utils/loopRepetitions';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -643,16 +643,17 @@ const selectRunMode = createSelector(getWorkflowState, (state: WorkflowState) =>
 
 export const useRunMode = (): string | null => useSelector(selectRunMode);
 
-export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
-  useSelector(
-    useMemo(
-      () => createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData?.retryHistory),
-      [id]
-    )
-  );
+const selectLoopRepetition = (state: RootState, id: string): LoopRepetition | undefined =>
+  state.designerOptions?.useSharedNodeUi && state.designerOptions.isMonitoringView ? getLoopRepetition(state.workflow, id) : undefined;
 
-export const getNodeRunData = (state: WorkflowState, id: string): NodesMetadata[string]['runData'] => {
+export const useSelectedLoopRepetition = (id: string): LoopRepetition | undefined =>
+  useSelector((state: RootState) => selectLoopRepetition(state, id), shallowEqual);
+
+export const getNodeRunData = (state: WorkflowState, id: string, repetition?: LoopRepetition): NodesMetadata[string]['runData'] => {
   const node = getRecordEntry(state.nodesMetadata, id);
+  if (repetition && !isSameLoopRepetition(node?.runDataRepetition, repetition)) {
+    return undefined;
+  }
   // Keep the previous tool result in state for a return to its cached repetition, but not in the open details panel.
   if (
     node?.agentRepetitionIdentity &&
@@ -665,7 +666,15 @@ export const getNodeRunData = (state: WorkflowState, id: string): NodesMetadata[
 };
 
 export const useRunData = (id: string): NodesMetadata[string]['runData'] =>
-  useSelector(useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getNodeRunData(state, id)), [id]));
+  useSelector((state: RootState) => getNodeRunData(state.workflow, id, selectLoopRepetition(state, id)));
+
+export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
+  useSelector((state: RootState) => {
+    const repetition = selectLoopRepetition(state, id);
+    return repetition
+      ? getNodeRunData(state.workflow, id, repetition)?.retryHistory
+      : getRecordEntry(state.workflow.nodesMetadata, id)?.runData?.retryHistory;
+  });
 
 export const useToolRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(

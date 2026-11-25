@@ -21,6 +21,7 @@ import { PinMenuItem } from '../../menuItems/pinMenuItem';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './childWorkflowHelpers';
 import { useRawInputsOutputs } from './useRawInputsOutputs';
 import { usePanelNodeData } from './usePanelNodeData';
+import { PanelLoopRunData } from './PanelLoopRunData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import { equals, getRecordEntry, HostService, isNullOrUndefined, SUBGRAPH_TYPES, WorkflowService } from '@microsoft/logic-apps-shared';
@@ -225,6 +226,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       nodeHeaderItems={getHeaderMenuItems(selectedNode)}
       alternateSelectedNode={alternateSelectedNodeData}
       alternateSelectedNodePersistence={alternateSelectedNodePersistence}
+      renderNodeObserver={(nodeId) => <PanelLoopRunData key={nodeId} nodeId={nodeId} />}
       alternateSelectedNodeHeaderItems={getHeaderMenuItems(alternateSelectedNodeId)}
       readOnlyMode={readOnly}
       canResubmit={(runData?.canResubmit ?? false) && runMode !== 'Draft'}

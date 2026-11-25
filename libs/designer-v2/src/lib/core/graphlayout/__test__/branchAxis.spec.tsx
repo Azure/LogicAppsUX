@@ -500,4 +500,75 @@ describe('actual deserialized tool-branch axis contracts', () => {
         .sort()
     );
   });
+
+  // Offline-only probe: validates ELK compound placement/containment invariants.
+  // DOM handle anchor rendering and final routed-path visuals still require browser validation.
+  it('keeps parallel If/Switch/Agent compounds disjoint in offline ELK placement invariants', async () => {
+    const source = {
+      ...definition(),
+      actions: {
+        ...definition().actions,
+        Parallel_if: {
+          type: 'If',
+          expression: { equals: [1, 1] },
+          actions: { If_true: { type: 'Compose', inputs: 'true-branch', runAfter: {} } },
+          else: { actions: { If_false: { type: 'Compose', inputs: 'false-branch', runAfter: {} } } },
+          runAfter: {},
+        },
+        Parallel_switch: {
+          type: 'Switch',
+          expression: '@triggerBody()',
+          cases: {
+            Case_1: { case: 1, actions: { Switch_case_1: { type: 'Compose', inputs: 'case-1', runAfter: {} } } },
+            Case_with_long_localized_label_for_wraps: {
+              case: 'long-localized-label',
+              actions: { Switch_case_long: { type: 'Compose', inputs: 'case-long', runAfter: {} } },
+            },
+          },
+          default: { actions: { Switch_default: { type: 'Compose', inputs: 'default', runAfter: {} } } },
+          runAfter: {},
+        },
+      },
+    };
+    const { nodes, edges, layout } = await accept(source, true);
+    const ids = [agentId, 'Parallel_if', 'Parallel_switch'];
+    const compounds = ids.map((id) => nodes.find((node) => node.id === id)!);
+    const bounds = compounds.map((node) => ({
+      id: node.id,
+      left: node.position.x,
+      top: node.position.y,
+      right: node.position.x + node.width!,
+      bottom: node.position.y + node.height!,
+    }));
+
+    for (const node of compounds) {
+      expect(node.parentId).toBeUndefined();
+      expect(node.data.handleAxis).toBe('vertical');
+    }
+
+    for (let i = 0; i < bounds.length; i++) {
+      for (let j = i + 1; j < bounds.length; j++) {
+        const first = bounds[i];
+        const second = bounds[j];
+        const overlaps = !(
+          first.right <= second.left ||
+          second.right <= first.left ||
+          first.bottom <= second.top ||
+          second.bottom <= first.top
+        );
+        expect(overlaps, `${first.id} should not overlap ${second.id}`).toBe(false);
+      }
+    }
+
+    for (const id of ids) {
+      expect(edges.find((edge) => edge.source === 'When_a_new_chat_session_starts' && edge.target === id)).toBeDefined();
+      const compound = findElkNode(layout, id)!;
+      for (const child of compound.children!) {
+        expect(child.x!).toBeGreaterThanOrEqual(0);
+        expect(child.y!).toBeGreaterThanOrEqual(0);
+        expect(child.x! + child.width!).toBeLessThanOrEqual(compound.width!);
+        expect(child.y! + child.height!).toBeLessThanOrEqual(compound.height!);
+      }
+    }
+  });
 });

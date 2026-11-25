@@ -9,6 +9,13 @@ export interface AgentToolInvocation {
   page: number;
 }
 
+export interface LoopRepetition {
+  runId: string;
+  name: string;
+  /** True when an admitted ancestor loop has zero iterations for the current outer coordinate. */
+  isEmpty?: boolean;
+}
+
 export interface NodeMetadata {
   graphId: string;
   parentNodeId?: string;
@@ -17,6 +24,9 @@ export interface NodeMetadata {
   isRoot?: boolean;
   isTrigger?: boolean;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
+  runDataRepetition?: LoopRepetition;
+  runDataRepetitionSource?: LogicAppsV2.WorkflowRunAction;
+  loopPayloadRevision?: string;
   actionMetadata?: Record<string, any>;
   subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   subgraphRunDataIdentity?: string;

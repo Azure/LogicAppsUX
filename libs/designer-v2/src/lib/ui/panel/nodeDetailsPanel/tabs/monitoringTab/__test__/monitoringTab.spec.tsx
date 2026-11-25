@@ -19,6 +19,12 @@ vi.mock('../../../../../../core/state/operation/operationSelector', () => ({
 
 vi.mock('../../../../../../core/state/workflow/workflowSelectors', () => ({
   useRunData: vi.fn(),
+  useNodeMetadata: () => undefined,
+  useSelectedLoopRepetition: () => undefined,
+}));
+
+vi.mock('../../../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useSharedNodeUi: vi.fn(() => false),
 }));
 
 const mockGetActionLinks = vi.fn();
@@ -68,11 +74,12 @@ vi.mock('../propertiesPanel', () => ({
 
 import { MonitoringPanel } from '../monitoringTab';
 import { useRunData } from '../../../../../../core/state/workflow/workflowSelectors';
-import { useQuery } from '@tanstack/react-query';
+import { useSharedNodeUi } from '../../../../../../core/state/designerOptions/designerOptionsSelectors';
 
 describe('MonitoringPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useSharedNodeUi).mockReturnValue(false);
     (useRunData as any).mockReturnValue({
       status: 'Succeeded',
       startTime: '2024-01-01T00:00:00Z',
@@ -80,7 +87,8 @@ describe('MonitoringPanel', () => {
     });
   });
 
-  it('should render null when runMetaData is null', () => {
+  it.each([false, true])('renders nothing without run metadata (shared layout: %s)', (showComparison) => {
+    vi.mocked(useSharedNodeUi).mockReturnValue(showComparison);
     (useRunData as any).mockReturnValue(null);
 
     const { container } = render(<MonitoringPanel nodeId="test-node" />);
@@ -94,6 +102,32 @@ describe('MonitoringPanel', () => {
     expect(screen.getByTestId('inputs-panel')).toBeDefined();
     expect(screen.getByTestId('outputs-panel')).toBeDefined();
     expect(screen.getByTestId('properties-panel')).toBeDefined();
+  });
+
+  it('keeps legacy composition when shared node UI is disabled', () => {
+    const { container } = render(<MonitoringPanel nodeId="test-node" />);
+
+    expect(Array.from(container.children)).toEqual([
+      screen.getByTestId('error-section'),
+      screen.getByTestId('inputs-panel'),
+      screen.getByTestId('outputs-panel'),
+      screen.getByTestId('properties-panel'),
+    ]);
+  });
+
+  it('uses shared comparison layout only when shared node UI is enabled', () => {
+    vi.mocked(useSharedNodeUi).mockReturnValue(true);
+    const { container } = render(<MonitoringPanel nodeId="test-node" />);
+
+    const layout = container.querySelector('[data-monitoring-payload-comparison]');
+    const grid = container.querySelector('[data-monitoring-payload-grid]');
+
+    expect(Array.from(container.children)).toEqual([screen.getByTestId('error-section'), layout]);
+    expect(Array.from(layout?.children ?? [])).toEqual([grid, screen.getByTestId('properties-panel')]);
+    expect(Array.from(grid?.children ?? [], (pane) => pane.firstElementChild)).toEqual([
+      screen.getByTestId('inputs-panel'),
+      screen.getByTestId('outputs-panel'),
+    ]);
   });
 
   it('should use cached data for built-in tools with existing inputs/outputs', () => {

@@ -13,11 +13,12 @@ import {
   useIsAddingAgentTool,
 } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useEnableNestedAgentLoops, useSharedNodeUi } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
 import { useMcpServersQuery } from '../../../core/queries/browse';
+import { getPickerOperationGlyph } from '../../sharedNodeGlyph';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -47,6 +48,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
   const enableNestedAgentLoops = useEnableNestedAgentLoops();
+  const sharedNodeUi = useSharedNodeUi();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -175,6 +177,7 @@ export const SearchView: FC<SearchViewProps> = ({
       groupByConnector={groupByConnector}
       setGroupByConnector={setGroupByConnector}
       displayRuntimeInfo={displayRuntimeInfo}
+      renderOperationIcon={sharedNodeUi ? getPickerOperationGlyph : undefined}
     />
   );
 };

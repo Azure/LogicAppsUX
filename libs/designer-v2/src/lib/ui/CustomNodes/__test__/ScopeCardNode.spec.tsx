@@ -138,6 +138,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useNodeMetadata: (...args: any[]) => mockUseNodeMetadata(...args),
   useParentNodeId: (...args: any[]) => mockUseParentNodeId(...args),
   useRunData: (...args: any[]) => mockUseRunData(...args),
+  useSelectedLoopRepetition: () => undefined,
   useRunIndex: (...args: any[]) => mockUseRunIndex(...args),
   useRunInstance: () => mockUseRunInstance(),
   useParentRunIndex: (...args: any[]) => mockUseParentRunIndex(...args),

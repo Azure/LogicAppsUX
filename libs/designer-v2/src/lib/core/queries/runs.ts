@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueries, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { replaceEqualDeep, useMutation, useQuery, useQueries, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type ChatHistory,
   isNullOrUndefined,
@@ -11,6 +11,8 @@ import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
 import { useMemo } from 'react';
+import { nanoid } from '@reduxjs/toolkit';
+import isEqual from 'lodash.isequal';
 
 const queryOpts = {
   cacheTime: 1000 * 60 * 60 * 24,
@@ -187,6 +189,26 @@ export const getRun = (runId: string) => {
   );
 };
 
+type SkippedNodeRepetition = {
+  properties: { status: string; inputsLink: null; outputsLink: null; startTime: null; endTime: null; trackingId: null; correlation: null };
+};
+type NodeRepetitionResponse = (LogicAppsV2.RunRepetition | SkippedNodeRepetition) & { loopPayloadRevision?: string };
+
+function shareLoopPayloadRevision(previous: NodeRepetitionResponse | undefined, next: NodeRepetitionResponse): NodeRepetitionResponse {
+  const before = previous?.properties;
+  const after = next.properties;
+  const samePayload =
+    !!before &&
+    isEqual(before.inputsLink ?? null, after.inputsLink ?? null) &&
+    isEqual(before.outputsLink ?? null, after.outputsLink ?? null) &&
+    isEqual('inputs' in before ? before.inputs : undefined, 'inputs' in after ? after.inputs : undefined) &&
+    isEqual('outputs' in before ? before.outputs : undefined, 'outputs' in after ? after.outputs : undefined);
+
+  // The token belongs to this cached response, not the current Redux selection. Query keys never contain links.
+  const revision = (samePayload && previous?.loopPayloadRevision) || nanoid();
+  return replaceEqualDeep(previous, { ...next, loopPayloadRevision: revision });
+}
+
 export const useNodeRepetition = (
   isEnabled: boolean,
   nodeId: string,
@@ -196,7 +218,7 @@ export const useNodeRepetition = (
   parentRunIndex: number | undefined,
   isWithinAgenticLoop: boolean
 ) => {
-  return useQuery(
+  return useQuery<NodeRepetitionResponse>(
     [runsQueriesKeys.useNodeRepetition, { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
     async () => {
       if (parentStatus === constants.FLOW_STATUS.SKIPPED) {
@@ -218,6 +240,7 @@ export const useNodeRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
+      structuralSharing: shareLoopPayloadRevision,
       enabled: repetitionName !== undefined && parentRunIndex !== undefined && isEnabled && !isWithinAgenticLoop,
     }
   );
@@ -231,19 +254,22 @@ export const useConditionOutputs = (
     | Pick<LogicAppsV2.WorkflowRunAction, 'outputsLink' | 'correlation' | 'startTime' | 'endTime'>
     | { outputsLink: null; correlation: null; startTime: null; endTime: null }
     | undefined,
-  enabled: boolean
+  enabled: boolean,
+  loopPayloadRevision?: string
 ) => {
   const outputsLink = runData?.outputsLink;
   const canFetch = enabled && !!runId && !!outputsLink?.uri && !outputsLink.secureData;
+  // Use the opaque loopPayloadRevision for loop repetitions so refreshed output links invalidate
+  // the cache even when tracking ID and timestamps are unchanged, without putting SAS URIs in keys.
   const { data } = useQuery<unknown>(
     [
       runsQueriesKeys.useConditionOutputs,
       runId,
       nodeId,
       repetitionName,
-      runData?.correlation?.actionTrackingId,
-      runData?.startTime,
-      runData?.endTime,
+      ...(loopPayloadRevision !== undefined
+        ? [loopPayloadRevision]
+        : [runData?.correlation?.actionTrackingId, runData?.startTime, runData?.endTime]),
     ],
     async () => (await RunService().getActionLinks({ outputsLink }, nodeId)).outputs ?? null,
     {

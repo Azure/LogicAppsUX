@@ -66,6 +66,21 @@ describe('runs queries', () => {
     await waitFor(() => expect(result.current).toEqual({ expressionResult: false }));
   });
 
+  test('refetches and clears stale condition outputs when loopPayloadRevision changes with identical tracking metadata', async () => {
+    const baseRun = { correlation: { actionTrackingId: 'same-id' }, startTime: 'start', endTime: 'end' };
+    mockRunService.getActionLinks.mockResolvedValueOnce({ outputs: { expressionResult: true } });
+    const { result, rerender } = renderHook(
+      ({ uri, rev }) => useConditionOutputs('Condition', 'run', '000000', { ...baseRun, outputsLink: { uri, contentSize: 16 } }, true, rev),
+      { initialProps: { uri: 'link-v1', rev: 'rev-1' }, wrapper: createWrapper }
+    );
+    await waitFor(() => expect(result.current).toEqual({ expressionResult: true }));
+
+    mockRunService.getActionLinks.mockResolvedValueOnce({ outputs: { expressionResult: false } });
+    rerender({ uri: 'link-v2', rev: 'rev-2' });
+    expect(result.current).toBeUndefined();
+    await waitFor(() => expect(result.current).toEqual({ expressionResult: false }));
+  });
+
   test('does not request secured condition outputs', () => {
     const outputsLink = { uri: 'fixture-condition-outputs', contentSize: 32, secureData: { properties: ['outputs'] } };
     const { result } = renderHook(

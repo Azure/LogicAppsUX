@@ -25,6 +25,8 @@ export type PanelContainerProps = {
   alternateSelectedNode: PanelNodeData | undefined;
   alternateSelectedNodeHeaderItems: JSX.Element[];
   alternateSelectedNodePersistence: 'pinned' | 'selected';
+  /** Mount a host observer only while this node's details pane is rendered. */
+  renderNodeObserver?: (nodeId: string) => React.ReactNode;
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   overrideWidth?: string;
@@ -61,6 +63,7 @@ export const PanelContainer = ({
   nodeHeaderItems,
   alternateSelectedNodeHeaderItems,
   alternateSelectedNodePersistence,
+  renderNodeObserver,
   onClose,
   trackEvent,
   onCommentChange,
@@ -237,6 +240,7 @@ export const PanelContainer = ({
           className={mergeClasses('msla-panel-layout', `msla-panel-border-${type}`, isAlternateSelectedNode && 'msla-panel-layout-pinned')}
           id={isAlternateSelectedNode ? alternateSelectedNodeContainerId : undefined}
         >
+          {renderNodeObserver?.(nodeId)}
           {renderHeader(contentsNode)}
           <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
             {isLoading ? (
@@ -264,7 +268,15 @@ export const PanelContainer = ({
         </div>
       );
     },
-    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId, enableNodeNavigation]
+    [
+      renderHeader,
+      renderNodeObserver,
+      panelErrorMessage,
+      trackEvent,
+      panelErrorTitle,
+      alternateSelectedNodeContainerId,
+      enableNodeNavigation,
+    ]
   );
 
   const minWidth = isDualView ? Number.parseInt(PanelSize.DualView, 10) : undefined;

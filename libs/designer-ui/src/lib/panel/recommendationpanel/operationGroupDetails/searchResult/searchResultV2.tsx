@@ -7,13 +7,13 @@ import { SearchResultSortOptions } from '../../../types';
 import { OperationSearchGroup } from '../../operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray } from '@microsoft/logic-apps-shared';
-import type { PropsWithChildren } from 'react';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { PropsWithChildren, ReactNode } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { BrowseGrid } from '../../browseResults';
-import { getOperationCardDataFromOperation } from '../../helpers';
 import { RecommendationPanelConstants } from '../../../../constants';
+import { getOperationCardDataFromOperation } from '../../helpers';
 import { OperationActionDataFromOperation } from './helper';
 
 export type SearchResultsGridV2Props = {
@@ -26,6 +26,7 @@ export type SearchResultsGridV2Props = {
   displayRuntimeInfo: boolean;
   groupByConnector: boolean;
   setGroupByConnector: (groupByConnector: boolean) => void;
+  renderOperationIcon?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => ReactNode;
 };
 
 const maxOperationsToDisplay = RecommendationPanelConstants.SEARCH_VIEW.MAX_OPERATIONS_IN_SEARCH_GROUP;
@@ -39,6 +40,7 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
   onOperationClick,
   groupByConnector,
   displayRuntimeInfo,
+  renderOperationIcon,
 }: SearchResultsGridV2Props) => {
   const intl = useIntl();
 
@@ -85,7 +87,10 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
           <OperationSearchGroup
             key={apiId}
             operationApi={api}
-            operationActionsData={operations.map((operation) => getOperationCardDataFromOperation(operation))}
+            operationActionsData={operations.map((operation) => ({
+              ...getOperationCardDataFromOperation(operation),
+              icon: renderOperationIcon?.(operation),
+            }))}
             onConnectorClick={onConnectorClick}
             onOperationClick={onOperationClick}
             maxOperationsToDisplay={maxOperationsToDisplay}
@@ -93,11 +98,14 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
         </div>
       );
     },
-    [onConnectorClick, onOperationClick, operationSearchResults]
+    [onConnectorClick, onOperationClick, operationSearchResults, renderOperationIcon]
   );
 
   const sortedOperationsData = useMemo(() => {
-    const operationCardData = operationSearchResults.map((operation) => OperationActionDataFromOperation(operation));
+    const operationCardData = operationSearchResults.map((operation) => ({
+      ...OperationActionDataFromOperation(operation),
+      icon: renderOperationIcon?.(operation),
+    }));
 
     if (resultsSorting !== SearchResultSortOptions.unsorted) {
       operationCardData.sort((a, b) =>
@@ -106,7 +114,7 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
     }
 
     return operationCardData;
-  }, [operationSearchResults, resultsSorting]);
+  }, [operationSearchResults, resultsSorting, renderOperationIcon]);
 
   const noResultsText = intl.formatMessage(
     {
@@ -164,7 +172,8 @@ export const SearchResultsGridV2: React.FC<PropsWithChildren<SearchResultsGridV2
       {groupByConnector ? (
         <>
           <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={connectorText} />
-          <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+          {/* Fluent v8 List caches pages by items + version; bumping version forces re-render when renderOperationIcon toggles */}
+          <List items={apiIds} onRenderCell={onRenderOperationGroup} version={renderOperationIcon ? 1 : 0} />
         </>
       ) : (
         <>

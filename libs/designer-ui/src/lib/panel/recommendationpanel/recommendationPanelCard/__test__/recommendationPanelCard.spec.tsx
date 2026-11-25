@@ -147,4 +147,19 @@ describe('RecommendationPanelCard', () => {
       expect(onConnectorClick).toHaveBeenCalledWith('test-group-api-id');
     });
   });
+
+  it('renders a host-provided operation icon slot when available', () => {
+    const operationDataWithIcon: OperationsData = {
+      ...mockOperationData,
+      data: {
+        ...mockOperationData.data,
+        icon: <span data-testid="operation-icon-slot">icon</span>,
+      },
+    };
+
+    const { container } = renderWithProviders(<RecommendationPanelCard operationData={operationDataWithIcon} />);
+
+    expect(screen.getByTestId('operation-icon-slot')).toBeTruthy();
+    expect(container.querySelector('.msla-recommendation-panel-card-operation-icon')).toBeTruthy();
+  });
 });

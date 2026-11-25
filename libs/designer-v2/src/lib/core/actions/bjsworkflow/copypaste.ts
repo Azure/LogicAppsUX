@@ -41,6 +41,7 @@ import { getConnectionReferenceForNodeId } from '../../state/connection/connecti
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
 import { storeStateToUndoRedoHistory } from './undoRedo';
+import { beginHistoryTransaction, endHistoryTransaction } from '../../state/undoRedo/undoRedoSlice';
 import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
 
 type CopyOperationPayload = {
@@ -237,6 +238,7 @@ interface PasteOperationPayload {
   connectionData?: ConnectionMapping[string];
   comment?: string;
   isParallelBranch?: boolean;
+  skipUndoSnapshot?: boolean;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
@@ -256,6 +258,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
       relationshipIds: relationshipIds,
       operation: operationInfo,
       isParallelBranch,
+      ...(payload.skipUndoSnapshot && { skipUndoSnapshot: true }),
     })
   );
 
@@ -307,6 +310,7 @@ interface PasteScopeOperationPayload {
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
   isParallelBranch?: boolean;
+  skipUndoSnapshot?: boolean;
 }
 
 export const pasteScopeOperation = createAsyncThunk(
@@ -540,56 +544,90 @@ export const duplicateOperations = createAsyncThunk(
   'duplicateOperations',
   async (payload: DuplicateOperationsPayload, { dispatch, getState }) => {
     const { nodeIds } = payload;
-    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+    const initialState = getState() as RootState;
+    if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked(initialState.designerOptions)) {
       return;
     }
 
-    dispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+    const useSharedHistoryTransaction = !!initialState.designerOptions.useSharedNodeUi;
+    if (useSharedHistoryTransaction && initialState.undoRedo.activeHistoryTransactions) {
+      // Do not interleave overlapping multi-step duplicate batches on the shared undo stack.
+      return;
+    }
 
-    for (const nodeId of nodeIds) {
-      // Re-read state each iteration because prior pastes mutate the workflow graph.
-      const state = getState() as RootState;
-      if (isWorkflowEditLocked(state.designerOptions)) {
+    let snapshotRecorded = false;
+    const ensureDuplicateSnapshot = () => {
+      if (snapshotRecorded) {
         return;
       }
-      const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
-      if (!graphId) {
-        continue;
-      }
+      snapshotRecorded = true;
+      dispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+    };
 
-      // parentId set with no childId inserts the duplicate right below the source node.
-      const relationshipIds = { graphId, parentId: nodeId, childId: undefined };
-      const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (useSharedHistoryTransaction) {
+      dispatch(beginHistoryTransaction());
+    } else {
+      ensureDuplicateSnapshot();
+    }
 
-      if (isScopeOperation(operationInfo?.type ?? '')) {
-        const entry = await buildScopeClipboardEntry(state, nodeId);
-        if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+    try {
+      for (const nodeId of nodeIds) {
+        // Re-read state each iteration because prior pastes mutate the workflow graph.
+        const state = getState() as RootState;
+        if (isWorkflowEditLocked(state.designerOptions)) {
           return;
         }
-        const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
-        await dispatch(
-          pasteScopeOperation({
-            relationshipIds,
-            nodeId: entry.nodeId,
-            serializedValue: entry.serializedOperation,
-            allConnectionData: entry.allConnectionData,
-            staticResults: entry.staticResults,
-            upstreamNodeIds,
-          })
-        );
-      } else {
-        const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
-        await dispatch(
-          pasteOperation({
-            relationshipIds,
-            nodeId: entry.nodeId,
-            nodeData: entry.nodeData,
-            nodeTokenData: entry.nodeTokenData,
-            operationInfo: entry.nodeOperationInfo,
-            connectionData: entry.nodeConnectionData,
-            comment: entry.nodeComment,
-          })
-        );
+        const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
+        if (!graphId) {
+          continue;
+        }
+
+        // parentId set with no childId inserts the duplicate right below the source node.
+        const relationshipIds = { graphId, parentId: nodeId, childId: undefined };
+        const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+        // The outer Duplicate owns one checkpoint for all of its internal pastes.
+        const undoOptions = useSharedHistoryTransaction ? { skipUndoSnapshot: true } : undefined;
+
+        if (isScopeOperation(operationInfo?.type ?? '')) {
+          const entry = await buildScopeClipboardEntry(state, nodeId);
+          if (isWorkflowEditLocked((getState() as RootState).designerOptions)) {
+            return;
+          }
+          const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
+          // Record the single transaction checkpoint lazily right before the first real mutation
+          // so an aborted or empty duplicate never pushes a no-op entry or clears Redo history.
+          ensureDuplicateSnapshot();
+          await dispatch(
+            pasteScopeOperation({
+              relationshipIds,
+              nodeId: entry.nodeId,
+              serializedValue: entry.serializedOperation,
+              allConnectionData: entry.allConnectionData,
+              staticResults: entry.staticResults,
+              upstreamNodeIds,
+              ...undoOptions,
+            })
+          );
+        } else {
+          const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
+          ensureDuplicateSnapshot();
+          await dispatch(
+            pasteOperation({
+              relationshipIds,
+              nodeId: entry.nodeId,
+              nodeData: entry.nodeData,
+              nodeTokenData: entry.nodeTokenData,
+              operationInfo: entry.nodeOperationInfo,
+              connectionData: entry.nodeConnectionData,
+              comment: entry.nodeComment,
+              ...undoOptions,
+            })
+          );
+        }
+      }
+    } finally {
+      if (useSharedHistoryTransaction) {
+        dispatch(endHistoryTransaction());
       }
     }
   }

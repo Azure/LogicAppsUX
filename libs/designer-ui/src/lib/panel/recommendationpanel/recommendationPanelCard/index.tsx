@@ -1,11 +1,21 @@
 import { getPreviewTag } from '../../../utils';
 import type { OperationActionData, OperationGroupCardData } from '../interfaces';
-import { Badge, Caption1, Card, mergeClasses, Text } from '@fluentui/react-components';
+import { Badge, Caption1, Card, makeStyles, mergeClasses, Text } from '@fluentui/react-components';
 import { InfoDot } from '../../../infoDot';
 import { ChevronRight12Regular } from '@fluentui/react-icons';
 import { ConnectorAvatar } from '../connectorAvatar';
 import { FavoriteButton } from '../favoriteButton';
 import { useIntl } from 'react-intl';
+
+const useStyles = makeStyles({
+  operationIconSlot: {
+    width: '24px',
+    height: '24px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export interface OperationsData {
   type: 'Operation';
@@ -39,10 +49,12 @@ export const RecommendationPanelCard = ({
   showConnectorName,
   hideFavorites = false,
 }: RecommendationPanelCardProps) => {
+  const styles = useStyles();
   const { data } = operationData;
   const { apiId = '', connectorName, description, iconUri, brandColor, isCustom } = data;
 
   const isOperationAction = isOperationData(operationData);
+  const operationIcon = isOperationAction ? operationData.data.icon : undefined;
   const operationTitle = isOperationAction ? operationData.data.title : (connectorName ?? '');
   const previewTag = isOperationAction ? getPreviewTag(operationData.data.releaseStatus) : undefined;
 
@@ -80,15 +92,21 @@ export const RecommendationPanelCard = ({
       title={operationTitle}
     >
       <div className="msla-recommendation-panel-card-image">
-        <ConnectorAvatar
-          className="msla-recommendation-panel-card-connector-image"
-          displayName={connectorName ?? ''}
-          isCustomApi={isCustom}
-          id={apiId}
-          iconUri={iconUri ?? ''}
-          brandColor={brandColor}
-          size={24}
-        />
+        {isOperationAction && operationIcon ? (
+          <span className={mergeClasses('msla-recommendation-panel-card-operation-icon', styles.operationIconSlot)} aria-hidden="true">
+            {operationIcon}
+          </span>
+        ) : (
+          <ConnectorAvatar
+            className="msla-recommendation-panel-card-connector-image"
+            displayName={connectorName ?? ''}
+            isCustomApi={isCustom}
+            id={apiId}
+            iconUri={iconUri ?? ''}
+            brandColor={brandColor}
+            size={24}
+          />
+        )}
       </div>
 
       <div className="msla-recommendation-panel-card-text">

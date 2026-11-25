@@ -19,6 +19,9 @@ vi.mock('../../../../core/state/operation/operationSelector', () => ({
   useIconUri: vi.fn(),
   useOperationErrorInfo: vi.fn(),
 }));
+vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useSharedNodeUi: vi.fn(),
+}));
 
 vi.mock('../../../../core/state/panel/panelSlice', () => ({
   setPinnedPanelActiveTab: vi.fn((tabId: string) => ({ type: 'setPinnedPanelActiveTab', payload: tabId })),
@@ -32,10 +35,12 @@ vi.mock('../../../../core/state/panel/panelSelectors', () => ({
 }));
 
 vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({
+  useOperationInfo: vi.fn(),
   useOperationQuery: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/workflow/workflowSelectors', () => ({
+  useActionMetadata: vi.fn(),
   useNodeDescription: vi.fn(),
   useRunData: vi.fn(),
 }));
@@ -47,11 +52,13 @@ vi.mock('../usePanelTabs', () => ({
 import { usePanelNodeData } from '../usePanelNodeData';
 import { useNodeDisplayName, useNodeMetadata } from '../../../../core';
 import { useIconUri, useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
+import { useSharedNodeUi } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodePinnedToOperationPanel } from '../../../../core/state/panel/panelSelectors';
-import { useOperationQuery } from '../../../../core/state/selectors/actionMetadataSelector';
-import { useRunData } from '../../../../core/state/workflow/workflowSelectors';
+import { useOperationInfo, useOperationQuery } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useActionMetadata, useRunData } from '../../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from '../usePanelTabs';
-import { renderHook } from '@testing-library/react';
+import { renderHook, render } from '@testing-library/react';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 
 describe('usePanelNodeData', () => {
   beforeEach(() => {
@@ -60,8 +67,11 @@ describe('usePanelNodeData', () => {
     (useNodeMetadata as any).mockReturnValue({ subgraphType: undefined });
     (useIconUri as any).mockReturnValue('https://example.com/icon.png');
     (useOperationErrorInfo as any).mockReturnValue(undefined);
+    (useSharedNodeUi as any).mockReturnValue(false);
     (useIsNodePinnedToOperationPanel as any).mockReturnValue(false);
-    (useOperationQuery as any).mockReturnValue({ isLoading: false, isError: false, data: {} });
+    vi.mocked(useOperationInfo, { partial: true }).mockReturnValue({ type: '' });
+    vi.mocked(useOperationQuery, { partial: true }).mockReturnValue({ isLoading: false, isError: false });
+    (useActionMetadata as any).mockReturnValue({ type: 'Http', kind: undefined });
     (useRunData as any).mockReturnValue(undefined);
     (usePanelTabs as any).mockReturnValue([]);
   });
@@ -134,5 +144,48 @@ describe('usePanelNodeData', () => {
 
     const { result } = renderHook(() => usePanelNodeData('test-node'));
     expect(result.current?.runData).toEqual(mockRunData);
+  });
+
+  it('prefers the resolved type and kind over the definition for a run node', () => {
+    vi.mocked(useSharedNodeUi).mockReturnValue(true);
+    vi.mocked(useOperationInfo, { partial: true }).mockReturnValue({ type: 'Expression', kind: 'CurrentTime' });
+    vi.mocked(useActionMetadata, { partial: true }).mockReturnValue({ type: 'Compose' });
+    (useRunData as any).mockReturnValue({ status: 'Succeeded' });
+
+    const { result } = renderHook(() => usePanelNodeData('run-node'));
+    const { container } = render(<FluentProvider theme={webLightTheme}>{result.current?.operationIcon}</FluentProvider>);
+    expect(container.querySelector('[data-tone="blue"] [data-icon-name="CalendarClockRegular"]')).toBeInTheDocument();
+  });
+
+  it('should keep the existing header icon path when shared-node UI is disabled', () => {
+    (useSharedNodeUi as any).mockReturnValue(false);
+    (useActionMetadata as any).mockReturnValue({ type: 'Compose', kind: undefined });
+
+    const { result } = renderHook(() => usePanelNodeData('compose-node'));
+    expect(result.current?.operationIcon).toBeUndefined();
+  });
+
+  it('keeps legacy artwork while loading or errored and clears the glyph on connector selection', () => {
+    vi.mocked(useSharedNodeUi).mockReturnValue(true);
+    vi.mocked(useActionMetadata, { partial: true }).mockImplementation((id) =>
+      id === 'compose-node' ? { type: 'Compose' } : { type: 'ApiConnection' }
+    );
+    const query = vi.mocked(useOperationQuery, { partial: true });
+    query.mockReturnValue({ isLoading: true, isError: false });
+
+    const { result, rerender } = renderHook(({ id }) => usePanelNodeData(id), { initialProps: { id: 'compose-node' } });
+    expect(result.current).toMatchObject({ isLoading: true, operationIcon: undefined });
+
+    query.mockReturnValue({ isLoading: false, isError: true });
+    rerender({ id: 'compose-node' });
+    expect(result.current).toMatchObject({ isError: true, isLoading: false, operationIcon: undefined });
+
+    query.mockReturnValue({ isLoading: false, isError: false });
+    rerender({ id: 'compose-node' });
+    const { container } = render(<FluentProvider theme={webLightTheme}>{result.current?.operationIcon}</FluentProvider>);
+    expect(container.querySelector('[data-tone="violet"] [data-icon-name="BracesRegular"]')).toBeInTheDocument();
+
+    rerender({ id: 'connector-node' });
+    expect(result.current).toMatchObject({ iconUri: 'https://example.com/icon.png', operationIcon: undefined });
   });
 });

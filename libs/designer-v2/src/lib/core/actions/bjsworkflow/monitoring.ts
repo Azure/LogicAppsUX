@@ -25,7 +25,7 @@ import type { NodeOperation } from '../../state/operation/operationMetadataSlice
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
 import { getAgentActionsRepetition, getAgentRepetition } from '../../queries/runs';
-import type { AgentToolInvocation } from '../../state/workflow/workflowInterfaces';
+import type { AgentToolInvocation, LoopRepetition } from '../../state/workflow/workflowInterfaces';
 
 /**
  * Converts raw JSON data into BoundParameters format for display in ValuesPanel.
@@ -45,6 +45,8 @@ const convertToBoundParameters = (data: Record<string, any>): BoundParameters =>
 interface InitInputsOutputsPayload {
   nodeId: string;
   inputsOutputs: InputsOutputsBinding;
+  loopRepetition?: LoopRepetition;
+  loopPayloadRevision?: string;
 }
 
 interface InputsOutputsBinding {

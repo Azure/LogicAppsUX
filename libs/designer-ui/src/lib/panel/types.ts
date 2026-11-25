@@ -1,4 +1,5 @@
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ReactNode } from 'react';
 import type { PanelTab } from './panelUtil';
 
 export interface PanelNodeData {
@@ -14,6 +15,8 @@ export interface PanelNodeData {
   selectedTab: string | undefined;
   subgraphType: string | undefined;
   tabs: PanelTab[];
+  /** Optional icon for a loaded operation; pending and error states use the existing header artwork. */
+  operationIcon?: ReactNode;
 }
 
 export type SearchResultSortOption = 'unsorted' | 'ascending' | 'descending';

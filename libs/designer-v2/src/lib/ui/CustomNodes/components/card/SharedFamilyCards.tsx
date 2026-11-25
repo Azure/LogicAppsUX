@@ -46,7 +46,7 @@ import {
   mapSharedRunVisuals,
   mapToolNodeStrings,
 } from './nodeUiStrings';
-import { agentNodeTone, scopeNodeIcon } from './operationNodeGlyphs';
+import { agentNodeTone, getControlOperationGlyph, scopeNodeIcon } from './operationNodeGlyphs';
 import { getNodePresentation, SHARED_SCOPE_TITLE_RESERVE, type NodePresentation } from '../../../../core/utils/graph';
 import { SharedNodeHoverCard } from './SharedNodeHoverCard';
 import { useOperationParameterByName } from '../../../../core/state/operation/operationSelector';
@@ -244,6 +244,7 @@ export const SharedScopeCard = ({
     return withHover(
       <ConditionNodeCard
         {...common}
+        {...getControlOperationGlyph(family)}
         headerTint={family === 'if' ? 'condition' : 'switch'}
         kind={family}
         subtitleKind={containsStatus ? 'status' : undefined}
@@ -263,6 +264,7 @@ export const SharedScopeCard = ({
     return withHover(
       <LoopNodeCard
         {...common}
+        {...getControlOperationGlyph('foreach')}
         className={mergeClasses(common.className, joined && loopHeaderHoverClass)}
         data-loop-group-header={joined ? props.id : undefined}
         headerTint="loop"

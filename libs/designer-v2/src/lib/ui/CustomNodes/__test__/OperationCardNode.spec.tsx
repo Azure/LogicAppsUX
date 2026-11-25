@@ -140,6 +140,7 @@ const mockUseIsLeafNode = vi.fn().mockReturnValue(false);
 const mockUseParentNodeId = vi.fn().mockReturnValue(undefined);
 const mockUseRunInstance = vi.fn().mockReturnValue(undefined);
 const mockUseParentRunIndex = vi.fn().mockReturnValue(undefined);
+const mockUseSelectedLoopRepetition = vi.fn().mockReturnValue(undefined);
 const mockUseIsWithinAgenticLoop = vi.fn().mockReturnValue(false);
 const mockUseSubgraphRunData = vi.fn().mockReturnValue(undefined);
 const mockUseRunIndex = vi.fn().mockReturnValue(undefined);
@@ -153,6 +154,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useNodeDisplayName: (...args: any[]) => mockUseNodeDisplayName(...args),
   useNodeMetadata: (...args: any[]) => mockUseNodeMetadata(...args),
   useRunData: (...args: any[]) => mockUseRunData(...args),
+  useSelectedLoopRepetition: (...args: any[]) => mockUseSelectedLoopRepetition(...args),
   useShouldNodeFocus: (...args: any[]) => mockUseShouldNodeFocus(...args),
   useIsLeafNode: (...args: any[]) => mockUseIsLeafNode(...args),
   useParentNodeId: (...args: any[]) => mockUseParentNodeId(...args),
@@ -299,6 +301,7 @@ describe('OperationCardNode (v2)', () => {
     mockUseParentNodeId.mockReturnValue(undefined);
     mockUseRunInstance.mockReturnValue(undefined);
     mockUseParentRunIndex.mockReturnValue(undefined);
+    mockUseSelectedLoopRepetition.mockReturnValue(undefined);
     mockUseIsWithinAgenticLoop.mockReturnValue(false);
     mockUseSubgraphRunData.mockReturnValue(undefined);
     mockUseRunIndex.mockReturnValue(undefined);
@@ -502,6 +505,27 @@ describe('OperationCardNode (v2)', () => {
         payload: expect.objectContaining({ nodeId: 'testNode' }),
       })
     );
+  });
+
+  it('updates Shared loop run data on a different page even when both responses have the same tracking ID', () => {
+    const selection = { runId: 'run-1', name: '000002-000001' };
+    const correlation = { actionTrackingId: 'same-id' };
+    const runData = { status: 'Succeeded', correlation };
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseMonitoringView.mockReturnValue(true);
+    mockUseRunInstance.mockReturnValue({ id: selection.runId });
+    mockUseParentRunIndex.mockReturnValue(1);
+    mockUseSelectedLoopRepetition.mockReturnValue(selection);
+    mockUseRunData.mockImplementation((id: string) => (id === 'testNode' ? { status: 'Failed', correlation } : undefined));
+    mockUseNodeRepetition.mockReturnValue({ isFetching: false, data: { properties: runData, loopPayloadRevision: 'scoped-payload' } });
+
+    render(<DefaultNode {...defaultProps} />);
+
+    expect(mockUseNodeRepetition).toHaveBeenCalledWith(true, 'testNode', selection.runId, selection.name, undefined, 1, false);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'workflow/setRepetitionRunData',
+      payload: { nodeId: 'testNode', runData, loopRepetition: selection, loopPayloadRevision: 'scoped-payload' },
+    });
   });
 
   it('uses actual immediate Agent parent metadata for tool identity, never the display name', () => {
