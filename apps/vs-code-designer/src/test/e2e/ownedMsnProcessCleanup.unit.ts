@@ -87,6 +87,10 @@ async function run(): Promise<void> {
     assert.deepStrictEqual(after.actions, []);
     assert.deepStrictEqual(positive.budgets, [10_000, 10_000, 10_000]);
     assert.ok(fs.existsSync(positive.workspace) && fs.existsSync(positive.dependencies));
+    assert.ok(
+      !fs.existsSync(`${positive.evidenceBase}.default.identity`),
+      'Successful finalization must remove its location identity marker'
+    );
     await assert.rejects(cleanup.capture(), reason('duplicate-process-capture'));
     await assert.rejects(cleanup.finalize(), reason('duplicate-process-finalization'));
     assert.strictEqual(positive.budgets.length, 3, 'Repeated calls cannot reset the deadline or start more observations');

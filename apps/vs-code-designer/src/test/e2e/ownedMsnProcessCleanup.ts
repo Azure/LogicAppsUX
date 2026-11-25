@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
@@ -97,15 +98,25 @@ function initializeOwnedExtensionProcessCleanup(
     allowEmptyCapture: input.allowEmptyCapture,
     previouslyCapturedProcesses: [...(options.excludedProcesses ?? [])],
   });
+  const identityPath = `${evidenceBase}.${options.evidenceStagePrefix ?? 'default'}.identity`;
+  const identity = randomUUID();
+  fs.writeFileSync(identityPath, identity, { flag: 'wx' });
 
   function persist(stage: string, evidence: OwnedProcessEvidence, reason?: string): void {
     const currentStat = fs.lstatSync(parent);
+    let identityMatches = false;
+    try {
+      identityMatches = fs.readFileSync(identityPath, 'utf8') === identity;
+    } catch {
+      identityMatches = false;
+    }
     if (
       fs.realpathSync(parent) !== canonicalParent ||
       currentStat.isSymbolicLink() ||
       !currentStat.isDirectory() ||
       currentStat.dev !== parentStat.dev ||
-      currentStat.ino !== parentStat.ino
+      currentStat.ino !== parentStat.ino ||
+      !identityMatches
     ) {
       throw new OwnedProcessEvidenceError('process-evidence-location-changed');
     }
@@ -140,7 +151,10 @@ function initializeOwnedExtensionProcessCleanup(
 
   return {
     capture: () => observe('before-teardown', guard.capture),
-    finalize: () => observe('after-teardown', guard.finalize),
+    finalize: async () => {
+      await observe('after-teardown', guard.finalize);
+      fs.unlinkSync(identityPath);
+    },
     evidence: guard.evidence,
   };
 }
