@@ -32,21 +32,26 @@ const runIndex = (page: Page, id: string, tool = false) =>
 
 const measureForeach = (page: Page) =>
   page.evaluate(() => {
-    const graph = document.querySelector<HTMLElement>('.react-flow__node[data-id="Foreach"]')!;
-    const header = document.querySelector<HTMLElement>('.react-flow__node[data-id="Foreach-#scope"]')!;
-    const card = header.querySelector<HTMLElement>('#msla-node-Foreach')!;
-    const frame = graph.querySelector<HTMLElement>('.msla-graph-container-wrapper > [data-node-card="loop-frame"]');
+    const graph = document.querySelector<HTMLElement>('.react-flow__node[data-id="Foreach"]');
+    const header = document.querySelector<HTMLElement>('.react-flow__node[data-id="Foreach-#scope"]');
+    const card = header?.querySelector<HTMLElement>('#msla-node-Foreach');
+    const frame = graph?.querySelector<HTMLElement>('.msla-graph-container-wrapper > [data-node-card="loop-frame"]');
     const edge = document.querySelector<SVGPathElement>(
       '.react-flow__edge[data-id^="Foreach-"] :is(.react-flow__edge-path, .msla-shared-edge-path)'
-    )!;
-    const zoom = new DOMMatrixReadOnly(getComputedStyle(graph.closest('.react-flow__viewport')!).transform).m11;
+    );
+    const viewport = graph?.closest('.react-flow__viewport');
+    const ctm = edge?.getScreenCTM();
+    if (!graph || !header || !card || !edge || !viewport || !ctm) {
+      return null;
+    }
+    const zoom = new DOMMatrixReadOnly(getComputedStyle(viewport).transform).m11;
     const top = graph.getBoundingClientRect().top;
     return {
       header: header.offsetHeight,
       card: card.offsetHeight,
       graph: graph.offsetHeight,
       frameTop: frame ? Math.round((frame.getBoundingClientRect().top - top) / zoom) : undefined,
-      edgeStart: Math.round((edge.getPointAtLength(0).matrixTransform(edge.getScreenCTM()!).y - top) / zoom),
+      edgeStart: Math.round((edge.getPointAtLength(0).matrixTransform(ctm).y - top) / zoom),
     };
   });
 
@@ -183,13 +188,13 @@ for (const flag of ['true', 'false'] as const) {
       } else {
         await expect(body).toHaveCount(0);
       }
-      const expanded = await measureForeach(page);
+      const expanded = (await measureForeach(page))!;
       const collapse = page.locator('button[id="Foreach-collapse-toggle"]');
       await collapse.click();
       await expect(pager).toHaveCount(0);
       await expect(join).toHaveCount(0);
-      await expect.poll(async () => (await measureForeach(page)).graph).toBeLessThan(expanded.graph);
-      const collapsed = await measureForeach(page);
+      await expect.poll(async () => (await measureForeach(page))?.graph ?? Number.POSITIVE_INFINITY).toBeLessThan(expanded.graph);
+      const collapsed = (await measureForeach(page))!;
       if (flag === 'true') {
         // The collapsed React Flow wrapper includes the count badge; the pager
         // must disappear from the card and the accepted body-frame position.
@@ -212,6 +217,98 @@ for (const flag of ['true', 'false'] as const) {
         contentType: 'image/png',
       });
     });
+
+    if (flag === 'true') {
+      test('hides the previous Foreach error and raw I/O while the selected iteration is pending', async ({ page }) => {
+        // The Local Designer's mock HTTP client does not send requests by default.
+        await page.route(/\/LocalDesigner\/httpClient\.ts(?:\?|$)/, async (route) => {
+          const response = await route.fetch();
+          await route.fulfill({
+            response,
+            body: `${await response.text()}
+              const originalGet = HttpClient.prototype.get;
+              HttpClient.prototype.get = function (options) {
+                if (options.uri.startsWith('/url/foreach-parity-run/actions/Increment_variable_2/repetitions/')) {
+                  return fetch(options.uri).then(response => response.json());
+                }
+                return originalGet.apply(this, arguments);
+              };`,
+          });
+        });
+        const errorMessage = 'Simulated failure from the first iteration';
+        const repetitions = /\/foreach-parity-run\/actions\/Increment_variable_2\/repetitions\/00000[01]\?/;
+        let releaseSecond = () => {};
+        const pending = new Promise<void>((resolve) => {
+          releaseSecond = resolve;
+        });
+        await page.route(repetitions, async (route) => {
+          const name = new URL(route.request().url()).pathname.split('/').pop();
+          const first = name === '000000';
+          if (!first) {
+            await pending;
+          }
+          await route.fulfill({
+            json: {
+              name,
+              properties: {
+                ...times,
+                status: first ? 'Failed' : 'Succeeded',
+                ...(first && {
+                  code: 'FixtureFailure',
+                  error: { code: 'FixtureFailure', message: errorMessage },
+                  inputsLink: { uri: '/simulated-foreach/000000/inputs' },
+                  outputsLink: { uri: '/simulated-foreach/000000/outputs' },
+                }),
+              },
+            },
+          });
+        });
+
+        await openSharedWorkflow(page, 'ForEach', flag);
+        await enterSimulatedMonitoring(page);
+        await page.evaluate(
+          ({ times }) => {
+            const store = (window as DesignerWindow).DesignerStoreV2;
+            store.dispatch({ type: 'workflow/setRunIndex', payload: { nodeId: 'Foreach', page: 0 } });
+            store.dispatch({
+              type: 'workflow/setRepetitionRunData',
+              payload: { nodeId: 'Foreach', runData: { ...times, status: 'Succeeded', iterationCount: 2 } },
+            });
+            store.dispatch({
+              type: 'workflow/setRunInstance',
+              payload: { id: '/foreach-parity-run', name: 'foreach-parity-run', properties: { status: 'Failed' } },
+            });
+          },
+          { times }
+        );
+
+        const action = page.locator('#msla-node-Increment_variable_2');
+        await action.click();
+        const panel = page.locator('#msla-node-details-panel-Increment_variable_2');
+        const priorError = panel.getByText(errorMessage, { exact: true });
+        const rawInputs = panel.getByRole('button', { name: 'Show raw inputs', exact: true });
+        const rawOutputs = panel.getByRole('button', { name: 'Show raw outputs', exact: true });
+        const priorValue = panel.locator('[aria-labelledby="inputs-Increment_variable_2"] pre').filter({ hasText: 'var1' });
+        await expect(priorError).toBeVisible();
+        await expect(rawInputs).toBeVisible();
+        await expect(rawOutputs).toBeVisible();
+        await expect(priorValue).toBeVisible();
+        try {
+          const secondRequest = page.waitForRequest(/\/Increment_variable_2\/repetitions\/000001\?/);
+          await page.getByTestId('msla-pager-v2-foreach').getByLabel('Next iteration', { exact: true }).click();
+          await secondRequest;
+          await expect(panel).toBeVisible();
+          await expect(priorError).toHaveCount(0);
+          await expect(rawInputs).toHaveCount(0);
+          await expect(rawOutputs).toHaveCount(0);
+          await expect(priorValue).toHaveCount(0);
+        } finally {
+          releaseSecond();
+        }
+        await expect(action).toHaveAttribute('data-status', 'succeeded');
+        await expect(priorError).toHaveCount(0);
+      });
+    }
 
     test('does not apply a late Agent response to the selected tool cards', async ({ page }) => {
       // The Local Designer's mock client doesn't send HTTP. Back just the simulated Agent route with

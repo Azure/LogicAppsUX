@@ -60,6 +60,41 @@ for (const flag of ['true', 'false'] as const) {
       expect((await getSerializedWorkflowFromStateV2(page)).definition.actions).toEqual(before.definition.actions);
     });
 
+    if (flag === 'true') {
+      test('restores the serialized branch DAG with one Undo after duplicating a nested Scope', async ({ page }) => {
+        await openSharedWorkflow(page, 'All Scope Nodes', flag);
+        const readActions = async () => (await getSerializedWorkflowFromStateV2(page)).definition.actions;
+        const readScopeBody = async () => (await readActions()).Switch.cases.Scope_Case.actions.Scope.actions;
+        const before = await readActions();
+        const scopeBody = before.Switch.cases.Scope_Case.actions.Scope.actions;
+        const undo = page.getByRole('button', { name: 'Undo', exact: true });
+        await expect(undo).toBeDisabled();
+
+        const nestedScope = page.locator('#msla-node-Scope_nested');
+        await nestedScope.press('Enter');
+        await nestedScope.focus();
+        await page.keyboard.press('ControlOrMeta+d');
+        await expect.poll(async () => Object.keys(await readScopeBody()).length).toBe(Object.keys(scopeBody).length + 1);
+        const after = await readScopeBody();
+        const duplicateId = Object.keys(after).find((id) => !scopeBody[id]);
+        if (!duplicateId) {
+          throw new Error('Duplicate must add a new Scope inside the original branch.');
+        }
+        expect(after[duplicateId].type).toBe('Scope');
+        expect(after[duplicateId].runAfter).toEqual({ Scope_nested: ['SUCCEEDED'] });
+        expect(after.Scope_empty.runAfter).toEqual({
+          [duplicateId]: scopeBody.Scope_empty.runAfter.Scope_nested,
+        });
+        await expect
+          .poll(async () => Object.values((await readScopeBody())[duplicateId].actions ?? {}))
+          .toEqual(Object.values(scopeBody.Scope_nested.actions));
+
+        await undo.click();
+        await expect.poll(readActions).toEqual(before);
+        await expect(undo).toBeDisabled();
+      });
+    }
+
     test('blocks node mutations in monitoring even when the host omits readOnly', async ({ page }) => {
       await openSharedWorkflow(page, 'General Run After', flag);
       const compose = page.locator('#msla-node-Compose');
