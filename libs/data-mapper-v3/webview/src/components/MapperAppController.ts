@@ -2009,7 +2009,15 @@ export class MapperAppController {
       const hasOutput = page.links.some((l: any) => l.sourceId === functoid.id);
 
       if (!hasInput && !hasOutput) {
-        issues.push(`✗ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
+        const scriptType = functoid.parameters?.find((parameter) => parameter.type === 'scriptType')?.value || functoid.scriptType;
+        const scriptBody = functoid.parameters?.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
+        const sharedDeclaration =
+          functoid.functoidId === 260 &&
+          (scriptType || 'inlineCSharp') === 'inlineCSharp' &&
+          /\b(?:public|private|protected|internal)\s+[^{}]*\([^)]*\)\s*\{/.test(scriptBody);
+        issues.push(
+          `${sharedDeclaration ? '⚠' : '✗'} Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`
+        );
       } else if (!hasInput) {
         const noInputOk = ['Date', 'Time', 'Date and Time', 'Iteration', 'Scripting'].includes(functoid.name);
         if (!noInputOk) {
