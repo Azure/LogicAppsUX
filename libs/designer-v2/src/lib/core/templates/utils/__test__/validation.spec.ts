@@ -19,11 +19,21 @@ describe('Template Validation Tests', () => {
         id: 'zMKxg9',
         description: 'Error message when the workflow name is invalid regex.',
       });
-      expect(checkWorkflowNameWithRegex(intl, 'workflow name')).toBe(nameDoesNotMath);
       expect(checkWorkflowNameWithRegex(intl, '1workflowName')).toBe(nameDoesNotMath);
       expect(checkWorkflowNameWithRegex(intl, '1_workflowName_1')).toBe(nameDoesNotMath);
-      expect(checkWorkflowNameWithRegex(intl, 'workflow_Name space')).toBe(nameDoesNotMath);
       expect(checkWorkflowNameWithRegex(intl, 'workflow_%7')).toBe(nameDoesNotMath);
+    });
+
+    test('Names with a space get a message that says spaces are not allowed', async () => {
+      const nameHasSpace = intl.formatMessage({
+        defaultMessage: "Workflow name cannot contain spaces. Use letters, numbers, dashes ('-') and underscores ('_') instead.",
+        id: 's2XJ/T',
+        description: 'Error message when the workflow name contains a space.',
+      });
+      expect(checkWorkflowNameWithRegex(intl, 'workflow name')).toBe(nameHasSpace);
+      expect(checkWorkflowNameWithRegex(intl, 'My Workflow')).toBe(nameHasSpace);
+      expect(checkWorkflowNameWithRegex(intl, 'workflow_Name space')).toBe(nameHasSpace);
+      expect(checkWorkflowNameWithRegex(intl, ' workflow')).toBe(nameHasSpace);
     });
   });
 
