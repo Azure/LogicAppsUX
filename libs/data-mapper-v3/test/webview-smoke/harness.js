@@ -11,15 +11,18 @@ const schema = {
   filePath: 'schema.xsd',
   rootElement: {
     name: 'Root',
+    type: 'element',
     path: '/Root',
     children: [
       {
         name: 'Value',
+        type: 'element',
         path: '/Root/Value',
         dataType: 'xs:string',
         children: [
           {
             name: 'Inner',
+            type: 'element',
             path: '/Root/Value/Inner',
             dataType: 'xs:string',
             children: [],
