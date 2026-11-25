@@ -44,7 +44,7 @@ extends:
       - stage: Publish
         displayName: Build and publish npm packages
         lockBehavior: sequential
-        condition: succeeded()
+        condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/v')))
         jobs:
           - job: BuildAndPublish
             displayName: Build release tag and publish to npm feed

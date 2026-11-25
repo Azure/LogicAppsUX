@@ -364,7 +364,7 @@ test('main validates command arguments', () => {
   assert.throws(() => main(['build', 'extra']), /Unexpected arguments/);
 });
 
-test('npm-publish.yml keeps 1ES Official template, WIF auth, and single Publish stage', () => {
+test('npm-publish.yml keeps 1ES Official template, WIF auth, branch gate, and single Publish stage', () => {
   const yaml = fs.readFileSync(path.join(__dirname, '..', '.azure-pipelines', 'npm-publish.yml'), 'utf8');
   assert.match(yaml, /template:\s*v1\/1ES\.Official\.PipelineTemplate\.yml@1esPipelines/);
   assert.match(yaml, /ref:\s*refs\/tags\/release/);
@@ -372,7 +372,10 @@ test('npm-publish.yml keeps 1ES Official template, WIF auth, and single Publish 
   assert.match(yaml, /useAgentBuildDirectory:\s*true/);
   assert.match(yaml, /workloadIdentityServiceConnection:\s*21d5a1d8-11d3-425c-8d3a-e7f088725481/);
   assert.match(yaml, /feedUrl:\s*'https:\/\/pkgs\.dev\.azure\.com\/msazure\/One\/_packaging\/microsoft-logic-apps\/npm\/registry\/'/);
-  assert.match(yaml, /condition:\s*succeeded\(\)/);
+  assert.match(
+    yaml,
+    /and\(succeeded\(\),\s*or\(eq\(variables\['Build\.SourceBranch'\],\s*'refs\/heads\/main'\),\s*startsWith\(variables\['Build\.SourceBranch'\],\s*'refs\/heads\/hotfix\/v'\)\)\)/
+  );
   assert.match(yaml, /- stage:\s*Publish/);
   assert.match(yaml, /- job:\s*BuildAndPublish/);
   assert.doesNotMatch(yaml, /VerifyRelease|ProductionPublishNotActivated|npm-verify-release/);
