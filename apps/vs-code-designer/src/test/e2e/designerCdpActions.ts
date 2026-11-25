@@ -894,15 +894,33 @@ export class MsnDesignerCdpActions {
       const quads = (await this.cdp.send('DOM.getContentQuads', { objectId })) as { result?: { quads?: number[][] } };
       const quad = quads.result?.quads;
       assert.ok(quad?.length === 1 && quad[0].length === 8 && quad[0].every(Number.isFinite), 'Expected one finite browser content quad');
-      const point = {
+      const center = {
         x: (quad[0][0] + quad[0][2] + quad[0][4] + quad[0][6]) / 4,
         y: (quad[0][1] + quad[0][3] + quad[0][5] + quad[0][7]) / 4,
       };
 
-      const hit = (await this.cdp.send('DOM.getNodeForLocation', {
-        x: Math.floor(point.x),
-        y: Math.floor(point.y),
-      })) as { result?: { backendNodeId?: number } };
+      const candidatePoints = [
+        center,
+        ...[0, 2, 4, 6].map((index) => ({
+          x: center.x * 0.75 + quad[0][index] * 0.25,
+          y: center.y * 0.75 + quad[0][index + 1] * 0.25,
+        })),
+      ];
+      let point = center;
+      let hit: { result?: { backendNodeId?: number } } = {};
+      for (const candidate of candidatePoints) {
+        const candidateHit = (await this.cdp.send('DOM.getNodeForLocation', {
+          x: Math.round(candidate.x),
+          y: Math.round(candidate.y),
+          includeUserAgentShadowDOM: true,
+          ignorePointerEventsNone: true,
+        })) as { result?: { backendNodeId?: number } };
+        if (candidateHit.result?.backendNodeId) {
+          point = candidate;
+          hit = candidateHit;
+          break;
+        }
+      }
       assert.ok(hit.result?.backendNodeId, 'Browser could not hit-test the discovery action point');
       const resolved = (await this.cdp.send('DOM.resolveNode', {
         backendNodeId: hit.result.backendNodeId,
