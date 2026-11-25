@@ -1,8 +1,23 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import scopeRun from '../../__mocks__/runs/simpleScoped/simpleScoped.json' with { type: 'json' };
-import { composeManifest } from '../../libs/logic-apps-shared/src/designer-client-services/lib/consumption/manifests/compose';
 import { LoadRunFile } from './utils/GoToWorkflow';
 import { openSharedWorkflow, waitForViewport } from './utils/sharedNodeUi';
+
+// Read Compose's iconUri from source text instead of importing compose.ts directly:
+// compose.ts transitively pulls in logic-apps-shared TS files with parameter properties,
+// which fail under Node 22's default strip-only TypeScript execution in Playwright CI.
+const composeManifestIconUri = (() => {
+  const source = readFileSync(
+    new URL('../../libs/logic-apps-shared/src/designer-client-services/lib/consumption/manifests/compose.ts', import.meta.url),
+    'utf8'
+  );
+  const match = source.match(/iconUri:\s*'([^']+)'/);
+  if (!match) {
+    throw new Error('Could not extract Compose manifest iconUri');
+  }
+  return match[1];
+})();
 
 // Fluent's data-icon-name is only provided by the unit-test mock; match the real Braces SVG paths.
 const bracesPath = { regular: 'M6.5 3A2.5 2.5', filled: 'M3.5 5.75A2.75 2.75' };
@@ -99,7 +114,7 @@ for (const flag of ['true', 'false'] as const) {
       );
       await openSharedWorkflow(page, 'General Run After', flag);
       const compose = page.locator('#msla-node-Compose');
-      const manifestArtwork = composeManifest.properties.iconUri;
+      const manifestArtwork = composeManifestIconUri;
       await expectComposeIcon(compose, shared, manifestArtwork);
       await compose.click();
       await expectComposeIcon(compose, shared, manifestArtwork, 'filled');
