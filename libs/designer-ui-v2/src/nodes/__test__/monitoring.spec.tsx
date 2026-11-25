@@ -153,6 +153,58 @@ describe('NodeIterationPager', () => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith(130);
   });
 
+  it('stays in compact mode without restoring separate failure buttons when jumping to a loop sole failed iteration', () => {
+    const ControlledCompactPager = () => {
+      const [current, setCurrent] = useState(0);
+      return (
+        <ui.NodeIterationPager
+          compactFailureNavigation
+          editable
+          current={current}
+          count={100000}
+          failed={[3]}
+          failedDestinations={[3]}
+          onChange={setCurrent}
+        />
+      );
+    };
+    render(<ControlledCompactPager />);
+
+    const group = screen.getByRole('group', { name: 'Iterations' });
+    const input = screen.getByRole('textbox', { name: 'Iteration number, 1 to 100000' });
+    const position = screen.getByText('/ 100000');
+    const trigger = screen.getByRole('button', { name: 'Jump to failed iteration' });
+
+    expect(screen.queryByRole('button', { name: 'Previous failed iteration' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Next failed iteration' })).not.toBeInTheDocument();
+    expect(position).toHaveAttribute('dir', 'ltr');
+    const compactInputWidths = propertyValues(input, 'width');
+    expect(compactInputWidths.some((value) => value.includes('6ch'))).toBe(true);
+
+    // Jump to the sole failed iteration (index 3 -> display 4): compact layout must stay active
+    // and separate failure buttons must not reappear, while focus rescues cleanly to the input.
+    trigger.focus();
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iteration 4' }));
+
+    expect(input).toHaveValue('4');
+    expect(input).toHaveFocus();
+    expect(screen.queryByRole('button', { name: 'Jump to failed iteration' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Previous failed iteration' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Next failed iteration' })).not.toBeInTheDocument();
+    expect(group.querySelector('[data-pager-action="previous-failed"]')).toBeNull();
+    expect(group.querySelector('[data-pager-action="next-failed"]')).toBeNull();
+    expect(position).toHaveAttribute('dir', 'ltr');
+    expect(propertyValues(input, 'width').some((value) => value.includes('6ch'))).toBe(true);
+
+    // Stepping away from the sole failed iteration restores the compact menu trigger.
+    fireEvent.click(screen.getByRole('button', { name: 'Previous iteration' }));
+    expect(input).toHaveValue('3');
+    expect(screen.getByRole('button', { name: 'Jump to failed iteration' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Previous failed iteration' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Next failed iteration' })).not.toBeInTheDocument();
+  });
+
   it.each([
     { failedDestinations: [0, 1], hostFocus: false, focusRole: 'combobox' },
     { failedDestinations: [1], hostFocus: false, focusRole: 'textbox' },

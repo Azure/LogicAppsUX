@@ -17,7 +17,12 @@ import knowledgeHubOptionsReducer from './state/knowledge/optionsSlice';
 
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import { extractionMutationGuardMiddleware, monitoringDirtyGuardMiddleware, storeStateHistoryMiddleware } from './utils/middleware';
+import {
+  extractionMutationGuardMiddleware,
+  historyTransactionGuardMiddleware,
+  monitoringDirtyGuardMiddleware,
+  storeStateHistoryMiddleware,
+} from './utils/middleware';
 
 declare global {
   interface Window {
@@ -53,7 +58,7 @@ export const createDesignerStore = (preloadedState?: ReturnType<typeof designerR
       getDefaultMiddleware({
         serializableCheck: false,
       })
-        .prepend(extractionMutationGuardMiddleware)
+        .prepend(historyTransactionGuardMiddleware, extractionMutationGuardMiddleware)
         .concat(storeStateHistoryMiddleware, monitoringDirtyGuardMiddleware),
   });
 

@@ -43,6 +43,7 @@ import { initScopeCopiedStaticResultProperties } from '../../state/staticresults
 import { storeStateToUndoRedoHistory } from './undoRedo';
 import { beginHistoryTransaction, endHistoryTransaction } from '../../state/undoRedo/undoRedoSlice';
 import { isWorkflowEditLocked } from '../../state/designerOptions/workflowEditLock';
+import { withHistoryTransaction } from '../../utils/middleware';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -542,7 +543,7 @@ type DuplicateOperationsPayload = {
 // copy/paste building blocks but keeps everything in-memory so the user's clipboard is untouched.
 export const duplicateOperations = createAsyncThunk(
   'duplicateOperations',
-  async (payload: DuplicateOperationsPayload, { dispatch, getState }) => {
+  async (payload: DuplicateOperationsPayload, { dispatch, getState, requestId }) => {
     const { nodeIds } = payload;
     const initialState = getState() as RootState;
     if (!nodeIds || nodeIds.length === 0 || isWorkflowEditLocked(initialState.designerOptions)) {
@@ -555,17 +556,23 @@ export const duplicateOperations = createAsyncThunk(
       return;
     }
 
+    // Tag all dispatches owned by this transaction so historyTransactionGuardMiddleware permits its
+    // nested async paste/metadata actions while blocking unrelated mutations until it settles.
+    const txDispatch = (
+      useSharedHistoryTransaction ? (action: unknown) => dispatch(withHistoryTransaction(action, requestId) as any) : dispatch
+    ) as typeof dispatch;
+
     let snapshotRecorded = false;
     const ensureDuplicateSnapshot = () => {
       if (snapshotRecorded) {
         return;
       }
       snapshotRecorded = true;
-      dispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+      txDispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
     };
 
     if (useSharedHistoryTransaction) {
-      dispatch(beginHistoryTransaction());
+      txDispatch(beginHistoryTransaction());
     } else {
       ensureDuplicateSnapshot();
     }
@@ -597,7 +604,7 @@ export const duplicateOperations = createAsyncThunk(
           // Record the single transaction checkpoint lazily right before the first real mutation
           // so an aborted or empty duplicate never pushes a no-op entry or clears Redo history.
           ensureDuplicateSnapshot();
-          await dispatch(
+          await txDispatch(
             pasteScopeOperation({
               relationshipIds,
               nodeId: entry.nodeId,
@@ -611,7 +618,7 @@ export const duplicateOperations = createAsyncThunk(
         } else {
           const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
           ensureDuplicateSnapshot();
-          await dispatch(
+          await txDispatch(
             pasteOperation({
               relationshipIds,
               nodeId: entry.nodeId,
@@ -627,7 +634,7 @@ export const duplicateOperations = createAsyncThunk(
       }
     } finally {
       if (useSharedHistoryTransaction) {
-        dispatch(endHistoryTransaction());
+        txDispatch(endHistoryTransaction());
       }
     }
   }

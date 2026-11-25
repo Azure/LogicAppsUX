@@ -3,14 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from '../../../parsers/ParseReduxAction';
 import { DynamicLoadStatus, initializeNodeOperationInputsData } from '../../../state/operation/operationMetadataSlice';
-import { initWorkflowSpec, setWorkflowKind } from '../../../state/workflow/workflowSlice';
+import { initWorkflowSpec, replaceId, setWorkflowKind } from '../../../state/workflow/workflowSlice';
 import { createDesignerStore, designerReducer } from '../../../store';
 import type { Workflow } from '../../../../common/models/workflow';
 import type { Operations } from '../../../state/workflow/workflowInterfaces';
 import { duplicateOperations } from '../copypaste';
+import { deleteOperation } from '../delete';
 import * as operationDeserializer from '../operationdeserializer';
 import { serializeOperation } from '../serializer';
-import { onUndoClick } from '../undoRedo';
+import { onUndoClick, storeStateToUndoRedoHistory } from '../undoRedo';
 import { RUN_AFTER_STATUS, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -174,6 +175,52 @@ describe('Duplicate scope', () => {
     expect(store.getState().workflow.operations).toEqual(operations);
     expect(store.getState().workflow.graph).toEqual(graph);
     expect(store.getState().undoRedo.past).toHaveLength(historyBefore);
+  });
+
+  it('blocks unrelated undoable edits while scope initialization is paused so Undo never restores a half-duplicated graph', async () => {
+    const store = initializeStore(true);
+    const { graph, operations } = store.getState().workflow;
+    const historyBefore = store.getState().undoRedo.past.length;
+
+    let releaseScopeMetadata!: () => void;
+    vi.spyOn(operationDeserializer, 'initializeOperationMetadata').mockImplementationOnce(
+      async ({ actionData }, _references, _workflowParameters, _customCode, _workflowKind, dispatch) => {
+        await new Promise<void>((resolve) => {
+          releaseScopeMetadata = resolve;
+        });
+        dispatch(initializeOperations(actionData));
+      }
+    );
+
+    const duplicatePromise = store.dispatch(duplicateOperations({ nodeIds: ['GuardScope', 'After'] })).unwrap();
+    await vi.waitFor(() => expect(releaseScopeMetadata).toBeDefined());
+    expect(store.getState().undoRedo.past).toHaveLength(historyBefore + 1);
+
+    // Intervening plain undoable edit and async mutation thunk must be blocked without recording a checkpoint.
+    store.dispatch(replaceId({ originalId: 'OtherBranch', newId: 'RenamedBranch' }));
+    await store.dispatch(storeStateToUndoRedoHistory({ type: 'unrelated/edit' } as any));
+    await store.dispatch(deleteOperation({ nodeId: 'OtherBranch', isTrigger: false }));
+    expect(store.getState().workflow.operations.OtherBranch).toEqual(operations.OtherBranch);
+    expect(store.getState().workflow.operations.RenamedBranch).toBeUndefined();
+    expect(store.getState().undoRedo.past).toHaveLength(historyBefore + 1);
+
+    releaseScopeMetadata();
+    await duplicatePromise;
+    expect(store.getState().undoRedo.activeHistoryTransactions).toBe(0);
+    expect(store.getState().undoRedo.past).toHaveLength(historyBefore + 1);
+    expect(store.getState().workflow.operations.OtherBranch).toEqual(operations.OtherBranch);
+    expect(Object.keys(store.getState().workflow.operations).length).toBeGreaterThan(Object.keys(operations).length + 1);
+
+    // Single Undo restores the exact pre-Duplicate graph and operations.
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations).toEqual(operations);
+    expect(store.getState().workflow.graph).toEqual(graph);
+    expect(store.getState().undoRedo.past).toHaveLength(historyBefore);
+
+    // Normal edits and undo checkpoints resume once the transaction has settled.
+    store.dispatch(replaceId({ originalId: 'OtherBranch', newId: 'RenamedBranch' }));
+    expect(store.getState().workflow.idReplacements.OtherBranch).toBe('RenamedBranch');
+    expect(store.getState().undoRedo.past).toHaveLength(historyBefore + 1);
   });
 
   it('does not push an undo checkpoint when Shared Duplicate finds no valid nodes', async () => {

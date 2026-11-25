@@ -152,16 +152,35 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
   const failureMenuRef = useRef<HTMLDivElement | null>(null);
   const restoreInputFocus = useRef(false);
   const [draft, setDraft] = useState(String(index + 1));
-  const failedDestinationIndexes = useMemo(
+  const validFailedDestinations = useMemo(
     () =>
-      Array.from(new Set((failedDestinations ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total)))
-        .filter((value) => value !== index)
-        .sort((a, b) => a - b),
-    [failedDestinations, index, total]
+      Array.from(new Set((failedDestinations ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total))).sort(
+        (a, b) => a - b
+      ),
+    [failedDestinations, total]
   );
-  const showFailureChooser = editable && failedDestinationIndexes.length > 0;
-  const showCompactMenu = showFailureChooser && compactFailureNavigation;
-  const showFailedDestinationSelect = showFailureChooser && !showCompactMenu;
+  const failedDestinationIndexes = useMemo(
+    () => validFailedDestinations.filter((value) => value !== index),
+    [validFailedDestinations, index]
+  );
+  // Failed jumps target the nearest valid failed iteration strictly before/after the selection.
+  const validFailed = (failed ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total);
+  const previousFailed = validFailed.reduce<number | undefined>(
+    (best, value) => (value < index && (best === undefined || value > best) ? value : best),
+    undefined
+  );
+  const nextFailed = validFailed.reduce<number | undefined>(
+    (best, value) => (value > index && (best === undefined || value < best) ? value : best),
+    undefined
+  );
+  const hasFailed = failed !== undefined;
+  // Keep compact layout whenever the loop has at least one valid failed destination, including when
+  // the user is viewing that sole failure, so jumping to it never re-expands the constrained Foreach
+  // row with the wider input and separate previous/next failed buttons.
+  const useCompactFailureLayout = editable && compactFailureNavigation && validFailedDestinations.length > 0;
+  const showCompactMenu =
+    useCompactFailureLayout && (failedDestinationIndexes.length > 0 || previousFailed !== undefined || nextFailed !== undefined);
+  const showFailedDestinationSelect = editable && !compactFailureNavigation && failedDestinationIndexes.length > 0;
   const failedDestinationLabel = strings.failedDestinationSelect ?? defaultNodeIterationPagerStrings.failedDestinationSelect;
   const setFailureTriggerRef = useCallback((trigger: HTMLButtonElement | null) => {
     const previous = failureTriggerRef.current;
@@ -190,18 +209,6 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
   if (total <= 0) {
     return null;
   }
-
-  // Failed jumps target the nearest valid failed iteration strictly before/after the selection.
-  const validFailed = (failed ?? []).filter((value) => Number.isInteger(value) && value >= 0 && value < total);
-  const previousFailed = validFailed.reduce<number | undefined>(
-    (best, value) => (value < index && (best === undefined || value > best) ? value : best),
-    undefined
-  );
-  const nextFailed = validFailed.reduce<number | undefined>(
-    (best, value) => (value > index && (best === undefined || value < best) ? value : best),
-    undefined
-  );
-  const hasFailed = failed !== undefined;
 
   const go = (target: number | undefined) => {
     if (target !== undefined && target !== index && target >= 0 && target < total) {
@@ -249,12 +256,12 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       ref={ref}
       role="group"
       aria-label={strings.label}
-      className={mergeClasses('nodrag', styles.root, showCompactMenu && styles.compact, className)}
+      className={mergeClasses('nodrag', styles.root, useCompactFailureLayout && styles.compact, className)}
       data-node-pager=""
       onKeyDown={isolateKeys}
       onClick={isolateClick}
     >
-      {hasFailed && !showCompactMenu ? (
+      {hasFailed && !useCompactFailureLayout ? (
         <Button
           appearance="transparent"
           size="small"
@@ -273,7 +280,7 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       <Button
         appearance="transparent"
         size="small"
-        className={showCompactMenu ? styles.compactArrow : undefined}
+        className={useCompactFailureLayout ? styles.compactArrow : undefined}
         icon={<ChevronLeftRegular />}
         aria-label={strings.previous}
         title={strings.previous}
@@ -287,7 +294,7 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
       {editable ? (
         <input
           ref={inputRef}
-          className={mergeClasses(styles.input, showCompactMenu && styles.compactInput)}
+          className={mergeClasses(styles.input, useCompactFailureLayout && styles.compactInput)}
           type="text"
           inputMode="numeric"
           aria-label={strings.input(total)}
@@ -304,16 +311,16 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
         />
       ) : null}
       <span
-        className={mergeClasses(styles.position, showCompactMenu && styles.compactPosition)}
+        className={mergeClasses(styles.position, useCompactFailureLayout && styles.compactPosition)}
         aria-live="off"
-        dir={showCompactMenu ? 'ltr' : undefined}
+        dir={useCompactFailureLayout ? 'ltr' : undefined}
       >
         {editable ? `/ ${total}` : strings.position(index + 1, total)}
       </span>
       <Button
         appearance="transparent"
         size="small"
-        className={showCompactMenu ? styles.compactArrow : undefined}
+        className={useCompactFailureLayout ? styles.compactArrow : undefined}
         icon={<ChevronRightRegular />}
         aria-label={strings.next}
         title={strings.next}
@@ -324,7 +331,7 @@ export const NodeIterationPager = forwardRef<HTMLDivElement, NodeIterationPagerP
         }}
         data-pager-action="next"
       />
-      {hasFailed && !showCompactMenu ? (
+      {hasFailed && !useCompactFailureLayout ? (
         <Button
           appearance="transparent"
           size="small"

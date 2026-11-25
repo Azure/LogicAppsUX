@@ -1,6 +1,7 @@
 import { default as CONSTANTS } from '../../common/constants';
 import { isExpressionConnectionMapping } from '../../common/models/workflow';
-import { saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
+import { resetWorkflowState } from '../state/global';
+import { beginHistoryTransaction, endHistoryTransaction, saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
 import { renameConnectionExpressionParameter } from '../state/connection/connectionSlice';
 import { pasteNode, setIsWorkflowDirty } from '../state/workflow/workflowSlice';
@@ -12,24 +13,149 @@ import type { Middleware } from '@reduxjs/toolkit';
 import { setWorkflowExtractionBusy } from '../state/designerView/designerViewSlice';
 
 type DesignerThunk = (dispatch: (action: unknown) => unknown, getState: () => unknown, extraArgument: unknown) => unknown;
+type ThunkGuardMeta = {
+  workflowGeneration?: number;
+  historyTransaction?: string;
+  blockedByHistoryTransaction?: boolean;
+};
+
 const workflowGenerationMeta = 'workflowGeneration';
+const historyTransactionMeta = 'historyTransaction';
+const historyTransactionBlockedMeta = 'blockedByHistoryTransaction';
+const thunkMeta = new WeakMap<Function, ThunkGuardMeta>();
+
+const wrapThunkWithMeta = (thunk: DesignerThunk, patch: ThunkGuardMeta): DesignerThunk => {
+  const wrapped: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) => thunk(thunkDispatch, thunkGetState, extraArgument);
+  thunkMeta.set(wrapped, { ...thunkMeta.get(thunk), ...patch });
+  return wrapped;
+};
+
+// Tags an action or thunk with the owning history transaction ID so historyTransactionGuardMiddleware
+// lets the transaction's own nested async dispatches through while blocking unrelated mutations.
+export const withHistoryTransaction = <TAction>(action: TAction, transactionId: string): TAction => {
+  if (typeof action === 'function') {
+    return wrapThunkWithMeta(action as unknown as DesignerThunk, { historyTransaction: transactionId }) as unknown as TAction;
+  }
+  if (!action || typeof action !== 'object') {
+    return action;
+  }
+  return {
+    ...(action as Record<string, unknown>),
+    meta: {
+      ...((action as { meta?: Record<string, unknown> }).meta ?? {}),
+      [historyTransactionMeta]: transactionId,
+    },
+  } as TAction;
+};
+
+const markBlockedByHistoryTransaction = <TAction>(action: TAction): TAction => {
+  if (typeof action === 'function') {
+    return wrapThunkWithMeta(action as unknown as DesignerThunk, { blockedByHistoryTransaction: true }) as unknown as TAction;
+  }
+  if (!action || typeof action !== 'object') {
+    return action;
+  }
+  return {
+    ...(action as Record<string, unknown>),
+    meta: {
+      ...((action as { meta?: Record<string, unknown> }).meta ?? {}),
+      [historyTransactionBlockedMeta]: true,
+    },
+  } as TAction;
+};
+
+// Non-mutating host/lifecycle actions that must remain allowed while a history transaction awaits
+// async metadata (for example host read-only/monitoring locks, extraction locks, workflow reset,
+// and RTK lifecycle wrappers whose bodies already guard on activeHistoryTransactions).
+const isAllowedDuringHistoryTransaction = (type: unknown): boolean =>
+  typeof type === 'string' &&
+  (type === resetWorkflowState.type ||
+    type.startsWith('designerOptions/') ||
+    type.startsWith('designerView/') ||
+    type.startsWith('dev/') ||
+    type.startsWith('onUndoClick/') ||
+    type.startsWith('onRedoClick/') ||
+    type.startsWith('duplicateOperations/'));
+
+// Keeps multi-step async mutations (e.g. Shared Duplicate awaiting scope metadata) atomic on the
+// undo stack: only actions belonging to the active transaction (plus non-mutating host/lifecycle
+// actions) may run until the transaction ends. Unrelated thunks started mid-transaction have their
+// nested dispatches marked blocked so delayed callbacks cannot leak after the transaction finishes.
+export const historyTransactionGuardMiddleware: Middleware = () => {
+  let activeTransactionId: string | undefined;
+
+  return (next) => (action: any) => {
+    if (typeof action === 'function') {
+      const meta = thunkMeta.get(action);
+      if (meta?.blockedByHistoryTransaction) {
+        const blockedThunk: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) =>
+          action((nestedAction: unknown) => thunkDispatch(markBlockedByHistoryTransaction(nestedAction)), thunkGetState, extraArgument);
+        thunkMeta.set(blockedThunk, meta);
+        return next(blockedThunk as any);
+      }
+      if (meta?.historyTransaction !== undefined) {
+        const txId = meta.historyTransaction;
+        const txBoundThunk: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) =>
+          action((nestedAction: unknown) => thunkDispatch(withHistoryTransaction(nestedAction, txId)), thunkGetState, extraArgument);
+        thunkMeta.set(txBoundThunk, meta);
+        return next(txBoundThunk as any);
+      }
+      if (activeTransactionId !== undefined) {
+        const blockedThunk: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) =>
+          action((nestedAction: unknown) => thunkDispatch(markBlockedByHistoryTransaction(nestedAction)), thunkGetState, extraArgument);
+        thunkMeta.set(blockedThunk, { ...meta, blockedByHistoryTransaction: true });
+        return next(blockedThunk as any);
+      }
+      return next(action);
+    }
+
+    if (resetWorkflowState.match(action)) {
+      activeTransactionId = undefined;
+      return next(action);
+    }
+
+    if (action?.meta?.[historyTransactionBlockedMeta] && !isAllowedDuringHistoryTransaction(action?.type)) {
+      return action;
+    }
+
+    const actionTxId: string | undefined = action?.meta?.[historyTransactionMeta];
+    if (beginHistoryTransaction.match(action)) {
+      if (activeTransactionId !== undefined && actionTxId !== activeTransactionId) {
+        return action;
+      }
+      if (actionTxId !== undefined) {
+        activeTransactionId = actionTxId;
+      }
+      return next(action);
+    }
+
+    if (endHistoryTransaction.match(action)) {
+      if (activeTransactionId !== undefined && actionTxId !== activeTransactionId) {
+        return action;
+      }
+      if (actionTxId !== undefined && actionTxId === activeTransactionId) {
+        activeTransactionId = undefined;
+      }
+      return next(action);
+    }
+
+    if (activeTransactionId !== undefined && actionTxId !== activeTransactionId && !isAllowedDuringHistoryTransaction(action?.type)) {
+      return action;
+    }
+
+    return next(action);
+  };
+};
 
 // Only the extraction transaction may modify the editor during persistence. Thunks
 // retain the graph generation in which they started, so callbacks from the previous
 // graph remain blocked even if they resume after the extraction lock is released.
 export const extractionMutationGuardMiddleware: Middleware = ({ dispatch, getState }) => {
   let workflowGeneration = 0;
-  const thunkGenerations = new WeakMap<Function, number>();
-
-  const bindThunkToGeneration = (thunk: DesignerThunk, generation: number): DesignerThunk => {
-    const boundThunk: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) => thunk(thunkDispatch, thunkGetState, extraArgument);
-    thunkGenerations.set(boundThunk, generation);
-    return boundThunk;
-  };
 
   const bindActionToGeneration = (action: any, generation: number): any => {
     if (typeof action === 'function') {
-      return bindThunkToGeneration(action, generation);
+      return wrapThunkWithMeta(action, { workflowGeneration: generation });
     }
     if (!action || typeof action !== 'object') {
       return action;
@@ -44,7 +170,8 @@ export const extractionMutationGuardMiddleware: Middleware = ({ dispatch, getSta
   };
 
   return (next) => (action: any) => {
-    const actionGeneration = typeof action === 'function' ? thunkGenerations.get(action) : action?.meta?.[workflowGenerationMeta];
+    const actionGeneration =
+      typeof action === 'function' ? thunkMeta.get(action)?.workflowGeneration : action?.meta?.[workflowGenerationMeta];
     if (actionGeneration !== undefined && actionGeneration !== workflowGeneration) {
       return action;
     }
