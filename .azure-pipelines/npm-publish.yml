@@ -1,33 +1,23 @@
-# Manual npm release build for LogicAppsUX, driven by one canonical stable version (X.Y.Z).
+# Manual npm release publish pipeline for LogicAppsUX.
 #
-# Versioning and release publication stay in GitHub (version-release.yml). This pipeline takes the
-# canonical stable version, resolves refs/tags/vX.Y.Z^{commit} from the local checked-out repository,
-# and builds that exact commit with the recipe (scripts/ado-npm-publisher*.cjs and this YAML) from
-# the reviewed pipeline ref. Released tags never need to carry this pipeline.
-# Select a release that is already complete and stable; the pipeline does not look up release status.
-# The product build scripts (pnpm build:lib, scripts/update-versions.js) come from the released tree.
-# Release assets (VSIX, iframe ZIP) are never read or treated as npm packages.
-#
-# This pipeline warns about absent literal CSS export files; all other archive checks still fail closed.
-# Released manifests and tarballs are not patched.
-# Component Governance scans the agent build directory, including the retained release worktree.
-# Actual detection of the tagged dependency inputs must be verified in ADO.
-#
-# Publish follows successful Release validation automatically, subject to the WIF service connection checks.
+# Versioning and GitHub Release creation stay in .github/workflows/version-release.yml.
+# Given a release version (e.g. 5.1024.0), this pipeline checks out the existing v<version>
+# tag into a clean detached worktree, builds and packs the 9 publishable packages, and
+# publishes any missing packages to the Azure Artifacts npm feed.
 trigger: none
 pr: none
 schedules: []
 
 parameters:
   - name: releaseVersion
-    displayName: Stable release version (e.g. 5.1024.0)
+    displayName: Release version (e.g. 5.1024.0)
     type: string
     default: ''
 
 variables:
-  ArtifactName: logicappsux-npm-release-cohort
-  PackageOutput: '$(Build.ArtifactStagingDirectory)/logicappsux-npm-release-cohort'
   NpmRegistry: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
+  TarballDir: '$(Agent.TempDirectory)/npm-tarballs'
+  PublishNpmrc: '$(Agent.TempDirectory)/npm-publish/.npmrc'
 
 resources:
   repositories:
@@ -51,20 +41,16 @@ extends:
         image: windows-latest
         os: windows
     stages:
-      - stage: Release
-        displayName: Build and verify npm packages for one stable release version
+      - stage: Publish
+        displayName: Build and publish npm packages
+        lockBehavior: sequential
+        condition: succeeded()
         jobs:
-          - job: BuildRelease
-            displayName: Resolve local tag, build exact source, pack and validate
+          - job: BuildAndPublish
+            displayName: Build release tag and publish to npm feed
             workspace:
               clean: all
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  targetPath: '$(PackageOutput)'
-                  artifactName: '$(ArtifactName)'
             steps:
-              # This checkout provides both the recipe and tag objects; scripts do not fetch source again.
               - checkout: self
                 clean: true
                 fetchTags: true
@@ -74,339 +60,27 @@ extends:
                 displayName: Use Node 24
                 inputs:
                   version: '24.x'
-              - bash: node scripts/ado-npm-publisher.cjs build-release-artifact
-                displayName: Resolve version tag, build its exact commit and validate nine tarballs
+              - bash: node scripts/ado-npm-publisher.cjs build
+                displayName: Build and pack release packages
                 workingDirectory: '$(Build.Repository.LocalPath)'
                 env:
-                  BASH_ENV: /dev/null
                   RELEASE_VERSION: ${{ parameters.releaseVersion }}
-                  BUILD_REASON: '$(Build.Reason)'
-                  BUILD_ID: '$(Build.BuildId)'
-                  RECIPE_SHA: '$(Build.SourceVersion)'
-                  SOURCE_REPOSITORY: '$(Build.Repository.Name)'
                   AGENT_TMP: '$(Agent.TempDirectory)'
                   RELEASE_SCAN_ROOT: '$(Agent.BuildDirectory)'
-                  ARTIFACT_ROOT: '$(PackageOutput)'
-              # Publish the manifest digest as a job output so the verifier pins the exact uploaded manifest.
-              - bash: |
-                  set -euo pipefail
-                  python3 -I - <<'PY'
-                  import hashlib, json, os, re, stat
-                  path = os.path.join(os.environ['PACKAGE_OUTPUT'], 'publisher-artifact.json')
-                  fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
-                  with os.fdopen(fd, 'rb') as handle:
-                      if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
-                          raise SystemExit('Manifest is not a regular file.')
-                      data = handle.read(128 * 1024 + 1)
-                  if len(data) > 128 * 1024:
-                      raise SystemExit('Manifest is too large.')
-                  sha = json.loads(data)['source']['verifiedSha']
-                  if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha):
-                      raise SystemExit('Manifest source SHA is invalid.')
-                  print('##vso[task.setvariable variable=ManifestSha256;isOutput=true]' + hashlib.sha256(data).hexdigest())
-                  print('##vso[task.setvariable variable=SourceSha;isOutput=true]' + sha)
-                  PY
-                name: manifest
-                displayName: Record manifest digest and source SHA
-                env:
-                  BASH_ENV: /dev/null
-                  PACKAGE_OUTPUT: '$(PackageOutput)'
-
-          # Artifact-only consumer: no repository checkout, no tool from the artifact is executed, and every
-          # byte is checked against this run's manifest digest, release version tag, build ID and recipe commit.
-          - job: VerifyRelease
-            displayName: Verify the same-run artifact without a checkout
-            dependsOn: BuildRelease
-            variables:
-              ExpectedManifestSha256: $[ dependencies.BuildRelease.outputs['manifest.ManifestSha256'] ]
-              ExpectedSourceSha: $[ dependencies.BuildRelease.outputs['manifest.SourceSha'] ]
-              ArtifactDir: '$(Pipeline.Workspace)/release-artifact'
-            templateContext:
-              inputs:
-                - input: pipelineArtifact
-                  buildType: current
-                  artifactName: '$(ArtifactName)'
-                  targetPath: '$(ArtifactDir)'
-            steps:
-              - checkout: none
-              - template: /.azure-pipelines/npm-verify-release.steps.yml@self
-                parameters:
-                  releaseVersion: ${{ parameters.releaseVersion }}
-
-          # Release never writes to the feed; Publish requires the protected service connection.
-          - job: ProductionPublishNotActivated
-            displayName: Release stage remains validation-only
-            dependsOn: VerifyRelease
-            steps:
-              - checkout: none
-              - bash: |
-                  set -euo pipefail
-                  echo '##vso[task.logissue type=warning]Release stage validated artifacts only. Feed writes require the protected Publish stage.'
-                displayName: Report that Release stage did not write to npm
-                env:
-                  BASH_ENV: /dev/null
-
-      - stage: Publish
-        displayName: Publish verified npm release cohort
-        dependsOn: Release
-        # Serialize this pipeline's Publish stages, not writers outside this pipeline.
-        lockBehavior: sequential
-        # Stage conditions use dependencies; job variables below use stageDependencies.
-        condition: and(
-          not(canceled()),
-          eq(dependencies.Release.result, 'Succeeded'),
-          eq(dependencies.Release.outputs['VerifyRelease.verification.ArtifactVerified'], 'true'),
-          eq(variables['Build.Reason'], 'Manual'),
-          eq(variables['Build.SourceBranch'], 'refs/heads/hotfix/v1.23123')
-          )
-        jobs:
-          - job: PublishRelease
-            displayName: Publish release cohort with reconciled readback
-            workspace:
-              clean: all
-            variables:
-              ArtifactDir: '$(Pipeline.Workspace)/release-artifact'
-              NpmWriter: '$(Agent.TempDirectory)/npm-writer-private'
-              ExpectedManifestSha256: $[ stageDependencies.Release.BuildRelease.outputs['manifest.ManifestSha256'] ]
-              ExpectedSourceSha: $[ stageDependencies.Release.BuildRelease.outputs['manifest.SourceSha'] ]
-            templateContext:
-              inputs:
-                - input: pipelineArtifact
-                  buildType: current
-                  artifactName: '$(ArtifactName)'
-                  targetPath: '$(ArtifactDir)'
-            steps:
-              - checkout: none
-              - template: /.azure-pipelines/npm-verify-release.steps.yml@self
-                parameters:
-                  releaseVersion: ${{ parameters.releaseVersion }}
-                  prepareWriter: true
-              - task: UseNode@1
-                displayName: Use Node 24
-                inputs:
-                  version: '24.x'
+                  TARBALL_DIR: '$(TarballDir)'
+                  NPM_REGISTRY: '$(NpmRegistry)'
+                  PUBLISH_NPMRC: '$(PublishNpmrc)'
               - task: npmAuthenticate@0
-                displayName: Authenticate npm writer via protected WIF
+                displayName: Authenticate npm feed via WIF
                 inputs:
-                  workingFile: '$(NpmWriter)/.npmrc'
+                  workingFile: '$(PublishNpmrc)'
                   workloadIdentityServiceConnection: 21d5a1d8-11d3-425c-8d3a-e7f088725481
                   feedUrl: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
-              - bash: |
-                  set -euo pipefail
-                  python3 -I - <<'PY'
-                  import hashlib
-                  import json
-                  import os
-                  import re
-                  import subprocess
-                  import tempfile
-                  from pathlib import Path
-
-                  os.umask(0o077)
-                  root = Path(os.environ['DIR']).resolve()
-                  registry = os.environ['REGISTRY']
-                  version = os.environ['RELEASE_VERSION']
-                  auth_line = re.compile(r'//pkgs\.dev\.azure\.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/:_authToken=\S+')
-                  if registry != 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/':
-                      raise SystemExit('Publish registry endpoint is not approved.')
-                  npmrc = root / '.npmrc'
-                  if not npmrc.is_file():
-                      raise SystemExit('Writer .npmrc is missing.')
-                  if not any(auth_line.fullmatch(line.strip()) for line in npmrc.read_text(encoding='utf-8').splitlines()):
-                      raise SystemExit('Scoped npm _authToken line is missing after npmAuthenticate.')
-                  cohort = json.loads((root / 'cohort.json').read_text(encoding='utf-8'))
-                  rows = cohort.get('packages')
-                  if not isinstance(rows, list) or len(rows) != 9:
-                      raise SystemExit('cohort.json must contain exactly nine validated package rows.')
-
-                  numeric_semver = r'(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)'
-                  inventory_version = re.compile(numeric_semver + r'(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?')
-
-                  def parse_numeric_semver(value):
-                      if not re.fullmatch(numeric_semver, value):
-                          raise SystemExit('Encountered non-numeric semver; failing closed.')
-                      parts = value.split('.')
-                      return int(parts[0]), int(parts[1]), int(parts[2])
-
-                  target_key = parse_numeric_semver(version)
-                  base_env = {'PATH': os.environ['PATH'], 'HOME': str(root)}
-                  write_root = root / 'write-cache'
-                  write_root.mkdir(exist_ok=True)
-
-                  def run_npm(args, cache_dir, timeout_seconds):
-                      command = [
-                          'npm',
-                          *args,
-                          '--registry',
-                          registry,
-                          '--userconfig',
-                          str(npmrc),
-                          '--globalconfig',
-                          '/dev/null',
-                          '--strict-ssl',
-                          'true',
-                          '--ignore-scripts',
-                          '--fetch-retries',
-                          '0',
-                          '--fetch-timeout',
-                          '60000',
-                          '--logs-max',
-                          '0',
-                          '--cache',
-                          str(cache_dir),
-                      ]
-                      return subprocess.run(
-                          command,
-                          cwd=root,
-                          env=base_env,
-                          stdin=subprocess.DEVNULL,
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.DEVNULL,
-                          text=True,
-                          timeout=timeout_seconds,
-                          check=False,
-                      )
-
-                  def read_npm(args, timeout_seconds):
-                      # A fresh cache prevents a retry or readback from proving state using local bytes.
-                      with tempfile.TemporaryDirectory(dir=root, prefix='read-cache-') as cache:
-                          return run_npm([*args, '--prefer-online'], cache, timeout_seconds)
-
-                  def read_json(args, spec):
-                      try:
-                          result = read_npm([*args, '--json'], 90)
-                          if result.returncode == 0:
-                              return json.loads(result.stdout)
-                      except (subprocess.TimeoutExpired, ValueError):
-                          pass
-                      raise SystemExit(f'Registry metadata is inconclusive for {spec}.')
-
-                  def inventory(name):
-                      payload = read_json(['view', name, 'name', 'version', 'versions', 'dist-tags'], name)
-                      if not isinstance(payload, dict) or sorted(payload.keys()) != ['dist-tags', 'name', 'version', 'versions']:
-                          raise SystemExit(f'Inventory shape is invalid for {name}.')
-                      if payload['name'] != name:
-                          raise SystemExit(f'Inventory package identity mismatch for {name}.')
-                      versions = payload['versions']
-                      if not isinstance(versions, list) or not all(isinstance(v, str) and inventory_version.fullmatch(v) for v in versions):
-                          raise SystemExit(f'Inventory versions list is invalid for {name}.')
-                      if any(v.startswith(version + '+') for v in versions):
-                          raise SystemExit(f'An existing version has the same SemVer precedence as {name}@{version}.')
-                      tags = payload['dist-tags']
-                      if not isinstance(tags, dict) or 'latest' not in tags or not isinstance(tags['latest'], str):
-                          raise SystemExit(f'Inventory dist-tags are invalid for {name}.')
-                      if payload['version'] != tags['latest']:
-                          raise SystemExit(f'Inventory latest tag is unstable for {name}.')
-                      if any(tagged not in versions for tagged in tags.values()):
-                          raise SystemExit(f'Inventory contains an unlisted tagged version for {name}.')
-                      latest_key = parse_numeric_semver(tags['latest'])
-                      if latest_key > target_key:
-                          raise SystemExit(f'Latest published version for {name} is newer than target {version}.')
-                      return payload
-
-                  def verify_exact_present(row):
-                      name, file_name = row['name'], row['file']
-                      spec = f'{name}@{version}'
-                      payload = read_json(['view', spec, 'name', 'version', 'dist.integrity', 'dist.tarball'], spec)
-                      if not isinstance(payload, dict) or sorted(payload.keys()) != ['dist.integrity', 'dist.tarball', 'name', 'version']:
-                          raise SystemExit(f'Exact version payload shape is invalid for {spec}.')
-                      if payload['name'] != name or payload['version'] != version or payload['dist.integrity'] != row['integrity']:
-                          raise SystemExit(f'Exact version metadata mismatch for {spec}.')
-                      package = name.split('/', 1)[1]
-                      attachment = f'{package}/-/{package}-{version}.tgz'
-                      legacy_registry = 'https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/'
-                      allowed_roots = f'(?:{re.escape(registry)}|{re.escape(legacy_registry)})'
-                      # Accept only the exact attachment route, optionally with the npm scope/slash escaped.
-                      route = allowed_roots + r'(?:@|%40)microsoft(?:/|%2[fF])' + re.escape(attachment)
-                      tarball = payload['dist.tarball']
-                      if not isinstance(tarball, str) or not re.fullmatch(route, tarball):
-                          raise SystemExit(f'Unapproved registry attachment for {spec}.')
-                      # Fetch that attachment directly using the authenticated alias. npm handles service redirects.
-                      with tempfile.TemporaryDirectory(dir=root, prefix='readback-') as readback:
-                          try:
-                              pack = read_npm(['pack', f'{registry}@microsoft/{attachment}', '--pack-destination', readback], 120)
-                          except subprocess.TimeoutExpired:
-                              raise SystemExit(f'Exact readback timed out for {spec}.')
-                          packed_path = Path(readback) / file_name
-                          if pack.returncode != 0 or not packed_path.is_file():
-                              raise SystemExit(f'Exact readback failed for {spec}.')
-                          if packed_path.stat().st_size != row['bytes'] or hashlib.sha256(packed_path.read_bytes()).hexdigest() != row['sha256']:
-                              raise SystemExit(f'Exact readback bytes mismatch for {spec}.')
-
-                  states = []
-                  for row in rows:
-                      name = row['name']
-                      file_name = row['file']
-                      if not isinstance(name, str) or not re.fullmatch(r'@microsoft/[a-z0-9-]+', name):
-                          raise SystemExit('cohort.json contains invalid package name.')
-                      if row.get('version') != version:
-                          raise SystemExit(f'cohort.json version mismatch for {name}.')
-                      if not isinstance(file_name, str) or '/' in file_name:
-                          raise SystemExit(f'cohort.json file is invalid for {name}.')
-                      local_file = root / file_name
-                      if (not local_file.is_file() or local_file.stat().st_size != row['bytes']
-                              or hashlib.sha256(local_file.read_bytes()).hexdigest() != row['sha256']):
-                          raise SystemExit(f'Private writer tarball does not match the verified artifact for {name}.')
-                      inv = inventory(name)
-                      latest = inv['dist-tags']['latest']
-                      target_present = version in inv['versions']
-                      if target_present:
-                          if latest != version:
-                              raise SystemExit(f'Target version already exists but latest is {latest} for {name}.')
-                          verify_exact_present(row)
-                          states.append({'row': row, 'present': True})
-                      else:
-                          states.append({'row': row, 'present': False})
-
-                  for state in states:
-                      row = state['row']
-                      name = row['name']
-                      file_name = row['file']
-                      spec = f'{name}@{version}'
-                      if state['present']:
-                          print(f'Exact latest version already present for {spec}; no publish needed.')
-                          continue
-
-                      inv = inventory(name)
-                      latest = inv['dist-tags']['latest']
-                      if version in inv['versions']:
-                          if latest != version:
-                              raise SystemExit(f'Recheck found existing {spec} but latest is {latest}; refusing write.')
-                          verify_exact_present(row)
-                          print(f'Recheck found exact latest version already present for {spec}; no publish needed.')
-                          continue
-
-                      publish_result = None
-                      publish_timeout = False
-                      try:
-                          publish_result = run_npm(['publish', f'./{file_name}', '--tag', 'latest'], write_root, 180)
-                      except subprocess.TimeoutExpired:
-                          publish_timeout = True
-
-                      post_inv = inventory(name)
-                      if version not in post_inv['versions'] or post_inv['dist-tags']['latest'] != version:
-                          state_desc = 'timeout' if publish_timeout else f'exit {publish_result.returncode}'
-                          raise SystemExit(f'Publish lacked exact evidence for {spec} after {state_desc}.')
-                      verify_exact_present(row)
-                      if publish_timeout:
-                          print(f'Publish timed out but exact latest evidence is confirmed for {spec}.')
-                      elif publish_result.returncode == 0:
-                          print(f'Published and verified exact latest {spec}.')
-                      else:
-                          print(f'Publish returned nonzero but exact latest evidence is confirmed for {spec}.')
-
-                  # Check the whole cohort's latest tags after writing. Exact versions are immutable,
-                  # and the bytes were freshly read from this same feed above.
-                  for row in rows:
-                      name = row['name']
-                      if inventory(name)['dist-tags']['latest'] != version:
-                          raise SystemExit(f'Final registry latest is not {version} for {name}.')
-                  print(f'Azure Artifacts npm base feed confirmed all nine exact versions, artifact digests, and latest={version}.')
-                  PY
-                displayName: Preflight, publish, and reconcile npm release cohort
-                workingDirectory: '$(NpmWriter)'
+              - bash: node scripts/ado-npm-publisher.cjs publish
+                displayName: Publish packages to Azure Artifacts npm feed
+                workingDirectory: '$(Build.Repository.LocalPath)'
                 env:
-                  BASH_ENV: /dev/null
-                  DIR: '$(NpmWriter)'
-                  REGISTRY: '$(NpmRegistry)'
                   RELEASE_VERSION: ${{ parameters.releaseVersion }}
+                  TARBALL_DIR: '$(TarballDir)'
+                  NPM_REGISTRY: '$(NpmRegistry)'
+                  PUBLISH_NPMRC: '$(PublishNpmrc)'

@@ -1,287 +1,270 @@
-const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
-const {
-    COHORT,
-    branchProvenance,
-    buildManifestContract,
-    materializeDetachedSourceWorktree,
-    parseReleaseRef,
-    readVerifiedContracts,
-    releaseRunSource,
-    resolveLocalReleaseTag,
-    restoreTrackedReleaseSource,
-    snapshotCheckout,
-    verifyCheckoutHead,
-    verifyCleanCheckout,
-    verifyReleaseMetadata,
-} =
-    require('./ado-npm-publisher-lib.cjs');
-const { authenticateFeed, classifyPackageState, createRegistry, npmRunner, publishPackage, readNpmAuthorization, validateArtifactFiles } =
-    require('./ado-npm-publisher-artifact.cjs');
 
-function sanitizeAgentOutput(value) {
-    return String(value).replace(/#/g, '# ');
+const DEFAULT_REGISTRY = 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/';
+const PNPM_MIRROR_BASE = 'https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry';
+
+// Publishable workspace libraries in dependency order (matches scripts/update-versions.js).
+const PACKAGES = [
+  { directory: 'libs/logic-apps-shared', name: '@microsoft/logic-apps-shared' },
+  { directory: 'libs/designer-ui', name: '@microsoft/designer-ui' },
+  { directory: 'libs/designer-ui-v2', name: '@microsoft/designer-ui-v2' },
+  { directory: 'libs/chatbot', name: '@microsoft/logic-apps-chatbot' },
+  { directory: 'libs/designer', name: '@microsoft/logic-apps-designer' },
+  { directory: 'libs/designer-v2', name: '@microsoft/logic-apps-designer-v2' },
+  { directory: 'libs/data-mapper', name: '@microsoft/logic-apps-data-mapper' },
+  { directory: 'libs/data-mapper-v2', name: '@microsoft/logic-apps-data-mapper-v2' },
+  { directory: 'libs/vscode-extension', name: '@microsoft/vscode-extension-logic-apps' },
+];
+
+function parseReleaseVersion(raw) {
+  const value = typeof raw === 'string' ? raw.trim() : '';
+  if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(value)) {
+    throw new Error(`Invalid releaseVersion '${value}'. Expected a version like 5.1024.0 (without the 'v' prefix).`);
+  }
+  return value;
 }
 
-async function prepareArtifact(env, log) {
-    const snapshot = JSON.parse(fs.readFileSync(env.CONTRACT_FILE, 'utf8'));
-    verifyCheckoutHead(env.SOURCE_ROOT, snapshot.verified.commitSha);
-    const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, snapshot.verified, snapshot.contracts, { prepare: true });
-    log(`Validated ${artifact.packages.length} tarballs; feed authentication and publication were not attempted.`);
+function tarballName(packageName, version) {
+  return `${packageName.replace(/^@/, '').replace('/', '-')}-${version}.tgz`;
 }
 
-function bootstrapBranchPnpm(sourceRoot, home, exec) {
-    // snapshotCheckout already checked this pin against the committed, reviewed manifest.
-    const { packageManager } = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'package.json'), 'utf8'));
-    const pin = /^pnpm@(\d+\.\d+\.\d+)\+sha512\.([a-f0-9]{128})$/.exec(packageManager);
-    assert(pin, 'Expected pnpm with an exact version and SHA-512 pin.');
-    const [, version, sha512] = pin;
-    const archive = path.join(home, 'pnpm.tgz');
-
-    // The lockfile mirror serves the tarball but not Corepack's version metadata endpoint.
-    const mirror = 'https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry';
-    exec('curl', [
-        '--disable', '--fail', '--silent', '--show-error', '--location', '--max-redirs', '1',
-        '--proto', '=https', '--proto-redir', '=https', '--max-time', '120', '--max-filesize', '10000000',
-        '--output', archive, `${mirror}/pnpm/-/pnpm-${version}.tgz`,
-    ]);
-    assert(
-        createHash('sha512').update(fs.readFileSync(archive)).digest('hex') === sha512,
-        'Downloaded pnpm archive does not match the pinned SHA-512.'
-    );
-    exec('tar', ['-xzf', archive, '-C', home]);
-    // Nested build scripts also invoke pnpm by name.
-    const pnpm = path.join(home, 'bin', 'pnpm');
-    fs.symlinkSync(path.join(home, 'package', 'bin', 'pnpm.cjs'), pnpm);
-    return pnpm;
+function runCommand(command, args, options, run = spawnSync) {
+  const result = run(command, args, options);
+  if (result.error || result.status !== 0) {
+    const detail = result.error?.message ?? `exit ${result.status ?? 'unknown'}`;
+    const stderr = typeof result.stderr === 'string' && result.stderr.trim() ? `\n${result.stderr.trim()}` : '';
+    throw new Error(`${command} ${args[0] ?? ''} failed (${detail}).${stderr}`.trim());
+  }
+  return result;
 }
 
-function buildCohort(env, snapshot, run = spawnSync, writeOutput = text => process.stdout.write(text), childEnv) {
-    const { verified } = snapshot;
-    if (verified.kind === 'branch-e2e') {
-        assert.deepEqual(verified, branchProvenance(env), 'Verified branch provenance mismatch.');
-    } else {
-        assert.equal(verified.version, parseReleaseRef(`refs/tags/${verified.releaseTag}`).version, 'Verified release version mismatch.');
+function resolveReleaseTag(repoRoot, version, run = spawnSync) {
+  const tag = `v${version}`;
+  const ref = `refs/tags/${tag}`;
+  const gitOptions = { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] };
+
+  const showRef = run('git', ['show-ref', '--verify', '--hash', '--', ref], gitOptions);
+  if (showRef.error || showRef.status !== 0) {
+    throw new Error(`Release tag '${tag}' was not found in the local repository.`);
+  }
+  const tagSha = showRef.stdout.trim();
+
+  const revParse = run('git', ['rev-parse', '--verify', `${tagSha}^{commit}`], gitOptions);
+  if (revParse.error || revParse.status !== 0) {
+    throw new Error(`Release tag '${tag}' does not resolve to a commit.`);
+  }
+  return { tag, ref, commitSha: revParse.stdout.trim() };
+}
+
+// 1ES Linux network isolation blocks Corepack from reaching registry.npmjs.org,
+// so download the exact pnpm version declared in package.json from the 1ES mirror.
+function bootstrapPnpm(sourceRoot, pnpmHome, run = spawnSync) {
+  const { packageManager } = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'package.json'), 'utf8'));
+  const match = /^pnpm@(\d+\.\d+\.\d+)(?:\+sha512\.([a-f0-9]{128}))?$/.exec(packageManager ?? '');
+  if (!match) {
+    throw new Error(`Unsupported packageManager '${packageManager ?? ''}' in package.json.`);
+  }
+  const [, pnpmVersion, expectedSha512] = match;
+  const archive = path.join(pnpmHome, `pnpm-${pnpmVersion}.tgz`);
+  const url = `${PNPM_MIRROR_BASE}/pnpm/-/pnpm-${pnpmVersion}.tgz`;
+
+  runCommand(
+    'curl',
+    ['--fail', '--silent', '--show-error', '--location', '--output', archive, url],
+    { cwd: pnpmHome, stdio: 'inherit', timeout: 120_000 },
+    run
+  );
+
+  if (expectedSha512) {
+    const actualSha512 = createHash('sha512').update(fs.readFileSync(archive)).digest('hex');
+    if (actualSha512 !== expectedSha512) {
+      throw new Error(`Downloaded pnpm@${pnpmVersion} archive SHA-512 does not match packageManager pin.`);
     }
-    const { version } = verified;
-    fs.mkdirSync(env.ARTIFACT_ROOT);
-    const exec = (command, args) => {
-        const result = run(command, args, {
-            cwd: env.SOURCE_ROOT, stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8',
-            timeout: 1_800_000, maxBuffer: 64 * 1024 * 1024, env: childEnv,
-        });
-        // Source and dependency output must not become Azure Pipelines logging commands.
-        for (const output of [result.stdout, result.stderr]) {
-            if (output) writeOutput(sanitizeAgentOutput(output));
-        }
-        if (result.error || result.status !== 0) {
-            throw new Error(`${command} failed: ${result.error?.message ?? `exit ${result.status ?? 'unavailable'}`}.`);
-        }
+  }
+
+  runCommand('tar', ['-xzf', archive, '-C', pnpmHome], { cwd: pnpmHome, stdio: 'inherit', timeout: 60_000 }, run);
+
+  const binDir = path.join(pnpmHome, 'bin');
+  fs.mkdirSync(binDir, { recursive: true });
+  const pnpmBin = path.join(binDir, 'pnpm');
+  fs.symlinkSync(path.join(pnpmHome, 'package', 'bin', 'pnpm.cjs'), pnpmBin);
+  return { pnpmBin, binDir };
+}
+
+function buildRelease(env, { run = spawnSync, log = console.log, repoRoot = process.cwd() } = {}) {
+  const version = parseReleaseVersion(env.RELEASE_VERSION);
+  const agentTmp = env.AGENT_TMP || os.tmpdir();
+  const tarballDir = env.TARBALL_DIR || path.join(agentTmp, 'npm-tarballs');
+  const registry = env.NPM_REGISTRY || DEFAULT_REGISTRY;
+  const npmrcPath = env.PUBLISH_NPMRC;
+
+  const { tag, commitSha } = resolveReleaseTag(repoRoot, version, run);
+  log(`Resolved ${tag} to ${commitSha}.`);
+
+  // Retain the release worktree under RELEASE_SCAN_ROOT (Agent.BuildDirectory) when set
+  // so 1ES Component Governance scans the released tag's lockfile and node_modules.
+  const scanRoot = env.RELEASE_SCAN_ROOT;
+  const sourceRoot = path.join(scanRoot || agentTmp, 'release-source');
+  fs.rmSync(sourceRoot, { recursive: true, force: true });
+  run('git', ['worktree', 'prune'], { cwd: repoRoot, stdio: 'ignore' });
+  runCommand('git', ['worktree', 'add', '--quiet', '--detach', sourceRoot, commitSha], { cwd: repoRoot, stdio: 'inherit' }, run);
+
+  const pnpmHome = fs.mkdtempSync(path.join(agentTmp, 'pnpm-bootstrap-'));
+  let retainForScan = false;
+
+  try {
+    const { pnpmBin, binDir } = bootstrapPnpm(sourceRoot, pnpmHome, run);
+    const buildEnv = {
+      ...env,
+      PATH: `${binDir}${path.delimiter}${env.PATH ?? process.env.PATH ?? ''}`,
+      HOME: pnpmHome,
+      CI: 'true',
+      HUSKY: '0',
+      NPM_CONFIG_USERCONFIG: '/dev/null',
     };
-    const pnpmBin = childEnv && bootstrapBranchPnpm(env.SOURCE_ROOT, childEnv.HOME, exec);
-    const pnpm = args => (pnpmBin ? exec(pnpmBin, args) : exec('corepack', ['pnpm', ...args]));
-    pnpm(['install', '--recursive', '--frozen-lockfile', '--strict-peer-dependencies']);
-    exec(process.execPath, ['scripts/update-versions.js', version]);
-    // The source rewrite logs individual file failures, so verify all nine before building.
-    for (const item of COHORT) {
-        const manifest = JSON.parse(fs.readFileSync(path.join(env.SOURCE_ROOT, item.directory, 'package.json'), 'utf8'));
-        assert.equal(manifest.version, version, `${item.name}: version rewrite failed.`);
-        assert.deepEqual(buildManifestContract(item, manifest, version), snapshot.contracts[item.name], `${item.name}: source contract changed.`);
+    const execOptions = { cwd: sourceRoot, env: buildEnv, stdio: 'inherit', timeout: 1_800_000 };
+
+    runCommand(pnpmBin, ['install', '--recursive', '--frozen-lockfile', '--strict-peer-dependencies'], execOptions, run);
+    runCommand(process.execPath, ['scripts/update-versions.js', version], execOptions, run);
+    runCommand(pnpmBin, ['run', 'build:lib'], execOptions, run);
+
+    fs.rmSync(tarballDir, { recursive: true, force: true });
+    fs.mkdirSync(tarballDir, { recursive: true });
+
+    // Pack via pnpm so workspace:* references and publishConfig fields are rewritten into each tarball.
+    for (const pkg of PACKAGES) {
+      runCommand(pnpmBin, ['--dir', path.join(sourceRoot, pkg.directory), 'pack', '--pack-destination', tarballDir], execOptions, run);
+      const expectedTarball = path.join(tarballDir, tarballName(pkg.name, version));
+      if (!fs.existsSync(expectedTarball)) {
+        throw new Error(`Expected packed tarball was not created: ${expectedTarball}`);
+      }
     }
-    pnpm(['run', 'build:lib']);
-    for (const item of COHORT) {
-        pnpm(['--dir', path.join(env.SOURCE_ROOT, item.directory), 'pack', '--pack-destination', env.ARTIFACT_ROOT]);
+
+    if (npmrcPath) {
+      fs.mkdirSync(path.dirname(npmrcPath), { recursive: true, mode: 0o700 });
+      fs.writeFileSync(npmrcPath, `registry=${registry}\n`, { mode: 0o600 });
     }
+
+    log(`Built and packed ${PACKAGES.length} packages for v${version} into ${tarballDir}.`);
+
+    if (scanRoot) {
+      runCommand('git', ['restore', '--source', commitSha, '--staged', '--worktree', '--', '.'], { cwd: sourceRoot, stdio: 'inherit' }, run);
+      retainForScan = true;
+    }
+
+    return { version, tag, commitSha, tarballDir };
+  } finally {
+    fs.rmSync(pnpmHome, { recursive: true, force: true });
+    if (!retainForScan) {
+      run('git', ['worktree', 'remove', '--force', sourceRoot], { cwd: repoRoot, stdio: 'ignore' });
+      fs.rmSync(sourceRoot, { recursive: true, force: true });
+    }
+  }
 }
 
-function withSandboxedBuild(env, prefix, build) {
-    const home = fs.mkdtempSync(path.join(env.AGENT_TMP, prefix));
-    try {
-        const bin = path.join(home, 'bin');
-        fs.mkdirSync(bin);
-        // This limits credential inheritance, but is not an agent/job isolation boundary.
-        return build({
-            PATH: `${bin}${path.delimiter}${env.PATH}`,
-            HOME: home,
-            CI: 'true',
-            HUSKY: '0',
-            GIT_CONFIG_NOSYSTEM: '1',
-            GIT_CONFIG_GLOBAL: '/dev/null',
-            GIT_TERMINAL_PROMPT: '0',
-            NPM_CONFIG_USERCONFIG: '/dev/null',
-            NPM_CONFIG_GLOBALCONFIG: path.join(home, 'global.npmrc'),
-        });
-    } finally {
-        fs.rmSync(home, { force: true, recursive: true });
-    }
+function isVersionInFeed(packageName, version, { registry, npmrc, cwd, run = spawnSync }) {
+  const spec = `${packageName}@${version}`;
+  const result = run(
+    'npm',
+    ['view', spec, 'version', '--registry', registry, '--userconfig', npmrc, '--prefer-online'],
+    { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 60_000 }
+  );
+
+  if (result.error) {
+    throw new Error(`Failed to check ${spec} in feed: ${result.error.message}`);
+  }
+  if (result.status === 0) {
+    // When the package exists in the feed but the requested version does not, npm view exits 0 with empty stdout.
+    return (result.stdout ?? '').trim() === version;
+  }
+
+  const combined = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
+  if (/\bE404\b|404 Not Found|is not in this registry/i.test(combined)) {
+    return false;
+  }
+  throw new Error(`Failed to check ${spec} in feed (exit ${result.status}): ${combined.trim()}`);
 }
 
-function buildBranchArtifact(env, log, run = spawnSync) {
-    const verified = branchProvenance(env);
-    const contracts = snapshotCheckout(env.SOURCE_ROOT, verified);
-    withSandboxedBuild(env, 'npm-branch-home-', childEnv => buildCohort(env, { verified, contracts }, run, undefined, childEnv));
-    verifyCheckoutHead(env.SOURCE_ROOT, verified.commitSha);
-    const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, { prepare: true });
-    log(`Validated ${artifact.packages.length} test tarballs at ${verified.version}; publication was not attempted.`);
+function publishRelease(env, { run = spawnSync, log = console.log } = {}) {
+  const version = parseReleaseVersion(env.RELEASE_VERSION);
+  const tarballDir = env.TARBALL_DIR;
+  const npmrc = env.PUBLISH_NPMRC;
+  const registry = env.NPM_REGISTRY || DEFAULT_REGISTRY;
+
+  if (!tarballDir || !fs.existsSync(tarballDir)) {
+    throw new Error(`Tarball directory does not exist: ${tarballDir ?? '(unset)'}`);
+  }
+  if (!npmrc || !fs.existsSync(npmrc)) {
+    throw new Error(`Authenticated .npmrc file does not exist: ${npmrc ?? '(unset)'}`);
+  }
+
+  let published = 0;
+  let skipped = 0;
+
+  for (const pkg of PACKAGES) {
+    const spec = `${pkg.name}@${version}`;
+    const tarball = path.join(tarballDir, tarballName(pkg.name, version));
+    if (!fs.existsSync(tarball)) {
+      throw new Error(`Missing tarball for ${spec}: ${tarball}`);
+    }
+
+    if (isVersionInFeed(pkg.name, version, { registry, npmrc, cwd: tarballDir, run })) {
+      log(`Skipping ${spec} (already exists in feed).`);
+      skipped += 1;
+      continue;
+    }
+
+    log(`Publishing ${spec}...`);
+    runCommand(
+      'npm',
+      ['publish', tarball, '--tag', 'latest', '--registry', registry, '--userconfig', npmrc],
+      { cwd: tarballDir, stdio: 'inherit', timeout: 180_000 },
+      run
+    );
+    log(`Published ${spec}.`);
+    published += 1;
+  }
+
+  log(`Publish complete for ${version}: ${published} published, ${skipped} skipped.`);
+  return { version, published, skipped };
 }
 
-// Release build from a local checked-out stable tag. The reviewed pipeline recipe remains on the pipeline ref,
-// while the source tree is materialized in a detached worktree pinned to refs/tags/vX.Y.Z^{commit}.
-// The options are code-level seams for local fixtures only; none is read from the environment.
-async function buildReleaseArtifact(env, log, { run = spawnSync, sandbox = withSandboxedBuild, recipeRoot } = {}) {
-    const source = releaseRunSource(env);
-    const root = fs.realpathSync(recipeRoot ?? process.cwd());
-    verifyCheckoutHead(root, source.recipeSha);
-    const commitSha = resolveLocalReleaseTag(root, source.releaseRef);
-    const verified = { ...source, kind: 'release-tag', commitSha };
-    log(`Resolved ${source.releaseRef} to ${commitSha}; packing has not started.`);
-    const scanRoot = env.RELEASE_SCAN_ROOT;
-    assert(scanRoot === undefined || path.isAbsolute(scanRoot), 'Expected an absolute release scan root.');
-    const sourceRoot = path.join(scanRoot === undefined ? env.AGENT_TMP : fs.realpathSync(scanRoot), 'release-source');
-    const removeSource = materializeDetachedSourceWorktree(root, sourceRoot, verified.commitSha);
-    let retainForScan = false;
-    try {
-        const contracts = snapshotCheckout(sourceRoot, verified);
-        const buildEnv = { ...env, SOURCE_ROOT: sourceRoot };
-        sandbox(env, 'npm-release-home-', childEnv => buildCohort(buildEnv, { verified, contracts }, run, undefined, childEnv));
-        verifyCheckoutHead(sourceRoot, verified.commitSha);
-        const artifact = validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts, {
-            prepare: true,
-            warnMissingCss: warning => log(`Warning: ${sanitizeAgentOutput(warning)}`),
-        });
-        log(`Packed and validated ${artifact.packages.length} release tarballs for ${verified.releaseTag} at ${verified.commitSha} (run ${verified.buildId}, recipe ${verified.recipeSha}); publication was not attempted.`);
-        if (scanRoot !== undefined) {
-            restoreTrackedReleaseSource(sourceRoot, verified.commitSha);
-            log(`Retaining tagged source ${verified.commitSha} for Component Governance at ${sanitizeAgentOutput(sourceRoot)}.`);
-            retainForScan = true; // The injected task runs after this step; workspace cleanup owns the tree.
-        }
-        return artifact;
-    } finally {
-        if (!retainForScan) {
-            removeSource();
-        }
-    }
-}
-
-async function verifyArtifact(env, fetchImpl) {
-    // Neither provenance nor the contract used by the privileged job comes from the tarballs.
-    const verified = await verifyReleaseMetadata({ releaseRef: env.RELEASE_REF, expectedSha: env.EXPECTED_SHA, fetchImpl });
-    const contracts = await readVerifiedContracts(verified, fetchImpl);
-    return validateArtifactFiles(env.ARTIFACT_ROOT, verified, contracts);
-}
-
-async function processCohort(artifact, registry, write, log) {
-    const distTag = artifact.destination.distTag;
-    if (distTag !== 'latest') throw new Error('Invalid publication tag; expected latest.');
-    const results = [];
-    for (const entry of artifact.packages) {
-        results.push({ ...entry, ...await classifyPackageState(registry, entry) });
-    }
-    const report = () => results.forEach(result => log(`${result.name}@${result.version} ${result.integrity}: ${result.status} (${result.reason})${result.warning ? ` Warning: ${result.warning}` : ''}`));
-    if (results.some(result => ['unknown', 'conflict'].includes(result.status))) {
-        report();
-        throw new Error('Preflight blocked; zero package writes.');
-    }
-    let stopped = false;
-    if (write) {
-        for (const result of results.filter(item => item.status === 'absent')) {
-            let outcome = { status: 'not-attempted', reason: 'Blocked by earlier unresolved write.' };
-            if (!stopped) {
-                // This narrows the race window but cannot serialize independent writers.
-                const current = await classifyPackageState(registry, result);
-                if (current.warning) result.warning = current.warning;
-                if (current.status === 'absent') {
-                    outcome = await publishPackage({ entry: result, registry, write: () => write(result.file, distTag) });
-                } else if (current.status === 'already-identical') {
-                    outcome = current;
-                } else {
-                    outcome = { status: 'failed', reason: `Pre-publication check blocked: ${current.reason}` };
-                }
-            }
-            Object.assign(result, outcome);
-            stopped ||= result.status === 'failed';
-        }
-    }
-    report();
-    if (stopped) throw new Error('Publication stopped. Retain and reconcile this exact pipeline artifact before retrying.');
-}
-
-function dryRunCohort(artifact, artifactRoot, npm, log) {
-    for (const entry of artifact.packages) {
-        const result = npm(path.join(artifactRoot, entry.file), 'latest', true);
-        if (result.error || result.status !== 0) {
-            throw new Error(`npm dry run failed for ${entry.name}@${entry.version}: ${result.error?.message ?? `exit ${result.status ?? 'unavailable'}`}.`);
-        }
-        log(`npm dry run succeeded for ${entry.name}@${entry.version}; no package was published.`);
-    }
-}
-
-async function main([command, ...args] = process.argv.slice(2), env = process.env, fetchImpl = fetch, log = console.log) {
-    const writeLog = log;
-    log = message => writeLog(sanitizeAgentOutput(message));
-    if (args.length) throw new Error('Publisher commands only accept inputs from their environment.');
-    if (command === 'isolated-test-feed') {
-        throw new Error('Isolated test-feed attempts are fixture-only and are rejected before environment, provenance, or network reads.');
-    }
-    if (command === 'build-branch-artifact') return buildBranchArtifact(env, log);
-    if (command === 'build-release-artifact') {
-        await buildReleaseArtifact(env, log);
-        return;
-    }
-    if (command === 'prepare-artifact') return prepareArtifact(env, log);
-    if (command === 'build-cohort') {
-        const snapshot = JSON.parse(fs.readFileSync(env.CONTRACT_FILE, 'utf8'));
-        verifyCheckoutHead(env.SOURCE_ROOT, snapshot.verified.commitSha);
-        verifyCleanCheckout(env.SOURCE_ROOT);
-        buildCohort(env, snapshot);
-        return;
-    }
-    if (command === 'verify-source') {
-        const verified = await verifyReleaseMetadata({ releaseRef: env.RELEASE_REF, expectedSha: env.EXPECTED_SHA, fetchImpl });
-        fs.writeFileSync(env.PROVENANCE_FILE, JSON.stringify(verified), { flag: 'wx', mode: 0o600 });
-        log(`Verified ${verified.releaseTag} at ${verified.commitSha} before checkout.`);
-        return;
-    }
-    if (command === 'snapshot-source') {
-        const previous = JSON.parse(fs.readFileSync(env.PROVENANCE_FILE, 'utf8'));
-        const verified = await verifyReleaseMetadata({ releaseRef: env.RELEASE_REF, expectedSha: env.EXPECTED_SHA, fetchImpl });
-        for (const field of ['releaseTag', 'version', 'commitSha', 'releaseId']) {
-            assert.equal(previous[field], verified[field], 'Release metadata changed during checkout.');
-        }
-        const contracts = snapshotCheckout(env.SOURCE_ROOT, verified);
-        fs.writeFileSync(env.CONTRACT_FILE, JSON.stringify({ verified, contracts }), { flag: 'wx', mode: 0o600 });
-        log(`Verified ${verified.releaseTag} at ${verified.commitSha}; snapshotted ${COHORT.length} source manifests before lifecycle execution.`);
-        return;
-    }
-    if (command === 'validate-artifact') {
-        const artifact = await verifyArtifact(env, fetchImpl);
-        log(`Validated artifact provenance and ${artifact.packages.length} tarballs.`);
-        return;
-    }
-    if (command !== 'feed') throw new Error('Unknown publisher command.');
-
-    const mode = env.PUBLISHER_MODE;
-    if (!['publish', 'preflight', 'dry-run'].includes(mode)) throw new Error('Invalid publisher mode.');
-    // Independent writers can race between preflight and publish; keep this stop until their coordination is verified.
-    if (mode === 'publish') throw new Error('Publication blocked: public-source controls and Azure Artifacts publication behavior have not been verified.');
-    const artifact = await verifyArtifact(env, fetchImpl);
-    const authorization = readNpmAuthorization(env.PUBLISH_NPMRC);
-    const npm = npmRunner(env.PUBLISH_NPMRC, env.NPM_CWD);
-    log(`${mode} ${artifact.source.releaseRef} ${artifact.source.verifiedSha} ${artifact.destination.registry} tag=${artifact.destination.distTag}`);
-    await authenticateFeed(env.ADO_FEED_TOKEN, fetchImpl);
-    const registry = createRegistry(authorization, fetchImpl);
-    await processCohort(artifact, registry, undefined, log);
-    if (mode === 'dry-run') dryRunCohort(artifact, env.ARTIFACT_ROOT, npm, log);
+function main([command, ...rest] = process.argv.slice(2), env = process.env, options = {}) {
+  if (rest.length > 0) {
+    throw new Error('Unexpected arguments. Usage: node scripts/ado-npm-publisher.cjs <build|publish>');
+  }
+  if (command === 'build') {
+    return buildRelease(env, options);
+  }
+  if (command === 'publish') {
+    return publishRelease(env, options);
+  }
+  throw new Error(`Unknown command '${command ?? ''}'. Expected 'build' or 'publish'.`);
 }
 
 if (require.main === module) {
-    main().catch(error => {
-        console.error(sanitizeAgentOutput(error.message));
-        process.exitCode = 1;
-    });
+  try {
+    main();
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+  }
 }
 
-module.exports = { buildBranchArtifact, buildCohort, buildReleaseArtifact, dryRunCohort, main, prepareArtifact, processCohort, sanitizeAgentOutput };
+module.exports = {
+  DEFAULT_REGISTRY,
+  PACKAGES,
+  PNPM_MIRROR_BASE,
+  bootstrapPnpm,
+  buildRelease,
+  isVersionInFeed,
+  main,
+  parseReleaseVersion,
+  publishRelease,
+  resolveReleaseTag,
+  tarballName,
+};
