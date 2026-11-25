@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SharedAgentScopeCard, SharedBranchCard, SharedScopeCard } from '../SharedFamilyCards';
@@ -644,4 +644,28 @@ describe('shared family interaction adapters', () => {
     tool.rerender(<SharedBranchCard {...toolProps} runData={{ status: 'Waiting', duration: '1m' }} />);
     expect(tool.container.querySelector('[data-node-card="tool"]')).toHaveAttribute('aria-label', `${toolName}, Waiting 1m`);
   });
+
+  it.each([
+    ['switch', 'control', 'ArrowTurnRightRegular'],
+    ['loop', 'control', 'ArrowRepeatAllRegular'],
+    ['scope', 'action', 'BoxMultipleRegular'],
+  ] as const)(
+    'passes the matching %s glyph and category to the hover card instead of falling back to If',
+    (family, expectedCategory, expectedIcon) => {
+      vi.useFakeTimers();
+      try {
+        const { container } = render(<SharedScopeCard {...props()} family={family} title={`My ${family}`} />);
+        const trigger = container.querySelector('[data-node-card]')!.parentElement!;
+        fireEvent.mouseOver(trigger);
+        act(() => {
+          vi.advanceTimersByTime(1000);
+        });
+        const infoCard = document.querySelector<HTMLElement>('[data-node-info-card]');
+        expect(infoCard).not.toBeNull();
+        expect(infoCard!.querySelector(`[data-category="${expectedCategory}"] [data-icon-name="${expectedIcon}"]`)).not.toBeNull();
+      } finally {
+        vi.useRealTimers();
+      }
+    }
+  );
 });

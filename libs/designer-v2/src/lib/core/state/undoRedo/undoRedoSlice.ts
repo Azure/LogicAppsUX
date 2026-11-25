@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { resetWorkflowState } from '../global';
+import { initWorkflowSpec } from '../workflow/workflowSlice';
 import type { StateHistory, StateHistoryItem } from './undoRedoTypes';
 
 export const initialState: StateHistory = {
@@ -63,6 +64,11 @@ export const undoRedoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    // Host workflow reloads replace the graph without always dispatching resetWorkflowState;
+    // clear any in-flight history transaction counter so Undo/Redo/Duplicate cannot stay locked.
+    builder.addCase(initWorkflowSpec, (state) => {
+      state.activeHistoryTransactions = 0;
+    });
   },
 });
 

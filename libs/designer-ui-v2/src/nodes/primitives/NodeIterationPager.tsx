@@ -80,10 +80,19 @@ function FailureDestinationItems({
   while (Math.ceil(indexes.length / rangeSize) > failureMenuPageSize) {
     rangeSize *= failureMenuPageSize;
   }
+  const optionLabel = strings.failedDestinationOption ?? defaultNodeIterationPagerStrings.failedDestinationOption;
   const label = strings.failedDestinationRange ?? defaultNodeIterationPagerStrings.failedDestinationRange;
   return Array.from({ length: Math.ceil(indexes.length / rangeSize) }, (_, rangeIndex) => {
     const start = rangeIndex * rangeSize;
     const end = Math.min(start + rangeSize, indexes.length);
+    // Avoid wrapping a single trailing failure in a redundant "N to N" submenu.
+    if (end - start === 1) {
+      return (
+        <MenuItem key={indexes[start]} onClick={() => onSelect(indexes[start])}>
+          {optionLabel?.(indexes[start] + 1)}
+        </MenuItem>
+      );
+    }
     return (
       <Menu key={indexes[start]}>
         <MenuTrigger disableButtonEnhancement>

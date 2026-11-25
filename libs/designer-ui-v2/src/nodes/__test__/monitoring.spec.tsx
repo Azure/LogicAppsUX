@@ -134,7 +134,7 @@ describe('NodeIterationPager', () => {
   });
 
   it('opens only the requested range of a long compact failure list, including the final destination', () => {
-    const failed = Array.from({ length: 65 }, (_, index) => (index + 1) * 2);
+    const failed = Array.from({ length: 66 }, (_, index) => (index + 1) * 2);
     const { onChange } = renderPager({
       compactFailureNavigation: true,
       editable: true,
@@ -145,12 +145,12 @@ describe('NodeIterationPager', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Jump to failed iteration' }));
     expect(screen.getByRole('menuitem', { name: 'Next failed iteration' })).toBeEnabled();
-    expect(screen.queryByRole('menuitem', { name: 'Failed iteration 131' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: 'Failed iteration 133' })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iterations 131 to 131' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iterations 131 to 133' }));
     expect(screen.queryByRole('menuitem', { name: 'Failed iteration 3' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iteration 131' }));
-    expect(onChange).toHaveBeenCalledExactlyOnceWith(130);
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iteration 133' }));
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(132);
   });
 
   it('stays in compact mode without restoring separate failure buttons when jumping to a loop sole failed iteration', () => {
@@ -378,5 +378,43 @@ describe('NodeLine run states', () => {
   it('dims not-taken lines with the shared inactive opacity', () => {
     const { container } = render(<ui.NodeLine state="notTaken" />);
     expect(propertyValues(container.querySelector('path') as SVGPathElement, 'opacity')).toEqual([String(ui.nodeMetrics.inactiveOpacity)]);
+  });
+});
+
+describe('NodeIterationPager trailing failure chunk', () => {
+  it('renders a single trailing failed iteration directly instead of a one-item range submenu', () => {
+    const failed = Array.from({ length: 65 }, (_, index) => (index + 1) * 2);
+    const { onChange } = renderPager({
+      compactFailureNavigation: true,
+      editable: true,
+      current: 0,
+      count: 200,
+      failed,
+      failedDestinations: failed,
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Jump to failed iteration' }));
+    expect(screen.queryByRole('menuitem', { name: 'Failed iterations 131 to 131' })).not.toBeInTheDocument();
+    const trailingItem = screen.getByRole('menuitem', { name: 'Failed iteration 131' });
+    fireEvent.click(trailingItem);
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(130);
+  });
+});
+
+describe('MonitoringPayloadComparison', () => {
+  it('renders inputs, outputs, and properties inside the responsive comparison shell', () => {
+    const { container } = render(
+      <ui.MonitoringPayloadComparison
+        className="host-monitoring-shell"
+        inputsSection={<section data-testid="inputs-pane">Inputs</section>}
+        outputsSection={<section data-testid="outputs-pane">Outputs</section>}
+        propertiesSection={<section data-testid="properties-pane">Properties</section>}
+      />
+    );
+    const root = container.querySelector('[data-monitoring-payload-comparison]')!;
+    expect(root).toHaveClass('host-monitoring-shell');
+    const grid = root.querySelector('[data-monitoring-payload-grid]')!;
+    expect(grid).toContainElement(screen.getByTestId('inputs-pane'));
+    expect(grid).toContainElement(screen.getByTestId('outputs-pane'));
+    expect(root).toContainElement(screen.getByTestId('properties-pane'));
   });
 });

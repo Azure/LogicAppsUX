@@ -225,12 +225,21 @@ export const SharedScopeCard = ({
       </>
     ),
   };
+  const hoverCategory = family === 'agent' ? 'agent' : family === 'scope' ? 'action' : 'control';
+  const hoverIcon =
+    family === 'if' || family === 'switch'
+      ? getControlOperationGlyph(family)?.icon
+      : family === 'loop'
+        ? getControlOperationGlyph('foreach')?.icon
+        : family === 'scope'
+          ? scopeNodeIcon
+          : undefined;
   const withHover = (card: ReactNode) => (
     <SharedNodeHoverCard
       // The fixed-width Agent header must center in its accepted frame, not a shrink-wrapped hover trigger.
       className={family === 'agent' && toolsPanel ? styles.acceptedFrame : undefined}
-      category={family === 'agent' ? 'agent' : 'control'}
-      icon={undefined}
+      category={hoverCategory}
+      icon={hoverIcon}
       title={props.title}
       subtitle={operationType}
       description={description}

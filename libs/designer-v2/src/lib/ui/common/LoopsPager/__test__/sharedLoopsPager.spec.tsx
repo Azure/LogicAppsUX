@@ -128,10 +128,11 @@ describe('SharedLoopsPager', () => {
     expect(screen.getByRole('textbox')).toHaveValue('2');
   });
 
-  it('does not expose a picker from retained data for a previous query identity', () => {
+  it('does not expose a picker or failed jumps from retained data for a previous query identity', () => {
     state.failed = { ...state.failed, data: [4], isPreviousData: true };
     renderPager();
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(action('next-failed')).toBeNull();
   });
 
   it('hides failed-destination selection while showing legacy failed jumps under repeating parents', () => {

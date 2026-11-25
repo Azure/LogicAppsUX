@@ -185,6 +185,12 @@ describe('runs queries', () => {
       // Query should be disabled and not make service calls
       expect(mockRunService.getScopeRepetitions).not.toHaveBeenCalled();
     });
+
+    test('should be disabled when runId is undefined', () => {
+      renderHook(() => useScopeFailedRepetitions(constants.NODE.TYPE.FOREACH, 'testScope', undefined), { wrapper: createWrapper });
+
+      expect(mockRunService.getScopeRepetitions).not.toHaveBeenCalled();
+    });
   });
 
   describe('useAgentActionsRepetition', () => {

@@ -345,7 +345,7 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
     },
     {
       ...queryOpts,
-      enabled: normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL,
+      enabled: Boolean(runId) && (normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL),
     }
   );
 };

@@ -128,8 +128,8 @@ export const SharedLoopsPager = ({
         current={currentPage}
         count={loopsCount}
         onChange={onChange}
-        // Legacy only shows failed jumps when failures exist; an empty list would render disabled buttons.
-        failed={failedRepetitions?.length ? failedRepetitions : undefined}
+        // Legacy only shows failed jumps when failures exist; suppress stale failures from a previous run.
+        failed={!isPreviousData && failedRepetitions?.length ? failedRepetitions : undefined}
         failedDestinations={canPickFailures ? failedRepetitions : undefined}
         compactFailureNavigation={inLoopCardRow && normalizedType === constants.NODE.TYPE.FOREACH}
         editable

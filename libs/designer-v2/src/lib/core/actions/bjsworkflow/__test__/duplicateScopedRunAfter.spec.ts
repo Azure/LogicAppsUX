@@ -4,10 +4,12 @@ import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from '../../../parsers/ParseReduxAction';
 import { DynamicLoadStatus, initializeNodeOperationInputsData } from '../../../state/operation/operationMetadataSlice';
 import { initWorkflowSpec, replaceId, setWorkflowKind } from '../../../state/workflow/workflowSlice';
+import { resetWorkflowState } from '../../../state/global';
 import { createDesignerStore, designerReducer } from '../../../store';
 import type { Workflow } from '../../../../common/models/workflow';
 import type { Operations } from '../../../state/workflow/workflowInterfaces';
-import { duplicateOperations } from '../copypaste';
+import { duplicateOperations, pasteScopeOperation } from '../copypaste';
+import { commitWorkflowExtraction } from '../workflowExtraction';
 import { deleteOperation } from '../delete';
 import * as operationDeserializer from '../operationdeserializer';
 import { serializeOperation } from '../serializer';
@@ -236,5 +238,101 @@ describe('Duplicate scope', () => {
     const historyBefore = store.getState().undoRedo.past.length;
     await store.dispatch(duplicateOperations({ nodeIds: ['GuardScope'] })).unwrap();
     expect(store.getState().undoRedo.past).toHaveLength(historyBefore + 2);
+  });
+
+  it('refuses workflow extraction while a Shared Duplicate history transaction is in flight', async () => {
+    const store = initializeStore(true);
+    let releaseScopeMetadata!: () => void;
+    const origInitMetadata = operationDeserializer.initializeOperationMetadata;
+    vi.spyOn(operationDeserializer, 'initializeOperationMetadata').mockImplementationOnce(async (...args) => {
+      await new Promise<void>((resolve) => {
+        releaseScopeMetadata = resolve;
+      });
+      return origInitMetadata(...args);
+    });
+
+    const duplicatePromise = store.dispatch(duplicateOperations({ nodeIds: ['GuardScope'] })).unwrap();
+    await vi.waitFor(() => expect(releaseScopeMetadata).toBeTypeOf('function'));
+    expect(store.getState().undoRedo.activeHistoryTransactions).toBe(1);
+
+    await expect(
+      commitWorkflowExtraction(
+        store,
+        { createWorkflow: vi.fn(), getExistingWorkflowNames: vi.fn() } as any,
+        { newWorkflowName: 'Extracted', selectedNodeIds: ['OtherBranch'], sourceFingerprint: 'fp' } as any,
+        vi.fn()
+      )
+    ).rejects.toThrow('The designer is not available for extraction.');
+
+    releaseScopeMetadata();
+    await duplicatePromise;
+    expect(store.getState().undoRedo.activeHistoryTransactions).toBe(0);
+  });
+
+  it.each(['resetWorkflowState', 'initWorkflowSpec'] as const)(
+    'cancels an in-flight Shared Duplicate transaction on %s and drops its late writes',
+    async (boundary) => {
+      const store = initializeStore(true);
+      let releaseScopeMetadata!: () => void;
+      vi.spyOn(operationDeserializer, 'initializeOperationMetadata').mockImplementationOnce(async (_w, _c, _p, _m, _k, dispatch) => {
+        await new Promise<void>((resolve) => {
+          releaseScopeMetadata = resolve;
+        });
+        dispatch(replaceId({ originalId: 'OtherBranch', newId: 'StaleLateWrite' }));
+        return {};
+      });
+
+      const duplicatePromise = store.dispatch(duplicateOperations({ nodeIds: ['GuardScope'] })).unwrap();
+      await vi.waitFor(() => expect(releaseScopeMetadata).toBeTypeOf('function'));
+      expect(store.getState().undoRedo.activeHistoryTransactions).toBe(1);
+
+      if (boundary === 'resetWorkflowState') {
+        store.dispatch(resetWorkflowState());
+      } else {
+        store.dispatch(initWorkflowSpec('BJS'));
+      }
+      expect(store.getState().undoRedo.activeHistoryTransactions).toBe(0);
+
+      releaseScopeMetadata();
+      await duplicatePromise;
+      expect(store.getState().undoRedo.activeHistoryTransactions).toBe(0);
+      expect(store.getState().workflow.idReplacements.OtherBranch).toBeUndefined();
+    }
+  );
+
+  it('skips Shared Duplicate while a standalone pasteScopeOperation is awaiting metadata', async () => {
+    const store = initializeStore(true);
+    let releasePaste!: () => void;
+    const origInitMetadata = operationDeserializer.initializeOperationMetadata;
+    vi.spyOn(operationDeserializer, 'initializeOperationMetadata').mockImplementationOnce(async (...args) => {
+      await new Promise<void>((resolve) => {
+        releasePaste = resolve;
+      });
+      return origInitMetadata(...args);
+    });
+
+    const beforeCount = Object.keys(store.getState().workflow.operations).length;
+    const pastePromise = store
+      .dispatch(
+        pasteScopeOperation({
+          relationshipIds: { graphId: 'root', parentId: 'Condition', childId: undefined },
+          nodeId: 'PastedScope',
+          serializedValue: { type: 'Scope', actions: { InnerPaste: { type: 'Compose', inputs: 'pasted' } } },
+          allConnectionData: {},
+          staticResults: {},
+          upstreamNodeIds: [],
+        })
+      )
+      .unwrap();
+
+    await vi.waitFor(() => expect(releasePaste).toBeTypeOf('function'));
+    await store.dispatch(duplicateOperations({ nodeIds: ['OtherBranch'] })).unwrap();
+    expect(store.getState().undoRedo.activeHistoryTransactions).toBe(0);
+
+    releasePaste();
+    await pastePromise;
+    // Standalone scope paste added PastedScope + InnerPaste; skipped Shared Duplicate did not add OtherBranch_1.
+    expect(Object.keys(store.getState().workflow.operations)).toHaveLength(beforeCount + 2);
+    expect(store.getState().workflow.operations.OtherBranch_1).toBeUndefined();
   });
 });

@@ -4,7 +4,15 @@ import { resetWorkflowState } from '../state/global';
 import { beginHistoryTransaction, endHistoryTransaction, saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
 import { renameConnectionExpressionParameter } from '../state/connection/connectionSlice';
-import { pasteNode, setIsWorkflowDirty } from '../state/workflow/workflowSlice';
+import { clearAllErrors } from '../state/operation/operationMetadataSlice';
+import {
+  initWorkflowSpec,
+  pasteNode,
+  setHasUnsupportedMultipleTriggers,
+  setIsWorkflowDirty,
+  setRunInstance,
+  setWorkflowKind,
+} from '../state/workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from '../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../store';
 import { getCompressedSlicesFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
@@ -64,18 +72,31 @@ const markBlockedByHistoryTransaction = <TAction>(action: TAction): TAction => {
   } as TAction;
 };
 
-// Non-mutating host/lifecycle actions that must remain allowed while a history transaction awaits
-// async metadata (for example host read-only/monitoring locks, extraction locks, workflow reset,
+// Non-mutating host/lifecycle and workflow-load actions that must remain allowed while a history
+// transaction awaits async metadata (for example host read-only/monitoring locks, workflow reloads,
 // and RTK lifecycle wrappers whose bodies already guard on activeHistoryTransactions).
 const isAllowedDuringHistoryTransaction = (type: unknown): boolean =>
   typeof type === 'string' &&
   (type === resetWorkflowState.type ||
+    type === clearAllErrors.type ||
+    type === initWorkflowSpec.type ||
+    type === setWorkflowKind.type ||
+    type === setRunInstance.type ||
+    type === 'panel/initRunInPanel' ||
+    type === 'customCode/initCustomCode' ||
+    type === setHasUnsupportedMultipleTriggers.type ||
+    type.startsWith('initializeGraphState/') ||
     type.startsWith('designerOptions/') ||
     type.startsWith('designerView/') ||
     type.startsWith('dev/') ||
     type.startsWith('onUndoClick/') ||
     type.startsWith('onRedoClick/') ||
     type.startsWith('duplicateOperations/'));
+
+// Host lifecycle boundaries that replace the loaded workflow and invalidate any in-flight history
+// transaction so its late async callbacks cannot write into the newly loaded graph.
+const isHistoryTransactionCancelBoundary = (action: any): boolean =>
+  resetWorkflowState.match(action) || initWorkflowSpec.match(action) || action?.type === 'initializeGraphState/pending';
 
 // Keeps multi-step async mutations (e.g. Shared Duplicate awaiting scope metadata) atomic on the
 // undo stack: only actions belonging to the active transaction (plus non-mutating host/lifecycle
@@ -109,7 +130,7 @@ export const historyTransactionGuardMiddleware: Middleware = () => {
       return next(action);
     }
 
-    if (resetWorkflowState.match(action)) {
+    if (isHistoryTransactionCancelBoundary(action)) {
       activeTransactionId = undefined;
       return next(action);
     }
@@ -130,13 +151,20 @@ export const historyTransactionGuardMiddleware: Middleware = () => {
     }
 
     if (endHistoryTransaction.match(action)) {
-      if (activeTransactionId !== undefined && actionTxId !== activeTransactionId) {
+      // Drop stray endHistoryTransaction dispatches from transactions already canceled by a reset/reload.
+      if (actionTxId !== undefined && actionTxId !== activeTransactionId) {
         return action;
       }
       if (actionTxId !== undefined && actionTxId === activeTransactionId) {
         activeTransactionId = undefined;
       }
       return next(action);
+    }
+
+    // Any action tagged with a transaction ID belongs exclusively to that transaction; if the
+    // transaction was canceled (activeTransactionId is undefined or a newer ID), drop late writes.
+    if (actionTxId !== undefined && actionTxId !== activeTransactionId) {
+      return action;
     }
 
     if (activeTransactionId !== undefined && actionTxId !== activeTransactionId && !isAllowedDuringHistoryTransaction(action?.type)) {

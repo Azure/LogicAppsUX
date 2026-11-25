@@ -4,7 +4,6 @@ import type { LoopRepetition } from '../../../core/state/workflow/workflowInterf
 import {
   useIsActionInSelectedTimelineRepetition,
   useIsWithinAgenticLoop,
-  useNodeGraphId,
   useParentNodeId,
   useParentRunIndex,
   useRunData,
@@ -17,8 +16,8 @@ export function PanelLoopRunData({ nodeId }: { nodeId: string }) {
 }
 
 function PanelRepetitionQuery({ nodeId, repetition }: { nodeId: string; repetition: LoopRepetition }) {
-  const graphId = useNodeGraphId(nodeId);
-  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+  // Pass nodeId (not graphId) so top-level Agent nodes are recognized as agentic loops too.
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(nodeId);
   const isTimelineRepetitionSelected = useIsActionInSelectedTimelineRepetition(nodeId);
   const parentId = useParentNodeId(nodeId);
   const parentStatus = useRunData(parentId ?? '')?.status;

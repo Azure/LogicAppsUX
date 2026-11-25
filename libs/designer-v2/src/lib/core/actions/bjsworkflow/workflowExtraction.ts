@@ -101,7 +101,12 @@ export async function commitWorkflowExtraction(
 ): Promise<WorkflowExtractionResult> {
   const snapshot = liveStore.getState();
   const intl = getIntl();
-  if (snapshot.designerView.workflowExtractionBusy || snapshot.designerOptions.readOnly || snapshot.designerOptions.isMonitoringView) {
+  if (
+    snapshot.designerView.workflowExtractionBusy ||
+    snapshot.designerOptions.readOnly ||
+    snapshot.designerOptions.isMonitoringView ||
+    snapshot.undoRedo.activeHistoryTransactions
+  ) {
     throw new Error(
       intl.formatMessage({
         id: 'NVB50O',
