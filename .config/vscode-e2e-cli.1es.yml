@@ -17,8 +17,7 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines
   parameters:
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
-      image: server2022-microbuildVS2022-1es
+      name: VSEng-MicroBuildVSStable
       os: windows
     stages:
       - stage: Bootstrap
@@ -27,8 +26,7 @@ extends:
           - job: RegisterPipeline
             displayName: Registration bootstrap
             pool:
-              name: VSEngSS-MicroBuild2022-1ES
-              image: server2022-microbuildVS2022-1es
+              name: VSEng-MicroBuildVSStable
               os: windows
             templateContext:
               type: validationJob
