@@ -603,6 +603,7 @@ test('main validates command arguments', () => {
 
 test('npm-publish.yml keeps 1ES Official template, WIF auth, branch gate, and single Publish stage', () => {
   const yaml = fs.readFileSync(path.join(__dirname, '..', '.azure-pipelines', 'npm-publish.yml'), 'utf8');
+  assert.match(yaml, /^name:\s*\$\{\{\s*coalesce\(trim\(parameters\.releaseVersion\),\s*'unversioned'\)\s*\}\}-\$\(Date:yyyyMMdd\)\$\(Rev:\.r\)$/m);
   assert.match(yaml, /template:\s*v1\/1ES\.Official\.PipelineTemplate\.yml@1esPipelines/);
   assert.match(yaml, /ref:\s*refs\/tags\/release/);
   assert.match(yaml, /name:\s*Azure-Pipelines-1ESPT-ExDShared/);
