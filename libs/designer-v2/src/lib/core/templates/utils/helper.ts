@@ -273,6 +273,13 @@ export const validateConnectionsValue = (
 export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string) => {
   const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
   if (!regex.test(workflowName)) {
+    if (/\s/.test(workflowName)) {
+      return intl.formatMessage({
+        defaultMessage: "Workflow name cannot contain spaces. Use letters, numbers, dashes ('-') and underscores ('_') instead.",
+        id: 's2XJ/T',
+        description: 'Error message when the workflow name contains a space.',
+      });
+    }
     return intl.formatMessage({
       defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
       id: 'TwBRcg',
