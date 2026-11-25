@@ -19,6 +19,10 @@ File-path → agent routing table. Used to determine which agent(s) own a change
 | `apps/iframe-app/src/**` | data-mapper | secondary |
 | `apps/vs-code-designer/src/test/ui/**` | test | primary |
 | `apps/vs-code-designer/src/test/ui/**` | vscode-test-specialist | advisory |
+| `apps/vs-code-designer/src/test/e2e/**` | vscode-test-specialist | primary |
+| `apps/vs-code-designer/src/test/e2e/**` | test | advisory |
+| `apps/vs-code-designer/scripts/**` | vscode | primary |
+| `apps/vs-code-designer/scripts/**` | vscode-test-specialist | advisory |
 | `apps/vs-code-designer/src/test/ui/run-e2e.js` | vscode-test-specialist | primary |
 | `apps/vs-code-designer/src/test/ui/*Helpers.ts` | vscode-test-specialist | primary |
 | `apps/vs-code-designer/src/test/ui/workspaceManifest.ts` | vscode-test-specialist | primary |
@@ -50,7 +54,7 @@ File-path → agent routing table. Used to determine which agent(s) own a change
 | Push branch, monitor PR checks, inspect CI logs/artifacts, iterate failures | ci-sentinel | primary |
 | PR body updates, reviewer response summaries, final status handoff | release-scribe | primary |
 | Previous Copilot session learnings, memory-worthy facts, curated agent context | session-knowledge-curator | primary |
-| VS Code extension unit tests, React webview unit tests, ExTester E2E tests, `run-e2e.js` phases | test / vscode-test-specialist | primary |
+| VS Code extension unit tests, React webview unit tests, ExTester E2E tests, CLI-native E2E tests, `run-e2e.js` phases | test / vscode-test-specialist | primary |
 | Test strategy, coverage planning, test failure analysis | test | primary |
 | Customer issue reproduction, support tickets, customer screenshots/logs, "try to repro" | customer-repro-tester | primary |
 | Customer issue requires browser/standalone repro | customer-repro-tester / test | primary |

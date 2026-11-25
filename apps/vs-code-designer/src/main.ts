@@ -34,7 +34,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
+import { createAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
@@ -66,10 +66,13 @@ import { validateAndInstallBinaries } from './app/commands/binaries/validateAndI
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
 import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
+import { recordRegenerationEvent } from './app/utils/regenerationProbe';
 
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
+  let activationInitialInvocationState: 'not-scheduled' | 'pending' | 'settled' = 'not-scheduled';
+  recordRegenerationEvent({ event: 'activation-start' });
   initializeCustomExtensionContext();
   await updateLogicAppsContext();
 
@@ -80,8 +83,8 @@ export async function activate(context: vscode.ExtensionContext) {
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   context.subscriptions.push(ext.telemetryReporter);
 
-  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+  ext.subscriptionProvider = await createAzureSubscriptionProvider();
 
   registerUIExtensionVariables(ext);
   registerAzureUtilsExtensionVariables(ext);
@@ -99,15 +102,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
-
+    const workspaceIdentity = () => JSON.stringify((vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.toString()).sort());
+    const workspaceIdentityAtActivation = workspaceIdentity();
+    const workspaceWasReadyAtActivation = workspaceIdentityAtActivation !== '[]';
+    recordRegenerationEvent({ event: 'activation-workspace', folderCount: vscode.workspace.workspaceFolders?.length ?? 0 });
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
+      recordRegenerationEvent({ event: 'activation-workspace-setup-start' });
       await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
         await ensureWorkspace(actionContext);
       });
+      recordRegenerationEvent({ event: 'activation-workspace-setup-returned' });
 
       activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
       callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
@@ -118,10 +126,15 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       });
 
-      if (isProjectConsistencyCheckEnabled()) {
+      const consistencyEnabled = isProjectConsistencyCheckEnabled();
+      recordRegenerationEvent({ event: 'consistency-setting', enabled: consistencyEnabled });
+      if (consistencyEnabled) {
+        recordRegenerationEvent({ event: 'activation-project-discovery-start' });
         const projectPaths = await getWorkspaceLogicAppRoots();
+        recordRegenerationEvent({ event: 'activation-project-discovery-returned', projectCount: projectPaths.length });
 
         activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+        recordRegenerationEvent({ event: 'activation-project-files-start' });
         const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
           await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
             actionContext.telemetry.properties.isActivationEvent = 'true';
@@ -129,24 +142,58 @@ export async function activate(context: vscode.ExtensionContext) {
           });
         });
         await Promise.all(ensureProjectFilesTasks);
+        recordRegenerationEvent({ event: 'activation-project-files-returned' });
 
         activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+        recordRegenerationEvent({ event: 'activation-vscode-check-scheduled' });
+        activationInitialInvocationState = 'pending';
         callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
           actionContext.telemetry.properties.isActivationEvent = 'true';
-          await ensureVSCodeFiles(actionContext, projectPaths);
+          recordRegenerationEvent({ event: 'activation-vscode-check-entered' });
+          try {
+            await ensureVSCodeFiles(actionContext, projectPaths, 'activation-initial');
+          } finally {
+            activationInitialInvocationState = 'settled';
+          }
         });
+      } else {
+        recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
       }
     }
 
     activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';
+    let workspaceConsistencyIdentity = workspaceWasReadyAtActivation ? workspaceIdentityAtActivation : '';
     registerEvent(
       extensionEvent.onDidChangeWorkspaceFolders,
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
+        recordRegenerationEvent({ event: 'workspace-change-entered' });
+        workspaceConsistencyIdentity = workspaceIdentity();
+        await ensureWorkspace(actionContext);
         await updateLogicAppsContext();
-        await runProjectConsistencyCheck(actionContext);
+        await runProjectConsistencyCheck(actionContext, 'workspace-change');
+        recordRegenerationEvent({ event: 'workspace-change-returned' });
       }
     );
+    recordRegenerationEvent({ event: 'workspace-listener-registered' });
+    const workspaceIdentityAfterRegistration = workspaceIdentity();
+    const shouldCatchUpWorkspace =
+      workspaceIdentityAfterRegistration !== '[]' && workspaceConsistencyIdentity !== workspaceIdentityAfterRegistration;
+    recordRegenerationEvent({ event: 'workspace-catchup-decision', needed: shouldCatchUpWorkspace });
+    if (shouldCatchUpWorkspace) {
+      workspaceConsistencyIdentity = workspaceIdentityAfterRegistration;
+      activateContext.telemetry.properties.lastStep = 'catchUpWorkspaceConsistency';
+      recordRegenerationEvent({ event: 'workspace-catchup-start' });
+      await callWithTelemetryAndErrorHandling('activate.catchUpWorkspaceConsistency', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await ensureWorkspace(actionContext);
+        await updateLogicAppsContext();
+        await runProjectConsistencyCheck(actionContext, 'catch-up');
+      });
+      recordRegenerationEvent({ event: 'workspace-catchup-returned' });
+    }
 
     activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
     callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
@@ -214,6 +261,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     logExtensionSettings(activateContext);
   });
+  recordRegenerationEvent({ event: 'activation-returned', initialInvocationState: activationInitialInvocationState });
 }
 
 async function promptShouldParameterizeConnections(context: IActionContext): Promise<boolean> {
@@ -262,7 +310,9 @@ async function promptShouldEnableLocalManagedIdentityAuth(): Promise<boolean> {
 
   if (selection === enableButton) {
     return true;
-  } else if (selection === dontShowAgain) {
+  }
+
+  if (selection === dontShowAgain) {
     await suppressManagedIdentityAuthNotification();
     return false;
   }
@@ -365,7 +415,9 @@ async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<
   if (result === confirm) {
     await updateGlobalSetting(autoStartDesignTimeSetting, true);
     return true;
-  } else if (result === dontWarnAgain) {
+  }
+
+  if (result === dontWarnAgain) {
     await suppressAutoStartDesignTimeNotification();
   }
 

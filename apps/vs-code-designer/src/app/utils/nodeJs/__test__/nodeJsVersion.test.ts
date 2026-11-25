@@ -94,7 +94,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('returns the <node-v*>/bin/npm path on Linux and reads the binaries directory (not an executable path)', () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue(['node-v18.0.0-linux-x64.tar.gz', NODE_VER_FOLDER, 'README.md'] as never);
       vi.mocked(fs.statSync).mockImplementation((p) => ({ isDirectory: () => String(p).endsWith(NODE_VER_FOLDER) }) as fs.Stats);
 
@@ -110,7 +110,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('returns the <node-v*>/bin/npm path on macOS', () => {
       setPlatform(Platform.mac as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue([NODE_VER_FOLDER] as never);
       vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as fs.Stats);
 
@@ -122,7 +122,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('falls back to the system npm on Linux when no node-v* subfolder is found', () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue(['something-else'] as never);
       vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as fs.Stats);
 
@@ -133,13 +133,22 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockImplementation(() => {
         throw new Error('permission denied');
       });
 
       expect(getNpmCommand()).toBe('npm');
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error:', 'permission denied');
+    });
+
+    it('returns the direct bin/npm path on Linux without requiring a node-v* subfolder', () => {
+      setPlatform(Platform.linux as NodeJS.Platform);
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
+      vi.mocked(fs.existsSync).mockImplementation((p) => [NODE_DIR, path.join(NODE_DIR, 'bin', 'npm')].includes(String(p)));
+
+      expect(getNpmCommand()).toBe(path.join(NODE_DIR, 'bin', 'npm'));
+      expect(fs.readdirSync).not.toHaveBeenCalled();
     });
   });
 
@@ -211,7 +220,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('writes the <node-v*>/bin/node path on Linux, reads the binaries directory, and chmods it', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue([NODE_VER_FOLDER] as never);
       vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as fs.Stats);
 
@@ -226,7 +235,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('writes the <node-v*>/bin/node path on macOS and chmods the binaries directory', async () => {
       setPlatform(Platform.mac as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue([NODE_VER_FOLDER] as never);
       vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as fs.Stats);
 
@@ -241,7 +250,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
     it('writes ext.nodeJsCliPath on Linux when no node-v* subfolder is found', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => String(p) === NODE_DIR);
       vi.mocked(fs.readdirSync).mockReturnValue(['something-else'] as never);
       vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as fs.Stats);
 
@@ -249,6 +258,18 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', 'node');
       expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+
+    it('writes the direct bin/node path on Linux without requiring a node-v* subfolder', async () => {
+      setPlatform(Platform.linux as NodeJS.Platform);
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
+      vi.mocked(fs.existsSync).mockImplementation((p) => [NODE_DIR, path.join(NODE_DIR, 'bin', 'node')].includes(String(p)));
+
+      await setNodeJsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'bin', 'node'));
+      expect(fs.readdirSync).not.toHaveBeenCalled();
+      expect(fs.chmodSync).toHaveBeenCalledWith(NODE_DIR, 0o777);
     });
   });
 

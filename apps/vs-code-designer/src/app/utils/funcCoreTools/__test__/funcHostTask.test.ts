@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { ext } from '../../../../extensionVariables';
 
@@ -55,6 +55,9 @@ describe('funcHostTask', () => {
     (vscode as any).debug = {
       onDidTerminateDebugSession: vi.fn(),
     };
+  });
+  afterEach(() => {
+    runningFuncTaskMap.clear();
   });
 
   describe('isFuncHostTask', () => {
@@ -130,6 +133,50 @@ describe('funcHostTask', () => {
   });
 
   describe('registerFuncHostTaskEvents', () => {
+    it.each([
+      ['${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}', true],
+      ['C:\\private\\func.exe', false],
+      ['/private/tools/func', false],
+      ['npm', false],
+    ])('tracks and clears only shell tasks classified by their execution command: %s', async (command, classified) => {
+      registerFuncHostTaskEvents();
+      const start = registerEventMock.mock.calls[0][2];
+      const end = registerEventMock.mock.calls[1][2];
+      const task = createShellTask(command, workspaceFolder);
+      task.definition.command = '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}';
+      const execution = { task };
+      await start({ errorHandling: {}, telemetry: {} }, { execution, processId: 123 });
+      expect(runningFuncTaskMap.has(workspaceFolder)).toBe(classified);
+      if (classified) {
+        expect(runningFuncTaskMap.get(workspaceFolder)).toEqual({ startTime: expect.any(Number), processId: 123 });
+        runningFuncTaskMap.get(workspaceFolder)!.childProcessId = ['456', '789'];
+      }
+      await end({ errorHandling: {}, telemetry: {} }, { execution, exitCode: 0 });
+      expect(runningFuncTaskMap.size).toBe(0);
+      expect(ext.workflowRuntimePort).toBe(classified ? undefined : '7071');
+    });
+
+    it('ignores absent scopes and deletes only the exact event scope key', async () => {
+      registerFuncHostTaskEvents();
+      const start = registerEventMock.mock.calls[0][2];
+      const end = registerEventMock.mock.calls[1][2];
+      await start({ errorHandling: {}, telemetry: {} }, { execution: { task: createProcessTask('func start') }, processId: 123 });
+      expect(runningFuncTaskMap.size).toBe(0);
+      await end({ errorHandling: {}, telemetry: {} }, { execution: { task: createProcessTask('func start') }, exitCode: 0 });
+      expect(ext.workflowRuntimePort).toBe('7071');
+      const clone = { ...workspaceFolder };
+      const originalTaskInfo = { startTime: 0, processId: 321, childProcessId: ['9'] };
+      runningFuncTaskMap.set(workspaceFolder, originalTaskInfo);
+      await start({ errorHandling: {}, telemetry: {} }, { execution: { task: createProcessTask('func start', clone) }, processId: 123 });
+      expect(runningFuncTaskMap.get(clone)?.processId).toBe(123);
+      expect(runningFuncTaskMap.get(workspaceFolder)).toBe(originalTaskInfo);
+      await end({ errorHandling: {}, telemetry: {} }, { execution: { task: createProcessTask('func start', clone) }, exitCode: 0 });
+      expect(runningFuncTaskMap.has(clone)).toBe(false);
+      expect(runningFuncTaskMap.size).toBe(1);
+      expect(runningFuncTaskMap.get(workspaceFolder)).toBe(originalTaskInfo);
+      expect(ext.workflowRuntimePort).toBeUndefined();
+    });
+
     it('tracks and clears a real bound ProcessExecution by its workspace', async () => {
       registerFuncHostTaskEvents();
       const startHandler = registerEventMock.mock.calls.find((call) => call[0] === 'azureLogicAppsStandard.onDidStartTask')?.[2];

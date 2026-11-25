@@ -39,6 +39,22 @@ const vscode = require('vscode');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+let lifecycle;
+let lifecycleShutdown;
+let lifecycleInterval;
+
+function shutdownLifecycle() {
+  if (lifecycleShutdown) return lifecycleShutdown;
+  clearInterval(lifecycleInterval);
+  lifecycleShutdown = Promise.resolve(lifecycle).then(async (observer) => {
+    try {
+      await observer?.shutdown();
+    } finally {
+      observer?.dispose();
+    }
+  });
+  return lifecycleShutdown;
+}
 
 function resolveEventsFile() {
   try {
@@ -98,11 +114,15 @@ function taskName(task) {
 }
 
 async function waitForLogicAppsExtension(timeoutMs = 360_000) {
+  return await waitForCommand('azureLogicAppsStandard.debugLogicApp', timeoutMs);
+}
+
+async function waitForCommand(commandId, timeoutMs = 120_000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     try {
       const commands = await vscode.commands.getCommands(true);
-      if (commands.includes('azureLogicAppsStandard.debugLogicApp')) {
+      if (commands.includes(commandId)) {
         return true;
       }
     } catch {
@@ -111,6 +131,60 @@ async function waitForLogicAppsExtension(timeoutMs = 360_000) {
     await new Promise((r) => setTimeout(r, 1000));
   }
   return false;
+}
+
+async function runCommand(eventsFile, commandId, requestId) {
+  const startedAt = new Date().toISOString();
+  appendEvent(eventsFile, {
+    phase: 'commandInvoke',
+    taskName: commandId,
+    requestId,
+    scopeFsPath: null,
+    processId: null,
+    exitCode: null,
+    timestamp: startedAt,
+  });
+
+  try {
+    const ready = await waitForCommand(commandId);
+    if (!ready) {
+      console.log(`[la-e2e-recorder] runCommand: timed out waiting for ${commandId}`);
+      appendEvent(eventsFile, {
+        phase: 'commandInvokeFailed',
+        taskName: commandId,
+        requestId,
+        scopeFsPath: null,
+        processId: null,
+        exitCode: 1,
+        timestamp: new Date().toISOString(),
+      });
+      return false;
+    }
+
+    await vscode.commands.executeCommand(commandId);
+    appendEvent(eventsFile, {
+      phase: 'commandInvoked',
+      taskName: commandId,
+      requestId,
+      scopeFsPath: null,
+      processId: null,
+      exitCode: 0,
+      timestamp: new Date().toISOString(),
+    });
+    return true;
+  } catch (err) {
+    console.log(`[la-e2e-recorder] runCommand ${commandId} failed: ${err && err.message}`);
+    appendEvent(eventsFile, {
+      phase: 'commandInvokeFailed',
+      taskName: commandId,
+      requestId,
+      scopeFsPath: null,
+      processId: null,
+      exitCode: 1,
+      timestamp: new Date().toISOString(),
+    });
+    return false;
+  }
 }
 
 /** Reads and JSONC-parses `<folder>/.vscode/launch.json`, returning its configurations. */
@@ -262,6 +336,21 @@ function resolveTriggerDir() {
 }
 
 function activate(context) {
+  if (process.env.LA_E2E_LIFECYCLE_DIR) {
+    lifecycle = require('./vscode-lifecycle-observer').installLifecycleObserver(vscode, process.env, context);
+    // Register a rejection handler immediately; exported deactivate still
+    // awaits/propagates the same installation promise.
+    lifecycle.catch((error) => console.error('[lifecycle-recorder] observer installation failed', error));
+    const shutdownTrigger = path.join(process.env.LA_E2E_LIFECYCLE_DIR, 'shutdown.trigger');
+    lifecycleInterval = setInterval(() => {
+      if (!fs.existsSync(shutdownTrigger)) return;
+      fs.unlinkSync(shutdownTrigger);
+      shutdownLifecycle().catch((error) => {
+        console.error('[lifecycle-recorder] actual shutdown failed', error);
+      });
+    }, 100);
+    context.subscriptions.push({ dispose: () => clearInterval(lifecycleInterval) });
+  }
   const eventsFile = resolveEventsFile();
   const triggerDir = resolveTriggerDir();
   console.log(`[la-e2e-recorder] activate; events=${eventsFile} triggerDir=${triggerDir}`);
@@ -282,6 +371,7 @@ function activate(context) {
   //   - `start-debug`  → start the first 'logicapp' launch config
   //   - `stop-debug`   → stop all debug sessions
   //   - `ping`         → write a single { phase: 'ping' } JSONL entry
+  //   - `run-command`  → read a command id from the marker file and invoke it
   // Marker files are consumed (deleted) immediately so a second test
   // variant can drop fresh markers without colliding with the previous run.
   const triggerInterval = setInterval(() => {
@@ -293,6 +383,12 @@ function activate(context) {
     }
     for (const entry of entries) {
       const markerPath = path.join(triggerDir, entry);
+      let markerText = '';
+      try {
+        markerText = fs.readFileSync(markerPath, 'utf8').trim();
+      } catch {
+        /* ignore */
+      }
       try {
         fs.unlinkSync(markerPath);
       } catch {
@@ -341,6 +437,23 @@ function activate(context) {
           exitCode: null,
           timestamp: new Date().toISOString(),
         });
+      } else if (entry === 'run-command' && markerText) {
+        let commandId = markerText;
+        let requestId = '';
+        try {
+          const marker = JSON.parse(markerText);
+          if (marker && typeof marker.commandId === 'string') {
+            commandId = marker.commandId;
+          }
+          if (marker && typeof marker.requestId === 'string') {
+            requestId = marker.requestId;
+          }
+        } catch {
+          /* marker is a plain command id */
+        }
+        runCommand(eventsFile, commandId, requestId).catch((err) =>
+          console.log(`[la-e2e-recorder] runCommand (file) failed: ${err && err.message}`)
+        );
       }
     }
   }, 500);
@@ -455,10 +568,19 @@ function activate(context) {
       return true;
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('la-e2e.runCommand', async (commandId, requestId = '') => {
+      if (!commandId || typeof commandId !== 'string') {
+        return false;
+      }
+      return await runCommand(eventsFile, commandId, typeof requestId === 'string' ? requestId : '');
+    })
+  );
 }
 
 function deactivate() {
-  // no-op
+  return shutdownLifecycle();
 }
 
 module.exports = { activate, deactivate };

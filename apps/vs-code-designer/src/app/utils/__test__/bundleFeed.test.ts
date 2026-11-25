@@ -649,10 +649,19 @@ describe('getBundleDependencyFeed', () => {
 
     await expect(getBundleDependencyFeed(context as any)).resolves.toEqual({ id: extensionBundleId });
 
-    expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
+    expect(feedModule.getJsonFeed).toHaveBeenCalledExactlyOnceWith(
       context,
       `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
     );
+  });
+
+  it('propagates dependency feed failures without another attempt', async () => {
+    const error = new Error('dependency feed unavailable');
+    vi.mocked(feedModule.getJsonFeed).mockReset().mockRejectedValue(error);
+    const context = { telemetry: { properties: {}, measurements: {} } };
+
+    await expect(getBundleDependencyFeed(context as never)).rejects.toBe(error);
+    expect(feedModule.getJsonFeed).toHaveBeenCalledTimes(1);
   });
 });
 

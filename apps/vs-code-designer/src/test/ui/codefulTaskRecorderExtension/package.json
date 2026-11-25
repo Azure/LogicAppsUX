@@ -22,6 +22,10 @@
       {
         "command": "la-e2e.recorderPing",
         "title": "LA E2E: Recorder Ping"
+      },
+      {
+        "command": "la-e2e.runCommand",
+        "title": "LA E2E: Run Command"
       }
     ]
   }

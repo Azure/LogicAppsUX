@@ -3,7 +3,8 @@ import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
 import { getDesignerServices } from './servicesHelper';
-import { convertConnectionsDataToReferences } from './utilities/workflow';
+import { convertConnectionsDataToReferences, getCodeViewRequestOptionsValidationErrors } from './utilities/workflow';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, Workflow } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer-v2';
 import {
@@ -68,6 +69,12 @@ export const DesignerApp = () => {
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
+  const loadedCodeViewValidationErrors = useMemo(
+    () => getCodeViewRequestOptionsValidationErrors(panelMetaData?.standardApp?.definition),
+    [panelMetaData?.standardApp?.definition]
+  );
+  const codeViewValidationSource = useRef<'code' | 'loaded' | 'none'>(loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none');
+  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(loadedCodeViewValidationErrors);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -87,9 +94,22 @@ export const DesignerApp = () => {
     [vscode]
   );
 
-  const discardAllChanges = useCallback(() => {
-    setDesignerID(guid());
+  const updateCodeViewValidationErrors = useCallback((errors: string[]) => {
+    codeViewValidationSource.current = errors.length > 0 ? 'code' : 'none';
+    setCodeViewValidationErrors(errors);
   }, []);
+
+  useEffect(() => {
+    if (codeViewValidationSource.current !== 'code') {
+      codeViewValidationSource.current = loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none';
+      setCodeViewValidationErrors(loadedCodeViewValidationErrors);
+    }
+  }, [loadedCodeViewValidationErrors]);
+
+  const discardAllChanges = useCallback(() => {
+    updateCodeViewValidationErrors([]);
+    setDesignerID(guid());
+  }, [updateCodeViewValidationErrors]);
 
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
@@ -156,8 +176,11 @@ export const DesignerApp = () => {
 
   useEffect(() => {
     setWorkflow(panelMetaData?.standardApp);
+  }, [panelMetaData?.standardApp]);
+
+  useEffect(() => {
     setCustomCode(panelMetaData?.customCodeData);
-  }, [panelMetaData]);
+  }, [panelMetaData?.customCodeData]);
 
   useEffect(() => {
     if (runInstance) {
@@ -177,6 +200,7 @@ export const DesignerApp = () => {
   const saveWorkflowFromDesigner = useCallback(
     async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
+      updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
       vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
@@ -200,17 +224,27 @@ export const DesignerApp = () => {
         customCodeData,
       };
     },
-    [vscode, workflow]
+    [updateCodeViewValidationErrors, vscode, workflow]
   );
 
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
-        if (!codeEditorRef.current?.hasChanges()) {
+        const hasChanges = codeEditorRef.current?.hasChanges() ?? false;
+        const code = codeEditorRef.current?.getValue();
+        if (!hasChanges && !code) {
+          updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition));
           return workflow;
         }
-        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        const codeToConvert = JSON.parse(code ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
+        updateCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+        if (!hasChanges) {
+          return {
+            ...workflow,
+            definition,
+          } as StandardApp;
+        }
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
           command: ExtensionCommand.save,
@@ -223,7 +257,6 @@ export const DesignerApp = () => {
           definition,
         } as StandardApp;
         setWorkflow(newWorkflow);
-        setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
         codeEditorRef.current?.resetChanges();
@@ -235,7 +268,7 @@ export const DesignerApp = () => {
       }
       return undefined;
     },
-    [vscode, workflow]
+    [initialWorkflow?.definition, updateCodeViewValidationErrors, vscode, workflow]
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -252,7 +285,12 @@ export const DesignerApp = () => {
       return;
     }
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Workflow));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Workflow);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
     if (isMonitoringView) {
       hideMonitoringView();
@@ -284,7 +322,12 @@ export const DesignerApp = () => {
     }
 
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Monitoring));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Monitoring);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
   }, [isMonitoringView, isDesignerView, isCodeView, validateAndSaveCodeView]);
 
@@ -345,6 +388,11 @@ export const DesignerApp = () => {
               switchToMonitoringView={switchToMonitoringView}
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
+            {codeViewValidationErrors.map((error) => (
+              <MessageBar key={error} intent="error" role="alert" style={{ boxSizing: 'border-box', maxWidth: '100%' }}>
+                <MessageBarBody style={{ minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' }}>{error}</MessageBarBody>
+              </MessageBar>
+            ))}
 
             {!isCodeView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>

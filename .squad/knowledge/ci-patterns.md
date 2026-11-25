@@ -52,6 +52,59 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
 - Status: verified.
 
+### VS Code CLI outcomes must be classified by gate
+
+- Learning: Distinguish build/bootstrap failure, native test failure, native pass with terminal/cleanup rejection, ordered-evidence staging rejection, and final publication/rollup failure. Overall job status alone is not the native verdict.
+- Why it matters: A suite can pass its JSON/JUnit body and cleanup while the job correctly fails because a required manifest checkpoint was not accepted; conversely, a preflight failure can skip every native lane.
+- Pattern: inspect native JSON/JUnit, phase and terminal receipts, cleanup ledgers, `ORDERED_EVIDENCE_VALIDATION.json`, and the staged evidence report before assigning ownership.
+- Source: Source-bound VS Code CLI ADO investigations and `docs/testing/vscode-cli-authoring.md`.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`, `release-scribe`.
+- Status: verified.
+
+### Separate managed Guardian setup failures from native test verdicts
+
+- Learning: In 1ES pipelines, `SDL Sources Analysis` is a managed Guardian gate. Its injected ESLint package bundle can differ from the repository's ESLint, and a failure while installing that managed bundle is not evidence that repository linting, product code, or the VS Code E2E matrix failed.
+- Why it matters: The canonical VS Code E2E consumer and protected rollup can be accepted even when the overall pipeline is red because an independent SDL setup step failed.
+- Pattern: Compare the source, package/lock files, pipeline inputs, task configuration, and last successful run. If they are unchanged and the failure occurs before analysis while fetching Guardian-owned packages, classify it as managed SDL setup/feed infrastructure. Do not change the repository's ESLint or product code to match the injected bundle. Successful installation through another approved Microsoft proxy proves package compatibility, not the ADO internal-feed response; retain the first unsuppressed package-manager error when available and use the support path emitted by the task.
+- Source: `.config/vscode-e2e-cli.1es.yml` (`sdl` currently configures CredScan and CodeQL only), root `package.json`, and repeated source-identical ADO runs where only `SDL Sources Analysis` failed while the canonical 23-lane rollup passed.
+- Applies to: `ci-sentinel`, `chief-engineer`, `vscode-test-specialist`, `release-scribe`.
+- Status: verified classification; exact internal-feed cause unresolved.
+
+### Preserve actionable stacks through suite-prefixed logs
+
+- Learning: Diagnostic serialization should retain `Error.stack`. Summarizers should remove one or more `[suite]` prefixes only for classifying error headers and contiguous `at ...` frames, while preserving the original prefixed lines in failure excerpts.
+- Why it matters: Reducing errors to `String(error)` or requiring unprefixed stack frames hides the call site that distinguishes wrapper setup failures from native test failures.
+- Source: `e2e-cli-diagnostics.js`, `summarize-e2e-cli-results.js`, and their regression controls.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`.
+- Status: verified.
+
+### Targeted native proof must be followed by the canonical matrix
+
+- Learning: First prove affected suites on isolated Linux and Windows consumers bound to an immutable full SHA. After focused success, run the complete canonical inventory; a diagnostic selection never satisfies the protected full rollup.
+- Why it matters: Targeted runs shorten iteration but do not exercise unrelated suites, shared build gates, or complete rollup inventory.
+- Pattern: record the admitted source SHA, inspect downloaded artifacts rather than only job status, then queue the full non-diagnostic aliases against that SHA or a newer explicitly recorded SHA containing the fix.
+- Source: `.config/README.md` E2E branch-driven validation contract.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: verified workflow.
+
+### Full VS Code CLI rollup topology must equal the suite registry
+
+- Learning: Treat `SUITE_REGISTRY.platforms` as the inventory source. The `linux`/`windows` aliases, ADO jobs, protected dependencies, result variables, artifact downloads, and validation records must be promoted atomically and compared as exact sets.
+- Why it matters: A green rollup can otherwise cover only a historical subset while appearing to represent the full suite.
+- Pattern: derive aliases from the registry; contract-test 11 Linux plus 12 Windows lanes; require strict terminal validation for every lifecycle family; provision and print Node 22 inside the rollup job before any Node validator runs.
+- Source: `apps/vs-code-designer/scripts/e2e-cli-batch.js`, `pipeline-contract.unit.test.js`, `.config/vscode-e2e-cli.1es.yml`.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: source/control verified; native 23-lane ADO proof required after changes.
+
+### Keep native-body and cleanup verdicts separate
+
+- Learning: A passing native JSON/JUnit body followed by retained-process or path-cleanup rejection is an infrastructure finalization failure, not a feature regression.
+- Why it matters: Collapsing the verdicts causes interaction code to be changed even when the real failure is Windows `EBUSY`/`EPERM`, unverified process closure, or artifact staging.
+- Pattern: report both verdicts; use one bounded cleanup owner with an absolute deadline and explicit path-absence verification; preserve owned workspaces when diagnostics or ordinary Code closure is unconfirmed.
+- Source: `e2e-cli-path-cleanup.js`, `run-e2e-cli.js`, and `docs/testing/vscode-cli-authoring.md`.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: verified by focused controls.
+
 ## Triggers → use this file
 
 - GitHub Actions failure triage, branch protection, required checks

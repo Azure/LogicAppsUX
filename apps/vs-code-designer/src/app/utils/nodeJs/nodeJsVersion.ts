@@ -48,10 +48,7 @@ export function getNpmCommand(): string {
     if (process.platform === Platform.windows) {
       command = path.join(nodeJsBinariesPath, ext.npmCliPath);
     } else {
-      const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
-      if (nodeSubFolder) {
-        command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
-      }
+      command = resolvePosixNodeJsCommand(nodeJsBinariesPath, ext.npmCliPath) ?? command;
     }
   }
   return command;
@@ -75,9 +72,9 @@ export async function setNodeJsCommand(): Promise<void> {
       if (process.platform === Platform.windows) {
         command = resolveNodeJsCommand(nodeJsBinariesPath);
       } else {
-        const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
-        if (nodeSubFolder) {
-          command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
+        const managedCommand = resolvePosixNodeJsCommand(nodeJsBinariesPath, ext.nodeJsCliPath);
+        if (managedCommand) {
+          command = managedCommand;
           fs.chmodSync(nodeJsBinariesPath, 0o777);
         }
       }
@@ -92,6 +89,15 @@ export async function setNodeJsCommand(): Promise<void> {
 export function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
   const executableName = ext.nodeJsCliPath.toLowerCase().endsWith('.exe') ? ext.nodeJsCliPath : `${ext.nodeJsCliPath}.exe`;
   return path.join(nodeJsBinariesPath, executableName);
+}
+
+function resolvePosixNodeJsCommand(nodeJsBinariesPath: string, executableName: string): string | undefined {
+  const directCommand = path.join(nodeJsBinariesPath, 'bin', executableName);
+  if (fs.existsSync(directCommand)) {
+    return directCommand;
+  }
+  const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
+  return nodeSubFolder ? path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', executableName) : undefined;
 }
 
 function getNodeSubFolder(directoryPath: string): string | undefined {

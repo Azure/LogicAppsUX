@@ -18,7 +18,7 @@ const cachedFeeds: Map<string, ICachedFeed> = new Map<string, ICachedFeed>();
 /**
  * Provides some helper logic when getting a json feed:
  * 1. Caches the feed for 10 minutes since these feeds don't change very often and we don't want to make repeated calls to get the same information
- * 2. Sets timeout for getting the feed to 15 seconds since we would rather default to the "backup" logic than wait a long time
+ * 2. Uses the extension's configured timeout for a single request; request and parsing failures propagate to the caller
  */
 export async function getJsonFeed<T extends Record<string, any>>(context: IActionContext, url: string): Promise<T> {
   let cachedFeed: ICachedFeed | undefined = cachedFeeds.get(url);

@@ -1,0 +1,210 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+/* global __dirname, require, structuredClone */
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const test = require('node:test');
+const { parse } = require('yaml');
+
+const repositoryRoot = path.resolve(__dirname, '..', '..', '..');
+const consumer = parse(fs.readFileSync(path.join(repositoryRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8'));
+const pipeline = parse(fs.readFileSync(path.join(repositoryRoot, '.config', 'vscode-e2e-cli.1es.yml'), 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+const branchName = "${{ if eq(parameters.suiteId, 'unitTests') }}";
+const displayName = 'Run registered E2E contracts on consumer OS';
+const command = 'pnpm --dir apps/vs-code-designer run test:e2e-cli:unit';
+
+function collect(value, predicate, result = []) {
+  if (value && typeof value === 'object') {
+    if (!Array.isArray(value) && predicate(value)) {
+      result.push(value);
+    }
+    for (const child of Object.values(value)) {
+      collect(child, predicate, result);
+    }
+  }
+  return result;
+}
+
+function assertMandatoryConsumerContract(template, entry, packageManifest) {
+  const jobs = template.jobs;
+  assert.ok(Array.isArray(jobs) && jobs.length === 1);
+  const steps = jobs[0].steps;
+  const clauses = steps.filter((step) => Object.hasOwn(step, branchName));
+  assert.equal(clauses.length, 1, 'Exactly one unitTests-only contract clause is required');
+  assert.equal(Object.keys(clauses[0]).length, 1, 'No additional condition may weaken the contract clause');
+  const branch = clauses[0][branchName];
+  assert.ok(Array.isArray(branch) && branch.length === 1);
+  const step = branch[0];
+  assert.deepEqual(Object.keys(step).sort(), ['pwsh', 'displayName', 'workingDirectory'].sort());
+  assert.equal(step.displayName, displayName);
+  assert.equal(step.workingDirectory, '$(Build.SourcesDirectory)');
+  assert.equal(step.pwsh.split(command).length - 1, 1, 'Exact registered package alias must run once');
+  assert.match(step.pwsh, /test:e2e-cli:unit \*>&1 \| Tee-Object -FilePath \$contractLog/);
+  assert.match(step.pwsh, /\$contractExitCode = \$LASTEXITCODE\s+if \(\$contractExitCode -ne 0\) \{\s+exit \$contractExitCode\s+\}/);
+  assert.match(step.pwsh, /Join-Path '\$\(Build\.ArtifactStagingDirectory\)' 'vscode-e2e-cli\/\$\{\{ parameters\.artifactName \}\}'/);
+  assert.match(step.pwsh, /Join-Path \$diagnosticsRoot 'registered-contract-chain\.log'/);
+  const clauseIndex = steps.indexOf(clauses[0]);
+  const extractionIndex = steps.findIndex((item) => item.displayName === 'Extract verified E2E artifact');
+  assert.ok(extractionIndex >= 0 && extractionIndex < clauseIndex, 'Contracts must consume the admitted compiled artifact');
+  const prior = steps.slice(0, extractionIndex);
+  assert.ok(prior.some((item) => item.displayName === 'Verify current-run E2E artifact admission'));
+  assert.ok(prior.some((item) => item.displayName === 'Verify exact admitted source checkout'));
+  const perSuitePreparation = collect(steps, (item) => item.displayName === 'Prepare VS Code extension dependencies once');
+  assert.equal(perSuitePreparation.length, 0, 'Suite consumers must not create concurrent Marketplace setup cohorts');
+  const restored = collect(
+    steps.slice(0, clauseIndex),
+    (item) => item.displayName === 'Verify and restore exact-run extension dependencies'
+  );
+  assert.equal(restored.length, 1, 'Contracts must consume the exact-run prepared dependency artifact');
+  const pipelinePreparation = collect(
+    entry,
+    (item) =>
+      item.displayName === 'Prepare Windows VS Code extension dependencies once' ||
+      item.displayName === 'Prepare Linux VS Code extension dependencies once'
+  );
+  assert.deepEqual(
+    pipelinePreparation.map((item) => item.displayName),
+    ['Prepare Windows VS Code extension dependencies once', 'Prepare Linux VS Code extension dependencies once'],
+    'Marketplace preparation must run once per OS in the existing sequential prerequisite jobs'
+  );
+  const unitJobs = collect(entry, (item) => item.template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self').filter(
+    (item) => item.parameters.suiteId === 'unitTests'
+  );
+  assert.equal(unitJobs.length, 2, 'Both existing unit consumers must use this gate');
+  assert.deepEqual(unitJobs.map((item) => item.parameters.platform).sort(), ['linux', 'windows']);
+  for (const { parameters } of unitJobs) {
+    assert.equal(parameters.jobName, `${parameters.platform}_unit_tests`);
+    assert.equal(parameters.cliArguments, '--label unitTests');
+    assert.match(parameters.selected, new RegExp(`${parameters.platform}_unitTests`));
+    assert.ok(parameters.dependsOn.includes('build_current_run_e2e_artifact'));
+  }
+  assert.ok(packageManifest.scripts['test:e2e-cli:unit'].startsWith('node --test scripts/ado-consumer-contract.unit.test.js && '));
+  assert.equal(
+    packageManifest.scripts['test:e2e-cli:unit']
+      .split(' && ')
+      .filter((part) => part === 'node --test scripts/e2e-cli-diagnostics.unit.test.js').length,
+    1,
+    'Diagnostic owning-writer controls must run exactly once in the bootstrap/consumer chain'
+  );
+  assert.ok(packageManifest.scripts['test:e2e-cli:build'].endsWith('pnpm run test:e2e-cli:unit'));
+}
+
+test('same registered contracts gate both existing OS consumers after exact-run dependency restore without changing native labels', () => {
+  assertMandatoryConsumerContract(consumer, pipeline, manifest);
+});
+
+test('all native consumer branches bind immutable original restored seed separately from actual installed dependencies', () => {
+  const restore = collect(consumer, (item) => item.displayName === 'Verify and restore exact-run extension dependencies')[0].pwsh;
+  const manifestHash = restore.indexOf('$manifest.contentManifestSHA256 -ne $contentManifestHash');
+  const verify = restore.indexOf('prepare-e2e-extension-dependencies.js verify');
+  const preserve = restore.indexOf('Move-Item -LiteralPath $target -Destination $seed');
+  const copy = restore.indexOf('prepareSuiteExtensionsDirectory({ seedDir: process.argv[1], targetDir: process.argv[2]');
+  assert.ok(manifestHash >= 0 && manifestHash < verify && verify < preserve && preserve < copy);
+  assert.match(restore, /\$seed = Join-Path \$targetParent 'prepared-extensions'/);
+  assert.match(restore, /\$seed \$target \$expectedPlatform \$expectedArchitecture '\$\(ResolvedVSCodeVersion\)'/);
+  assert.ok(!restore.includes('createContentManifest'), 'Consumer cannot rebaseline runtime additions');
+  const native = collect(consumer, (item) => item.env?.LA_E2E_CLI_EXTENSIONS_DIR);
+  assert.equal(native.length, 4, 'Both credential-free and credentialed OS branches must preserve this binding');
+  for (const { env } of native) {
+    assert.equal(env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR, env.LA_E2E_CLI_EXTENSIONS_DIR.replace('test-extensions', 'prepared-extensions'));
+  }
+});
+
+const controls = [
+  [
+    'missing-contract-clause',
+    (template) => {
+      template.jobs[0].steps = template.jobs[0].steps.filter((step) => !Object.hasOwn(step, branchName));
+    },
+  ],
+  [
+    'wrong-suite-selector',
+    (template) => {
+      const branch = template.jobs[0].steps.find((step) => Object.hasOwn(step, branchName));
+      branch["${{ if eq(parameters.suiteId, 'other') }}"] = branch[branchName];
+      delete branch[branchName];
+    },
+  ],
+  [
+    'before-artifact-admission',
+    (template) => {
+      const steps = template.jobs[0].steps;
+      const index = steps.findIndex((step) => Object.hasOwn(step, branchName));
+      steps.unshift(...steps.splice(index, 1));
+    },
+  ],
+  [
+    'continue-on-error',
+    (template, _entry, _manifest, step) => {
+      step.continueOnError = true;
+    },
+  ],
+  [
+    'always-condition',
+    (template, _entry, _manifest, step) => {
+      step.condition = 'always()';
+    },
+  ],
+  [
+    'missing-exit-propagation',
+    (template, _entry, _manifest, step) => {
+      step.pwsh = step.pwsh.replace('exit $contractExitCode', 'exit 0');
+    },
+  ],
+  [
+    'missing-output-retention',
+    (template, _entry, _manifest, step) => {
+      step.pwsh = step.pwsh.replace(' | Tee-Object -FilePath $contractLog', '');
+    },
+  ],
+  [
+    'different-registered-command',
+    (template, _entry, _manifest, step) => {
+      step.pwsh = step.pwsh.replace(command, 'node scripts/private-unregistered-controls.js');
+    },
+  ],
+  [
+    'missing-Windows-unit-consumer',
+    (_template, entry) => {
+      collect(entry, (item) => item.parameters?.jobName === 'windows_unit_tests')[0].parameters.suiteId = 'other';
+    },
+  ],
+  [
+    'unregistered-owning-writer-controls',
+    (_template, _entry, packageManifest) => {
+      packageManifest.scripts['test:e2e-cli:unit'] = packageManifest.scripts['test:e2e-cli:unit'].replace(
+        'node --test scripts/e2e-cli-diagnostics.unit.test.js && ',
+        ''
+      );
+    },
+  ],
+  [
+    'duplicate-owning-writer-controls',
+    (_template, _entry, packageManifest) => {
+      packageManifest.scripts['test:e2e-cli:unit'] += ' && node --test scripts/e2e-cli-diagnostics.unit.test.js';
+    },
+  ],
+  [
+    'unregistered-public-regression',
+    (_template, _entry, packageManifest) => {
+      packageManifest.scripts['test:e2e-cli:unit'] = packageManifest.scripts['test:e2e-cli:unit'].replace(
+        'node --test scripts/ado-consumer-contract.unit.test.js && ',
+        ''
+      );
+    },
+  ],
+];
+for (const [name, mutate] of controls) {
+  test(`mandatory consumer contract rejects ${name}`, () => {
+    const template = structuredClone(consumer);
+    const entry = structuredClone(pipeline);
+    const packageManifest = structuredClone(manifest);
+    const step = template.jobs[0].steps.find((item) => Object.hasOwn(item, branchName))[branchName][0];
+    mutate(template, entry, packageManifest, step);
+    assert.throws(() => assertMandatoryConsumerContract(template, entry, packageManifest));
+  });
+}

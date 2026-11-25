@@ -5,7 +5,7 @@ Bundle-feed SDK requirements are retained alongside .NET 10 so existing .NET 8 w
 
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
-> **Last updated**: 2026-03-03
+> **Last updated**: 2026-11-09 (shared authoring guidance; the ExTester status above was not revalidated)
 
 ---
 
@@ -14,6 +14,149 @@ Bundle-feed SDK requirements are retained alongside .NET 10 so existing .NET 8 w
 TRUE end-to-end tests using `vscode-extension-tester` (ExTester v8.21.0) that launch a real standalone VS Code instance, load the locally-built Logic Apps extension, open webviews, interact with form fields via Selenium WebDriver, and verify the wizard flow + designer functionality.
 
 **Not** filesystem-only tests. **Not** `@vscode/test-cli` tests (those exist separately in `src/test/e2e/`).
+
+## 1.4. Local-first workflow for CLI-native tests
+
+When work touches `src/test/e2e/` or `scripts/run-e2e-cli.js`, develop the
+affected logical family locally before queueing ADO. The complete commands,
+Azure setup, evidence gates and ADO handoff are maintained in
+`docs/testing/vscode-cli-authoring.md` under **Local-first development before
+ADO**.
+
+Required order:
+
+1. Run `pnpm run test:e2e-cli:compile`.
+2. Run the focused family unit controls.
+3. Run `pnpm --dir apps/vs-code-designer run test:e2e-cli:unit`.
+4. Verify or prepare
+   `apps/vs-code-designer/.vscode-test/prepared-extensions-local` with
+   `prepare-e2e-extension-dependencies.js`.
+5. For Azure-backed families, acquire a fresh token for only the approved local
+   **Logic Apps PM** / **`lambrian_iactest`** target. Never use the ADO
+   service-connection fixture locally or print/persist the token.
+6. Run one affected family through its real `run-e2e-cli.js` lifecycle. Multiple
+   VS Code windows opening and closing is expected phase isolation.
+7. Inspect the terminal receipt, cleanup ledger, phase journal, screenshots,
+   diagnostics and containment receipt. A passing Mocha body alone is not
+   acceptance.
+8. Queue targeted exact-SHA Linux/Windows ADO lanes only after local proof is
+   green. The complete 23-lane rollup remains the final coverage gate.
+
+Useful focused entry points:
+
+```powershell
+pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables-lifecycle
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-multi-root
+pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-lifecycle
+```
+
+Do not copy the long Azure environment setup into family-specific notes. Keep
+the canonical snippet in `docs/testing/vscode-cli-authoring.md` so token
+freshness, approved-target policy and prepared-seed identity cannot drift.
+
+### Bounded ADO failed-job reruns
+
+Once attempt-safe artifact publication and rollup selection are available and
+verified, a failing pipeline may rerun **failed jobs only**, at the same
+immutable source SHA, at most **two additional times**. Count the original
+execution as attempt one: the limit is three executions total, not three
+retries. Preserve the initial failure and each rerun's native results,
+screenshots, lifecycle receipts, publication verdict and attempt identity.
+
+If both additional executions fail, stop retrying and treat the persistent
+failure as a regression requiring diagnosis before another run. This is the
+operational triage threshold, not proof of a particular product-code cause.
+Classify build/bootstrap, native test, lifecycle/evidence and publication
+failures separately; an artifact-name collision is not a native test failure.
+Do not reset the retry budget, change source between attempts, relax an
+assertion, or discard earlier failures to obtain a green result.
+
+A rerun pass requires the successful producing attempt's original artifact
+and all existing evidence/lifecycle gates. It does not make an older failure
+artifact valid or replace the protected full23 rollup. See
+`docs/testing/vscode-cli-authoring.md` for the canonical ADO procedure.
+
+### Product changes versus test requirements
+
+The [product-change audit](../../../../../docs/testing/vscode-product-change-audit.md#current-decisions-and-acceptance)
+owns source-bound decisions and evidence. The
+[canonical CLI guide](../../../../../docs/testing/vscode-cli-authoring.md#product-changes-versus-test-requirements)
+owns detailed reusable rules. CLI full23 acceptance is not a new ExTester
+result; do not replace the historical ExTester counts with CLI lane counts.
+
+- **Full-first ADO validation:** after focused local controls, queue all 11
+  Linux and 12 Windows suites directly at the immutable candidate SHA with
+  diagnostic mode disabled. A targeted ADO pass is optional diagnosis, not a
+  prerequisite for full23. Independent workstreams may proceed in parallel,
+  with separate source-bound evidence and protected full23 acceptance.
+- **Not required; removals accepted:** durable validation-alert storage and the
+  internal `data-code-view-validation-errors` DOM attribute. Observe real alert
+  text, visibility, geometry and owner identity instead. Preserve fresh-file
+  recomputation and local Code-save source precedence.
+- **Preserve editing safeguards:** D4 metadata synchronization and D5 deferred
+  baseline adoption prevent controlled saved-definition/content-loss cases.
+  Clean local Code state can still contain serialized unsaved Designer edits.
+  No-change reparsing has conditional graph/view-transition controls, not
+  native public-event proof. Assess initialization guards separately; do not
+  delete D3-D5 as a bundle or mistake a dirty-state mock for native proof.
+- **Retain required integration and features:** supported WIF provider/session
+  and SDK adaptations, actual compiler prerequisites, and the product
+  validation needed for an independently required visible error. The separate
+  environment-token fallback is not automatically approved by WIF retention.
+  A selector, sleep or terminal error cannot replace an absent product banner.
+- **Keep lifecycle and file policies explicit:** original product Func release
+  is not harness recovery. An independent dependency exception requires the
+  established ownership/shutdown/startup proof. Final settled contents do not
+  prove continuous non-target file immutability.
+- **Preserve normal activation:** minimal-activation early-return removal has
+  affected both-OS and canonical full23 acceptance. Legacy minimal flags no
+  longer skip normal activation. The independent initial-workspace bypass is
+  removed and accepted at `3e9d343a0` in affected run `15983333` and canonical
+  full23 run `15984836`; failed regeneration attempts remain preserved.
+  Exercise all initial workspace-setup calls regardless of legacy flag values,
+  preserve real prompts and E5 catch-up, and retain regeneration in full23.
+  Optional consumers need their
+  own evidence.
+- **Candidates are not accepted removals:** dependency-update behavior,
+  unresolved package branches, feed cleanup and narrower
+  recorder hooks still need their own controlled proof. Do not credit native
+  passes to uncommitted feed or regeneration-readiness drafts.
+- **Separate update eligibility from strict validation:** the user-directed
+  suppression-removal candidate restores the normal persisted 24-hour
+  throttle while keeping strict fail-closed checks enabled. Removal is accepted
+  at `c585d2639` in affected run `15986177` and canonical full23 run `15987081`,
+  with all 23 canonical suites passing on attempt 1. Do not disable strict
+  validation to audit updates.
+  Fresh profiles lose persisted throttle history even when phases share
+  installed binaries. Bundle refresh also records that
+  timestamp, so it cannot attest full setup. Prove real cold/warm setup and
+  exact executable identity; do not substitute timestamp seeding or re-pinning.
+- **Preserve original Run After names:** scope to the unique visible predecessor
+  row and match its exact browser-formatted label. Reuse
+  `runAfterPredecessorLabelDom`; percent placeholders can consume the extra title
+  argument instead of simply duplicating it. Validate against the installed
+  browser polyfill and actual React/Fluent DOM, retaining trusted clicks, status
+  assertions and persisted `runAfter`. Run component controls with the package's
+  JSDOM configuration; local controls alone are not both-OS native acceptance.
+  The restoration now has affected both-OS and canonical full23 acceptance,
+  recorded against its immutable source in the audit.
+- **Check authentic dependency provenance:** inspect publisher package entries
+  and normal production extraction before changing a fixture to match the old
+  resolver. Product-owned container normalization and genuinely omitted optional
+  executables can require compatibility fixes. Keep platform/file-specific
+  gaps explicit; metadata and simulated controls are not native install proof.
+- **Prove one cleanup at a time:** keep real UI and semantic/ownership oracles;
+  require affected both-OS coverage and canonical full23 at the same immutable
+  source before proceeding. A new Designer target does not by itself prove
+  stale-error rejection; that needs a native valid-after-invalid negative leg.
+- **Separate infrastructure from product behavior:** a shared source-bound build
+  and prepared dependencies are required; Windows preparation is not a Linux
+  prerequisite. Suite-attempt publication and mixed-attempt protected full23
+  selection have native proof with producing-artifact identity verified and
+  failed originals preserved; this does not prove absence of intermittency.
+  Keep the bounded failed-job policy above; fixed-name
+  shared producers are not safe for force-all retries.
 
 ## 1.5. Critical Rules — Read Before Writing Any New Test
 
@@ -131,6 +274,7 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 |------|---------|
 | `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
 | `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
+| `src/test/ui/extesterRuntime.test.ts` | Local-only pure Mocha controls for the owned ExTester cache layout, missing/ambiguous CLI paths, CLI environment sanitization, and seeded Code/ChromeDriver setup wiring. `E2E_MODE=extesterruntimeonly` short-circuits before setup; no downloads or native launch. Not a native lifecycle/CI acceptance verdict. |
 | `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
 | `src/test/ui/customCodeDotNetVersionCreate.test.ts` | Custom-code .NET picker/create phase. The `net10` target drives the real Create Workspace webview and creates a Stateful workspace; the `net8` target asserts `.NET 8` is hidden from the picker. Phase 4.15A / `E2E_MODE=customcodedotnetonly`. See §20. |
 | `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building or running the project. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
@@ -138,6 +282,7 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
 | `src/test/ui/workspaceManifest.ts` | Shared manifest types and utilities (~110 lines) |
+| `src/test/e2e/designerCdpActions.ts` | CLI-native shared Designer CDP actions. `ProvenDesignerCdpActions` owns stable node identity, exact ID-scoped insertion, Settings/Run After navigation, semantic status reads, and rerender-safe toggles. Do not duplicate these in a family-local driver. |
 | `src/test/ui/run-e2e.ts` | Launcher script (~2600 lines). Orchestrates ExTester programmatically. Compiled by tsup to `out/test/run-e2e.js` |
 | `src/test/ui/run-clean.ps1` | PowerShell helper to kill stuck processes, compile, and run |
 | `src/test/ui/smoke.test.ts` | Extension smoke tests |

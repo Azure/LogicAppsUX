@@ -1,11 +1,32 @@
-import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode';
-import { getConfiguredAzureEnv } from '@microsoft/vscode-azext-azureauth';
-import { localize } from '../../../localize';
+import { getConfiguredAzureEnv, getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth';
 import type { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AuthenticationSession } from 'vscode';
 import * as vscode from 'vscode';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { isAzureDevOpsFederatedCredentialsConfigured } from '../services/VSCodeAzureSubscriptionProvider';
 
-export async function getAuthData(tenantId?: string): Promise<AuthenticationSession> {
+async function getAuthDataFromSubscriptionProvider(tenantId?: string): Promise<AuthenticationSession | undefined> {
+  if (!isAzureDevOpsFederatedCredentialsConfigured() || !ext.subscriptionProvider) {
+    return undefined;
+  }
+
+  const isSignedIn = await ext.subscriptionProvider.isSignedIn(tenantId);
+  if (!isSignedIn) {
+    await ext.subscriptionProvider.signIn(tenantId);
+  }
+
+  const subscriptions = await ext.subscriptionProvider.getSubscriptions(tenantId ? { tenantId } : false);
+  const subscription = tenantId ? subscriptions.find((sub) => sub.tenantId === tenantId) : subscriptions[0];
+  return subscription?.authentication.getSession();
+}
+
+export async function getAuthData(tenantId?: string): Promise<AuthenticationSession | undefined> {
+  const providerAuthData = await getAuthDataFromSubscriptionProvider(tenantId);
+  if (providerAuthData) {
+    return providerAuthData;
+  }
+
   // When silentAuth is enabled (e.g. in automated test environments),
   // use { silent: true } to avoid showing the "wants to sign in" dialog.
   // This returns undefined if no cached session exists, instead of prompting.

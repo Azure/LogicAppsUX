@@ -1,0 +1,492 @@
+import * as assert from 'assert';
+import { createHash } from 'crypto';
+import * as path from 'path';
+import type { CdpEvaluator } from './cdpFormHelpers';
+import { clickPoint } from './cdpFormHelpers';
+import {
+  approvedAzureFixtureFromEnvironment,
+  approvedAzureFixturePrompts,
+  assertApprovedAzureFixture,
+  type ApprovedAzureFixture,
+} from './approvedAzureFixture';
+import { selectWorkbenchPromptOption } from './workbenchPromptSelection';
+import {
+  flagUnexpectedWorkbenchPrompt,
+  knownPromptTitles,
+  subscriptionTitles,
+  readWorkbenchPrompts,
+  type DetectedWorkbenchPrompt,
+} from './workbenchPrompts';
+import { operationDiagnostics } from './operationDiagnostics';
+import type { DiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
+
+export interface ApprovedAzureConnectorFixture extends ApprovedAzureFixture {
+  // Template location is only a setup hint until the approved existing RG's
+  // actual ARM location has been read and independently checked.
+  resourceGroupLocationVerified?: boolean;
+}
+
+interface ApprovedArmReadRetryOptions {
+  maxAttempts?: number;
+  retryDelayMs?: number;
+  attemptTimeoutMs?: number;
+  sleep?: (delayMs: number) => Promise<void>;
+}
+
+function isRetryableArmStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function isRetryableArmTransportError(error: unknown): boolean {
+  const codes = new Set(['EAI_AGAIN', 'ECONNRESET', 'ENETUNREACH', 'ETIMEDOUT']);
+  let current = error;
+  while (current && typeof current === 'object') {
+    const candidate = current as { code?: unknown; cause?: unknown; name?: unknown };
+    if ((typeof candidate.code === 'string' && codes.has(candidate.code)) || candidate.name === 'AbortError') {
+      return true;
+    }
+    if (current instanceof AggregateError && current.errors.some(isRetryableArmTransportError)) {
+      return true;
+    }
+    current = candidate.cause;
+  }
+  return false;
+}
+
+interface ApprovedArmReadResult<T> {
+  response: Response;
+  body?: T;
+}
+
+async function getApprovedArmRead<T>(
+  endpoint: URL,
+  deadline: number,
+  token: string,
+  get: typeof fetch,
+  signal: AbortSignal | undefined,
+  context: string,
+  attemptTimeoutLimitMs: number,
+  {
+    maxAttempts = 3,
+    retryDelayMs = 250,
+    attemptTimeoutMs = attemptTimeoutLimitMs,
+    sleep = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs)),
+  }: ApprovedArmReadRetryOptions = {}
+): Promise<ApprovedArmReadResult<T>> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    signal?.throwIfAborted();
+    const remainingMs = deadline - Date.now();
+    assert.ok(remainingMs > 0, `${context} deadline expired`);
+    const request = new AbortController();
+    const cancelRequest = () => request.abort(signal?.reason);
+    signal?.addEventListener('abort', cancelRequest, { once: true });
+    if (signal?.aborted) {
+      cancelRequest();
+    }
+    const timeout = setTimeout(
+      () => {
+        request.abort(Object.assign(new Error(`${context} timed out`), { code: 'ETIMEDOUT' }));
+      },
+      Math.min(attemptTimeoutLimitMs, attemptTimeoutMs, remainingMs)
+    );
+    try {
+      const response = await get(endpoint, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+        signal: request.signal,
+      });
+      signal?.throwIfAborted();
+      if (!isRetryableArmStatus(response.status) || attempt === maxAttempts) {
+        if (!response.ok) {
+          return { response };
+        }
+        const body = (await response.json()) as T;
+        signal?.throwIfAborted();
+        assert.ok(Date.now() < deadline, `${context} response arrived after the original deadline`);
+        return { response, body };
+      }
+    } catch (error) {
+      signal?.throwIfAborted();
+      if (!isRetryableArmTransportError(error) || attempt === maxAttempts) {
+        throw error;
+      }
+    } finally {
+      clearTimeout(timeout);
+      signal?.removeEventListener('abort', cancelRequest);
+    }
+    const retryWaitMs = Math.min(retryDelayMs, deadline - Date.now());
+    assert.ok(retryWaitMs > 0, `${context} deadline expired`);
+    await sleep(retryWaitMs);
+  }
+  throw new Error(`${context} retry contract exhausted unexpectedly`);
+}
+
+export function readApprovedAzureConnectorFixture(env: NodeJS.ProcessEnv = process.env): ApprovedAzureConnectorFixture {
+  assert.ok(env.LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL?.trim(), 'Approved HTTP fixture missing LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL');
+  const result = approvedAzureFixtureFromEnvironment(env);
+  const endpoint = new URL(result.managementBaseUrl);
+  assert.ok(
+    endpoint.protocol === 'https:' && !endpoint.username && !endpoint.password && !endpoint.search && !endpoint.hash,
+    'Approved management endpoint must be an HTTPS base URL without credentials/query'
+  );
+  return result;
+}
+
+export function assertApprovedAzureConnectorFixtureSaved(appDir: string, fixture: ApprovedAzureConnectorFixture): void {
+  assert.strictEqual(
+    fixture.resourceGroupLocationVerified,
+    true,
+    'Existing resource-group actual location must be verified, not assumed from template'
+  );
+  // Shared strict verifier only. HTTP deliberately does not call the shared
+  // preconfiguration lease: product wizard persistence is still required.
+  assertApprovedAzureFixture(path.join(appDir, 'local.settings.json'), fixture);
+}
+
+export async function readApprovedExistingResourceGroup(
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
+  get = fetch,
+  signal?: AbortSignal,
+  retryOptions?: ApprovedArmReadRetryOptions
+): Promise<ApprovedAzureConnectorFixture> {
+  const approvedToken = token?.trim();
+  assert.ok(approvedToken, 'Approved ARM access token missing for existing resource-group verification');
+  signal?.throwIfAborted();
+  assert.ok(Date.now() < deadline, 'Existing resource-group verification deadline expired');
+  const endpoint = new URL(
+    `${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}/resourceGroups/${encodeURIComponent(fixture.resourceGroupName)}`
+  );
+  endpoint.searchParams.set('api-version', '2022-09-01');
+  const { response, body: group } = await getApprovedArmRead<{ id?: string; name?: string; location?: string }>(
+    endpoint,
+    deadline,
+    approvedToken,
+    get,
+    signal,
+    'Existing resource-group verification',
+    30_000,
+    retryOptions
+  );
+  assert.ok(response.ok, `Existing approved resource-group read failed: HTTP ${response.status}; WIF access/fixture remains blocked`);
+  assert.ok(group, 'Existing approved resource-group response body unavailable');
+  const expectedId = `/subscriptions/${fixture.subscriptionId}/resourceGroups/${fixture.resourceGroupName}`;
+  assert.strictEqual(group.id?.toLowerCase(), expectedId.toLowerCase(), 'ARM returned another existing resource group/subscription');
+  assert.strictEqual(group.name?.toLowerCase(), fixture.resourceGroupName.toLowerCase(), 'ARM returned another group name');
+  const location = group.location;
+  assert.ok(typeof location === 'string' && location.trim(), 'Existing approved resource-group actual location unavailable');
+  return { ...fixture, location: location.trim(), resourceGroupLocationVerified: true };
+}
+
+export function assertAzureConnectorAccountTreePrerequisite(api: unknown, minimalActivation: string | undefined): void {
+  assert.notStrictEqual(minimalActivation, '1', 'HTTP affirmative wizard requires normal activation, not minimal command-only activation');
+  const resourceApi = api as { appResourceTree?: { _rootTreeItem?: { getSubscriptionPromptStep?: unknown } } } | undefined;
+  assert.strictEqual(
+    typeof resourceApi?.appResourceTree?._rootTreeItem?.getSubscriptionPromptStep,
+    'function',
+    'Actual activated Azure Resources account tree is unavailable; approved WIF initialization is a native prerequisite'
+  );
+}
+
+export function azurePromptObservation(
+  prompt: DetectedWorkbenchPrompt,
+  fixture?: ApprovedAzureConnectorFixture,
+  subscriptionName?: string
+) {
+  const normalize = (value: string) => value.replace(/\s+/g, ' ').trim();
+  const identity = (value: string) => ({
+    sha256: createHash('sha256').update(normalize(value)).digest('hex'),
+    // One-based index into knownPromptTitles above; zero is unknown.
+    knownTitleCode: knownPromptTitles.indexOf(normalize(value)) + 1,
+  });
+  const labels = prompt.rows.map((row) => row.label ?? row.text);
+  const sources = prompt.promptSources;
+  return {
+    title: identity(prompt.title),
+    supported: prompt.kind === 'quickInput' && (subscriptionTitles.includes(prompt.title) || prompt.title === knownPromptTitles[6]),
+    interactive: prompt.interactive,
+    count: labels.length,
+    hitTestableCount: prompt.rows.filter((row) => row.point).length,
+    subscriptionNameKnown: subscriptionName !== undefined,
+    candidates: labels.slice(0, 12).map((label, index) => ({
+      ...identity(label),
+      hitTestable: Boolean(prompt.rows[index].point),
+      // These comparisons are observations, never a selection rule.
+      resourceGroupMatch: fixture !== undefined && label === fixture.resourceGroupName,
+      subscriptionIdMatch: fixture !== undefined && label === fixture.subscriptionId,
+      subscriptionNameMatch: subscriptionName !== undefined && label === subscriptionName,
+      locationMatch: fixture !== undefined && label === fixture.location,
+    })),
+    capped: labels.length > 12,
+    ...(sources
+      ? {
+          promptSources: {
+            ...sources,
+            placeholder: identity(sources.placeholder),
+            widgetTitle: identity(sources.widgetTitle),
+            inputLabel: identity(sources.inputLabel),
+            titleSourcesAgree: normalize(sources.placeholder) === normalize(sources.widgetTitle),
+          },
+        }
+      : {}),
+  };
+}
+
+export function describeUnsupportedAzurePrompt(prompt: DetectedWorkbenchPrompt, fixture?: ApprovedAzureConnectorFixture): string {
+  const knownActions = new Set([
+    'Cancel',
+    'Create new resource group',
+    'Grant permission',
+    'Loading...',
+    'Sign in',
+    'Sign in to Azure',
+    'Skip for now',
+  ]);
+  const safeLabel = (value: string) => {
+    const normalized = value.replace(/\s+/g, ' ').trim();
+    if (knownActions.has(normalized)) {
+      return normalized;
+    }
+    return `<target:${createHash('sha256').update(normalized).digest('hex').slice(0, 12)}>`;
+  };
+  const normalizedTitle = prompt.title.replace(/\s+/g, ' ').trim();
+  return JSON.stringify({
+    kind: prompt.kind,
+    title: knownActions.has(normalizedTitle)
+      ? normalizedTitle
+      : `<prompt:${createHash('sha256').update(normalizedTitle).digest('hex').slice(0, 12)}>`,
+    category: /sign in|account/i.test(normalizedTitle)
+      ? 'authentication'
+      : /create|resource group/i.test(normalizedTitle)
+        ? 'resource-creation'
+        : /grant|permission/i.test(normalizedTitle)
+          ? 'permission'
+          : /subscription/i.test(normalizedTitle)
+            ? 'subscription'
+            : 'unknown',
+    interactive: prompt.interactive,
+    rows: prompt.rows.slice(0, 12).map((row) => ({
+      label: safeLabel(row.label ?? row.text),
+      hitTestable: Boolean(row.point),
+    })),
+    observation: azurePromptObservation(prompt, fixture),
+  });
+}
+
+export async function selectApprovedAzureConnectorFixturePrompt(
+  cdp: CdpEvaluator,
+  prompt: DetectedWorkbenchPrompt,
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  getSubscriptionName: () => Promise<string>,
+  signal?: AbortSignal,
+  trace: DiagnosticProducer = operationDiagnostics.fork('azure-fixture-prompts', { maxEvents: 64, maxBytes: 65536 })
+): Promise<boolean> {
+  let lastPrompt = prompt;
+  let captureAttempted = false;
+  let state = azurePromptObservation(prompt, fixture);
+  const operation = trace.start('azure-fixture-prompt', state);
+  const observe = (current: DetectedWorkbenchPrompt, subscriptionName?: string) => {
+    lastPrompt = current;
+    state = azurePromptObservation(current, fixture, subscriptionName);
+    trace.emit('azure-fixture-prompt-observation', 'sample', { state });
+  };
+  const captureUnexpected = async (current: DetectedWorkbenchPrompt | undefined, error: unknown) => {
+    captureAttempted = true;
+    await flagUnexpectedWorkbenchPrompt(cdp, current, error, trace.fork('unexpected-ui', { maxEvents: 16, maxBytes: 32768 }));
+  };
+  try {
+    const result = await selectApprovedAzureConnectorFixturePromptCore(
+      cdp,
+      prompt,
+      fixture,
+      deadline,
+      getSubscriptionName,
+      signal,
+      observe,
+      captureUnexpected
+    );
+    operation.end(state);
+    return result;
+  } catch (error) {
+    if (!captureAttempted) {
+      await captureUnexpected(lastPrompt, error);
+    }
+    operation.fail(error, state);
+    // Reserved summary capacity keeps the first gate even after noisy UI polls.
+    trace.emit('azure-fixture-prompt-terminal', 'summary', { state });
+    throw error;
+  }
+}
+
+async function selectApprovedAzureConnectorFixturePromptCore(
+  cdp: CdpEvaluator,
+  prompt: DetectedWorkbenchPrompt,
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  getSubscriptionName: () => Promise<string>,
+  signal: AbortSignal | undefined,
+  observe: (prompt: DetectedWorkbenchPrompt, subscriptionName?: string) => void,
+  captureUnexpected: (prompt: DetectedWorkbenchPrompt | undefined, error: unknown) => Promise<void>
+): Promise<boolean> {
+  const supportedTitle = subscriptionTitles.includes(prompt.title) || prompt.title === 'Select a resource group for new resources.';
+  if (prompt.kind !== 'quickInput' || !supportedTitle) {
+    const error = new Error(
+      `Azure setup reached an unsupported prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt, fixture)}`
+    );
+    await captureUnexpected(prompt, error);
+    throw error;
+  }
+  let expectedName: string;
+  if (subscriptionTitles.includes(prompt.title)) {
+    signal?.throwIfAborted();
+    expectedName = await getSubscriptionName();
+    signal?.throwIfAborted();
+  } else {
+    assert.strictEqual(prompt.title, 'Select a resource group for new resources.');
+    assert.strictEqual(
+      fixture.resourceGroupLocationVerified,
+      true,
+      'Existing RG identity/location must be read before its native selection'
+    );
+    expectedName = fixture.resourceGroupName;
+  }
+  assert.ok(
+    expectedName && !/create new|sign in|grant|permission/i.test(expectedName),
+    'Never select cloud creation, sign-in or elevation actions'
+  );
+  const remaining = () => {
+    signal?.throwIfAborted();
+    const value = deadline - Date.now();
+    assert.ok(value > 0, 'Approved existing Azure target unavailable before the original deadline');
+    return value;
+  };
+  const sharedRule = approvedAzureFixturePrompts(fixture)[subscriptionTitles.includes(prompt.title) ? 0 : 1];
+  let current = prompt;
+  let filtered = false;
+  let selection: ReturnType<typeof selectWorkbenchPromptOption>;
+  while (true) {
+    observe(current, subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
+    const matches = current.rows.filter((row) => (row.label ?? row.text) === expectedName);
+    try {
+      assert.ok(matches.length <= 1, 'Approved existing Azure target is ambiguous; do not select another target or create a resource');
+    } catch (error) {
+      await captureUnexpected(current, error);
+      throw error;
+    }
+    selection = selectWorkbenchPromptOption(
+      [{ ...sharedRule, matchText: prompt.title, optionText: expectedName, exactRowLabel: true }],
+      [current]
+    );
+    if (selection.point) {
+      assert.strictEqual(matches.length, 1, 'Approved existing Azure target selection must resolve exactly one row');
+      break;
+    }
+    if (!filtered && current.interactive && current.inputPoint) {
+      await clickPoint(cdp, current.inputPoint);
+      await replaceFocusedWorkbenchInput(cdp, expectedName);
+      filtered = true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
+    const prompts = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
+    signal?.throwIfAborted();
+    try {
+      assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
+    } catch (error) {
+      await captureUnexpected(prompts[0], error);
+      throw error;
+    }
+    current = prompts[0];
+    observe(current, subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
+    if (current.kind !== 'quickInput' || current.title !== prompt.title) {
+      const error = new Error(
+        `Azure setup changed to an unsupported prompt before the approved target was actionable: ${describeUnsupportedAzurePrompt(current, fixture)}`
+      );
+      await captureUnexpected(current, error);
+      throw error;
+    }
+  }
+
+  async function replaceFocusedWorkbenchInput(cdp: CdpEvaluator, value: string): Promise<void> {
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'Control',
+      code: 'ControlLeft',
+      windowsVirtualKeyCode: 17,
+      nativeVirtualKeyCode: 17,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'a',
+      code: 'KeyA',
+      windowsVirtualKeyCode: 65,
+      nativeVirtualKeyCode: 65,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'a',
+      code: 'KeyA',
+      windowsVirtualKeyCode: 65,
+      nativeVirtualKeyCode: 65,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'Control',
+      code: 'ControlLeft',
+      windowsVirtualKeyCode: 17,
+      nativeVirtualKeyCode: 17,
+    });
+    await cdp.send('Input.insertText', { text: value });
+  }
+  remaining();
+  await clickPoint(cdp, selection.point);
+  while (true) {
+    const next = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
+    signal?.throwIfAborted();
+    if (next.length) {
+      observe(next[0], subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
+    }
+    if (!next.length || next.every((value) => value.title !== prompt.title)) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
+  }
+}
+
+export async function readApprovedAzureSubscriptionName(
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
+  get = fetch,
+  signal?: AbortSignal,
+  retryOptions?: ApprovedArmReadRetryOptions
+): Promise<string> {
+  const approvedToken = token?.trim();
+  assert.ok(approvedToken, 'Approved ARM access token missing; parent must enable requiresAzureAccessToken using existing WIF connection');
+  signal?.throwIfAborted();
+  const timeoutMs = Math.min(5000, deadline - Date.now());
+  assert.ok(timeoutMs > 0, 'Approved subscription lookup deadline expired');
+  // Read-only lookup of this exact existing subscription, never list/create/
+  // mutate resources or use Azure CLI/ambient sign-in as a fallback.
+  const endpoint = new URL(`${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}`);
+  endpoint.searchParams.set('api-version', '2022-12-01');
+  const { response, body: subscription } = await getApprovedArmRead<{
+    subscriptionId?: string;
+    tenantId?: string;
+    displayName?: string;
+  }>(endpoint, deadline, approvedToken, get, signal, 'Approved subscription lookup', timeoutMs, retryOptions);
+  assert.ok(
+    response.ok,
+    `Approved subscription read-only lookup failed: HTTP ${response.status}; existing auth/fixture access is required`
+  );
+  assert.ok(subscription, 'Approved subscription response body unavailable');
+  assert.strictEqual(subscription.subscriptionId?.toLowerCase(), fixture.subscriptionId.toLowerCase(), 'ARM returned another subscription');
+  assert.strictEqual(subscription.tenantId?.toLowerCase(), fixture.tenantId.toLowerCase(), 'ARM returned another tenant');
+  const displayName = subscription.displayName;
+  assert.ok(typeof displayName === 'string' && displayName.trim(), 'Approved subscription display name unavailable');
+  return displayName.trim();
+}

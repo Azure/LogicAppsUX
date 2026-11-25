@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '../../../constants';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencies';
@@ -10,8 +10,11 @@ import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '..
 describe('dependencies', () => {
   let globalStateGet: Mock;
   let globalStateUpdate: Mock;
+  let originalStrictValidation: string | undefined;
 
   beforeEach(() => {
+    originalStrictValidation = process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
+    delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
     globalStateGet = vi.fn();
     globalStateUpdate = vi.fn().mockResolvedValue(undefined);
     (ext as any).context = {
@@ -22,10 +25,25 @@ describe('dependencies', () => {
     };
   });
 
-  describe('shouldCheckForDependencyUpdates', () => {
+  afterEach(() => {
+    if (originalStrictValidation === undefined) {
+      delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
+    } else {
+      process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = originalStrictValidation;
+    }
+  });
+
+  describe.each([undefined, '0', '1'])('shouldCheckForDependencyUpdates with strict validation %s', (strictValidation) => {
+    beforeEach(() => {
+      if (strictValidation !== undefined) {
+        process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = strictValidation;
+      }
+    });
+
     it('returns true when no timestamp has been recorded', () => {
       globalStateGet.mockReturnValue(undefined);
       expect(shouldCheckForDependencyUpdates()).toBe(true);
+      expect(globalStateGet).toHaveBeenCalledWith(lastDependencyUpdateCheckKey);
     });
 
     it('returns true when the stored value is not a number', () => {
@@ -53,6 +71,12 @@ describe('dependencies', () => {
     it('returns false when less than the interval has elapsed', () => {
       const now = 1_000_000_000_000;
       globalStateGet.mockReturnValue(now - 1000);
+      expect(shouldCheckForDependencyUpdates(now)).toBe(false);
+    });
+
+    it('returns false when the recorded timestamp is in the future', () => {
+      const now = 1_000_000_000_000;
+      globalStateGet.mockReturnValue(now + 1000);
       expect(shouldCheckForDependencyUpdates(now)).toBe(false);
     });
 

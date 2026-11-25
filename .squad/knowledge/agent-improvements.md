@@ -48,3 +48,11 @@ Curated improvements to Squad routing, prompts, playbooks, and agent behavior. A
 - Source: Issue #7040 NuGet debug lifecycle investigation.
 - Applies to: `chief-engineer`, `test`, `vscode-test-specialist`, `ci-sentinel`.
 - Status: verified.
+
+### CLI E2E work must use layered triage and the full proof ladder
+
+- Improvement: Agents working on `@vscode/test-cli` infrastructure must classify build, native, cleanup/terminal, evidence-staging, and publication outcomes separately; validate focused controls and the complete CLI unit chain; run exact-SHA targeted native diagnostics; inspect artifacts; and then run the canonical Linux/Windows matrix.
+- Why it matters: Treating a job result as the native verdict or stopping after a targeted green repeatedly caused correct interaction fixes to be confused with evidence/reporting regressions and left unrelated suites unverified.
+- Source: `docs/testing/vscode-cli-authoring.md`, `.config/README.md`, `run-e2e-cli.unit.test.js`, and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode`, `test`, `vscode-test-specialist`, `senior-swe-reviewer`.
+- Status: verified workflow.

@@ -1,0 +1,8 @@
+{
+  "name": "logic-apps-lifecycle-test-recorder",
+  "publisher": "logic-apps-tests",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.104.0" },
+  "activationEvents": ["*"],
+  "main": "./extension.js"
+}

@@ -7,16 +7,28 @@ import { ensureProjectFiles } from '../projectConsistency/projectFilesConsistenc
 import { ensureVSCodeFiles } from '../projectConsistency/vscodeConsistency';
 import * as vscode from 'vscode';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { type EnsureVSCodeFilesOrigin, recordRegenerationEvent } from '../utils/regenerationProbe';
 import { isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
 
-export async function runProjectConsistencyCheck(context: IActionContext): Promise<void> {
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0 || !isProjectConsistencyCheckEnabled()) {
+export async function runProjectConsistencyCheck(
+  context: IActionContext,
+  origin: EnsureVSCodeFilesOrigin = 'explicit-consistency-command'
+): Promise<void> {
+  recordRegenerationEvent({ event: 'consistency-check-entered' });
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'no-workspace' });
+    return;
+  }
+  if (!isProjectConsistencyCheckEnabled()) {
+    recordRegenerationEvent({ event: 'consistency-check-skipped', reason: 'disabled' });
     return;
   }
   const projectPaths = await getWorkspaceLogicAppRoots();
+  recordRegenerationEvent({ event: 'consistency-project-discovery-returned', projectCount: projectPaths.length });
 
   const ensureProjectFilesTasks = projectPaths.map((projectPath) => ensureProjectFiles(context, projectPath));
-  const ensureVSCodeFilesTask = ensureVSCodeFiles(context, projectPaths);
+  const ensureVSCodeFilesTask = ensureVSCodeFiles(context, projectPaths, origin);
 
   await Promise.all([...ensureProjectFilesTasks, ensureVSCodeFilesTask]);
+  recordRegenerationEvent({ event: 'consistency-check-returned' });
 }

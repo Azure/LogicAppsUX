@@ -60,6 +60,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     };
     return await callback(context);
   }),
+  parseError: (error: any) => ({ errorType: error?.errorType }),
 }));
 
 vi.mock('../../utils/delay', () => ({
@@ -554,6 +555,154 @@ describe('pickFuncProcessInternal', () => {
     Object.assign(vscode, { Task: originalTaskConstructor, ShellExecution: originalShellConstructor });
     vi.restoreAllMocks();
     restoreProcessPlatform();
+  });
+
+  const launch = () =>
+    pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+  it('waits for pending execution before querying host status and returns the tracked process after settlement', async () => {
+    let release!: () => void;
+    let entered!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const executing = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    vi.mocked(executeIfNotActive).mockImplementation(async () => {
+      entered();
+      await pending;
+      runningFuncTaskMap.set(workspaceFolder, { startTime: 0, processId: 1234 });
+    });
+    const result = launch();
+    await executing;
+    expect(getFuncPortFromTaskOrProject).not.toHaveBeenCalled();
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    release();
+    expect(await result).toBe('1234');
+    expect(runningFuncTaskMap.get(workspaceFolder)).toEqual({ startTime: 0, processId: 1234, childProcessId: ['1234', undefined] });
+    expect(sendRequestWithTimeout).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(vscode.tasks.onDidEndTaskProcess).mock.results[0].value.dispose).toHaveBeenCalled();
+  });
+
+  it('keeps waiting for a pending map entry at 500ms intervals before querying host status', async () => {
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    let release!: () => void;
+    let entered!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const waiting = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    let count = 0;
+    vi.mocked(delay).mockImplementation(async () => {
+      if (++count === 50) {
+        entered();
+        await pending;
+        runningFuncTaskMap.set(workspaceFolder, { startTime: 0, processId: 5678 });
+      }
+    });
+    const result = launch();
+    await waiting;
+    expect(delay).toHaveBeenCalledTimes(50);
+    expect(vi.mocked(delay).mock.calls.every(([interval]) => interval === 500)).toBe(true);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    release();
+    expect(await result).toBe('5678');
+    expect(runningFuncTaskMap.get(workspaceFolder)?.processId).toBe(5678);
+    expect(sendRequestWithTimeout).toHaveBeenCalledTimes(1);
+  });
+
+  it('retains the minimum 600-second map-wait deadline without querying host status', async () => {
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    vi.spyOn(Date, 'now').mockReturnValueOnce(0).mockReturnValue(600001);
+    await expect(launch()).rejects.toThrow('Failed to start the Functions host task within "600" seconds.');
+    expect(runningFuncTaskMap.size).toBe(0);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    expect(vi.mocked(vscode.tasks.onDidEndTaskProcess).mock.results[0].value.dispose).toHaveBeenCalled();
+  });
+
+  it('fails map readiness when a workspace dependency task fails and disposes its listener', async () => {
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    let taskEnd!: (event: vscode.TaskProcessEndEvent) => void;
+    const dispose = vi.fn();
+    vi.mocked(vscode.tasks.onDidEndTaskProcess).mockImplementation((listener) => {
+      taskEnd = listener;
+      return { dispose };
+    });
+    vi.mocked(delay).mockImplementation(async () => {
+      taskEnd({ execution: { task: { ...funcTask, name: 'build' } }, exitCode: 1 } as vscode.TaskProcessEndEvent);
+    });
+    await expect(launch()).rejects.toThrow('Error exists after running preLaunchTask "build". View task output for more information.');
+    expect(context.errorHandling.suppressReportIssue).toBe(true);
+    expect(dispose).toHaveBeenCalled();
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+  });
+
+  it('preserves execute rejection identity and disposes its listener', async () => {
+    const primary = new Error('private-execute-failure');
+    vi.mocked(executeIfNotActive).mockRejectedValue(primary);
+    await expect(launch()).rejects.toBe(primary);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    expect(vi.mocked(vscode.tasks.onDidEndTaskProcess).mock.results[0].value.dispose).toHaveBeenCalled();
+  });
+
+  it('doubles host request timeouts after each of eight timeout failures before succeeding on request nine', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(0);
+    let attempts = 0;
+    vi.mocked(sendRequestWithTimeout).mockImplementation(async () => {
+      if (++attempts <= 8) {
+        throw { errorType: 'REQUEST_ABORTED_ERROR' };
+      }
+      return { parsedBody: { state: 'Running' } } as any;
+    });
+    expect(await launch()).toBe('1234');
+    expect(vi.mocked(sendRequestWithTimeout).mock.calls.map((call) => call[2])).toEqual([
+      500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000,
+    ]);
+    expect(context.telemetry.measurements.maxStatusTimeout).toBe(128000);
+    expect(sendRequestWithTimeout).toHaveBeenCalledTimes(9);
+    expect(delay).toHaveBeenCalledTimes(4);
+    expect(vi.mocked(delay).mock.calls.every(([interval]) => interval === 500)).toBe(true);
+    expect(runningFuncTaskMap.get(workspaceFolder)?.childProcessId).toEqual(['1234', undefined]);
+  });
+
+  it('keeps non-timeout failures secondary and polls HTTP then HTTPS without increasing the timeout', async () => {
+    vi.mocked(sendRequestWithTimeout)
+      .mockRejectedValueOnce(new Error('connection refused'))
+      .mockResolvedValueOnce({ parsedBody: { state: 'Starting' } } as any);
+
+    expect(await launch()).toBe('1234');
+    const calls = vi.mocked(sendRequestWithTimeout).mock.calls;
+    expect(calls.map((call) => call[1])).toEqual([
+      { url: 'http://localhost:7071/admin/host/status', method: 'GET' },
+      { url: 'https://localhost:7071/admin/host/status', method: 'GET', rejectUnauthorized: false },
+      { url: 'http://localhost:7071/admin/host/status', method: 'GET' },
+    ]);
+    expect(calls.map((call) => call[2])).toEqual([500, 500, 500]);
+    expect(context.telemetry.measurements.maxStatusTimeout).toBeUndefined();
+    expect(delay).toHaveBeenCalledExactlyOnceWith(500);
+  });
+
+  it('preserves the host-readiness timeout error and disposes its listener', async () => {
+    let now = 0;
+    vi.spyOn(Date, 'now').mockImplementation(() => now);
+    vi.mocked(sendRequestWithTimeout).mockImplementation(async () => {
+      now = 1001;
+      return { parsedBody: { state: 'Starting' } } as any;
+    });
+
+    await expect(launch()).rejects.toThrow(
+      'Failed to detect running Functions host within "1" seconds. You may want to adjust the "azureLogicAppsStandard.pickProcessTimeout" setting.'
+    );
+    expect(sendRequestWithTimeout).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(vscode.tasks.onDidEndTaskProcess).mock.results[0].value.dispose).toHaveBeenCalled();
   });
 
   it('serializes a workspace-scoped selected debug-symbol task without mutating fetched handles', async () => {

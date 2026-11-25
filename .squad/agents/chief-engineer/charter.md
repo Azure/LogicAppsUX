@@ -50,6 +50,7 @@
 13. Hand push and CI monitoring to `ci-sentinel`.
 14. Keep iterating on actionable failures until checks pass, the PR merges, or a real blocker requires user input.
 15. Ask `release-scribe` for reviewer-facing summaries and PR body updates.
+16. For shared VS Code CLI E2E infrastructure, require layered failure classification, the complete local CLI gate, exact-SHA targeted Linux/Windows proof with artifact inspection, and the complete canonical matrix before declaring the broader suite healthy.
 
 ## Review Board Policy
 

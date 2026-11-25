@@ -1,17 +1,45 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Uri, window, workspace } from 'vscode';
 import axios from 'axios';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import findProcess from 'find-process';
 import * as os from 'os';
+import * as productFs from 'fs';
+import * as path from 'node:path';
+import { randomUUID, createHash } from 'node:crypto';
+const diagnosticFs = await vi.importActual<typeof import('node:fs')>('node:fs');
+const diagnosticOs = await vi.importActual<typeof import('node:os')>('node:os');
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
 import { releaseReservedPort, reserveFreePort } from '../../portReservation';
+import {
+  startAllDesignTimeApis,
+  startDesignTimeApi,
+  startDesignTimeProcess,
+  stopDesignTimeApi,
+  stopAllDesignTimeApis,
+  waitForDesignTimeStartUp,
+} from '../startDesignTimeApi';
 import { getExperimentalBundleRuntime } from '../../bundleFeed';
 import { ensureDesignTimeFiles, ensureProjectFiles } from '../../../projectConsistency/projectFilesConsistency';
+import { findChildProcess } from '../../../commands/pickFuncProcess';
+import { emitDesignTimeDiagnostic, startDesignTimeDiagnostic, finishDesignTimeDiagnostic } from '../designTimeDiagnostics';
+import { warnIfJdbcJavaRuntimeMissing } from '../../java/jdbcConnector';
+import { ensureExtensionBundleHealthy } from '../../bundleFeed';
 import { isProjectConsistencyCheckEnabled } from '../../vsCodeConfig/settings';
-import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
+
+vi.mock('../../bundleFeed', () => ({
+  ensureExtensionBundleHealthy: vi.fn().mockResolvedValue(undefined),
+  getExperimentalBundleRuntime: vi.fn(),
+  isExtensionBundleDownloadInFlight: vi.fn(() => false),
+  isInsideBundleDownloadScope: vi.fn(() => false),
+  waitForExtensionBundleReady: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('../../java/jdbcConnector', () => ({
+  warnIfJdbcJavaRuntimeMissing: vi.fn().mockResolvedValue(undefined),
+}));
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
@@ -38,14 +66,6 @@ vi.mock('../../../projectConsistency/projectFilesConsistency', () => ({
 
 vi.mock('../../fs', () => ({
   writeFormattedJson: vi.fn(),
-}));
-
-vi.mock('../../bundleFeed', () => ({
-  getExperimentalBundleRuntime: vi.fn(),
-  ensureExtensionBundleHealthy: vi.fn(),
-  isExtensionBundleDownloadInFlight: vi.fn(() => false),
-  isInsideBundleDownloadScope: vi.fn(() => false),
-  waitForExtensionBundleReady: vi.fn(),
 }));
 
 vi.mock('../common', () => ({
@@ -292,8 +312,8 @@ describe('startAllDesignTimeApis', () => {
     );
   });
 
-  it('kills both the tracked child and wrapper shell on linux when stopping design time', async () => {
-    vi.mocked(os.platform).mockReturnValue('linux' as any);
+  it('preserves tracked child and wrapper shell cleanup on macOS', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
     vi.mocked(cp.spawn).mockReturnValue({} as any);
     ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
 
@@ -366,6 +386,638 @@ describe('startAllDesignTimeApis', () => {
     await expect(stopDesignTimeApi('D:/workspace/app-one')).resolves.toBeUndefined();
 
     expect(cp.exec).not.toHaveBeenCalled();
+  });
+});
+
+describe('Linux design-time process-group ownership', () => {
+  const project = path.resolve('owned-design-time-project');
+  const workdir = path.join(project, 'workflow-designtime');
+  const context = () => ({ telemetry: { properties: {}, measurements: {} }, errorHandling: {} }) as any;
+  const nativeKill = process.kill.bind(process);
+  let child: cp.ChildProcess;
+
+  const launch = () => {
+    ext.designTimeInstances.set(project, {});
+    startDesignTimeProcess(undefined, workdir, 'private-func', ['host', 'start', '--port 7071']);
+    return ext.designTimeInstances.get(project)!;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    ext.designTimeInstances.clear();
+    vi.mocked(os.platform).mockReturnValue('linux');
+    child = Object.assign(new EventEmitter(), { pid: 20457, exitCode: null, signalCode: null }) as cp.ChildProcess;
+    vi.mocked(cp.spawn).mockReturnValue(child);
+    vi.spyOn(process, 'kill').mockImplementation(() => {
+      child.emit('exit', null, 'SIGKILL');
+      return true;
+    });
+    vi.mocked(reserveFreePort).mockResolvedValue(7071);
+    vi.mocked(warnIfJdbcJavaRuntimeMissing).mockResolvedValue(undefined);
+    vi.mocked(ensureExtensionBundleHealthy).mockResolvedValue(undefined);
+    workspace.fs.createDirectory = vi.fn().mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    ext.designTimeInstances.clear();
+  });
+
+  it('stops the owned group while startup is pending and childFuncPid is absent, excluding foreign groups', async () => {
+    let resolveStartup!: () => void;
+    const startupPromise = new Promise<void>((resolve) => {
+      resolveStartup = resolve;
+    });
+    const instance = launch();
+    instance.startupPromise = startupPromise;
+    const liveGroups = new Map([
+      [20457, 20457], // shell
+      [20460, 20457], // launcher
+      [20503, 20457], // worker
+      [30001, 30001], // unrelated process
+      [process.pid, process.pid], // extension host
+    ]);
+    vi.mocked(process.kill).mockImplementation((pid, signal) => {
+      expect(signal).toBe('SIGKILL');
+      for (const [member, group] of liveGroups) {
+        if (group === -Number(pid)) liveGroups.delete(member);
+      }
+      child.emit('exit', null, 'SIGKILL');
+      return true;
+    });
+
+    await stopAllDesignTimeApis();
+
+    expect(instance.childFuncPid).toBeUndefined();
+    expect(instance.startupPromise).toBe(startupPromise);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect([...liveGroups.keys()]).toEqual([30001, process.pid]);
+    expect(ext.designTimeInstances.size).toBe(0);
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith('private-func', ['host', 'start', '--port 7071'], {
+      cwd: workdir,
+      shell: true,
+      detached: true,
+    });
+    expect(findProcess).not.toHaveBeenCalled();
+    expect(findChildProcess).not.toHaveBeenCalled();
+    resolveStartup();
+  });
+
+  it('ignores a foreign discovered child PID and waits for the owned child exit, not pipe close', async () => {
+    launch().childFuncPid = '30001';
+    vi.mocked(process.kill).mockReturnValue(true);
+    let settled = false;
+    const stopping = stopDesignTimeApi(project).then(() => {
+      settled = true;
+    });
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    child.emit('exit', null, 'SIGKILL');
+    await stopping;
+    expect(settled).toBe(true);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it('stops an actual in-flight startup before child discovery without waiting for readiness', async () => {
+    let ready!: (value: unknown) => void;
+    vi.mocked(axios.get)
+      .mockRejectedValueOnce(new Error('not ready'))
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            ready = resolve;
+          })
+      );
+    const startup = startDesignTimeApi(context(), project);
+    const outcome = startup.catch((error) => error);
+    await vi.waitFor(() => expect(ready).toBeTypeOf('function'));
+    const instance = ext.designTimeInstances.get(project)!;
+    expect(instance.process).toBe(child);
+    expect(instance.startupPromise).toBeDefined();
+    expect(instance.childFuncPid).toBeUndefined();
+    expect(findChildProcess).not.toHaveBeenCalled();
+
+    await stopAllDesignTimeApis();
+
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(ext.designTimeInstances.size).toBe(0);
+    // Let the pre-existing startup continuation settle; this is not a new
+    // cancellation policy or a late-spawn correction.
+    ready({});
+    expect((await outcome).message).toContain('Design-time startup state was lost');
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(findChildProcess).not.toHaveBeenCalled();
+  });
+
+  it('rejects an exited leader rather than signaling a potentially reused process-group number', async () => {
+    launch();
+    Object.assign(child, { exitCode: 0 });
+    vi.mocked(process.kill).mockReturnValue(true);
+    await expect(stopDesignTimeApi(project)).rejects.toThrow('Cannot verify a live Linux design-time process-group leader');
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, 0, -1, 1, NaN, process.pid])('does not authorize an unsafe or absent spawn PID: %s', async (pid) => {
+    Object.assign(child, { pid });
+    launch().childFuncPid = '30001';
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not trust an unmarked ChildProcess with a copied PID or stale FuncInstance child PID', async () => {
+    launch();
+    ext.designTimeInstances.set(project, { process: { pid: child.pid } as cp.ChildProcess, childFuncPid: '30001' });
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not trust a changed PID on the marked child', async () => {
+    launch();
+    Object.assign(child, { pid: 30001 });
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it('consumes ownership so reinserting the same old child cannot replay a group kill', async () => {
+    launch();
+    await stopDesignTimeApi(project);
+    ext.designTimeInstances.set(project, { process: child, childFuncPid: '30001' });
+    await stopDesignTimeApi(project);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+  });
+
+  it('treats ESRCH as already absent without any fallback kill or exit wait', async () => {
+    launch();
+    vi.mocked(process.kill).mockImplementation(() => {
+      throw Object.assign(new Error('gone'), { code: 'ESRCH' });
+    });
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it.each(['EPERM', 'ENOSYS'])('propagates unavailable group cleanup (%s) without falling back to foreign PIDs', async (code) => {
+    launch().childFuncPid = '30001';
+    const failure = Object.assign(new Error('group kill failed'), { code });
+    vi.mocked(process.kill).mockImplementation(() => {
+      throw failure;
+    });
+    await expect(stopDesignTimeApi(project)).rejects.toBe(failure);
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it('bounds the exit wait after a successful signal and removes its listener', async () => {
+    vi.useFakeTimers();
+    launch();
+    vi.mocked(process.kill).mockReturnValue(true);
+    const stopping = expect(stopDesignTimeApi(project)).rejects.toThrow('Timed out waiting for the Linux design-time process');
+    await vi.advanceTimersByTimeAsync(5000);
+    await stopping;
+    expect(child.listenerCount('exit')).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each([false, true])('preserves the original post-spawn startup failure when cleanup fails: %s', async (cleanupFails) => {
+    const primary = new Error('original startup failure');
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(findChildProcess).mockResolvedValue('30001');
+    vi.mocked(productFs.readFileSync).mockImplementation(() => {
+      throw primary;
+    });
+    if (cleanupFails) {
+      vi.mocked(process.kill).mockImplementation(() => {
+        throw Object.assign(new Error('secondary'), { code: 'EPERM' });
+      });
+    }
+    await expect(startDesignTimeApi(context(), project)).rejects.toBe(primary);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(ext.designTimeInstances.get(project)).toMatchObject({ startupError: primary.message, isStarting: false });
+    expect(ext.designTimeInstances.get(project)?.process).toBeUndefined();
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+  });
+
+  it('awaits child exit on startup failure before rethrowing the original failure', async () => {
+    const primary = new Error('original startup failure');
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(findChildProcess).mockResolvedValue('30001');
+    vi.mocked(productFs.readFileSync).mockImplementation(() => {
+      throw primary;
+    });
+    vi.mocked(process.kill).mockReturnValue(true);
+    const startup = startDesignTimeApi(context(), project);
+    const rejection = expect(startup).rejects.toBe(primary);
+    await vi.waitFor(() => expect(process.kill).toHaveBeenCalled());
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeDefined();
+    child.emit('exit', null, 'SIGKILL');
+    await rejection;
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+  });
+
+  it.each(['win32', 'darwin'] as const)('does not detach or change launch args on %s', (platform) => {
+    vi.mocked(os.platform).mockReturnValue(platform);
+    launch();
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith('private-func', ['host', 'start', '--port 7071'], { cwd: workdir, shell: true });
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it.skipIf(diagnosticOs.platform() !== 'linux')('kills real Linux owned descendants but leaves a foreign process alive', async () => {
+    const nativeCp = await vi.importActual<typeof import('node:child_process')>('node:child_process');
+    vi.mocked(process.kill).mockImplementation(nativeKill);
+    vi.mocked(cp.spawn).mockImplementation(nativeCp.spawn);
+    const foreign = nativeCp.spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { detached: true, stdio: 'ignore' });
+    let owned: cp.ChildProcess | undefined;
+    try {
+      // The launcher and worker inherit the detached shell's group. All observed
+      // PIDs come directly from this control, not name/global process scans.
+      const workerCode = 'setInterval(() => {}, 1000)';
+      const launcherCode = `const c=require("child_process").spawn(process.execPath,["-e",${JSON.stringify(workerCode)}],{stdio:"ignore"});console.log(JSON.stringify([process.pid,c.pid]));setInterval(()=>{},1000)`;
+      const actualProject = path.dirname(diagnosticOs.tmpdir());
+      ext.designTimeInstances.set(actualProject, { startupPromise: new Promise(() => {}) });
+      startDesignTimeProcess(undefined, diagnosticOs.tmpdir(), process.execPath, ['-e', `'${launcherCode}'`]);
+      owned = vi.mocked(cp.spawn).mock.results.at(-1)!.value;
+      expect(ext.designTimeInstances.get(actualProject)?.process).toBe(owned);
+      let output = '';
+      owned!.stdout!.on('data', (data) => {
+        output += data.toString();
+      });
+      await vi.waitFor(() => expect(output).toContain('\n'), { timeout: 2000, interval: 20 });
+      const descendants = JSON.parse(output.trim()) as number[];
+      expect(descendants).toHaveLength(2);
+      for (const pid of descendants) {
+        const stat = diagnosticFs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+        const fields = stat
+          .slice(stat.lastIndexOf(')') + 1)
+          .trim()
+          .split(/\s+/);
+        expect(Number(fields[2])).toBe(owned!.pid); // process group
+        expect(Number(fields[3])).toBe(owned!.pid); // session
+      }
+      const isLive = (pid: number) => {
+        try {
+          const stat = diagnosticFs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+          return !/^\s*[ZX]\b/.test(stat.slice(stat.lastIndexOf(')') + 1));
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+          throw error;
+        }
+      };
+      expect(descendants.every(isLive)).toBe(true);
+      await stopDesignTimeApi(actualProject);
+      await vi.waitFor(() => expect(descendants.some(isLive)).toBe(false), { timeout: 2000, interval: 20 });
+      expect(nativeKill(foreign.pid!, 0)).toBe(true);
+      expect(vi.mocked(process.kill).mock.calls).toEqual([[-owned!.pid!, 'SIGKILL']]);
+    } finally {
+      for (const proc of [owned, foreign]) {
+        if (!proc?.pid) continue;
+        try {
+          nativeKill(-proc.pid, 'SIGKILL');
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
+        await vi.waitFor(() => expect(proc.exitCode !== null || proc.signalCode !== null).toBe(true), { timeout: 1000, interval: 20 });
+      }
+    }
+  });
+});
+
+describe('isolated MultiRoot design-time owning receipts', () => {
+  let directory: string;
+  let file: string;
+  let project: string;
+  const context = () =>
+    ({
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: {},
+    }) as any;
+  const digest = (value: string) => createHash('sha256').update(value).digest('hex');
+  const receipts = () =>
+    diagnosticFs
+      .readFileSync(file, 'utf8')
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    ext.designTimeInstances.clear();
+    directory = diagnosticFs.mkdtempSync(path.join(diagnosticOs.tmpdir(), 'la-design-owning-'));
+    project = path.join(directory, 'private-project');
+    const invocation = randomUUID();
+    file = path.join(directory, `${invocation}.design-time.jsonl`);
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '');
+    vi.stubEnv('LA_E2E_CLI_MULTI_ROOT_ISOLATED', '1');
+    vi.stubEnv('LA_E2E_LIFECYCLE_DIR', directory);
+    vi.stubEnv('LA_E2E_LIFECYCLE_INVOCATION', invocation);
+    vi.stubEnv('LA_E2E_CLI_MULTI_ROOT_EVENTS', path.join(directory, 'debug-events.jsonl'));
+    vi.mocked(os.platform).mockReturnValue('linux');
+    const spawned = Object.assign(new EventEmitter(), { pid: 23035, exitCode: null, signalCode: null });
+    vi.mocked(cp.spawn).mockReturnValue(spawned as any);
+    vi.spyOn(process, 'kill').mockImplementation(() => {
+      spawned.emit('exit', null, 'SIGKILL');
+      return true;
+    });
+    vi.mocked(reserveFreePort).mockResolvedValue(7071);
+    vi.mocked(axios.get).mockRejectedValue(new Error('not ready'));
+    vi.mocked(findChildProcess).mockResolvedValue('23080');
+    vi.mocked(warnIfJdbcJavaRuntimeMissing).mockResolvedValue(undefined);
+    vi.mocked(ensureExtensionBundleHealthy).mockResolvedValue(undefined);
+    workspace.fs.createDirectory = vi.fn().mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    diagnosticFs.rmSync(directory, { recursive: true, force: true });
+    ext.designTimeInstances.clear();
+  });
+
+  it('does not perform IO or evaluate snapshots outside the exact admitted environment', () => {
+    vi.stubEnv('LA_E2E_CLI_MULTI_ROOT_ISOLATED', '0');
+    const inspect = vi.fn(() => {
+      throw new Error('must never inspect');
+    });
+    emitDesignTimeDiagnostic('design-time-stop', inspect);
+    const span = startDesignTimeDiagnostic('design-time-spawn', inspect);
+    finishDesignTimeDiagnostic(span, inspect, { error: undefined });
+    ext.designTimeInstances.set(project, {});
+    startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func', []);
+    expect(span).toBeUndefined();
+    expect(inspect).not.toHaveBeenCalled();
+    expect(productFs.realpathSync.native).not.toHaveBeenCalled();
+    expect(diagnosticFs.readdirSync(directory)).toEqual([]);
+  });
+
+  it('attributes the exact spawn, map registration and discovered child without adding process scans', async () => {
+    ext.designTimeInstances.set(project, {});
+    const workdir = path.join(project, 'workflow-designtime');
+    const command = path.join(directory, 'private-func');
+    expect(startDesignTimeProcess(undefined, workdir, command, ['host', 'start', '--token=secret'])).toBeUndefined();
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith(command, ['host', 'start', '--token=secret'], {
+      cwd: workdir,
+      shell: true,
+      detached: true,
+    });
+    expect(findProcess).not.toHaveBeenCalled();
+    expect(findChildProcess).not.toHaveBeenCalled();
+    expect(ext.designTimeInstances.get(project)?.process?.pid).toBe(23035);
+    vi.mocked(axios.get).mockResolvedValue({});
+    await expect(waitForDesignTimeStartUp(context(), project, 'http://localhost:7071', true)).resolves.toBeUndefined();
+    expect(findChildProcess).toHaveBeenCalledExactlyOnceWith(23035);
+    expect(ext.designTimeInstances.get(project)?.childFuncPid).toBe('23080');
+
+    const records = receipts();
+    const spawn = records.filter((r) => r.operation === 'design-time-spawn');
+    expect(spawn.map((r) => r.status)).toEqual(['start', 'end']);
+    expect(spawn[0].state).toMatchObject({
+      hostPid: process.pid,
+      mapCount: 1,
+      startupPromisePresent: false,
+      project: { sha256: digest(project) },
+      workingDirectory: { sha256: digest(workdir) },
+      command: { sha256: digest(command) },
+      argvCount: 3,
+      shell: true,
+    });
+    expect(spawn[1]).toMatchObject({ operationId: spawn[0].operationId, state: { pid: 23035 } });
+    expect(new Set(records.map((r) => r.producerId)).size).toBe(1);
+    expect(records.find((r) => r.operation === 'design-time-process-map-set').state).toMatchObject({ pid: 23035, skipped: false });
+    expect(records.find((r) => r.operation === 'design-time-child-pid-set').state).toMatchObject({
+      pid: 23035,
+      childFuncPid: 23080,
+      targetPid: 23080,
+    });
+    for (const secret of [project, workdir, command, '--token=secret']) expect(JSON.stringify(records)).not.toContain(secret);
+  });
+
+  it('records successful startup registration and settlement without changing its void result', async () => {
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(productFs.readFileSync).mockReturnValue('{}');
+    await expect(startDesignTimeApi(context(), project)).resolves.toBeUndefined();
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+    expect(ext.designTimeInstances.get(project)?.childFuncPid).toBe('23080');
+    const records = receipts();
+    expect(records.find((r) => r.operation === 'design-time-map-set').state).toMatchObject({ mapCount: 1, startupPromisePresent: false });
+    expect(records.find((r) => r.operation === 'design-time-start-request' && r.state.reused === false).state.startupPromisePresent).toBe(
+      true
+    );
+    expect(records.find((r) => r.operation === 'design-time-startup' && r.status === 'end').state).toMatchObject({
+      settled: true,
+      startupPromisePresent: false,
+      pid: 23035,
+      childFuncPid: 23080,
+    });
+  });
+
+  it('receipts an unregistered spawn without repairing the missing map ownership', () => {
+    expect(startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func', [])).toBeUndefined();
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(ext.designTimeInstances.has(project)).toBe(false);
+    expect(receipts().find((r) => r.operation === 'design-time-process-map-set').state).toMatchObject({
+      hostPid: process.pid,
+      mapCount: 0,
+      skipped: true,
+      processPresent: false,
+      project: { sha256: digest(project) },
+    });
+  });
+
+  it('joins startup receipt identity to the canonical physical project without changing raw map keys', async () => {
+    const physicalProject = 'D:\\owned-fixture\\project';
+    project = 'd:\\owned-fixture\\project';
+    vi.mocked(productFs.realpathSync.native).mockImplementation((value) => (String(value) === project ? physicalProject : String(value)));
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(productFs.readFileSync).mockReturnValue('{}');
+    await expect(startDesignTimeApi(context(), project)).resolves.toBeUndefined();
+    expect(ext.designTimeInstances.has(project)).toBe(true);
+    expect(ext.designTimeInstances.has(physicalProject)).toBe(false);
+    const startup = receipts().find((record) => record.operation === 'design-time-startup' && record.status === 'end');
+    expect(startup.state.project).toMatchObject({ sha256: digest(physicalProject) });
+    expect(startup.state.project.sha256).not.toBe(digest(project));
+    expect(startup.state).toMatchObject({ settled: true, processPresent: true, startupPromisePresent: false, pid: 23035 });
+  });
+
+  it('preserves concurrent startup rejection identity and records reuse and failed settlement', async () => {
+    let reject!: (error: unknown) => void;
+    workspace.fs.createDirectory = vi.fn(
+      () =>
+        new Promise((_resolve, fail) => {
+          reject = fail;
+        })
+    ) as any;
+    const first = startDesignTimeApi(context(), project);
+    const second = startDesignTimeApi(context(), project);
+    // Let the existing port/readiness awaits reach ensureProjectFiles.
+    await vi.waitFor(() => expect(reject).toBeTypeOf('function'));
+    const primary = new Error('private-startup-token');
+    reject(primary);
+    await expect(first).rejects.toBe(primary);
+    await expect(second).rejects.toBe(primary);
+    expect(reserveFreePort).toHaveBeenCalledTimes(1);
+    expect(cp.spawn).not.toHaveBeenCalled();
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+    const records = receipts();
+    expect(records.find((r) => r.operation === 'design-time-start-request' && r.state.reused).state.startupPromisePresent).toBe(true);
+    expect(records.find((r) => r.operation === 'design-time-startup' && r.status === 'failure').state).toMatchObject({
+      settled: true,
+      startupPromisePresent: false,
+    });
+    expect(JSON.stringify(records)).not.toContain(primary.message);
+  });
+
+  it('retains macOS child/wrapper deduplication, deletion and stopAll settled results', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
+    ext.designTimeInstances.set(project, { process: { pid: 111 } as any, childFuncPid: '111' });
+    ext.designTimeInstances.set(`${project}-second`, { process: { pid: 222 } as any, childFuncPid: '333' });
+    ext.designTimeInstances.set(`${project}-empty`, {});
+    await expect(stopAllDesignTimeApis()).resolves.toBeUndefined();
+    expect(vi.mocked(cp.spawn).mock.calls).toEqual([
+      ['kill', ['-9', '111']],
+      ['kill', ['-9', '333']],
+      ['kill', ['-9', '222']],
+    ]);
+    expect(ext.designTimeInstances.size).toBe(0);
+    const records = receipts();
+    expect(records.filter((r) => r.operation === 'design-time-kill' && r.status === 'start').map((r) => r.state.targetPid)).toEqual([
+      111, 333, 222,
+    ]);
+    expect(records.filter((r) => r.operation === 'design-time-kill' && r.status === 'end').every((r) => r.state.settled === false)).toBe(
+      true
+    );
+    expect(records.filter((r) => r.operation === 'design-time-map-delete').map((r) => r.state.mapCount)).toEqual([2, 1, 0]);
+    expect(records.find((r) => r.operation === 'design-time-stop-all' && r.status === 'start').state.mapCount).toBe(3);
+    expect(records.find((r) => r.operation === 'design-time-stop-all' && r.status === 'end').state).toMatchObject({
+      mapCount: 0,
+      fulfilledCount: 3,
+      rejectedCount: 0,
+    });
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(receipts().at(-1).state).toMatchObject({ skipped: true, mapCount: 0 });
+  });
+
+  it('records Windows request, returned process and callback failures while preserving allSettled wait semantics', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32');
+    const callbacks: Array<(error: Error | null) => void> = [];
+    vi.spyOn(cp, 'exec').mockImplementation(((_command: string, callback: (error: Error | null) => void) => {
+      callbacks.push(callback);
+      return { pid: 999 } as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set(project, { process: { pid: 111 } as any, childFuncPid: '222' });
+    let resolved = false;
+    const stopping = stopDesignTimeApi(project).then(() => {
+      resolved = true;
+    });
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+    expect(vi.mocked(cp.exec).mock.calls.map(([command]) => command)).toEqual(['taskkill /pid 222 /t /f', 'taskkill /pid 111 /t /f']);
+    const primary = new Error('taskkill-private-token');
+    callbacks[0](primary);
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+    callbacks[1](null);
+    await stopping;
+    expect(resolved).toBe(true);
+    const records = receipts().filter((r) => r.operation === 'design-time-taskkill');
+    expect(records.filter((r) => r.status === 'start').map((r) => r.state.targetPid)).toEqual([222, 111]);
+    expect(records.filter((r) => r.status === 'sample').every((r) => r.state.pid === 999 && !r.state.settled)).toBe(true);
+    expect(records.find((r) => r.status === 'failure').state).toMatchObject({ targetPid: 222, settled: true });
+    expect(records.find((r) => r.status === 'end').state).toMatchObject({ targetPid: 111, settled: true });
+    expect(JSON.stringify(records)).not.toContain(primary.message);
+  });
+
+  it('receipts the Windows undefined-pid skip without issuing a taskkill', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32');
+    const taskkill = vi.spyOn(cp, 'exec').mockReturnValue({} as cp.ChildProcess);
+    ext.designTimeInstances.set(project, { process: {} as cp.ChildProcess });
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(taskkill).not.toHaveBeenCalled();
+    expect(
+      receipts()
+        .filter((r) => r.operation === 'design-time-taskkill')
+        .map((r) => [r.status, r.state.skipped])
+    ).toEqual([
+      ['start', true],
+      ['end', true],
+    ]);
+  });
+
+  it.each(['linux', 'win32'] as const)('cleans up startup failure with platform-specific semantics on %s', async (platform) => {
+    vi.mocked(os.platform).mockReturnValue(platform);
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    const primary = new Error('original post-spawn startup failure');
+    vi.mocked(productFs.readFileSync).mockImplementation(() => {
+      throw primary;
+    });
+    vi.spyOn(cp, 'exec').mockReturnValue({ pid: 444 } as cp.ChildProcess);
+    await expect(startDesignTimeApi(context(), project)).rejects.toBe(primary);
+    const instance = ext.designTimeInstances.get(project);
+    expect(instance?.process).toBeUndefined();
+    expect(instance?.childFuncPid).toBeUndefined();
+    expect(instance?.startupPromise).toBeUndefined();
+    if (platform === 'win32') {
+      expect(vi.mocked(cp.exec).mock.calls).toEqual([['taskkill /pid 23080 /t /f'], ['taskkill /pid 23035 /t /f']]);
+    } else {
+      expect(cp.spawn).toHaveBeenCalledTimes(1);
+      expect(process.kill).toHaveBeenCalledExactlyOnceWith(-23035, 'SIGKILL');
+    }
+    const records = receipts();
+    const cleanup = records.filter((r) => r.operation === (platform === 'win32' ? 'design-time-taskkill' : 'design-time-kill'));
+    expect(cleanup.filter((r) => r.status === 'end').map((r) => r.state.settled)).toEqual(platform === 'win32' ? [false, false] : [true]);
+    if (platform === 'linux') {
+      expect(cleanup.filter((r) => r.status === 'end').map((r) => r.state.targetPid)).toEqual([-23035]);
+    }
+    expect(records.find((r) => r.operation === 'design-time-tracked-stop').state).toMatchObject({ pid: 23035, childFuncPid: 23080 });
+    expect(records.find((r) => r.operation === 'design-time-startup' && r.status === 'failure')).toBeDefined();
+  });
+
+  it('preserves exact thrown spawn/kill values and stopAll rejection accounting', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
+    const primary = { token: 'private-original-error' };
+    vi.mocked(cp.spawn).mockImplementation(() => {
+      throw primary;
+    });
+    let thrown: unknown;
+    try {
+      startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func', []);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBe(primary);
+    ext.designTimeInstances.set(project, { process: { pid: 111 } as any });
+    await expect(stopDesignTimeApi(project)).rejects.toBe(primary);
+    ext.designTimeInstances.set(project, { process: { pid: 111 } as any });
+    await expect(stopAllDesignTimeApis()).resolves.toBeUndefined();
+    expect(receipts().find((r) => r.operation === 'design-time-stop-all' && r.status === 'end').state).toMatchObject({
+      fulfilledCount: 0,
+      rejectedCount: 1,
+    });
+  });
+
+  it('keeps state and sink failures secondary to the owning result and original error', async () => {
+    const state = () => {
+      throw new Error('secondary snapshot failure');
+    };
+    expect(() => emitDesignTimeDiagnostic('design-time-stop', state)).not.toThrow();
+    expect(startDesignTimeDiagnostic('design-time-spawn', state)).toBeUndefined();
+    const span = startDesignTimeDiagnostic('design-time-spawn', () => ({}));
+    expect(() => finishDesignTimeDiagnostic(span, state, { error: undefined })).not.toThrow();
+    diagnosticFs.rmSync(file);
+    diagnosticFs.mkdirSync(file);
+    ext.designTimeInstances.set(project, {});
+    expect(startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func', [])).toBeUndefined();
+    expect(ext.designTimeInstances.get(project)?.process?.pid).toBe(23035);
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-23035, 'SIGKILL');
+    const primary = new Error('original spawn failure');
+    vi.mocked(cp.spawn).mockImplementation(() => {
+      throw primary;
+    });
+    expect(() => startDesignTimeProcess(undefined, undefined, 'func', [])).toThrow(primary);
+    ext.designTimeInstances.clear();
+    await expect(stopAllDesignTimeApis()).resolves.toBeUndefined();
   });
 });
 

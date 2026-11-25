@@ -7,12 +7,28 @@ import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
 import {
   getWorkspaceSetting,
   isProjectConsistencyCheckEnabled,
+  shouldParameterizeConnections,
   shouldValidateAndInstallRuntimeDependencies,
   updateGlobalSetting,
 } from '../app/utils/vsCodeConfig/settings';
 import { autoStartDesignTimeSetting, extensionCommand } from '../constants';
 import { ext } from '../extensionVariables';
 import { activate } from '../main';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
+import { ensureWorkspace } from '../app/commands/ensureWorkspace';
+import { parameterizeAllConnections } from '../app/commands/parameterizeConnections';
+import { registerFuncHostTaskEvents } from '../app/utils/funcCoreTools/funcHostTask';
+import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
+import {
+  bootstrapRequest,
+  snapshotBootstrapBinary,
+  writeBootstrapAttestation,
+  readBootstrapAttestation,
+} from '../test/e2e/workspaceMultiRootBootstrap';
+import { multiRootRegularLaunch, observeFuncRuntime, assertFuncRuntimeResolution } from '../test/e2e/workspaceMultiRootLaunch';
 
 const mocks = vi.hoisted(() => ({
   callWithTelemetryAndErrorHandling: vi.fn(),
@@ -26,9 +42,19 @@ const mocks = vi.hoisted(() => ({
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
   ensureProjectFiles: vi.fn(),
   ensureVSCodeFiles: vi.fn(),
+  recordRegenerationEvent: vi.fn(),
+  registerEvent: vi.fn(),
+  runProjectConsistencyCheck: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),
   startDesignTimeApi: vi.fn(),
 }));
+
+// This control needs real IO only for its unit-owned binary fixture; all
+// activation side effects (Code/runtime/download/services) remain mocked below.
+vi.unmock('fs');
+vi.unmock('node:fs');
+vi.unmock('os');
+vi.unmock('node:os');
 
 vi.mock('@microsoft/vscode-azext-azureappservice', () => ({
   registerAppServiceExtensionVariables: vi.fn(),
@@ -46,7 +72,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     no: 'No',
     dontWarnAgain: "Don't warn again",
   },
-  registerEvent: vi.fn(),
+  registerEvent: mocks.registerEvent,
   registerUIExtensionVariables: vi.fn(),
 }));
 
@@ -96,7 +122,7 @@ vi.mock('../app/commands/registerCommands', () => ({
 }));
 
 vi.mock('../app/commands/runProjectConsistencyCheck', () => ({
-  runProjectConsistencyCheck: vi.fn(),
+  runProjectConsistencyCheck: mocks.runProjectConsistencyCheck,
 }));
 
 vi.mock('../app/languageServer/languageClient', () => ({
@@ -138,6 +164,10 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
   stopAllDesignTimeApis: vi.fn(),
 }));
 
+vi.mock('../app/utils/regenerationProbe', () => ({
+  recordRegenerationEvent: mocks.recordRegenerationEvent,
+}));
+
 vi.mock('../app/utils/codeless/urihandler', () => ({
   UriHandler: class {},
 }));
@@ -165,6 +195,7 @@ vi.mock('../app/utils/managedIdentity', () => ({
 }));
 
 vi.mock('../app/utils/services/VSCodeAzureSubscriptionProvider', () => ({
+  createAzureSubscriptionProvider: vi.fn(() => Promise.resolve({})),
   createVSCodeAzureSubscriptionProvider: vi.fn(() => ({})),
 }));
 
@@ -280,11 +311,123 @@ describe('activate design-time startup', () => {
     mocks.startDesignTimeApi.mockResolvedValue(undefined);
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(false);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(false);
     vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(true);
     vi.mocked(getWorkspaceSetting).mockReturnValue(false);
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
 
     ext.designTimeInstances.clear();
+  });
+
+  it.each([undefined, '0', '1'])('completes normal activation even with the legacy minimal flag (%s)', async (minimal) => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', minimal);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.registerEvent).toHaveBeenCalledTimes(1);
+      expect(mocks.getResourceGroupsApi).toHaveBeenCalledTimes(1);
+      expect(ext.rgApi.registerApplicationResourceResolver).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
+      expect(vscode.window.registerUriHandler).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it.each([undefined, '0', '1'])('initializes open workspaces regardless of the legacy workspace flag (%s)', async (skip) => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', '1');
+    vi.stubEnv('LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE', skip);
+    const projectPaths = ['D:\\workspace\\app-one', 'D:\\workspace\\app-two'];
+    Object.assign(vscode.workspace, {
+      workspaceFolders: projectPaths.map((projectPath, index) => ({
+        uri: vscode.Uri.file(projectPath),
+        name: `app-${index + 1}`,
+        index,
+      })),
+    });
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(projectPaths);
+    vi.mocked(shouldParameterizeConnections).mockReturnValue(true);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(ensureWorkspace).toHaveBeenCalledTimes(1);
+      expect(parameterizeAllConnections).toHaveBeenCalledTimes(1);
+      expect(ensureProjectFiles).toHaveBeenCalledTimes(projectPaths.length);
+      for (const projectPath of projectPaths) {
+        expect(ensureProjectFiles).toHaveBeenCalledWith(expect.any(Object), projectPath);
+      }
+      expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(expect.any(Object), projectPaths, 'activation-initial');
+      expect(vi.mocked(ensureWorkspace).mock.invocationCallOrder[0]).toBeLessThan(
+        vi.mocked(parameterizeAllConnections).mock.invocationCallOrder[0]
+      );
+      for (const invocation of vi.mocked(ensureProjectFiles).mock.invocationCallOrder) {
+        expect(invocation).toBeLessThan(vi.mocked(ensureVSCodeFiles).mock.invocationCallOrder[0]);
+      }
+      expect(mocks.runProjectConsistencyCheck).not.toHaveBeenCalled();
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('records activation returning while the initial consistency invocation remains pending', async () => {
+    const projectPaths = ['D:\\workspace\\app-one'];
+    let resolveConsistency!: () => void;
+    vi.mocked(ensureVSCodeFiles).mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveConsistency = resolve;
+        })
+    );
+    Object.assign(vscode.workspace, {
+      workspaceFolders: [{ uri: vscode.Uri.file(projectPaths[0]), name: 'app-one', index: 0 }],
+    });
+    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(projectPaths);
+
+    await activate(createExtensionContext());
+
+    expect(ensureVSCodeFiles).toHaveBeenCalledWith(expect.any(Object), projectPaths, 'activation-initial');
+    expect(mocks.recordRegenerationEvent).toHaveBeenCalledWith({
+      event: 'activation-returned',
+      initialInvocationState: 'pending',
+    });
+
+    resolveConsistency();
+    await Promise.all(backgroundOperations);
+  });
+
+  it.each([undefined, '0', '1'])('does not initialize absent workspace folders with the legacy workspace flag (%s)', async (skip) => {
+    vi.stubEnv('LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE', skip);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(ensureWorkspace).not.toHaveBeenCalled();
+      expect(parameterizeAllConnections).not.toHaveBeenCalled();
+      expect(ensureProjectFiles).not.toHaveBeenCalled();
+      expect(ensureVSCodeFiles).not.toHaveBeenCalled();
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      expect(mocks.getAzureResourcesExtensionApi).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('keeps installed dependency paths during normal activation when runtime validation is enabled', async () => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', '0');
+    vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(validateAndInstallBinaries).toHaveBeenCalledTimes(1);
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      for (const [setting] of vi.mocked(updateGlobalSetting).mock.calls) {
+        expect(['funcCoreToolsBinaryPath', 'dotnetBinaryPath', 'nodeJsBinaryPath']).not.toContain(setting);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('does not block activation while the auto-start prompt is unanswered', async () => {
@@ -365,5 +508,130 @@ describe('activate design-time startup', () => {
     expect(mocks.startDesignTimeApi).toHaveBeenCalledTimes(2);
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-one');
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-two');
+  });
+
+  it('catches up workspace consistency when the workspace loads before the folder listener is registered', async () => {
+    (vscode.workspace as any).workspaceFolders = undefined;
+    mocks.registerEvent.mockImplementation(() => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(ensureWorkspace).toHaveBeenCalledTimes(1);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'catch-up');
+  });
+
+  it('catches up workspace consistency when startup switches between nonempty workspaces before listener registration', async () => {
+    (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+    mocks.registerEvent.mockImplementation(() => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-two'), name: 'app-two', index: 0 }];
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(ensureWorkspace).toHaveBeenCalledTimes(2);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'catch-up');
+  });
+
+  it('does not duplicate catch-up when the workspace listener observes the startup folder change', async () => {
+    (vscode.workspace as any).workspaceFolders = undefined;
+    mocks.registerEvent.mockImplementation((_eventName, _event, listener) => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+      return listener(createActionContext());
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(ensureWorkspace).toHaveBeenCalledTimes(1);
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledExactlyOnceWith(expect.any(Object), 'workspace-change');
+  });
+
+  it('multi-root launch binds the attested Func through PATH after the REAL non-managed ensureBinaries branch overwrites a profile pin', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-activation-unit-'));
+    const configured = new Map<string, unknown>();
+    let configurationSpy: ReturnType<typeof vi.spyOn> | undefined;
+    try {
+      fs.mkdirSync(path.join(root, 'FuncCoreTools'));
+      const executable = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+      fs.writeFileSync(executable, 'unit-owned-nonexecutable-fixture-never-run');
+      const worker = path.join(root, 'FuncCoreTools', 'in-proc8', path.basename(executable));
+      fs.mkdirSync(path.dirname(worker));
+      fs.writeFileSync(worker, 'unit-owned-nonexecutable-worker-fixture-never-run');
+      const request = bootstrapRequest({
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: path.join(root, 'attestation.json'),
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify({
+          suiteId: 'workspaceMultiRoot',
+          invocation: 'activation-unit',
+          runtimeRoot: fs.realpathSync(root),
+          startedUtc: new Date(Date.now() - 1000).toISOString(),
+          identity: { source: 'unit', run: 'unit', job: 'unit', platform: process.platform },
+        }),
+      });
+      if (!request) {
+        throw new Error('Unit bootstrap request missing');
+      }
+      writeBootstrapAttestation(
+        request,
+        snapshotBootstrapBinary(request.context, executable),
+        [`configured launcher ${executable}=4.1.2`, `in-proc8 worker host ${worker}=4.1.2`],
+        'unit-Code'
+      );
+      const admitted = readBootstrapAttestation(request.file, request.context, {
+        phaseId: 'runtimeDependencyBootstrap:bootstrap',
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+      });
+      const launch = multiRootRegularLaunch(admitted, process.env, path.join(root, 'profile'));
+      for (const [key, value] of Object.entries(launch.settings)) {
+        configured.set(key.replace(/^azureLogicAppsStandard\./, ''), value);
+      }
+      // Deliberately reproduce the rejected pin-only configuration. The real
+      // main.activate -> ensureBinaries implementation must overwrite this.
+      configured.set('funcCoreToolsBinaryPath', executable);
+      configurationSpy = vi.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+        inspect: <T>(key: string) => ({ globalValue: configured.get(key) as T }),
+      } as unknown as vscode.WorkspaceConfiguration);
+      const actualSettings = await vi.importActual<typeof import('../app/utils/vsCodeConfig/settings')>(
+        '../app/utils/vsCodeConfig/settings'
+      );
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockImplementation(actualSettings.shouldValidateAndInstallRuntimeDependencies);
+      vi.mocked(getGlobalSetting).mockImplementation(actualSettings.getGlobalSetting);
+      vi.mocked(updateGlobalSetting).mockImplementation(async (key, value) => {
+        configured.set(key, value);
+      });
+      expect(await binaries.useBinariesDependencies()).toBe(false);
+
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+      expect(configured.get('funcCoreToolsBinaryPath')).toBe('func');
+      expect(validateAndInstallBinaries).not.toHaveBeenCalled();
+      const actualVersion = await vi.importActual<typeof import('../app/utils/funcCoreTools/funcVersion')>(
+        '../app/utils/funcCoreTools/funcVersion'
+      );
+      const actualCommand = actualVersion.getFunctionsCommand();
+      expect(actualCommand).toBe('func');
+      const observed = observeFuncRuntime(actualCommand, false, admitted.runtimeRoot, launch.env);
+      assertFuncRuntimeResolution(observed, admitted);
+      // Same actual rewritten command, but no controlled PATH: the old pin
+      // cannot establish identity and must fail instead of passing this control.
+      const unbound = { ...launch.env, [process.platform === 'win32' ? 'Path' : 'PATH']: root };
+      expect(() => observeFuncRuntime(actualCommand, false, admitted.runtimeRoot, unbound)).toThrow(/PATH does not lead/);
+    } finally {
+      configurationSpy?.mockRestore();
+      vi.mocked(getGlobalSetting).mockReset();
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReset();
+      vi.mocked(updateGlobalSetting).mockReset();
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 });

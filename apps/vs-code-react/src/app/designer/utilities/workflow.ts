@@ -91,3 +91,47 @@ export const getTriggerName = (workflowJson?: { definition: LogicAppsV2.Workflow
   }
   return undefined;
 };
+
+export const getCodeViewRequestOptionsValidationErrors = (definition: unknown): string[] => {
+  const errors: string[] = [];
+  visitActions(asRecord(definition)?.actions, errors);
+  return errors;
+};
+
+const visitActions = (value: unknown, errors: string[]): void => {
+  const actions = asRecord(value);
+  if (!actions) {
+    return;
+  }
+  for (const [name, value] of Object.entries(actions)) {
+    const action = asRecord(value);
+    if (!action) {
+      continue;
+    }
+    const type = typeof action.type === 'string' ? action.type : undefined;
+    const requestOptions = asRecord(asRecord(action.runtimeConfiguration)?.requestOptions);
+    if (type && type.toLowerCase() !== 'http' && requestOptions && Object.hasOwn(requestOptions, 'timeout')) {
+      errors.push(
+        `The request options timeout parameter is not supported for action '${name}' of type '${type}'. Actions of type 'HTTP' are supported.`
+      );
+    }
+    visitActions(action.actions, errors);
+    visitActions(asRecord(action.else)?.actions, errors);
+    visitActions(asRecord(action.default)?.actions, errors);
+    const cases = asRecord(action.cases);
+    if (cases) {
+      for (const caseDefinition of Object.values(cases)) {
+        visitActions(asRecord(caseDefinition)?.actions, errors);
+      }
+    }
+    const tools = asRecord(action.tools);
+    if (tools) {
+      for (const toolDefinition of Object.values(tools)) {
+        visitActions(asRecord(toolDefinition)?.actions, errors);
+      }
+    }
+  }
+};
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;

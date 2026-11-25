@@ -23,7 +23,12 @@ import {
 import { window, workspace, type WorkspaceFolder } from 'vscode';
 import { InitProjectStep } from './initProjectStep';
 
-export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
+export async function initProjectForVSCode(
+  context: IActionContext,
+  fsPath?: string,
+  language?: ProjectLanguage,
+  regenerationCheckId?: number
+): Promise<void> {
   let workspaceFolder: WorkspaceFolder | undefined;
   let workspacePath: string;
 
@@ -65,9 +70,10 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     projectPackageType,
   });
 
-  const executeSteps = projectPackageType === ProjectPackageType.Nuget
-    ? [new InitDotnetProjectStep()]
-    : [new InitProjectStep()];
+  const executeSteps =
+    projectPackageType === ProjectPackageType.Nuget
+      ? [new InitDotnetProjectStep(regenerationCheckId)]
+      : [new InitProjectStep(regenerationCheckId)];
 
   const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { executeSteps });
   await wizard.execute();

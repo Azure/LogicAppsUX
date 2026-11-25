@@ -1,0 +1,1537 @@
+import * as assert from 'assert';
+import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as ts from 'typescript';
+import * as vm from 'vm';
+import { createDiagnosticProducer, diagnosticOperationId } from '../../../scripts/e2e-cli-diagnostics';
+
+const { JSDOM } = require('jsdom') as {
+  JSDOM: new (html: string, options?: Record<string, unknown>) => { window: Window & typeof globalThis };
+};
+
+const sourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.ts');
+const sourceText = fs.readFileSync(sourcePath, 'utf-8');
+const source = ts.createSourceFile(sourcePath, sourceText, ts.ScriptTarget.Latest, true);
+
+const runtimeFunctionNames = new Set([
+  'waitForOverviewRunStatus',
+  'waitForLatestRunStatus',
+  'getWorkflowRunFailureDiagnostics',
+  'tryParseJsonForDiagnostics',
+  'sanitizeRunDiagnostic',
+  'isSensitiveDiagnosticKey',
+  'redactDiagnosticString',
+  'parseListResponse',
+  'waitForDynamicContentPickerOpen',
+  'buildDynamicContentPickerOpenExpression',
+  'buildDesignerConnectionOrParameterStateExpression',
+  'getRemainingTimeoutMs',
+]);
+
+async function main(): Promise<void> {
+  await testTerminalStatusFailsFast();
+  await testSucceededStatusDoesNotCollectFailureDetails();
+  await testMalformedActionDiagnosticsPreserveTerminalStatus();
+  testRuntimeDiagnosticsRedactSensitiveSubtrees();
+  testRuntimeDiagnosticsRedactSensitiveStrings();
+  testEarlyMsnWeatherPhaseWiring();
+  testDebugPromptEvidenceWaitsForStableRuntime();
+  await testDebugStartupRequiresSettledOwnedLiveSession();
+  await testPersistedDesignerEvidenceSeparatesCanvasAndPanel();
+  testDynamicContentPickerOpenAcceptsAlternativeLabels();
+  testDynamicContentPickerEvidenceForwardsTokenTitles();
+  testDynamicContentEntrypointIsReacquiredAfterFocusedEvidence();
+  await testDynamicContentPickerOpenUsesBoundedEvaluation();
+  await testMonitoringActionCardUsesStableNodeIdentity();
+  await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
+  testNotificationHousekeepingUsesBoundedOperations();
+  await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
+  testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
+  testDesignerConnectionActionExpressionScopesCreateActions();
+  await testMsnHandleShutdownDiagnosticReceipts();
+  console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+async function testDebugStartupRequiresSettledOwnedLiveSession(): Promise<void> {
+  const declarations = ['startDebuggingGeneratedWorkspace', 'waitForDebugStartup'].map((name) => {
+    const declaration = source.statements.find(
+      (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === name
+    );
+    assert.ok(declaration, `Expected real ${name} implementation`);
+    return `export ${declaration.getText(source)}`;
+  });
+  const implementation = ts.transpileModule(declarations.join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const scenarios = [
+    'task-only-pending',
+    'exact-session-pending',
+    'settled-without-session',
+    'exact-session',
+    'delayed-settlement',
+    'false',
+    'rejected',
+    'rejected-undefined',
+    'foreign-id',
+    'foreign-workspace',
+    'foreign-launch',
+    'foreign-invocation',
+    'foreign-name',
+    'foreign-type',
+    'foreign-request',
+    'terminated',
+    'terminated-during-host-probe',
+    'host-not-running',
+    'exact-session-without-host-probe',
+    'pending-without-host-probe',
+  ];
+  for (const scenario of scenarios) {
+    type Session = {
+      id: string;
+      workspaceFolder: { uri: { fsPath: string } };
+      configuration: Record<string, unknown>;
+    };
+    const listeners = { start: new Set<(session: Session) => void>(), terminate: new Set<(session: Session) => void>() };
+    const folder = { uri: { fsPath: 'owned-root/app' } };
+    const timeout = new Error('original-startup-deadline');
+    const primary = new Error('original-launch-rejection');
+    const screenshots: string[] = [];
+    const startupVerdicts: { passed?: unknown; failed?: unknown } = {};
+    const startupEvents: { operation: string; status: string; details: unknown }[] = [];
+    const serializedReceipts: { operation: string; status: string; state?: Record<string, unknown> }[] = [];
+    const realTrace = createDiagnosticProducer({ sink: (line) => serializedReceipts.push(JSON.parse(line)) });
+    let hostProbes = 0;
+    let launchedSession: Session;
+    let settleLaunch: (started: boolean) => void = () => assert.fail('Expected deferred launch');
+    const skipHostProbe = scenario.endsWith('without-host-probe');
+    const subscribe = (kind: keyof typeof listeners, listener: (session: Session) => void) => {
+      listeners[kind].add(listener);
+      return { dispose: () => listeners[kind].delete(listener) };
+    };
+    const api = {
+      Uri: { file: (value: string) => value },
+      workspace: { getWorkspaceFolder: () => folder },
+      tasks: { taskExecutions: [{ task: { name: 'func: host start', scope: folder } }] },
+      debug: {
+        // Neither the active foreign session nor the owned task can satisfy the gate.
+        activeDebugSession: { id: 'foreign-active-session' },
+        onDidStartDebugSession: (listener: (session: Session) => void) => subscribe('start', listener),
+        onDidTerminateDebugSession: (listener: (session: Session) => void) => subscribe('terminate', listener),
+        startDebugging: (actualFolder: typeof folder, config: Record<string, unknown>) => {
+          assert.strictEqual(actualFolder, folder);
+          assert.equal(listeners.start.size, 1, 'Must subscribe to starts before launching');
+          assert.equal(listeners.terminate.size, 1, 'Must subscribe to termination before launching');
+          launchedSession = {
+            id: 'exact-api-session-id',
+            workspaceFolder: folder,
+            configuration: { ...config },
+          };
+          if (scenario === 'foreign-id') {
+            launchedSession.id = '';
+          } else if (scenario === 'foreign-workspace') {
+            launchedSession.workspaceFolder = { uri: { fsPath: 'foreign-root/app' } };
+          } else {
+            const field = {
+              'foreign-launch': '__logicAppsDebugLaunch',
+              'foreign-invocation': '__logicAppsMsnInvocation',
+              'foreign-name': 'name',
+              'foreign-type': 'type',
+              'foreign-request': 'request',
+            }[scenario];
+            if (field) {
+              launchedSession.configuration[field] = 'foreign';
+            }
+          }
+          if (!['task-only-pending', 'settled-without-session', 'pending-without-host-probe'].includes(scenario)) {
+            listeners.start.forEach((listener) => listener(launchedSession));
+          }
+          if (scenario === 'terminated') {
+            listeners.terminate.forEach((listener) => listener({ ...launchedSession }));
+          }
+          if (scenario === 'false') {
+            return Promise.resolve(false);
+          }
+          if (scenario === 'rejected' || scenario === 'rejected-undefined') {
+            return Promise.reject(scenario === 'rejected' ? primary : undefined);
+          }
+          if (scenario.includes('pending') || scenario === 'delayed-settlement') {
+            return new Promise<boolean>((resolve) => {
+              settleLaunch = resolve;
+            });
+          }
+          return Promise.resolve(true);
+        },
+      },
+    };
+    const exported: {
+      startDebuggingGeneratedWorkspace?: (
+        workspace: { appDir: string; workflowJsonPath: string; label: string },
+        options: { cleanupBeforeDebug: boolean; requireHostRunning: boolean }
+      ) => Promise<void>;
+    } = {};
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      vscode: api,
+      assert,
+      path,
+      fs: { readFileSync: () => JSON.stringify({ configurations: [{ name: 'owned-launch', type: 'coreclr', request: 'attach' }] }) },
+      randomUUID: () => 'exact-launch-id',
+      operationDiagnostics: {
+        start: (operation: string, state: unknown) => {
+          assert.equal(operation, 'debug-startup');
+          const span = realTrace.start(operation, state);
+          return {
+            end: (state: unknown) => {
+              startupVerdicts.passed = state;
+              span.end(state);
+            },
+            fail: (error: unknown, state: unknown) => {
+              startupVerdicts.failed = state;
+              span.fail(error, state);
+            },
+          };
+        },
+        emit: (operation: string, status: string, details: { state?: unknown; error?: unknown }) => {
+          startupEvents.push({ operation, status, details });
+          realTrace.emit(operation, status, details);
+        },
+      },
+      normalizeFsPath: (value: string) => path.win32.normalize(value).toLowerCase(),
+      process: {
+        env: {
+          LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+          LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION: 'exact-invocation',
+        },
+      },
+      requiredValue: (value: string) => value,
+      console: { log: () => undefined },
+      closeCopilotChatIfVisible: async () => undefined,
+      logAzuriteDiagnostics: async () => undefined,
+      captureLifecycleScreenshot: async (name: string) => {
+        screenshots.push(name);
+        if (scenario === 'rejected' && name.endsWith('-debug-failure')) {
+          throw new Error('secondary-diagnostic-failure');
+        }
+      },
+      affirmativeAzureConnectorPrompt: {},
+      handleWorkbenchPrompts: async () => undefined,
+      isHostRunning: async () => {
+        hostProbes++;
+        if (scenario === 'terminated-during-host-probe') {
+          listeners.terminate.forEach((listener) => listener({ ...launchedSession }));
+        } else {
+          // A foreign termination must not remove the exact live session.
+          listeners.terminate.forEach((listener) => listener({ ...launchedSession, id: 'foreign-id' }));
+        }
+        return scenario !== 'host-not-running';
+      },
+      waitUntil: async (predicate: () => Promise<boolean>, budget: number) => {
+        assert.equal(budget, 300000, 'Keep the existing startup deadline');
+        if (scenario === 'delayed-settlement') {
+          assert.equal(await predicate(), false, 'An exact session cannot replace actual launch-promise settlement');
+          assert.equal(hostProbes, 0);
+          settleLaunch(true);
+          await Promise.resolve();
+        }
+        // Exercise repeated detection (and the deferred promise's microtasks) without real-time sleeps.
+        for (let poll = 0; poll < 3; poll++) {
+          if (await predicate()) {
+            return;
+          }
+        }
+        throw timeout;
+      },
+    });
+    const launch = () =>
+      exported.startDebuggingGeneratedWorkspace!(
+        { appDir: folder.uri.fsPath, workflowJsonPath: 'workflow.json', label: 'unit' },
+        { cleanupBeforeDebug: false, requireHostRunning: !skipHostProbe }
+      );
+    const succeeds = ['exact-session', 'delayed-settlement', 'exact-session-without-host-probe'].includes(scenario);
+    if (succeeds) {
+      await launch();
+    } else if (scenario === 'false') {
+      await assert.rejects(launch, /startDebugging=false/);
+    } else if (scenario === 'rejected' || scenario === 'rejected-undefined') {
+      let rejected = false;
+      try {
+        await launch();
+      } catch (error) {
+        rejected = true;
+        assert.strictEqual(error, scenario === 'rejected' ? primary : undefined, 'Preserve the actual launch rejection');
+      }
+      assert.ok(rejected, 'A rejected launch must not pass');
+    } else {
+      await assert.rejects(launch, (error: unknown) => error === timeout, scenario);
+    }
+    assert.equal(
+      screenshots.some((name) => name.endsWith('-debug-prompts-handled')),
+      succeeds,
+      scenario
+    );
+    assert.equal(listeners.start.size, 0, `Dispose start subscription: ${scenario}`);
+    assert.equal(listeners.terminate.size, 0, `Dispose termination subscription: ${scenario}`);
+    assert.equal(!!startupVerdicts.passed, succeeds, `Startup accepted receipt: ${scenario}`);
+    assert.equal(!!startupVerdicts.failed, !succeeds, `Startup failed receipt: ${scenario}`);
+    if (scenario.includes('pending')) {
+      assert.deepEqual(
+        startupVerdicts.failed,
+        {
+          launchPending: true,
+          launchStarted: false,
+          launchRejected: false,
+          liveOwnedSessions: scenario === 'exact-session-pending' ? 1 : 0,
+        },
+        `Pending launch attribution: ${scenario}`
+      );
+    }
+    assert.ok(startupEvents.length < 10, 'Receipts must follow transitions, not every readiness poll');
+    assert.ok(serializedReceipts.every((record) => diagnosticOperationId(record.operation) === record.operation));
+    assert.equal(serializedReceipts[0].state?.requireHostRunning, !skipHostProbe);
+    assert.deepEqual(serializedReceipts.at(-1)?.state, succeeds ? startupVerdicts.passed : startupVerdicts.failed);
+    for (const event of startupEvents) {
+      const state = (event.details as { state: Record<string, unknown> }).state;
+      const receipt = serializedReceipts.find((record) => record.operation === event.operation && record.status === event.status);
+      assert.ok(receipt?.state?.launchId, 'Actual producer must retain the hash-redacted launch correlation');
+      if (state.matches) {
+        assert.deepEqual(receipt.state.matches, state.matches, 'Retain every boolean session ownership predicate');
+      }
+      if ('started' in state) {
+        assert.equal(receipt.state.started, state.started);
+      }
+    }
+    assert.ok(!JSON.stringify(serializedReceipts).includes('exact-launch-id'));
+    const probesExpected = ['exact-session', 'delayed-settlement', 'terminated-during-host-probe', 'host-not-running'].includes(scenario);
+    assert.equal(hostProbes > 0, probesExpected, scenario);
+  }
+}
+
+async function testMsnHandleShutdownDiagnosticReceipts(): Promise<void> {
+  const declaration = source.statements.find(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'stopDebuggingAndTasks'
+  );
+  assert.ok(declaration);
+  const implementation = ts.transpileModule(`export ${declaration.getText(source)}`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  for (const mode of ['absent', 'active', 'foreign', 'stop-failure']) {
+    const records: { operation: string; status: string; state?: Record<string, unknown> }[] = [];
+    const primary = new Error('original-stop-error');
+    const session = {
+      id: 'exact-owned-session',
+      workspaceFolder: { uri: { fsPath: 'owned-root' } },
+      configuration: { __logicAppsMsnInvocation: 'invocation' },
+    };
+    const task = {
+      task: { name: 'func: host start', scope: { uri: { fsPath: 'owned-root' } } },
+      terminate: () => {
+        api.tasks.taskExecutions = [];
+      },
+    };
+    let stopRequests = 0;
+    const api = {
+      extensions: { getExtension: () => ({ id: 'extension', isActive: true, extensionPath: 'extension', packageJSON: { main: 'main' } }) },
+      workspace: { workspaceFolders: [{ uri: { fsPath: 'owned-root' } }] },
+      debug: {
+        activeDebugSession: mode === 'absent' ? undefined : (session as typeof session | undefined),
+        stopDebugging: async (target: typeof session) => {
+          assert.strictEqual(target, session);
+          stopRequests++;
+          if (mode === 'stop-failure') {
+            throw primary;
+          }
+          api.debug.activeDebugSession = undefined;
+        },
+      },
+      tasks: { taskExecutions: [task] },
+    };
+    const exported: { stopDebuggingAndTasks?: () => Promise<void> } = {};
+    const emit = (operation: string, status: string, details?: { state?: Record<string, unknown> }) =>
+      records.push({ operation, status, state: details?.state });
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      vscode: api,
+      assert,
+      require,
+      logicAppsExtensionId: 'extension',
+      process: {
+        env: {
+          LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+          LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION: 'invocation',
+          LA_E2E_CLI_WORKSPACE_PARENT: 'owned-root',
+        },
+      },
+      requiredValue: (value: string) => value,
+      assertOwnedMsnHandleScopes: () => {
+        if (mode === 'foreign') {
+          throw primary;
+        }
+      },
+      waitUntil: async (predicate: () => boolean, budget: number) => {
+        assert.equal(budget, 10000);
+        assert.ok(predicate());
+      },
+      operationDiagnostics: {
+        emit,
+        run: async (operation: string, action: () => Promise<unknown>, state?: Record<string, unknown>) => {
+          emit(operation, 'start', { state });
+          try {
+            const result = await action();
+            emit(operation, 'end');
+            return result;
+          } catch (error) {
+            emit(operation, 'failure');
+            throw error;
+          }
+        },
+        start: (operation: string, state: Record<string, unknown>) => {
+          emit(operation, 'start', { state });
+          return { end: () => emit(operation, 'end'), fail: () => emit(operation, 'failure') };
+        },
+      },
+    });
+    if (mode === 'foreign' || mode === 'stop-failure') {
+      await assert.rejects(exported.stopDebuggingAndTasks!, (error: unknown) => error === primary);
+    } else {
+      await exported.stopDebuggingAndTasks!();
+    }
+    assert.equal(stopRequests, mode === 'active' || mode === 'stop-failure' ? 1 : 0);
+    if (mode === 'absent' || mode === 'foreign') {
+      assert.ok(records.some((record) => record.status === (mode === 'absent' ? 'skipped-no-active-session' : 'skipped-scope-rejected')));
+      assert.ok(!records.some((record) => record.operation === 'msn-debug-stop' && record.status === 'start'));
+    }
+    if (mode === 'active') {
+      assert.equal(
+        records.find((record) => record.operation === 'msn-debug-stop' && record.status === 'start')?.state?.selected,
+        session.id
+      );
+    }
+  }
+}
+
+async function testPersistedDesignerEvidenceSeparatesCanvasAndPanel(): Promise<void> {
+  let branch: ts.Statement | undefined;
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isIfStatement(node) &&
+      node.expression.getText(source) === 'options.persistedDesigner' &&
+      node.thenStatement.getText(source).includes('await persisted.waitForPersistedDesignerReady()')
+    ) {
+      assert.strictEqual(branch, undefined, 'Expected one persisted Designer evidence branch');
+      branch = node.thenStatement;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  assert.ok(branch, 'Expected persisted Designer lifecycle implementation');
+  const implementation = ts.transpileModule(`export async function run() ${branch.getText(source)}`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const nodeIds = ['Request', 'Initialize', 'AppendArray', 'AppendString', 'Response'];
+  for (const includePanel of [true, false]) {
+    const calls: string[] = [];
+    let panelOpen = false;
+    const deadlineMs = Date.now() + 30_000;
+    const exported: { run?: () => Promise<void> } = {};
+    const cdp = {};
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      assert,
+      options: {
+        warmOnly: true,
+        persistedDesigner: {
+          requiredNodeIds: nodeIds,
+          panelNodeId: includePanel ? 'Initialize' : undefined,
+          evidenceName: 'unit-rebound',
+          description: 'Persisted Designer',
+          deadlineMs,
+        },
+      },
+      createdWorkspace: { label: 'unit' },
+      designerCdp: cdp,
+      cdp,
+      contextId: 4,
+      ProvenDesignerCdpActions: class {
+        async waitForPersistedDesignerReady() {
+          calls.push('ready');
+        }
+        async waitForExactNodeIds(ids: string[]) {
+          assert.deepStrictEqual(ids, nodeIds);
+          calls.push('exact-nodes');
+          return ids.map((nodeId) => ({ nodeId, title: nodeId === 'Initialize' ? 'Initialize variables' : nodeId }));
+        }
+        async ensureNodePanelOpen() {
+          panelOpen = true;
+          calls.push('open-panel');
+        }
+      },
+      normalizeDesignerCanvasViewport: async () => calls.push('fit-canvas'),
+      captureLifecycleScreenshot: async (
+        name: string,
+        options: {
+          expectation: { kind: string; requiredNodeIds?: string[]; nodeId?: string; actionTitle?: string };
+          deadlineMs: number;
+          semanticContextId: number;
+          semanticCdp: unknown;
+          skipNotificationHousekeeping: boolean;
+        }
+      ) => {
+        assert.strictEqual(options.deadlineMs, deadlineMs, 'Both captures retain the original absolute deadline');
+        assert.strictEqual(options.semanticCdp, cdp);
+        assert.strictEqual(options.semanticContextId, 4);
+        assert.strictEqual(options.skipNotificationHousekeeping, true);
+        if (options.expectation.kind === 'designerCanvas') {
+          assert.strictEqual(panelOpen, false, 'An open panel clips nodes in the 710px Windows viewport');
+          assert.deepStrictEqual(options.expectation.requiredNodeIds, nodeIds, 'Canvas proof must retain every exact node');
+          assert.strictEqual(name, 'unit-rebound');
+          calls.push('canvas-evidence');
+        } else {
+          assert.strictEqual(options.expectation.kind, 'designerPanel');
+          assert.strictEqual(panelOpen, true);
+          assert.strictEqual(options.expectation.nodeId, 'Initialize');
+          assert.strictEqual(options.expectation.actionTitle, 'Initialize variables');
+          assert.strictEqual(name, 'unit-rebound-panel-open');
+          calls.push('panel-evidence');
+        }
+      },
+    });
+    await exported.run!();
+    assert.deepStrictEqual(calls, [
+      'ready',
+      'fit-canvas',
+      'exact-nodes',
+      'canvas-evidence',
+      ...(includePanel ? ['open-panel', 'panel-evidence'] : []),
+    ]);
+  }
+}
+
+function testNotificationHousekeepingUsesBoundedOperations(): void {
+  const start = sourceText.indexOf('async function dismissWorkbenchNotifications(');
+  const end = sourceText.indexOf('\nasync function waitForWorkbenchPromptOptionToDismiss(', start);
+  assert.ok(start >= 0 && end > start, 'Expected dismissWorkbenchNotifications source');
+  const implementation = sourceText.slice(start, end);
+  assert.match(
+    implementation,
+    /const bounded = boundedCdp\(cdp, deadline\)/,
+    'Notification CDP operations must share the absolute deadline'
+  );
+  assert.match(implementation, /await bounded\.evaluate/, 'Notification discovery must use bounded CDP evaluation');
+  assert.match(implementation, /await clickPoint\(bounded, point\)/, 'Notification dismissal clicks must use bounded CDP sends');
+  assert.match(implementation, /Promise\.race/, 'VS Code notification commands must be raced against the same deadline');
+  assert.match(implementation, /Math\.min\(150, remaining\(\)\)/, 'Notification polling sleeps must not exceed the remaining deadline');
+}
+
+function testDebugPromptEvidenceWaitsForStableRuntime(): void {
+  const start = sourceText.indexOf('async function startDebuggingGeneratedWorkspace(');
+  const end = sourceText.indexOf('\nasync function waitForDebugStartup(', start);
+  assert.ok(start >= 0 && end > start, 'Expected startDebuggingGeneratedWorkspace source');
+  const implementation = sourceText.slice(start, end);
+  const debugStarting = implementation.indexOf('-debug-starting');
+  const promptHandling = implementation.indexOf('handleWorkbenchPrompts([');
+  const runtimeReady = implementation.indexOf('await waitForDebugStartup(');
+  const promptsHandled = implementation.indexOf('-debug-prompts-handled');
+  assert.ok(
+    [debugStarting, promptHandling, runtimeReady, promptsHandled].every((position) => position >= 0),
+    'Expected debug transition steps'
+  );
+  assert.ok(debugStarting < promptHandling, 'Debug-starting evidence must precede prompt handling');
+  assert.ok(promptHandling < runtimeReady, 'Known prompts must be handled while debug startup proceeds');
+  assert.ok(runtimeReady < promptsHandled, 'Post-prompt evidence must wait for the workbench target to stabilize');
+}
+
+function loadCaptureHarness(sourceOverride = sourceText, delays: { chatMs?: number; notificationMs?: number; connectMs?: number } = {}) {
+  const captureSource = ts.createSourceFile(`${sourcePath}.capture.ts`, sourceOverride, ts.ScriptTarget.Latest, true);
+  const selected = captureSource.statements.filter(
+    (node): node is ts.FunctionDeclaration =>
+      ts.isFunctionDeclaration(node) &&
+      ['captureLifecycleScreenshot', 'shouldCloseCopilotChatBeforeScreenshot'].includes(node.name?.text ?? '')
+  );
+  assert.strictEqual(selected.length, 2, 'Expected captureLifecycleScreenshot and shouldCloseCopilotChatBeforeScreenshot to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(captureSource)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const calls = {
+    chatCleanup: 0,
+    chatTimeoutMs: undefined as number | undefined,
+    notificationCleanup: 0,
+    notificationDeadlineMs: undefined as number | undefined,
+    capture: 0,
+    captureDeadlineMs: undefined as number | undefined,
+    captureTimeoutMs: undefined as number | undefined,
+    ownerConnect: 0,
+    ownerConnectTimeoutMs: undefined as number | undefined,
+  };
+  let now = 1000;
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    console,
+    Date: { now: () => now },
+    closeCopilotChatIfVisible: async (_stage: string, options?: { timeoutMs?: number }) => {
+      calls.chatCleanup++;
+      calls.chatTimeoutMs = options?.timeoutMs;
+      now += delays.chatMs ?? 0;
+    },
+    dismissWorkbenchNotifications: async (deadlineMs?: number) => {
+      calls.notificationCleanup++;
+      calls.notificationDeadlineMs = deadlineMs;
+      now += delays.notificationMs ?? 0;
+    },
+    assertLifecycleWorkspaceBinding: () => undefined,
+    captureCdpScreenshot: async (_cdp: unknown, _name: string, options?: { deadlineMs?: number; timeoutMs?: number }) => {
+      calls.capture++;
+      calls.captureDeadlineMs = options?.deadlineMs;
+      calls.captureTimeoutMs = options?.timeoutMs;
+    },
+    connectToVsCodeWorkbenchCdp: async (options?: { timeoutMs?: number }) => {
+      calls.ownerConnect++;
+      calls.ownerConnectTimeoutMs = options?.timeoutMs;
+      now += delays.connectMs ?? 0;
+      return { dispose: () => undefined };
+    },
+    captureDiagnosticScreenshot: async () => undefined,
+    defaultEvidenceScreenshotTimeoutMs: 15_000,
+    getExpectedActiveTabText: () => [],
+  });
+
+  return { exported, calls };
+}
+
+function loadNormalizeViewportHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'normalizeDesignerCanvasViewport'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected normalizeDesignerCanvasViewport to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const logs: string[] = [];
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    console: { log: (line: string) => logs.push(line) },
+    boundedCdp: (cdp: unknown) => cdp,
+    ensureWorkbenchPanelClosed: async () => logs.push('workbench-panel-closed'),
+    clickPoint: async (
+      cdp: { send: (method: string, params: Record<string, unknown>) => Promise<void> },
+      point: { x: number; y: number }
+    ) => {
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...point });
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point });
+    },
+    setTimeout: (callback: () => void) => {
+      callback();
+      return 0;
+    },
+  });
+
+  return { exported, logs };
+}
+
+function loadFinalCanvasCheckpointHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'shouldRunFinalDesignerCanvasCheckpoint'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected shouldRunFinalDesignerCanvasCheckpoint to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+  });
+
+  return { exported };
+}
+
+function loadMonitoringActionHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'clickMonitoringActionCardByTitle'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected clickMonitoringActionCardByTitle to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const clickedNodes: Array<{ title: string; browserRouted: boolean }> = [];
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    getMsnDesignerActions: () => ({
+      clickNode: async (title: string, options: { browserRouted?: boolean }) => {
+        clickedNodes.push({ title, browserRouted: options?.browserRouted === true });
+      },
+    }),
+  });
+
+  return { exported, clickedNodes };
+}
+
+function loadRuntimeHarness(status: string, options: { malformedActions?: boolean } = {}) {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && runtimeFunctionNames.has(node.name?.text ?? '')
+  );
+  assert.strictEqual(selected.length, runtimeFunctionNames.size, 'Expected all runtime diagnostic functions to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const exported: Record<string, any> = {};
+  const calls = { polls: 0, urls: [] as string[], logs: [] as string[], actionDetails: [] as string[] };
+  const workflowName = 'workflow / with space';
+  const runName = 'run/?exact';
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    assert,
+    console: { log: (line: string) => calls.logs.push(line) },
+    setTimeout,
+    clearTimeout,
+    managementBaseUrl: 'http://localhost:7071/management',
+    apiVersion: '2018-11-01',
+    getOverviewRunStatus: async () => ({ status, runName, text: `${runName} ${status}` }),
+    getRunActionDetails: async (_workflow: string, _run: string, action: string) => {
+      calls.actionDetails.push(action);
+      return {
+        properties: {
+          status: 'Failed',
+          error: {
+            code: 'UpstreamFailure',
+            message: 'Fixture upstream failed.',
+          },
+        },
+      };
+    },
+    httpRequest: async (request: { url: string }) => {
+      calls.urls.push(request.url);
+      if (request.url.includes('/actions?')) {
+        if (options.malformedActions) {
+          return { status: 200, body: '<html>Unexpected proxy response</html>' };
+        }
+        return {
+          status: 200,
+          body: JSON.stringify({
+            value: [
+              { name: 'Get_current_weather', properties: { status: 'Failed', code: 'UpstreamFailure' } },
+              { name: 'Successful_action', properties: { status: 'Succeeded' } },
+            ],
+          }),
+        };
+      }
+      if (request.url.includes('/runs?')) {
+        return { status: 200, body: JSON.stringify({ value: [{ name: runName, properties: { status } }] }) };
+      }
+      return { status: 200, body: JSON.stringify({ name: runName, properties: { status } }) };
+    },
+    waitUntil: async (predicate: () => Promise<boolean> | boolean) => {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        calls.polls++;
+        try {
+          if (await predicate()) {
+            return;
+          }
+        } catch {
+          // Match production waitUntil's retrying predicate contract.
+        }
+      }
+      throw new Error('Synthetic wait exhausted: terminal failure was swallowed.');
+    },
+  });
+
+  return { exported, calls, workflowName, runName };
+}
+
+function testDynamicContentPickerOpenAcceptsAlternativeLabels(): void {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  const expression = exported.buildDynamicContentPickerOpenExpression(['get current weather', 'get_current_weather']);
+  const friendlyOnly = runPickerExpression(expression, 'Get current weather Body');
+  const internalOnly = runPickerExpression(expression, 'Get_current_weather Body');
+  const neither = runPickerExpression(expression, 'Different action Body');
+
+  assert.strictEqual(friendlyOnly.visible, true, JSON.stringify(friendlyOnly));
+  assert.strictEqual(internalOnly.visible, true, JSON.stringify(internalOnly));
+  assert.strictEqual(neither.visible, false, JSON.stringify(neither));
+}
+
+function testDynamicContentPickerEvidenceForwardsTokenTitles(): void {
+  assert.match(
+    sourceText,
+    /picker:\s*\{\s*sectionLabels,\s*tokenTitles\s*\}/,
+    'Picker-open evidence must forward requested token titles so readiness proves the same field that selection will click'
+  );
+}
+
+function testDynamicContentEntrypointIsReacquiredAfterFocusedEvidence(): void {
+  const start = sourceText.indexOf('async function selectDynamicContentTokenForParameter(');
+  const end = sourceText.indexOf('\nasync function waitForDynamicContentPickerOpen(', start);
+  assert.ok(start >= 0 && end > start, 'Expected selectDynamicContentTokenForParameter source');
+  const implementation = sourceText.slice(start, end);
+  const focusedEvidenceIndex = implementation.indexOf('captureLifecycleScreenshot(');
+  const reacquireIndex = implementation.indexOf('const currentEditorPoint = await getDesignerParameterEditorPoint(', focusedEvidenceIndex);
+  const refocusIndex = implementation.indexOf('await clickPoint(cdp, currentEditorPoint);', reacquireIndex);
+  const boundedWaitIndex = implementation.indexOf('10_000,', refocusIndex);
+
+  assert.ok(focusedEvidenceIndex >= 0, 'Expected focused editor evidence before opening dynamic content');
+  assert.ok(
+    reacquireIndex > focusedEvidenceIndex,
+    'Expected the active editor point to be reacquired after focused evidence can rerender the panel'
+  );
+  assert.ok(refocusIndex > reacquireIndex, 'Expected the reacquired editor to be focused before locating its dynamic-content entrypoint');
+  assert.ok(boundedWaitIndex > refocusIndex, 'Expected entrypoint reacquisition to remain deadline bounded');
+}
+
+async function testDynamicContentPickerOpenUsesBoundedEvaluation(): Promise<void> {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  let calls = 0;
+  const neverResolvingCdp = {
+    evaluate: (_contextId: number | undefined, _expression: string, options?: { timeoutMs?: number }) => {
+      calls++;
+      assert.ok((options?.timeoutMs ?? 0) > 0, 'Expected bounded picker evaluation timeout');
+      return new Promise((_resolve, reject) =>
+        setTimeout(() => reject(new Error('synthetic picker RPC timeout')), options?.timeoutMs ?? 1)
+      );
+    },
+  };
+
+  await assert.rejects(
+    exported.waitForDynamicContentPickerOpen(
+      neverResolvingCdp,
+      1,
+      ['Get current weather', 'Get_current_weather'],
+      { x: 1, y: 1 },
+      'unit picker'
+    ),
+    /Timed out waiting for dynamic-content picker/
+  );
+  assert.ok(calls > 0, 'Expected picker poll to execute');
+
+  let healthyCalls = 0;
+  const healthyDelayedCdp = {
+    evaluate: async (_contextId: number | undefined, expression: string, options?: { timeoutMs?: number }) => {
+      assert.ok((options?.timeoutMs ?? 0) > 0, 'Expected bounded healthy picker evaluation timeout');
+      healthyCalls++;
+      return runPickerExpression(expression, healthyCalls > 1 ? 'Get current weather Body' : '');
+    },
+  };
+
+  await exported.waitForDynamicContentPickerOpen(
+    healthyDelayedCdp,
+    1,
+    ['Get current weather', 'Get_current_weather'],
+    { x: 1, y: 1 },
+    'unit picker'
+  );
+  assert.ok(healthyCalls > 1, 'Expected healthy delayed picker to poll until visible');
+}
+
+function runPickerExpression(expression: string, pickerText: string): { visible: boolean; text?: string } {
+  const visibleElement = {
+    textContent: pickerText,
+    offsetWidth: 100,
+    offsetHeight: 20,
+    getClientRects: () => [{}],
+    getAttribute: () => undefined,
+    tagName: 'DIV',
+    className: '',
+  };
+  const hiddenEntrypoint = { ...visibleElement, textContent: '', offsetWidth: 0, offsetHeight: 0, getClientRects: () => [] };
+  const document = {
+    activeElement: visibleElement,
+    querySelectorAll: (selector: string) => {
+      if (selector.includes('msla-token-picker') || selector.includes('picker')) {
+        return [visibleElement];
+      }
+      if (selector.includes('entrypoint-button-dynamic-content')) {
+        return [hiddenEntrypoint];
+      }
+      return [];
+    },
+  };
+  return vm.runInNewContext(expression, { document, Array }) as { visible: boolean; text?: string };
+}
+
+async function testMonitoringActionCardUsesStableNodeIdentity(): Promise<void> {
+  const { exported, clickedNodes } = loadMonitoringActionHarness();
+  for (const duration of ['0.9s', '3s']) {
+    await exported.clickMonitoringActionCardByTitle({}, 1, duration === '0.9s' ? 'Get current weather' : 'Get current weather');
+  }
+  await exported.clickMonitoringActionCardByTitle({}, 1, 'Response');
+  assert.deepStrictEqual(clickedNodes, [
+    { title: 'Get current weather', browserRouted: true },
+    { title: 'Get current weather', browserRouted: true },
+    { title: 'Response', browserRouted: true },
+  ]);
+}
+
+async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Promise<void> {
+  const { exported, calls } = loadCaptureHarness();
+  await exported.captureLifecycleScreenshot('picker-open', {
+    expectation: {
+      kind: 'designerPanel',
+      label: 'picker-open',
+      actionTitle: 'Response',
+      picker: { sectionLabels: ['Get current weather'] },
+    },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+  });
+
+  assert.strictEqual(calls.chatCleanup, 0, 'Picker-open evidence must not run Copilot Chat cleanup');
+  assert.strictEqual(calls.notificationCleanup, 0, 'Picker-open evidence must not run notification cleanup');
+  assert.strictEqual(calls.capture, 1, 'Expected picker-open evidence capture');
+  assert.strictEqual(calls.ownerConnect, 1, 'Expected picker-open evidence to use owner-bound workbench capture');
+
+  const mutatedSource = sourceText.replace('if (shouldCloseCopilotChatBeforeScreenshot(options.expectation))', 'if (true)');
+  const mutated = loadCaptureHarness(mutatedSource);
+  await mutated.exported.captureLifecycleScreenshot('picker-open', {
+    expectation: {
+      kind: 'designerPanel',
+      label: 'picker-open',
+      actionTitle: 'Response',
+      picker: { sectionLabels: ['Get current weather'] },
+    },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+  });
+  assert.notStrictEqual(mutated.calls.chatCleanup, 0, 'Unconditional cleanup mutation must be observable');
+
+  const bounded = loadCaptureHarness();
+  const deadlineMs = 6000;
+  await bounded.exported.captureLifecycleScreenshot('bounded-housekeeping', {
+    expectation: { kind: 'designerCanvas', label: 'bounded-housekeeping', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    deadlineMs,
+  });
+  assert.ok(
+    typeof bounded.calls.chatTimeoutMs === 'number' && bounded.calls.chatTimeoutMs > 0 && bounded.calls.chatTimeoutMs <= 5000,
+    'Copilot Chat housekeeping must use the caller lifecycle deadline'
+  );
+  assert.strictEqual(
+    bounded.calls.notificationDeadlineMs,
+    deadlineMs,
+    'Notification housekeeping must use the same caller lifecycle deadline'
+  );
+  assert.strictEqual(bounded.calls.captureDeadlineMs, deadlineMs, 'An earlier caller deadline must remain authoritative');
+  assert.strictEqual(bounded.calls.captureTimeoutMs, 15_000);
+
+  const longDeadline = loadCaptureHarness();
+  await longDeadline.exported.captureLifecycleScreenshot('bounded-evidence', {
+    expectation: { kind: 'designerCanvas', label: 'bounded-evidence', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+    deadlineMs: 901_000,
+  });
+  assert.strictEqual(longDeadline.calls.captureDeadlineMs, 16_000);
+
+  const delayed = loadCaptureHarness(sourceText, { chatMs: 10_000, notificationMs: 3000, connectMs: 1000 });
+  await delayed.exported.captureLifecycleScreenshot('end-to-end-bounded-evidence', {
+    expectation: { kind: 'designerCanvas', label: 'end-to-end-bounded-evidence', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    deadlineMs: 901_000,
+  });
+  assert.strictEqual(delayed.calls.notificationDeadlineMs, 16_000);
+  assert.strictEqual(delayed.calls.ownerConnectTimeoutMs, 2000, 'Connection must receive only the remaining evidence budget');
+  assert.strictEqual(delayed.calls.captureDeadlineMs, 16_000, 'Housekeeping and connection must not reset the evidence deadline');
+}
+
+async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls(): Promise<void> {
+  const { exported, logs } = loadNormalizeViewportHarness();
+  const normalizeSource = source.statements
+    .find((node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'normalizeDesignerCanvasViewport')
+    ?.getText(source);
+  assert.ok(normalizeSource);
+  assert.match(normalizeSource, /await clickPoint\(bounded, state\.fitButtonPoint\)/, 'Fit must use trusted CDP input');
+  assert.ok(
+    normalizeSource.indexOf('await ensureWorkbenchPanelClosed') <
+      normalizeSource.indexOf('await clickPoint(bounded, state.fitButtonPoint)'),
+    'Workbench panel closure must precede Designer Fit'
+  );
+  assert.match(normalizeSource, /const bounded = boundedCdp\(cdp, normalizationDeadline\)/, 'Fit must retain one bounded CDP budget');
+  assert.match(normalizeSource, /missingExpectedNodeIds/, 'Fit must wait for every caller-required node identity');
+  assert.match(normalizeSource, /geometry === previousGeometry/, 'Fit must require consecutive stable geometry observations');
+  assert.match(normalizeSource, /attempt <= 4 && !settled/, 'Fit must use bounded Zoom Out recovery');
+  assert.match(
+    normalizeSource,
+    /for \(let attempt = 1; attempt <= 4 && !settled; attempt \+= 1\) \{\s*const zoomOutButtonPoint = await bounded\.evaluate/,
+    'Zoom Out must be reacquired inside every recovery attempt'
+  );
+  assert.doesNotMatch(normalizeSource, /fitButton\.click\(\)/, 'Fit must not use a synthetic DOM click');
+  assert.match(normalizeSource, /settledObservations >= 3/, 'Fit must wait for stable in-canvas node geometry');
+  assert.match(normalizeSource, /clippedExpectedNodeIds/, 'Fit must retain exact clipping diagnostics for caller-required nodes');
+  const dom = new JSDOM(
+    `
+    <html><body>
+      <div id="unrelated-scroll"><div style="width: 1000px">unrelated</div></div>
+      <div id="profit" title="Profit"></div>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Fit"></button>
+        <div id="canvas-scroll"><div class="msla-card private-Authorization-sentinel">Authorization private runtime text</div></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const windowAny = dom.window as any;
+  const { document } = windowAny;
+  let profitClicked = 0;
+  let fitClicked = 0;
+  const profit = document.getElementById('profit');
+  const fit = document.getElementById('control-zoom-fit-button');
+  const unrelatedScroll = document.getElementById('unrelated-scroll');
+  const canvasScroll = document.getElementById('canvas-scroll');
+  profit.click = () => {
+    profitClicked++;
+  };
+  fit.click = () => {
+    fitClicked++;
+  };
+  Object.defineProperty(unrelatedScroll, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+  Object.defineProperty(canvasScroll, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+  configureElementGeometry(dom.window, {
+    profit: { left: 5, top: 5, width: 80, height: 30 },
+    'control-zoom-fit-button': { left: 100, top: 80, width: 40, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+    'canvas-scroll': { left: 0, top: 60, width: 300, height: 100, scrollWidth: 600, clientWidth: 300 },
+    'unrelated-scroll': { left: 0, top: 700, width: 300, height: 100, scrollWidth: 600, clientWidth: 300 },
+  });
+
+  const cdp = {
+    evaluate: async (_contextId: number | undefined, expression: string) => dom.window.eval(expression) as Record<string, unknown>,
+    send: async (_method: string, params: Record<string, unknown>) => {
+      if (params.type === 'mouseReleased') {
+        fit.click();
+      }
+    },
+  };
+  await exported.normalizeDesignerCanvasViewport(cdp, 1, 'unit normalization');
+
+  assert.strictEqual(profitClicked, 0, 'Normalization must not click unrelated fit-substring controls');
+  assert.strictEqual(fitClicked, 1, 'Normalization should click the exact supported Fit control');
+  assert.strictEqual(unrelatedScroll.scrollLeft, 10, 'Normalization must not reset unrelated scrollers');
+  assert.strictEqual(canvasScroll.scrollLeft, 0, 'Normalization should reset owned canvas scrollers');
+  const serializedLogs = logs.join('\n');
+  assert.ok(!serializedLogs.includes('Authorization'), serializedLogs);
+  assert.ok(!serializedLogs.includes('private-Authorization-sentinel'), serializedLogs);
+
+  const unownedDom = new JSDOM(
+    `
+    <html><body>
+      <div role="dialog"><button id="unowned-fit" aria-label="Fit"></button></div>
+      <div class="react-flow" id="canvas"><div class="msla-card"></div></div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const unownedWindow = unownedDom.window as any;
+  let unownedFitClicked = 0;
+  unownedWindow.document.getElementById('unowned-fit').click = () => {
+    unownedFitClicked++;
+  };
+  configureElementGeometry(unownedDom.window, {
+    'unowned-fit': { left: 10, top: 10, width: 60, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  });
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) => unownedDom.window.eval(expression) as Record<string, unknown>,
+      send: async () => undefined,
+    },
+    1,
+    'unit unowned fit'
+  );
+  assert.strictEqual(unownedFitClicked, 0, 'Normalization must not click Fit controls outside the active canvas owner');
+
+  const offscreenDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Fit"></button>
+        <div class="msla-card"></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const offscreenWindow = offscreenDom.window as any;
+  Object.defineProperty(offscreenWindow, 'innerWidth', { configurable: true, value: 458 });
+  Object.defineProperty(offscreenWindow, 'innerHeight', { configurable: true, value: 666 });
+  let offscreenFitClicked = 0;
+  offscreenWindow.document.getElementById('control-zoom-fit-button').click = () => {
+    offscreenFitClicked++;
+  };
+  configureElementGeometry(offscreenDom.window, {
+    'control-zoom-fit-button': { left: 500, top: 10, width: 40, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  });
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        offscreenDom.window.eval(expression) as Record<string, unknown>,
+      send: async () => undefined,
+    },
+    1,
+    'unit offscreen fit'
+  );
+  assert.strictEqual(offscreenFitClicked, 0, 'Normalization must not click Fit controls when hit testing returns null');
+
+  const zoomRecoveryDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Zoom view to fit"></button>
+        <button id="control-zoom-out-button" aria-label="Zoom out"></button>
+        <div id="msla-node-Request"></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const zoomRecoveryGeometry = {
+    'control-zoom-fit-button': { left: 20, top: 80, width: 40, height: 30 },
+    'control-zoom-out-button': { left: 20, top: 120, width: 40, height: 30 },
+    'msla-node-Request': { left: 100, top: -200, width: 200, height: 80 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  };
+  configureElementGeometry(zoomRecoveryDom.window, zoomRecoveryGeometry);
+  const zoomOutDispatches: Array<{ x: number; y: number }> = [];
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        zoomRecoveryDom.window.eval(expression) as Record<string, unknown>,
+      send: async (_method: string, params: Record<string, unknown>) => {
+        if (params.type !== 'mouseReleased') {
+          return;
+        }
+        if (params.y === 135 && (params.x === 40 || params.x === 140)) {
+          zoomOutDispatches.push({ x: params.x as number, y: params.y as number });
+          if (zoomOutDispatches.length === 1) {
+            zoomRecoveryGeometry['msla-node-Request'].top = -50;
+            zoomRecoveryGeometry['control-zoom-out-button'].left = 120;
+          } else {
+            zoomRecoveryGeometry['msla-node-Request'].top = 100;
+          }
+        }
+      },
+    },
+    1,
+    'unit zoom recovery',
+    ['Request']
+  );
+  assert.deepStrictEqual(
+    zoomOutDispatches,
+    [
+      { x: 40, y: 135 },
+      { x: 140, y: 135 },
+    ],
+    'Normalization must reacquire moved Zoom Out coordinates before the second trusted recovery click'
+  );
+  assert.match(logs.join('\n'), /unit zoom recovery settled: \{"settled":true/);
+
+  const ancestorClippingDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Zoom view to fit"></button>
+        <button id="control-zoom-out-button" aria-label="Zoom out"></button>
+        <div id="canvas-viewport" style="overflow: hidden">
+          <div id="msla-node-Response"></div>
+        </div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const ancestorClippingGeometry = {
+    'control-zoom-fit-button': { left: 20, top: 80, width: 40, height: 30 },
+    'control-zoom-out-button': { left: 20, top: 120, width: 40, height: 30 },
+    'msla-node-Response': { left: 100, top: 500, width: 200, height: 80 },
+    'canvas-viewport': { left: 0, top: 50, width: 458, height: 500 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  };
+  configureElementGeometry(ancestorClippingDom.window, ancestorClippingGeometry);
+  const ancestorClippingZoomOutDispatches: Array<{ x: number; y: number }> = [];
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        ancestorClippingDom.window.eval(expression) as Record<string, unknown>,
+      send: async (_method: string, params: Record<string, unknown>) => {
+        if (params.type === 'mouseReleased' && params.x === 40 && params.y === 135) {
+          ancestorClippingZoomOutDispatches.push({ x: params.x as number, y: params.y as number });
+          ancestorClippingGeometry['msla-node-Response'].top = 400;
+        }
+      },
+    },
+    1,
+    'unit ancestor clipping recovery',
+    ['Response']
+  );
+  assert.deepEqual(
+    ancestorClippingZoomOutDispatches,
+    [{ x: 40, y: 135 }],
+    'Normalization must recover when an exact node is inside the canvas but clipped by an overflow ancestor'
+  );
+  assert.match(logs.join('\n'), /unit ancestor clipping recovery settled: \{"settled":true/);
+}
+
+function testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint(): void {
+  const { exported } = loadFinalCanvasCheckpointHarness();
+
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({ includeMsnWeather: true }), false);
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({ includeMsnWeather: false }), true);
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({}), true);
+
+  const savedIndex = sourceText.indexOf("runLifecyclePhase(createdWorkspace, 'savedworkflowverified'");
+  const checkpointIndex = sourceText.indexOf('shouldRunFinalDesignerCanvasCheckpoint(options)');
+  const debugIndex = sourceText.indexOf("runLifecyclePhase(createdWorkspace, 'debugrequested'");
+  assert.ok(savedIndex >= 0, 'MSN lifecycle must retain saved workflow verification');
+  assert.ok(checkpointIndex > savedIndex, 'Final canvas checkpoint decision must happen after saved workflow verification');
+  assert.ok(debugIndex > checkpointIndex, 'MSN runtime prep must remain after saved workflow verification and checkpoint decision');
+  assert.match(sourceText, /assertMsnWeatherStandardWorkflow\(createdWorkspace\);/);
+  assert.match(sourceText, /captureLifecycleScreenshot\(`workspace-lifecycle-\$\{createdWorkspace\.label\}-designer-open`/);
+  assert.match(sourceText, /skipping redundant final designer-open canvas checkpoint after MSN saved workflow verification/);
+}
+
+function configureElementGeometry(
+  window: any,
+  geometry: Record<string, { left: number; top: number; width: number; height: number; scrollWidth?: number; clientWidth?: number }>
+): void {
+  const htmlElementPrototype = (window as any).HTMLElement.prototype;
+  Object.defineProperty(htmlElementPrototype, 'offsetWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.width ?? 100;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'offsetHeight', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.height ?? 40;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'clientWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.clientWidth ?? geometry[this.id]?.width ?? 100;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'clientHeight', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.height ?? 40;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'scrollWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.scrollWidth ?? geometry[this.id]?.width ?? 100;
+    },
+  });
+  htmlElementPrototype.getClientRects = function () {
+    return [this.getBoundingClientRect()];
+  };
+  htmlElementPrototype.scrollIntoView = () => undefined;
+  htmlElementPrototype.getBoundingClientRect = function () {
+    const rect = geometry[this.id] ?? { left: 0, top: 0, width: 100, height: 40 };
+    return {
+      bottom: rect.top + rect.height,
+      height: rect.height,
+      left: rect.left,
+      right: rect.left + rect.width,
+      top: rect.top,
+      width: rect.width,
+      x: rect.left,
+      y: rect.top,
+      toJSON: () => ({}),
+    };
+  };
+  window.document.elementFromPoint = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight) {
+      return null;
+    }
+    return (
+      (Object.entries(geometry)
+        .map(([id, rect]) => ({ element: window.document.getElementById(id), rect }))
+        .find(
+          ({ element, rect }) => element && x >= rect.left && x <= rect.left + rect.width && y >= rect.top && y <= rect.top + rect.height
+        )?.element as any) ?? null
+    );
+  };
+}
+
+function testDesignerConnectionActionExpressionScopesCreateActions(): void {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  const expression = exported.buildDesignerConnectionOrParameterStateExpression();
+
+  const unscopedCreateNewFolder = runConnectionStateExpression(expression, [
+    createButton('Create new folder'),
+    createButton('Create new workspace'),
+    createButton('Create new unit test'),
+  ]);
+  assert.strictEqual(unscopedCreateNewFolder.actionPoint, undefined, JSON.stringify(unscopedCreateNewFolder));
+
+  const unscopedCreateNewWithLegitimateConnection = runConnectionStateExpression(expression, [
+    createButton('Create new folder'),
+    createButton('Create new workspace'),
+    createButton('Create new unit test'),
+    createConnectionButton('Create new connection'),
+  ]);
+  assert.strictEqual(unscopedCreateNewWithLegitimateConnection.actionSummary?.label, 'Create new connection');
+
+  const bareCreateUnitTest = runConnectionStateExpression(expression, [createButton('Create unit test')]);
+  assert.strictEqual(bareCreateUnitTest.actionPoint, undefined, JSON.stringify(bareCreateUnitTest));
+
+  const scopedBareCreate = runConnectionStateExpression(expression, [createConnectionButton('Create')]);
+  assert.strictEqual(scopedBareCreate.actionSummary?.label, 'Create');
+
+  const scopedConnect = runConnectionStateExpression(expression, [createConnectionButton('Connect')]);
+  assert.strictEqual(scopedConnect.actionSummary?.label, 'Connect');
+
+  const connectionsNavWithOwnedConnect = runConnectionStateExpression(expression, [
+    createButton('Connections'),
+    createConnectionButton('Connect'),
+  ]);
+  assert.strictEqual(connectionsNavWithOwnedConnect.actionSummary?.label, 'Connect');
+
+  const disconnectWithOwnedConnect = runConnectionStateExpression(expression, [
+    createButton('Disconnect'),
+    createConnectionButton('Connect'),
+  ]);
+  assert.strictEqual(disconnectWithOwnedConnect.actionSummary?.label, 'Connect');
+
+  const selectAllWithOwnedSelect = runConnectionStateExpression(expression, [createButton('Select all'), createConnectionButton('Select')]);
+  assert.strictEqual(selectAllWithOwnedSelect.actionSummary?.label, 'Select');
+
+  const connectionsNavWithOwnedSelect = runConnectionStateExpression(expression, [
+    createButton('Connections'),
+    createConnectionButton('Select'),
+  ]);
+  assert.strictEqual(connectionsNavWithOwnedSelect.actionSummary?.label, 'Select');
+
+  const unscopedCreateNewConnection = runConnectionStateExpression(expression, [createButton('Create new connection')]);
+  assert.strictEqual(unscopedCreateNewConnection.actionPoint, undefined, JSON.stringify(unscopedCreateNewConnection));
+
+  const conflictingNearestOwner = runConnectionStateExpression(expression, [createConflictingOwnerInsideConnectionPanelButton('Create')]);
+  assert.strictEqual(conflictingNearestOwner.actionPoint, undefined, JSON.stringify(conflictingNearestOwner));
+
+  const scopedConnectorRow = runConnectionStateExpression(expression, [createConnectionButton('MSN Weather')]);
+  assert.strictEqual(scopedConnectorRow.actionSummary?.label, 'MSN Weather');
+}
+
+function runConnectionStateExpression(
+  expression: string,
+  buttons: FakeConnectionElement[]
+): {
+  hasLocationParameter: boolean;
+  hasActionOnCanvas: boolean;
+  actionPoint?: { x: number; y: number };
+  actionSummary?: { label: string };
+  candidates: string[];
+} {
+  const body = new FakeConnectionElement('Get current weather', { id: 'body' });
+  const document = {
+    body: { innerText: ['Get current weather', ...buttons.map((button) => button.textContent)].join(' ') },
+    querySelectorAll: (selector: string) => {
+      if (selector.includes('label') || selector.includes('span') || selector.includes('div')) {
+        return [body, ...buttons];
+      }
+      return buttons;
+    },
+  };
+  return vm.runInNewContext(expression, { document, Array, HTMLElement: FakeConnectionElement }) as {
+    hasLocationParameter: boolean;
+    hasActionOnCanvas: boolean;
+    actionPoint?: { x: number; y: number };
+    actionSummary?: { label: string };
+    candidates: string[];
+  };
+}
+
+function createButton(text: string): FakeConnectionElement {
+  return new FakeConnectionElement(text, { className: 'fui-Button' });
+}
+
+function createConnectionButton(text: string): FakeConnectionElement {
+  const panel = new FakeConnectionElement('Connection panel', {
+    className: 'msla-panel-root-CreateConnection',
+    id: 'connection-panel',
+  });
+  const button = new FakeConnectionElement(text, { className: 'fui-Button' });
+  button.parentElement = panel;
+  return button;
+}
+
+function createConflictingOwnerInsideConnectionPanelButton(text: string): FakeConnectionElement {
+  const connectionPanel = new FakeConnectionElement('Connection panel', {
+    className: 'msla-panel-root-CreateConnection',
+    id: 'connection-panel',
+  });
+  const workspaceDialog = new FakeConnectionElement('Workspace dialog', {
+    className: 'create-workspace-dialog',
+    id: 'workspace-dialog',
+  });
+  workspaceDialog.parentElement = connectionPanel;
+  const button = new FakeConnectionElement(text, { className: 'fui-Button' });
+  button.parentElement = workspaceDialog;
+  return button;
+}
+
+class FakeConnectionElement {
+  offsetWidth = 100;
+  offsetHeight = 32;
+  parentElement?: FakeConnectionElement;
+  readonly tagName = 'BUTTON';
+  readonly id: string;
+  readonly className: string;
+
+  constructor(
+    readonly textContent: string,
+    options: { id?: string; className?: string; role?: string; dataAutomationId?: string; ariaLabel?: string } = {}
+  ) {
+    this.id = options.id ?? '';
+    this.className = options.className ?? '';
+    this.attributes = {
+      role: options.role,
+      'data-automation-id': options.dataAutomationId,
+      'aria-label': options.ariaLabel,
+    };
+  }
+
+  private readonly attributes: Record<string, string | undefined>;
+
+  getClientRects(): unknown[] {
+    return [{}];
+  }
+
+  getAttribute(name: string): string | null {
+    return this.attributes[name] ?? null;
+  }
+
+  scrollIntoView(): void {
+    // No-op in VM tests.
+  }
+
+  getBoundingClientRect(): { left: number; top: number; width: number; height: number } {
+    return { left: 10, top: 10, width: 100, height: 32 };
+  }
+}
+
+async function testTerminalStatusFailsFast(): Promise<void> {
+  for (const status of ['Failed', 'Cancelled']) {
+    const overview = loadRuntimeHarness(status);
+    await assert.rejects(
+      overview.exported.waitForOverviewRunStatus({}, 9, overview.workflowName, 'standard', overview.runName, 'Succeeded', 180000),
+      (error: Error) => error.message.includes(overview.runName) && error.message.includes(status)
+    );
+    assert.strictEqual(overview.calls.polls, 1, `Overview ${status} should stop on first terminal observation`);
+    assert.deepStrictEqual(overview.calls.actionDetails, ['Get_current_weather']);
+    assert.ok(overview.calls.urls.every((url) => url.includes(encodeURIComponent(overview.workflowName))));
+    assert.ok(overview.calls.urls.every((url) => url.includes(encodeURIComponent(overview.runName))));
+    assert.ok(overview.calls.logs.some((line) => line.includes('UpstreamFailure')));
+
+    const management = loadRuntimeHarness(status);
+    await assert.rejects(
+      management.exported.waitForLatestRunStatus(management.workflowName, 'Succeeded', 180000),
+      (error: Error) => error.message.includes(management.runName) && error.message.includes(status)
+    );
+    assert.strictEqual(management.calls.polls, 1, `Management ${status} should stop on first terminal observation`);
+    assert.deepStrictEqual(management.calls.actionDetails, ['Get_current_weather']);
+  }
+}
+
+async function testSucceededStatusDoesNotCollectFailureDetails(): Promise<void> {
+  const harness = loadRuntimeHarness('Succeeded');
+  await harness.exported.waitForOverviewRunStatus({}, 9, harness.workflowName, 'standard', harness.runName, 'Succeeded', 180000);
+  assert.strictEqual(harness.calls.polls, 1);
+  assert.deepStrictEqual(harness.calls.urls, []);
+  assert.deepStrictEqual(harness.calls.actionDetails, []);
+}
+
+async function testMalformedActionDiagnosticsPreserveTerminalStatus(): Promise<void> {
+  for (const source of ['Overview', 'Management']) {
+    const harness = loadRuntimeHarness('Failed', { malformedActions: true });
+    await assert.rejects(
+      source === 'Overview'
+        ? harness.exported.waitForOverviewRunStatus({}, 9, harness.workflowName, 'standard', harness.runName, 'Succeeded', 180000)
+        : harness.exported.waitForLatestRunStatus(harness.workflowName, 'Succeeded', 180000),
+      (error: Error) => error.message.includes(harness.runName) && error.message.includes('Failed')
+    );
+    assert.strictEqual(harness.calls.polls, 1, `${source} malformed action diagnostics must not hide terminal status`);
+  }
+}
+
+function testRuntimeDiagnosticsRedactSensitiveSubtrees(): void {
+  const harness = loadRuntimeHarness('Failed');
+  for (const key of [
+    'password',
+    'credential',
+    'accountKey',
+    'x-api-key',
+    'cookie',
+    'authentication',
+    'clientSecret',
+    'accessToken',
+    'connectionKey',
+    'MSN_CONNECTION_KEY',
+    'connection-key',
+    'connection_key',
+    'connectionRuntimeUrl',
+    'MSN_CONNECTION_RUNTIME_URL',
+  ]) {
+    const secret = `synthetic-${randomUUID()}`;
+    const output = JSON.stringify(harness.exported.sanitizeRunDiagnostic({ properties: { details: { [key]: { nested: secret } } } }));
+    assert.ok(!output.includes(secret), `Sensitive ${key} value must not survive production sanitizer`);
+  }
+}
+
+function testRuntimeDiagnosticsRedactSensitiveStrings(): void {
+  const harness = loadRuntimeHarness('Failed');
+  for (const [kind, inputFactory] of Object.entries({
+    Bearer: (secret: string) => `Authorization: Bearer ${secret}`,
+    'SAS URL': (secret: string) => `https://example.invalid/run?sig=${secret}&api-version=1`,
+    'connection string': (secret: string) => `Request failed with AccountName=test;AccountKey=${secret};EndpointSuffix=core.windows.net`,
+    connectionKey: (secret: string) => `Request failed with connectionKey=${secret}`,
+    'prefixed connection key': (secret: string) => `Request failed: {"MSN_CONNECTION_KEY":"${secret}"}`,
+    'dash connection key': (secret: string) => `Request failed: {"connection-key":"${secret}"}`,
+    'underscore connection key': (secret: string) => `Request failed: {"connection_key":"${secret}"}`,
+    connectionRuntimeUrl: (secret: string) => `Request failed with connectionRuntimeUrl=https://example.invalid/runtime/${secret}`,
+    'prefixed runtime URL': (secret: string) =>
+      `Request failed: {"MSN_CONNECTION_RUNTIME_URL":"https://example.invalid/runtime/${secret}"}`,
+    'embedded JSON': (secret: string) => `Request failed: {"password":"${secret}"}`,
+    Basic: (secret: string) => `Authorization: Basic ${secret}`,
+  })) {
+    const secret = randomUUID().replaceAll('-', '');
+    const output = JSON.stringify(harness.exported.sanitizeRunDiagnostic({ error: { message: inputFactory(secret) } }));
+    assert.ok(!output.includes(secret), `Sensitive ${kind} value must not survive production sanitizer`);
+  }
+}
+
+function testEarlyMsnWeatherPhaseWiring(): void {
+  const orderMatch = sourceText.match(/const msnWeatherLifecyclePhaseOrder = \[([\s\S]*?)\];/);
+  assert.ok(orderMatch, 'Expected msnWeatherLifecyclePhaseOrder declaration');
+  const order = Array.from(orderMatch[1].matchAll(/'([^']+)'/g)).map((match) => match[1]);
+  assert.deepStrictEqual(order.slice(0, 4), ['Requestinserted', 'MsnWeatherDiscoveryready', 'MsnWeatherinserted', 'MsnWeatherconfigured']);
+  assert.ok(order.indexOf('MsnWeatherconfigured') < order.indexOf('connectionReady'), 'MSN configuration must precede connectionReady');
+  assert.match(sourceText, /runLifecyclePhase\(createdWorkspace,\s*'Requestinserted'/);
+  assert.match(sourceText, /runLifecyclePhase\(createdWorkspace,\s*'MsnWeatherDiscoveryready'/);
+  assert.match(sourceText, /runLifecyclePhase\(createdWorkspace,\s*'MsnWeatherinserted'/);
+  assert.match(sourceText, /runLifecyclePhase\(createdWorkspace,\s*'MsnWeatherconfigured'/);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

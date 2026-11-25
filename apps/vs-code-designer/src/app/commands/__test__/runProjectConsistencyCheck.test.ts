@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { workspace } from 'vscode';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import * as vscode from 'vscode';
+import { runProjectConsistencyCheck } from '../runProjectConsistencyCheck';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { ensureVSCodeFiles } from '../../projectConsistency/vscodeConsistency';
 import { getWorkspaceLogicAppRoots } from '../../utils/workspace';
 import { isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
-import { runProjectConsistencyCheck } from '../runProjectConsistencyCheck';
+
+const probeEvents = vi.hoisted(() => ({ record: vi.fn() }));
 
 vi.mock('../../projectConsistency/projectFilesConsistency', () => ({
   ensureProjectFiles: vi.fn(),
@@ -18,17 +21,28 @@ vi.mock('../../utils/workspace', () => ({
   getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
+vi.mock('../../utils/regenerationProbe', () => ({
+  recordRegenerationEvent: probeEvents.record,
+}));
+
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
   isProjectConsistencyCheckEnabled: vi.fn(),
 }));
 
+vi.mock('vscode', () => ({
+  workspace: {
+    workspaceFolders: [],
+  },
+}));
+
 describe('runProjectConsistencyCheck', () => {
-  const context = {} as any;
+  const context = {} as IActionContext;
+  const projectPaths = ['D:\\workspace\\app-one', 'D:\\workspace\\app-two'];
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:\\workspace' }, name: 'workspace', index: 0 }];
-    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['D:\\workspace\\app-one']);
+    (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:\\workspace' }, name: 'workspace', index: 0 }];
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(projectPaths);
     vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(true);
   });
 
@@ -40,12 +54,19 @@ describe('runProjectConsistencyCheck', () => {
     expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
     expect(ensureProjectFiles).not.toHaveBeenCalled();
     expect(ensureVSCodeFiles).not.toHaveBeenCalled();
+    expect(probeEvents.record).toHaveBeenCalledWith({ event: 'consistency-check-skipped', reason: 'disabled' });
   });
 
-  it('checks all discovered projects when enabled', async () => {
+  it('forwards the workspace invocation origin without serializing existing checks', async () => {
+    await runProjectConsistencyCheck(context, 'workspace-change');
+
+    expect(ensureProjectFiles).toHaveBeenCalledTimes(projectPaths.length);
+    expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(context, projectPaths, 'workspace-change');
+  });
+
+  it('uses the explicit command origin by default', async () => {
     await runProjectConsistencyCheck(context);
 
-    expect(ensureProjectFiles).toHaveBeenCalledWith(context, 'D:\\workspace\\app-one');
-    expect(ensureVSCodeFiles).toHaveBeenCalledWith(context, ['D:\\workspace\\app-one']);
+    expect(ensureVSCodeFiles).toHaveBeenCalledExactlyOnceWith(context, projectPaths, 'explicit-consistency-command');
   });
 });

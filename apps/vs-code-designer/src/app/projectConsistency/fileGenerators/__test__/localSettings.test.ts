@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, TargetFramework, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../localSettings';
 import {
   ProjectDirectoryPathKey,
@@ -8,6 +8,7 @@ import {
   azureWebJobsFeatureFlagsKey,
   azureWebJobsSecretStorageTypeKey,
   azureWebJobsStorageKey,
+  customCodeDotNetVersionSettingKey,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
   localEmulatorConnectionString,
@@ -95,6 +96,14 @@ describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () =
           [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
         },
       });
+    });
+
+    it('logicApp with an explicit custom-code version preserves that version', () => {
+      expect(
+        generateLocalSettingsJson(projectPath, ProjectType.logicApp, {
+          customCodeDotNetVersion: TargetFramework.Net10,
+        }).Values
+      ).toHaveProperty(customCodeDotNetVersionSettingKey, TargetFramework.Net10);
     });
 
     it('customCode: adds the multi-language worker feature flag', () => {

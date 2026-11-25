@@ -1,6 +1,7 @@
 # VS Code E2E Testing Knowledge
 
-Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through `session-knowledge-curator`.
+Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` native tests. Add entries through
+`session-knowledge-curator`.
 
 ## Triggers → use this file
 
@@ -9,9 +10,11 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - CI matrix shards `independent`, `designer`, `newtests`, `conversion`, `scenarios-pilot`
 - VS Code webview iframe switching, overview/run lifecycle, modal dialog interaction on xvfb
 - Adding a new E2E test, debugging a CI-only failure, writing diagnostic dumps
+- `apps/vs-code-designer/src/test/e2e/**`, `scripts/run-e2e-cli.js`, ordered evidence, native ADO selectors
 - See also: [`runtime-readiness-probes.md`](runtime-readiness-probes.md) for runtime/HTTP probe rules,
   [`vscode-task-env-propagation.md`](vscode-task-env-propagation.md) for `func: host start` env bugs,
-  [`ci-patterns.md`](ci-patterns.md) for the shard matrix workflow and coverage gate.
+  [`ci-patterns.md`](ci-patterns.md) for CI proof and failure classification, and
+  [`../../docs/testing/vscode-cli-authoring.md`](../../docs/testing/vscode-cli-authoring.md) for the canonical CLI contracts.
 
 ## Core Sources
 
@@ -20,8 +23,68 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - `apps/vs-code-designer/src/test/ui/designerHelpers.ts`
 - `apps/vs-code-designer/src/test/ui/runHelpers.ts`
 - `apps/vs-code-designer/src/test/ui/workspaceManifest.ts`
+- `apps/vs-code-designer/src/test/e2e/README.md`
+- `docs/testing/vscode-cli-authoring.md`
+- `apps/vs-code-designer/scripts/run-e2e-cli.js`
+- `.config/README.md`
 
 ## Current Learnings
+
+### Workspace regeneration warnings need a foreground-first retained fallback
+
+- Learning: A `showWarningMessage` call does not prove that VS Code displayed a foreground toast. For CLI-native workspace regeneration, prefer the exact owned-project foreground warning. If it remains absent through the bounded foreground-primary window, reveal Notification Center once under the original phase deadline and select only one exact, enabled, hit-tested owned-project action through trusted UI input. Ignore unrelated notifications and progress rows while continuing through live insertion. A clipped exact action may be revealed once, but never invoked through DOM click or command dispatch.
+- Architecture: Keep retained Notification Center parsing and classification owned by the regeneration observer. Shared prompt helpers may provide generic foreground selection or trusted-input primitives, but must not absorb regeneration-specific clutter, insertion, clipping, ambiguity, and deadline semantics.
+- Preserve: The separate overwrite confirmation, exact regenerated files, non-target immutability, fresh reopen, no-repeat prompt, lifecycle closure, cleanup, and ordered-evidence proofs remain authoritative.
+- Why it matters: Native runs proved that the exact warning could be retained without a foreground toast. Immediate or repeated center interaction introduced presentation races and unsafe selection risks.
+- Source: `27123d86ca515b418a59132e92d1a2d5dc6f8a7d`; canonical [full23 run 16058353](https://dev.azure.com/devdiv/DevDiv/_build/results?buildId=16058353); `docs/testing/vscode-cli-authoring.md` section 5; `apps/vs-code-designer/src/test/e2e/README.md` workspace-regeneration contract.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `senior-swe-reviewer`.
+- Status: verified at the accepted source-bound SHA. The protected rollup accepted all 11 Linux and 12 Windows suites.
+
+### Exact executable ownership does not require a frozen runtime cache
+
+- Learning: Fully verify the immutable prepared dependency seed, then hash the exact physical installed C# Roslyn executable against its known manifest entry. Retain native PID/creation/full-command/path binding and reject links, foreign/modified executables, unavailable metadata and observed hash-read races. Added `.roslyn/cache/*.mef-composition` files are not executable identity changes. The former whole-installed-inventory prerequisite and added warmup/freeze/provisioning subsystem are superseded and removed.
+- Setup: Keep the normal dependency flow and ExTester's public Code **and ChromeDriver** asset setup. A supplied seed skips Marketplace dependency installation, not ChromeDriver setup. Keep the type-safe owned cache resolver instead of private `ExTester.code` access.
+- Evidence: Fresh original-seed Windows `lifecycleStartupProof` in `native-lifecycle-normal-1101g` naturally retained Roslyn, recovered only its native owner, and automatically recorded separate actual extension-host startup. Final product passed/infrastructure recovered while native host exit 125 and ordinary closure false remained sticky.
+- Limits: No product runtime PIDs, tasks, ports or workspace resources were exercised in that empty window. This is not Func/design-time restart, Linux native proof, native ExTester acceptance or the 23-lane full rollup. Missing original product shutdown/release or actual subsequent startup still blocks an exception; unknown/shared Func ownership is not independent.
+- Source: `docs/testing/vscode-lifecycle-acceptance.md`, registered producer controls and `E2E_MODE=extesterruntimeonly`.
+
+### Explorer context-menu opening is distinct from action selection
+
+- Learning: Bind the current persisted physical workspace root to its unique Explorer label (including a workspace `name` override), observe selected tree focus, and use Monaco List's native ContextMenu keyup route to anchor the folder menu. Require an observed menu before clicking its exact enabled item, then observe closure. Monaco's disabled state is on the menu item/container, not the label span.
+- Why it matters: An empty candidate list alone cannot distinguish an unopened menu, focus loss, native presentation, or selector failure. Do not invent a submenu or weaken action assertions from that receipt. Capture menu-state diagnostics early.
+- Source: `workspaceMultiRootWorkbench.ts`, `workbenchCdpActions.ts`, their unit controls, and `workspaceMultiRoot.md`. Menu/List shape and keyboard routing were checked against installed Code 1.144.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source-reviewed and production-shaped DOM-control verified, **not native validated**. The original empty-menu failure mechanism remains unproven without isolated native evidence. Extra menu screenshots are diagnostic attachments, not new ordered acceptance checkpoints.
+
+### CLI monitoring uses stable product identity, not presentation text
+
+- Learning: Monitoring-card text can include duration, status, or other changing presentation. Resolve the exact product node ID derived from the action identity first, and retain the existing exact-title matching only as a fallback.
+- Why it matters: Containers such as `0.9sGet current weather` and `3sGet current weather` are valid presentations of the same action; presentation equality misses the action and broad substring matching risks selecting a duplicate.
+- Source: `workspaceLifecycle.test.ts` monitoring-card helper and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-reviewer`.
+- Status: regression-tested; native revalidation is required whenever shared harness behavior changes.
+
+### Post-F5 diagnostic evidence waits for target stability
+
+- Learning: Completing known prompts does not mean the VS Code workbench/CDP target is stable. Keep early transition diagnostics, but capture the final post-prompt checkpoint only after `waitForDebugStartup` or an equivalent target-stability condition.
+- Why it matters: Capturing during navigation can let the native lifecycle pass while a required ordered-evidence checkpoint remains failed or missing on one operating system.
+- Source: `workspaceLifecycle.test.ts` debug startup ordering and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source/control verified; native validation follows the canonical proof ladder after shared harness changes.
+
+### `@vscode/test-cli` Create Workspace CI publishes structured results
+
+- Learning: `.github/workflows/vscode-e2e.yml` runs the latest-stable `@vscode/test-cli` Create Workspace labels in the `vscode-e2e-cli-create-workspace` matrix and each label must publish structured results, not only logs.
+- Why it matters: Without JUnit/JSON summaries, screenshots, and aggregate pass-rate output, failures are discovered by reading long VS Code host logs and users cannot quickly see which label failed.
+- Pattern:
+  1. Run each label through `apps/vs-code-designer/scripts/run-e2e-cli.js`.
+  2. Tee the raw log to `.vscode-test/results/<label>.log`.
+  3. Generate `.json`, `.junit.xml`, and `.summary.md` with `scripts/summarize-e2e-cli-results.js`.
+  4. Upload `vscode-e2e-cli-test-results-<label>`, `vscode-e2e-cli-log-<label>`, and `vscode-e2e-cli-screenshots-<label>`.
+  5. Let `vscode-e2e-cli-create-workspace-report` download all label result artifacts and publish the aggregate pass-rate dashboard plus JSON/JUnit/JSONL trend artifacts.
+- Source: `apps/vs-code-designer/scripts/summarize-e2e-cli-results.js`, `.github/workflows/vscode-e2e.yml`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `release-scribe`.
+- Status: verified.
 
 ### `run-e2e.js` is the suite entry point
 
@@ -190,6 +253,17 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
 - Status: verified.
 
+### Latest-stable CLI parity commands for NuGet and codeful debug
+
+- Learning: The `@vscode/test-cli` baseline has focused manual parity commands for runtime-heavy Create Workspace gaps:
+  - `pnpm run test:e2e-cli:nuget-conversion-lifecycle` creates a Standard Stateful workspace through the CLI Create Workspace webview, seeds a Request/Response workflow, proves bundle debug/run, converts to NuGet, verifies regenerated NuGet project/debug artifacts, and proves post-conversion debug/run without harness port cleanup.
+  - `pnpm run test:e2e-cli:codeful-debug-tasks` creates modern and legacy-control codeful workspaces through the CLI Create Workspace webview, patches only generated codeful source to a connector-free Request/Response debug guard, reopens each generated `.code-workspace` in a fresh latest-stable host, records VS Code task events directly from the extension host, requires the F5 Functions host to report `Running`, and verifies modern skips `publish` while legacy runs `clean release` + `publish`.
+- Run shape: Use the package scripts above, not raw `pnpm run test:e2e-cli --label ...`, for these lifecycle flows. The scripts intentionally launch multiple fresh VS Code hosts: one to create the workspace and write a manifest, then one or more hosts to reopen the generated project with the required startup resource and environment variables.
+- Why it matters: These close the two latest-stable CLI parity rows that used to be documented as ExTester-only while keeping ExTester as the deeper Selenium/UI owner.
+- Source: `apps/vs-code-designer/src/test/e2e/workspaceLifecycle.test.ts`, `apps/vs-code-designer/scripts/run-e2e-cli.js`, `apps/vs-code-designer/src/test/e2e/createWorkspaceParityMap.md`.
+- Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
+- Status: verified.
+
 ### Do not use harness port cleanup when product cleanup is the regression
 
 - Learning: If the regression is about stale `func` task/process cleanup across debug sessions, the critical F5 must bypass `runHelpers.startDebugging()` / `prepareForFreshFuncHost()` and invoke `Debug: Start Debugging` directly.
@@ -291,6 +365,33 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Source: commit `2d959c9a9`; `apps/vs-code-designer/src/test/ui/runHelpers.ts:407-413,453`; pattern also in `runHelpers.ts:95-97` (`debug-waiting-for-runtime`).
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
 - Status: verified.
+
+### Capture semantic evidence after every meaningful interaction
+
+- Learning: Use `interaction -> exact-state wait -> viewport normalization when needed -> semantic screenshot -> next interaction`.
+- Why it matters: Final-state-only screenshots cannot identify whether action insertion, field entry, Settings changes, save acknowledgement, or monitoring selection failed. MSN Weather established the reliable pattern.
+- Pattern: capture separately after each operation insertion and field value, then after save and every state transition the scenario depends on. Bind each capture to the owned Designer/workbench target and exact visible semantic state; a workspace-creation screenshot is not Designer authoring proof.
+- Source: `docs/testing/vscode-cli-authoring.md` and the MSN Weather/Run After evidence plans.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Pre-command Chat failure is not a product interaction regression
+
+- Learning: If Copilot Chat cleanup cannot attach or determine workbench state before the Create Workspace command runs, classify the lane as pre-command infrastructure failure.
+- Why it matters: The wizard or Designer never received the interaction, so changing product assertions cannot fix the first failure boundary.
+- Pattern: retain two bounded attach attempts under one 20-second deadline; preserve diagnostics; keep unknown state fatal.
+- Source: `copilotChatController.ts`, `copilotChat.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified by compiled controls.
+
+### Lifecycle families use outer retained-identity containment
+
+- Learning: The inner MSN, regeneration, and Multi-root workers prove ordered body phases but the outer native containment host owns final retained-process closure, transient-root cleanup, and terminal publication.
+- Why it matters: Post-exit ancestry can miss reparented children, and inner cleanup booleans cannot prove original identity closure.
+- Pattern: retain original child identities while the worker runs; require `processClosureProof="retained-original-identities"` before protected acceptance; preserve fixtures on unconfirmed closure or diagnostics failure.
+- Source: `run-e2e-cli.js`, `family-lifecycle-terminal.js`, `workspaceMultiRoot.md`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source/control verified; native ADO proof required.
 
 ### Debug-toolbar readiness ≠ Functions host readiness
 

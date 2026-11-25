@@ -1,0 +1,55 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: publishVersion
+    displayName: Version to publish
+    type: string
+
+  - name: packageToPublish
+    displayName: VSIX package prefix
+    type: string
+    default: vscode-azurelogicapps
+
+  - name: releaseServiceConnection
+    displayName: Marketplace release service connection
+    type: string
+    default: AzCodeReleases
+
+  - name: releaseApprovalEnvironment
+    displayName: Intended protected release approval environment
+    type: string
+    default: VSCodeDeployLAUX
+    values:
+      - VSCodeDeployLAUX
+
+  - name: npmFeed
+    displayName: Private NPM feed for vsce install
+    type: string
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: \Azure Tools\VSCode\Extensions\vscode-azurelogicapps
+  repositories:
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: azext-pt/v1
+      endpoint: GitHub-AzureTools
+
+variables:
+  - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
+  - name: TeamName
+    value: Azure Tools for VS Code
+
+extends:
+  template: azdo-pipelines/1es-mb-release-extension.yml@azExtTemplates
+  parameters:
+    packageToPublish: ${{ parameters.packageToPublish }}
+    publishVersion: ${{ parameters.publishVersion }}
+    dryRun: true
+    artifactName: Build Root
+    releaseServiceConnection: ${{ parameters.releaseServiceConnection }}
+    releaseApprovalEnvironment: ${{ parameters.releaseApprovalEnvironment }}
+    npmFeed: ${{ parameters.npmFeed }}

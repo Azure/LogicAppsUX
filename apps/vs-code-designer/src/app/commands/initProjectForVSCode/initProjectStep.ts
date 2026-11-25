@@ -16,17 +16,30 @@ import { binariesExistSync } from '../../utils/binaries';
 import { detectCustomCodeTargetFramework } from '../../utils/customCodeUtils';
 import { isSubpath, writeFormattedJson } from '../../utils/fs';
 import { removeFromGitIgnore } from '../../utils/git';
-import { generateTasksJson, generateLaunchJson, generateSettingsJson, generateExtensionsJson } from '../../projectConsistency/fileGenerators';
+import {
+  generateTasksJson,
+  generateLaunchJson,
+  generateSettingsJson,
+  generateExtensionsJson,
+} from '../../projectConsistency/fileGenerators';
 import type { VSCodeProjectConfig } from '../../projectConsistency/fileGenerators';
-import { AzureWizardExecuteStep, DialogResponses, nonNullProp } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, DialogResponses, isUserCancelledError, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { getOrCreateDesignTimeDirectory } from '../../utils/codeless/startDesignTimeApi';
+import { beginRegenerationWarning, recordRegenerationEvent } from '../../utils/regenerationProbe';
+import type { MessageItem } from 'vscode';
+
+const maxDiagnosticDurationMs = 86_400_000;
 
 export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
+
+  public constructor(private readonly regenerationCheckId?: number) {
+    super();
+  }
 
   protected async executeCore(_context: IProjectWizardContext): Promise<void> {
     // Default implementation does nothing
@@ -88,7 +101,45 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
         'overwriteVSCodeFiles',
         'The .vscode configuration files will be regenerated to match the current project settings. This will overwrite any custom modifications. Continue?'
       );
-      const result = await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+      const checkId = this.regenerationCheckId;
+      const warningId = checkId === undefined ? undefined : beginRegenerationWarning('overwrite', checkId);
+      const warningStartedAt = warningId === undefined ? undefined : Date.now();
+      let result: MessageItem | undefined;
+      try {
+        const warning = context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+        if (warningId !== undefined && checkId !== undefined) {
+          recordRegenerationEvent({
+            event: 'warning-call-returned',
+            kind: 'overwrite',
+            warningId,
+            checkId,
+            awaitable: isAwaitable(warning),
+          });
+        }
+        result = await warning;
+      } catch (error) {
+        if (warningId !== undefined && checkId !== undefined && warningStartedAt !== undefined) {
+          recordRegenerationEvent({
+            event: 'warning-error',
+            kind: 'overwrite',
+            warningId,
+            checkId,
+            errorKind: getDiagnosticErrorKind(error),
+            durationMs: getBoundedDurationMs(warningStartedAt),
+          });
+        }
+        throw error;
+      }
+      if (warningId !== undefined && checkId !== undefined && warningStartedAt !== undefined) {
+        recordRegenerationEvent({
+          event: 'warning-result',
+          kind: 'overwrite',
+          warningId,
+          checkId,
+          result: result === DialogResponses.yes ? 'yes' : result === undefined ? 'undefined' : 'other',
+          durationMs: getBoundedDurationMs(warningStartedAt),
+        });
+      }
       if (result !== DialogResponses.yes) {
         return;
       }
@@ -99,9 +150,33 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
     const settingsContent = generateSettingsJson(projectConfig);
     const extensionsContent = generateExtensionsJson();
 
-    await writeFormattedJson(tasksJsonPath, tasksContent);
-    await writeFormattedJson(launchJsonPath, launchContent);
-    await writeFormattedJson(settingsJsonPath, settingsContent);
-    await writeFormattedJson(extensionsJsonPath, extensionsContent);
+    await writeMissingJson(tasksJsonPath, tasksContent);
+    await writeMissingJson(launchJsonPath, launchContent);
+    await writeMissingJson(settingsJsonPath, settingsContent);
+    await writeMissingJson(extensionsJsonPath, extensionsContent);
   }
+}
+
+async function writeMissingJson(filePath: string, content: unknown): Promise<void> {
+  if (!(await fse.pathExists(filePath))) {
+    await writeFormattedJson(filePath, content);
+  }
+}
+
+function isAwaitable(value: unknown): boolean {
+  return (
+    (typeof value === 'object' && value !== null && 'then' in value && typeof value.then === 'function') ||
+    (typeof value === 'function' && 'then' in value && typeof value.then === 'function')
+  );
+}
+
+function getBoundedDurationMs(startedAt: number): number {
+  return Math.min(maxDiagnosticDurationMs, Math.max(0, Math.round(Date.now() - startedAt)));
+}
+
+function getDiagnosticErrorKind(error: unknown): 'user-cancelled' | 'error' | 'non-error' {
+  if (isUserCancelledError(error)) {
+    return 'user-cancelled';
+  }
+  return error instanceof Error ? 'error' : 'non-error';
 }

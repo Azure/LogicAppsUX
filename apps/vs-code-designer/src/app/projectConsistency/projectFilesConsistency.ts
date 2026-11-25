@@ -34,7 +34,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appS
 import { hasJdbcDriverJars } from '../utils/java/jdbcConnector';
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
-import { ProjectPackageType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, TargetFramework, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { type ILocalSettingsJson, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
@@ -152,7 +152,11 @@ export async function ensureLocalSettingsFile(
 
   const logicAppType = await detectProjectType(projectPath);
   const hasJdbcDrivers = await hasJdbcDriverJars(projectPath);
-  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType, { hasJdbcDriverJars: hasJdbcDrivers }).Values ?? {};
+  const baselineValues =
+    generateLocalSettingsJson(projectPath, logicAppType, {
+      customCodeDotNetVersion: !fileExisted && logicAppType === ProjectType.logicApp ? TargetFramework.Net10 : undefined,
+      hasJdbcDriverJars: hasJdbcDrivers,
+    }).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);

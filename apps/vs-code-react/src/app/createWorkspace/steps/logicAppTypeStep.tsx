@@ -7,10 +7,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { useCreateWorkspaceStyles } from '../createWorkspaceStyles';
 import type { RootState } from '../../../state/store';
 import type { CreateWorkspaceState } from '../../../state/createWorkspaceSlice';
-import { setLogicAppType, setLogicAppName, setTargetFramework } from '../../../state/createWorkspaceSlice';
+import { setLogicAppType, setLogicAppName, setTargetFramework, setWorkflowType } from '../../../state/createWorkspaceSlice';
 import { useIntlMessages, workspaceMessages } from '../../../intl';
 import { useSelector, useDispatch } from 'react-redux';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { nameValidation } from '../utils/validation';
 
 export const LogicAppTypeStep: React.FC = () => {
@@ -30,6 +30,7 @@ export const LogicAppTypeStep: React.FC = () => {
     flowType,
     separator,
     isAddCustomCodeFlow,
+    workflowType,
   } = createWorkspaceState;
 
   const shouldShowLogicAppSection = !isAddCustomCodeFlow && (flowType === 'createWorkspace' || flowType === 'createLogicApp');
@@ -39,10 +40,33 @@ export const LogicAppTypeStep: React.FC = () => {
 
   const handleLogicAppTypeChange = (_event: React.FormEvent<HTMLDivElement>, data: { value: string }) => {
     dispatch(setLogicAppType(data.value));
+    const translatedWorkflowType = translateWorkflowType(workflowType, data.value);
+    if (translatedWorkflowType !== workflowType) {
+      dispatch(setWorkflowType(translatedWorkflowType));
+    }
     if (data.value === 'rulesEngine') {
       dispatch(setTargetFramework('net472'));
     }
   };
+
+  function translateWorkflowType(workflowType: string, projectType: string): string {
+    const codelessToCodeful: Record<string, WorkflowType> = {
+      [WorkflowType.stateful]: WorkflowType.statefulCodeful,
+      [WorkflowType.stateless]: WorkflowType.statelessCodeful,
+      [WorkflowType.agentic]: WorkflowType.agenticCodeful,
+      [WorkflowType.agent]: WorkflowType.agentCodeful,
+    };
+    const codefulToCodeless: Record<string, WorkflowType> = {
+      [WorkflowType.statefulCodeful]: WorkflowType.stateful,
+      [WorkflowType.statelessCodeful]: WorkflowType.stateless,
+      [WorkflowType.agenticCodeful]: WorkflowType.agentic,
+      [WorkflowType.agentCodeful]: WorkflowType.agent,
+    };
+
+    return projectType === ProjectType.codeful
+      ? (codelessToCodeful[workflowType] ?? workflowType)
+      : (codefulToCodeless[workflowType] ?? workflowType);
+  }
 
   const validateLogicAppName = useCallback(
     (name: string) => {

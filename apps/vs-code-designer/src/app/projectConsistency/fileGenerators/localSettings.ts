@@ -8,6 +8,7 @@ import {
   azureWebJobsSecretStorageTypeKey,
   azureWebJobsStorageKey,
   azureStorageTypeSetting,
+  customCodeDotNetVersionSettingKey,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
   localEmulatorConnectionString,
@@ -20,10 +21,10 @@ import {
   workerRuntimeKey,
 } from '../../../constants';
 import { isManagedIdentityAuthEnabled } from '../../utils/vsCodeConfig/settings';
-import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkerRuntime, type ILocalSettingsJson, type TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 export interface LocalSettingsJsonOptions {
+  customCodeDotNetVersion?: TargetFramework;
   hasJdbcDriverJars?: boolean;
 }
 
@@ -52,13 +53,16 @@ export function generateLocalSettingsJson(
   if (isManagedIdentityAuthEnabled()) {
     values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
-  
+
   if ((logicAppType !== undefined && logicAppType !== ProjectType.logicApp) || options.hasJdbcDriverJars) {
     values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 
   if (logicAppType === ProjectType.codeful) {
     values[workflowCodefulEnabledKey] = 'true';
+  }
+  if (options.customCodeDotNetVersion) {
+    values[customCodeDotNetVersionSettingKey] = options.customCodeDotNetVersion;
   }
 
   return {
