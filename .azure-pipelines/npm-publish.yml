@@ -1,0 +1,86 @@
+# Manual npm release publish pipeline for LogicAppsUX.
+#
+# Versioning and GitHub Release creation stay in .github/workflows/version-release.yml.
+# Given a release version (e.g. 5.1024.0), this pipeline checks out the existing v<version>
+# tag into a clean detached worktree, builds and packs the 9 publishable packages, and
+# publishes any missing packages to the Azure Artifacts npm feed.
+trigger: none
+pr: none
+schedules: []
+
+parameters:
+  - name: releaseVersion
+    displayName: Release version (e.g. 5.1024.0)
+    type: string
+    default: ''
+
+variables:
+  NpmRegistry: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
+  TarballDir: '$(Agent.TempDirectory)/npm-tarballs'
+  PublishNpmrc: '$(Agent.TempDirectory)/npm-publish/.npmrc'
+
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: ubuntu-latest
+      os: linux
+    sdl:
+      componentgovernance:
+        useAgentBuildDirectory: true
+      sourceAnalysisPool:
+        name: Azure-Pipelines-1ESPT-ExDShared
+        image: windows-latest
+        os: windows
+    stages:
+      - stage: Publish
+        displayName: Build and publish npm packages
+        lockBehavior: sequential
+        condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/v')))
+        jobs:
+          - job: BuildAndPublish
+            displayName: Build release tag and publish to npm feed
+            workspace:
+              clean: all
+            steps:
+              - checkout: self
+                clean: true
+                fetchTags: true
+                fetchDepth: 0
+                persistCredentials: false
+              - task: UseNode@1
+                displayName: Use Node 24
+                inputs:
+                  version: '24.x'
+              - bash: node scripts/ado-npm-publisher.cjs build
+                displayName: Build and pack release packages
+                workingDirectory: '$(Build.Repository.LocalPath)'
+                env:
+                  RELEASE_VERSION: ${{ parameters.releaseVersion }}
+                  AGENT_TMP: '$(Agent.TempDirectory)'
+                  RELEASE_SCAN_ROOT: '$(Agent.BuildDirectory)'
+                  TARBALL_DIR: '$(TarballDir)'
+                  NPM_REGISTRY: '$(NpmRegistry)'
+                  PUBLISH_NPMRC: '$(PublishNpmrc)'
+              - task: npmAuthenticate@0
+                displayName: Authenticate npm feed via WIF
+                inputs:
+                  workingFile: '$(PublishNpmrc)'
+                  workloadIdentityServiceConnection: 21d5a1d8-11d3-425c-8d3a-e7f088725481
+                  feedUrl: 'https://pkgs.dev.azure.com/msazure/One/_packaging/microsoft-logic-apps/npm/registry/'
+              - bash: node scripts/ado-npm-publisher.cjs publish
+                displayName: Publish packages to Azure Artifacts npm feed
+                workingDirectory: '$(Build.Repository.LocalPath)'
+                env:
+                  RELEASE_VERSION: ${{ parameters.releaseVersion }}
+                  TARBALL_DIR: '$(TarballDir)'
+                  NPM_REGISTRY: '$(NpmRegistry)'
+                  PUBLISH_NPMRC: '$(PublishNpmrc)'
