@@ -22,7 +22,7 @@ import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-log
 import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
-  const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
+  const helpLink = 'https://aka.ms/lastandard/onboarding#troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   await vscode.window.withProgress(
