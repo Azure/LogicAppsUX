@@ -65,10 +65,10 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 
 - Learning: In 1ES pipelines, `SDL Sources Analysis` is a managed Guardian gate. Its injected ESLint package bundle can differ from the repository's ESLint, and a failure while installing that managed bundle is not evidence that repository linting, product code, or the VS Code E2E matrix failed.
 - Why it matters: The canonical VS Code E2E consumer and protected rollup can be accepted even when the overall pipeline is red because an independent SDL setup step failed.
-- Pattern: Compare the source, package/lock files, pipeline inputs, task configuration, and last successful run. If they are unchanged and the failure occurs before analysis while fetching Guardian-owned packages, classify it as managed SDL setup/feed infrastructure. Do not change the repository's ESLint or product code to match the injected bundle. Successful installation through another approved Microsoft proxy proves package compatibility, not the ADO internal-feed response; retain the first unsuppressed package-manager error when available and use the support path emitted by the task.
-- Source: `.config/vscode-e2e-cli.1es.yml` (`sdl` currently configures CredScan and CodeQL only), root `package.json`, and repeated source-identical ADO runs where only `SDL Sources Analysis` failed while the canonical 23-lane rollup passed.
+- Pattern: Compare the source, package/lock files, pipeline inputs, task configuration, and last successful run. If the failure occurs before analysis while installing Guardian-owned packages, do not change the repository's ESLint or product code to match the injected bundle. For the tracked `jschardet@4.1.0` engine-strict failure, set `sdl.eslint.nodeVersion: '24.x'` in the 1ES pipeline; this changes Guardian's tool-install runtime without changing the test jobs' Node version. Retain the first unsuppressed package-manager error and the Guardian support incident/PR references.
+- Source: `.config/vscode-e2e-cli.1es.yml`, root `package.json`, Guardian support guidance for IcM 908169069 and PR 976328, and repeated source-identical ADO runs where only `SDL Sources Analysis` failed while the canonical 23-lane rollup passed.
 - Applies to: `ci-sentinel`, `chief-engineer`, `vscode-test-specialist`, `release-scribe`.
-- Status: verified classification; exact internal-feed cause unresolved.
+- Status: verified classification and documented mitigation; permanent Guardian pin pending.
 
 ### Preserve actionable stacks through suite-prefixed logs
 

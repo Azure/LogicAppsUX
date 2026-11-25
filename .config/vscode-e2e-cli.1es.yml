@@ -57,6 +57,8 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
       codeql:
         language: javascript
+      eslint:
+        nodeVersion: '24.x'
     pool:
       name: VSEng-MicroBuildVSStable
       os: windows

@@ -1404,6 +1404,11 @@ function testConsumerAdmissionContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
   const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
   assert.strictEqual(consumer.extends.template, 'azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines');
+  assert.strictEqual(
+    consumer.extends.parameters.sdl.eslint.nodeVersion,
+    '24.x',
+    'Guardian ESLint must use a Node runtime that satisfies its engine-strict transitive dependencies'
+  );
   assert.ok(
     !consumer.parameters.some((parameter) => parameter.name === 'isOfficialBuild'),
     'consumer must not expose an official build toggle'

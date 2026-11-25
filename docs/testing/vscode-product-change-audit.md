@@ -104,9 +104,13 @@ overall ADO badge remained red because the independent managed Guardian
 `SDL Sources Analysis` job failed while installing Guardian's injected ESLint
 package bundle; the VS Code E2E consumer and protected 23-lane rollup passed.
 At this accepted source, the repository SDL configuration did not select that
-ESLint version. Installing the same bundle through an approved Microsoft proxy
-established package compatibility only; the silent managed install did not
-expose enough evidence to identify the ADO internal-feed response.
+ESLint version. Guardian support later identified the tracked cause in IcM
+908169069: Guardian's formatter dependency resolved `jschardet@4.1.0`, which
+requires Node 20 or newer, while Guardian installs with `engine_strict=true`.
+The pipeline now selects Node 24 specifically for Guardian ESLint through
+`sdl.eslint.nodeVersion`; the test/build jobs remain on their separately pinned
+Node version. Guardian PR 976328 is expected to provide the permanent upstream
+fix by pinning `jschardet@3.1.4`.
 
 | Classification | Areas | Current decision | Evidence boundary |
 | --- | --- | --- | --- |
