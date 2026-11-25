@@ -722,6 +722,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
             // Step 3: Transform
             testMessages.push('• Performing XSLT transformation...');
+            let failureStage = 'XSLT transformation';
             try {
               const outputPath = path.join(path.dirname(xsltPath), `${btmName}_output.xml`);
               let outputXml: string | undefined;
@@ -783,12 +784,40 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               }
 
               // Step 5: Save output.xml
-              fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
+              failureStage = 'Test Map output save';
+              const outputUri = vscode.Uri.file(outputPath);
+              const normalizedOutputPath = path.resolve(outputPath);
+              const outputPathForComparison = process.platform === 'win32' ? normalizedOutputPath.toLowerCase() : normalizedOutputPath;
+              const openOutputDocument = vscode.workspace.textDocuments.find((openDocument) => {
+                if (openDocument.uri.scheme !== 'file') {
+                  return false;
+                }
+                const documentPath = path.resolve(openDocument.uri.fsPath);
+                return (process.platform === 'win32' ? documentPath.toLowerCase() : documentPath) === outputPathForComparison;
+              });
+              if (openOutputDocument) {
+                const edit = new vscode.WorkspaceEdit();
+                edit.set(openOutputDocument.uri, [
+                  vscode.TextEdit.replace(
+                    new vscode.Range(openOutputDocument.positionAt(0), openOutputDocument.positionAt(openOutputDocument.getText().length)),
+                    formattedOutput
+                  ),
+                  vscode.TextEdit.setEndOfLine(vscode.EndOfLine.LF),
+                ]);
+                if (!(await vscode.workspace.applyEdit(edit))) {
+                  throw new Error('VS Code could not replace the existing Test Map output.');
+                }
+                if (!(await openOutputDocument.save())) {
+                  throw new Error('VS Code could not save the Test Map output.');
+                }
+              } else {
+                fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
+              }
               this.logger.info(`${operation}: output XML saved (${Buffer.byteLength(formattedOutput)} bytes); Test Map succeeded.`);
               testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
 
               // Open the output file in VS Code
-              const outputUri = vscode.Uri.file(outputPath);
+              failureStage = 'Opening Test Map output';
               await vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
 
               const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${formattedOutput}`;
@@ -797,13 +826,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 data: { output: resultSummary },
               });
               vscode.window.showInformationMessage(`Test Map succeeded. Output: ${btmName}_output.xml`);
-            } catch (transformErr: any) {
+            } catch (testMapError: any) {
               this.logger.error(
-                `${operation}: transformation or output save failed (${errorCategory(transformErr)}); details returned to the editor.`
+                `${operation}: ${failureStage.toLowerCase()} failed (${errorCategory(testMapError)}); details returned to the editor.`
               );
               webviewPanel.webview.postMessage({
                 type: 'testMapResult',
-                data: { output: '', error: `${testMessages.join('\n')}\n\n✗ XSLT transformation failed:\n${transformErr.message}` },
+                data: { output: '', error: `${testMessages.join('\n')}\n\n✗ ${failureStage} failed:\n${testMapError.message}` },
               });
             }
             break;
