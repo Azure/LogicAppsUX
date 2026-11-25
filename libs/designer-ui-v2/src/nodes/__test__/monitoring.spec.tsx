@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import * as ui from '../..';
 import type { NodeLineVariant } from '../..';
@@ -79,6 +80,109 @@ describe('NodeIterationPager', () => {
     const { unmount } = render(<ui.NodeIterationPager current={0} count={3} onChange={vi.fn()} />);
     expect(screen.getAllByRole('group')[1].querySelector('[data-pager-action="next-failed"]')).toBeNull();
     unmount();
+  });
+
+  it('shows direct failed destinations in editable mode and dispatches the selected zero-based index', () => {
+    const { onChange } = renderPager({
+      editable: true,
+      current: 0,
+      count: 8,
+      failed: [2, 4, 6],
+      failedDestinations: [6, 2, 4, 2, 0, -1, 2.5, 8],
+    });
+    const select = screen.getByRole('combobox', { name: 'Jump to failed iteration' });
+    const options = Array.from(select.querySelectorAll('option')).map((option) => option.textContent);
+    expect(options).toEqual(['Failed…', 'Failed iteration 3', 'Failed iteration 5', 'Failed iteration 7']);
+    expect(screen.getByRole('textbox')).toHaveValue('1');
+    expect(screen.getByText('/ 8')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Next failed iteration' }).nextElementSibling).toBe(select);
+    fireEvent.click(select);
+    fireEvent.change(select, { target: { value: '3' } });
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.change(select, { target: { value: '6' } });
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(6);
+    expect(select).toHaveValue('');
+  });
+
+  it('offers all failure navigation in one compact menu without removing ordinary navigation', () => {
+    const args = {
+      compactFailureNavigation: true,
+      editable: true,
+      current: 3,
+      count: 10,
+      failed: [2, 4, 8],
+      failedDestinations: [2, 4, 8],
+    };
+    const { onChange } = renderPager(args);
+    const trigger = screen.getByRole('button', { name: 'Jump to failed iteration' });
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Previous iteration' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Next iteration' })).toBeEnabled();
+    expect(screen.getByRole('textbox')).toHaveValue('4');
+    expect(screen.getByText('/ 10')).toBeVisible();
+
+    for (const [name, index] of [
+      ['Previous failed iteration', 2],
+      ['Next failed iteration', 4],
+      ['Failed iteration 9', 8],
+    ] as const) {
+      fireEvent.click(trigger);
+      fireEvent.click(screen.getByRole('menuitem', { name }));
+      expect(onChange).toHaveBeenLastCalledWith(index);
+    }
+    expect(onChange).toHaveBeenCalledTimes(3);
+  });
+
+  it('opens only the requested range of a long compact failure list, including the final destination', () => {
+    const failed = Array.from({ length: 65 }, (_, index) => (index + 1) * 2);
+    const { onChange } = renderPager({
+      compactFailureNavigation: true,
+      editable: true,
+      count: 200,
+      failed,
+      failedDestinations: failed,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Jump to failed iteration' }));
+    expect(screen.getByRole('menuitem', { name: 'Next failed iteration' })).toBeEnabled();
+    expect(screen.queryByRole('menuitem', { name: 'Failed iteration 131' })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iterations 131 to 131' }));
+    expect(screen.queryByRole('menuitem', { name: 'Failed iteration 3' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Failed iteration 131' }));
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(130);
+  });
+
+  it.each([
+    { failedDestinations: [0, 1], hostFocus: false, focusRole: 'combobox' },
+    { failedDestinations: [1], hostFocus: false, focusRole: 'textbox' },
+    { failedDestinations: [1], hostFocus: true, focusRole: 'button' },
+  ])('honors $focusRole focus after a controlled jump', ({ failedDestinations, hostFocus, focusRole }) => {
+    const ControlledPager = () => {
+      const [current, setCurrent] = useState(0);
+      return (
+        <>
+          <button type="button">Host focus target</button>
+          <ui.NodeIterationPager
+            editable
+            current={current}
+            count={5}
+            failedDestinations={failedDestinations}
+            onChange={(target) => {
+              if (hostFocus) {
+                screen.getByRole('button', { name: 'Host focus target' }).focus();
+              }
+              setCurrent(target);
+            }}
+          />
+        </>
+      );
+    };
+    render(<ControlledPager />);
+    const select = screen.getByRole('combobox');
+    select.focus();
+    fireEvent.change(select, { target: { value: '1' } });
+    expect(screen.getByRole(focusRole, focusRole === 'button' ? { name: 'Host focus target' } : undefined)).toHaveFocus();
   });
 
   it('commits an editable value on Enter, clamped to the one-based range', () => {
