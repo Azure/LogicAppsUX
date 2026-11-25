@@ -5,11 +5,13 @@ import {
   foundryServiceConnectionRegex,
   apimanagementRegex,
   normalizeAgentConnectionResourceIdForRoleAssignment,
+  unescapeExpressionLiteral,
 } from '../connection';
 import type { StandardConnectionServiceOptions, ConnectionsData } from '../connection';
 import { agentConnectorId, mcpclientConnectorId } from '../../base/operationmanifest';
-import { ConnectionType } from '../../../../utils/src';
+import { ConnectionParameterSource, ConnectionType } from '../../../../utils/src';
 import { InitLoggerService } from '../../logger';
+import agentLoopConnector from '../manifest/agentLoopConnector';
 
 describe('StandardConnectionService', () => {
   const mockHttpClient = {
@@ -423,7 +425,7 @@ describe('StandardConnectionService', () => {
     });
   });
 
-  describe('createConnection - Agent with /models suffix', () => {
+  describe('createConnection - Agent', () => {
     const mockLoggerService = {
       log: vi.fn(),
       startTrace: vi.fn().mockReturnValue('mock-trace-id'),
@@ -443,6 +445,41 @@ describe('StandardConnectionService', () => {
         description: 'Agent',
       },
     };
+
+    it.each(['@@fixture!password', 'fixture@@{text}'])('should save the client certificate password %s unchanged', async (password) => {
+      InitLoggerService([mockLoggerService]);
+      const writeConnection = vi.fn().mockResolvedValue(undefined);
+      const service = new StandardConnectionService({ ...createMockOptions({}), writeConnection });
+      const authType = 'ClientCertificate';
+
+      await service.createConnection(
+        'agent',
+        agentLoopConnector,
+        {
+          connectionParametersSet: {
+            name: authType,
+            values: {
+              endpoint: { value: 'https://agent.example.com' },
+              clientCertificatePfx: { value: 'test-pfx' },
+              clientCertificatePassword: { value: password },
+            },
+          },
+        },
+        {
+          connectionMetadata: { required: true, type: ConnectionType.Agent },
+          connectionParameterSet: agentLoopConnector.properties.connectionParameterSets?.values.find((set) => set.name === authType),
+        }
+      );
+
+      expect(writeConnection).toHaveBeenCalledWith(
+        expect.objectContaining({
+          settings: expect.objectContaining({ agent_clientCertificatePassword: password }),
+          connectionData: expect.objectContaining({
+            authentication: expect.objectContaining({ type: authType, password: "@appsetting('agent_clientCertificatePassword')" }),
+          }),
+        })
+      );
+    });
 
     it('should keep AzureOpenAI resourceId at the account scope for standard Cognitive Services connections', async () => {
       InitLoggerService([mockLoggerService]);
@@ -733,5 +770,100 @@ describe('Connection regex patterns', () => {
         false
       );
     });
+  });
+});
+
+describe('unescapeExpressionLiteral', () => {
+  it.each([
+    ['@@abc!def', '@abc!def'],
+    ['@@{abc}', '@{abc}'],
+    ['@@abc@@{x}', '@abc@@{x}'],
+    ['@@@{', '@@{'],
+    ['ab@@{cd!}', 'ab@{cd!}'],
+    ['a@@{b}@@{c}', 'a@{b}@{c}'],
+    ['a@@@{b', 'a@@{b'],
+  ])('unescapes the literal %s to %s', (value, expected) => {
+    expect(unescapeExpressionLiteral(value)).toBe(expected);
+  });
+
+  it.each([
+    'plain!password',
+    '@',
+    'a@b',
+    "@parameters('secret')",
+    "@appsetting('secret')",
+    "@{parameters('secret')}",
+    "prefix-@{parameters('secret')}",
+    "ab@@{cd}@{parameters('secret')}",
+  ])('returns %s unchanged', (value) => {
+    expect(unescapeExpressionLiteral(value)).toBe(value);
+  });
+});
+
+describe('StandardConnectionService - service provider app setting values', () => {
+  const createServiceProviderConnection = async (password: string) => {
+    InitLoggerService([
+      {
+        log: vi.fn(),
+        startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+        endTrace: vi.fn(),
+        logErrorWithFormatting: vi.fn(),
+      },
+    ]);
+    const httpClient = {
+      get: vi.fn(),
+      post: vi.fn().mockResolvedValue({ status: 200 }),
+      put: vi.fn(),
+      delete: vi.fn(),
+    };
+    const writeConnection = vi.fn().mockResolvedValue(undefined);
+    const service = new StandardConnectionService({
+      apiVersion: '2024-01-01',
+      baseUrl: 'https://test.azure.com/runtime/webhooks/workflow/api/management',
+      httpClient: httpClient as any,
+      apiHubServiceDetails: {
+        apiVersion: '2024-01-01',
+        baseUrl: 'https://test.azure.com',
+        subscriptionId: 'test-subscription',
+        resourceGroup: 'test-rg',
+        location: 'eastus',
+        httpClient: httpClient as any,
+      },
+      readConnections: vi.fn().mockResolvedValue({}),
+      writeConnection,
+    });
+
+    await service.createConnection(
+      'sftp',
+      { id: '/serviceProviders/Sftp', properties: { testConnectionUrl: '/testConnection' } } as any,
+      {
+        displayName: 'SFTP',
+        connectionParameters: { sshHostAddress: 'sftp.contoso.com', password },
+      },
+      {
+        connectionParameters: {
+          sshHostAddress: { type: 'string', parameterSource: ConnectionParameterSource.AppConfiguration },
+          password: { type: 'securestring', parameterSource: ConnectionParameterSource.AppConfiguration },
+        },
+        connectionMetadata: { required: true, type: ConnectionType.ServiceProvider },
+      } as any
+    );
+
+    return { httpClient, writeConnection };
+  };
+
+  it('saves the unescaped literal to the app setting and tests the connection with the escaped value', async () => {
+    const { httpClient, writeConnection } = await createServiceProviderConnection('@@abc!def');
+
+    const connectionsData = writeConnection.mock.calls[0][0];
+    expect(connectionsData.settings['sftp_password']).toBe('@abc!def');
+    expect(connectionsData.connectionData.parameterValues.password).toBe("@appsetting('sftp_password')");
+    expect(httpClient.post.mock.calls[0][0].content.parameterValues.password).toBe('@@abc!def');
+  });
+
+  it('saves a value without escape characters as is', async () => {
+    const { writeConnection } = await createServiceProviderConnection('plain!password');
+
+    expect(writeConnection.mock.calls[0][0].settings['sftp_password']).toBe('plain!password');
   });
 });
