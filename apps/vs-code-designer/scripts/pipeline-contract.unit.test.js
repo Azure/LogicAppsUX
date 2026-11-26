@@ -3215,6 +3215,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       const failedDiagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'results', `${suiteId}.json`)));
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'log', `${suiteId}.log`)));
+      assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'evidence.html')));
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json')));
       assert.ok(
@@ -3286,6 +3287,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assert.match(sanitizedLog, /<redacted>/);
 
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'evidence.html')));
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json')));
     assert.strictEqual(JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json'), 'utf8')).suiteId, suiteId);
@@ -3567,6 +3569,7 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
       const diagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
       const manifest = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json'), 'utf8'));
       assert.strictEqual(manifest.suiteId, lane.suiteId);
+      assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'evidence.html')));
       assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
       if (lane.suiteId === 'workspaceMultiRoot') {
         const multiRootDestination = path.join(diagnosticsRoot, 'workspace-multi-root');

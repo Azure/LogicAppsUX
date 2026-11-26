@@ -339,7 +339,7 @@ function buildSingleSummary(result) {
         separator: '|---|---:|---:|---:|---:|---:|---|',
         row: `| \`${result.label}\` | \`${result.outcome}\` | ${result.passing} | ${result.failing} | ${result.pending} | ${result.passRate}% | \`${diagnosticsArtifactName}\` |`,
         description:
-          'The diagnostics artifact contains structured results under `results/`, the raw runner log and VS Code profile logs under `log/`, screenshots under `screenshots/`, and generated workspace snapshots under `generated-workspaces/`.',
+          'The diagnostics artifact contains the self-contained `evidence.html`, compact ordered evidence under `e/` and `d/`, structured results under `results/`, logs under `log/`, and workspace snapshots under `generated-workspaces/`.',
       }
     : {
         header: '| Label | Outcome | Passing | Failing | Pending | Pass rate | JUnit | Logs | Screenshots |',

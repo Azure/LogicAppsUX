@@ -750,8 +750,8 @@ or reject the legitimate producer bootstrap shape.
 The evidence directory is a self-contained producer bundle:
 
 - `suite-evidence-manifest.json`;
-- allowlisted public PNG/JSON pairs under `screenshots/`;
-- diagnostic PNG/JSON pairs under `diagnostics/`.
+- allowlisted public PNG/JSON pairs under compact ordinal paths such as `e/001.png`;
+- diagnostic PNG/JSON pairs under stable hashed paths such as `d/x-0123456789ab.png`.
 
 Public sidecars contain checkpoint, phase, classification, verdict, reason
 codes, and an allowlisted capture summary: finite timing/revision/generation
@@ -788,10 +788,18 @@ extension, size, hash, duplicate-reference, and symlink checks. It must not
 bulk-copy screenshot trees or private sidecars. The manifest-only renderer,
 `vscode-e2e-evidence-report.js`, then receives
 `--evidence-manifest <staged suite-evidence-manifest.json>` and writes
-`VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`; HTTP timeout also
-writes its historical `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.*` aliases. The renderer
+`evidence.html`, `VS_CODE_CLI_EVIDENCE.md`, and
+`VS_CODE_CLI_EVIDENCE.json`; HTTP timeout also writes its historical
+`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.*` aliases. `evidence.html` is a script-free,
+self-contained offline report: verified PNG bytes are embedded as data URIs,
+all text is HTML-escaped, a restrictive content-security policy blocks external
+resources, and generation fails above the 100 MiB report ceiling. The renderer
 validates and presents the producer contract; it does not construct checkpoint
-plans or scan directories.
+plans or scan directories. HTML is a reviewer convenience and never a native
+acceptance gate: if image embedding exceeds the ceiling or its second integrity
+read is unavailable, the renderer still writes a script-free standalone summary
+with an explicit omitted-images reason while preserving Markdown, JSON, and the
+separate verified `e/` / `d/` files.
 
 The report allowlist remains intentionally narrow. Do not add raw logs,
 exception excerpts, absolute paths, runtime roots, credentials, target/frame

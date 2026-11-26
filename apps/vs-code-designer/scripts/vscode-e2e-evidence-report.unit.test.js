@@ -33,6 +33,13 @@ test('inline code escaping handles backslashes before backticks', () => {
   assert.equal(evidenceReportTest.escapeInlineCode('C:\\temp\\`evidence`'), 'C:\\\\temp\\\\\\`evidence\\`');
 });
 
+test('HTML escaping neutralizes active markup', () => {
+  assert.equal(
+    evidenceReportTest.escapeHtml('<script src="https://example.test">&'),
+    '&lt;script src=&quot;https://example.test&quot;&gt;&amp;'
+  );
+});
+
 test('producer plans preserve the expected finite checkpoint counts', () => {
   const counts = Object.fromEntries(
     Object.keys(SUITE_REGISTRY).map((suiteId) => [
@@ -117,8 +124,55 @@ test('manifest initialization assigns stable producer ordinals without filesyste
   });
 });
 
+test('manifest initialization removes legacy and compact evidence folders', () => {
+  withFixture(({ evidenceDir }) => {
+    for (const relativeDirectory of ['e', 'd', 'screenshots', 'diagnostics']) {
+      fs.mkdirSync(path.join(evidenceDir, relativeDirectory), { recursive: true });
+      fs.writeFileSync(path.join(evidenceDir, relativeDirectory, 'stale.txt'), 'stale');
+    }
+    initializeSuiteEvidenceManifest({
+      suiteId: 'unitTests',
+      invocation: 'cleanup-folders',
+      platform: 'linux',
+      evidenceDir,
+      expectedPhaseIds: ['unitTests'],
+    });
+    for (const relativeDirectory of ['e', 'd', 'screenshots', 'diagnostics']) {
+      assert.ok(!fs.existsSync(path.join(evidenceDir, relativeDirectory, 'stale.txt')));
+    }
+  });
+});
+
+test('dynamic multi-root checkpoints reject ordinal renumbering after evidence starts', () => {
+  withFixture(({ root, evidenceDir, manifestPath }) => {
+    initializeSuiteEvidenceManifest({
+      suiteId: 'workspaceMultiRoot',
+      invocation: 'multi-root-started',
+      platform: 'linux',
+      evidenceDir,
+      expectedPhaseIds: SUITE_REGISTRY.workspaceMultiRoot.expectedPhases,
+    });
+    writeCapture({
+      root,
+      manifestPath,
+      checkpoint: 'workspace-multi-root-created',
+      classification: 'evidence',
+      verdict: 'accepted',
+    });
+    assert.throws(
+      () =>
+        declareMultiRootEvidenceCheckpoints({
+          manifestPath,
+          rootLabels: ['alpha'],
+          expectedInvocation: 'multi-root-started',
+        }),
+      /before any evidence is recorded/
+    );
+  });
+});
+
 test('failed dynamic suites preserve the unexpanded plan as not reached', () => {
-  withFixture(({ evidenceDir, manifestPath }) => {
+  withFixture(({ evidenceDir, manifestPath, artifactRoot }) => {
     initializeSuiteEvidenceManifest({
       suiteId: 'workspaceMultiRoot',
       invocation: 'multi-root-early-failure',
@@ -126,17 +180,20 @@ test('failed dynamic suites preserve the unexpanded plan as not reached', () => 
       evidenceDir,
       expectedPhaseIds: SUITE_REGISTRY.workspaceMultiRoot.expectedPhases,
     });
-    finalizeEvidenceManifest({
-      manifestPath,
-      state: 'failed',
-      reason: 'fixture creation failed before root discovery',
-      expectedInvocation: 'multi-root-early-failure',
-    });
-    const manifest = readEvidenceManifest(manifestPath);
+    const outcomeFile = writeStructuredInputs(artifactRoot, 'workspaceMultiRoot', 'failure');
+    stageVscodeE2eEvidence({ manifestPath, artifactRoot, outcomeFile });
+    const manifest = readEvidenceManifest(path.join(artifactRoot, manifestFileName));
     assert.equal(manifest.state, 'failed');
     assert.equal(manifest.planState, 'expandable');
     assert.equal(manifest.finalization.planComplete, false);
     assert.ok(manifest.groups.flatMap((group) => group.checkpoints).every((checkpoint) => checkpoint.status === 'not-reached'));
+    const report = generateVscodeE2eEvidenceReport({
+      suiteId: 'workspaceMultiRoot',
+      artifactRoot,
+      evidenceManifest: path.join(artifactRoot, manifestFileName),
+    });
+    assert.match(report.html, /Not reached/);
+    assert.doesNotMatch(report.html, /<img\b/);
   });
 });
 
@@ -175,7 +232,8 @@ test('shared writer enforces declared order and records only public sidecars', (
     const manifest = readEvidenceManifest(manifestPath);
     const checkpoint = manifest.groups[0].checkpoints[0];
     assert.equal(checkpoint.status, 'accepted');
-    assert.equal(checkpoint.evidence.screenshot.path, 'screenshots/empty-window-startup.png');
+    assert.equal(checkpoint.evidence.screenshot.path, 'e/001.png');
+    assert.equal(checkpoint.evidence.sidecar.path, 'e/001.json');
     const sidecar = JSON.parse(fs.readFileSync(path.join(evidenceDir, checkpoint.evidence.sidecar.path), 'utf8'));
     assert.deepEqual(Object.keys(sidecar), ['schemaVersion', 'checkpoint', 'phase', 'classification', 'verdict', 'reasonCodes', 'events']);
     assert.deepEqual(sidecar.events, []);
@@ -226,9 +284,12 @@ test('evidence and diagnostic sidecars preserve only allowlisted capture compari
       ['capture-failure-diagnostic', 'diagnostic', 'diagnostic'],
     ]) {
       writeCapture({ root, manifestPath, checkpoint, classification, verdict, privateFields });
-      const sidecar = JSON.parse(
-        fs.readFileSync(path.join(evidenceDir, classification === 'evidence' ? 'screenshots' : 'diagnostics', `${checkpoint}.json`), 'utf8')
-      );
+      const manifest = readEvidenceManifest(manifestPath);
+      const reference =
+        classification === 'evidence'
+          ? manifest.groups.flatMap((group) => group.checkpoints).find((entry) => entry.id === checkpoint).evidence.sidecar
+          : manifest.attachments.find((entry) => entry.id === checkpoint).evidence.sidecar;
+      const sidecar = JSON.parse(fs.readFileSync(path.join(evidenceDir, reference.path), 'utf8'));
       assert.equal(sidecar.timing.captureAttempts, 2);
       assert.deepEqual(sidecar.geometry.viewport, { width: 1024, height: 768, deviceScaleFactor: 1.25 });
       assert.deepEqual(sidecar.counts, { loaders: 0, canvasNodes: 2 });
@@ -342,6 +403,46 @@ test('manifest staging copies only referenced files and renderer consumes the st
     assert.equal(report.manifest.canonicalStepCount, 1);
     assert.equal(report.manifest.groups[0].steps[0].status, 'accepted');
     assert.match(report.markdown, /Producer evidence manifest/);
+    assert.equal(report.manifest.selfContainedReport, 'evidence.html');
+    assert.ok(fs.existsSync(report.htmlPath));
+    assert.match(report.html, /default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'/);
+    assert.match(report.html, /src="data:image\/png;base64,/);
+    assert.doesNotMatch(report.html, /<script\b|src="https?:/);
+    const hostileManifest = JSON.parse(JSON.stringify(report.manifest));
+    hostileManifest.groups[0].title = '<script src="https://example.test">';
+    hostileManifest.groups[0].steps[0].action = '<img src=x onerror=alert(1)>';
+    const hostileHtml = evidenceReportTest.buildHtml(hostileManifest, artifactRoot);
+    assert.match(hostileHtml, /&lt;script src=&quot;https:\/\/example\.test&quot;&gt;/);
+    assert.match(hostileHtml, /&lt;img src=x onerror=alert\(1\)&gt;/);
+    assert.doesNotMatch(hostileHtml, /<script\b|<img src=x/);
+    assert.throws(() => evidenceReportTest.buildHtml(report.manifest, artifactRoot, 10), /too large/);
+    const fallback = generateVscodeE2eEvidenceReport({
+      suiteId: 'unitTests',
+      artifactRoot,
+      evidenceManifest: path.join(artifactRoot, manifestFileName),
+      maxHtmlBytes: 10,
+    });
+    assert.deepEqual(fallback.manifest.selfContainedReportStatus, { images: 'omitted', reason: 'report-size-limit' });
+    assert.match(fallback.html, /Embedded images omitted/);
+    assert.doesNotMatch(fallback.html, /<img\b/);
+    const missingManifest = JSON.parse(JSON.stringify(report.manifest));
+    missingManifest.groups[0].steps[0].screenshot = { status: 'missing' };
+    const missingHtml = evidenceReportTest.buildHtml(missingManifest, artifactRoot);
+    assert.match(missingHtml, /Screenshot unavailable \(missing\)/);
+    assert.doesNotMatch(missingHtml, /<img\b/);
+    const screenshotPath = path.join(artifactRoot, report.manifest.groups[0].steps[0].screenshot.path);
+    fs.appendFileSync(screenshotPath, 'tamper');
+    assert.throws(() => evidenceReportTest.buildHtml(report.manifest, artifactRoot), /integrity mismatch/);
+    const tampered = generateVscodeE2eEvidenceReport({
+      suiteId: 'unitTests',
+      artifactRoot,
+      evidenceManifest: path.join(artifactRoot, manifestFileName),
+    });
+    assert.deepEqual(tampered.manifest.selfContainedReportStatus, {
+      images: 'omitted',
+      reason: 'image-integrity-unavailable',
+    });
+    assert.match(tampered.html, /Embedded images omitted/);
   });
 });
 
@@ -419,9 +520,18 @@ test('Stateless click-time diagnostics are staged as producer attachments withou
       const manifest = readEvidenceManifest(path.join(artifactRoot, manifestFileName));
       assert.equal(manifest.attachments.length, attempts * 2);
       for (const attachment of manifest.attachments) {
-        assert.ok(fs.existsSync(path.join(artifactRoot, 'diagnostics', `${attachment.id}.png`)));
-        assert.ok(fs.existsSync(path.join(artifactRoot, 'diagnostics', `${attachment.id}.json`)));
+        assert.ok(fs.existsSync(path.join(artifactRoot, attachment.evidence.screenshot.path)));
+        assert.ok(fs.existsSync(path.join(artifactRoot, attachment.evidence.sidecar.path)));
+        assert.match(attachment.evidence.screenshot.path, /^d\/x-[a-f0-9]{12}\.png$/);
+        assert.match(attachment.evidence.sidecar.path, /^d\/x-[a-f0-9]{12}\.json$/);
       }
+      const report = generateVscodeE2eEvidenceReport({
+        suiteId: 'statelessVariablesLifecycle',
+        artifactRoot,
+        evidenceManifest: path.join(artifactRoot, manifestFileName),
+      });
+      assert.match(report.html, /stateless-variables-initialize-click-1-before/);
+      assert.match(report.html, /src="data:image\/png;base64,/);
       assert.equal(
         manifest.groups
           .flatMap((group) => group.checkpoints)
@@ -488,13 +598,14 @@ test('staging rejects tampered content and retains a bounded validation result',
       classification: 'evidence',
       verdict: 'accepted',
     });
-    fs.appendFileSync(path.join(evidenceDir, 'screenshots', 'empty-window-startup.png'), 'tamper');
+    const screenshotPath = readEvidenceManifest(manifestPath).groups[0].checkpoints[0].evidence.screenshot.path;
+    fs.appendFileSync(path.join(evidenceDir, screenshotPath), 'tamper');
     const resultPath = writeStructuredInputs(artifactRoot, 'unitTests', 'success');
     assert.throws(() => stageVscodeE2eEvidence({ manifestPath, artifactRoot, outcomeFile: resultPath }), /integrity mismatch/);
     const validation = JSON.parse(fs.readFileSync(path.join(artifactRoot, validationFileName), 'utf8'));
     assert.equal(validation.valid, false);
     assert.match(validation.errors[0], /integrity mismatch/);
-    assert.ok(!fs.existsSync(path.join(artifactRoot, 'screenshots', 'empty-window-startup.png')));
+    assert.ok(!fs.existsSync(path.join(artifactRoot, screenshotPath)));
   });
 });
 

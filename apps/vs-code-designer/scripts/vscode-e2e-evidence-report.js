@@ -6,14 +6,18 @@
 /* global console, module, process, require */
 const fs = require('node:fs');
 const path = require('node:path');
+const { Buffer } = require('node:buffer');
+const { createHash } = require('node:crypto');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { readEvidenceManifest } = require('./vscode-e2e-evidence-manifest');
 const { evaluateLifecycleAcceptance } = require('./vscode-lifecycle-acceptance');
 
 const markdownFileName = 'VS_CODE_CLI_EVIDENCE.md';
 const manifestFileName = 'VS_CODE_CLI_EVIDENCE.json';
+const htmlFileName = 'evidence.html';
 const httpMarkdownFileName = 'HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md';
 const httpManifestFileName = 'HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json';
+const maxEmbeddedHtmlBytes = 100 * 1024 * 1024;
 
 function parseArgs(args) {
   const options = {};
@@ -90,6 +94,7 @@ function generateVscodeE2eEvidenceReport(options) {
     mode: 'manifest',
     generatedAt,
     report: markdownFileName,
+    selfContainedReport: htmlFileName,
     manifest: manifestFileName,
     canonicalStepCount: groups.reduce((count, group) => count + group.steps.length, 0),
     summary,
@@ -110,8 +115,8 @@ function generateVscodeE2eEvidenceReport(options) {
   const markdown = buildMarkdown(manifest);
   const markdownPath = path.join(artifactRoot, markdownFileName);
   const manifestPath = path.join(artifactRoot, manifestFileName);
+  const htmlPath = path.join(artifactRoot, htmlFileName);
   fs.writeFileSync(markdownPath, `${markdown.trimEnd()}\n`);
-  fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   const aliasPaths = [];
   let compatibility;
   if (suiteId === 'httpTimeoutLifecycle') {
@@ -129,7 +134,18 @@ function generateVscodeE2eEvidenceReport(options) {
       markdown: aliasMarkdown,
     };
   }
-  return { markdownPath, manifestPath, aliasPaths, compatibility, manifest, markdown };
+  let html;
+  try {
+    html = buildHtml(manifest, artifactRoot, options.maxHtmlBytes ?? maxEmbeddedHtmlBytes);
+    manifest.selfContainedReportStatus = { images: 'embedded' };
+  } catch (error) {
+    const reason = htmlFallbackReason(error);
+    manifest.selfContainedReportStatus = { images: 'omitted', reason };
+    html = buildHtml(manifest, artifactRoot, maxEmbeddedHtmlBytes, { embedImages: false, warning: reason });
+  }
+  fs.writeFileSync(htmlPath, html);
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  return { htmlPath, markdownPath, manifestPath, aliasPaths, compatibility, manifest, html, markdown };
 }
 
 function buildHttpCompatibilityManifest(manifest, inputs) {
@@ -331,6 +347,8 @@ function describeManifestReference(artifactRoot, reference, expectedExtension) {
     status: 'available',
     path: reference.path,
     link: artifactRelativeLink(artifactRoot, filePath),
+    sha256,
+    size: bytes.length,
     candidates: [],
   };
 }
@@ -717,6 +735,192 @@ function buildMarkdown(manifest) {
   return lines.join('\n');
 }
 
+function buildHtml(manifest, artifactRoot, maxBytes = maxEmbeddedHtmlBytes, options = {}) {
+  const embedImages = options.embedImages !== false;
+  if (embedImages) {
+    const projectedBytes =
+      1024 * 1024 +
+      evidenceScreenshots(manifest)
+        .filter((screenshot) => screenshot?.status === 'available')
+        .reduce((total, screenshot) => total + Math.ceil(screenshot.size / 3) * 4 + 64, 0);
+    if (projectedBytes > maxBytes) {
+      throw new Error(`Self-contained evidence HTML is too large: projected ${projectedBytes} bytes (limit ${maxBytes})`);
+    }
+  }
+  const renderImage = (screenshot, label) => {
+    if (embedImages && ['integrity-mismatch', 'invalid-reference'].includes(screenshot?.status)) {
+      throw new Error(`Embedded screenshot integrity mismatch: ${screenshot.path || 'unknown'}`);
+    }
+    if (screenshot?.status !== 'available') {
+      return `<p class="missing">Screenshot unavailable (${escapeHtml(screenshot?.status || 'missing')}).</p>`;
+    }
+    if (!embedImages) {
+      return '<p class="missing">Screenshot embedding was omitted; inspect the compact evidence files in the full diagnostics artifact.</p>';
+    }
+    return `<img src="${embeddedPngDataUri(artifactRoot, screenshot)}" alt="${escapeHtml(label)}" loading="lazy">`;
+  };
+  const renderStep = (entry) => {
+    const title = `${String(entry.number).padStart(3, '0')}. ${humanizeCheckpoint(entry.checkpoint)}`;
+    return `<article class="checkpoint ${htmlStatusClass(entry.status)}">
+      <h3>${escapeHtml(title)}</h3>
+      <dl>
+        <dt>Phase</dt><dd>${escapeHtml(entry.phase)}</dd>
+        <dt>Action</dt><dd>${escapeHtml(entry.action)}</dd>
+        <dt>Expected proof</dt><dd>${escapeHtml(entry.expectedProof)}</dd>
+        <dt>Status</dt><dd>${escapeHtml(statusLabel(entry.status))}</dd>
+        <dt>Classification / verdict</dt><dd>${escapeHtml(entry.sidecar.classification || '—')} / ${escapeHtml(
+          entry.sidecar.verdict || '—'
+        )}</dd>
+        <dt>Reason codes</dt><dd>${escapeHtml(entry.sidecar.reasonCodes?.join(', ') || '—')}</dd>
+      </dl>
+      ${renderImage(entry.screenshot, title)}
+    </article>`;
+  };
+  const groups = manifest.groups
+    .map(
+      (group) => `<section>
+        <h2>${escapeHtml(group.title)}</h2>
+        <p>${escapeHtml(group.description)}</p>
+        ${group.steps.map(renderStep).join('\n')}
+      </section>`
+    )
+    .join('\n');
+  const extras =
+    manifest.diagnosticExtras.length === 0
+      ? '<p>No additional diagnostic screenshots were staged.</p>'
+      : manifest.diagnosticExtras
+          .map(
+            (extra) => `<article class="checkpoint diagnostic">
+              <h3>${escapeHtml(extra.checkpoint)}</h3>
+              <p><strong>Status:</strong> ${escapeHtml(statusLabel(extra.status))}</p>
+              <p><strong>Reason codes:</strong> ${escapeHtml(extra.sidecar.reasonCodes?.join(', ') || '—')}</p>
+              ${renderImage(extra.screenshot, extra.checkpoint)}
+            </article>`
+          )
+          .join('\n');
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <title>${escapeHtml(manifest.suiteTitle)} evidence</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.45; }
+    body { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    header, section, article { border: 1px solid #8886; border-radius: 8px; padding: 16px; margin: 16px 0; }
+    header { background: #0969da18; }
+    dl { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 6px 16px; }
+    dt { font-weight: 600; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    img { display: block; max-width: 100%; height: auto; margin: 16px auto 0; border: 1px solid #8886; }
+    .accepted { border-left: 6px solid #1a7f37; }
+    .diagnostic, .not-reached, .missing { border-left: 6px solid #9a6700; }
+    .rejected, .integrity-mismatch, .invalid-reference { border-left: 6px solid #cf222e; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #8886; padding: 6px 8px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>${escapeHtml(manifest.suiteTitle)} evidence</h1>
+    <p>This self-contained report embeds all verified PNG evidence. Test, lifecycle, cleanup, process-closure, and terminal gates remain authoritative.</p>
+    ${options.warning ? `<p class="missing"><strong>Embedded images omitted:</strong> ${escapeHtml(options.warning)}</p>` : ''}
+    ${htmlTable([
+      ['Generated', manifest.generatedAt],
+      ['Suite ID', manifest.suiteId],
+      ['Canonical checkpoints', manifest.canonicalStepCount],
+      ['Diagnostic extras', manifest.diagnosticExtras.length],
+      ['Outcome', manifest.summary.testResult.outcome],
+      ['Source SHA', manifest.summary.identity.sourceSHA],
+      ['Resolved VS Code', manifest.summary.identity.resolvedVSCodeBuild],
+    ])}
+  </header>
+  <section>
+    <h2>Run summary</h2>
+    ${htmlTable([
+      ['Producer run', manifest.summary.identity.producerRunId],
+      ['Build number', manifest.summary.identity.producerBuildNumber],
+      ['Repository', manifest.summary.identity.repositoryName],
+      [
+        'Passing / failing / pending',
+        `${manifest.summary.testResult.passing ?? '—'} / ${manifest.summary.testResult.failing ?? '—'} / ${
+          manifest.summary.testResult.pending ?? '—'
+        }`,
+      ],
+      ['Lifecycle complete', manifest.summary.lifecycle.complete],
+      ['Cleanup verified', manifest.summary.lifecycle.cleanupVerified],
+      ['Exact phase order', manifest.summary.lifecycle.exactPhaseOrder],
+    ])}
+  </section>
+  ${groups}
+  <section>
+    <h2>Additional diagnostic screenshots</h2>
+    ${extras}
+  </section>
+</body>
+</html>
+`;
+  const bytes = Buffer.byteLength(html);
+  if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || bytes > maxBytes) {
+    throw new Error(`Self-contained evidence HTML is too large: ${bytes} bytes (limit ${maxBytes})`);
+  }
+  return html;
+}
+
+function evidenceScreenshots(manifest) {
+  return [
+    ...manifest.groups.flatMap((group) => group.steps.map((entry) => entry.screenshot)),
+    ...manifest.diagnosticExtras.map((entry) => entry.screenshot),
+  ];
+}
+
+function htmlFallbackReason(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (/too large/i.test(message)) {
+    return 'report-size-limit';
+  }
+  if (/integrity mismatch|regular file|invalid ordered evidence reference/i.test(message)) {
+    return 'image-integrity-unavailable';
+  }
+  return 'image-embedding-unavailable';
+}
+
+function embeddedPngDataUri(artifactRoot, screenshot) {
+  const filePath = requireManifestReferencePath(artifactRoot, screenshot.path, '.png');
+  const stat = fs.lstatSync(filePath);
+  if (!stat.isFile() || stat.isSymbolicLink()) {
+    throw new Error(`Embedded screenshot is not a regular file: ${screenshot.path}`);
+  }
+  const bytes = fs.readFileSync(filePath);
+  const sha256 = createHash('sha256').update(bytes).digest('hex');
+  if (bytes.length !== screenshot.size || sha256 !== screenshot.sha256) {
+    throw new Error(`Embedded screenshot integrity mismatch: ${screenshot.path}`);
+  }
+  return `data:image/png;base64,${bytes.toString('base64')}`;
+}
+
+function htmlTable(rows) {
+  return `<table><tbody>${rows
+    .map(
+      ([label, value]) => `<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(value === undefined || value === '' ? '—' : value)}</td></tr>`
+    )
+    .join('')}</tbody></table>`;
+}
+
+function htmlStatusClass(status) {
+  return /^[a-z0-9-]+$/.test(status || '') ? status : 'unknown';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function buildIdentitySummary(identity) {
   return [
     '### Admitted run, build, and source identity',
@@ -937,9 +1141,9 @@ if (require.main === module) {
       evidenceManifest: options['evidence-manifest'],
     });
     console.log(
-      `[vscode-e2e-evidence] ${result.manifest.suiteId}: wrote ${path.basename(result.markdownPath)} and ${path.basename(
-        result.manifestPath
-      )}`
+      `[vscode-e2e-evidence] ${result.manifest.suiteId}: wrote ${path.basename(result.htmlPath)}, ${path.basename(
+        result.markdownPath
+      )}, and ${path.basename(result.manifestPath)}`
     );
   } catch (error) {
     console.error(`[vscode-e2e-evidence] ${error instanceof Error ? error.message : String(error)}`);
@@ -953,6 +1157,7 @@ module.exports = {
   _test: {
     artifactRelativeLink,
     artifactRelativePath,
+    buildHtml,
     buildHttpCompatibilityMarkdown,
     buildMarkdown,
     buildHttpCompatibilityManifest,
@@ -960,6 +1165,7 @@ module.exports = {
     buildSummary,
     buildManifestAttachments,
     buildManifestEvidence,
+    escapeHtml,
     escapeInlineCode,
     humanizeCheckpoint,
     requireManifestReferencePath,

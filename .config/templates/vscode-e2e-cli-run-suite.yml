@@ -718,9 +718,8 @@ jobs:
           $diagnosticsRoot = "$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}"
           $resultDestination = Join-Path $diagnosticsRoot 'results'
           $logDestination = Join-Path $diagnosticsRoot 'log'
-          $screenshotDestination = Join-Path $diagnosticsRoot 'screenshots'
           $workspaceDestination = Join-Path $diagnosticsRoot 'generated-workspaces'
-          New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination, $workspaceDestination | Out-Null
+          New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $workspaceDestination | Out-Null
 
           $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
           $evidenceManifestSource = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/evidence/${{ parameters.suiteId }}/suite-evidence-manifest.json'
@@ -964,7 +963,7 @@ jobs:
             throw 'VS Code CLI evidence report generation failed.'
           }
 
-          foreach ($directory in @($logDestination, $screenshotDestination, $workspaceDestination)) {
+          foreach ($directory in @($logDestination, $workspaceDestination)) {
             if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
               Set-Content -Path (Join-Path $directory '.empty') -Value 'No files were produced for this artifact.'
             }

@@ -39,8 +39,9 @@ function initializeSuiteEvidenceManifest({ suiteId, invocation, platform = proce
       return existing;
     }
 
-    fs.rmSync(path.join(resolvedEvidenceDir, 'screenshots'), { recursive: true, force: true });
-    fs.rmSync(path.join(resolvedEvidenceDir, 'diagnostics'), { recursive: true, force: true });
+    for (const relativeDirectory of ['e', 'd', 'screenshots', 'diagnostics']) {
+      fs.rmSync(path.join(resolvedEvidenceDir, relativeDirectory), { recursive: true, force: true });
+    }
     const groups = descriptor.buildCatalog({}).map((catalogGroup) => ({
       id: requireSafeId(catalogGroup.id, 'group id'),
       title: requireBoundedText(catalogGroup.title, 'group title', 200),
@@ -93,6 +94,13 @@ function declareMultiRootEvidenceCheckpoints({ manifestPath, rootLabels, expecte
     const group = manifest.groups.find((candidate) => candidate.id === 'multi-root');
     if (!group) {
       throw new Error('workspaceMultiRoot manifest is missing its multi-root group');
+    }
+    if (
+      manifest.groups
+        .flatMap((candidate) => candidate.checkpoints)
+        .some((checkpoint) => checkpoint.status !== 'pending' || checkpoint.evidence)
+    ) {
+      throw new Error('workspaceMultiRoot dynamic checkpoints must be declared before any evidence is recorded');
     }
     const mapperIndex = group.checkpoints.findIndex((checkpoint) => checkpoint.id === 'workspace-multi-root-mapper');
     if (mapperIndex < 0) {
@@ -155,13 +163,14 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
     enforceCheckpointOrder(manifest, checkpoint);
     const status = statusFromVerdict(verdict);
     const bundleDirectory = path.dirname(manifestPath);
-    const relativeDirectory = classification === 'diagnostic' ? 'diagnostics' : 'screenshots';
+    const relativeDirectory = classification === 'diagnostic' ? 'd' : 'e';
+    const fileStem = String(checkpoint.ordinal).padStart(3, '0');
     const screenshotReference =
       (verifiedScreenshotBytes !== undefined || fs.existsSync(screenshotPath)) && verdict !== 'disabled' && verdict !== 'failed'
         ? copyBundleFile({
             sourcePath: screenshotPath,
             bundleDirectory,
-            relativePath: `${relativeDirectory}/${checkpointId}.png`,
+            relativePath: `${relativeDirectory}/${fileStem}.png`,
             maxBytes: 20 * 1024 * 1024,
             verifiedBytes: verifiedScreenshotBytes,
           })
@@ -180,7 +189,7 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
     };
     const sidecarReference = writeBundleJson({
       bundleDirectory,
-      relativePath: `${relativeDirectory}/${checkpointId}.json`,
+      relativePath: `${relativeDirectory}/${fileStem}.json`,
       value: publicSidecar,
     });
     checkpoint.status = status;
@@ -469,13 +478,14 @@ function recordAttachment(
   manifest,
   { id, phase, classification, verdict, reasonCodes, metadata, screenshotPath, verifiedScreenshotBytes, bundleDirectory }
 ) {
-  const relativeDirectory = 'diagnostics';
+  const relativeDirectory = 'd';
+  const fileStem = diagnosticFileStem(manifest, id);
   const screenshotReference =
     (verifiedScreenshotBytes !== undefined || fs.existsSync(screenshotPath)) && verdict === 'diagnostic'
       ? copyBundleFile({
           sourcePath: screenshotPath,
           bundleDirectory,
-          relativePath: `${relativeDirectory}/${id}.png`,
+          relativePath: `${relativeDirectory}/${fileStem}.png`,
           maxBytes: 20 * 1024 * 1024,
           verifiedBytes: verifiedScreenshotBytes,
         })
@@ -491,7 +501,7 @@ function recordAttachment(
   };
   const sidecarReference = writeBundleJson({
     bundleDirectory,
-    relativePath: `${relativeDirectory}/${id}.json`,
+    relativePath: `${relativeDirectory}/${fileStem}.json`,
     value: publicSidecar,
   });
   const existing = manifest.attachments.find((attachment) => attachment.id === id);
@@ -512,6 +522,21 @@ function recordAttachment(
   } else {
     manifest.attachments.push(attachment);
   }
+}
+
+function diagnosticFileStem(manifest, id) {
+  const fileStem = `x-${createHash('sha256').update(id).digest('hex').slice(0, 12)}`;
+  const conflicting = manifest.attachments.find(
+    (attachment) =>
+      attachment.id !== id &&
+      Object.values(attachment.evidence ?? {}).some(
+        (reference) => path.posix.basename(reference.path, path.posix.extname(reference.path)) === fileStem
+      )
+  );
+  if (conflicting) {
+    throw new Error(`Diagnostic evidence filename collision between "${id}" and "${conflicting.id}"`);
+  }
+  return fileStem;
 }
 
 function enforceCheckpointOrder(manifest, checkpoint) {

@@ -3735,8 +3735,10 @@ function testSingleSummarySupportsDiagnosticsArtifactName() {
     diagnosticsArtifactName: 'vscode-e2e-cli-diagnostics-linux-unit-tests',
   });
   assert.match(diagnosticsSummary, /vscode-e2e-cli-diagnostics-linux-unit-tests/);
+  assert.match(diagnosticsSummary, /self-contained `evidence\.html`/);
+  assert.match(diagnosticsSummary, /compact ordered evidence under `e\/` and `d\/`/);
   assert.match(diagnosticsSummary, /structured results under `results\/`/);
-  assert.match(diagnosticsSummary, /VS Code profile logs under `log\/`/);
+  assert.match(diagnosticsSummary, /logs under `log\/`/);
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-test-results-unitTests/);
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-log-unitTests/);
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-screenshots-unitTests/);

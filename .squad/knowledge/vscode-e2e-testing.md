@@ -86,6 +86,15 @@ Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` nat
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `release-scribe`.
 - Status: verified.
 
+### Ordered evidence uses compact paths and a self-contained reviewer report
+
+- Learning: Preserve the attempt-qualified ADO diagnostics artifact name because the protected rollup uses it as immutable producer identity, but keep reviewer-facing ordered evidence compact: required checkpoints use ordinal `e/NNN.{png,json}` paths and diagnostic attachments use stable hashed `d/x-<hash>.{png,json}` paths. Semantic checkpoint IDs and order remain in the manifest, not in filenames.
+- Reviewer experience: Each suite publishes root-level `evidence.html`, a script-free offline report that embeds verified PNG bytes as data URIs. Markdown and JSON remain compatibility and machine-readable contracts. HTML embedding is best-effort: size or second-read integrity failures produce a standalone summary with an explicit omission reason and never change the native lane verdict.
+- Safety: Escape all report text, allow only verified PNG data, use a restrictive content-security policy, declare dynamic checkpoints before any evidence is recorded, and keep the 100 MiB embedded-report ceiling.
+- Source: `vscode-e2e-evidence-manifest.js`, `vscode-e2e-evidence-report.js`, `.config/templates/vscode-e2e-cli-run-suite.yml`, and their contract tests.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `release-scribe`.
+- Status: locally verified; exact-SHA ADO validation is required after changes.
+
 ### `run-e2e.js` is the suite entry point
 
 - Learning: VS Code UI E2E tests must be wired through `apps/vs-code-designer/src/test/ui/run-e2e.js` and its phase model.
