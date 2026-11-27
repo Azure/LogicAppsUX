@@ -420,7 +420,8 @@ describe('workflow trust wiring', () => {
     expect(trusted).toContain('cancel-in-progress: false');
     expect(trusted).toContain('fail-fast: false');
     expect(trusted).toContain('unlabeled, closed');
-    expect(trusted).toContain('schedule:');
+    expect(trusted).toContain('workflow_dispatch:');
+    expect(trusted).not.toMatch(/^\s*schedule:/m);
     expect(trusted).toContain("if: always() && steps.prepare.outputs.deploy == 'true'");
   });
 });

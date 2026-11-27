@@ -16,6 +16,10 @@ permissions:
   contents: read
   copilot-requests: write
 
+concurrency:
+  group: pr-ai-validation-${{ github.event.pull_request.number || github.event.inputs.pr_number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
+
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
@@ -74,7 +78,7 @@ jobs:
         run: node --test scripts/pr-ai-validation.test.mjs
 
       - name: Cache Copilot CLI download
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: copilot-cli-${{ runner.os }}-${{ env.COPILOT_CLI_VERSION }}
@@ -253,7 +257,7 @@ jobs:
         id: fallback
         uses: actions/github-script@v8
         env:
-          LOGIC_APP_URL: ${{ vars.PR_VALIDATION_LOGIC_APP_URL }}
+          LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
             const pr_number = Number(process.env.PR_NUMBER);

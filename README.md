@@ -88,7 +88,7 @@ This repository uses [Graphify](https://graphify.net/) to maintain per-package k
 
 **Read the [comprehensive Graphify knowledge graph guide](apps/docs/docs/Development/graphify.md)** for the supported-library inventory, freshness checks, CI behavior, assistant integration, command reference, interpretation guidance, workflows, and troubleshooting.
 
-Each supported library commits a human-readable `src/graphify-out/GRAPH_REPORT.md` and queryable `graph.json`. Read the relevant report before exploring a large package, and check its **Graph Freshness** source commit when branch changes matter. The `update-knowledge-graphs.yml` workflow rebuilds all supported graphs after matching TypeScript changes reach `main`.
+Each supported library commits a human-readable `src/graphify-out/GRAPH_REPORT.md` and queryable `graph.json`. Read the relevant report before exploring a large package, and check its **Graph Freshness** source commit when branch changes matter. The `update-knowledge-graphs.yml` workflow can be triggered manually via `workflow_dispatch` to rebuild all supported graphs and upload a `knowledge-graphs.patch` artifact for opening a PR.
 
 Committed reports require no local setup. For interactive queries:
 

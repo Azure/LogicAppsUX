@@ -2,7 +2,7 @@ name: "Copilot: Flake Review"
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 3 * * 0'
   workflow_dispatch:
     inputs:
       testRuns:
@@ -10,19 +10,18 @@ on:
         type: number
         default: 3
 
-permissions:
-  contents: write
-  pull-requests: write
-  copilot-requests: write
+permissions: {}
 
 concurrency:
   group: copilot-flake-review
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   detect_flakes:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
+    permissions:
+      contents: read
     outputs:
       has_flakes: ${{ steps.analyze.outputs.has_flakes }}
     steps:
@@ -32,51 +31,134 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build workspace prerequisites
+        run: pnpm turbo run build:lib
+
       - name: Run tests multiple times
         id: replay
+        shell: bash
         env:
           RUNS: ${{ inputs.testRuns || 3 }}
         run: |
+          set -euo pipefail
+          if ! [[ "$RUNS" =~ ^[0-9]+$ ]] || [ "$RUNS" -lt 2 ]; then
+            echo "::error::Invalid testRuns input '$RUNS': must be an integer >= 2."
+            exit 1
+          fi
+
+          rm -rf /tmp/flake-results
           mkdir -p /tmp/flake-results
 
-          for i in $(seq 1 $RUNS); do
+          # Discover all library packages that define a test:lib script.
+          node <<'EOF' > /tmp/flake-results/packages.tsv
+            const fs = require("fs");
+            const path = require("path");
+            const libsDir = path.join(process.cwd(), "libs");
+            const pkgs = [];
+            for (const entry of fs.readdirSync(libsDir, { withFileTypes: true })) {
+              if (!entry.isDirectory()) continue;
+              const pkgPath = path.join(libsDir, entry.name, "package.json");
+              if (!fs.existsSync(pkgPath)) continue;
+              const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+              if (pkg.scripts && pkg.scripts["test:lib"] && pkg.name) {
+                pkgs.push({ slug: entry.name, dir: path.join("libs", entry.name), name: pkg.name });
+              }
+            }
+            pkgs.sort((a, b) => a.slug.localeCompare(b.slug));
+            fs.writeFileSync("/tmp/flake-results/packages.json", JSON.stringify(pkgs, null, 2));
+            for (const p of pkgs) {
+              console.log(`${p.slug}\t${p.dir}\t${p.name}`);
+            }
+          EOF
+
+          if [ ! -s /tmp/flake-results/packages.tsv ]; then
+            echo "::error::No libs/* packages with a test:lib script were discovered."
+            exit 1
+          fi
+
+          for i in $(seq 1 "$RUNS"); do
+            RUN_DIR="/tmp/flake-results/run-${i}"
+            mkdir -p "$RUN_DIR"
             echo "::group::Run $i/$RUNS"
-            pnpm turbo run test:lib -- --reporter=json --outputFile=/tmp/flake-results/run-$i.json 2>&1 || true
+            while IFS=$'\t' read -r pkg_slug pkg_dir pkg_name; do
+              echo "--- Running Vitest for ${pkg_name} (run ${i}/${RUNS}) ---"
+              # Invoke Vitest directly per package to bypass Turbo cache and avoid duplicate --retry
+              # conflicts with library test:lib scripts that hardcode --retry=3.
+              pnpm --dir "$pkg_dir" exec vitest run \
+                --retry=0 --reporter=json --outputFile="${RUN_DIR}/${pkg_slug}.json" 2>&1 || true
+            done < /tmp/flake-results/packages.tsv
             echo "::endgroup::"
           done
 
-          node -e "
-            const fs = require('fs');
-            const glob = require('path');
-            const runs = [];
-            for (let i = 1; i <= ${RUNS}; i++) {
-              try {
-                runs.push(JSON.parse(fs.readFileSync('/tmp/flake-results/run-' + i + '.json', 'utf8')));
-              } catch {}
-            }
+          node <<'EOF'
+            const fs = require("fs");
+            const path = require("path");
+            const runsCount = Number(process.env.RUNS || 3);
+            const packages = JSON.parse(fs.readFileSync("/tmp/flake-results/packages.json", "utf8"));
 
             const testResults = {};
-            for (const run of runs) {
-              for (const suite of (run.testResults || [])) {
-                for (const test of (suite.assertionResults || [])) {
-                  const key = suite.name + '::' + test.fullName;
-                  if (!testResults[key]) testResults[key] = { pass: 0, fail: 0, file: suite.name, test: test.fullName };
-                  if (test.status === 'passed') testResults[key].pass++;
-                  else if (test.status === 'failed') testResults[key].fail++;
+            const incompleteReports = [];
+            let totalAssertionsAllRuns = 0;
+
+            for (let i = 1; i <= runsCount; i++) {
+              const runDir = `/tmp/flake-results/run-${i}`;
+              let parsedPackages = 0;
+              let runAssertions = 0;
+
+              for (const pkg of packages) {
+                const filePath = path.join(runDir, `${pkg.slug}.json`);
+                if (!fs.existsSync(filePath)) {
+                  incompleteReports.push(`run ${i}: ${pkg.slug} (missing report)`);
+                  continue;
+                }
+                try {
+                  const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+                  if (!Array.isArray(data.testResults)) {
+                    incompleteReports.push(`run ${i}: ${pkg.slug} (missing testResults array)`);
+                    continue;
+                  }
+                  parsedPackages++;
+                  for (const suite of data.testResults) {
+                    for (const test of (suite.assertionResults || [])) {
+                      runAssertions++;
+                      const key = `${pkg.slug}::${suite.name}::${test.fullName}`;
+                      if (!testResults[key]) {
+                        testResults[key] = {
+                          package: pkg.name,
+                          pass: 0,
+                          fail: 0,
+                          file: suite.name,
+                          test: test.fullName,
+                        };
+                      }
+                      if (test.status === "passed") testResults[key].pass++;
+                      else if (test.status === "failed") testResults[key].fail++;
+                    }
+                  }
+                } catch (err) {
+                  incompleteReports.push(`run ${i}: ${pkg.slug} (invalid JSON: ${err.message})`);
                 }
               }
+
+              console.log(`Run ${i}/${runsCount}: parsed ${parsedPackages}/${packages.length} packages, ${runAssertions} test assertions.`);
+              totalAssertionsAllRuns += runAssertions;
+            }
+
+            if (incompleteReports.length > 0 || totalAssertionsAllRuns === 0) {
+              console.error(`::error::Flake detection incomplete (${incompleteReports.length} missing/malformed package report(s), ${totalAssertionsAllRuns} assertions total): ${incompleteReports.join("; ")}`);
+              process.exit(1);
             }
 
             const flakes = Object.values(testResults).filter(t => t.pass > 0 && t.fail > 0);
-            fs.writeFileSync('/tmp/flake-results/flakes.json', JSON.stringify(flakes, null, 2));
-            console.log('Found ' + flakes.length + ' flaky test(s)');
-          "
+            fs.writeFileSync("/tmp/flake-results/flakes.json", JSON.stringify(flakes, null, 2));
+            console.log(`Analyzed ${Object.keys(testResults).length} unique tests across ${runsCount} complete runs (${packages.length} packages); found ${flakes.length} flaky test(s).`);
+          EOF
 
       - name: Analyze results
         id: analyze
@@ -102,6 +184,10 @@ jobs:
     if: needs.detect_flakes.outputs.has_flakes == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      copilot-requests: write
     steps:
       - uses: actions/checkout@v5
 
@@ -109,7 +195,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -125,24 +211,41 @@ jobs:
           path: /tmp/flake-results/
 
       - name: Fix flakes with Copilot
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          REPORT=$(cat /tmp/flake-results/flakes.json)
-          PROMPT_FILE="prompts/copilot-flake-review.md"
-          SYSTEM_PROMPT=$(cat "$PROMPT_FILE")
-
-          TASK="The following tests are flaky (passed and failed across multiple runs). Fix them according to the system prompt guidelines. Flake report: $REPORT"
+          {
+            cat prompts/copilot-flake-review.md
+            echo ""
+            echo "## Flake Report"
+            echo "The following tests are flaky (passed and failed across multiple uncached runs with retries disabled). Fix them according to the guidelines above:"
+            echo ""
+            echo '```json'
+            cat /tmp/flake-results/flakes.json
+            echo '```'
+          } > /tmp/flake-prompt.txt
 
           MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          SUCCESS=0
           for MODEL in $MODELS; do
             set +e
-            timeout 600 copilot --yolo -p "$TASK" --model "$MODEL"
+            timeout 600 copilot --yolo --model "$MODEL" < /tmp/flake-prompt.txt
             CODE=$?
             set -e
-            [ $CODE -eq 0 ] && break
-            echo "::warning::Copilot model $MODEL failed (exit $CODE) — trying next"
-          done || true
+            if [ "$CODE" -eq 0 ]; then
+              SUCCESS=1
+              break
+            fi
+            echo "::warning::Copilot model $MODEL failed (exit $CODE) — reverting partial edits and trying next"
+            git checkout -- .
+            git clean -fd
+          done
+
+          if [ "$SUCCESS" -ne 1 ]; then
+            echo "::error::All Copilot models failed to resolve flaky tests — aborting without creating a PR."
+            exit 1
+          fi
 
       - name: Check for changes and create PR
         env:

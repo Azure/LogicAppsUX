@@ -5,9 +5,18 @@ on:
     branches: [main, dev/*, hotfix/*]
   pull_request:
     branches: [main, dev/*, hotfix/*]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     strategy:
       matrix:

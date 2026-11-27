@@ -2,11 +2,16 @@ name: Close inactive issues
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 6 * * *'
+
+concurrency:
+  group: issue-management
+  cancel-in-progress: false
 
 jobs:
   close-issues:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       issues: write
       pull-requests: write

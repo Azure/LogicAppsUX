@@ -12,19 +12,34 @@ on:
     branches:
       - main
 
+permissions: {}
+
+concurrency:
+  group: deploy-docs-${{ github.event.pull_request.number || 'production' }}
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy_job:
     if: |
-      (
-        github.event_name == 'push' 
-        || (github.event_name == 'pull_request' && github.event.action != 'closed') 
-        || (github.event.label.name == 'Documentation')
-      ) 
-      && github.actor != 'csigs'
-      &&  github.actor != 'azure-logic-apps-automation' 
-      && (contains(github.event.pull_request.labels.*.name, 'Documentation') || github.event_name == 'push')
+      github.actor != 'csigs'
+      && github.actor != 'azure-logic-apps-automation'
+      && (
+        github.event_name == 'push'
+        || github.event_name == 'workflow_dispatch'
+        || github.event_name == 'repository_dispatch'
+        || (
+          github.event_name == 'pull_request'
+          && github.event.action != 'closed'
+          && contains(github.event.pull_request.labels.*.name, 'Documentation')
+        )
+      )
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     name: Build and Deploy Job
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -65,9 +80,12 @@ jobs:
           output_location: 'apps/docs/build'
 
   close_pull_request_job:
-    if: (github.event_name == 'pull_request' && github.event.action == 'closed') && github.actor != 'csigs' &&  github.actor != 'azure-logic-apps-automation'
+    if: (github.event_name == 'pull_request' && github.event.action == 'closed') && github.actor != 'csigs' && github.actor != 'azure-logic-apps-automation'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     name: Close Pull Request Job
+    permissions:
+      contents: read
     steps:
       - name: Close Pull Request
         id: closepullrequest

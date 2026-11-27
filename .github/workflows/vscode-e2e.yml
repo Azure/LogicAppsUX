@@ -36,6 +36,9 @@ on:
   # suppresses an expected auto-trigger after rapid pushes).
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: vscode-e2e-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
@@ -1635,9 +1638,8 @@ jobs:
   # Windows — a failure mode Linux structurally cannot reproduce, because there an
   # executable can be overwritten while it runs. The ubuntu `func-selfheal` shard
   # therefore proves the repair logic but not the platform it matters on. Nothing
-  # else covers this change on Windows either: test.yml, pr-coverage.yml and
-  # private-vsix-build.yml are all `runs-on: ubuntu-latest`, so even the unit tests
-  # never execute there.
+  # else covers this change on Windows either: test.yml and pr-coverage.yml
+  # are both `runs-on: ubuntu-latest`, so even the unit tests never execute there.
   #
   # Why this job CREATES its own fixtures instead of consuming
   # `workspace-fixtures-<sha>` the way the ubuntu shard does: THAT ARTIFACT IS NOT

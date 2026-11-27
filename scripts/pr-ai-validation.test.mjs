@@ -311,3 +311,8 @@ test('runs the regression suite from the existing trusted checkout before gather
   assert.ok(workflow.indexOf('      - name: Test PR validation data gathering') < workflow.indexOf('      - name: Gather PR data'));
   assert.ok(workflow.includes('  pull_request_target:'));
 });
+
+test('reads fallback Logic App URL from secrets only, never repository variables', () => {
+  assert.ok(workflow.includes('LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}'));
+  assert.ok(!workflow.includes('vars.PR_VALIDATION_LOGIC_APP_URL'));
+});

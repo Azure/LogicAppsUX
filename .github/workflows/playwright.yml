@@ -5,6 +5,13 @@ on:
   pull_request:
     branches: [main, dev/*, hotfix/*]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   designer-e2e-shards:
     timeout-minutes: 90
@@ -63,6 +70,7 @@ jobs:
   test:
     if: ${{ !cancelled() }}
     needs: [designer-e2e-shards]
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -143,6 +151,7 @@ jobs:
   chat-client-report:
     if: ${{ !cancelled() }}
     needs: [chat-client-tests]
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
