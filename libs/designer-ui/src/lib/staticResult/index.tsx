@@ -172,7 +172,14 @@ export const StaticResultContainer = ({
     additionalProperties: additionalPropertiesSchema,
     required,
   } = useMemo(() => {
-    return parseStaticResultSchema(staticResultSchema);
+    const parsed = parseStaticResultSchema(staticResultSchema);
+    console.log('[DEBUG StaticResult] StaticResultContainer - parseStaticResultSchema', {
+      inputSchema: JSON.stringify(staticResultSchema, null, 2),
+      parsedPropertiesKeys: parsed.properties ? Object.keys(parsed.properties) : 'none',
+      parsedRequired: parsed.required,
+      outputsInParsed: parsed.properties?.outputs ? JSON.stringify(parsed.properties.outputs, null, 2) : 'none',
+    });
+    return parsed;
   }, [staticResultSchema]);
 
   return (
