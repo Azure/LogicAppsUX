@@ -1,6 +1,7 @@
 import constants from '../../../constants';
 import { isEmpty } from '../../../dictionary/expandeddictionary';
 import type { ValueSegment } from '../../models/parameter';
+import { ValueSegmentType } from '../../models/parameter';
 import { containsTokenSegments, createLiteralValueSegment, insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
 import { escapeBackslash } from '@microsoft/logic-apps-shared';
@@ -41,7 +42,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
           convertedValueType !== constants.SWAGGER.TYPE.STRING
             ? segment.value
             : typeof segment.value === 'string'
-              ? escapeBackslash(segment.value)
+              ? escapeStringValue(segment.value, segment.type)
               : JSON.stringify(segment.value),
       };
     });
@@ -58,6 +59,13 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
   }
 
   return parsedItems;
+};
+
+// Literal text that ends up inside a JSON string must also have its double quotes escaped,
+// otherwise a value such as {"a":1} produces invalid JSON in the collapsed editor.
+const escapeStringValue = (value: string, type: string): string => {
+  const escaped = escapeBackslash(value);
+  return type === ValueSegmentType.LITERAL ? escaped.replace(/"/g, '\\"') : escaped;
 };
 
 // we want to default to string type when the value is type any
