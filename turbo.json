@@ -18,6 +18,7 @@
     "standalone#build:ephemeral": {
       "dependsOn": ["^build:lib"],
       "outputs": ["dist/**"],
+      "passThroughEnv": ["NODE_OPTIONS"],
       "cache": false
     },
     "build:lib": {

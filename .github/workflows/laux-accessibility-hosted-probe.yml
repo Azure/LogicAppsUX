@@ -2,7 +2,7 @@ name: LAUX Accessibility Hosted Probe
 
 on:
   push:
-    branches: [takyyon-feature/laux-accessibility-pilot]
+    branches: [takyyon-feature/laux-accessibility-pilot-heap-retry]
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ jobs:
     # First creation only; later pushes and manual reruns must not start another probe.
     if: >-
       github.repository == 'Azure/LogicAppsUX' &&
-      github.ref == 'refs/heads/takyyon-feature/laux-accessibility-pilot' &&
+      github.ref == 'refs/heads/takyyon-feature/laux-accessibility-pilot-heap-retry' &&
       github.actor == 'takyyon' && github.actor_id == '11722204' &&
       github.event.created == true && github.run_attempt == 1
     runs-on: macos-15
@@ -39,7 +39,8 @@ jobs:
           pnpm exec playwright install chromium
       - name: Build and validate the credential-free preview
         run: |
-          pnpm turbo run build:ephemeral --filter=standalone
+          # The hosted Vite transform exhausted the default heap. Keep this override out of the replay.
+          NODE_OPTIONS=--max-old-space-size=4096 pnpm turbo run build:ephemeral --filter=standalone --concurrency=1
           python3 -B scripts/ephemeral/validate.py --directory apps/Standalone/dist .ephemeral-site
       - name: Run the pinned Designer replay
         id: replay

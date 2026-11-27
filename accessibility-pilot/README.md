@@ -73,7 +73,7 @@ Replay reports now include `scope.mode` (`full` by default, `pilot` with `--pilo
 
 Exit zero requires a matching attempt, scope, and pinned digest, plus passing fixture smokes and keyboard, axe, and assertion evidence for every selected journey. If the worker report is missing or unreadable, the launcher records a failed attempt with the full catalog still listed.
 
-The temporary **LAUX Accessibility Hosted Probe** runs on the first push that creates `takyyon-feature/laux-accessibility-pilot` in `Azure/LogicAppsUX` by `@takyyon`. It builds the exact pushed commit on macOS and fails closed if the resulting digest differs from the pin. It retains only the JSON report for one day. It does not exercise PR events, accept evidence into a trusted consumer, or call Otto.
+The temporary **LAUX Accessibility Hosted Probe** runs on the first push that creates `takyyon-feature/laux-accessibility-pilot-heap-retry` in `Azure/LogicAppsUX` by `@takyyon`. It builds the exact pushed commit on macOS, with serial Turbo execution and a 4 GiB Node heap for the ephemeral build after the first probe hit Vite's heap limit. It fails closed if the resulting digest differs from the pin and retains only the JSON report for one day. It does not exercise PR events, accept evidence into a trusted consumer, or call Otto.
 
 For Details, the replay tabs to the `manual` node, opens it with Enter, and checks that focus moves to **Close**. It scans the open panel, presses Enter on **Close**, and checks that the panel closes and focus returns to `manual` without setting focus in the test.
 
