@@ -226,6 +226,7 @@ jobs:
             echo '```'
           } > /tmp/flake-prompt.txt
 
+          BASE_SHA=$(git rev-parse HEAD)
           MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
           SUCCESS=0
           for MODEL in $MODELS; do
@@ -238,7 +239,7 @@ jobs:
               break
             fi
             echo "::warning::Copilot model $MODEL failed (exit $CODE) — reverting partial edits and trying next"
-            git checkout -- .
+            git reset --hard "$BASE_SHA"
             git clean -fd
           done
 
@@ -247,11 +248,17 @@ jobs:
             exit 1
           fi
 
+          # If Copilot created commits directly, fold them back to staged changes on BASE_SHA
+          # so the PR-creation step commits and pushes them uniformly.
+          if [ "$(git rev-parse HEAD)" != "$BASE_SHA" ]; then
+            git reset --soft "$BASE_SHA"
+          fi
+
       - name: Check for changes and create PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet && git diff --cached --quiet; then
+          if [ -z "$(git status --porcelain)" ]; then
             echo "No flake fixes produced"
             exit 0
           fi

@@ -78,33 +78,53 @@ jobs:
               // Scheduled discovery: restrict to open bug issues >1h old authored by trusted collaborators
               // so untrusted public issue bodies cannot trigger automated Copilot runs without triage.
               const cutoffMs = Date.now() - 3600 * 1000;
-              const issues = await github.rest.issues.listForRepo({
+              const MAX_PAGES = 20;
+              const iterator = github.paginate.iterator(github.rest.issues.listForRepo, {
                 owner,
                 repo,
                 labels: 'bug',
                 state: 'open',
                 sort: 'created',
                 direction: 'asc',
-                per_page: 50,
+                per_page: 100,
               });
 
-              for (const issue of issues.data) {
-                if (selected.length >= 2) break;
-                if (issue.pull_request) continue;
-                if (!TRUSTED_ASSOCIATIONS.has(issue.author_association)) continue;
-                if (Date.parse(issue.created_at) >= cutoffMs) continue;
+              let pageCount = 0;
+              let done = false;
+              for await (const { data: issues } of iterator) {
+                if (++pageCount > MAX_PAGES) break;
 
-                const labelNames = (issue.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
-                if (
-                  labelNames.some(
-                    (name) => name === 'investigated' || name === 'needs-investigation' || name.startsWith('P')
-                  )
-                ) {
-                  continue;
+                for (const issue of issues) {
+                  if (selected.length >= 2) {
+                    done = true;
+                    break;
+                  }
+                  // Results are sorted created ascending; once we hit an issue newer than cutoffMs, all remaining issues are newer too.
+                  if (Date.parse(issue.created_at) >= cutoffMs) {
+                    done = true;
+                    break;
+                  }
+                  if (issue.pull_request) continue;
+                  if (!TRUSTED_ASSOCIATIONS.has(issue.author_association)) continue;
+
+                  const labelNames = (issue.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
+                  if (
+                    labelNames.some(
+                      (name) => name === 'investigated' || name === 'needs-investigation' || name.startsWith('P')
+                    )
+                  ) {
+                    continue;
+                  }
+
+                  if (await hasBotInvestigationComment(issue.number)) continue;
+                  selected.push(issue);
+                  if (selected.length >= 2) {
+                    done = true;
+                    break;
+                  }
                 }
 
-                if (await hasBotInvestigationComment(issue.number)) continue;
-                selected.push(issue);
+                if (done) break;
               }
             }
 
