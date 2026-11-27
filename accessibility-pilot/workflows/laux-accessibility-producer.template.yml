@@ -1,0 +1,53 @@
+name: LAUX Accessibility Producer (template only)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  synthetic-smoke-template:
+    # Even if copied to .github/workflows, do not schedule a runner while activation gates are open.
+    if: >-
+      false &&
+      github.repository == 'Azure/LogicAppsUX' &&
+      github.event.pull_request.user.login == 'takyyon' &&
+      github.event.pull_request.base.repo.id == github.event.repository.id &&
+      github.event.pull_request.head.repo.id == github.event.repository.id
+    name: Synthetic smoke only (no Designer coverage)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Verify exact checked-out head before smoke
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ || "$(git rev-parse HEAD)" != "$EXPECTED_SHA" ]]; then
+            echo "::error::Checkout does not match the exact PR head."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - uses: pnpm/action-setup@v5
+
+      - name: Install dependencies (no cache)
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run synthetic self-tests
+        run: pnpm run test:e2e:accessibility-pilot

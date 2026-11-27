@@ -82,6 +82,9 @@ docs/src/pages/CHANGELOG.MD
 /blob-report/
 /playwright/.cache/
 
+# standalone accessibility pilot artifacts
+/accessibility-pilot/artifacts/
+
 # Logs
 logs
 *.log

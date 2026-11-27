@@ -1,0 +1,43 @@
+name: LAUX Accessibility Metadata Consumer (template only)
+
+on:
+  workflow_run:
+    workflows: ['LAUX Accessibility Producer (template only)']
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  metadata-preflight-template:
+    # Metadata matching cannot authorize artifact acceptance.
+    if: false && github.repository == 'Azure/LogicAppsUX'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    steps:
+      # Trusted-branch checkout only. Never check out PR refs in this consumer.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/accessibility-pilot/actions-metadata-preflight.mjs
+
+      - name: Metadata-only preflight
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const modulePath = `${process.env.GITHUB_WORKSPACE}/scripts/accessibility-pilot/actions-metadata-preflight.mjs`;
+            const { preflightWorkflowRunMetadata } = await import(modulePath);
+
+            const result = await preflightWorkflowRunMetadata({ github, context });
+
+            if (result.status === 'held') {
+              core.notice(`Metadata matched for PR ${result.pullNumber} at ${result.headSha}, producer run ${result.runId} attempt ${result.runAttempt}. Evidence acceptance is disabled.`);
+            } else {
+              core.setFailed(`Metadata-only preflight rejected: ${result.reason}. No evidence accepted.`);
+            }

@@ -3,6 +3,7 @@
   "version": "5.110.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "axe-core": "4.14.0",
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
@@ -89,6 +90,7 @@
     "test:lib": "turbo run test:lib",
     "test:iframe-app": "turbo run test:iframe-app",
     "test:e2e": "playwright test",
+    "test:e2e:accessibility-pilot": "node ./scripts/accessibility-pilot/run.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:designer": "playwright test --config=playwright.designer.config.ts",
     "test:e2e:designer:ui": "playwright test --config=playwright.designer.config.ts --ui",

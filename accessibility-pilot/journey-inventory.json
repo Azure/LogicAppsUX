@@ -1,0 +1,46 @@
+[
+  {
+    "id": "nested-graph",
+    "title": "Nested graph navigation",
+    "fixture": "All Scope Nodes",
+    "fixtureFile": "AllScopeNodes.json",
+    "expectedEvidence": "Traverse the named branch and insertion edge with keys; verify collapsed descendants leave the tab order; scan both states.",
+    "sourceAnchors": ["e2e/designer/tabFocus.spec.ts:25-47", "e2e/designer/scopeActions.spec.ts:50-84"]
+  },
+  {
+    "id": "details-open-close",
+    "title": "Details panel open and close",
+    "fixture": "Panel",
+    "fixtureFile": "Panel.json",
+    "expectedEvidence": "Tab to the manual node and open Details with Enter. Verify Close receives focus and scan the open panel. Press Enter on Close, verify Details closes, and verify focus returns to the manual node.",
+    "sourceAnchors": ["e2e/designer/tabFocus.spec.ts:14-24", "e2e/designer/tabFocus.spec.ts:50-76"]
+  },
+  {
+    "id": "action-discovery-insertion",
+    "title": "Action discovery and insertion",
+    "fixture": "Conditionals (Complex)",
+    "fixtureFile": "MoreComplex.json",
+    "expectedEvidence": "Use keys to find and open an existing action; separately add an action at the intended edge and verify the workflow change. Scan the results state.",
+    "sourceAnchors": [
+      "e2e/designer/nodeSearchPanel.spec.ts:10-31",
+      "libs/designer/src/lib/ui/panel/nodeSearchPanel/nodeSearchPanel.tsx:29-47",
+      "e2e/designer/variables/ensureInitializeVariable.spec.ts:11-16"
+    ]
+  },
+  {
+    "id": "token-editing",
+    "title": "Token editing",
+    "fixture": "Panel",
+    "fixtureFile": "Panel.json",
+    "expectedEvidence": "Use keys to open the picker and insert ArrayVariable, verify the expression and resumed editing, and scan the open picker.",
+    "sourceAnchors": ["e2e/designer/TokenPicker.spec.ts:13-30", "e2e/designer/TokenPicker.spec.ts:33-44"]
+  },
+  {
+    "id": "validation-recovery",
+    "title": "Validation recovery",
+    "fixture": "Panel",
+    "fixtureFile": "Panel.json",
+    "expectedEvidence": "Scan the HTTP URI error state, then use keys to reach the field from Errors, correct it, and verify that specific error clears.",
+    "sourceAnchors": ["e2e/designer/errorsPanel.spec.ts:12-34"]
+  }
+]

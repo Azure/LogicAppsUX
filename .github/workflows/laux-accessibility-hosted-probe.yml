@@ -1,0 +1,54 @@
+name: LAUX Accessibility Hosted Probe
+
+on:
+  push:
+    branches: [takyyon-feature/laux-accessibility-pilot]
+
+permissions:
+  contents: read
+
+jobs:
+  offline-replay:
+    # First creation only; later pushes and manual reruns must not start another probe.
+    if: >-
+      github.repository == 'Azure/LogicAppsUX' &&
+      github.ref == 'refs/heads/takyyon-feature/laux-accessibility-pilot' &&
+      github.actor == 'takyyon' && github.actor_id == '11722204' &&
+      github.event.created == true && github.run_attempt == 1
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify the exact pushed revision and replay prerequisite
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -x /usr/bin/sandbox-exec
+          printf 'Checked out %s\n' "$GITHUB_SHA"
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+      - name: Install dependencies and Chromium
+        run: |
+          pnpm install --frozen-lockfile --strict-peer-dependencies
+          pnpm exec playwright install chromium
+      - name: Build and validate the credential-free preview
+        run: |
+          pnpm turbo run build:ephemeral --filter=standalone
+          python3 -B scripts/ephemeral/validate.py --directory apps/Standalone/dist .ephemeral-site
+      - name: Run the pinned Designer replay
+        id: replay
+        run: node scripts/accessibility-pilot/designer-replay.mjs --pilot
+      - name: Retain the report for the hosted probe
+        if: ${{ !cancelled() && (steps.replay.outcome == 'success' || steps.replay.outcome == 'failure') }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: laux-hosted-probe-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+          path: accessibility-pilot/artifacts/designer-replay/attempts/*/runtime-report.json
+          if-no-files-found: error
+          retention-days: 1
