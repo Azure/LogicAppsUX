@@ -70,6 +70,39 @@ describe('keyvalueitem utilities', () => {
       expect(result).toMatch(/"DATE"\s*:\s*"/);
     });
 
+    it('should escape double quotes in a string value so a JSON value yields valid JSON', () => {
+      const items = [
+        {
+          id: '1',
+          key: [{ id: 'k1', type: ValueSegmentType.LITERAL, value: 'X-Payload' }],
+          value: [{ id: 'v1', type: ValueSegmentType.LITERAL, value: '{"a":1,"b":"two"}' }],
+        },
+      ];
+
+      const segments = convertKeyValueItemToSegments(items, 'string', 'string');
+      const result = convertSegmentsToString(segments);
+
+      expect(JSON.parse(result)).toEqual({ 'X-Payload': '{"a":1,"b":"two"}' });
+    });
+
+    it('should leave token segment values untouched when escaping a string value', () => {
+      const items = [
+        {
+          id: '1',
+          key: [{ id: 'k1', type: ValueSegmentType.LITERAL, value: 'X-Id' }],
+          value: [
+            { id: 'v1', type: ValueSegmentType.LITERAL, value: 'id-"' },
+            { id: 'v2', type: ValueSegmentType.TOKEN, value: 'concat("a")' },
+          ],
+        },
+      ];
+
+      const segments = convertKeyValueItemToSegments(items, 'string', 'string');
+
+      expect(segments.find((s) => s.id === 'v1')?.value).toBe('id-\\"');
+      expect(segments.find((s) => s.id === 'v2')?.value).toBe('concat("a")');
+    });
+
     it('should handle empty items', () => {
       const items: {
         id: string;

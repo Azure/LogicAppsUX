@@ -24,7 +24,11 @@ export const serializeDictionary = (
 
       for (const [key, value] of Object.entries(jsonEditor)) {
         const newKey = keyType === constants.SWAGGER.TYPE.STRING ? (key as string) : removeQuotes(JSON.stringify(key));
-        const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : removeQuotes(JSON.stringify(value));
+        // A string value is already decoded by JSON.parse; stringifying it again would leave literal backslashes before escaped characters.
+        const newValue =
+          valueType === constants.SWAGGER.TYPE.STRING || typeof value === 'string'
+            ? (value as string)
+            : removeQuotes(JSON.stringify(value));
         returnItems.push({
           id: guid(),
           key: convertStringToSegments(newKey, nodeMap, { tokensEnabled: true }),
