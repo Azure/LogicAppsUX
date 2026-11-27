@@ -15,7 +15,7 @@ export default {
         callbackUrl: {
           type: 'string',
           title: 'HTTP URL',
-          description: 'URL will be generated after save',
+          description: 'Publish the workflow to generate the URL.',
           'x-ms-visiblity': 'important',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
@@ -27,7 +27,7 @@ export default {
           title: 'Method',
           'x-ms-visiblity': 'important',
           'x-ms-editor': 'combobox',
-          description: 'URL will be generated after save',
+          description: 'Publish the workflow to generate the URL.',
           'x-ms-editor-options': {
             options: [
               {
