@@ -216,7 +216,7 @@ jobs:
               # capped at MAX_ARG_STRLEN (128 KB); large-diff PRs push the combined prompt past that,
               # making execve fail with E2BIG which surfaces as an instant exit 126 with no output.
               # stdin has no such limit, so this validates PRs of any diff size.
-              RESULT=$(timeout 90 copilot --yolo \
+              RESULT=$(timeout 90 copilot --yolo -s --no-custom-instructions --disable-builtin-mcps \
                 --model "$MODEL" < /tmp/full-prompt.txt 2>&1)
               CLI_EXIT=$?
               if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then
@@ -239,24 +239,63 @@ jobs:
             printf '%s\n' "$RESULT" | tail -n 25
             echo "----------------------------------------------------"
           else
-            printf '%s' "$RESULT" | USED_MODEL="$USED_MODEL" python3 -c '
-          import json, os, sys
-          text = sys.stdin.read()
-          # Find JSON in output
-          start = text.find("{")
-          end = text.rfind("}") + 1
-          if start >= 0 and end > start:
-              try:
-                  data = json.loads(text[start:end])
-                  with open("/tmp/validation-result.json", "w", encoding="utf-8") as f:
-                      json.dump(data, f)
-                  print("cli_success=true")
-                  print("used_model=" + os.environ.get("USED_MODEL", ""))
-              except Exception:
-                  print("cli_success=false")
+            printf '%s' "$RESULT" > /tmp/copilot-raw-output.txt
+            USED_MODEL="$USED_MODEL" python3 - /tmp/copilot-raw-output.txt <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os, re, sys
+
+          with open(sys.argv[1], "r", encoding="utf-8") as f:
+              text = f.read()
+          decoder = json.JSONDecoder()
+
+          def is_verdict(obj):
+              return (
+                  isinstance(obj, dict)
+                  and isinstance(obj.get("passes"), bool)
+                  and isinstance(obj.get("message"), str)
+              )
+
+          def find_verdict(src):
+              last = None
+              pos = 0
+              while True:
+                  idx = src.find("{", pos)
+                  if idx < 0:
+                      return last
+                  try:
+                      obj, end = decoder.raw_decode(src, idx)
+                      if is_verdict(obj):
+                          last = obj
+                          pos = end
+                      else:
+                          pos = idx + 1
+                  except json.JSONDecodeError:
+                      pos = idx + 1
+
+          data = None
+          # Prefer fenced ```json ... ``` blocks first, checking from last to first.
+          fenced_blocks = re.findall(r"```(?:json)?\s*\n(.*?)```", text, flags=re.IGNORECASE | re.DOTALL)
+          for block in reversed(fenced_blocks):
+              data = find_verdict(block)
+              if data is not None:
+                  break
+
+          if data is None:
+              data = find_verdict(text)
+
+          if data is not None:
+              out_path = os.environ.get("VALIDATION_RESULT_PATH", "/tmp/validation-result.json")
+              with open(out_path, "w", encoding="utf-8") as f:
+                  json.dump(data, f)
+              print("cli_success=true")
+              print("used_model=" + os.environ.get("USED_MODEL", ""))
           else:
               print("cli_success=false")
-          ' >> "$GITHUB_OUTPUT"
+              tail = "\n".join(text.splitlines()[-25:])
+              sys.stderr.write("::warning::Copilot CLI returned exit 0 but no valid verdict JSON was extracted.\n")
+              sys.stderr.write("----- Copilot CLI output (tail, for debugging) -----\n")
+              sys.stderr.write(tail + "\n")
+              sys.stderr.write("----------------------------------------------------\n")
+          EOF
           fi
 
       - name: Fallback to Logic App
