@@ -214,6 +214,7 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          S2STOKENS: true
         run: |
           {
             cat prompts/copilot-flake-review.md
@@ -227,7 +228,7 @@ jobs:
           } > /tmp/flake-prompt.txt
 
           BASE_SHA=$(git rev-parse HEAD)
-          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          MODELS="${COPILOT_MODELS:-auto claude-sonnet-5.5 gpt-5.4}"
           SUCCESS=0
           for MODEL in $MODELS; do
             set +e

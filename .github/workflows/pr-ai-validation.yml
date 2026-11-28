@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 5
     env:
       PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
-      COPILOT_CLI_VERSION: 1.0.72-0
+      COPILOT_CLI_VERSION: 1.0.115-4
     steps:
       - name: Check if contributor is trusted
         uses: actions/github-script@v8
@@ -178,6 +178,7 @@ jobs:
         id: validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          S2STOKENS: true
         shell: bash
         run: |
           SYSTEM_PROMPT=$(cat prompts/copilot-pr-desc-check.md 2>/dev/null || echo "Validate this PR description.")
@@ -207,8 +208,8 @@ jobs:
           } > /tmp/full-prompt.txt
 
           set +e
-          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
-          RESULT=""; CLI_EXIT=1
+          MODELS="${COPILOT_MODELS:-auto claude-sonnet-5.5 gpt-5.4}"
+          RESULT=""; CLI_EXIT=1; USED_MODEL=""
           for MODEL in $MODELS; do
             for try in 1 2; do
               # Pass the prompt via stdin, NOT as a `-p "$(...)"` argv. On Linux a single argument is
@@ -218,8 +219,12 @@ jobs:
               RESULT=$(timeout 90 copilot --yolo \
                 --model "$MODEL" < /tmp/full-prompt.txt 2>&1)
               CLI_EXIT=$?
-              if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then break 2; fi
+              if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then
+                USED_MODEL="$MODEL"
+                break 2
+              fi
               echo "::warning::Copilot model $MODEL attempt $try failed (exit $CLI_EXIT)"
+              printf '%s\n' "$RESULT" | tail -n 5
               # 126/127 = binary could not be executed (transient install/exec flake) — brief backoff and retry.
               # Any other non-zero exit is deterministic for this model, so move on to the next one.
               if [ $CLI_EXIT -eq 126 ] || [ $CLI_EXIT -eq 127 ]; then sleep 5; else break; fi
@@ -234,22 +239,24 @@ jobs:
             printf '%s\n' "$RESULT" | tail -n 25
             echo "----------------------------------------------------"
           else
-            echo "$RESULT" | python3 -c "
-          import sys, json
+            printf '%s' "$RESULT" | USED_MODEL="$USED_MODEL" python3 -c '
+          import json, os, sys
           text = sys.stdin.read()
           # Find JSON in output
-          start = text.find('{')
-          end = text.rfind('}') + 1
+          start = text.find("{")
+          end = text.rfind("}") + 1
           if start >= 0 and end > start:
               try:
                   data = json.loads(text[start:end])
-                  json.dump(data, open('/tmp/validation-result.json', 'w'))
-                  print('cli_success=true')
-              except:
-                  print('cli_success=false')
+                  with open("/tmp/validation-result.json", "w", encoding="utf-8") as f:
+                      json.dump(data, f)
+                  print("cli_success=true")
+                  print("used_model=" + os.environ.get("USED_MODEL", ""))
+              except Exception:
+                  print("cli_success=false")
           else:
-              print('cli_success=false')
-          " >> "$GITHUB_OUTPUT"
+              print("cli_success=false")
+          ' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Fallback to Logic App
@@ -292,6 +299,7 @@ jobs:
         uses: actions/github-script@v8
         env:
           CLI_SUCCESS: ${{ steps.validate.outputs.cli_success }}
+          CLI_MODEL: ${{ steps.validate.outputs.used_model }}
         with:
           script: |
             const fs = require('fs');
@@ -312,7 +320,7 @@ jobs:
               return;
             }
 
-            const source = process.env.CLI_SUCCESS === 'true' ? 'Copilot CLI (claude-opus-4.8)' : 'Logic App (fallback)';
+            const source = process.env.CLI_SUCCESS === 'true' ? `Copilot CLI (${process.env.CLI_MODEL || 'auto'})` : 'Logic App (fallback)';
             const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Powered by: ${source} | Last updated: ${new Date().toUTCString()}*`;
 
             const comments = await github.rest.issues.listComments({

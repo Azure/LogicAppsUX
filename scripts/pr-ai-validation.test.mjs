@@ -316,3 +316,12 @@ test('reads fallback Logic App URL from secrets only, never repository variables
   assert.ok(workflow.includes('LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}'));
   assert.ok(!workflow.includes('vars.PR_VALIDATION_LOGIC_APP_URL'));
 });
+
+test('configures S2STOKENS, non-retired default Copilot models, and dynamic CLI_MODEL reporting', () => {
+  assert.ok(workflow.includes('S2STOKENS: true'));
+  assert.ok(workflow.includes('MODELS="${COPILOT_MODELS:-auto '));
+  assert.ok(!workflow.includes('claude-opus-4.8'));
+  assert.ok(!workflow.includes('gpt-5-mini'));
+  assert.ok(workflow.includes('CLI_MODEL: ${{ steps.validate.outputs.used_model }}'));
+  assert.ok(workflow.includes("`Copilot CLI (${process.env.CLI_MODEL || 'auto'})`"));
+});

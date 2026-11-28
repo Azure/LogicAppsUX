@@ -188,6 +188,7 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          S2STOKENS: true
           ISSUE_NUMBER: ${{ matrix.issue_number }}
           REPOSITORY: ${{ github.repository }}
         run: |
@@ -222,8 +223,8 @@ jobs:
             fs.writeFileSync('/tmp/investigate-prompt.txt', prompt, 'utf8');
           EOF
 
-          # GITHUB_TOKEN has only contents:read + copilot-requests:write (no issues:write).
-          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          # GITHUB_TOKEN has only contents:read + copilot-requests: write (no issues:write).
+          MODELS="${COPILOT_MODELS:-auto claude-sonnet-5.5 gpt-5.4}"
           SUCCESS=0
           for MODEL in $MODELS; do
             rm -f /tmp/investigation.md
