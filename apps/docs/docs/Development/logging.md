@@ -4,7 +4,7 @@
 
 We log in VSCode two different ways, for the individual libraries and the VSCode app.
 
-We store the Application Insights IKey and Connection String (we need to replace IKey with connection string before they stop supporting it according to these [docs](https://www.bing.com/ck/a?!&&p=2ca732e0bf41371ba66545baf1e347ebc8dd4c604e5c1c6c9d959e4c610ad604JmltdHM9MTczMzk2MTYwMA&ptn=3&ver=2&hsh=4&fclid=3441c1a0-fa32-6667-3dc4-d01cfb886781&psq=app+insights+connection+string&u=a1aHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlL2F6dXJlLW1vbml0b3IvYXBwL21pZ3JhdGUtZnJvbS1pbnN0cnVtZW50YXRpb24ta2V5cy10by1jb25uZWN0aW9uLXN0cmluZ3M&ntb=1)) in our production-build.yml file.
+We store the Application Insights IKey and Connection String (we need to replace IKey with connection string before they stop supporting it according to these [docs](https://www.bing.com/ck/a?!&&p=2ca732e0bf41371ba66545baf1e347ebc8dd4c604e5c1c6c9d959e4c610ad604JmltdHM9MTczMzk2MTYwMA&ptn=3&ver=2&hsh=4&fclid=3441c1a0-fa32-6667-3dc4-d01cfb886781&psq=app+insights+connection+string&u=a1aHR0cHM6Ly9sZWFybi5taWNyb3NvZnQuY29tL2VuLXVzL2F6dXJlL2F6dXJlLW1vbml0b3IvYXBwL21pZ3JhdGUtZnJvbS1pbnN0cnVtZW50YXRpb24ta2V5cy10by1jb25uZWN0aW9uLXN0cmluZ3M&ntb=1)) in our `version-release.yml` workflow (via repository secrets).
 
 We use [ApplicationInsights](https://www.npmjs.com/package/@microsoft/applicationinsights-web) to gather our logs, and then they are sent to Kusto for easier querying.
 
@@ -21,7 +21,7 @@ Here we mainly log extension commands. The name is name of the command like this
 
 Using the LoggerService in apps/vs-code-react/src/app/services/Logger.ts that implements ILoggerService in vs-code-react. This service sends commands to vs-code-designer to log. vs-code-designer uses the library [vscode-extension-telemetry](https://github.com/microsoft/vscode-extension-telemetry) initialized in apps/vs-code-designer/src/main.ts to log.
 
-In the github build we copy over the key from production-build.yml into main.ts in vs-code-designer.
+In the github build we copy over the key from `version-release.yml` into `main.ts` in `vs-code-designer`.
 
 ##### Testing locally
 

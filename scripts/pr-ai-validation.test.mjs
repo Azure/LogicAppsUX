@@ -311,3 +311,72 @@ test('runs the regression suite from the existing trusted checkout before gather
   assert.ok(workflow.indexOf('      - name: Test PR validation data gathering') < workflow.indexOf('      - name: Gather PR data'));
   assert.ok(workflow.includes('  pull_request_target:'));
 });
+
+test('reads fallback Logic App URL from secrets only, never repository variables', () => {
+  assert.ok(workflow.includes('LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}'));
+  assert.ok(!workflow.includes('vars.PR_VALIDATION_LOGIC_APP_URL'));
+});
+
+test('configures S2STOKENS, non-retired default Copilot models, and dynamic CLI_MODEL reporting', () => {
+  assert.ok(workflow.includes('S2STOKENS: true'));
+  assert.ok(workflow.includes('MODELS="${COPILOT_MODELS:-auto '));
+  assert.ok(workflow.includes('copilot --yolo -s --no-custom-instructions --disable-builtin-mcps'));
+  assert.ok(!workflow.includes('claude-opus-4.8'));
+  assert.ok(!workflow.includes('gpt-5-mini'));
+  assert.ok(workflow.includes('CLI_MODEL: ${{ steps.validate.outputs.used_model }}'));
+  assert.ok(workflow.includes("`Copilot CLI (${process.env.CLI_MODEL || 'auto'})`"));
+});
+
+test('extracts verdict JSON from noisy Copilot CLI output and logs diagnostics on failure', () => {
+  const marker = 'python3 - /tmp/copilot-raw-output.txt <<\'EOF\' >> "$GITHUB_OUTPUT"\n';
+  const start = workflow.indexOf(marker);
+  assert.ok(start >= 0, 'Missing Python verdict extractor in workflow');
+  const end = workflow.indexOf('\n          EOF\n', start);
+  assert.ok(end > start, 'Missing end of Python verdict extractor');
+  const pythonScript = workflow
+    .slice(start + marker.length, end)
+    .split('\n')
+    .map((line) => line.slice(10))
+    .join('\n');
+
+  const dir = mkdtempSync(join(tmpdir(), 'pr-ai-verdict-'));
+  const rawPath = join(dir, 'copilot-raw-output.txt');
+  const outPath = join(dir, 'validation-result.json');
+  try {
+    // 1. Noisy output with extra {braces} before and after raw verdict JSON
+    writeFileSync(rawPath, 'Debug {not json} {"meta": 1}\n{"passes": true, "message": "Looks good!"}\nSummary {elapsed: 17s}\n');
+    const rawRes = spawnSync('python3', ['-', rawPath], {
+      input: pythonScript,
+      encoding: 'utf8',
+      env: { ...process.env, USED_MODEL: 'auto', VALIDATION_RESULT_PATH: outPath },
+    });
+    assert.equal(rawRes.status, 0, rawRes.stderr);
+    assert.equal(rawRes.stdout, 'cli_success=true\nused_model=auto\n');
+    assert.deepEqual(JSON.parse(readFileSync(outPath, 'utf8')), { passes: true, message: 'Looks good!' });
+
+    // 2. Fenced ```json block surrounded by unrelated JSON and braces
+    writeFileSync(rawPath, 'Noise {x}\n```json\n{"passes": false, "message": "Needs details"}\n```\nFooter {"other": true}\n');
+    const fencedRes = spawnSync('python3', ['-', rawPath], {
+      input: pythonScript,
+      encoding: 'utf8',
+      env: { ...process.env, USED_MODEL: 'claude-sonnet-5.5', VALIDATION_RESULT_PATH: outPath },
+    });
+    assert.equal(fencedRes.status, 0, fencedRes.stderr);
+    assert.equal(fencedRes.stdout, 'cli_success=true\nused_model=claude-sonnet-5.5\n');
+    assert.deepEqual(JSON.parse(readFileSync(outPath, 'utf8')), { passes: false, message: 'Needs details' });
+
+    // 3. Invalid/non-verdict output emits cli_success=false on stdout and diagnostics on stderr
+    writeFileSync(rawPath, 'No verdict here {"passes": "not-a-bool"}\n');
+    const invalidRes = spawnSync('python3', ['-', rawPath], {
+      input: pythonScript,
+      encoding: 'utf8',
+      env: { ...process.env, USED_MODEL: 'auto', VALIDATION_RESULT_PATH: outPath },
+    });
+    assert.equal(invalidRes.status, 0);
+    assert.equal(invalidRes.stdout, 'cli_success=false\n');
+    assert.ok(invalidRes.stderr.includes('no valid verdict JSON was extracted'));
+    assert.ok(invalidRes.stderr.includes('No verdict here'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

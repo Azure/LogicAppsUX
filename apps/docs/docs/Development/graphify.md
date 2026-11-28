@@ -61,17 +61,17 @@ fi
 
 For a quick conservative check, compare the report's commit with `git rev-parse --short HEAD`. A mismatch means “investigate freshness,” not necessarily “stale,” because unrelated repository changes also advance `HEAD`.
 
-### Automatic rebuilds on `main`
+### Manual CI rebuilds (patch artifact)
 
-The **Update Knowledge Graphs** workflow:
+Direct pushes to `main` are blocked by repository branch protection rules, so the **Update Knowledge Graphs** workflow (`update-knowledge-graphs.yml`) runs on manual `workflow_dispatch`:
 
-1. Runs after pushes to `main` that change `libs/*/src/**/*.ts` or `libs/*/src/**/*.tsx`.
+1. Trigger **Update Knowledge Graphs** from the Actions tab (or via `gh workflow run update-knowledge-graphs.yml`).
 2. Installs Python 3.13 and the `graphifyy` package.
 3. Rebuilds all eight supported libraries with pure AST extraction; no LLM credentials or API keys are required.
 4. Removes workspace-specific absolute paths from generated reports and JSON.
-5. Commits changed `GRAPH_REPORT.md` and `graph.json` files with `[skip ci]`.
+5. Generates a `knowledge-graphs.patch` diff under `libs/*/src/graphify-out/`, uploads it as a workflow artifact, and writes step-by-step instructions in the job summary to apply the patch on a branch and open a PR.
 
-The workflow does not rebuild graphs on feature branches, for unsupported packages, or for changes outside its TypeScript and TSX path filters. Rebuild locally when branch-only changes matter to your analysis.
+For faster iteration on a feature branch, you can also run `pnpm run graphify:rebuild` locally and commit the updated reports in your PR.
 
 ## AI assistant integration
 
@@ -293,16 +293,13 @@ Check the exact label in `GRAPH_REPORT.md` or `graph.json`. Function labels comm
 
 Do not hand-edit generated artifacts. Run `pnpm run graphify:rebuild` from the repository root; the rebuild script strips repository-specific absolute and encoded paths.
 
-### CI did not rebuild a graph
+### CI did not produce a knowledge-graphs patch
 
 Confirm that:
 
-- The change reached `main`.
-- The changed file matches `libs/*/src/**/*.ts` or `libs/*/src/**/*.tsx`.
-- The library is in the supported list.
-- The **Update Knowledge Graphs** workflow completed and had `contents: write` permission.
-
-Changes to JavaScript, Markdown, apps, or unsupported libraries do not match the current workflow trigger.
+- The **Update Knowledge Graphs** workflow (`update-knowledge-graphs.yml`) was triggered manually via `workflow_dispatch` (it does not auto-run or push directly to `main`).
+- The library is in the supported list and has uncommitted graph drift after running `scripts/graphify-rebuild.sh`.
+- Download the `knowledge-graphs-patch` artifact from the completed workflow run and follow the job summary instructions to apply it on a PR branch.
 
 ### The graph disagrees with source or runtime behavior
 

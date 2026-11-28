@@ -15,7 +15,7 @@ This repository has been migrated from `standard-version` to a custom tag-based 
 - **After**: Manual trigger with explicit version type that creates release tags and the corresponding hotfix branch for major/minor releases
 
 ### 3. Workflow Changes
-- **Old workflow**: `production-build.yml` (can be deprecated)
+- **Old workflow**: `production-build.yml` (removed)
 - **New workflow**: `version-release.yml`
 
 ### 4. Branch Restrictions
@@ -63,7 +63,7 @@ Can also be triggered via:
 - [x] Create new GitHub workflow with branch validation
 - [x] Remove `.versionrc` file
 - [x] Remove semantic-release dependencies
-- [ ] Deprecate old `production-build.yml` workflow
+- [x] Remove old `production-build.yml` workflow
 - [x] Update team documentation
 
 ## Rollback Plan
@@ -71,5 +71,5 @@ Can also be triggered via:
 If needed, to rollback:
 1. Restore `.versionrc` file
 2. Revert package.json to use `standard-version`
-3. Use `production-build.yml` workflow
+3. Restore `.github/workflows/production-build.yml` from git history
 4. Delete `version-release.yml` workflow

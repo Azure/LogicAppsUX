@@ -16,13 +16,17 @@ permissions:
   contents: read
   copilot-requests: write
 
+concurrency:
+  group: pr-ai-validation-${{ github.event.pull_request.number || github.event.inputs.pr_number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
+
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
       PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
-      COPILOT_CLI_VERSION: 1.0.72-0
+      COPILOT_CLI_VERSION: 1.0.115-4
     steps:
       - name: Check if contributor is trusted
         uses: actions/github-script@v8
@@ -74,7 +78,7 @@ jobs:
         run: node --test scripts/pr-ai-validation.test.mjs
 
       - name: Cache Copilot CLI download
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: copilot-cli-${{ runner.os }}-${{ env.COPILOT_CLI_VERSION }}
@@ -174,6 +178,7 @@ jobs:
         id: validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          S2STOKENS: true
         shell: bash
         run: |
           SYSTEM_PROMPT=$(cat prompts/copilot-pr-desc-check.md 2>/dev/null || echo "Validate this PR description.")
@@ -203,19 +208,23 @@ jobs:
           } > /tmp/full-prompt.txt
 
           set +e
-          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
-          RESULT=""; CLI_EXIT=1
+          MODELS="${COPILOT_MODELS:-auto claude-sonnet-5.5 gpt-5.4}"
+          RESULT=""; CLI_EXIT=1; USED_MODEL=""
           for MODEL in $MODELS; do
             for try in 1 2; do
               # Pass the prompt via stdin, NOT as a `-p "$(...)"` argv. On Linux a single argument is
               # capped at MAX_ARG_STRLEN (128 KB); large-diff PRs push the combined prompt past that,
               # making execve fail with E2BIG which surfaces as an instant exit 126 with no output.
               # stdin has no such limit, so this validates PRs of any diff size.
-              RESULT=$(timeout 90 copilot --yolo \
+              RESULT=$(timeout 90 copilot --yolo -s --no-custom-instructions --disable-builtin-mcps \
                 --model "$MODEL" < /tmp/full-prompt.txt 2>&1)
               CLI_EXIT=$?
-              if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then break 2; fi
+              if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then
+                USED_MODEL="$MODEL"
+                break 2
+              fi
               echo "::warning::Copilot model $MODEL attempt $try failed (exit $CLI_EXIT)"
+              printf '%s\n' "$RESULT" | tail -n 5
               # 126/127 = binary could not be executed (transient install/exec flake) — brief backoff and retry.
               # Any other non-zero exit is deterministic for this model, so move on to the next one.
               if [ $CLI_EXIT -eq 126 ] || [ $CLI_EXIT -eq 127 ]; then sleep 5; else break; fi
@@ -230,22 +239,63 @@ jobs:
             printf '%s\n' "$RESULT" | tail -n 25
             echo "----------------------------------------------------"
           else
-            echo "$RESULT" | python3 -c "
-          import sys, json
-          text = sys.stdin.read()
-          # Find JSON in output
-          start = text.find('{')
-          end = text.rfind('}') + 1
-          if start >= 0 and end > start:
-              try:
-                  data = json.loads(text[start:end])
-                  json.dump(data, open('/tmp/validation-result.json', 'w'))
-                  print('cli_success=true')
-              except:
-                  print('cli_success=false')
+            printf '%s' "$RESULT" > /tmp/copilot-raw-output.txt
+            USED_MODEL="$USED_MODEL" python3 - /tmp/copilot-raw-output.txt <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os, re, sys
+
+          with open(sys.argv[1], "r", encoding="utf-8") as f:
+              text = f.read()
+          decoder = json.JSONDecoder()
+
+          def is_verdict(obj):
+              return (
+                  isinstance(obj, dict)
+                  and isinstance(obj.get("passes"), bool)
+                  and isinstance(obj.get("message"), str)
+              )
+
+          def find_verdict(src):
+              last = None
+              pos = 0
+              while True:
+                  idx = src.find("{", pos)
+                  if idx < 0:
+                      return last
+                  try:
+                      obj, end = decoder.raw_decode(src, idx)
+                      if is_verdict(obj):
+                          last = obj
+                          pos = end
+                      else:
+                          pos = idx + 1
+                  except json.JSONDecodeError:
+                      pos = idx + 1
+
+          data = None
+          # Prefer fenced ```json ... ``` blocks first, checking from last to first.
+          fenced_blocks = re.findall(r"```(?:json)?\s*\n(.*?)```", text, flags=re.IGNORECASE | re.DOTALL)
+          for block in reversed(fenced_blocks):
+              data = find_verdict(block)
+              if data is not None:
+                  break
+
+          if data is None:
+              data = find_verdict(text)
+
+          if data is not None:
+              out_path = os.environ.get("VALIDATION_RESULT_PATH", "/tmp/validation-result.json")
+              with open(out_path, "w", encoding="utf-8") as f:
+                  json.dump(data, f)
+              print("cli_success=true")
+              print("used_model=" + os.environ.get("USED_MODEL", ""))
           else:
-              print('cli_success=false')
-          " >> "$GITHUB_OUTPUT"
+              print("cli_success=false")
+              tail = "\n".join(text.splitlines()[-25:])
+              sys.stderr.write("::warning::Copilot CLI returned exit 0 but no valid verdict JSON was extracted.\n")
+              sys.stderr.write("----- Copilot CLI output (tail, for debugging) -----\n")
+              sys.stderr.write(tail + "\n")
+              sys.stderr.write("----------------------------------------------------\n")
+          EOF
           fi
 
       - name: Fallback to Logic App
@@ -253,7 +303,7 @@ jobs:
         id: fallback
         uses: actions/github-script@v8
         env:
-          LOGIC_APP_URL: ${{ vars.PR_VALIDATION_LOGIC_APP_URL }}
+          LOGIC_APP_URL: ${{ secrets.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
             const pr_number = Number(process.env.PR_NUMBER);
@@ -288,6 +338,7 @@ jobs:
         uses: actions/github-script@v8
         env:
           CLI_SUCCESS: ${{ steps.validate.outputs.cli_success }}
+          CLI_MODEL: ${{ steps.validate.outputs.used_model }}
         with:
           script: |
             const fs = require('fs');
@@ -308,7 +359,7 @@ jobs:
               return;
             }
 
-            const source = process.env.CLI_SUCCESS === 'true' ? 'Copilot CLI (claude-opus-4.8)' : 'Logic App (fallback)';
+            const source = process.env.CLI_SUCCESS === 'true' ? `Copilot CLI (${process.env.CLI_MODEL || 'auto'})` : 'Logic App (fallback)';
             const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Powered by: ${source} | Last updated: ${new Date().toUTCString()}*`;
 
             const comments = await github.rest.issues.listComments({

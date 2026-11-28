@@ -225,7 +225,7 @@ Each library has a Graphify knowledge graph at `libs/<lib>/src/graphify-out/` co
 - **GRAPH_REPORT.md** — God nodes (most-connected abstractions), communities, surprising cross-file connections
 - **graph.json** — Queryable graph for structural questions
 
-Graphs are **auto-rebuilt by CI** when source files change on main.
+Graphs can be rebuilt via the manual **Update Knowledge Graphs** workflow (`update-knowledge-graphs.yml`, which uploads a `knowledge-graphs.patch` artifact for a PR) or locally with `pnpm run graphify:rebuild`.
 
 **Before exploring a library, read its `GRAPH_REPORT.md` first** — it tells you the core abstractions, how they connect, and what's surprising. This is faster and more accurate than grepping raw files.
 

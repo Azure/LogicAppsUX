@@ -15,12 +15,16 @@ on:
       enable_blob_upload:
         description: 'Upload Iframe App to Azure Blob Storage'
         required: false
-        default: true
+        default: false
         type: boolean
   repository_dispatch:
     types: [release]
   schedule:
     - cron: '0 17 * * 4'
+
+concurrency:
+  group: version-release
+  cancel-in-progress: false
 
 env:
   AI_KEY: ${{ vars.AI_KEY }}
@@ -29,6 +33,8 @@ env:
 jobs:
   validation:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
     steps:
       - name: 'Check branch and release type'
         id: validate
@@ -51,10 +57,12 @@ jobs:
   create-release:
     needs: validation
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     outputs:
       new_version: ${{ steps.version.outputs.new_version }}
       tag_name: ${{ steps.version.outputs.tag_name }}
-    permissions: write-all
+    permissions:
+      contents: write
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v5
@@ -169,6 +177,7 @@ jobs:
   build-and-publish:
     needs: create-release
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     environment: E2ETesting
     permissions:
       contents: write
@@ -296,6 +305,7 @@ jobs:
   publish-npm:
     needs: create-release
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment: E2ETesting
     permissions:
       contents: read

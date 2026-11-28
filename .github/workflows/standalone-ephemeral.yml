@@ -12,8 +12,7 @@ on:
       pr_number:
         description: 'PR number, or leave empty to reconcile all previews'
         type: string
-  schedule:
-    - cron: '17 */6 * * *'
+  # Scheduled sweep is paused because Entra Conditional Access (AADSTS53003) blocks scheduled Azure logins.
 
 permissions: {}
 
@@ -50,7 +49,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
       - uses: azure/login@v3
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.pr_number == '')
+        if: github.event_name == 'workflow_dispatch' && inputs.pr_number == ''
         with:
           client-id: ${{ vars.EPHEMERAL_CLIENT_ID }}
           tenant-id: ${{ vars.EPHEMERAL_TENANT_ID }}
